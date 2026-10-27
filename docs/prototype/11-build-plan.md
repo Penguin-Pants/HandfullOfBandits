@@ -1,0 +1,448 @@
+# 11 Build Plan
+
+Status: planning document. No task has started.
+
+## 1. How to use this plan
+
+1. Each task is one small pull request. Target under 400 changed lines, tests included.
+2. Do tasks in ID order inside a phase unless "Deps" allows parallel work.
+3. Each task follows TDD (`AGENTS.md`): failing assertion first.
+4. A phase ends at its integration checkpoint (IC). Do not start the next phase until the IC passes.
+5. Paths are relative to the repository root. `sim/` is the application. `game-packages/` holds data.
+
+Task field key: **Obj** objective, **Files** files or modules, **Deps** dependencies, **Steps** implementation steps, **Accept** acceptance criteria, **Tests** automated tests, **Risks**, **Out** deliverables.
+
+## 2. Phase 1: rules and data foundation
+
+### P0-01 Toolchain and repository skeleton
+
+- **Obj:** Create `sim/` with TypeScript strict, Vitest, ESLint, scripts `test`, `check`, `start`.
+- **Files:** `sim/package.json`, `sim/tsconfig.json`, `sim/eslint.config.*`, `sim/vitest.config.*`, `Makefile` (targets `test`, `check`, `start`).
+- **Deps:** none.
+- **Steps:** 1. Confirm current Node LTS and `better-sqlite3` Windows prebuilds. Record result in 13-design-decisions.md. 2. Scaffold. 3. Add one placeholder test that fails, then passes.
+- **Accept:** `make test` and `make check` pass on Windows 11 and Linux CI.
+- **Tests:** Placeholder test.
+- **Risks:** Native SQLite module fails on Windows. Fallback: `node:sqlite`.
+- **Out:** Working toolchain.
+
+### P1-01 Module boundaries and banned globals
+
+- **Obj:** Enforce 03 s5 import rules and engine purity.
+- **Files:** `sim/eslint.config.*`, `sim/test/arch.test.ts`.
+- **Deps:** P0-01.
+- **Steps:** 1. Restricted-imports rule per folder. 2. Restricted-globals rule for `sim/src/engine/**`.
+- **Accept:** A test file that imports `fs` in the engine fails lint.
+- **Tests:** T-ARCH.
+- **Risks:** Rules too strict for test helpers. Exclude `*.test.ts`.
+- **Out:** Lint config.
+
+### P1-02 Seeded RNG and canonical hash
+
+- **Obj:** Deterministic random source with serializable state. Canonical JSON and SHA-256.
+- **Files:** `sim/src/engine/core/rng.ts`, `sim/src/engine/core/canonical.ts`.
+- **Deps:** P1-01.
+- **Steps:** 1. Implement a documented generator (xoshiro128** or PCG32). 2. `rollDie`, `pickRandom`, `shuffle` return `{value, rng}`. 3. Canonical serializer with sorted keys.
+- **Accept:** Known-answer vectors match. Same seed gives same shuffle on two runs.
+- **Tests:** T-DET (unit part).
+- **Risks:** Subtle bias in `pickRandom`. Use rejection sampling.
+- **Out:** RNG and hash utilities.
+
+### P1-03 Core state types
+
+- **Obj:** Define `GameState`, `DerivedView`, `Command`, `Decision`, `LogEntry`, `Effect` types (05 s2, s3, s10).
+- **Files:** `sim/src/engine/core/types.ts`, `sim/src/engine/core/state.ts`.
+- **Deps:** P1-02.
+- **Steps:** 1. Types keyed by faction ID (N factions). 2. `emptyState(ruleset)`. 3. Measure canonical size of a full setup state.
+- **Accept:** Full campaign setup state serializes under 30 KB or the measured value is recorded in 06 s3.7.
+- **Tests:** Round trip serialize and hash.
+- **Risks:** Over-design. Add only fields named in 05 s2.
+- **Out:** Type module.
+
+### P1-04 Package schemas (core subset)
+
+- **Obj:** Zod schemas for manifest, parameters, factions, pieces, map, tracks, markers, scenarios.
+- **Files:** `sim/src/package/schema/*.ts`.
+- **Deps:** P1-03.
+- **Steps:** 1. Schemas per 04 s3 to s4. 2. Generate JSON Schema to `game-packages/_schema/`.
+- **Accept:** Valid fixture parses. Each invalid fixture fails with a path.
+- **Tests:** T-PKG (schema cases).
+- **Risks:** Schema churn. Keep `schemaVersion: 1` until P2 ends.
+- **Out:** Schemas and JSON Schema files.
+
+### P1-05 Package loader, hash and reference validation
+
+- **Obj:** Load a YAML folder, compute content hash, run V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS.
+- **Files:** `sim/src/package/load.ts`, `sim/src/package/validate.ts`, `sim/src/cli/validate.ts`.
+- **Deps:** P1-04.
+- **Steps:** 1. Load and normalize. 2. Hash. 3. Validators return messages per 04 s9. 4. CLI `sim validate <dir>`.
+- **Accept:** CLI prints file, path, ID and sentence for each error. Exit code 1 on error.
+- **Tests:** T-PKG fixtures, one per code.
+- **Risks:** Hash changes on whitespace. Hash the normalized object, not the bytes.
+- **Out:** Loader, validator, CLI command.
+
+### P1-06 Test package "tiny"
+
+- **Obj:** A 4-space, 2-faction test package for engine tests.
+- **Files:** `sim/test/packages/tiny/*.yaml`.
+- **Deps:** P1-05.
+- **Steps:** 1. Two factions, 2 piece types each, 1 track each, 1 ordinal track, 3 cards.
+- **Accept:** `sim validate` passes.
+- **Tests:** Used by later tasks.
+- **Risks:** None.
+- **Out:** Fixture package.
+
+### P1-07 Core effect primitives
+
+- **Obj:** `placePieces`, `removePieces`, `movePieces`, `setPieceState`, `adjustTrack`, `setTrack`, `stepOrdinal`, `placeMarker`, `removeMarker`, `flipMarker`, `setFlag`, `shiftLevel` with invariants (05 s7).
+- **Files:** `sim/src/engine/core/effects/*.ts`.
+- **Deps:** P1-06.
+- **Steps:** 1. One primitive per file. 2. Each returns `{state, entries}`. 3. PA-04 and PA-09 behavior with `assumption_ref`.
+- **Accept:** Piece total invariant holds after every primitive in property tests.
+- **Tests:** T-PRIM.
+- **Risks:** Shift blocks need markers config. Read from ruleset.
+- **Out:** Primitive library.
+
+### P1-08 Parameters access and literal check
+
+- **Obj:** Handlers read numbers only through parameter IDs.
+- **Files:** `sim/src/engine/core/params.ts`, `sim/test/no-literals.test.ts`.
+- **Deps:** P1-07.
+- **Steps:** 1. `param(ruleset, id)` with typed access and a clear error. 2. Static scan of handler folders for numeric literals above 2.
+- **Accept:** A handler with literal `3` fails the scan.
+- **Tests:** Scan test.
+- **Risks:** False positives. Allow-list by comment with a reason.
+- **Out:** Parameter helper.
+
+### P1-09 Derive: Control, totals, scores
+
+- **Obj:** `derive` for Control and formula terms (04 s8).
+- **Files:** `sim/src/engine/coin/derive.ts`, `sim/src/engine/core/terms.ts`.
+- **Deps:** P1-07.
+- **Steps:** 1. Control per 03 s6. 2. Term evaluator for the closed set. 3. Score and Harm count terms.
+- **Accept:** Tiny package values match hand math.
+- **Tests:** T-SCORE (tiny).
+- **Risks:** Term set too small. Add terms only with a schema bump.
+- **Out:** Derive module.
+
+### P1-10 Engine apply loop and log entries
+
+- **Obj:** `start`, `validate`, `apply` skeleton with one command type (`AdjustTrackDebug` in test builds only) and full log entries.
+- **Files:** `sim/src/engine/index.ts`, `sim/src/engine/core/log.ts`.
+- **Deps:** P1-09.
+- **Steps:** 1. Transition type. 2. Validation result type. 3. Log entry builder with rule refs.
+- **Accept:** Applying one command returns a new state, a hash and entries with before and after values.
+- **Tests:** T-DET (apply twice, same hash).
+- **Risks:** Debug command leaks to production. Register it only in tests.
+- **Out:** Engine entry points.
+
+### P1-11 Store schema with annotation tables
+
+- **Obj:** SQLite schema for all tables in 06 s3, including annotations, categories, branches and regression tables.
+- **Files:** `sim/src/store/schema.sql`, `sim/src/store/migrate.ts`, `sim/src/store/repos/*.ts`.
+- **Deps:** P1-10.
+- **Steps:** 1. Migration 001. 2. Repos for package_versions, sessions, actions, commands, log_entries, states, annotations, categories. 3. One-transaction commit function.
+- **Accept:** Commit of one command writes action, command, entries and state atomically. A thrown error leaves no rows.
+- **Tests:** Store integration tests on a temp file.
+- **Risks:** Schema churn. Migrations, never edits to 001 after merge.
+- **Out:** Store layer.
+
+### P1-12 Annotation context builder
+
+- **Obj:** Build the context object of 07 s4 from state, derived view, action record and a UI focus input.
+- **Files:** `sim/src/annotate/context.ts`, `sim/src/annotate/types.ts`.
+- **Deps:** P1-11.
+- **Steps:** 1. Pure function `buildContext(input)`. 2. Size check under 8 KB.
+- **Accept:** Context for the P1-10 transition contains every 07 s4.1 and s4.2 field that has a source.
+- **Tests:** T-ANN-03, T-ANN-04.
+- **Risks:** Field drift from spec. Test lists fields by name from 07.
+- **Out:** Context builder.
+
+### IC-1 Integration checkpoint (Phase 1 exit)
+
+Script test: load `tiny`, start a session in the store, apply one command, save a note anchored to the action, reload from disk, verify hashes and note links. Matches the Phase 1 exit criterion in the brief.
+
+## 3. Phase 2: first playable slice (S0 Opening)
+
+### P2-01 Kurdish package 0.1.0: static data
+
+- **Obj:** Map, pieces, tracks, markers, factions, parameters from 03, 04, 05 and 09.
+- **Files:** `game-packages/kurdish-coin/0.1.0/*.yaml`.
+- **Deps:** IC-1.
+- **Steps:** 1. Enter data by hand from research tables. 2. Cite sections in `source`. 3. Add `assumptions.yaml` with PA-01 to PA-17.
+- **Accept:** `sim validate` passes. Start scores equal 21 and 4 (09 s2.2).
+- **Tests:** T-SCORE for the full campaign setup.
+- **Risks:** Typos in adjacency. Test that adjacency equals the 03 s4.1 list.
+- **Out:** Package data.
+
+### P2-02 Scenarios: full campaign setup and S0
+
+- **Obj:** Scenario files for the full setup and S0.
+- **Files:** `game-packages/kurdish-coin/0.1.0/scenarios/*.yaml`.
+- **Deps:** P2-01.
+- **Steps:** 1. Full setup from 10 s2. 2. S0 with `testOnly: true`, `finalRound: 1`, pile size 8.
+- **Accept:** V-PIECES passes. Totals reconcile with 10 s2.
+- **Tests:** T-PKG.
+- **Risks:** None.
+- **Out:** Scenario files.
+
+### P2-03 CT sequence model
+
+- **Obj:** `SequenceModel` for the CT two-faction track (05 s2 to s3).
+- **Files:** `sim/src/engine/coin/sequence/ct.ts`.
+- **Deps:** IC-1.
+- **Steps:** 1. Legal boxes from the adjacency graph. 2. Eligibility update. 3. Pass income. 4. Both pass.
+- **Accept:** Each matrix row returns the 05 s2.3 cells.
+- **Tests:** T-SEQ.
+- **Risks:** Hidden two-faction assumptions leak. Keep them inside this file.
+- **Out:** Sequence model.
+
+### P2-04 Deck building
+
+- **Obj:** 05 s1.1 procedure with seeded shuffle, mandatory top-8 rule and chain order.
+- **Files:** `sim/src/engine/coin/deck.ts`.
+- **Deps:** P2-03.
+- **Steps:** 1. Pile size from scenario. 2. Mandatory swap. 3. Chain order. 4. Propaganda in bottom third. 5. Scenario flag `propagandaLast` for S0.
+- **Accept:** 1000 seeds: mandatory cards always in the top part. Propaganda position always in range. With `propagandaLast`, all 8 cards precede it.
+- **Tests:** Property tests.
+- **Risks:** Scaled pile rule for S0 differs from research. S0 is `testOnly`.
+- **Out:** Deck builder.
+
+### P2-05 Card schema and encoding of 8 C1 cards plus Propaganda
+
+- **Obj:** Card schema (04 s4.8), effect primitives `choice`, `conditional`, `freeAction`. Encode the 8 S0 cards.
+- **Files:** `sim/src/package/schema/cards.ts`, `game-packages/kurdish-coin/0.1.0/cards/c1.yaml`.
+- **Deps:** P2-04.
+- **Steps:** 1. One-time stub generator from the deck CSV (run from `/tmp`, not committed, per `AGENTS.md`). 2. Hand-encode effects. 3. Set `reviewedAgainstText` after review.
+- **Accept:** V-ENCODE passes for S0.
+- **Tests:** T-EVT fixture per side (16 fixtures).
+- **Risks:** Encoder misreads prose. Side-by-side review output (09 s5).
+- **Out:** Encoded cards.
+
+### P2-06 State Ops: Train, Garrison, Sweep, Assault
+
+- **Obj:** Generic handlers with Kurdish parameters.
+- **Files:** `sim/src/engine/coin/ops/state/*.ts`.
+- **Deps:** P2-03.
+- **Steps:** 1. Validate per 06 s2. 2. Resolve with PA-07 and PA-08. 3. Civic Action sub-step.
+- **Accept:** 06 s7 worked example reproduces.
+- **Tests:** T-VAL and T-OPS for each op.
+- **Risks:** Train option 3 and Civic Action costs interplay. Separate fixtures.
+- **Out:** Four handlers.
+
+### P2-07 PKK Ops: Rally, March, Attack, Coerce
+
+- **Obj:** Handlers per 06 s4.
+- **Files:** `sim/src/engine/coin/ops/pkk/*.ts`.
+- **Deps:** P2-03.
+- **Steps:** 1. Rally three options and Europe location. 2. March activation condition. 3. Attack roll, Decision for removal choice, attrition. 4. Coerce with PA-05.
+- **Accept:** Each rule line in 06 s4 has a fixture.
+- **Tests:** T-VAL, T-OPS.
+- **Risks:** Rally option 3 limit (Pop + Bases) on external boxes. Fixture for box Pop 1.
+- **Out:** Four handlers.
+
+### P2-08 SAs: Air Mobility, Ambush, Extort, Strike Collaborators
+
+- **Obj:** Handlers per 06 s3.1, s5.1, s5.2, s5.3 with PA-06, PA-12, PA-14.
+- **Files:** `sim/src/engine/coin/ops/sa/*.ts`.
+- **Deps:** P2-06, P2-07.
+- **Steps:** 1. SA pairing rules. 2. Timing field. 3. Handlers.
+- **Accept:** SA with Limited Op rejected. In an Ambush space, Attack resolves as normal and removes 1 extra piece (PA-06).
+- **Tests:** T-VAL, T-OPS.
+- **Risks:** "Interleaved" timing complexity. MVP allows `before` and `after` only. Record as a decision.
+- **Out:** Three handlers.
+
+### P2-09 Event execution and Always lines
+
+- **Obj:** Execute a card side with "do as much as you can", ownership limits and Always lines on reveal (05 s5).
+- **Files:** `sim/src/engine/coin/events.ts`.
+- **Deps:** P2-05, P2-08.
+- **Steps:** 1. Side choice. 2. Effect list runner with skip logging. 3. Free actions with no eligibility change.
+- **Accept:** DK-003 Always line moves 16 Guards to Available on reveal.
+- **Tests:** T-EVT.
+- **Risks:** Free action needs the full plan UI. Reuse the op plan flow.
+- **Out:** Event runner.
+
+### P2-10 Propaganda round (slice phases) and final scoring
+
+- **Obj:** Phases Victory (skip), Resources, Upkeep, Legitimacy (8 steps), Civic Action and Agitation, final scoring, record sheet.
+- **Files:** `sim/src/engine/coin/propaganda/*.ts`, `sim/src/engine/coin/victory.ts`.
+- **Deps:** P2-09.
+- **Steps:** 1. Phase pipeline from `sequence.yaml`. 2. Phase handlers. 3. Final margin and tie order.
+- **Accept:** Hand-computed income and Legitimacy for a fixture board match.
+- **Tests:** T-PROP, T-VIC, T-PERV (formula level).
+- **Risks:** Civic Action cap and choice UI. Decision-based spend form.
+- **Out:** Propaganda pipeline.
+
+### IC-2a Engine-only playthrough
+
+CLI test plays S0 to the end with a scripted command list and a fixed seed. Golden replay file stored. No server or UI needed. This proves rules before UI work.
+
+### P2-11 Session service and API
+
+- **Obj:** HTTP API: packages, validate, sessions (create, list, load), commands, legal choices, history, states, annotations, export.
+- **Files:** `sim/src/server/*.ts`.
+- **Deps:** IC-2a.
+- **Steps:** 1. Fastify routes. 2. Session service wraps engine and store. 3. Package content and module source hashes stored on session start. 4. Resume runs a replay check when a module hash differs.
+- **Accept:** API integration tests run a short session.
+- **Tests:** Integration suite.
+- **Risks:** Concurrency with two tabs. One active writer per session, reject stale `head_action_id`.
+- **Out:** Local server.
+
+### P2-12 Replay CLI and performance check
+
+- **Obj:** `sim replay <sessionId|file>` compares hashes per action. Measure apply time.
+- **Files:** `sim/src/cli/replay.ts`.
+- **Deps:** P2-11.
+- **Accept:** Replay of the IC-2a session reports "identical". Timing recorded in 05 s11.
+- **Tests:** T-DET, golden replay.
+- **Risks:** None.
+- **Out:** CLI command.
+
+### P2-13 UI shell, Home screen, package check screen
+
+- **Obj:** React app, Home (package, scenario, options, seed, name, saved sessions) and validation report.
+- **Files:** `sim/src/ui/*`.
+- **Deps:** P2-11.
+- **Accept:** Start disabled with errors. PA warnings listed.
+- **Tests:** Component tests for the Start rule.
+- **Risks:** Styling time. Plain CSS only.
+- **Out:** UI shell.
+
+### P2-14 Board and status bar
+
+- **Obj:** SVG schematic board with selection and detail card. Status bar.
+- **Files:** `sim/src/ui/board/*`, `sim/src/ui/status/*`.
+- **Deps:** P2-13.
+- **Accept:** All 18 locations show counts, levels, markers and Control from the server view model.
+- **Tests:** View model mapping unit tests.
+- **Risks:** Layout coordinates. Hand-set in `map.yaml`.
+- **Out:** Board.
+
+### P2-15 Faction panel, event panel, Decisions, Propaganda flow
+
+- **Obj:** Plan building, live validation, preview, commit, Decisions inline, event side choice, phase list.
+- **Files:** `sim/src/ui/faction/*`, `sim/src/ui/event/*`, `sim/src/ui/propaganda/*`.
+- **Deps:** P2-14.
+- **Accept:** Every illegal action shows a reason (T-UI-03).
+- **Tests:** Component tests with mocked API.
+- **Risks:** Per-op plan forms are many. One generic form driven by handler metadata.
+- **Out:** Play controls.
+
+### P2-16 Note bar, anchors, categories, history drawer
+
+- **Obj:** 07 s2 to s6 in the UI. Focus store feeds context.
+- **Files:** `sim/src/ui/notes/*`, `sim/src/ui/history/*`, `sim/src/ui/focus-store.ts`.
+- **Deps:** P2-15.
+- **Accept:** T-ANN-01, T-ANN-02, T-UI-02.
+- **Tests:** Component and API tests.
+- **Risks:** Hotkey clashes with plan entry. Note bar captures keys only when focused.
+- **Out:** Annotation UI.
+
+### P2-17 Undo, state viewer, basic feedback review
+
+- **Obj:** Undo last action. Read-only board at a hash with before and after. Review table with filters and plain substring search.
+- **Files:** `sim/src/server/undo.ts`, `sim/src/ui/review/*`, `sim/src/ui/state-viewer/*`.
+- **Deps:** P2-16.
+- **Accept:** T-ANN-05, T-ANN-06, T-UI-04.
+- **Tests:** Integration and component tests.
+- **Risks:** Substring search is slow on many notes. Acceptable below 10,000 notes. FTS moves to P3a-08.
+- **Out:** Review features.
+
+### P2-18 JSON export
+
+- **Obj:** Exporter per 07 s8.1 with a reference check.
+- **Files:** `sim/src/export/*`, `sim/src/cli/export.ts`.
+- **Deps:** P2-17.
+- **Accept:** T-ANN-07 and T-EXP pass.
+- **Tests:** T-EXP.
+- **Risks:** Large files with states. States off by default.
+- **Out:** Exporters.
+
+### IC-2 Integration checkpoint (Phase 2 exit, M2)
+
+1. Playwright smoke: Home, start S0, one action, one note, undo, JSON export.
+2. Manual session by the designer against 10 s2.4.
+3. Fix list from that session goes into Phase 3a tasks.
+
+## 4. Phase 3: full Kurdish COIN prototype
+
+Split into three sub-phases. Each sub-phase ends with a scenario played to the end.
+
+### Phase 3a: Scenario A (C1 and C2)
+
+| ID | Obj | Files | Deps | Accept | Tests | Risks |
+|---|---|---|---|---|---|---|
+| P3a-01 | Redeploy and Reset phases | `propaganda/redeploy.ts`, `reset.ts` | IC-2 | 05 s6.7 and s6.8 fixtures | T-PROP | Redeploy UI form size |
+| P3a-02 | Multi-round play and victory checks | `victory.ts` | P3a-01 | Check skipped only in round 1. PA-10 | T-VIC | None |
+| P3a-03 | Capability and Momentum modifiers | `core/modifiers.ts`, hooks | P3a-01 | Momentum discarded at Reset | T-EVT | Hook sprawl. Fixed hook list (03 s6) |
+| P3a-04 | Cross-Border, Diplomacy, Host Pressure, Strike Collaborators | `ops/sa/*`, module `cross-border` | P3a-03 | Posture gates and PA-02, PA-03 | T-VAL, T-OPS | Hot pursuit Low evidence. Option flag |
+| P3a-05 | Pivotal window and ARGK Formed | `coin/pivotal.ts`, module `pivotal-argk` | P3a-02 | Priority to Second Eligible | T-SEQ | None |
+| P3a-06 | Encode remaining C1 and all C2 cards | `cards/c1.yaml`, `c2.yaml` | P3a-03 | V-ENCODE passes for Scenario A | T-EVT per side | Encoding volume. Split per 5 cards per PR |
+| P3a-07 | Scenario A file and golden replay | `scenarios/scenario-a.yaml` | P3a-06 | Scenario A plays to end in CLI script | Golden | None |
+| P3a-08 | Moved from M2: auto backup, FTS search, minimal Markdown export | `store/backup.ts`, `export/markdown.ts` | IC-2 | Last 10 backups kept. FTS returns same rows as substring search on fixtures | T-EXP | FTS5 build availability |
+
+**IC-3a:** Designer plays Scenario A to the end in the UI. Notes export. Matches stage 0 of the research playtest plan (12 s2).
+
+### Phase 3b: C3 to C5 systems, Scenarios B and C
+
+| ID | Obj | Files | Deps | Accept | Tests | Risks |
+|---|---|---|---|---|---|---|
+| P3b-01 | Emergency Rule step table and Legitimacy phase step 8 | module `emergency-rule` | IC-3a | 07 s8.2 table | T-PROP | None |
+| P3b-02 | Village Clearance | module `village-clearance` | P3b-01 | 7 effects in order. T-PERV cases | T-OPS, T-PERV | Highest ethics sensitivity. Review log text |
+| P3b-03 | Covert Action and hidden markers | module `covert`, `core/hidden.ts` | P3b-01 | Check penalty and reveal | T-VIC | Solo play sees hidden markers. Logged as GAP-O01 |
+| P3b-04 | Legal Politics procedure and closure filing | module `legal-politics` | P3b-01 | Two runs of the table give identical Offices (research M-007) | T-PROP | Line order details |
+| P3b-05 | Ceasefire, restrictions, breach, votes, Negotiated Outcome | module `ceasefire` | P3b-04 | 07 s7 fixtures. PA-11 | T-VAL, T-PROP | Breach warnings in UI |
+| P3b-06 | Remaining Pivotals and structural cards (DK-037, 040, 093) | modules `pivotal-*`, `structural-*` | P3b-05 | Always lines fire once | T-EVT | None |
+| P3b-07 | Encode C3, C4, C5 cards | `cards/c3.yaml` to `c5.yaml` | P3b-06 | V-ENCODE passes for B and C | T-EVT | Volume. 5 cards per PR |
+| P3b-08 | Scenarios B and C | `scenarios/*.yaml` | P3b-07 | Start scores equal 09 s2.3 | T-SCORE, golden | Scenario B threshold open (DD-19.7). Package value |
+
+**IC-3b:** Scenarios B and C each played to the end in the UI.
+
+### Phase 3c: full campaign
+
+| ID | Obj | Deps | Accept |
+|---|---|---|---|
+| P3c-01 | Five-pile deck, Campaign advance and structural switches (10 s6.2) | IC-3b | Switch flags set at each Reset |
+| P3c-02 | Full campaign scenario and a long golden replay | P3c-01 | Full campaign replays in under 10 seconds |
+
+**IC-3c (M4):** The selected design plays from setup to conclusion. Phase 3 exit criterion met.
+
+## 5. Phase 4: playtest analysis
+
+| ID | Obj | Accept |
+|---|---|---|
+| P4-01 | Cross-session review: version filters, saved filters, bulk status | Notes from 3 sessions filter by ruleset version |
+| P4-02 | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
+| P4-03 | Per-round metrics table and metrics export | Matches research logging sheet items 6 to 15 |
+| P4-04 | Branch from a past action | New branch plays. Original branch intact |
+| P4-05 | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
+| P4-06 | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
+| P4-07 | Hidden-information view toggle | Covert markers hidden in view mode |
+
+**IC-4 (M5):** Two package versions and at least three sessions compared with recorded evidence.
+
+## 6. Phase 5: evaluation only
+
+Write a one-page evaluation for each before any build: automated opponents, batch execution, AI-assisted log analysis, package generation from documents, map art, Windows installer (Electron), MOD-3B sequence model, MOD-4A, Concept B map, ranked initiative. None blocks M2 to M5.
+
+## 7. Dependency view
+
+```mermaid
+flowchart LR
+    P0[P0-01] --> P1[P1-01..P1-12] --> IC1[IC-1]
+    IC1 --> D[P2-01..P2-02 data]
+    IC1 --> E[P2-03..P2-10 engine]
+    D --> IC2a[IC-2a CLI playthrough]
+    E --> IC2a
+    IC2a --> S[P2-11..P2-12 server]
+    S --> U[P2-13..P2-18 UI and export]
+    U --> IC2[IC-2 M2]
+    IC2 --> A[Phase 3a] --> IC3a[IC-3a]
+    IC3a --> B[Phase 3b] --> IC3b[IC-3b]
+    IC3b --> C[Phase 3c] --> IC3c[IC-3c M4]
+    IC3c --> F[Phase 4] --> IC4[IC-4 M5]
+```
+
+Parallel work allowed: P2-01 and P2-02 (data) alongside P2-03 to P2-10 (engine).
+
+Next step: read 12-architecture-review.md.
