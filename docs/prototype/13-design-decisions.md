@@ -18,7 +18,7 @@ Status: planning document. Records simulator decisions (DEC-nn). Game design dec
 | DEC-10 | `branches` table from Phase 1, single branch until Phase 4 | Add branching later by migration | Branching later needs no data change | High |
 | DEC-11 | Seeded generator inside engine core, state stored in game state | Library RNG | Full control of determinism and serialization | High |
 | DEC-12 | Session stores full package content by hash | Rely on package folders | Old sessions stay reproducible if folders change | High |
-| DEC-13 | Annotation anchors: executed, proposed, decision, state, session | Single note type | Brief requires before and after notes kept apart | High |
+| DEC-13 | Annotation anchors: executed, proposed, decision, state, session, debrief (one overall comment per session, exported for AI analysis) | Single note type | Brief requires before and after notes kept apart | High |
 | DEC-14 | Engine-only CLI playthrough (IC-2a) before any UI work | UI-first slice | Rules proven before UI cost. Reduces rework | High |
 | DEC-15 | M2 slice is test scenario S0: real map and setup, one C1 pile of 8 cards, one final Propaganda round | Abstract 4-space test game | Notes from S0 apply to the real design | Medium |
 | DEC-16 | SA timing in MVP: before or after the Op only | Full interleaving | 06 s1.3 "during" is undefined. Interleaving later if play needs it | Medium |

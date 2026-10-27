@@ -333,7 +333,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Obj:** 07 s2 to s6 in the UI. Focus store feeds context.
 - **Files:** `sim/src/ui/notes/*`, `sim/src/ui/history/*`, `sim/src/ui/focus-store.ts`.
 - **Deps:** P2-15.
-- **Accept:** T-ANN-01, T-ANN-02, T-UI-02.
+- **Accept:** T-ANN-01, T-ANN-02, T-UI-02, T-UI-06.
 - **Tests:** Component and API tests.
 - **Risks:** Hotkey clashes with plan entry. Note bar captures keys only when focused.
 - **Out:** Annotation UI.
@@ -353,7 +353,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Obj:** Exporter per 07 s8.1 with a reference check.
 - **Files:** `sim/src/export/*`, `sim/src/cli/export.ts`.
 - **Deps:** P2-17.
-- **Accept:** T-ANN-07 and T-EXP pass.
+- **Accept:** T-ANN-07, T-ANN-08 and T-EXP pass.
 - **Tests:** T-EXP.
 - **Risks:** Large files with states. States off by default.
 - **Out:** Exporters.
