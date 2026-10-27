@@ -5,7 +5,7 @@ Status: planning document. Wireframes are text sketches.
 ## 1. Principles
 
 1. Critical information stays on screen: active faction, current card, Resources, Legitimacy, scores.
-2. No modal dialogs during play, except confirm on "Undo" and "End session".
+2. No modal dialogs during play, except confirm on "Undo" and "End session". The "End session" dialog and the game end screen show an optional debrief box (07 s3). Home has a [Debrief] button per saved session to add or edit it later.
 3. Every illegal action shows why.
 4. Every action shows its expected effects before commit, where no roll is needed.
 5. Notes never take the user out of context.
@@ -139,5 +139,6 @@ The Start button is disabled while validation has errors. Warnings list each PA.
 | T-UI-03 | Each grey action shows a reason |
 | T-UI-04 | Undo restores the board and the faction panel |
 | T-UI-05 | Resume a saved session at an open Decision |
+| T-UI-06 | "End session" with debrief text saves one `debrief` note. Skip saves none |
 
 Next step: read 09-testing-and-replay.md.

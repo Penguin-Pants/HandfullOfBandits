@@ -38,6 +38,7 @@ When the user is building an action plan (faction panel open, op selected, locat
 | `decision` | Note while a Decision is open | Decision ID, parent `action_id`, current `state_hash` |
 | `state` | Note while inspecting the board or a score | `state_hash`, selected space or panel |
 | `session` | General note | `session_id` only |
+| `debrief` | Overall comment on the whole session. One per session. Asked at game end or "End session" (08 s1). Editable later from Home | `session_id`, final `state_hash` |
 
 A proposed note gains a link if the same plan is then executed. It keeps `anchor: proposed` and adds `executed_as: <action_id>`. This keeps "before" and "after" notes apart.
 
@@ -149,7 +150,7 @@ One file per export. Schema `coin-sim-export/1`.
 |---|---|
 | `exportMeta` | App version, export time, filter used, schema version |
 | `packages` | Each package version referenced: manifest, hash, parameters, assumption list, rule index with research sources |
-| `sessions` | Session rows with result and record sheet |
+| `sessions` | Session rows with result, record sheet and `debrief_annotation_id` (null when none) |
 | `branches` | Branch rows referenced by sessions, actions and notes |
 | `categories` | Category rows referenced by notes, including user-defined labels and inactive ones |
 | `actions` | Action rows with commands and log entries |
@@ -166,7 +167,7 @@ Structure for one or more sessions:
 
 1. Header: export scope, versions, scenario, seed, result.
 2. Active prototype assumptions.
-3. Per session: a compact action log (one line per action) with notes inlined under their action.
+3. Per session: the debrief text first, then a compact action log (one line per action) with notes inlined under their action.
 4. Notes grouped by category, each with turn position, faction, card, action summary, state changes and rule refs with research sources.
 5. Per-round metrics table.
 6. Action use counts per faction.
@@ -195,5 +196,6 @@ Two files: `annotations.csv` (one row per note with flattened context) and `acti
 | T-ANN-05 | After undo, the note still opens its original before and after states |
 | T-ANN-06 | Filter by space returns notes whose `selected_space` or action locations include that space |
 | T-ANN-07 | JSON export of a session with notes passes reference validation |
+| T-ANN-08 | A debrief saved at "End session" appears in the JSON export as that session's `debrief_annotation_id`. A second debrief replaces the first |
 
 Next step: read 08-ui-ux-spec.md.

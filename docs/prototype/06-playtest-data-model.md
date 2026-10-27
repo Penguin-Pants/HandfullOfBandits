@@ -134,7 +134,7 @@ Snapshot policy: store the state after every committed command. Deduplicated by 
 
 ### 3.8 annotations
 
-Full definition in 07-annotation-and-feedback-spec.md. Key links: `session_id`, `branch_id`, `action_id`, `anchor` (`executed`, `proposed`, `state`, `session`), `state_hash`, `context` JSON, `category_ids`, `text`.
+Full definition in 07-annotation-and-feedback-spec.md. Key links: `session_id`, `branch_id`, `action_id`, `anchor` (`executed`, `proposed`, `decision`, `state`, `session`, `debrief`), `state_hash`, `context` JSON, `category_ids`, `text`.
 
 ### 3.9 categories
 
