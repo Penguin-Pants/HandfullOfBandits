@@ -1,0 +1,316 @@
+# 04 Game Package Specification
+
+Status: planning document. Examples below are data format illustrations, not application code.
+
+## 1. Principles
+
+1. A package is a folder of YAML files. It holds data only.
+2. Every element has a stable ID. IDs never change meaning between versions. A changed meaning gets a new ID.
+3. Every number marked `[tune]` in the research is a named parameter.
+4. Every rule element can carry `source` (research references) and `status` (01-mechanics-inventory.md, section 4).
+5. Procedures live in handlers and modules. The package selects them and gives their parameters.
+
+## 2. Folder structure
+
+```
+game-packages/
+  kurdish-coin/
+    0.1.0/
+      manifest.yaml
+      parameters.yaml
+      factions.yaml
+      pieces.yaml
+      map.yaml
+      tracks.yaml
+      markers.yaml
+      sequence.yaml
+      actions.yaml
+      cards/
+        c1.yaml
+        c2.yaml
+        c3.yaml
+        c4.yaml
+        c5.yaml
+        pivotal.yaml
+        propaganda.yaml
+      victory.yaml
+      scenarios/
+        full-campaign.yaml
+        scenario-a.yaml
+        scenario-b.yaml
+        scenario-c.yaml
+        test-slice.yaml
+      assumptions.yaml
+      CHANGELOG.md
+```
+
+One folder per version. Old version folders stay in the repository. The database also keeps a content copy of each version used by a session (section 10.3).
+
+## 3. manifest.yaml
+
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `packageId` | string | yes | Stable ID, for example `kurdish-coin` |
+| `version` | semver | yes | Human version, for example `0.3.1` |
+| `rulesetVersion` | string | yes | Changes when any rule or value changes. Format `R<integer>` |
+| `schemaVersion` | integer | yes | Package format version the loader must support |
+| `parent` | `{version, rulesetVersion}` | no | The version this one derives from |
+| `changeDescription` | string | yes | Short summary. Details in `CHANGELOG.md` |
+| `title` | string | yes | Display name |
+| `modules` | list of `id@major` | yes | Rule modules this package needs |
+| `options` | map | no | Named competing options with allowed values (ALT and PA choices) |
+| `researchBase` | string | no | Path of the research folder the package cites |
+
+`rulesetVersion` and `version` differ on purpose. A text or layout fix changes `version` only. Replay compatibility depends on `rulesetVersion` plus content hash.
+
+## 4. Core files
+
+### 4.1 factions.yaml
+
+| Field | Meaning |
+|---|---|
+| `id` | `state`, `pkk` |
+| `name`, `color` | Display |
+| `kind` | `player` or `nonPlayer` |
+| `resourcesTrack` | Track ID |
+| `pivotalHand` | Default Pivotal card IDs (scenario may override) |
+
+Two, three or four `player` factions are legal. The selected `SequenceModel` declares how many it supports. Validation checks the match.
+
+### 4.2 pieces.yaml
+
+| Field | Meaning |
+|---|---|
+| `id` | `troops`, `police`, `guards`, `stateBase`, `guerrilla`, `pkkBase` |
+| `faction` | Owner |
+| `count` | Total in the game |
+| `isBase` | Base stacking and scoring flag |
+| `states` | Optional flip states, for example `[underground, active]` with `placedAs: underground` |
+| `countsForControl` | true or false |
+| `movable` | false for Guards and Bases |
+| `startPool` | `available` or `outOfPlay` |
+
+### 4.3 map.yaml
+
+| Field | Meaning |
+|---|---|
+| `spaces[].id` | `hakkari`, `botan`, ... `western-cities` |
+| `spaces[].kind` | `domestic` or `external` |
+| `spaces[].terrain` | `mountain`, `plain`, `city` (external boxes may set terrain for Cross-Border) |
+| `spaces[].pop` | Integer |
+| `spaces[].hasSupportScale` | true for domestic spaces |
+| `spaces[].layout` | `{x, y}` for the schematic board |
+| `spaces[].confidence` | Research confidence note (GAP-I09) |
+| `spaces[].tags` | Free tags used by rules, for example `noLandLinks`, `receptionTarget` |
+| `links[]` | `{a, b, kind}` where kind is `land` or `external` |
+| `links[].gate` | Optional posture gate reference for external links |
+| `stacking` | Limits by piece class and space kind |
+
+### 4.4 tracks.yaml and markers.yaml
+
+Tracks: `id`, `kind` (`numeric` or `ordinal`), `min`, `max` or `steps[]`, `owner`, `display`.
+Markers: `id`, `count`, `sides` (for example `[new, old]` or `[faceDown, revealed]`), `hidden` flag, `blocks` (shift block rules), `countsAs` (Harm count term).
+
+### 4.5 parameters.yaml
+
+All tunable values in one file. Each entry:
+
+| Field | Meaning |
+|---|---|
+| `id` | `sweep.costPerSpace`, `harm.limit`, `civicAction.capDivisor` |
+| `value` | Number, string or list |
+| `tune` | true if the research marks it `[tune]` |
+| `source` | Research reference |
+
+A handler reads a value only through its parameter ID. No handler holds a game number in code. A lint test checks handlers for numeric literals other than 0, 1 and 2 used as counters (P1-08).
+
+### 4.6 sequence.yaml
+
+| Field | Meaning |
+|---|---|
+| `model` | `ct-two-faction@1` |
+| `boxes` | Box IDs and labels |
+| `adjacency` | Responder graph (05 s2.3) |
+| `eligibilityRules` | Which choices hand First Eligible to the other faction |
+| `passIncome` | Per faction |
+| `firstEligibleAtStart` | `pkk` |
+| `propagandaPhases` | Ordered list of phase handler IDs with parameters |
+| `pivotal` | Priority rule, box placement |
+
+### 4.7 actions.yaml
+
+One entry per Operation and Special Activity.
+
+| Field | Meaning |
+|---|---|
+| `id` | `state.sweep`, `pkk.rally`, `state.village-clearance` |
+| `faction` | Owner |
+| `type` | `op` or `sa` |
+| `handler` | `coin.sweep@1` or `kurdish-coin.village-clearance@1` |
+| `params` | Parameter IDs or inline values the handler needs |
+| `accompanies` | For SAs: Op IDs, or `any` |
+| `availability` | Closed condition terms (section 8), for example `campaignAtLeast: C3` |
+| `ruleRefs` | Rule IDs shown in logs and tooltips |
+| `source` | Research reference |
+| `status` | Inventory status |
+| `provisional` | Optional PA reference list |
+
+### 4.8 cards/*.yaml
+
+| Field | Meaning |
+|---|---|
+| `id` | `DK-001` (deck CSV ID) |
+| `campaign`, `title`, `date` | From the deck CSV |
+| `type` | `event`, `capability`, `momentum`, `pivotal`, `propaganda` |
+| `mandatory` | Structural card flag |
+| `always` | Effect list applied on reveal |
+| `unshaded`, `shaded` | `{text, owner, effects, blockOnly, tier}` |
+| `chainAfter` | Card ID this card must follow |
+| `pivotal` | `{faction, earliestCampaign, precondition}` |
+| `encoding` | `{status: encoded or notEncoded, encodedBy, reviewedAgainstText}` |
+| `eventConfidence`, `deckEligible` | From the deck CSV |
+| `sources` | Event and source IDs |
+
+`text` is the exact prose from the CSV. It is never edited by the encoder.
+
+### 4.9 victory.yaml
+
+1. `scores`: per faction, a list of formula terms.
+2. `harmCount`: per faction, a list of marker counts.
+3. `harmLimit`, `checkSkipFirstRound`, `tieOrder`, `finalMargin` terms.
+4. `recordSheet`: dimensions from 09 s6, as derived metrics (record only).
+
+Thresholds live in scenario files, because they differ per scenario.
+
+### 4.10 scenarios/*.yaml
+
+| Field | Meaning |
+|---|---|
+| `id`, `title`, `campaigns` | For example `[C1, C2]` |
+| `finalRound` | Propaganda round that ends the game |
+| `tracks` | Start values |
+| `spaces` | Pieces, levels and markers per space |
+| `available`, `outOfPlay` | Pools. Validation checks totals against `pieces.yaml` |
+| `pivotals` | Per faction |
+| `flags` | For example `law3175: true`, `northernIraqVacuum: true` |
+| `thresholds` | Per faction |
+| `options` | Values for every competing option in `manifest.options` |
+| `excludedCards` | Optional list with reason |
+| `testOnly` | true for designer test scenarios not taken from research |
+
+## 5. Effect primitives (card and module output)
+
+| Primitive | Parameters |
+|---|---|
+| `placePieces` | faction, piece, count, space or choice, state |
+| `removePieces` | piece filter, count, space or choice, destination |
+| `movePieces` | piece filter, count, from, to |
+| `setPieceState` | piece, from state, to state, space, count or all |
+| `shiftLevel` | space or choice, direction, steps |
+| `adjustTrack` | track, delta |
+| `setTrack` | track, value or `ifEquals` guard |
+| `stepOrdinal` | track, direction, steps |
+| `placeMarker` / `removeMarker` / `flipMarker` | marker, space or choice, side |
+| `setFlag` | flag, value |
+| `freeAction` | action ID, constraints (spaces, extra rules) |
+| `addModifier` | modifier ID, duration (`game` or `untilReset`), parameters |
+| `revealHidden` | marker, count, selection (`random` or choice) |
+| `runProcedure` | module procedure ID, parameters |
+| `choice` | chooser (default PA-01), options, each option a nested effect list |
+| `conditional` | condition terms, then and else effect lists |
+
+Rule: every primitive is applied by core code that enforces stacking, supply, clamps and shift blocks. "Do as much as you can" (05 s5.3) is implemented by applying each primitive in order and logging the parts that could not apply.
+
+## 6. Example card encoding
+
+```yaml
+- id: DK-001
+  campaign: C1
+  title: Eruh and Şemdinli (15 Aug 1984)
+  type: event
+  unshaded:
+    owner: state
+    text: "Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2."
+    effects:
+      - choice:
+          options:
+            - [{placePieces: {piece: troops, count: 2, space: hakkari}}]
+            - [{placePieces: {piece: troops, count: 2, space: botan}}]
+      - adjustTrack: {track: resources.state, delta: 2}
+  shaded:
+    owner: pkk
+    text: "Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Botan. Shift Botan one level toward Opposition."
+    effects:
+      - placePieces: {piece: guerrilla, count: 2, space: hakkari, state: underground}
+      - placePieces: {piece: guerrilla, count: 1, space: botan, state: underground}
+      - shiftLevel: {space: botan, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: designer, reviewedAgainstText: true}
+```
+
+## 7. Provisional rules and assumptions
+
+`assumptions.yaml` lists each PA from 02-rules-gap-analysis.md:
+
+| Field | Meaning |
+|---|---|
+| `id` | `PA-05` |
+| `gap` | `GAP-B05` |
+| `text` | The provisional rule |
+| `appliesTo` | Rule or action IDs |
+| `status` | `provisional`, `accepted` or `replaced` |
+
+Any rule element may set `status: missing`. Validation then blocks a session that can reach that element.
+
+## 8. Condition and formula terms (closed set)
+
+Conditions: `campaignAtLeast`, `campaignIn`, `trackAtLeast`, `trackAtMost`, `trackIn`, `flag`, `spaceHas`, `spaceLevelIn`, `control`, `countAtLeast`, `optionEquals`, `all`, `any`, `not`.
+Formula terms: `sumPopWhere`, `countPieces`, `countMarkers`, `trackValue`, `divideFloor`, `multiply`, `add`, `constant`, `moduleTerm`.
+
+There is no expression string. A new term type needs a code change and a schema version bump.
+
+## 9. Validation
+
+Validation runs on load, before a session starts, and in the CLI (`sim validate <path>`).
+
+| Code | Check | Level |
+|---|---|---|
+| V-SCHEMA | Each file matches its schema version | error |
+| V-REF | Every referenced ID exists (spaces, pieces, tracks, markers, actions, cards, parameters, modules) | error |
+| V-MODULE | Each module `id@major` exists in the registry | error |
+| V-FACTIONS | Player faction count fits the sequence model | error |
+| V-PIECES | Scenario pieces plus pools equal totals | error |
+| V-STACK | Scenario setup obeys stacking | error |
+| V-LINKS | Adjacency is symmetric. No link to an unknown space | error |
+| V-CARDS | Each pile has enough eligible cards. Mandatory cards exist. Chain pairs refer to real cards | error |
+| V-ENCODE | Each card a scenario can draw is encoded or excluded | error |
+| V-EFFECT | Each effect primitive has valid parameters | error |
+| V-VICTORY | Score terms resolve. Thresholds set for each player faction | error |
+| V-OPTIONS | Every competing option has a value in each scenario | error |
+| V-PARAM | Every `tune` parameter has a value | error |
+| V-MISSING | A reachable rule has `status: missing` | error |
+| V-PROVISIONAL | A rule uses a PA | warning |
+| V-SCORE-CHECK | Computed start scores equal the scenario's stated start scores | warning |
+
+Each message gives file, path inside the file, the ID and a plain sentence. Example: `scenarios/scenario-b.yaml spaces.botan.pieces.guards: 2 Guards exceed the limit of 3 when added to 2 from events.flags`.
+
+## 10. Versioning
+
+### 10.1 Rules
+
+1. Any change to a value, effect, handler choice or module version raises `rulesetVersion`.
+2. A schema change raises `schemaVersion`. The loader supports the current and previous schema version.
+3. `parent` names the previous version. The package diff tool compares two versions (P4-05).
+
+### 10.2 Content hash
+
+The loader computes a SHA-256 hash of the canonical package content (sorted keys, normalized YAML). The hash identifies the exact rules of a session.
+
+### 10.3 Preservation
+
+1. When a session starts, the store saves the full package content under its hash, if not already saved.
+2. A session can always reload its own package from the database, even if the folder is deleted.
+3. Rule modules and shared handlers are code. Each session records its own app version, each module full semver and a `code_fingerprint`: one SHA-256 over all rules-execution code (`engine/core`, `engine/coin`, `engine/modules`), computed at build time.
+4. On resume, if the `code_fingerprint` differs, the app runs a replay check before resume. Replay identical: resume. Replay differs: read-only with "rules code changed since this session".
+5. If a module major version is gone, the session opens read-only and reports "module version unavailable".
+
+Next step: read 05-rules-engine-spec.md.
