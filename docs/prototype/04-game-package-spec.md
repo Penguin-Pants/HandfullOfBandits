@@ -89,6 +89,10 @@ Two, three or four `player` factions are legal. The selected `SequenceModel` dec
 | `countsForControl` | true or false |
 | `movable` | false for Guards and Bases |
 | `startPool` | `available` or `outOfPlay` |
+| `shape` | Board icon: `cube`, `cylinder`, `disc` or `octagon`. Unknown value fails V-SCHEMA |
+| `colorVariant` | Optional. `base` (default) or `light`: lighter shade of the faction color |
+
+Default shapes (DEC-29): Troops `cube`; Police `cube` with `colorVariant: light`; Village Guards `cylinder`; State Bases `disc`; Guerrillas `octagon`; PKK Bases `disc`.
 
 ### 4.3 map.yaml
 
