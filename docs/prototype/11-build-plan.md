@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. No task has started.
+Status: planning document. P0-01 done.
 
 ## 1. How to use this plan
 

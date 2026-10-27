@@ -1,6 +1,6 @@
 # 03 Architecture
 
-Status: planning document. No application code exists.
+Status: planning document. Toolchain skeleton exists in `sim/` (P0-01).
 
 ## 1. Decision summary
 
@@ -40,10 +40,10 @@ Problem this avoids: a "universal" operation DSL. Problem this accepts: some des
 | Concern | Choice | Reason |
 |---|---|---|
 | Language | TypeScript, strict mode | One language for engine, server, UI and tests |
-| Runtime | Node.js LTS (verify current LTS at task P0-01) | Runs on Windows 11 without extra toolchains |
+| Runtime | Node.js 24 LTS or later (DEC-27) | Runs on Windows 11 without extra toolchains |
 | UI | React with Vite | Fast local dev. Large ecosystem. Plain SVG board |
 | HTTP | Fastify | Small, typed, JSON schema routes |
-| Database | SQLite through `better-sqlite3` | One local file. Synchronous API fits a single user. Prebuilt Windows binaries (unverified assumption: confirm at P0-01; fallback is `node:sqlite`) |
+| Database | SQLite through `better-sqlite3` | One local file. Synchronous API fits a single user. Prebuilt Windows binaries ship in the package (DEC-28; fallback is `node:sqlite`) |
 | Schemas | Zod, plus `zod-to-json-schema` | One schema source for runtime validation and editor hints |
 | YAML | `yaml` package | Comments in card files. Readable diffs |
 | Tests | Vitest. One Playwright smoke test | Fast unit tests. Chromium is pre-installed in CI images |
