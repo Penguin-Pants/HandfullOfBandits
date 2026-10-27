@@ -51,6 +51,11 @@ export default defineConfig(
           "process",
           "crypto",
           "require",
+          // Global objects give a second path to every name above.
+          "globalThis",
+          "global",
+          "self",
+          "window",
         ].map((name) => ({ name, message: "Banned in engine code (05 s8)." })),
       ],
       "no-restricted-properties": [

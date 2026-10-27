@@ -33,17 +33,21 @@ beforeAll(async () => {
 
 describe("architecture lint", () => {
   it("lints every fixture", () => {
-    expect(archErrors.size).toBe(17);
+    expect(archErrors.size).toBe(21);
   });
 
   it.each([
+    "engine/core/bad-crypto-other.ts",
+    "engine/core/bad-dynamic-template.ts",
     "engine/core/bad-fs.ts",
+    "engine/core/bad-global-object.ts",
     "engine/core/bad-globals.ts",
     "engine/core/bad-random-import.ts",
     "engine/core/bad-reexport.ts",
     "engine/core/bad-upward.ts",
     "package/bad-module.ts",
     "shared/bad-folder.ts",
+    "store/bad-dynamic.ts",
     "store/bad-unknown.ts",
     "store/bad-value.ts",
     "ui/bad-engine.ts",

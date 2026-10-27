@@ -29,15 +29,7 @@ layers[registry] = layers[modules];
 
 // Engine purity (05 s8): no package or Node API except hashing from node:crypto.
 const engineBareImports = new Set(["node:crypto", "crypto"]);
-const randomNames = new Set([
-  "getRandomValues",
-  "randomBytes",
-  "randomFill",
-  "randomFillSync",
-  "randomInt",
-  "randomUUID",
-  "webcrypto",
-]);
+const hashNames = new Set(["createHash", "hash"]);
 
 function layerOf(file) {
   const parts = file.split(sep);
@@ -48,6 +40,12 @@ function layerOf(file) {
   if (rest[0] !== "engine") return rest[0];
   if (rest[1] === "modules" && rest[2]?.startsWith("registry")) return registry;
   return `engine/${rest[1]}`;
+}
+
+function constantSource(node) {
+  if (node.type === "Literal") return node.value;
+  if (node.type === "TemplateLiteral" && node.expressions.length === 0) return node.quasis[0].value.cooked;
+  return null;
 }
 
 function allows(list, target) {
@@ -73,7 +71,10 @@ const rule = {
     }
 
     function check(node, source, typeOnly, specifiers) {
-      if (typeof source !== "string") return;
+      if (typeof source !== "string") {
+        context.report({ node, message: "Import source must be a constant string so its layer can be checked (03 s5)." });
+        return;
+      }
       if (!source.startsWith(".")) {
         if (!from.startsWith("engine/")) return;
         if (!engineBareImports.has(source)) {
@@ -81,8 +82,8 @@ const rule = {
           return;
         }
         for (const spec of specifiers) {
-          const name = spec.imported?.name ?? spec.local?.name;
-          if (spec.type !== "ImportSpecifier" || randomNames.has(name)) {
+          const name = spec.imported?.name ?? spec.imported?.value;
+          if (spec.type !== "ImportSpecifier" || !hashNames.has(name)) {
             context.report({ node, message: `Engine code may import only hash functions from "${source}" (05 s8).` });
           }
         }
@@ -108,7 +109,7 @@ const rule = {
         check(node, node.source.value, node.exportKind === "type", [{ type: "export" }]);
       },
       ImportExpression(node) {
-        check(node, node.source.type === "Literal" ? node.source.value : null, false, [{ type: "dynamic" }]);
+        check(node, constantSource(node.source), false, [{ type: "dynamic" }]);
       },
     };
   },
