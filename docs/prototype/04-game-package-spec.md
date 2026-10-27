@@ -70,7 +70,7 @@ One folder per version. Old version folders stay in the repository. The database
 | Field | Meaning |
 |---|---|
 | `id` | `state`, `pkk` |
-| `name`, `color` | Display |
+| `name`, `color` | Display. Defaults (DEC-30): State red, PKK green |
 | `kind` | `player` or `nonPlayer` |
 | `resourcesTrack` | Track ID |
 | `pivotalHand` | Default Pivotal card IDs (scenario may override) |
@@ -89,6 +89,14 @@ Two, three or four `player` factions are legal. The selected `SequenceModel` dec
 | `countsForControl` | true or false |
 | `movable` | false for Guards and Bases |
 | `startPool` | `available` or `outOfPlay` |
+| `shape` | Board icon: `cube`, `cylinder`, `disc` or `octagon`. Unknown value fails V-SCHEMA |
+| `colorVariant` | Optional. `base` (default) or `light`: lighter shade of the faction color |
+| `emblem` | Optional. `crescentStar` or `starCircle`. Unknown value fails V-SCHEMA |
+| `emblemState` | Optional. Show the emblem only in this flip state, for example `active`. Unknown state fails V-REF |
+
+Default shapes (DEC-29): Troops `cube`; Police `cube` with `colorVariant: light`; Village Guards `cylinder`; State Bases `disc`; Guerrillas `octagon`; PKK Bases `disc`.
+
+Default emblems (DEC-30): State Bases `crescentStar`; Guerrillas `starCircle` with `emblemState: active`. All other pieces have none.
 
 ### 4.3 map.yaml
 
