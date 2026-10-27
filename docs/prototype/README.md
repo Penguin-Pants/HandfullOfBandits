@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: planning complete. No application code exists.
+Status: planning complete. Toolchain skeleton exists in `sim/` (P0-01).
 
 ## Bottom line
 
@@ -35,4 +35,4 @@ Status: planning complete. No application code exists.
 
 ## Next step
 
-Answer Q-01 and Q-02 in [13-design-decisions.md](13-design-decisions.md), then start task P0-01 in [11-build-plan.md](11-build-plan.md).
+Start task P1-01 in [11-build-plan.md](11-build-plan.md).

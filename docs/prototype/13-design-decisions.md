@@ -32,6 +32,8 @@ Status: planning document. Records simulator decisions (DEC-nn). Game design dec
 | DEC-25 | First optional module to evaluate in Phase 5: MOD-3B Legal Movement third player | MOD-4A. Ranked initiative. None | Research names it the top alternative (Q-05) | Medium |
 | DEC-26 | Keep the responder matrix Event and Pass rows as designed | Other rows | Designer decision on research unresolved item 14 | Medium |
 | DEC-18 | Faction-keyed state. Only the CT sequence model assumes two factions | Two-faction types everywhere | Keeps MOD-3B and MOD-4A possible | High |
+| DEC-27 | Node.js 24 LTS minimum (`engines >=24`, `engine-strict`). CI also runs Node 26 | Node 22: maintenance LTS, and its npm 10 runs the `better-sqlite3` gyp build. Node 26 only: Active LTS from 2026-10-28 | Checked 2026-10-27 at P0-01: Node 24.22.1 is LTS (maintenance since 2026-10-20). Node 26 becomes Active LTS 2026-10-28. Sources: https://nodejs.org/dist/index.json, https://github.com/nodejs/Release/blob/main/schedule.json | High |
+| DEC-28 | Keep `better-sqlite3` (13.0.3). `sim/.npmrc` sets `ignore-scripts=true` | `node:sqlite` fallback | Checked at P0-01: the npm tarball bundles Node-API prebuilds for win32-x64 and win32-arm64 (`prebuilds/`), so no compiler is needed. npm 10 still runs an implicit `node-gyp rebuild` (seen on Linux). `ignore-scripts` stops it. Windows proof: CI `windows-latest` job | High |
 
 ## 2. Prototype assumptions (rules)
 
