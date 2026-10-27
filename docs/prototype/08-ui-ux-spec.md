@@ -62,7 +62,7 @@ Status: planning document. Wireframes are text sketches.
 ### 3.1 Board
 
 1. Node positions come from `map.yaml` `layout`. No geographic art.
-2. Pieces show as flat SVG icons from `pieces.yaml` `shape` and `colorVariant` (04 s4.2), each with its count. Underground: outline only. Active: filled. Bases: heavy border.
+2. Pieces show as flat SVG icons from `pieces.yaml` `shape` and `colorVariant` (04 s4.2), each with its count. Shapes are solid faction color. `emblem` draws on top, only in `emblemState` when set: an Underground Guerrilla is solid green, an Active one is green with the star in circle. Bases: heavy border.
 3. Click a node to select it. Shift-click adds to a multi-select (for plan locations).
 4. Selected node shows a detail card: all pieces with flip state, markers with sides, level, Control, Pop, terrain, tags, confidence note.
 5. Hidden markers show as "Covert (face down)". A view toggle hides them (Phase 4, GAP-O01).
