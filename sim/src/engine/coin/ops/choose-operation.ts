@@ -80,6 +80,7 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
     const timing = rawSa["timing"] === "before" ? "before" : rawSa["timing"] === "after" ? "after" : null;
     if (box !== BOX.opSa) violations.push(at(null, "saNotAllowed", `A Special Activity needs the Op + SA box, not ${box} (06 s1 item 2).`, "06 s1"));
     if (saPart === null || timing === null) return fail("badPlan", "The Special Activity part is not well formed (timing before or after, DEC-16).");
+    if (new Set(saPart.locations).size !== saPart.locations.length) violations.push(at(null, "duplicateLocation", "Select each Special Activity location once.", ruleRef));
     if (handler?.kind !== "sa" || handler.faction !== faction) return fail("unknownSa", `"${saId}" is not a Special Activity of ${faction}.`);
     if (handler.accompanies !== "any" && !handler.accompanies.includes(op.id)) {
       violations.push(at(null, "saNotWithOp", `${handler.id} cannot accompany ${op.id}. It accompanies ${handler.accompanies.join(", ")}.`, handler.ruleRef));
@@ -90,25 +91,22 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
   }
   const options: ActionOptions = { faction, limited, free: false, constraints: {}, op: null, sa: sa?.handler.id ?? null, opLocations: [], subActions: subs };
   const saOptions: ActionOptions | null = sa === null ? null : { ...options, op: op.id, sa: null, opLocations: opPart.locations, subActions: [] };
-  // Each part is checked on the state it will meet: an SA before the Op changes the Op's board (DEC-16).
-  let total = 0;
-  const checkPart = (handler: ActionHandler, p: ActionPart, o: ActionOptions, on: GameState): void => {
+  // Each part is checked on the board it will meet, and paid from the Resources it will have:
+  // an SA before the Op changes the Op's board and may add income (DEC-16).
+  const checkPart = (handler: ActionHandler, p: ActionPart, o: ActionOptions, on: GameState): boolean => {
     const found = handler.check(ruleset, on, p, o);
     violations.push(...found);
-    if (found.length === 0) total += handler.cost(ruleset, on, p, o);
+    if (found.length > 0) return false;
+    const cost = handler.cost(ruleset, on, p, o);
+    const have = resources(ruleset, on, faction);
+    if (cost > have) violations.push(at(null, "cannotPay", `${handler.id} costs ${String(cost)} Resources; ${faction} has ${String(have)} then (06 s1 item 4).`, "06 s1"));
+    return cost <= have;
   };
   if (sa !== null && saOptions !== null && sa.timing === "before") {
-    checkPart(sa.handler, sa.part, saOptions, state);
-    if (violations.length === 0) checkPart(op, opPart, options, simulate(ruleset, state, (ctx) => { sa.handler.execute(ctx, sa.part, saOptions); }));
-  } else {
-    checkPart(op, opPart, options, state);
-    if (sa !== null && saOptions !== null && violations.length === 0) {
-      checkPart(sa.handler, sa.part, saOptions, simulate(ruleset, state, (ctx) => { op.execute(ctx, opPart, options); }));
-    }
-  }
-  const have = resources(ruleset, state, faction);
-  if (violations.length === 0 && total > have) {
-    violations.push(at(null, "cannotPay", `The action costs ${String(total)} Resources; ${faction} has ${String(have)} (06 s1 item 4).`, "06 s1"));
+    if (checkPart(sa.handler, sa.part, saOptions, state)) checkPart(op, opPart, options, simulate(ruleset, state, (ctx) => { sa.handler.execute(ctx, sa.part, saOptions); }));
+  } else if (checkPart(op, opPart, options, state) && sa !== null && saOptions !== null) {
+    // The board after a rolling Op is known only at execution, so execute checks the SA again.
+    checkPart(sa.handler, sa.part, saOptions, simulate(ruleset, state, (ctx) => { op.execute(ctx, opPart, options); }));
   }
   return violations.length > 0 ? { violations, plan: null } : { violations: [], plan: { op, part: opPart, sa, options, saOptions } };
 }
@@ -123,7 +121,13 @@ export const chooseOperationHandler: CommandHandler = {
     ctx.write(() => placed.state);
     ctx.log(placed.entry.kind, { ...placed.entry.data, op: plan.op.id, sa: plan.sa?.handler.id ?? null }, placed.entry.ruleRef);
     const runSa = (timing: "before" | "after"): void => {
-      if (plan.sa?.timing === timing && plan.saOptions !== null) plan.sa.handler.execute(ctx, plan.sa.part, plan.saOptions);
+      if (plan.sa?.timing !== timing || plan.saOptions === null) return;
+      const found = plan.sa.handler.check(ctx.ruleset, ctx.state, plan.sa.part, plan.saOptions);
+      if (found.length > 0) {
+        ctx.log("EffectSkipped", { effect: "specialActivity", action: plan.sa.handler.id, reason: found.map((v) => v.code).join(",") }, plan.sa.handler.ruleRef);
+        return;
+      }
+      plan.sa.handler.execute(ctx, plan.sa.part, plan.saOptions);
     };
     runSa("before");
     plan.op.execute(ctx, plan.part, plan.options);

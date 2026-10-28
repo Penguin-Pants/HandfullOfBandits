@@ -323,6 +323,8 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
           error("V-EFFECT", file, `${at}.track`, id, `${e.type} cannot use ${track.kind} track "${track.id}".`);
         } else if (e.type === "setTrack" && track.kind === "ordinal") {
           for (const v of [e.value, e.ifEquals]) if (v !== null) face(track.steps, "step", String(v), file, `${at}.value`, id);
+        } else if (e.type === "setTrack" && [e.value, e.ifEquals].some((v) => v !== null && typeof v !== "number")) {
+          error("V-EFFECT", file, `${at}.value`, id, `Numeric track "${track.id}" needs integer values.`);
         }
         return;
       }
@@ -455,7 +457,16 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
     }
     (scenario.excludedCards ?? []).forEach((e, j) => { ref(cardFiles, "card", e.card, file, `excludedCards.${String(j)}.card`, e.card); });
     const excluded = new Set((scenario.excludedCards ?? []).map((e) => e.card));
-    const pileSize = scenario.pileSize ?? Number(pkg.parameters.find((p) => p.id === "deck.pileSize")?.value ?? 0);
+    // The deck builder reads these parameters (05 s1.1); a package with cards needs them.
+    const numberParam = (pid: string): number | null => {
+      const value = pkg.parameters.find((p) => p.id === pid)?.value;
+      return typeof value === "number" ? value : null;
+    };
+    const pileSize = scenario.pileSize ?? numberParam("deck.pileSize") ?? 0;
+    if (cardFiles.size > 0) {
+      if (numberParam("deck.topSize") === null) error("V-PARAM", "parameters.yaml", "", "deck.topSize", "A package with cards needs integer parameter deck.topSize.");
+      if (scenario.pileSize === undefined && numberParam("deck.pileSize") === null) error("V-PARAM", file, "pileSize", scenario.id, "Set pileSize here or integer parameter deck.pileSize.");
+    }
     for (const campaign of scenario.campaigns) {
       const inCampaign = [...cardFiles.values()].map((c) => c.card).filter((c) => c.campaign === campaign && !excluded.has(c.id));
       const pool = inCampaign.filter((c) => POOL_TYPES.has(c.type) && (c.mandatory || c.deckEligible));

@@ -1,6 +1,7 @@
 // Train (research 06 s2.1): per selected space one of three options, then optional Civic Action in
 // one selected space (07 s1.3).
 import { stackingRoom } from "../../../core/effects/common.ts";
+import { createExec, type Exec } from "../../../core/exec.ts";
 import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "../action.ts";
@@ -84,10 +85,13 @@ export const train: ActionHandler = {
     }
     const civics = civic(options);
     if (civics.length > 1 || options.subActions.length > civics.length) out.push(at(null, "trainSubAction", "Train allows one Civic Action in one space.", ruleRef));
+    // Civic Action runs after the placements, so check it on that board.
+    const placed = createExec(ruleset, state, true);
+    placeAll(placed, part, { ...options, free: true });
     for (const c of civics) {
       if (!part.locations.includes(c.space)) out.push(at(c.space, "civicNotSelected", "Civic Action must be in a Train space.", ruleRef));
       if (c.spend === null) out.push(at(c.space, "civicBadSpend", "Civic Action spend is not well formed.", "07 s1.3"));
-      else out.push(...civicViolations(ruleset, state, c.space, c.spend, false));
+      else out.push(...civicViolations(ruleset, placed.state, c.space, c.spend, false));
     }
     return out;
   },
@@ -96,22 +100,27 @@ export const train: ActionHandler = {
     return op + civic(options).reduce((sum, c) => sum + (c.spend === null ? 0 : civicCost(ruleset, c.spend)), 0);
   },
   execute(ctx, part, options) {
-    for (const loc of part.locations) {
-      if (!options.free) pay(ctx, FACTION.state, param(ctx.ruleset, "train.costPerSpace", "number"), ruleRef, loc);
-      const choice = read(part, loc);
-      const place = (piece: string, n: number): void => {
-        if (n > 0) ctx.apply({ type: "placePieces", piece, count: n, space: loc, state: null, ruleRef, assumptionRef: null });
-      };
-      if (choice?.option === "place") {
-        place(PIECE.troops, choice.troops);
-        place(PIECE.police, choice.police);
-      } else if (choice?.option === "guards") {
-        place(PIECE.guards, choice.count);
-      } else if (choice?.option === "base") {
-        ctx.apply({ type: "removePieces", piece: PIECE.police, state: null, count: param(ctx.ruleset, "train.baseFromPolice", "number"), space: loc, to: "available", ruleRef, assumptionRef: null });
-        place(PIECE.stateBase, 1);
-      }
-    }
+    placeAll(ctx, part, options);
     for (const c of civic(options)) if (c.spend !== null) civicExecute(ctx, c.space, c.spend);
   },
 };
+
+/** Pay per space (unless free) and resolve each space's option. */
+function placeAll(ctx: Exec, part: ActionPart, options: ActionOptions): void {
+  for (const loc of part.locations) {
+    if (!options.free) pay(ctx, FACTION.state, param(ctx.ruleset, "train.costPerSpace", "number"), ruleRef, loc);
+    const choice = read(part, loc);
+    const place = (piece: string, n: number): void => {
+      if (n > 0) ctx.apply({ type: "placePieces", piece, count: n, space: loc, state: null, ruleRef, assumptionRef: null });
+    };
+    if (choice?.option === "place") {
+      place(PIECE.troops, choice.troops);
+      place(PIECE.police, choice.police);
+    } else if (choice?.option === "guards") {
+      place(PIECE.guards, choice.count);
+    } else if (choice?.option === "base") {
+      ctx.apply({ type: "removePieces", piece: PIECE.police, state: null, count: param(ctx.ruleset, "train.baseFromPolice", "number"), space: loc, to: "available", ruleRef, assumptionRef: null });
+      place(PIECE.stateBase, 1);
+    }
+  }
+}

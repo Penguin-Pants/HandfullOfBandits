@@ -97,7 +97,7 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.factions.map((f) => f.resourcesTrack)).toEqual(["resources.state", "resources.pkk"]);
     expect(result.ruleset.markers.find((m) => m.id === "office")).toEqual({ id: "office", count: 2, sides: [], blocks: [], capsLevel: 1 });
     expect(result.ruleset.stacking[1]).toEqual({ pieces: ["pkkBase"], max: 0, spaceKind: null, terrain: ["city"], spaces: null });
-    expect(result.ruleset.parameters).toEqual({ "sweep.costPerSpace": 2, "harm.limit": 6, "ui.label": "text" });
+    expect(result.ruleset.parameters).toEqual({ "sweep.costPerSpace": 2, "harm.limit": 6, "ui.label": "text", "deck.topSize": 8 });
     expect(result.ruleset.pieces.find((p) => p.id === "pkkBase")?.countsForControl).toBe(true);
     expect(result.ruleset.victory.scores["pkk"]).toEqual([
       { type: "countPieces", pieces: ["pkkBase"], where: { type: "spaceKind", kind: "domestic" } },
@@ -210,6 +210,8 @@ const invalid: [string, string, string, Record<string, unknown>, string, string 
   ["V-REF", "unknown space in a card effect", "cards/c1.yaml", { "0/unshaded/effects/0": { type: "shiftLevel", space: "sea", direction: "support", steps: 1 } }, "0.unshaded.effects.0.space", "F-001"],
   ["V-EFFECT", "adjustTrack on an ordinal track", "cards/c1.yaml", { "0/unshaded/effects/0/track": "posture" }, "0.unshaded.effects.0.track", "F-001"],
   ["V-REF", "unknown side owner", "cards/c1.yaml", { "0/shaded/owner": "army" }, "0.shaded.owner", "F-001"],
+  ["V-EFFECT", "setTrack string on a numeric track", "cards/c1.yaml", { "0/unshaded/effects/0": { type: "setTrack", track: "resources.state", value: "host", ifEquals: null } }, "0.unshaded.effects.0.value", "F-001"],
+  ["V-PARAM", "cards without deck.topSize", "parameters.yaml", { "3": { id: "deck.other", value: 1, tune: false } }, "", "deck.topSize"],
   ["V-CARDS", "chain to a missing card", "cards/c1.yaml", { "0/chainAfter": ["F-999"] }, "0.chainAfter.0", "F-001"],
   ["V-REF", "unknown excluded card", "scenarios/s0.yaml", { excludedCards: [{ card: "F-999", reason: "test" }] }, "excludedCards.0.card", "F-999"],
   ["V-RANGE", "numeric track above max", "scenarios/s0.yaml", { "tracks/resources.pkk": 51 }, "tracks.resources.pkk", "resources.pkk"],
@@ -318,7 +320,7 @@ describe("sim validate", () => {
   });
 
   it("prints file, path, ID and sentence with exit code 1 for an invalid package", () => {
-    const dir = tempPackage("parameters.yaml", "- {id: harm.limit, tune: true}\n");
+    const dir = tempPackage("parameters.yaml", "- {id: harm.limit, tune: true}\n- {id: deck.topSize, value: 8, tune: false}\n");
     const cli = fileURLToPath(new URL("../cli/main.ts", import.meta.url));
     let status = 0;
     let stdout = "";

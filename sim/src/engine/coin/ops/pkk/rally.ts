@@ -8,7 +8,7 @@ import { at, type ActionHandler, type ActionOptions, type ActionPart } from "../
 import { controlOf, count, hasTag, isTerrain, markers, pay, space } from "../common.ts";
 import { rallyBaseOpen, rallyGuerrillasOpen } from "../common-pkk.ts";
 import { EUROPE_SPACE, FACE, FACTION, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
-import { asString } from "../plan.ts";
+import { asCount, asString } from "../plan.ts";
 import { agitationCost, agitationExecute, agitationViolations, readAgitation, type AgitationSpend } from "./agitation.ts";
 
 const ruleRef = "06 s4.1";
@@ -29,6 +29,13 @@ function growLimit(ruleset: Ruleset, state: GameState, loc: string): number {
   const s = space(ruleset, loc);
   const pop = s?.kind === "external" ? param(ruleset, "rally.externalPop", "number") : (s?.pop ?? 0);
   return pop + count(state, loc, PIECE.pkkBase);
+}
+
+/** Guerrillas the plan places with `grow`: `count`, default the limit. Null: outside 1 to the limit. */
+function growCount(ruleset: Ruleset, state: GameState, part: ActionPart, loc: string): number | null {
+  const limit = growLimit(ruleset, state, loc);
+  const n = asCount(part.perLocation[loc]?.["count"], limit);
+  return n === null || n < 1 || n > limit ? null : n;
 }
 
 function agitations(options: ActionOptions): { space: string; spend: AgitationSpend | null }[] {
@@ -83,7 +90,9 @@ export const rally: ActionHandler = {
       } else if (count(state, loc, PIECE.pkkBase) === 0) {
         v("rallyNeedsBase", "This option needs a PKK Base here.");
       } else if (choice === "grow") {
-        placing += growLimit(ruleset, state, loc);
+        const n = growCount(ruleset, state, part, loc);
+        if (n === null) v("rallyGrowCount", `Place 1 to ${String(growLimit(ruleset, state, loc))} Guerrillas (Pop + Bases).`);
+        placing += n ?? 0;
       }
     }
     if (basing > (state.pools[PIECE.pkkBase]?.available ?? 0)) out.push(at(null, "rallySupply", "No PKK Base is Available.", ruleRef));
@@ -114,7 +123,7 @@ export const rally: ActionHandler = {
       };
       const choice = option(part, loc);
       if (choice === "place") place(1);
-      else if (choice === "grow") place(growLimit(ctx.ruleset, ctx.state, loc));
+      else if (choice === "grow") place(growCount(ctx.ruleset, ctx.state, part, loc) ?? 0);
       else if (choice === "flip") ctx.apply({ type: "setPieceState", piece: PIECE.guerrilla, space: loc, from: FACE.active, to: FACE.underground, count: "all", ruleRef, assumptionRef: null });
       else if (choice === "base") {
         // Active Guerrillas go first: they are the ones a later Assault could remove.
