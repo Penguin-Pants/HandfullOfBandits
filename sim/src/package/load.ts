@@ -137,11 +137,30 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
     packageHash,
     rulesetVersion: data.manifest.rulesetVersion,
     factions: data.factions.map(({ id, kind }) => ({ id, kind })),
-    pieces: data.pieces.map((p) => ({ id: p.id, faction: p.faction, count: p.count, states: p.states ?? [], startPool: p.startPool })),
-    spaces: data.map.spaces.map(({ id, hasSupportScale }) => ({ id, hasSupportScale })),
-    tracks: data.tracks.map((t) =>
-      t.kind === "numeric" ? { id: t.id, kind: t.kind, min: t.min, max: t.max } : { id: t.id, kind: t.kind, steps: t.steps },
-    ),
-    markers: data.markers.map((m) => ({ id: m.id, count: m.count, sides: m.sides ?? [] })),
+    pieces: data.pieces.map((p) => ({
+      id: p.id,
+      faction: p.faction,
+      count: p.count,
+      states: p.states ?? [],
+      placedAs: p.placedAs ?? null,
+      startPool: p.startPool,
+    })),
+    spaces: data.map.spaces.map((s) => ({ id: s.id, hasSupportScale: s.hasSupportScale, kind: s.kind, terrain: s.terrain ?? null })),
+    tracks: data.tracks.map((t) => {
+      if (t.kind === "ordinal") return { id: t.id, kind: t.kind, steps: t.steps };
+      // V-PARAM guarantees an integer cost for every overflow.
+      const cost = data.parameters.find((p) => p.id === t.overflow?.costParam)?.value;
+      const overflow = t.overflow === undefined || typeof cost !== "number" ? null : { track: t.overflow.track, cost };
+      return { id: t.id, kind: t.kind, min: t.min, max: t.max, overflow };
+    }),
+    markers: data.markers.map((m) => ({ id: m.id, count: m.count, sides: m.sides ?? [], blocks: m.blocks ?? [], capsLevel: m.capsLevel ?? null })),
+    stacking: data.map.stacking.map((r) => ({
+      pieces: r.pieces,
+      max: r.max,
+      spaceKind: r.spaceKind ?? null,
+      terrain: r.terrain ?? null,
+      spaces: r.spaces ?? null,
+    })),
+    levelRange: data.map.supportLevels === undefined ? 0 : (data.map.supportLevels.length - 1) / 2,
   };
 }

@@ -13,22 +13,24 @@ const ruleset: Ruleset = {
     { id: "town", kind: "nonPlayer" },
   ],
   pieces: [
-    { id: "soldier", faction: "blue", count: 5, states: [], startPool: "available" },
-    { id: "militia", faction: "blue", count: 3, states: [], startPool: "outOfPlay" },
-    { id: "rebel", faction: "red", count: 4, states: ["hidden", "shown"], startPool: "available" },
+    { id: "soldier", faction: "blue", count: 5, states: [], placedAs: null, startPool: "available" },
+    { id: "militia", faction: "blue", count: 3, states: [], placedAs: null, startPool: "outOfPlay" },
+    { id: "rebel", faction: "red", count: 4, states: ["hidden", "shown"], placedAs: "hidden", startPool: "available" },
   ],
   spaces: [
-    { id: "city", hasSupportScale: true },
-    { id: "camp", hasSupportScale: false },
+    { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city" },
+    { id: "camp", hasSupportScale: false, kind: "external", terrain: null },
   ],
   tracks: [
-    { id: "cash", kind: "numeric", min: 3, max: 9 },
+    { id: "cash", kind: "numeric", min: 3, max: 9, overflow: null },
     { id: "mood", kind: "ordinal", steps: ["calm", "tense"] },
   ],
   markers: [
-    { id: "harm", count: 6, sides: [] },
-    { id: "camp", count: 2, sides: ["new", "old"] },
+    { id: "harm", count: 6, sides: [], blocks: [], capsLevel: null },
+    { id: "camp", count: 2, sides: ["new", "old"], blocks: [], capsLevel: null },
   ],
+  stacking: [],
+  levelRange: 2,
 };
 
 describe("emptyState", () => {

@@ -1,2 +1,5 @@
 - {id: sweep.costPerSpace, value: 2, tune: true}
 - {id: harm.limit, value: 6, tune: true}
+- id: ui.label
+  value: text
+  tune: false

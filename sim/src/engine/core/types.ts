@@ -19,7 +19,8 @@ export interface JsonObject {
 }
 
 // The package compiles to a Ruleset (03 s5). These are the fields core reads.
-// The P1-05 loader builds them from the P1-04 schema output (DEC-37).
+// The P1-05 loader builds them from the P1-04 schema output (DEC-37). P1-07 primitives read
+// stacking, levels, blocks, caps and overflow.
 
 export interface RulesetFaction {
   readonly id: FactionId;
@@ -32,16 +33,36 @@ export interface RulesetPiece {
   readonly count: number;
   /** Flip states, for example [underground, active]. Empty: one face (SINGLE_FACE in state.ts). */
   readonly states: readonly string[];
+  /** Face a placement uses when the effect names none (05 s7). Null: SINGLE_FACE. */
+  readonly placedAs: string | null;
   readonly startPool: "available" | "outOfPlay";
 }
 
 export interface RulesetSpace {
   readonly id: SpaceId;
   readonly hasSupportScale: boolean;
+  readonly kind: "domestic" | "external";
+  readonly terrain: string | null;
+}
+
+/** At most `max` of `pieces` in each space that matches every non-null filter (04 s4.3). */
+export interface RulesetStacking {
+  readonly pieces: readonly PieceTypeId[];
+  readonly max: number;
+  readonly spaceKind: "domestic" | "external" | null;
+  readonly terrain: readonly string[] | null;
+  readonly spaces: readonly SpaceId[] | null;
 }
 
 export type RulesetTrack =
-  | { readonly id: TrackId; readonly kind: "numeric"; readonly min: number; readonly max: number }
+  | {
+      readonly id: TrackId;
+      readonly kind: "numeric";
+      readonly min: number;
+      readonly max: number;
+      /** A loss the track cannot pay costs `cost` per unpaid point on `track` (research 04 s3.2, DEC-41). */
+      readonly overflow: { readonly track: TrackId; readonly cost: number } | null;
+    }
   | { readonly id: TrackId; readonly kind: "ordinal"; readonly steps: readonly string[] };
 
 export interface RulesetMarker {
@@ -49,6 +70,10 @@ export interface RulesetMarker {
   readonly count: number;
   /** Sides, for example [new, old]. Empty: one side (SINGLE_FACE in state.ts). */
   readonly sides: readonly string[];
+  /** Shift directions this marker blocks in its space. */
+  readonly blocks: readonly ("support" | "opposition")[];
+  /** No shift takes a level past ±capsLevel in its space (DEC-39). Null: no cap. */
+  readonly capsLevel: number | null;
 }
 
 export interface Ruleset {
@@ -59,6 +84,9 @@ export interface Ruleset {
   readonly spaces: readonly RulesetSpace[];
   readonly tracks: readonly RulesetTrack[];
   readonly markers: readonly RulesetMarker[];
+  readonly stacking: readonly RulesetStacking[];
+  /** Highest level magnitude: ±levelRange from Neutral (DEC-39). 0 without supportLevels. */
+  readonly levelRange: number;
 }
 
 // Game state (05 s2). Derived values are never stored here.

@@ -86,8 +86,21 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
     if (p.placedAs !== undefined) face(p.states ?? [], "flip state", p.placedAs, "pieces.yaml", at("placedAs"), p.id);
     if (p.emblemState !== undefined) face(p.states ?? [], "flip state", p.emblemState, "pieces.yaml", at("emblemState"), p.id);
   });
+  const parameters = new Map(pkg.parameters.map((p) => [p.id, p]));
   pkg.tracks.forEach((t, i) => {
     if (t.owner !== undefined) ref(factions, "faction", t.owner, "tracks.yaml", `${String(i)}.owner`, t.id);
+    if (t.kind !== "numeric" || t.overflow === undefined) return;
+    const at = (field: string): string => `${String(i)}.overflow.${field}`;
+    const target = tracks.get(t.overflow.track);
+    if (target?.kind !== "numeric" || target.id === t.id) {
+      error("V-REF", "tracks.yaml", at("track"), t.id, `Overflow track "${t.overflow.track}" must be another numeric track.`);
+    }
+    const cost = parameters.get(t.overflow.costParam);
+    if (cost === undefined) {
+      ref(parameters, "parameter", t.overflow.costParam, "tracks.yaml", at("costParam"), t.id);
+    } else if (typeof cost.value !== "number" || cost.value < 1) {
+      error("V-PARAM", "tracks.yaml", at("costParam"), t.id, `Parameter "${cost.id}" must hold a positive integer.`);
+    }
   });
 
   // V-LINKS, V-REF: map
