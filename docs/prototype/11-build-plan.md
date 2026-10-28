@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-14 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-15 done.
 
 ## 1. How to use this plan
 
@@ -386,6 +386,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Component tests with mocked API.
 - **Risks:** Per-op plan forms are many. One generic form driven by handler metadata.
 - **Out:** Play controls.
+- **Done:** server `legalChoices` returns every box with its reason and every Op and SA with OK (legal locations) or the first violation, plus plan form metadata (`server/forms.ts`, one generic form). View model adds card sides and the Propaganda phase list. UI `faction/FactionPanel.tsx` (boxes, Op list, plan from board selection with per-location fields, SA choice, live validation with each violation and rule, preview, commit, clear), `faction/plan.ts`, `event/EventPanel.tsx` (both sides, inline questions for options, counts, spaces and free actions), `propaganda/PropagandaPanel.tsx` (phase list, Advance, Emergency step, Upkeep removals, Civic Action and Agitation spends), `play/Play.tsx` wiring and Space to Advance. Component tests `ui/faction/panels.test.tsx` cover T-UI-03.
+- **Open:** keyboard shortcuts 1 to 5, U and S, right-click menus (DEC-47 B). Sub-action (Civic Action, Agitate) entry in the faction form.
 
 ### P2-16 Note bar, anchors, categories, history drawer
 

@@ -25,7 +25,9 @@ import { saveMetrics } from "../store/repos/metrics.ts";
 import { loadPackageContent, savePackageVersion } from "../store/repos/packages.ts";
 import { createSession, getSession, type SessionRow } from "../store/repos/sessions.ts";
 import { loadState } from "../store/repos/states.ts";
+import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { codeFingerprint } from "./fingerprint.ts";
+import { actionForms } from "./forms.ts";
 import { entryText } from "./text.ts";
 import { boardView, type BoardView } from "./view.ts";
 
@@ -203,19 +205,31 @@ export class SessionService {
     return { actionId: commit.actionId, head: this.head(sessionId), entries: listEntries(this.db, commit.actionId) };
   }
 
-  /** Legal boxes, the open question and sample legal Ops for the active faction (05 s1 item 2). */
+  /**
+   * Legal choices for the acting faction (05 s1 item 2, s4.2): every box with its reason when closed,
+   * every Op and SA with OK or the first violation (T-UI-03), and the plan form metadata.
+   */
   legalChoices(sessionId: string): JsonValue {
     const { head, ruleset } = this.session(sessionId);
-    const faction = activeFaction(head.state);
+    const state = head.state;
+    const faction = activeFaction(state);
     if (faction === null) {
-      const advance = this.engine.validate(ruleset, head.state, { type: "Advance" });
-      return { faction: null, phase: head.state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })) } as unknown as JsonValue;
+      const advance = this.engine.validate(ruleset, state, { type: "Advance" });
+      return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })) } as unknown as JsonValue;
     }
-    const ops = legalOps(ruleset, head.state, faction, Number.MAX_SAFE_INTEGER).map((c) => {
-      const plan = c["plan"] as { op: string; locations: string[] };
-      return { op: plan.op, location: plan.locations[0] ?? null };
-    });
-    return { faction, phase: head.state.turn.phase, boxes: legalBoxes(ruleset, head.state, faction), ops };
+    const open = legalBoxes(ruleset, state, faction);
+    const boxes = ruleset.sequence.boxes.map((box) => ({ box, allowed: open.includes(box), reason: open.includes(box) ? null : `Not open after the First Eligible's choice (05 s2.3).` }));
+    const ops = legalOps(ruleset, state, faction, Number.MAX_SAFE_INTEGER).map((c) => (c["plan"] as { op: string; locations: string[] }));
+    const actions = actionForms
+      .filter((f) => actionHandlers[f.id]?.faction === faction)
+      .map((form) => {
+        const handler = actionHandlers[form.id];
+        const where = ops.filter((p) => p.op === form.id).map((p) => p.locations[0] ?? "");
+        if (handler?.kind === "sa") return { ...form, kind: "sa", ok: true, reason: null, locations: [] };
+        const probe = this.engine.validate(ruleset, state, { type: "ChooseOperation", faction, box: open.find((b) => b !== "event" && b !== "pass") ?? "limitedOp", plan: { op: form.id, locations: [ruleset.spaces[0]?.id ?? ""], perLocation: {}, sa: null, subActions: [] } });
+        return { ...form, kind: "op", ok: where.length > 0, reason: where.length > 0 ? null : (probe.violations[0]?.message ?? "No legal location."), locations: [...new Set(where)] };
+      });
+    return { faction, phase: state.turn.phase, first: faction === state.initiative.firstEligible, boxes, actions } as unknown as JsonValue;
   }
 
   history(sessionId: string): { action: ActionRow; entries: LogEntryRow[]; notes: number }[] {

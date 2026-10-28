@@ -18,6 +18,15 @@ export interface PieceView {
   readonly isBase: boolean;
 }
 
+export interface CardView {
+  readonly id: string;
+  readonly title: string;
+  readonly type: string;
+  readonly encoded: boolean;
+  readonly unshaded: { readonly text: string; readonly owner: string | null; readonly blockOnly: boolean } | null;
+  readonly shaded: { readonly text: string; readonly owner: string | null; readonly blockOnly: boolean } | null;
+}
+
 export interface SpaceView {
   readonly id: string;
   readonly name: string;
@@ -44,7 +53,10 @@ export interface BoardView {
     readonly phase: string;
     readonly cardIndex: number;
     readonly propagandaRound: number;
-    readonly card: { readonly id: string; readonly title: string } | null;
+    readonly card: CardView | null;
+    /** Propaganda phase IDs and the open one (05 s6). */
+    readonly propagandaPhases: readonly string[];
+    readonly propagandaStep: number;
     readonly active: string | null;
     readonly firstEligible: string | null;
     readonly secondEligible: string | null;
@@ -57,6 +69,12 @@ export interface BoardView {
     readonly harmLimit: number;
     readonly ended: GameState["ended"];
   };
+}
+
+function cardView(ruleset: Ruleset, id: string): CardView {
+  const c = ruleset.cards[id];
+  const side = (s: NonNullable<typeof c>["unshaded"] | undefined): CardView["unshaded"] => (s === null || s === undefined ? null : { text: s.text, owner: s.owner, blockOnly: s.blockOnly });
+  return { id, title: c?.title ?? id, type: c?.type ?? "unknown", encoded: c?.encoded ?? false, unshaded: side(c?.unshaded), shaded: side(c?.shaded) };
 }
 
 export function boardView(ruleset: Ruleset, data: PackageData, state: GameState): BoardView {
@@ -102,7 +120,9 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
       phase: state.turn.phase,
       cardIndex: state.turn.cardIndex,
       propagandaRound: state.turn.propagandaRound,
-      card: card === null ? null : { id: card, title: ruleset.cards[card]?.title ?? card },
+      card: card === null ? null : cardView(ruleset, card),
+      propagandaPhases: ruleset.sequence.propagandaPhases,
+      propagandaStep: state.turn.step,
       active: activeFaction(state),
       firstEligible: state.initiative.firstEligible,
       secondEligible: state.initiative.secondEligible,

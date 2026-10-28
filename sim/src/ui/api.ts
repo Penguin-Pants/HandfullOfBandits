@@ -6,14 +6,34 @@ import type { Head, PackageSummary } from "../server/service.ts";
 import type { BoardView, PieceView, SpaceView } from "../server/view.ts";
 import type { ActionRow } from "../store/repos/actions.ts";
 import type { LogEntryRow } from "../store/repos/log-entries.ts";
-import type { AnyCommand, GameState, ValidationResult } from "../server/api-types.ts";
+import type { AnyCommand, GameState, Question, ValidationResult, Violation } from "../server/api-types.ts";
+import type { ActionForm, FormField } from "../server/forms.ts";
 
+export type { AnyCommand, FormField, Question, ValidationResult, Violation };
 export type { AnnotationRow, BoardView, CategoryRow, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
 export interface HistoryItem {
   readonly action: ActionRow;
   readonly entries: readonly LogEntryRow[];
   readonly notes: number;
+}
+
+export interface ActionChoice extends ActionForm {
+  readonly kind: "op" | "sa";
+  readonly ok: boolean;
+  readonly reason: string | null;
+  readonly locations: readonly string[];
+}
+
+/** GET /legal: the acting faction's boxes and actions, or the Advance state (05 s4.2). */
+export interface LegalChoices {
+  readonly faction: string | null;
+  readonly phase: string;
+  readonly first?: boolean;
+  readonly boxes?: readonly { readonly box: string; readonly allowed: boolean; readonly reason: string | null }[];
+  readonly actions?: readonly ActionChoice[];
+  readonly advance?: boolean;
+  readonly violations?: readonly Violation[];
 }
 
 export class ApiError extends Error {
@@ -44,7 +64,7 @@ export const api = {
   session: (id: string) => call<{ session: SessionRow; head: Head }>("GET", `/sessions/${id}`),
   validate: (id: string, command: AnyCommand) => call<ValidationResult>("POST", `/sessions/${id}/validate`, { command }),
   submit: (id: string, command: AnyCommand, headActionId: string) => call<{ actionId: string; head: Head; entries: LogEntryRow[] }>("POST", `/sessions/${id}/commands`, { command, headActionId }),
-  legal: (id: string) => call<{ faction: string | null; phase: string; boxes?: string[]; ops?: { op: string; location: string | null }[]; advance?: boolean }>("GET", `/sessions/${id}/legal`),
+  legal: (id: string) => call<LegalChoices>("GET", `/sessions/${id}/legal`),
   history: (id: string) => call<HistoryItem[]>("GET", `/sessions/${id}/history`),
   state: (hash: string) => call<{ state: GameState; derived: unknown }>("GET", `/states/${hash}`),
   stateView: (id: string, hash: string) => call<BoardView>("GET", `/sessions/${id}/states/${hash}/view`),
