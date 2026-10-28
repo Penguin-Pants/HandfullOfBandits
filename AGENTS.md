@@ -67,7 +67,7 @@ Run on the complete phase diff after tests pass and before commit.
 
 - Use Makefile targets over direct calls when present (e.g. `make test`).
 - Grep for exact search, `rg` for regex. Mermaid for complex system diagrams.
-- Instruction files (SKILL.md, **/prompts/**, AGENTS.md, CLAUDE.md): format only with `mdformat --number`.
+- Instruction files (SKILL.md, **/prompts/**, AGENTS.md, CLAUDE.md): format only with `mdformat --number --end-of-line keep` (keeps CRLF line endings).
 
 #### Subagents
 
