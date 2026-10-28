@@ -33,7 +33,7 @@ const ruleset: Ruleset = {
   levelRange: 2,
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
-  sequence: { model: "ct-two-faction@1", boxes: [], adjacency: [], swapAfter: [], firstEligibleAtStart: "blue", passIncome: {} },
+  sequence: { model: "ct-two-faction@1", boxes: [], adjacency: [], swapAfter: [], firstEligibleAtStart: "blue", passIncome: {}, propagandaPhases: [] },
   links: [],
   cards: {},
   harmMarkers: [],
@@ -138,6 +138,7 @@ describe("setupState", () => {
     pivotals: null,
     options: {},
     blockedBy: [],
+    testOnly: false,
     campaigns: ["C2", "C3"],
     tracks: { cash: 5, mood: "tense" },
     spaces: {

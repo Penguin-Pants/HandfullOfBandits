@@ -8,4 +8,5 @@ boxes:
 adjacency: [[pass, event], [pass, limitedOp], [pass, opOnly], [pass, opSa], [opSa, event], [opSa, limitedOp], [limitedOp, opOnly]]
 swapAfter: [opOnly, opSa]
 firstEligibleAtStart: red
+propagandaPhases: [victory, resources, upkeep, legitimacy, legalPolitics, civicAction, agitation, redeploy, reset]
 passIncome: {blue: 2, red: 1}

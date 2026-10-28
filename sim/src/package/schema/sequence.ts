@@ -20,5 +20,7 @@ export const sequenceSchema = z.strictObject({
   firstEligibleAtStart: id,
   /** Resources gained by a Pass, per faction (05 s3.2). */
   passIncome: z.record(id, count),
+  /** Propaganda phase handler IDs in order (research 05 s6). The loader checks them against the registry. */
+  propagandaPhases: z.array(id).min(1),
   source: text.optional(),
 });

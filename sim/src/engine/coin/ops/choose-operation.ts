@@ -4,7 +4,9 @@ import type { AnyCommand, CommandHandler, GameState, JsonObject, Ruleset, SubAct
 import { BOX, placeCylinder, sequenceViolations } from "../sequence/ct.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "./action.ts";
 import { resources } from "./common.ts";
+import { HARMFUL_ACTIONS } from "./ids.ts";
 import { asList, asObject, asString } from "./plan.ts";
+import { flagHarmful, notePassOnly } from "../stop-rules.ts";
 import { actionHandlers } from "./registry.ts";
 
 const ruleRef = "06 s1";
@@ -127,8 +129,11 @@ export const chooseOperationHandler: CommandHandler = {
         ctx.log("EffectSkipped", { effect: "specialActivity", action: plan.sa.handler.id, reason: found.map((v) => v.code).join(",") }, plan.sa.handler.ruleRef);
         return;
       }
+      const before = ctx.state;
       plan.sa.handler.execute(ctx, plan.sa.part, plan.saOptions);
+      if (HARMFUL_ACTIONS.includes(plan.sa.handler.id)) flagHarmful(ctx, plan.sa.handler.id, plan.options.faction, before);
     };
+    notePassOnly(ctx, plan.options.faction, false);
     runSa("before");
     plan.op.execute(ctx, plan.part, plan.options);
     runSa("after");

@@ -3,7 +3,7 @@
 import { own } from "../engine/core/state.ts";
 import { SELECTED } from "../engine/core/terms.ts";
 import type { CardEffect, FormulaTerm, SpaceCondition } from "../engine/core/types.ts";
-import { sequenceModels } from "../engine/modules/registry.ts";
+import { propagandaPhaseIds, sequenceModels } from "../engine/modules/registry.ts";
 import type { PackageFileData } from "./schema/index.ts";
 
 export type IssueCode =
@@ -111,6 +111,7 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
   seq.adjacency.forEach((pair, i) => {
     pair.forEach((box, j) => { face(boxIds, "box", box, "sequence.yaml", `adjacency.${String(i)}.${String(j)}`, box); });
   });
+  seq.propagandaPhases.forEach((phase, i) => { face(propagandaPhaseIds, "Propaganda phase", phase, "sequence.yaml", `propagandaPhases.${String(i)}`, phase); });
   seq.swapAfter.forEach((box, i) => { face(boxIds, "box", box, "sequence.yaml", `swapAfter.${String(i)}`, box); });
 
   pkg.factions.forEach((f, i) => {

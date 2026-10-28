@@ -144,6 +144,7 @@ export interface RulesetSequence {
   readonly swapAfter: readonly string[];
   readonly firstEligibleAtStart: FactionId;
   readonly passIncome: Readonly<Record<FactionId, number>>;
+  readonly propagandaPhases: readonly string[];
 }
 
 /** A parameters.yaml value (04 s4.5). */
@@ -193,6 +194,8 @@ export interface RulesetScenario {
   /** Pivotal hands per faction. Null: the faction default (factions.yaml). */
   readonly pivotals: Readonly<Record<FactionId, readonly CardId[]>> | null;
   readonly options: Readonly<Record<string, string | number>>;
+  /** Designer test scenario, not research (04 s4.10): its result is "not comparable". */
+  readonly testOnly: boolean;
   /** Scenario-scoped validation errors (V-ENCODE, V-CARDS). Not empty: the scenario cannot start (DEC-51). */
   readonly blockedBy: readonly string[];
   /** Campaigns in play order. The game starts in the first. */
@@ -562,7 +565,9 @@ export type LogKind =
   | "PhaseEnded"
   | "ScoreCheck"
   | "GameEnded"
-  | "StopRuleFlag";
+  | "StopRuleFlag"
+  /** One per Propaganda round: the research 12 s4 per-round logging sheet fields (DEC-34). */
+  | "RoundMetrics";
 
 export interface LogEntry {
   readonly kind: LogKind;

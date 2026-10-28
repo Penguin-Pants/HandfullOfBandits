@@ -4,6 +4,7 @@ import { createExec, PreviewStop, type Exec } from "../core/exec.ts";
 import type { AnyCommand, CommandHandler, GameState, Ruleset, Violation } from "../core/types.ts";
 import { AnswerNeeded, runEffects } from "./events.ts";
 import { asList } from "./ops/plan.ts";
+import { notePassOnly } from "./stop-rules.ts";
 import { BOX, placeCylinder, sequenceViolations } from "./sequence/ct.ts";
 
 const ruleRef = "05 s5";
@@ -13,6 +14,7 @@ function run(ctx: Exec, command: AnyCommand): void {
   const faction = String(command["faction"]);
   const side = SIDES.find((s) => s === command["side"]) ?? "unshaded";
   const card = ctx.state.deck.currentCard ?? "";
+  notePassOnly(ctx, faction, false);
   const placed = placeCylinder(ctx.state, faction, BOX.event);
   ctx.write(() => placed.state);
   ctx.log(placed.entry.kind, { ...placed.entry.data, card, side }, placed.entry.ruleRef);

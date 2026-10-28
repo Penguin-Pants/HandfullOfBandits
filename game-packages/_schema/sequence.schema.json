@@ -83,6 +83,14 @@
         "maximum": 9007199254740991
       }
     },
+    "propagandaPhases": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      }
+    },
     "source": {
       "type": "string",
       "minLength": 1
@@ -94,7 +102,8 @@
     "adjacency",
     "swapAfter",
     "firstEligibleAtStart",
-    "passIncome"
+    "passIncome",
+    "propagandaPhases"
   ],
   "additionalProperties": false
 }

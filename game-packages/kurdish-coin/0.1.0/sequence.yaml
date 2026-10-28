@@ -18,5 +18,6 @@ adjacency:
   - [limitedOp, opOnly]
 swapAfter: [opOnly, opSa]
 firstEligibleAtStart: pkk
+propagandaPhases: [victory, resources, upkeep, legitimacy, legalPolitics, civicAction, agitation, redeploy, reset]
 passIncome: {state: 2, pkk: 1}
 source: "05 s2.1 to s2.4, s3.2; DEC-26"

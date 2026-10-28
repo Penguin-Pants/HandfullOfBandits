@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-09 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10 done.
 
 ## 1. How to use this plan
 
@@ -321,6 +321,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-PROP, T-VIC, T-PERV (formula level).
 - **Risks:** Civic Action cap and choice UI. Decision-based spend form.
 - **Out:** Propaganda pipeline.
+- **Done:** `sequence.yaml` `propagandaPhases` (checked against the handler registry). Pipeline `coin/propaganda/pipeline.ts`: a Propaganda card starts a round; `Advance` runs the open phase with no choice, `PropagandaChoice` with one. Handlers: Victory (skip in round 1; check with the Covert penalty, Harm gate and PA-10), Resources, Upkeep (Guard removal choice on a shortfall), Legitimacy (8 steps, seeded Covert exposure, 07 s8.2 Emergency steps), Legal Politics (skip while Absent), Civic Action and Agitation as two phases (cap, Control, Troops and Police). Final scoring after Agitation of the final round: Covert reveal, final margins, tie order, labels, record sheet with score change from start for test scenarios. `RoundMetrics` log entry per round; `StopRuleFlag` for rules 3, 4 and the rule 6 Pass-only proxy (`coin/stop-rules.ts`). Tests in `coin/propaganda/propaganda.test.ts`.
+- **Open:** Redeploy and Reset (Phase 3a); a non-final round stops there with `notInSlice`. The session service writes `metrics` rows from `RoundMetrics` entries (P2-11).
 
 ### IC-2a Engine-only playthrough
 

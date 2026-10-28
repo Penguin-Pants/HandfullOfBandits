@@ -113,6 +113,7 @@ describe("loadPackage on the valid fixture", () => {
         pivotals: null,
         options: {},
         blockedBy: [],
+        testOnly: false,
         campaigns: ["C1"],
         tracks: { "resources.state": 12, "resources.pkk": 5, posture: "tolerant" },
         // Bare piece counts go to the placedAs face, else `default`. Bare marker counts go to `default`.

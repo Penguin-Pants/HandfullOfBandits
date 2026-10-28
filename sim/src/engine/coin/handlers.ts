@@ -3,6 +3,7 @@ import type { CommandHandler } from "../core/types.ts";
 import { advanceHandler } from "./advance.ts";
 import { chooseEventHandler } from "./event-command.ts";
 import { chooseOperationHandler } from "./ops/choose-operation.ts";
+import { propagandaChoiceHandler } from "./propaganda/pipeline.ts";
 import { passHandler } from "./sequence/pass.ts";
 
 export const coinHandlers: Readonly<Record<string, CommandHandler>> = {
@@ -10,4 +11,5 @@ export const coinHandlers: Readonly<Record<string, CommandHandler>> = {
   ChooseOperation: chooseOperationHandler,
   ChooseEvent: chooseEventHandler,
   Advance: advanceHandler,
+  PropagandaChoice: propagandaChoiceHandler,
 };

@@ -75,3 +75,11 @@
 - {id: strike.costPerSpace, value: 1, tune: false, source: "06 s5.3 item 1"}
 - {id: strike.maxGuards, value: 2, tune: false, source: "06 s5.3 item 2"}
 - {id: strike.europeLoss, value: 1, tune: false, source: "06 s5.3 item 5"}
+# 05 s6 and 07 s8 Propaganda (P2-10)
+- {id: campaign.order, value: [C1, C2, C3, C4, C5], tune: false, source: "05 s1 item 1"}
+- {id: emergencyRule.extendedFrom, value: C3, tune: false, source: "07 s8.2 item 2"}
+- {id: emergencyRule.returnCost, value: 1, tune: false, source: "07 s8.2 item 3"}
+- {id: recordSheet.civilianGap, value: 2, tune: false, source: "09 s6"}
+- {id: recordSheet.boardGap, value: 3, tune: false, source: "09 s6"}
+- {id: stopRule.passStreak, value: 3, tune: false, source: "12 s9 item 6; DEC-34"}
+- {id: stopRule.passStreaks, value: 2, tune: false, source: "12 s9 item 6; DEC-34"}

@@ -2,6 +2,7 @@
 import type { Exec } from "../core/exec.ts";
 import { AnswerNeeded, runEffects } from "./events.ts";
 import { PHASE } from "./phases.ts";
+import { startRound } from "./propaganda/pipeline.ts";
 import { adjustEligibility, cardComplete } from "./sequence/ct.ts";
 
 const ruleRef = "05 s2.2";
@@ -28,9 +29,9 @@ export function revealNext(ctx: Exec): void {
     revealNext(ctx);
     return;
   }
-  const phase = data?.type === "propaganda" ? PHASE.propaganda : PHASE.card;
-  ctx.write((s) => ({ ...s, deck: { ...s.deck, piles, played, currentCard: card }, turn: { ...s.turn, cardIndex: s.turn.cardIndex + 1, phase, step: 0 } }));
+  ctx.write((s) => ({ ...s, deck: { ...s.deck, piles, played, currentCard: card }, turn: { ...s.turn, cardIndex: s.turn.cardIndex + 1, phase: PHASE.card, step: 0 } }));
   ctx.log("CardRevealed", { card, pile: index, type: data?.type ?? "unknown" }, ruleRef);
+  if (data?.type === "propaganda") startRound(ctx);
   if (data !== undefined && data.always.length > 0) {
     try {
       runEffects({ ctx, faction: ctx.state.initiative.firstEligible ?? "", answers: [], ruleRef: `${card} Always` }, data.always);

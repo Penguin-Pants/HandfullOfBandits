@@ -22,7 +22,7 @@ const ruleset: Ruleset = {
   levelRange: 2,
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
-  sequence: { model: "ct-two-faction@1", boxes: [], adjacency: [], swapAfter: [], firstEligibleAtStart: "blue", passIncome: {} },
+  sequence: { model: "ct-two-faction@1", boxes: [], adjacency: [], swapAfter: [], firstEligibleAtStart: "blue", passIncome: {}, propagandaPhases: [] },
   links: [],
   cards: {},
   harmMarkers: [],

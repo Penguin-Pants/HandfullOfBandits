@@ -41,3 +41,5 @@ export const SYRIA_BOX = "syria-bekaa";
 export const EUROPE_SPACE = "europe";
 export const FLAG_VACUUM = "northernIraqVacuum";
 export const OPTION = { syriaMarchRestricted: "syriaMarchRestricted" } as const;
+/** Actions the atrocity test checks (research 06 s8 item 1; stop rule 3). */
+export const HARMFUL_ACTIONS: readonly string[] = ["pkk.strike-collaborators", "state.village-clearance", "state.covert-action"];

@@ -101,6 +101,7 @@ const valid: Record<PackageFile, unknown> = {
     swapAfter: ["event"],
     firstEligibleAtStart: "blue",
     passIncome: { blue: 2 },
+    propagandaPhases: ["victory", "resources"],
     source: "05 s2",
   },
   scenario: {
