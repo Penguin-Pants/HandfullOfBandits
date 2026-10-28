@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a and P2-11 done.
 
 ## 1. How to use this plan
 
@@ -340,6 +340,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Integration suite.
 - **Risks:** Concurrency with two tabs. One active writer per session, reject stale `head_action_id`.
 - **Out:** Local server.
+- **Done:** Fastify 5.12.7. `sim/src/server/service.ts` (`SessionService`): package list and validation, session create (package content stored, setup action), command validate and submit as one action transaction with a stale-head check (409), legal choices, history with entry text (`server/text.ts`), states by hash, notes with auto context (`buildContext`), metrics rows from `RoundMetrics`. Sessions reload rules from stored content; a changed code fingerprint (`server/fingerprint.ts`) runs a replay check on first load and marks the session read-only on a difference. Routes in `server/app.ts` under `/api`; `npm start` serves on 127.0.0.1. Store repo `metrics.ts`. Integration suite `sim/test/api.test.ts` plays S0 to the end through the API.
+- **Open:** export route (P2-18), undo route (P2-17).
 
 ### P2-12 Replay CLI and performance check
 
