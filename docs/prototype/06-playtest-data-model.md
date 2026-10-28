@@ -130,7 +130,7 @@ MVP uses one branch per session plus undo (section 6). The table exists from Pha
 | `content` | Compressed canonical state |
 | `derived` | JSON of derived view (Control, scores, Harm counts) for fast review |
 
-Snapshot policy: store the state after every committed command. Deduplicated by hash. Reason: about 30 KB per state, about 400 actions per campaign, under 15 MB per full campaign before compression. This removes replay as a dependency for review and undo. Replay remains the integrity check (09-testing-and-replay.md).
+Snapshot policy: store the state after every committed command. Deduplicated by hash. Reason: about 14 KB per state (13,751 bytes measured for the full campaign setup at P1-03, 1,410 bytes gzip), about 400 actions per campaign, under 6 MB per full campaign before compression. This removes replay as a dependency for review and undo. Replay remains the integrity check (09-testing-and-replay.md).
 
 ### 3.8 annotations
 

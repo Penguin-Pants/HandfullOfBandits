@@ -43,7 +43,7 @@ Rules:
 
 Derived values (Control, Total Support, scores, Harm counts) are never stored in `state`. `derive` recomputes them. Log entries record derived values at the moment of each step.
 
-State size estimate: under 30 KB as canonical JSON (18 spaces, 6 piece types, 12 marker types, 100 card IDs). Unverified assumption; P1-03 measures it.
+State size: 13,751 bytes as canonical JSON (1,410 bytes gzip) for the full campaign setup (18 spaces, 6 piece types, 15 marker types, 100 card IDs). Measured at P1-03 with a hand-built research setup (`sim/test/full-setup.ts`). Types: `sim/src/engine/core/types.ts` (DEC-36).
 
 ## 3. Commands
 
@@ -212,7 +212,7 @@ Core primitives are the only code that writes state.
 | `GameEnded` | Result, labels, record sheet |
 | `StopRuleFlag` | Research stop rule number (12 s9) and evidence. Rule 3: a harmful action raised its user's net score. Rule 4: a faction wins with Harm above its limit (also a test failure). Rule 6 (proxy): a faction's only legal choice was Pass on 3 cards in a row, for the second time in the game. The research rule says "no useful action"; legal but useless actions stay a designer judgment through notes (DEC-34) |
 
-Every entry has `entryId = <actionId>.<n>`, the action ID and the state sequence it belongs to.
+Every engine entry has its kind, the `stateSeq` it belongs to, rule and PA refs and a data body. The engine never sees action IDs (section 2). The store adds `entryId = <actionId>-E<n>` and the action ID (06 s2, s3.6).
 
 ## 11. Performance target
 

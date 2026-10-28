@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01, P1-01 and P1-02 done.
+Status: planning document. P0-01, P1-01, P1-02 and P1-03 done.
 
 ## 1. How to use this plan
 
@@ -57,6 +57,8 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** Round trip serialize and hash.
 - **Risks:** Over-design. Add only fields named in 05 s2.
 - **Out:** Type module.
+- **Done:** Types in `types.ts`, `emptyState(ruleset, scenarioId, seed)` in `state.ts` (DEC-36). Full setup state measures 13,751 bytes (05 s2, 06 s3.7).
+- **Open for P2-01:** Research lists Campaign as a track (research 04 s3). State holds it in `turn.campaign` (05 s2). Do not add a Campaign track too, or two fields hold one value.
 
 ### P1-04 Package schemas (core subset)
 
