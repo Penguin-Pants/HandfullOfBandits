@@ -267,7 +267,7 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Obj:** Phases Victory (skip), Resources, Upkeep, Legitimacy (8 steps), Civic Action and Agitation, final scoring, record sheet.
 - **Files:** `sim/src/engine/coin/propaganda/*.ts`, `sim/src/engine/coin/victory.ts`.
 - **Deps:** P2-09.
-- **Steps:** 1. Phase pipeline from `sequence.yaml`. 2. Phase handlers. 3. Final margin and tie order.
+- **Steps:** 1. Phase pipeline from `sequence.yaml`. 2. Phase handlers. 3. Final margin and tie order. 4. One `metrics` row per Propaganda round: score, margin, income, Resources and Harm count per faction (research 12 s4 items 6 to 12; DEC-34). 5. `StopRuleFlag` entries for research stop rules 3, 4 and 6 (05 s10).
 - **Accept:** Hand-computed income and Legitimacy for a fixture board match.
 - **Tests:** T-PROP, T-VIC, T-PERV (formula level).
 - **Risks:** Civic Action cap and choice UI. Decision-based spend form.
@@ -353,7 +353,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Obj:** Exporter per 07 s8.1 with a reference check.
 - **Files:** `sim/src/export/*`, `sim/src/cli/export.ts`.
 - **Deps:** P2-17.
-- **Accept:** T-ANN-07, T-ANN-08 and T-EXP pass.
+- **Accept:** T-ANN-07, T-ANN-08 and T-EXP pass. The S0 export contains the round metrics row and any stop rule flags (DEC-34).
 - **Tests:** T-EXP.
 - **Risks:** Large files with states. States off by default.
 - **Out:** Exporters.
@@ -380,6 +380,8 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 | P3a-06 | Encode remaining C1 and all C2 cards | `cards/c1.yaml`, `c2.yaml` | P3a-03 | V-ENCODE passes for Scenario A | T-EVT per side | Encoding volume. Split per 5 cards per PR |
 | P3a-07 | Scenario A file and golden replay | `scenarios/scenario-a.yaml` | P3a-06 | Scenario A plays to end in CLI script | Golden | None |
 | P3a-08 | Moved from M2: auto backup, FTS search, minimal Markdown export | `store/backup.ts`, `export/markdown.ts` | IC-2 | Last 10 backups kept. FTS returns same rows as substring search on fixtures | T-EXP | FTS5 build availability |
+
+| P3a-09 | Scripted strategy batch runs: `sim batch --games 10 --strategy <state>,<pkk> --swap-seats`. Strategies are small policies that pick from legal choices. First set from research 12 s7 for Scenario A | `cli/batch.ts`, `cli/strategies/*` | P3a-07, P2-12 | CSV of round metrics and a win-rate report. A side with 8 or more wins in 10 is flagged (research 12 s9) | T-FUZZ harness | Strategies too naive to find exploits. Treat results as screens, not balance proof |
 
 **IC-3a:** Designer plays Scenario A to the end in the UI. Notes export. Matches stage 0 of the research playtest plan (12 s2).
 
@@ -413,11 +415,12 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 |---|---|---|
 | P4-01 | Cross-session review: version filters, saved filters, bulk status | Notes from 3 sessions filter by ruleset version |
 | P4-02 | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
-| P4-03 | Per-round metrics table and metrics export | Matches research logging sheet items 6 to 15 |
+| P4-03 | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 |
 | P4-04 | Branch from a past action | New branch plays. Original branch intact |
 | P4-05 | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
 | P4-06 | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
 | P4-07 | Hidden-information view toggle | Covert markers hidden in view mode |
+| P4-08 | Tester materials: `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md`, rule lookup from any log rule ref to its text in the package rule index (DEC-34) | A new tester installs and finishes S0 using only these files |
 
 **IC-4 (M5):** Two package versions and at least three sessions compared with recorded evidence.
 

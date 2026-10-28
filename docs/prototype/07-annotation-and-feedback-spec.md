@@ -156,7 +156,7 @@ One file per export. Schema `coin-sim-export/1`.
 | `actions` | Action rows with commands, log entries, status and undo entries with `undoneAfterRandom` (06 s6) |
 | `states` | Always one record per referenced hash with its derived view (Control, tracks, scores, Harm counts). Full canonical content only with `--with-states` |
 | `annotations` | Annotation rows with context |
-| `metrics` | Per-round metrics |
+| `metrics` | Per-round metrics and stop rule flags per session (DEC-34) |
 | `index` | Maps from annotation to action, state, rules and package |
 
 Relationships use IDs only. A validator checks that every reference in the file resolves inside the file (09-testing-and-replay.md, T-EXP).
