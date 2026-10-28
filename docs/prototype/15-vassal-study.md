@@ -1,6 +1,6 @@
 # 15 Vassal Pattern Study
 
-Status: study for P2 to P4 (DEC-32). Proposals below wait for designer approval. Nothing is copied into this repository yet.
+Status: study for P2 to P4 (DEC-32). B and C approved, A rejected (DEC-47). Nothing is copied into this repository yet.
 
 ## Bottom line
 
@@ -35,20 +35,20 @@ Colonial Twilight is the closest model: COIN, 2 factions (Government and FLN), P
 
 ## 3. Proposals
 
-### A. COIN series board look (08 s3.1)
+### A. COIN series board look (08 s3.1), rejected
 
 1. Replace "No geographic art" with one map image plus a polygon per space in `map.yaml`. Keep the node graph as a debug view.
 2. Draw pieces in the series shapes: cubes for State troops and police, cylinders for Guerrillas, discs for Bases. Keep DEC-30 colors and emblems.
 3. Add the series edge track (0 to 99 style) for Resources and scores, and the Sequence of Play box with eligibility cylinders.
 4. Art stays original. CT images are reference for size and layout only.
 
-### B. Vassal player habits (08 s3)
+### B. Vassal player habits (08 s3), approved
 
 1. Right-click menu on a space and a piece, next to the faction panel.
 2. Hover shows stack contents.
 3. Toolbar names match Vassal COIN modules: "End Card Play", "Propaganda", "Undo".
 
-### C. Vassal module for early tests (new task, before P2)
+### C. Vassal module for early tests (PV-01), approved
 
 1. Build a plain `.vmod` from the package: map, spaces, pieces, cards, tracks. No automation.
 2. Testers play the physical design in Vassal now. Notes go in the existing feedback form (07).
@@ -56,4 +56,4 @@ Colonial Twilight is the closest model: COIN, 2 factions (Government and FLN), P
 
 Open: does the research plan (12 s4) accept unenforced Vassal games as S0 data?
 
-Next step: designer approves or rejects proposals A, B and C.
+Next step: start task PV-01 in 11-build-plan.md.
