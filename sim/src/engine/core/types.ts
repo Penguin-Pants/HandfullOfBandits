@@ -567,7 +567,9 @@ export type LogKind =
   | "GameEnded"
   | "StopRuleFlag"
   /** One per Propaganda round: the research 12 s4 per-round logging sheet fields (DEC-34). */
-  | "RoundMetrics";
+  | "RoundMetrics"
+  /** Written by the store on undo (06 s6), never by the engine. */
+  | "Undo";
 
 export interface LogEntry {
   readonly kind: LogKind;

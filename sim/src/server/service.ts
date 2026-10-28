@@ -28,6 +28,8 @@ import { loadState } from "../store/repos/states.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { codeFingerprint } from "./fingerprint.ts";
 import { actionForms } from "./forms.ts";
+import { filterRows, reviewRow, type ReviewFilter, type ReviewRow } from "./review.ts";
+import { undoLast, type UndoResult } from "./undo.ts";
 import { entryText } from "./text.ts";
 import { boardView, type BoardView } from "./view.ts";
 
@@ -296,6 +298,27 @@ export class SessionService {
     const debriefId = debrief === null || debrief.trim() === "" ? null : this.annotate(sessionId, { anchor: "debrief", actionId: null, text: debrief, categoryIds: [], focus: { panel: "board", selectedSpace: null, selectedPieces: [], hoveredActionId: null } });
     if (session.status === "active") this.db.prepare("UPDATE sessions SET status = ? WHERE session_id = ?").run(head.state.ended === null ? "abandoned" : "ended", sessionId);
     return { debriefId };
+  }
+
+  /** Undo the head action (06 s6). `headActionId` guards against a stale tab. */
+  undo(sessionId: string, headActionId: string): UndoResult & { readonly state: Head } {
+    const { session, head } = this.session(sessionId);
+    if (session.status === "readOnly") throw new ServiceError(409, "The session is read-only.");
+    if (headActionId !== head.actionId) throw new ServiceError(409, "The session moved on. Reload before acting.", { head: head.actionId });
+    try {
+      const result = undoLast(this.db, sessionId, session.current_branch_id);
+      return { ...result, state: this.head(sessionId) };
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(409, e.message);
+      throw e;
+    }
+  }
+
+  /** Notes across sessions for the review screen (07 s7). */
+  review(filter: ReviewFilter): ReviewRow[] {
+    const sessions = new Map(this.listSessions().map((s) => [s.session_id, s.name]));
+    const rows = [...sessions.keys()].flatMap((id) => listAnnotations(this.db, id).map((n) => reviewRow(n, sessions.get(id) ?? id)));
+    return filterRows(rows, filter);
   }
 
   private rules(hash: string): { ruleset: Ruleset; data: PackageData } {

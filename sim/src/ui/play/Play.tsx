@@ -16,9 +16,10 @@ export interface PlayProps {
   readonly api: Api;
   readonly sessionId: string;
   readonly onExit?: () => void;
+  readonly onOpenState?: (before: string | null, after: string) => void;
 }
 
-export function Play({ api, sessionId, onExit }: PlayProps) {
+export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
   const [data, setData] = useState<{ session: SessionRow; head: Head } | null>(null);
   const [legal, setLegal] = useState<LegalChoices | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -63,6 +64,7 @@ export function Play({ api, sessionId, onExit }: PlayProps) {
       const target = e.target as HTMLElement | null;
       if (target !== null && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
       if (e.key === "h" || e.key === "H") setShowHistory((v) => !v);
+      if (e.key === "z" && (e.ctrlKey || e.metaKey)) void undo();
       if (e.key === " " && legal?.advance === true) {
         e.preventDefault();
         void commit({ type: "Advance" });
@@ -81,6 +83,18 @@ export function Play({ api, sessionId, onExit }: PlayProps) {
   };
   const anchor = (): ReturnType<typeof defaultAnchor> =>
     defaultAnchor({ lastActionId: last.current.id, lastActionAt: last.current.at, now: Date.now(), draft: draft.current, selectedSpace: focusStore.get().selectedSpace });
+  const undo = async (): Promise<void> => {
+    if (!window.confirm("Undo the last action?")) return;
+    setError(null);
+    try {
+      const result = await api.undo(sessionId, data.head.actionId);
+      if (result.undoneAfterRandom) setError(`Undid ${result.undone}. It used a random result; the undo is flagged.`);
+      last.current = { id: null, at: null };
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  };
   const end = async (debrief: string | null): Promise<void> => {
     await api.endSession(sessionId, debrief);
     setEnding(false);
@@ -111,6 +125,9 @@ export function Play({ api, sessionId, onExit }: PlayProps) {
             <button type="button" onClick={() => { setShowHistory(!showHistory); }}>
               History (H)
             </button>
+            <button type="button" onClick={() => void undo()}>
+              Undo (Ctrl+Z)
+            </button>
             <button type="button" onClick={() => { setEnding(true); }}>
               End session
             </button>
@@ -128,7 +145,7 @@ export function Play({ api, sessionId, onExit }: PlayProps) {
           return annotationId;
         }}
       />
-      {showHistory && <HistoryDrawer items={history} />}
+      {showHistory && <HistoryDrawer items={history} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />}
     </div>
   );
 }

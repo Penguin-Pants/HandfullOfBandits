@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-16 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-17 done.
 
 ## 1. How to use this plan
 
@@ -409,6 +409,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Integration and component tests.
 - **Risks:** Substring search is slow on many notes. Acceptable below 10,000 notes. FTS moves to P3a-08.
 - **Out:** Review features.
+- **Done:** `sim/src/server/undo.ts` (`undoLast`: action `undone`, an `Undo` log entry with `undoneAfterRandom`, head back to the previous committed action, nothing deleted), `service.undo` with the stale-head check, `POST /api/sessions/:id/undo`. `server/review.ts` review rows and filters (faction, card, space from the selected space or plan locations, category with `general`, version, session, anchor, status, substring search), `GET /api/review`. UI: Undo button and Ctrl+Z with confirm, `ui/state-viewer/StateViewer.tsx` (read-only board, Before and After), `ui/review/Review.tsx`, history rows open the state viewer. Tests: `sim/test/undo-review.test.ts` (undo, T-ANN-05, T-ANN-06, undoneAfterRandom), `ui/review/review.test.tsx`, `ui/play/play.test.tsx` (T-UI-04).
+- **Decided:** undo adds no action row: the `Undo` entry goes on the undone action's log, so `actions.kind` needs no migration and `undone_by` stays empty (06 s6 item 2 is met by the log entry).
 
 ### P2-18 JSON export
 

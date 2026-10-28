@@ -76,6 +76,12 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     const { debrief } = body<{ debrief: string | null }>(request.body);
     return service.endSession(request.params.id, typeof debrief === "string" ? debrief : null);
   });
+  app.post<{ Params: Id }>("/api/sessions/:id/undo", (request) => {
+    const { headActionId } = body<{ headActionId: string }>(request.body);
+    if (typeof headActionId !== "string") throw new ServiceError(400, "headActionId is required.");
+    return service.undo(request.params.id, headActionId);
+  });
+  app.get<{ Querystring: Record<string, string> }>("/api/review", (request) => service.review(request.query));
   app.get("/api/categories", () => service.categories());
   app.get<{ Params: Id }>("/api/sessions/:id/annotations", (request) => service.annotations(request.params.id));
   app.post<{ Params: Id }>("/api/sessions/:id/annotations", (request, reply) => {

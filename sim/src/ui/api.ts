@@ -4,6 +4,7 @@ import type { CategoryRow } from "../store/repos/categories.ts";
 import type { SessionRow } from "../store/repos/sessions.ts";
 import type { Head, PackageSummary } from "../server/service.ts";
 import type { BoardView, PieceView, SpaceView } from "../server/view.ts";
+import type { ReviewRow } from "../server/review.ts";
 import type { ActionRow } from "../store/repos/actions.ts";
 import type { LogEntryRow } from "../store/repos/log-entries.ts";
 import type { AnyCommand, GameState, Question, ValidationResult, Violation } from "../server/api-types.ts";
@@ -11,6 +12,7 @@ import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
 
 export type { AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
+export type { ReviewRow };
 export type { AnnotationRow, BoardView, CategoryRow, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
 export interface HistoryItem {
@@ -82,6 +84,8 @@ export const api = {
   categories: () => call<CategoryRow[]>("GET", "/categories"),
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
+  undo: (id: string, headActionId: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean }>("POST", `/sessions/${id}/undo`, { headActionId }),
+  review: (filter: Readonly<Record<string, string>>) => call<ReviewRow[]>("GET", `/review?${new URLSearchParams(filter).toString()}`),
   endSession: (id: string, debrief: string | null) => call<{ debriefId: string | null }>("POST", `/sessions/${id}/end`, { debrief }),
 };
 

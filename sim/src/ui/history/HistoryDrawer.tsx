@@ -2,13 +2,18 @@
 // actions struck through. `H` toggles it (Play).
 import type { HistoryItem } from "../api.ts";
 
-export function HistoryDrawer({ items, limit = 10 }: { readonly items: readonly HistoryItem[]; readonly limit?: number }) {
+export function HistoryDrawer({ items, limit = 10, onOpen }: { readonly items: readonly HistoryItem[]; readonly limit?: number; readonly onOpen?: (item: HistoryItem) => void }) {
   return (
     <section className="panel" aria-label="History">
       <ol>
-        {items.slice(-limit).map(({ action, entries, notes }) => (
+        {items.slice(-limit).map((item) => {
+          const { action, entries, notes } = item;
+          return (
           <li key={action.action_id} style={{ textDecoration: action.status === "undone" ? "line-through" : "none" }}>
-            <strong>{action.action_id}</strong> {action.summary}
+            <button type="button" onClick={() => onOpen?.(item)}>
+              {action.action_id}
+            </button>{" "}
+            {action.summary}
             {notes > 0 && <span> · {notes} note{notes === 1 ? "" : "s"}</span>}
             <ul>
               {entries.filter((e) => e.kind !== "ValidationPassed").map((e) => (
@@ -18,7 +23,8 @@ export function HistoryDrawer({ items, limit = 10 }: { readonly items: readonly 
               ))}
             </ul>
           </li>
-        ))}
+          );
+        })}
       </ol>
     </section>
   );
