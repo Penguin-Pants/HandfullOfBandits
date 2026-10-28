@@ -27,6 +27,7 @@ import { createSession, getSession, type SessionRow } from "../store/repos/sessi
 import { loadState } from "../store/repos/states.ts";
 import { codeFingerprint } from "./fingerprint.ts";
 import { entryText } from "./text.ts";
+import { boardView, type BoardView } from "./view.ts";
 
 export const APP_VERSION = "0.1.0";
 
@@ -60,6 +61,8 @@ export interface Head {
   readonly stateHash: string;
   readonly state: GameState;
   readonly derived: ReturnType<typeof derive>;
+  /** Board and status view model (08 s3). */
+  readonly view: BoardView;
 }
 
 const KIND: Readonly<Record<string, ActionKind>> = { ChooseEvent: "cardChoice", ChooseOperation: "cardChoice", Pass: "cardChoice", PlayPivotal: "pivotal", PropagandaChoice: "propagandaChoice", Advance: "advance" };
@@ -221,6 +224,12 @@ export class SessionService {
     return listActions(this.db, session.current_branch_id).map((action) => ({ action, entries: listEntries(this.db, action.action_id), notes: notes.filter((n) => n.action_id === action.action_id).length }));
   }
 
+  /** A state's board view in a session's rules (08 s2 state viewer). */
+  stateView(sessionId: string, hash: string): BoardView {
+    const { ruleset, data } = this.session(sessionId);
+    return boardView(ruleset, data, this.state(hash).state);
+  }
+
   state(hash: string): { state: GameState; derived: unknown } {
     const stored = loadState(this.db, hash);
     if (stored === null) throw new ServiceError(404, `Unknown state "${hash}".`);
@@ -285,8 +294,8 @@ export class SessionService {
     if (row === null || actionId === null) throw new ServiceError(404, `Session "${sessionId}" has no head.`);
     const action = this.db.prepare("SELECT state_hash_after FROM actions WHERE action_id = ?").get(actionId) as { state_hash_after: string };
     const { state } = this.state(action.state_hash_after);
-    const { ruleset } = this.rules(row.package_hash);
-    return { actionId, stateHash: action.state_hash_after, state, derived: derive(ruleset, state) };
+    const { ruleset, data } = this.rules(row.package_hash);
+    return { actionId, stateHash: action.state_hash_after, state, derived: derive(ruleset, state), view: boardView(ruleset, data, state) };
   }
 
   private stateInput(ruleset: Ruleset, state: GameState, hash: string): { hash: string; content: string; derived: unknown } {

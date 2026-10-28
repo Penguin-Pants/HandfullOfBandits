@@ -71,6 +71,7 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   app.get<{ Params: Id }>("/api/sessions/:id/legal", (request) => service.legalChoices(request.params.id));
   app.get<{ Params: Id }>("/api/sessions/:id/history", (request) => service.history(request.params.id));
   app.get<{ Params: { hash: string } }>("/api/states/:hash", (request) => service.state(request.params.hash));
+  app.get<{ Params: { id: string; hash: string } }>("/api/sessions/:id/states/:hash/view", (request) => service.stateView(request.params.id, request.params.hash));
   app.get("/api/categories", () => service.categories());
   app.get<{ Params: Id }>("/api/sessions/:id/annotations", (request) => service.annotations(request.params.id));
   app.post<{ Params: Id }>("/api/sessions/:id/annotations", (request, reply) => {

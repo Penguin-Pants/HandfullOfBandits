@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-13 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-14 done.
 
 ## 1. How to use this plan
 
@@ -374,6 +374,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** View model mapping unit tests.
 - **Risks:** Layout coordinates. Hand-set in `map.yaml`.
 - **Out:** Board.
+- **Done:** server view model `sim/src/server/view.ts` (`boardView`: 18 locations with layout, level name, Control, pieces by face with shape, variant and emblem face, markers with hidden flag, links, status bar data), sent as `head.view` and at `GET /api/sessions/:id/states/:hash/view`. UI `ui/board/Board.tsx` (SVG nodes, dashed external links, level band, Control ring, click and Shift-click selection, hover title with stack contents, `SpaceDetail` card), `ui/board/PieceIcon.tsx` (DEC-29, DEC-30), `ui/status/StatusBar.tsx`. Tests: `server/view.test.ts` (mapping), `ui/board/board.test.tsx` (components).
+- **Open:** right-click menus (DEC-47 B) come with the faction panel actions (P2-15).
 
 ### P2-15 Faction panel, event panel, Decisions, Propaganda flow
 

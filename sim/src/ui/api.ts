@@ -3,11 +3,12 @@ import type { AnnotationRow } from "../store/repos/annotations.ts";
 import type { CategoryRow } from "../store/repos/categories.ts";
 import type { SessionRow } from "../store/repos/sessions.ts";
 import type { Head, PackageSummary } from "../server/service.ts";
+import type { BoardView, PieceView, SpaceView } from "../server/view.ts";
 import type { ActionRow } from "../store/repos/actions.ts";
 import type { LogEntryRow } from "../store/repos/log-entries.ts";
 import type { AnyCommand, GameState, ValidationResult } from "../server/api-types.ts";
 
-export type { AnnotationRow, CategoryRow, Head, PackageSummary, SessionRow };
+export type { AnnotationRow, BoardView, CategoryRow, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
 export interface HistoryItem {
   readonly action: ActionRow;
@@ -46,6 +47,7 @@ export const api = {
   legal: (id: string) => call<{ faction: string | null; phase: string; boxes?: string[]; ops?: { op: string; location: string | null }[]; advance?: boolean }>("GET", `/sessions/${id}/legal`),
   history: (id: string) => call<HistoryItem[]>("GET", `/sessions/${id}/history`),
   state: (hash: string) => call<{ state: GameState; derived: unknown }>("GET", `/states/${hash}`),
+  stateView: (id: string, hash: string) => call<BoardView>("GET", `/sessions/${id}/states/${hash}/view`),
   categories: () => call<CategoryRow[]>("GET", "/categories"),
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: unknown) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
