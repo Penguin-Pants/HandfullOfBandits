@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01, P1-01, P1-02 and P1-03 done.
+Status: planning document. P0-01 and P1-01 to P1-04 done.
 
 ## 1. How to use this plan
 
@@ -70,6 +70,9 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** T-PKG (schema cases).
 - **Risks:** Schema churn. Keep `schemaVersion: 1` until P2 ends.
 - **Out:** Schemas and JSON Schema files.
+- **Done:** One schema per file in `sim/src/package/schema/`, `parsePackageFile(file, data)` returns issues with dot paths (DEC-37). `make schema` writes `game-packages/_schema/`; a test fails on drift. Field shapes recorded in 04 s4. T-PKG schema cases: 1 valid fixture per file, 33 invalid cases.
+- **Open for P1-05:** Compile schema output to `Ruleset` (needs the package hash). V-REF for `placedAs`, `emblemState`, `resourcesTrack`, `owner`, `countsAs`, link ends, gate steps and stacking IDs.
+- **Proposed fixes (not applied, need designer approval):** 1. 04 s4.9 `harmCount` repeats marker `countsAs`. Keep one source; proposal: drop `harmCount`. Needed by P1-09. 2. No package file holds the Support scale (5 levels, research 04 s4.1) or the Office cap (Passive Support and Passive Opposition, DD-18.4). Scenario `level` has no range check until one does. Needed by P1-07 `shiftLevel`.
 
 ### P1-05 Package loader, hash and reference validation
 

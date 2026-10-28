@@ -65,6 +65,8 @@ One folder per version. Old version folders stay in the repository. The database
 
 ## 4. Core files
 
+Schemas: `sim/src/package/schema/` (P1-04, DEC-37). JSON Schema for editors: `game-packages/_schema/`, written by `make schema`. Every object rejects unknown keys. Every number is an integer, so the package hash is canonical (05 s8 item 6). A field is required unless this section says "optional".
+
 ### 4.1 factions.yaml
 
 | Field | Meaning |
@@ -103,21 +105,22 @@ Default emblems (DEC-30): State Bases `crescentStar`; Guerrillas `starCircle` wi
 | Field | Meaning |
 |---|---|
 | `spaces[].id` | `hakkari`, `botan`, ... `western-cities` |
+| `spaces[].name` | Display name, for example `Diyarbakır City` |
 | `spaces[].kind` | `domestic` or `external` |
-| `spaces[].terrain` | `mountain`, `plain`, `city` (external boxes may set terrain for Cross-Border) |
+| `spaces[].terrain` | `mountain`, `plain`, `city`. Required for domestic spaces. Optional for external boxes (Cross-Border) |
 | `spaces[].pop` | Integer |
 | `spaces[].hasSupportScale` | true for domestic spaces |
 | `spaces[].layout` | `{x, y}` for the schematic board |
-| `spaces[].confidence` | Research confidence note (GAP-I09) |
-| `spaces[].tags` | Free tags used by rules, for example `noLandLinks`, `receptionTarget` |
+| `spaces[].confidence` | Optional. Research confidence note (GAP-I09) |
+| `spaces[].tags` | Optional. Free tags used by rules, for example `noLandLinks`, `receptionTarget` |
 | `links[]` | `{a, b, kind}` where kind is `land` or `external` |
-| `links[].gate` | Optional posture gate reference for external links |
-| `stacking` | Limits by piece class and space kind |
+| `links[].gate` | Optional posture gate `{track, steps}`: the link is open only while the track is at one of the steps |
+| `stacking[]` | `{pieces, max}` plus optional filters `spaceKind`, `terrain[]`, `spaces[]`. At most `max` of the listed piece types in each space that matches every filter. Example: `{pieces: [guards], max: 3, terrain: [mountain, plain]}` |
 
 ### 4.4 tracks.yaml and markers.yaml
 
-Tracks: `id`, `kind` (`numeric` or `ordinal`), `min`, `max` or `steps[]`, `owner`, `display`.
-Markers: `id`, `count`, `sides` (for example `[new, old]` or `[faceDown, revealed]`), `hidden` flag, `blocks` (shift block rules), `countsAs` (Harm count term).
+Tracks: `id`, `kind` (`numeric` or `ordinal`), `min` and `max` (`min` <= `max`) or `steps[]` (2 or more), optional `owner` (faction ID), `display` (display name).
+Markers: `id`, `count`, optional `sides` (2 or more, for example `[new, old]` or `[faceDown, revealed]`), optional `hidden` flag, optional `blocks` (shift directions blocked in its space: `support`, `opposition` or both), optional `countsAs` (faction whose Harm count the marker adds to).
 
 ### 4.5 parameters.yaml
 

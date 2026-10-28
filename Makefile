@@ -1,4 +1,4 @@
-.PHONY: install test check start
+.PHONY: install test check start schema
 
 install:
 	cd sim && npm ci
@@ -11,3 +11,6 @@ check:
 
 start:
 	cd sim && npm start
+
+schema:
+	cd sim && npm run schema

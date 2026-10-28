@@ -44,7 +44,7 @@ Problem this avoids: a "universal" operation DSL. Problem this accepts: some des
 | UI | React with Vite | Fast local dev. Large ecosystem. Plain SVG board |
 | HTTP | Fastify | Small, typed, JSON schema routes |
 | Database | SQLite through `better-sqlite3` | One local file. Synchronous API fits a single user. Prebuilt Windows binaries ship in the package (DEC-28; fallback is `node:sqlite`) |
-| Schemas | Zod, plus `zod-to-json-schema` | One schema source for runtime validation and editor hints |
+| Schemas | Zod 4 with its built-in `z.toJSONSchema` (DEC-37) | One schema source for runtime validation and editor hints |
 | YAML | `yaml` package | Comments in card files. Readable diffs |
 | Tests | Vitest. One Playwright smoke test | Fast unit tests. Chromium is pre-installed in CI images |
 | Lint | ESLint with a restricted-globals rule for the engine folder | Blocks `Date`, `Math.random`, `fetch`, `fs` in the engine |
