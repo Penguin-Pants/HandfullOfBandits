@@ -1,14 +1,10 @@
-import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { validateCommand } from "../src/cli/validate.ts";
 import { derive } from "../src/engine/coin/derive.ts";
 import { setupState } from "../src/engine/core/state.ts";
-import { loadPackage, readPackageDir } from "../src/package/load.ts";
+import { kurdish as result, kurdishDir as dir } from "./kurdish-package.ts";
 
 // P2-01: Kurdish package 0.1.0 static data. Accept: `sim validate` passes, start scores 21 and 4.
-const dir = fileURLToPath(new URL("../../game-packages/kurdish-coin/0.1.0", import.meta.url));
-const result = loadPackage(readPackageDir(dir));
-if (!result.ok) throw new Error(`kurdish-coin must load: ${JSON.stringify(result.issues)}`);
 const { data, ruleset } = result;
 
 // Research 03 s4.1 printed adjacency list, typed from the table (domestic and special links).

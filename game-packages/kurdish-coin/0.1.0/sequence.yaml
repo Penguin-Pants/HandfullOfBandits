@@ -1,0 +1,22 @@
+# Research 05 s2 and s3.2. CT two-faction initiative track (DD-04).
+model: ct-two-faction@1
+boxes:
+  - {id: event, label: Event}
+  - {id: limitedOp, label: Limited Op}
+  - {id: opOnly, label: Op Only}
+  - {id: opSa, label: Op + SA}
+  - {id: pass, label: Pass}
+# 05 s2.3 derived graph: Pass touches all four other boxes; Op + SA touches Event and Limited Op;
+# Limited Op touches Op Only. Pass is always open to the Second Eligible (CT 2.3.3).
+adjacency:
+  - [pass, event]
+  - [pass, limitedOp]
+  - [pass, opOnly]
+  - [pass, opSa]
+  - [opSa, event]
+  - [opSa, limitedOp]
+  - [limitedOp, opOnly]
+swapAfter: [opOnly, opSa]
+firstEligibleAtStart: pkk
+passIncome: {state: 2, pkk: 1}
+source: "05 s2.1 to s2.4, s3.2; DEC-26"

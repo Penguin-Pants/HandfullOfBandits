@@ -8,6 +8,7 @@ import { markersSchema } from "./markers.ts";
 import { parametersSchema } from "./parameters.ts";
 import { piecesSchema } from "./pieces.ts";
 import { scenarioSchema } from "./scenario.ts";
+import { sequenceSchema } from "./sequence.ts";
 import { tracksSchema } from "./tracks.ts";
 import { victorySchema } from "./victory.ts";
 
@@ -21,6 +22,7 @@ export const packageFileSchemas = {
   tracks: tracksSchema,
   markers: markersSchema,
   victory: victorySchema,
+  sequence: sequenceSchema,
   scenario: scenarioSchema,
   assumptions: assumptionsSchema,
 } as const;

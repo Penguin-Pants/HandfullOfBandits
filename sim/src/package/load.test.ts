@@ -168,6 +168,10 @@ const invalid: [string, string, string, Record<string, unknown>, string, string 
   ["V-LINKS", "space linked to itself", "map.yaml", { "links/0/b": "hills" }, "links.0.b", "hills-hills"],
   ["V-PARAM", "tune parameter without value", "parameters.yaml", { "1/value": DELETE }, "1.value", "harm.limit"],
   ["V-FACTIONS", "one player faction", "factions.yaml", { "1/kind": "nonPlayer" }, "", null],
+  ["V-REF", "unknown sequence model", "sequence.yaml", { model: "pp-three-faction@1" }, "model", "pp-three-faction@1"],
+  ["V-REF", "First Eligible not a player faction", "sequence.yaml", { firstEligibleAtStart: "army" }, "firstEligibleAtStart", "army"],
+  ["V-REF", "player faction without pass income", "sequence.yaml", { "passIncome/pkk": DELETE }, "passIncome", "pkk"],
+  ["V-REF", "adjacency box not on the track", "sequence.yaml", { boxes: ["event", "limitedOp", "opOnly", "opSa"].map((id) => ({ id, label: id })) }, "adjacency.0.0", "pass"],
   ["V-RANGE", "level beyond the support scale", "scenarios/s0.yaml", { "spaces/town/level": 3 }, "spaces.town.level", "town"],
   ["V-RANGE", "level on a space with no support scale", "scenarios/s0.yaml", { "spaces/camp/level": 0 }, "spaces.camp.level", "camp"],
   ["V-RANGE", "support scale space without supportLevels", "map.yaml", { "supportLevels": DELETE }, "spaces.0.hasSupportScale", "hills"],
@@ -191,6 +195,11 @@ describe("loadPackage on invalid packages", () => {
     const result = loadPackage(changed(file, edits));
     expect(result.ok).toBe(false);
     expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code, file, path, id }));
+  });
+
+  it("V-FACTIONS: rejects a player count the sequence model does not support", () => {
+    const result = loadPackage(changed("factions.yaml", { "2": { id: "legal", name: "Legal", color: "blue", kind: "player" } }));
+    expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code: "V-FACTIONS", file: "sequence.yaml", path: "model", id: "ct-two-faction@1" }));
   });
 
   it("asks for supportLevels when a term has a level condition and the map has none", () => {
@@ -219,13 +228,13 @@ describe("loadPackage on invalid packages", () => {
   });
 
   it("warns about files the loader does not read, and still loads", () => {
-    const dir = tempPackage("sequence.yaml", "model: ct-two-faction@1\n");
+    const dir = tempPackage("actions.yaml", "[]\n");
     writeFileSync(join(dir, "scenarios", "s1.yml"), "id: s1\n");
     const result = loadPackage(readPackageDir(dir));
     expect(result.ok).toBe(true);
     expect(result.issues).toEqual([
+      expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "actions.yaml", path: "", id: null }),
       expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "scenarios/s1.yml", path: "", id: null }),
-      expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "sequence.yaml", path: "", id: null }),
     ]);
   });
 

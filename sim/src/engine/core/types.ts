@@ -2,6 +2,7 @@
 // Every type is plain JSON, so canonicalJson can hash it (05 s8 item 6).
 // Optional values are null, never a missing key. Every map is keyed by ID,
 // so N factions need no type change (DEC-18).
+import type { Exec } from "./exec.ts";
 import type { RngState } from "./rng.ts";
 
 export type FactionId = string;
@@ -121,6 +122,17 @@ export interface RulesetVictory {
   readonly totals: Readonly<Record<string, readonly FormulaTerm[]>>;
 }
 
+/** sequence.yaml (04 s4.6). Box IDs: event, limitedOp, opOnly, opSa, pass. */
+export interface RulesetSequence {
+  readonly model: string;
+  readonly boxes: readonly string[];
+  /** Responder graph edges (research 05 s2.3). */
+  readonly adjacency: readonly (readonly [string, string])[];
+  readonly swapAfter: readonly string[];
+  readonly firstEligibleAtStart: FactionId;
+  readonly passIncome: Readonly<Record<FactionId, number>>;
+}
+
 /** A parameters.yaml value (04 s4.5). */
 export type ParamValue = number | string | readonly (number | string)[];
 
@@ -138,6 +150,7 @@ export interface Ruleset {
   /** parameters.yaml by ID. Null: an entry with no value (only non-tune entries, V-PARAM). Read with param(). */
   readonly parameters: Readonly<Record<string, ParamValue | null>>;
   readonly victory: RulesetVictory;
+  readonly sequence: RulesetSequence;
   /** Marker types that a harmCount term counts. Their empty supply warns (PA-09). */
   readonly harmMarkers: readonly MarkerTypeId[];
   /** Scenarios by ID (04 s4.10). */
@@ -344,8 +357,10 @@ export type ApplyResult =
 export interface CommandHandler {
   readonly ruleRef: RuleRef;
   check(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Violation[];
-  /** Effects of a command that passed `check`. */
+  /** Deterministic effects of a command that passed `check`: the preview (05 s4). */
   resolve(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Effect[];
+  /** Full resolution. Absent: apply the `resolve` effects. */
+  execute?(ctx: Exec, command: AnyCommand): void;
 }
 
 // Effects: core primitives (04 s5; 03 s6.1 items 4 to 6). Locations and counts are

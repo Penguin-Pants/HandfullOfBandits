@@ -2,6 +2,7 @@
 // Input has passed V-SCHEMA. Each issue names file, path, element ID and one sentence.
 import { own } from "../engine/core/state.ts";
 import type { FormulaTerm, SpaceCondition } from "../engine/core/types.ts";
+import { sequenceModels } from "../engine/modules/registry.ts";
 import type { PackageFileData } from "./schema/index.ts";
 
 export type IssueCode = "V-SCHEMA" | "V-REF" | "V-PIECES" | "V-STACK" | "V-LINKS" | "V-PARAM" | "V-FACTIONS" | "V-RANGE" | "V-VICTORY";
@@ -27,13 +28,14 @@ export interface PackageData {
   readonly tracks: PackageFileData<"tracks">;
   readonly markers: PackageFileData<"markers">;
   readonly victory: PackageFileData<"victory">;
+  readonly sequence: PackageFileData<"sequence">;
   /** Absent when the package has no assumptions.yaml. */
   readonly assumptions?: PackageFileData<"assumptions">;
   /** By file path, for example `scenarios/s0.yaml`. */
   readonly scenarios: Readonly<Record<string, PackageFileData<"scenario">>>;
 }
 
-/** Player faction counts the package format allows (04 s4.1). The sequence model check comes with P2-03. */
+/** Player faction counts the package format allows (04 s4.1). The sequence model narrows it. */
 const PLAYER_FACTIONS = { min: 2, max: 4 };
 
 type Space = PackageFileData<"map">["spaces"][number];
@@ -71,6 +73,26 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
   if (players < PLAYER_FACTIONS.min || players > PLAYER_FACTIONS.max) {
     error("V-FACTIONS", "factions.yaml", "", null, `Found ${String(players)} player factions. Use ${String(PLAYER_FACTIONS.min)} to ${String(PLAYER_FACTIONS.max)}.`);
   }
+  // V-FACTIONS, V-REF: sequence.yaml (04 s4.6)
+  const seq = pkg.sequence;
+  const model = own(sequenceModels, seq.model);
+  if (model === undefined) {
+    error("V-REF", "sequence.yaml", "model", seq.model, `Unknown sequence model "${seq.model}". Use one of: ${Object.keys(sequenceModels).join(", ")}.`);
+  } else if (model.players !== players) {
+    error("V-FACTIONS", "sequence.yaml", "model", seq.model, `Sequence model "${seq.model}" needs ${String(model.players)} player factions, but factions.yaml has ${String(players)}.`);
+  }
+  const playerIds = new Map(playerFactions.map((f) => [f.id, f]));
+  ref(playerIds, "player faction", seq.firstEligibleAtStart, "sequence.yaml", "firstEligibleAtStart", seq.firstEligibleAtStart);
+  for (const id of Object.keys(seq.passIncome)) ref(playerIds, "player faction", id, "sequence.yaml", `passIncome.${id}`, id);
+  for (const f of playerFactions) {
+    if (own(seq.passIncome, f.id) === undefined) error("V-REF", "sequence.yaml", "passIncome", f.id, `Player faction "${f.id}" needs a pass income.`);
+  }
+  const boxIds = seq.boxes.map((b) => b.id);
+  seq.adjacency.forEach((pair, i) => {
+    pair.forEach((box, j) => { face(boxIds, "box", box, "sequence.yaml", `adjacency.${String(i)}.${String(j)}`, box); });
+  });
+  seq.swapAfter.forEach((box, i) => { face(boxIds, "box", box, "sequence.yaml", `swapAfter.${String(i)}`, box); });
+
   pkg.factions.forEach((f, i) => {
     if (f.resourcesTrack !== undefined) ref(tracks, "track", f.resourcesTrack, "factions.yaml", `${String(i)}.resourcesTrack`, f.id);
   });

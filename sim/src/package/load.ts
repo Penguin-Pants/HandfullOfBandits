@@ -10,7 +10,7 @@ import type { Ruleset, RulesetScenario } from "../engine/core/types.ts";
 import { parsePackageFile, type PackageFile } from "./schema/index.ts";
 import { validatePackage, type PackageData, type PackageIssue } from "./validate.ts";
 
-const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers", "victory"] as const;
+const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers", "victory", "sequence"] as const;
 /** Read when present. A package without them is valid. */
 const OPTIONAL_FILES = ["assumptions"] as const;
 const SCENARIO_DIR = "scenarios";
@@ -129,6 +129,7 @@ export function loadPackage(raw: RawPackage): LoadResult {
     tracks: parsed["tracks.yaml"] as PackageData["tracks"],
     markers: parsed["markers.yaml"] as PackageData["markers"],
     victory: parsed["victory.yaml"] as PackageData["victory"],
+    sequence: parsed["sequence.yaml"] as PackageData["sequence"],
     ...("assumptions.yaml" in parsed ? { assumptions: parsed["assumptions.yaml"] as NonNullable<PackageData["assumptions"]> } : {}),
     scenarios: Object.fromEntries(scenarioPaths.map((path) => [path, parsed[path] as PackageData["scenarios"][string]])),
   };
@@ -183,6 +184,14 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
     levelRange: data.map.supportLevels === undefined ? 0 : (data.map.supportLevels.length - 1) / 2,
     parameters,
     victory: data.victory,
+    sequence: {
+      model: data.sequence.model,
+      boxes: data.sequence.boxes.map((b) => b.id),
+      adjacency: data.sequence.adjacency.map(([a, b]) => [a ?? "", b ?? ""] as const),
+      swapAfter: data.sequence.swapAfter,
+      firstEligibleAtStart: data.sequence.firstEligibleAtStart,
+      passIncome: data.sequence.passIncome,
+    },
     harmMarkers: markersIn(Object.values(data.victory.harmCount).flat()),
     scenarios: Object.fromEntries(Object.values(data.scenarios).map((s) => [s.id, compileScenario(data, s)])),
   };

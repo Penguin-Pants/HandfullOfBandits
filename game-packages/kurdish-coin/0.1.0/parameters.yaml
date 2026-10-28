@@ -8,8 +8,6 @@
 - {id: europe.drainFrom, value: 4, tune: false, source: "04 s3.6; 05 s6.4 step 6"}
 - {id: europe.banCap, value: 3, tune: false, source: "04 s3.6"}
 # 05 Sequence of play
-- {id: pass.income.state, value: 2, tune: false, source: "05 s3.2"}
-- {id: pass.income.pkk, value: 1, tune: false, source: "05 s3.2"}
 - {id: income.state.base, value: 8, tune: true, source: "05 s6.2 item 1"}
 - {id: income.state.legitimacyDivisor, value: 2, tune: true, source: "05 s6.2 item 1"}
 - {id: income.pkk.domesticBase, value: 1, tune: true, source: "05 s6.2 item 2"}
