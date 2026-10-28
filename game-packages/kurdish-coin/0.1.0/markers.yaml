@@ -1,0 +1,17 @@
+# Research 04 s4. Support and Opposition markers are space levels (map.yaml supportLevels).
+# Initiative cylinders are initiative state. Harm counts are in victory.yaml only (DEC-38).
+- {id: stateHarm, count: 12, blocks: [support], source: "04 s4"}
+- {id: pkkHarm, count: 12, blocks: [opposition], source: "04 s4"}
+- {id: disputedHarm, count: 6, source: "04 s4"}
+- {id: coercion, count: 8, blocks: [support, opposition], source: "04 s4"}
+- {id: displacement, count: 10, sides: [new, old], source: "04 s4"}
+- {id: reception, count: 8, source: "04 s4"}
+- {id: covert, count: 6, hidden: true, source: "04 s4; 06 s3.5"}
+- {id: office, count: 8, capsLevel: 1, source: "04 s4; DD-18.4"}
+- {id: closureCase, count: 1, source: "04 s4"}
+- {id: successor, count: 1, source: "04 s4"}
+- {id: ban, count: 1, source: "04 s4, s3.6"}
+- {id: restraintBroken, count: 2, sides: [state, pkk], source: "04 s4"}
+- {id: capability, count: 12, sides: [state, pkk], source: "04 s4"}
+- {id: momentum, count: 8, source: "04 s4"}
+- {id: leadership, count: 1, sides: [present, abroad], source: "04 s2; DD-09.6"}

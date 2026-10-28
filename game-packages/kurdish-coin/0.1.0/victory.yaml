@@ -1,0 +1,25 @@
+# Research 09 s1 (scores) and s3.1 (Harm counts); 04 s4.1 and s4.2. Only domestic spaces have a
+# support scale, so level terms count domestic spaces only (09 s1 item 1).
+totals:
+  totalSupport:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [2]}}}
+  totalOpposition:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-2]}}}
+  domesticPkkBases:
+    - {type: countPieces, pieces: [pkkBase], where: {type: spaceKind, kind: domestic}}
+scores:
+  state:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [2]}}}
+    - {type: trackValue, track: legitimacy}
+  pkk:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-2]}}}
+    - {type: countPieces, pieces: [pkkBase], where: {type: spaceKind, kind: domestic}}
+harmCount:
+  state:
+    - {type: countMarkers, markers: [stateHarm]}
+  pkk:
+    - {type: countMarkers, markers: [pkkHarm, coercion]}

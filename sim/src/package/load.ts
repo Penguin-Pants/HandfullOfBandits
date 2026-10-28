@@ -11,6 +11,8 @@ import { parsePackageFile, type PackageFile } from "./schema/index.ts";
 import { validatePackage, type PackageData, type PackageIssue } from "./validate.ts";
 
 const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers", "victory"] as const;
+/** Read when present. A package without them is valid. */
+const OPTIONAL_FILES = ["assumptions"] as const;
 const SCENARIO_DIR = "scenarios";
 
 /** Parsed YAML by package path (`/` separators). A file that failed to parse holds its issues instead. */
@@ -23,7 +25,7 @@ export type LoadResult =
   | { readonly ok: true; readonly data: PackageData; readonly hash: string; readonly ruleset: Ruleset; readonly issues: readonly PackageIssue[] }
   | { readonly ok: false; readonly issues: readonly PackageIssue[] };
 
-const READ_ROOT = new Set(CORE_FILES.map((file) => `${file}.yaml`));
+const READ_ROOT = new Set([...CORE_FILES, ...OPTIONAL_FILES].map((file) => `${file}.yaml`));
 /** Root entries that are not read and need no warning. */
 const QUIET_ROOT = new Set([SCENARIO_DIR, "CHANGELOG.md"]);
 
@@ -45,6 +47,7 @@ function entries(dir: string, path: string, issues: PackageIssue[]): string[] {
 /**
  * Read the core files and `scenarios/*.yaml`. Every other entry gets a warning, so a misnamed
  * file is never skipped in silence. Sequence, actions and cards have no schema yet (DEC-40).
+ * Optional files (assumptions) are read when present.
  */
 export function readPackageDir(dir: string): RawPackage {
   const files: Record<string, unknown> = {};
@@ -112,6 +115,7 @@ export function loadPackage(raw: RawPackage): LoadResult {
     }
   };
   for (const file of CORE_FILES) check(file, `${file}.yaml`);
+  for (const file of OPTIONAL_FILES) if (`${file}.yaml` in raw.files) check(file, `${file}.yaml`);
   const scenarioPaths = Object.keys(raw.files).filter((path) => path.startsWith(`${SCENARIO_DIR}/`)).sort();
   for (const path of scenarioPaths) check("scenario", path);
   if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
@@ -125,6 +129,7 @@ export function loadPackage(raw: RawPackage): LoadResult {
     tracks: parsed["tracks.yaml"] as PackageData["tracks"],
     markers: parsed["markers.yaml"] as PackageData["markers"],
     victory: parsed["victory.yaml"] as PackageData["victory"],
+    ...("assumptions.yaml" in parsed ? { assumptions: parsed["assumptions.yaml"] as NonNullable<PackageData["assumptions"]> } : {}),
     scenarios: Object.fromEntries(scenarioPaths.map((path) => [path, parsed[path] as PackageData["scenarios"][string]])),
   };
   // 04 s10.2: hash the normalized content, so whitespace and comments do not change it.

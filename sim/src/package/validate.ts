@@ -27,6 +27,8 @@ export interface PackageData {
   readonly tracks: PackageFileData<"tracks">;
   readonly markers: PackageFileData<"markers">;
   readonly victory: PackageFileData<"victory">;
+  /** Absent when the package has no assumptions.yaml. */
+  readonly assumptions?: PackageFileData<"assumptions">;
   /** By file path, for example `scenarios/s0.yaml`. */
   readonly scenarios: Readonly<Record<string, PackageFileData<"scenario">>>;
 }

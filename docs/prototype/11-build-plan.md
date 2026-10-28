@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05). Phase 2 in progress: P2-01 done.
 
 ## 1. How to use this plan
 
@@ -202,6 +202,9 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-SCORE for the full campaign setup.
 - **Risks:** Typos in adjacency. Test that adjacency equals the 03 s4.1 list.
 - **Out:** Package data.
+- **Done:** `game-packages/kurdish-coin/0.1.0/`: manifest, parameters (03, 04, 05, 09 values), factions, pieces, map (18 locations, 25 links), tracks, markers, victory, `assumptions.yaml` (PA-01 to PA-17) and `scenarios/full-campaign.yaml`. `sim/test/kurdish.test.ts`: validate passes with no issues, adjacency equals the 03 s4.1 list, T-SCORE 21 and 4, margins -28 and -26, Control as in 10 s2.2. New optional schema `assumptions` (04 s7, DEC-49).
+- **Moved:** the full campaign scenario file came with P2-01, because its accept test (start scores) needs a setup. P2-02 adds S0 and the totals check.
+- **Open for later tasks:** operation and SA parameters come with their handlers (P2-06 to P2-08). Host posture limits on external links are handler rules (07 s5), not map gates (DEC-49). Pivotal hands and `excludedCards` come with cards (P2-05).
 
 ### P2-02 Scenarios: full campaign setup and S0
 

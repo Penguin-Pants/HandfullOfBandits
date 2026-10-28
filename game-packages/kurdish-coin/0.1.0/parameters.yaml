@@ -1,0 +1,32 @@
+# Values from research 03, 04, 05 and 09 (11 P2-01). tune: true where the research marks [tune].
+# Operation and Special Activity values come with their handlers (P2-06 to P2-08).
+# 03 Map
+- {id: rally.externalPop, value: 1, tune: false, source: "03 s3 item 3"}
+# 04 Tracks
+- {id: legitimacy.overflowCost, value: 2, tune: true, source: "04 s3.2; PA-04"}
+- {id: europe.income, value: [0, 0, 1, 1, 2, 2], tune: true, source: "04 s3.6 (PKK income by Europe 0 to 5)"}
+- {id: europe.drainFrom, value: 4, tune: false, source: "04 s3.6; 05 s6.4 step 6"}
+- {id: europe.banCap, value: 3, tune: false, source: "04 s3.6"}
+# 05 Sequence of play
+- {id: pass.income.state, value: 2, tune: false, source: "05 s3.2"}
+- {id: pass.income.pkk, value: 1, tune: false, source: "05 s3.2"}
+- {id: income.state.base, value: 8, tune: true, source: "05 s6.2 item 1"}
+- {id: income.state.legitimacyDivisor, value: 2, tune: true, source: "05 s6.2 item 1"}
+- {id: income.pkk.domesticBase, value: 1, tune: true, source: "05 s6.2 item 2"}
+- {id: income.pkk.externalBase, value: 1, tune: true, source: "05 s6.2 item 2"}
+- {id: income.pkk.leadershipHost, value: 2, tune: true, source: "05 s6.2 item 2"}
+- {id: income.pkk.leadershipTolerant, value: 1, tune: true, source: "05 s6.2 item 2"}
+- {id: upkeep.guardsPerResource, value: 2, tune: true, source: "05 s6.3 item 1"}
+- {id: emergencyRule.drain, value: [1, 1, 2, 0], tune: false, source: "05 s6.4 step 1 (by emergencyRule step)"}
+- {id: legitimacy.displacementDrain, value: 1, tune: false, source: "05 s6.4 step 2"}
+- {id: legitimacy.receptionThreshold, value: 3, tune: false, source: "05 s6.4 step 3"}
+- {id: legitimacy.disputedThreshold, value: 3, tune: false, source: "05 s6.4 step 4"}
+- {id: covert.exposureThreshold, value: 3, tune: false, source: "05 s6.4 step 5"}
+- {id: covert.revealCost, value: 2, tune: false, source: "05 s6.4 step 5; 09 s4 item 1"}
+- {id: europe.harmGap, value: 3, tune: false, source: "05 s6.4 step 6"}
+- {id: civicAction.capDivisor, value: 2, tune: true, source: "05 s6.6 item 2"}
+# 09 Victory
+- {id: harm.limit, value: 6, tune: true, source: "09 s3.1"}
+- {id: victory.covertCheckPenalty, value: 2, tune: false, source: "09 s3 step 1"}
+- {id: victory.finalHarmFactor, value: 2, tune: true, source: "09 s4 item 3"}
+- {id: victory.narrowMax, value: 5, tune: false, source: "09 s4 (record sheet labels)"}

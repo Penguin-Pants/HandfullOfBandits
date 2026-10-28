@@ -107,6 +107,7 @@ const valid: Record<PackageFile, unknown> = {
     excludedCards: [{ card: "T-2", reason: "Not encoded" }],
     testOnly: true,
   },
+  assumptions: [{ id: "PA-01", gap: "GAP-B01", text: "Executing faction chooses", appliesTo: ["events.choice"], status: "accepted" }],
 };
 
 const DELETE = Symbol("delete");
@@ -169,6 +170,9 @@ const invalid: [PackageFile, string, string, unknown, string][] = [
   ["scenario", "final round 0", "finalRound", 0, "finalRound"],
   ["scenario", "negative piece count", "spaces.city.pieces.rebel.underground", -2, "spaces.city.pieces.rebel.underground"],
   ["scenario", "fraction level", "spaces.city.level", 0.5, "spaces.city.level"],
+  ["assumptions", "bad PA ID", "0.id", "PA-1", "0.id"],
+  ["assumptions", "unknown status", "0.status", "open", "0.status"],
+  ["assumptions", "empty appliesTo", "0.appliesTo", [], "0.appliesTo"],
   ["scenario", "excluded card without reason", "excludedCards.0.reason", DELETE, "excludedCards.0.reason"],
 ];
 

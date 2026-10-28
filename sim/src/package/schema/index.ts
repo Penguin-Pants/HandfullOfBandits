@@ -1,5 +1,6 @@
 // Package file schemas (04 s3 to s4) and their JSON Schema form for editor hints (DEC-05).
 import { z } from "zod";
+import { assumptionsSchema } from "./assumptions.ts";
 import { factionsSchema } from "./factions.ts";
 import { manifestSchema } from "./manifest.ts";
 import { mapSchema } from "./map.ts";
@@ -21,6 +22,7 @@ export const packageFileSchemas = {
   markers: markersSchema,
   victory: victorySchema,
   scenario: scenarioSchema,
+  assumptions: assumptionsSchema,
 } as const;
 
 export type PackageFile = keyof typeof packageFileSchemas;

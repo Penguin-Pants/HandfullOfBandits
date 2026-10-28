@@ -52,6 +52,16 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ok).toBe(true);
   });
 
+  it("reads an optional assumptions.yaml and checks its schema (04 s7)", () => {
+    const entry = { id: "PA-01", gap: "GAP-B01", text: "Executing faction chooses", appliesTo: ["events.choice"], status: "accepted" };
+    const present = loadPackage({ files: { ...raw.files, "assumptions.yaml": [entry] }, issues: [] });
+    if (!present.ok) throw new Error(JSON.stringify(present.issues));
+    expect(present.data.assumptions).toEqual([entry]);
+    expect(present.hash).not.toBe(result.ok ? result.hash : "");
+    const bad = loadPackage({ files: { ...raw.files, "assumptions.yaml": [{ ...entry, status: "open" }] }, issues: [] });
+    expect(bad.issues).toContainEqual(expect.objectContaining({ code: "V-SCHEMA", file: "assumptions.yaml", path: "0.status", id: "PA-01" }));
+  });
+
   it("compiles an overflow cost from its parameter", () => {
     const other = loadPackage(changed("tracks.yaml", { "1/overflow": { track: "resources.state", costParam: "sweep.costPerSpace" } }));
     if (!other.ok) throw new Error(JSON.stringify(other.issues));
