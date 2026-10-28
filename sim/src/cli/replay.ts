@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { coinHandlers } from "../engine/coin/handlers.ts";
 import { createEngine } from "../engine/index.ts";
-import { loadPackage, readPackageDir } from "../package/load.ts";
+import { loadPackage, readPackageDir, withSessionOptions } from "../package/load.ts";
 import { replaySteps } from "../engine/replay.ts";
 import { storedSteps } from "../store/repos/actions.ts";
 import { loadPackageContent } from "../store/repos/packages.ts";
@@ -30,7 +30,7 @@ export function replaySession(sessionId: string, dbFile: string): { exitCode: nu
     const loaded = loadPackage({ files: JSON.parse(content) as Record<string, unknown>, issues: [] });
     if (!loaded.ok) return { exitCode: 1, lines: ["error: the stored package does not load"] };
     const { startHash, steps } = storedSteps(db, session.current_branch_id);
-    const diff = replaySteps(createEngine(coinHandlers), loaded.ruleset, session.scenario_id, session.seed, startHash, steps);
+    const diff = replaySteps(createEngine(coinHandlers), withSessionOptions(loaded.ruleset, session.scenario_id, JSON.parse(session.options) as Record<string, string | number>), session.scenario_id, session.seed, startHash, steps);
     return diff === null ? { exitCode: 0, lines: [`identical (${String(steps.length)} actions)`] } : { exitCode: 1, lines: [`differs at action ${diff.id}: expected ${diff.expected}, got ${diff.actual}`] };
   } finally {
     db.close();

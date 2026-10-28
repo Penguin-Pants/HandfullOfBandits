@@ -159,6 +159,13 @@ export function packageContent(data: PackageData): Record<string, unknown> {
 }
 
 /** The fields core reads (types.ts). Absent flip states and sides become empty lists. */
+/** The ruleset a session plays: its stored options replace the scenario defaults (04 s10.3). */
+export function withSessionOptions(ruleset: Ruleset, scenarioId: string, options: Readonly<Record<string, string | number>>): Ruleset {
+  const scenario = ruleset.scenarios[scenarioId];
+  if (scenario === undefined) return ruleset;
+  return { ...ruleset, scenarios: { ...ruleset.scenarios, [scenarioId]: { ...scenario, options: { ...scenario.options, ...options } } } };
+}
+
 export function compileRuleset(data: PackageData, packageHash: string, issues: readonly PackageIssue[] = []): Ruleset {
   const parameters = Object.fromEntries(data.parameters.map((p) => [p.id, p.value ?? null]));
   return {

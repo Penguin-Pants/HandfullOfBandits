@@ -13,7 +13,7 @@ import { canonicalJson } from "../engine/core/canonical.ts";
 import type { AnyCommand, GameState, JsonObject, JsonValue, LogEntry, Ruleset, ValidationResult } from "../engine/core/types.ts";
 import { createEngine } from "../engine/index.ts";
 import { replaySteps } from "../engine/replay.ts";
-import { loadPackage, packageContent, readPackageDir, type LoadResult } from "../package/load.ts";
+import { loadPackage, packageContent, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
 import type { PackageData, PackageIssue } from "../package/validate.ts";
 import type { Db } from "../store/migrate.ts";
 import { commitAction, listActions, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
@@ -134,17 +134,19 @@ export class SessionService {
       parentVersion: m.parent?.version ?? null, changeDescription: m.changeDescription, content: canonicalJson(packageContent(loaded.data)), appVersion: APP_VERSION,
     });
     this.rulesets.set(loaded.hash, { ruleset: loaded.ruleset, data: loaded.data });
-    const start = this.engine.start(loaded.ruleset, input.scenarioId, input.seed);
+    const options = input.options ?? scenario.options;
+    const ruleset = withSessionOptions(loaded.ruleset, input.scenarioId, options);
+    const start = this.engine.start(ruleset, input.scenarioId, input.seed);
     const turn = start.state.turn;
     const created = createSession(
       this.db,
       {
-        name: input.name, packageHash: loaded.hash, scenarioId: input.scenarioId, seed: input.seed, options: input.options ?? scenario.options,
+        name: input.name, packageHash: loaded.hash, scenarioId: input.scenarioId, seed: input.seed, options,
         appVersion: APP_VERSION, codeFingerprint: codeFingerprint(), modules: m.modules, excludedCards: scenario.excludedCards,
       },
       {
         faction: null, cardId: null, campaign: turn.campaign, propagandaRound: turn.propagandaRound, cardIndex: turn.cardIndex, phase: turn.phase, box: null,
-        summary: `Setup ${input.scenarioId}, seed ${String(input.seed)}`, stateAfter: this.stateInput(loaded.ruleset, start.state, start.stateHash),
+        summary: `Setup ${input.scenarioId}, seed ${String(input.seed)}`, stateAfter: this.stateInput(ruleset, start.state, start.stateHash),
         status: "committed", commands: [], entries: start.logEntries.map((e) => ({ ...e, text: entryText(e) })),
       },
     );
@@ -159,7 +161,9 @@ export class SessionService {
   session(sessionId: string): { session: SessionRow; head: Head; ruleset: Ruleset; data: PackageData } {
     const row = getSession(this.db, sessionId);
     if (row === null) throw new ServiceError(404, `Unknown session "${sessionId}".`);
-    const { ruleset, data } = this.rules(row.package_hash);
+    const rules = this.rules(row.package_hash);
+    const ruleset = withSessionOptions(rules.ruleset, row.scenario_id, JSON.parse(row.options) as Record<string, string | number>);
+    const { data } = rules;
     if (!this.checked.has(sessionId)) {
       this.checked.add(sessionId);
       if (row.code_fingerprint !== codeFingerprint() && this.replayCheck(row, ruleset) !== null) {
