@@ -177,12 +177,12 @@ Core primitives are the only code that writes state.
 
 ## 8. Determinism
 
-1. Random source: a seeded generator implemented inside core (for example xoshiro128** or PCG32). Its full state lives in `state.rng`. No library random source.
+1. Random source: xoshiro128** 1.1, seeded by two SplitMix64 outputs (DEC-35, `sim/src/engine/core/rng.ts`). Its full state (four 32-bit words) lives in `state.rng`. No library random source. Bounded draws use rejection sampling, so no modulo bias.
 2. Every die roll and random pick logs the raw value, the modifiers and the result.
 3. Deck building uses the same generator. The deck order is stored in `state.deck`. The seed alone can rebuild it, and the stored order is a check.
 4. No clock. Timestamps are added by the store, outside the engine.
 5. Iteration order: every map or set iteration uses sorted IDs or package order. Never object insertion order from runtime data.
-6. Canonical serialization: sorted keys, no undefined values, integers only. The state hash is SHA-256 of that text.
+6. Canonical serialization: sorted keys (UTF-16 code unit order), no undefined values, safe integers only, plain objects and arrays only. The state hash is lowercase hex SHA-256 of the UTF-8 text (`sim/src/engine/core/canonical.ts`).
 7. Lint: the engine folder bans `Date`, `Math.random`, `performance`, timers, network and file APIs.
 
 ## 9. Scoring and victory
