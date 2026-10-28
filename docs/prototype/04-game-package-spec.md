@@ -187,10 +187,11 @@ One entry per Operation and Special Activity.
 
 ### 4.9 victory.yaml
 
-1. `scores`: per faction, a list of formula terms.
-2. `harmCount`: per faction, a list of formula terms, for example `countMarkers`. The only source of Harm counts (DEC-38).
-3. `harmLimit`, `checkSkipFirstRound`, `tieOrder`, `finalMargin` terms.
-4. `recordSheet`: dimensions from 09 s6, as derived metrics (record only).
+1. `scores`: per faction, a list of formula terms. The value is their sum. Every player faction needs one (V-VICTORY).
+2. `harmCount`: per faction, a list of formula terms, for example `countMarkers`. The only source of Harm counts (DEC-38). Every player faction needs one (V-VICTORY). A marker type a `countMarkers` term counts here is a Harm marker for the PA-09 warning (DEC-43).
+3. `totals`: optional named lists of formula terms, for example `totalSupport` (05 s9 item 1).
+4. `harmLimit`, `checkSkipFirstRound`, `tieOrder`, `finalMargin` terms (P3a; not in the schema yet).
+5. `recordSheet`: dimensions from 09 s6, as derived metrics (record only; P3a).
 
 Thresholds live in scenario files, because they differ per scenario.
 
@@ -283,6 +284,21 @@ Conditions: `campaignAtLeast`, `campaignIn`, `trackAtLeast`, `trackAtMost`, `tra
 Formula terms: `sumPopWhere`, `countPieces`, `countMarkers`, `trackValue`, `divideFloor`, `multiply`, `add`, `constant`, `moduleTerm`.
 
 There is no expression string. A new term type needs a code change and a schema version bump.
+
+Shapes built in P1-09 (DEC-43). Each term is an object with a `type` key. Pieces and markers count on the map only, never in pools.
+
+| Term | Fields |
+|---|---|
+| `sumPopWhere` | `where`: space condition. Sum of Pop of matching spaces |
+| `countPieces` | `pieces`: piece IDs, optional `where` (absent: every space). Every face counts |
+| `countMarkers` | `markers`: marker IDs, optional `sides` (absent: every side), optional `where` |
+| `trackValue` | `track`: numeric track ID |
+| `divideFloor` | `of`: term, `by`: integer 1 or more. Rounds down |
+| `multiply` | `of`: term, `by`: integer |
+| `add` | `terms`: list of terms |
+| `constant` | `value`: integer |
+
+Space conditions built in P1-09: `spaceKind` (`kind`), `terrainIn` (`terrain` list), `spaceLevelIn` (`levels`: signed levels, never matches a space with no support scale), `control` (`faction`), `spaceHas` (`pieces` and/or `markers`: at least one of a listed type), `all` and `any` (`of`: list), `not` (`of`: condition). The other conditions and `moduleTerm` come with their first users (P2-05, rule modules).
 
 ## 9. Validation
 

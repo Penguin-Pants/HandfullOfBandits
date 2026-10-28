@@ -2,8 +2,8 @@
 import { z } from "zod";
 import { count, elementList, id, idList, ruleMeta, text, uniqueList } from "./common.ts";
 
-const terrain = z.enum(["mountain", "plain", "city"]);
-const spaceKind = z.enum(["domestic", "external"]);
+export const terrain = z.enum(["mountain", "plain", "city"]);
+export const spaceKind = z.enum(["domestic", "external"]);
 
 const space = z
   .strictObject({

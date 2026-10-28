@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01, P1-01 to P1-05, P1-07 and P1-08 done. P1-06 done except its 3 cards (blocked until P2-05).
+Status: planning document. P0-01, P1-01 to P1-05 and P1-07 to P1-09 done. P1-06 done except its 3 cards (blocked until P2-05).
 
 ## 1. How to use this plan
 
@@ -136,6 +136,9 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** T-SCORE (tiny).
 - **Risks:** Term set too small. Add terms only with a schema bump.
 - **Out:** Derive module.
+- **Done:** `victory.yaml` is a core file with a schema subset: `scores`, `harmCount`, `totals` (DEC-43). V-REF, V-RANGE and new V-VICTORY check its terms; V-VICTORY also needs a scenario threshold per player faction. `Ruleset` gains space `pop`, piece `countsForControl`, `victory`, `harmMarkers` and scenario `thresholds`. `sim/src/engine/core/terms.ts` evaluates the 8 formula terms and 8 space conditions. `sim/src/engine/coin/derive.ts`: `control` (pieces exceed all other factions combined) and `derive` (Control, totals, scores, Harm counts, margins). `placeMarker` adds `warning: harmSupplyExhausted` to its PA-09 skip for a Harm marker. Tiny gains `victory.yaml`. T-SCORE: `derive.test.ts` hand math on tiny, `terms.test.ts` edge cases, 12 new loader cases, 8 new schema cases.
+- **Size:** about 620 changed lines without fixtures and generated files, above the 400-line target. The victory.yaml schema and its checks were not in Files; they are the only data source for score terms (DEC-38).
+- **Open for later tasks:** `moduleTerm` and the track, campaign, flag, option, adjacency and `selected` conditions (P2-05 and the module registry). `harmLimit`, `checkSkipFirstRound`, `tieOrder`, `finalMargin`, `recordSheet` and the Covert penalty at a check (P3a-02). P2-01 must ship a `victory.yaml`: start scores 21 and 4 come from it.
 
 ### P1-10 Engine apply loop and log entries
 

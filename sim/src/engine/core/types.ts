@@ -20,7 +20,7 @@ export interface JsonObject {
 
 // The package compiles to a Ruleset (03 s5). These are the fields core reads.
 // The P1-05 loader builds them from the P1-04 schema output (DEC-37). P1-07 primitives read
-// stacking, levels, blocks, caps and overflow.
+// stacking, levels, blocks, caps and overflow. P1-09 derive reads pop, Control and victory terms.
 
 export interface RulesetFaction {
   readonly id: FactionId;
@@ -36,6 +36,7 @@ export interface RulesetPiece {
   /** Face a placement uses when the effect names none (05 s7). Null: SINGLE_FACE. */
   readonly placedAs: string | null;
   readonly startPool: "available" | "outOfPlay";
+  readonly countsForControl: boolean;
 }
 
 export interface RulesetSpace {
@@ -43,6 +44,7 @@ export interface RulesetSpace {
   readonly hasSupportScale: boolean;
   readonly kind: "domestic" | "external";
   readonly terrain: string | null;
+  readonly pop: number;
 }
 
 /** At most `max` of `pieces` in each space that matches every non-null filter (04 s4.3). */
@@ -76,6 +78,47 @@ export interface RulesetMarker {
   readonly capsLevel: number | null;
 }
 
+// Condition and formula terms (04 s8): a closed set, no expression strings (03 s6.2).
+// Space conditions hold for one space. Track, campaign and card conditions come with P2-05.
+
+export type SpaceCondition =
+  | { readonly type: "spaceKind"; readonly kind: "domestic" | "external" }
+  | { readonly type: "terrainIn"; readonly terrain: readonly string[] }
+  /** Signed levels from Neutral (DEC-36). A space with no support scale never matches. */
+  | { readonly type: "spaceLevelIn"; readonly levels: readonly number[] }
+  | { readonly type: "control"; readonly faction: FactionId }
+  /** At least one piece or marker of a listed type, any face. */
+  | { readonly type: "spaceHas"; readonly pieces: readonly PieceTypeId[]; readonly markers: readonly MarkerTypeId[] }
+  | { readonly type: "all"; readonly of: readonly SpaceCondition[] }
+  | { readonly type: "any"; readonly of: readonly SpaceCondition[] }
+  | { readonly type: "not"; readonly of: SpaceCondition };
+
+/** Pieces and markers count on the map only, never in pools. Null `where`: every space. */
+export type FormulaTerm =
+  | { readonly type: "sumPopWhere"; readonly where: SpaceCondition }
+  | { readonly type: "countPieces"; readonly pieces: readonly PieceTypeId[]; readonly where: SpaceCondition | null }
+  | {
+      readonly type: "countMarkers";
+      readonly markers: readonly MarkerTypeId[];
+      /** Null: every side. */
+      readonly sides: readonly string[] | null;
+      readonly where: SpaceCondition | null;
+    }
+  | { readonly type: "trackValue"; readonly track: TrackId }
+  | { readonly type: "divideFloor"; readonly of: FormulaTerm; readonly by: number }
+  | { readonly type: "multiply"; readonly of: FormulaTerm; readonly by: number }
+  | { readonly type: "add"; readonly terms: readonly FormulaTerm[] }
+  | { readonly type: "constant"; readonly value: number };
+
+/** victory.yaml subset (04 s4.9). Each list is a sum of terms. */
+export interface RulesetVictory {
+  readonly scores: Readonly<Record<FactionId, readonly FormulaTerm[]>>;
+  /** The only source of Harm counts (DEC-38). */
+  readonly harmCount: Readonly<Record<FactionId, readonly FormulaTerm[]>>;
+  /** Named totals, for example Total Support. */
+  readonly totals: Readonly<Record<string, readonly FormulaTerm[]>>;
+}
+
 /** A parameters.yaml value (04 s4.5). */
 export type ParamValue = number | string | readonly (number | string)[];
 
@@ -92,6 +135,11 @@ export interface Ruleset {
   readonly levelRange: number;
   /** parameters.yaml by ID. Null: an entry with no value (only non-tune entries, V-PARAM). Read with param(). */
   readonly parameters: Readonly<Record<string, ParamValue | null>>;
+  readonly victory: RulesetVictory;
+  /** Marker types that a harmCount term counts. Their empty supply warns (PA-09). */
+  readonly harmMarkers: readonly MarkerTypeId[];
+  /** Scenario thresholds by scenario ID, then faction. */
+  readonly thresholds: Readonly<Record<string, Readonly<Record<FactionId, number>>>>;
 }
 
 // Game state (05 s2). Derived values are never stored here.
@@ -193,6 +241,7 @@ export interface DerivedView {
   readonly totals: Readonly<Record<string, number>>;
   readonly scores: Readonly<Record<FactionId, number>>;
   readonly harm: Readonly<Record<FactionId, number>>;
+  /** Score minus the scenario threshold, for each faction with a threshold. */
   readonly margins: Readonly<Record<FactionId, number>>;
 }
 

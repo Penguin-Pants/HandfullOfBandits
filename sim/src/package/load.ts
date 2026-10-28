@@ -4,11 +4,12 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseDocument } from "yaml";
 import { canonicalHash } from "../engine/core/canonical.ts";
+import { markersIn } from "../engine/core/terms.ts";
 import type { Ruleset } from "../engine/core/types.ts";
 import { parsePackageFile, type PackageFile } from "./schema/index.ts";
 import { validatePackage, type PackageData, type PackageIssue } from "./validate.ts";
 
-const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers"] as const;
+const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers", "victory"] as const;
 const SCENARIO_DIR = "scenarios";
 
 /** Parsed YAML by package path (`/` separators). A file that failed to parse holds its issues instead. */
@@ -42,7 +43,7 @@ function entries(dir: string, path: string, issues: PackageIssue[]): string[] {
 
 /**
  * Read the core files and `scenarios/*.yaml`. Every other entry gets a warning, so a misnamed
- * file is never skipped in silence. Sequence, actions, cards and victory have no schema yet (DEC-40).
+ * file is never skipped in silence. Sequence, actions and cards have no schema yet (DEC-40).
  */
 export function readPackageDir(dir: string): RawPackage {
   const files: Record<string, unknown> = {};
@@ -124,6 +125,7 @@ export function loadPackage(raw: RawPackage): LoadResult {
     map: parsed["map.yaml"] as PackageData["map"],
     tracks: parsed["tracks.yaml"] as PackageData["tracks"],
     markers: parsed["markers.yaml"] as PackageData["markers"],
+    victory: parsed["victory.yaml"] as PackageData["victory"],
     scenarios: Object.fromEntries(scenarioPaths.map((path) => [path, parsed[path] as PackageData["scenarios"][string]])),
   };
   issues.push(...validatePackage(data));
@@ -145,8 +147,9 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
       states: p.states ?? [],
       placedAs: p.placedAs ?? null,
       startPool: p.startPool,
+      countsForControl: p.countsForControl,
     })),
-    spaces: data.map.spaces.map((s) => ({ id: s.id, hasSupportScale: s.hasSupportScale, kind: s.kind, terrain: s.terrain ?? null })),
+    spaces: data.map.spaces.map((s) => ({ id: s.id, hasSupportScale: s.hasSupportScale, kind: s.kind, terrain: s.terrain ?? null, pop: s.pop })),
     tracks: data.tracks.map((t) => {
       if (t.kind === "ordinal") return { id: t.id, kind: t.kind, steps: t.steps };
       // V-PARAM guarantees an integer cost for every overflow.
@@ -164,5 +167,8 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
     })),
     levelRange: data.map.supportLevels === undefined ? 0 : (data.map.supportLevels.length - 1) / 2,
     parameters,
+    victory: data.victory,
+    harmMarkers: markersIn(Object.values(data.victory.harmCount).flat()),
+    thresholds: Object.fromEntries(Object.values(data.scenarios).map((s) => [s.id, s.thresholds ?? {}])),
   };
 }

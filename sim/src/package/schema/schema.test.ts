@@ -70,6 +70,27 @@ const valid: Record<PackageFile, unknown> = {
     { id: "harm", count: 6, blocks: ["support"], capsLevel: 1 },
     { id: "secret", count: 2, sides: ["faceDown", "revealed"], hidden: true },
   ],
+  // Every defaulted field is set, so the parsed value equals the input.
+  victory: {
+    scores: {
+      blue: [
+        { type: "sumPopWhere", where: { type: "all", of: [{ type: "spaceKind", kind: "domestic" }, { type: "spaceLevelIn", levels: [1] }] } },
+        { type: "multiply", of: { type: "trackValue", track: "cash.blue" }, by: -1 },
+      ],
+    },
+    harmCount: {
+      blue: [
+        { type: "countMarkers", markers: ["harm"], sides: null, where: null },
+        { type: "countPieces", pieces: ["camp"], where: { type: "not", of: { type: "control", faction: "blue" } } },
+      ],
+    },
+    totals: {
+      bases: [
+        { type: "divideFloor", of: { type: "add", terms: [{ type: "constant", value: 3 }] }, by: 2 },
+        { type: "sumPopWhere", where: { type: "any", of: [{ type: "terrainIn", terrain: ["city"] }, { type: "spaceHas", pieces: ["camp"], markers: [] }] } },
+      ],
+    },
+  },
   scenario: {
     id: "s0",
     title: "Slice",
@@ -137,6 +158,14 @@ const invalid: [PackageFile, string, string, unknown, string][] = [
   ["markers", "duplicate block direction", "0.blocks", ["support", "support"], "0.blocks"],
   ["markers", "negative level cap", "0.capsLevel", -1, "0.capsLevel"],
   ["markers", "one side", "1.sides", ["faceDown"], "1.sides"],
+  ["victory", "unknown term type", "scores.blue.1.type", "power", "scores.blue.1.type"],
+  ["victory", "empty term list", "scores.blue", [], "scores.blue"],
+  ["victory", "divide by 0", "totals.bases.0.by", 0, "totals.bases.0.by"],
+  ["victory", "unknown condition type", "scores.blue.0.where.of.0.type", "region", "scores.blue.0.where.of.0.type"],
+  ["victory", "fraction level", "scores.blue.0.where.of.1.levels", [0.5], "scores.blue.0.where.of.1.levels.0"],
+  ["victory", "spaceHas with nothing listed", "totals.bases.1.where.of.1.pieces", [], "totals.bases.1.where.of.1.pieces"],
+  ["victory", "unknown terrain", "totals.bases.1.where.of.0.terrain", ["sea"], "totals.bases.1.where.of.0.terrain.0"],
+  ["victory", "unknown key", "harmLimit", 6, ""],
   ["scenario", "final round 0", "finalRound", 0, "finalRound"],
   ["scenario", "negative piece count", "spaces.city.pieces.rebel.underground", -2, "spaces.city.pieces.rebel.underground"],
   ["scenario", "fraction level", "spaces.city.level", 0.5, "spaces.city.level"],

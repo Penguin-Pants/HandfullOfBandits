@@ -1,0 +1,16 @@
+totals:
+  totalSupport:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [2]}}}
+scores:
+  state:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [1]}}
+    - {type: trackValue, track: resources.state}
+  pkk:
+    - {type: countPieces, pieces: [pkkBase], where: {type: spaceKind, kind: domestic}}
+harmCount:
+  state:
+    - {type: countMarkers, markers: [stateHarm]}
+    - {type: countMarkers, markers: [covert], sides: [faceDown], where: {type: control, faction: state}}
+  pkk:
+    - {type: constant, value: 0}

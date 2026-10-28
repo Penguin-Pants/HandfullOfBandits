@@ -67,14 +67,21 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.markers.find((m) => m.id === "stateHarm")?.sides).toEqual([]);
     expect(result.ruleset.tracks.find((t) => t.id === "posture")).toEqual({ id: "posture", kind: "ordinal", steps: ["host", "tolerant", "hostile"] });
     expect(result.ruleset.spaces).toEqual([
-      { id: "hills", hasSupportScale: true, kind: "domestic", terrain: "mountain" },
-      { id: "town", hasSupportScale: true, kind: "domestic", terrain: "city" },
-      { id: "camp", hasSupportScale: false, kind: "external", terrain: null },
+      { id: "hills", hasSupportScale: true, kind: "domestic", terrain: "mountain", pop: 2 },
+      { id: "town", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 3 },
+      { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0 },
     ]);
     expect(result.ruleset.levelRange).toBe(2);
     expect(result.ruleset.markers.find((m) => m.id === "office")).toEqual({ id: "office", count: 2, sides: [], blocks: [], capsLevel: 1 });
     expect(result.ruleset.stacking[1]).toEqual({ pieces: ["pkkBase"], max: 0, spaceKind: null, terrain: ["city"], spaces: null });
     expect(result.ruleset.parameters).toEqual({ "sweep.costPerSpace": 2, "harm.limit": 6, "ui.label": "text" });
+    expect(result.ruleset.pieces.find((p) => p.id === "pkkBase")?.countsForControl).toBe(true);
+    expect(result.ruleset.victory.scores["pkk"]).toEqual([
+      { type: "countPieces", pieces: ["pkkBase"], where: { type: "spaceKind", kind: "domestic" } },
+    ]);
+    expect(Object.keys(result.ruleset.victory.totals)).toEqual(["totalSupport"]);
+    expect(result.ruleset.harmMarkers).toEqual(["stateHarm", "covert"]);
+    expect(result.ruleset.thresholds).toEqual({ s0: { state: 30, pkk: 20 } });
   });
 
   it("compiles a non-tune parameter with no value to null", () => {
@@ -132,6 +139,18 @@ const invalid: [string, string, string, Record<string, unknown>, string, string 
   ["V-RANGE", "level beyond the support scale", "scenarios/s0.yaml", { "spaces/town/level": 3 }, "spaces.town.level", "town"],
   ["V-RANGE", "level on a space with no support scale", "scenarios/s0.yaml", { "spaces/camp/level": 0 }, "spaces.camp.level", "camp"],
   ["V-RANGE", "support scale space without supportLevels", "map.yaml", { "supportLevels": DELETE }, "spaces.0.hasSupportScale", "hills"],
+  ["V-REF", "score for unknown faction", "victory.yaml", { "scores/army": [{ type: "constant", value: 1 }] }, "scores.army", "army"],
+  ["V-REF", "unknown piece in a term", "victory.yaml", { "scores/pkk/0/pieces/0": "camp" }, "scores.pkk.0.pieces.0", "pkk"],
+  ["V-REF", "unknown marker in a term", "victory.yaml", { "harmCount/state/0/markers/0": "harm" }, "harmCount.state.0.markers.0", "state"],
+  ["V-REF", "side the marker lacks", "victory.yaml", { "harmCount/state/1/sides/0": "old" }, "harmCount.state.1.sides.0", "state"],
+  ["V-REF", "control by unknown faction", "victory.yaml", { "harmCount/state/1/where/faction": "army" }, "harmCount.state.1.where.faction", "state"],
+  ["V-REF", "unknown track in a term", "victory.yaml", { "scores/state/1/track": "gold" }, "scores.state.1.track", "state"],
+  ["V-REF", "ordinal track in a term", "victory.yaml", { "scores/state/1/track": "posture" }, "scores.state.1.track", "state"],
+  ["V-REF", "unknown piece in a nested condition", "victory.yaml", { "totals/totalSupport/1/of/where": { type: "not", of: { type: "spaceHas", pieces: ["camp"] } } }, "totals.totalSupport.1.of.where.of.pieces.0", "totalSupport"],
+  ["V-RANGE", "term level beyond the support scale", "victory.yaml", { "totals/totalSupport/1/of/where/levels/0": 3 }, "totals.totalSupport.1.of.where.levels.0", "totalSupport"],
+  ["V-VICTORY", "player faction without a score", "victory.yaml", { "scores/pkk": DELETE }, "scores", "pkk"],
+  ["V-VICTORY", "player faction without a threshold", "scenarios/s0.yaml", { "thresholds/pkk": DELETE }, "thresholds", "pkk"],
+  ["V-VICTORY", "player faction without a Harm count", "victory.yaml", { "harmCount/state": DELETE }, "harmCount", "state"],
   ["V-RANGE", "numeric track above max", "scenarios/s0.yaml", { "tracks/resources.pkk": 51 }, "tracks.resources.pkk", "resources.pkk"],
 ];
 
@@ -142,9 +161,16 @@ describe("loadPackage on invalid packages", () => {
     expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code, file, path, id }));
   });
 
+  it("asks for supportLevels when a term has a level condition and the map has none", () => {
+    const result = loadPackage(changed("map.yaml", { supportLevels: DELETE }));
+    expect(result.issues).toContainEqual(
+      expect.objectContaining({ code: "V-RANGE", file: "victory.yaml", path: "totals.totalSupport.0.where.levels.0", message: "A level condition needs supportLevels in map.yaml." }),
+    );
+  });
+
   it("covers every error code the loader reports", () => {
     expect(new Set(invalid.map(([code]) => code))).toEqual(
-      new Set(["V-SCHEMA", "V-REF", "V-PIECES", "V-STACK", "V-LINKS", "V-PARAM", "V-FACTIONS", "V-RANGE"]),
+      new Set(["V-SCHEMA", "V-REF", "V-PIECES", "V-STACK", "V-LINKS", "V-PARAM", "V-FACTIONS", "V-RANGE", "V-VICTORY"]),
     );
   });
 
@@ -218,9 +244,9 @@ describe("sim validate", () => {
   });
 
   it("prints warnings and exit code 0 when only warnings are found", () => {
-    const { exitCode, lines } = validateCommand(tempPackage("victory.yaml", "scores: {}\n"));
+    const { exitCode, lines } = validateCommand(tempPackage("cards.yaml", "[]\n"));
     expect(exitCode).toBe(0);
-    expect(lines[0]).toMatch(/^warning V-SCHEMA victory\.yaml: /);
+    expect(lines[0]).toMatch(/^warning V-SCHEMA cards\.yaml: /);
     expect(lines[1]).toMatch(/^ok /);
   });
 
