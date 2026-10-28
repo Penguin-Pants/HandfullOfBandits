@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "faction": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "count": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      },
+      "isBase": {
+        "type": "boolean"
+      },
+      "states": {
+        "minItems": 2,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        }
+      },
+      "placedAs": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "countsForControl": {
+        "type": "boolean"
+      },
+      "movable": {
+        "type": "boolean"
+      },
+      "startPool": {
+        "type": "string",
+        "enum": [
+          "available",
+          "outOfPlay"
+        ]
+      },
+      "shape": {
+        "type": "string",
+        "enum": [
+          "cube",
+          "cylinder",
+          "disc",
+          "octagon"
+        ]
+      },
+      "colorVariant": {
+        "type": "string",
+        "enum": [
+          "base",
+          "light"
+        ]
+      },
+      "emblem": {
+        "type": "string",
+        "enum": [
+          "crescentStar",
+          "starCircle"
+        ]
+      },
+      "emblemState": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "source": {
+        "type": "string",
+        "minLength": 1
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "approved",
+          "recommended",
+          "tune",
+          "competing",
+          "unresolved",
+          "missing"
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "faction",
+      "count",
+      "isBase",
+      "countsForControl",
+      "movable",
+      "startPool",
+      "shape"
+    ],
+    "additionalProperties": false
+  }
+}

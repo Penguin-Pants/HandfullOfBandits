@@ -19,7 +19,7 @@ export interface JsonObject {
 }
 
 // The package compiles to a Ruleset (03 s5). These are the fields core reads.
-// P1-04 schemas produce them from factions, pieces, map, tracks and markers files.
+// The P1-05 loader builds them from the P1-04 schema output (DEC-37).
 
 export interface RulesetFaction {
   readonly id: FactionId;

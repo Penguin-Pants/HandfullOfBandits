@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "color": {
+        "type": "string",
+        "minLength": 1
+      },
+      "kind": {
+        "type": "string",
+        "enum": [
+          "player",
+          "nonPlayer"
+        ]
+      },
+      "resourcesTrack": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "pivotalHand": {
+        "minItems": 0,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        }
+      },
+      "source": {
+        "type": "string",
+        "minLength": 1
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "approved",
+          "recommended",
+          "tune",
+          "competing",
+          "unresolved",
+          "missing"
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "color",
+      "kind"
+    ],
+    "additionalProperties": false
+  }
+}
