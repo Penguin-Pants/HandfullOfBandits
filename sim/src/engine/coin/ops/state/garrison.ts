@@ -6,11 +6,11 @@ import type { Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionPart } from "../action.ts";
 import { activate, count, hasTag, pay, space, terrainRate } from "../common.ts";
 import { FACTION, PIECE, TAG } from "../ids.ts";
-import { asMoves, asString } from "../plan.ts";
+import { asMoves, asString, type Move } from "../plan.ts";
 
 const ruleRef = "06 s2.2";
 
-function moves(part: ActionPart): { from: string; to: string | null; count: number }[] | null {
+function moves(part: ActionPart): Move[] | null {
   const loc = part.locations[0];
   return loc === undefined ? null : asMoves(part.perLocation[loc]?.["moves"]);
 }

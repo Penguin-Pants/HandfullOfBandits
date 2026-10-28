@@ -48,3 +48,20 @@
 - {id: civicAction.returnCost, value: 3, tune: false, source: "07 s1.3"}
 - {id: civicAction.shiftCost, value: 2, tune: false, source: "07 s1.3"}
 - {id: civicAction.maxShifts, value: 2, tune: false, source: "07 s1.3"}
+- {id: rally.costPerLocation, value: 1, tune: false, source: "06 s4.1"}
+- {id: rally.europeBanCost, value: 2, tune: false, source: "06 s4.1 item 3; 04 s3.6"}
+- {id: rally.europeGain, value: 1, tune: false, source: "06 s4.1 item 3"}
+- {id: rally.baseFromGuerrillas, value: 2, tune: false, source: "06 s4.1 option 2"}
+- {id: march.costPerDestination, value: 1, tune: false, source: "06 s4.2"}
+- {id: march.restrictedExtraCost, value: 1, tune: false, source: "06 s4.2 item 2; 07 s5.1"}
+- {id: march.activationThreshold, value: 3, tune: false, source: "06 s4.2 item 4"}
+- {id: attack.costPerSpace, value: 1, tune: false, source: "06 s4.3"}
+- {id: attack.maxRemoval, value: 2, tune: false, source: "06 s4.3 item 3"}
+- {id: attack.bonusRoll, value: 1, tune: false, source: "06 s4.3 item 5"}
+- {id: coerce.costPerSpace, value: 1, tune: true, source: "06 s4.4; DD-19.4"}
+- {id: coerce.costHighPop, value: 2, tune: true, source: "06 s4.4; DD-19.4"}
+- {id: coerce.highPopFrom, value: 3, tune: true, source: "06 s4.4; DD-19.4"}
+- {id: agitation.coercionCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: agitation.redressCost, value: 2, tune: false, source: "07 s1.3"}
+- {id: agitation.shiftCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: agitation.maxShifts, value: 2, tune: false, source: "07 s1.3"}

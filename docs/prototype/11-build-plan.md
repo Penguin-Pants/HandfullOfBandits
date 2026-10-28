@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-06 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-07 done.
 
 ## 1. How to use this plan
 
@@ -282,6 +282,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-VAL, T-OPS.
 - **Risks:** Rally option 3 limit (Pop + Bases) on external boxes. Fixture for box Pop 1.
 - **Out:** Four handlers.
+- **Done:** `ops/pkk/rally.ts` (place, base, grow, flip, Europe track with the Ban cost and cap, host posture rules, Agitate sub-action), `ops/pkk/march.ts` (one-step groups, activation condition, Restricted entry cost and activation, Syria under PA-16 option), `ops/pkk/attack.ts` (seeded roll, removal order with a Police-first choice, attrition, bonus Guerrilla), `ops/pkk/coerce.ts` (PA-05 order, Pop 3+ cost). `ops/pkk/agitation.ts` is shared with Propaganda. Map tag `rallyAtSupport` on Western Cities. One fixture per 06 s4 rule line in `ops/pkk/pkk-ops.test.ts`.
+- **Decided:** the Attack removal choice is a plan field (`prefer: police`), made before the roll, not a Decision after it (DEC-51). Rally takes no piece from the map when Available is empty (04 s2.1 item 1 is not in the slice).
 
 ### P2-08 SAs: Air Mobility, Ambush, Extort, Strike Collaborators
 

@@ -14,7 +14,7 @@ spaces:
   - {id: bingol-mus, name: Bingöl-Muş, kind: domestic, terrain: mountain, pop: 3, hasSupportScale: true, layout: {x: 520, y: 220}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
   - {id: van-bitlis, name: Van-Bitlis, kind: domestic, terrain: mountain, pop: 4, hasSupportScale: true, layout: {x: 720, y: 360}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
   - {id: agri, name: Ağrı, kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 720, y: 180}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: western-cities, name: Western Cities, kind: domestic, terrain: city, pop: 3, hasSupportScale: true, layout: {x: 60, y: 120}, tags: [noLandLinks, receptionTarget], confidence: "Design node, no census basis", source: "03 s2, s4.2"}
+  - {id: western-cities, name: Western Cities, kind: domestic, terrain: city, pop: 3, hasSupportScale: true, layout: {x: 60, y: 120}, tags: [noLandLinks, receptionTarget, rallyAtSupport], confidence: "Design node, no census basis", source: "03 s2, s4.2"}
   - {id: syria-bekaa, name: Syria-Bekaa, kind: external, pop: 0, hasSupportScale: false, layout: {x: 380, y: 640}, source: "03 s3"}
   - {id: kdp-zone, name: KDP Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 760, y: 640}, source: "03 s3; 06 s3.2 item 3"}
   - {id: puk-zone, name: PUK Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 920, y: 640}, source: "03 s3; 06 s3.2 item 3"}

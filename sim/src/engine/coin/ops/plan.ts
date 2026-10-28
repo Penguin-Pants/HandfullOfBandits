@@ -19,8 +19,16 @@ export function asString(value: unknown): string | null {
   return typeof value === "string" ? value : null;
 }
 
-/** Moves `[{from, to?, count}]` in a location's choices. Null: malformed. */
-export function asMoves(value: unknown): { readonly from: string; readonly to: string | null; readonly count: number }[] | null {
+export interface Move {
+  readonly from: string;
+  readonly to: string | null;
+  readonly count: number;
+  /** Flip state of the moving pieces. Null: any face. */
+  readonly face: string | null;
+}
+
+/** Moves `[{from, to?, count, face?}]` in a location's choices. Null: malformed. */
+export function asMoves(value: unknown): Move[] | null {
   if (value === undefined) return [];
   if (!Array.isArray(value)) return null;
   const moves = [];
@@ -29,8 +37,9 @@ export function asMoves(value: unknown): { readonly from: string; readonly to: s
     const from = asString(o?.["from"]);
     const to = o?.["to"] === undefined ? null : asString(o["to"]);
     const count = asCount(o?.["count"], -1);
-    if (o === null || from === null || (o["to"] !== undefined && to === null) || count === null || count < 1) return null;
-    moves.push({ from, to, count });
+    const face = o?.["face"] === undefined ? null : asString(o["face"]);
+    if (o === null || from === null || (o["to"] !== undefined && to === null) || count === null || count < 1 || (o["face"] !== undefined && face === null)) return null;
+    moves.push({ from, to, count, face });
   }
   return moves;
 }

@@ -1,5 +1,6 @@
 // Test helpers for board positions on the Kurdish package. Not for production code.
 import { createEngine } from "../src/engine/index.ts";
+import { rollDie, seedRng } from "../src/engine/core/rng.ts";
 import { coinHandlers } from "../src/engine/coin/handlers.ts";
 import { PHASE } from "../src/engine/coin/phases.ts";
 import type { AnyCommand, GameState, LogEntry } from "../src/engine/core/types.ts";
@@ -67,4 +68,13 @@ export function op(faction: string, box: string, plan: Record<string, unknown>):
 
 export function pieces(state: GameState, space: string, piece: string): Readonly<Record<string, number>> {
   return state.spaces[space]?.pieces[piece] ?? {};
+}
+
+/** State whose next die roll is `value` (searches seeds; PA-13 generator). */
+export function withRoll(state: GameState, value: number): GameState {
+  for (let seed = 0; seed < 1000; seed++) {
+    const rng = seedRng(seed);
+    if (rollDie(rng).value === value) return { ...state, rng };
+  }
+  throw new Error(`No seed rolls ${String(value)}`);
 }
