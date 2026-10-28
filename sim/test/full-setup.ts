@@ -31,17 +31,17 @@ export const fullRuleset: Ruleset = {
     { id: "pkk", kind: "player" },
   ],
   pieces: [
-    { id: "troops", faction: "state", count: 30, states: [], placedAs: null, startPool: "available" },
-    { id: "police", faction: "state", count: 24, states: [], placedAs: null, startPool: "available" },
-    { id: "guards", faction: "state", count: 16, states: [], placedAs: null, startPool: "outOfPlay" },
-    { id: "stateBase", faction: "state", count: 8, states: [], placedAs: null, startPool: "available" },
-    { id: "guerrilla", faction: "pkk", count: 30, states: ["underground", "active"], placedAs: "underground", startPool: "available" },
-    { id: "pkkBase", faction: "pkk", count: 12, states: [], placedAs: null, startPool: "available" },
+    { id: "troops", faction: "state", count: 30, states: [], placedAs: null, startPool: "available", countsForControl: true },
+    { id: "police", faction: "state", count: 24, states: [], placedAs: null, startPool: "available", countsForControl: true },
+    { id: "guards", faction: "state", count: 16, states: [], placedAs: null, startPool: "outOfPlay", countsForControl: true },
+    { id: "stateBase", faction: "state", count: 8, states: [], placedAs: null, startPool: "available", countsForControl: true },
+    { id: "guerrilla", faction: "pkk", count: 30, states: ["underground", "active"], placedAs: "underground", startPool: "available", countsForControl: true },
+    { id: "pkkBase", faction: "pkk", count: 12, states: [], placedAs: null, startPool: "available", countsForControl: true },
   ],
   spaces: [
     // Terrain and stacking are not needed for the size check.
-    ...domestic.map((id) => ({ id, hasSupportScale: true, kind: "domestic" as const, terrain: null })),
-    ...external.map((id) => ({ id, hasSupportScale: false, kind: "external" as const, terrain: null })),
+    ...domestic.map((id) => ({ id, hasSupportScale: true, kind: "domestic" as const, terrain: null, pop: 0 })),
+    ...external.map((id) => ({ id, hasSupportScale: false, kind: "external" as const, terrain: null, pop: 0 })),
   ],
   tracks: [
     { id: "resources.state", kind: "numeric", min: 0, max: 50, overflow: null },
@@ -76,6 +76,9 @@ export const fullRuleset: Ruleset = {
   stacking: [],
   levelRange: 2,
   parameters: {},
+  victory: { scores: {}, harmCount: {}, totals: {} },
+  harmMarkers: [],
+  thresholds: {},
 };
 
 type Setup = Readonly<Record<string, { level?: number; pieces: Readonly<Record<string, number>> }>>;

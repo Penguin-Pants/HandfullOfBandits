@@ -1,8 +1,9 @@
-// Cross-file package checks (04 s9): V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS, V-RANGE.
+// Cross-file package checks (04 s9): V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS, V-RANGE, V-VICTORY.
 // Input has passed V-SCHEMA. Each issue names file, path, element ID and one sentence.
+import type { FormulaTerm, SpaceCondition } from "../engine/core/types.ts";
 import type { PackageFileData } from "./schema/index.ts";
 
-export type IssueCode = "V-SCHEMA" | "V-REF" | "V-PIECES" | "V-STACK" | "V-LINKS" | "V-PARAM" | "V-FACTIONS" | "V-RANGE";
+export type IssueCode = "V-SCHEMA" | "V-REF" | "V-PIECES" | "V-STACK" | "V-LINKS" | "V-PARAM" | "V-FACTIONS" | "V-RANGE" | "V-VICTORY";
 
 export interface PackageIssue {
   readonly level: "error" | "warning";
@@ -24,6 +25,7 @@ export interface PackageData {
   readonly map: PackageFileData<"map">;
   readonly tracks: PackageFileData<"tracks">;
   readonly markers: PackageFileData<"markers">;
+  readonly victory: PackageFileData<"victory">;
   /** By file path, for example `scenarios/s0.yaml`. */
   readonly scenarios: Readonly<Record<string, PackageFileData<"scenario">>>;
 }
@@ -66,7 +68,8 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
   };
 
   // V-FACTIONS
-  const players = pkg.factions.filter((f) => f.kind === "player").length;
+  const playerFactions = pkg.factions.filter((f) => f.kind === "player");
+  const players = playerFactions.length;
   if (players < PLAYER_FACTIONS.min || players > PLAYER_FACTIONS.max) {
     error("V-FACTIONS", "factions.yaml", "", null, `Found ${String(players)} player factions. Use ${String(PLAYER_FACTIONS.min)} to ${String(PLAYER_FACTIONS.max)}.`);
   }
@@ -138,6 +141,82 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
     }
   });
 
+  // V-VICTORY, V-REF, V-RANGE: victory.yaml terms (04 s8, s4.9)
+  const victoryFile = "victory.yaml";
+  const condition = (c: SpaceCondition, at: string, id: string): void => {
+    switch (c.type) {
+      case "spaceLevelIn":
+        c.levels.forEach((level, j) => {
+          const path = `${at}.levels.${String(j)}`;
+          if (levelRange === null) error("V-RANGE", victoryFile, path, id, "A level condition needs supportLevels in map.yaml.");
+          else if (Math.abs(level) > levelRange) error("V-RANGE", victoryFile, path, id, `Use a level from ${String(-levelRange)} to ${String(levelRange)}.`);
+        });
+        return;
+      case "control":
+        ref(factions, "faction", c.faction, victoryFile, `${at}.faction`, id);
+        return;
+      case "spaceHas":
+        c.pieces.forEach((p, j) => { ref(pieces, "piece", p, victoryFile, `${at}.pieces.${String(j)}`, id); });
+        c.markers.forEach((m, j) => { ref(markers, "marker", m, victoryFile, `${at}.markers.${String(j)}`, id); });
+        return;
+      case "all":
+      case "any":
+        c.of.forEach((inner, j) => { condition(inner, `${at}.of.${String(j)}`, id); });
+        return;
+      case "not":
+        condition(c.of, `${at}.of`, id);
+        return;
+      case "spaceKind":
+      case "terrainIn":
+        return;
+    }
+  };
+  const term = (t: FormulaTerm, at: string, id: string): void => {
+    switch (t.type) {
+      case "sumPopWhere":
+        condition(t.where, `${at}.where`, id);
+        return;
+      case "countPieces":
+        t.pieces.forEach((p, j) => { ref(pieces, "piece", p, victoryFile, `${at}.pieces.${String(j)}`, id); });
+        if (t.where !== null) condition(t.where, `${at}.where`, id);
+        return;
+      case "countMarkers":
+        t.markers.forEach((m, j) => {
+          const marker = markers.get(m);
+          if (marker === undefined) ref(markers, "marker", m, victoryFile, `${at}.markers.${String(j)}`, id);
+          else t.sides?.forEach((side, k) => { face(marker.sides ?? [], "side", side, victoryFile, `${at}.sides.${String(k)}`, id); });
+        });
+        if (t.where !== null) condition(t.where, `${at}.where`, id);
+        return;
+      case "trackValue": {
+        const track = tracks.get(t.track);
+        if (track === undefined) ref(tracks, "track", t.track, victoryFile, `${at}.track`, id);
+        else if (track.kind !== "numeric") error("V-REF", victoryFile, `${at}.track`, id, `Track "${track.id}" must be numeric.`);
+        return;
+      }
+      case "divideFloor":
+      case "multiply":
+        term(t.of, `${at}.of`, id);
+        return;
+      case "add":
+        t.terms.forEach((inner, j) => { term(inner, `${at}.terms.${String(j)}`, id); });
+        return;
+      case "constant":
+        return;
+    }
+  };
+  for (const key of ["scores", "harmCount", "totals"] as const) {
+    for (const [id, terms] of Object.entries(pkg.victory[key])) {
+      if (key !== "totals") ref(factions, "faction", id, victoryFile, `${key}.${id}`, id);
+      terms.forEach((t, i) => { term(t, `${key}.${id}.${String(i)}`, id); });
+    }
+  }
+  for (const f of playerFactions) {
+    for (const key of ["scores", "harmCount"] as const) {
+      if (own(pkg.victory[key], f.id) === undefined) error("V-VICTORY", victoryFile, key, f.id, `Player faction "${f.id}" needs a ${key} entry.`);
+    }
+  }
+
   for (const [file, scenario] of Object.entries(pkg.scenarios)) {
     const onMap = new Map<string, number>();
     const markersOnMap = new Map<string, number>();
@@ -206,6 +285,9 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
     }
     for (const [key, kind] of [["pivotals", "faction"], ["thresholds", "faction"]] as const) {
       for (const factionId of Object.keys(scenario[key] ?? {})) ref(factions, kind, factionId, file, `${key}.${factionId}`, factionId);
+    }
+    for (const f of playerFactions) {
+      if (own(scenario.thresholds, f.id) === undefined) error("V-VICTORY", file, "thresholds", f.id, `Player faction "${f.id}" needs a threshold.`);
     }
 
     // V-PIECES: map plus pools equals the total of each piece type. Markers on the map fit their supply.

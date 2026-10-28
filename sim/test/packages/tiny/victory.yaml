@@ -1,0 +1,35 @@
+# Shaped like research 09 s1: Blue = Total Support + Standing, Red = Total Opposition + domestic Camps.
+# Totals use the remaining terms and conditions, so T-SCORE covers each one.
+totals:
+  totalSupport:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [2]}}}
+  totalOpposition:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-2]}}}
+  domesticCamps:
+    - {type: countPieces, pieces: [camp], where: {type: spaceKind, kind: domestic}}
+  heldByBlue:
+    - {type: sumPopWhere, where: {type: control, faction: blue}}
+  contested:
+    - type: countPieces
+      pieces: [soldier, rebel]
+      where: {type: all, of: [{type: spaceHas, pieces: [soldier]}, {type: spaceHas, pieces: [rebel]}]}
+  halfCash:
+    - {type: divideFloor, by: 2, of: {type: add, terms: [{type: trackValue, track: cash.blue}, {type: constant, value: 1}]}}
+  inland:
+    - {type: sumPopWhere, where: {type: not, of: {type: any, of: [{type: terrainIn, terrain: [city]}, {type: spaceKind, kind: external}]}}}
+scores:
+  blue:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [2]}}}
+    - {type: trackValue, track: standing}
+  red:
+    - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-1]}}
+    - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-2]}}}
+    - {type: countPieces, pieces: [camp], where: {type: spaceKind, kind: domestic}}
+harmCount:
+  blue:
+    - {type: countMarkers, markers: [harm]}
+  red:
+    - {type: countMarkers, markers: [mark], sides: [new]}

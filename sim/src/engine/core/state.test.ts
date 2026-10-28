@@ -13,13 +13,13 @@ const ruleset: Ruleset = {
     { id: "town", kind: "nonPlayer" },
   ],
   pieces: [
-    { id: "soldier", faction: "blue", count: 5, states: [], placedAs: null, startPool: "available" },
-    { id: "militia", faction: "blue", count: 3, states: [], placedAs: null, startPool: "outOfPlay" },
-    { id: "rebel", faction: "red", count: 4, states: ["hidden", "shown"], placedAs: "hidden", startPool: "available" },
+    { id: "soldier", faction: "blue", count: 5, states: [], placedAs: null, startPool: "available", countsForControl: true },
+    { id: "militia", faction: "blue", count: 3, states: [], placedAs: null, startPool: "outOfPlay", countsForControl: true },
+    { id: "rebel", faction: "red", count: 4, states: ["hidden", "shown"], placedAs: "hidden", startPool: "available", countsForControl: true },
   ],
   spaces: [
-    { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city" },
-    { id: "camp", hasSupportScale: false, kind: "external", terrain: null },
+    { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 0 },
+    { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0 },
   ],
   tracks: [
     { id: "cash", kind: "numeric", min: 3, max: 9, overflow: null },
@@ -32,6 +32,9 @@ const ruleset: Ruleset = {
   stacking: [],
   levelRange: 2,
   parameters: {},
+  victory: { scores: {}, harmCount: {}, totals: {} },
+  harmMarkers: [],
+  thresholds: {},
 };
 
 describe("emptyState", () => {

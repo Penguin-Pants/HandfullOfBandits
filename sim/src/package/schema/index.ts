@@ -8,6 +8,7 @@ import { parametersSchema } from "./parameters.ts";
 import { piecesSchema } from "./pieces.ts";
 import { scenarioSchema } from "./scenario.ts";
 import { tracksSchema } from "./tracks.ts";
+import { victorySchema } from "./victory.ts";
 
 /** One schema per package file. `scenario` applies to each file in `scenarios/`. */
 export const packageFileSchemas = {
@@ -18,6 +19,7 @@ export const packageFileSchemas = {
   map: mapSchema,
   tracks: tracksSchema,
   markers: markersSchema,
+  victory: victorySchema,
   scenario: scenarioSchema,
 } as const;
 

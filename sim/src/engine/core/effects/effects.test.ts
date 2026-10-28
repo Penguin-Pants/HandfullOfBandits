@@ -145,6 +145,13 @@ describe("marker primitives", () => {
     expect(entries[4]).toMatchObject({ kind: "EffectSkipped", assumptionRef: "PA-09", data: { reason: "supply" } });
   });
 
+  it("placeMarker warns when a Harm marker type runs out (PA-09)", () => {
+    const harm = { type: "placeMarker", marker: "harm", space: "city", side: "default" } as const;
+    expect(run(empty, harm, harm, harm, harm, harm).entries[4]?.data).toMatchObject({ reason: "supply", warning: "harmSupplyExhausted" });
+    const office = { type: "placeMarker", marker: "office", space: "city", side: "default" } as const;
+    expect(run(empty, office, office).entries[1]?.data).not.toHaveProperty("warning");
+  });
+
   it("removeMarker returns a marker to supply and skips when absent", () => {
     const placed = run(empty, { type: "placeMarker", marker: "mark", space: "farm", side: "new" }).state;
     const { state, entries } = run(
