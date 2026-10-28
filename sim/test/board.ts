@@ -78,3 +78,8 @@ export function withRoll(state: GameState, value: number): GameState {
   }
   throw new Error(`No seed rolls ${String(value)}`);
 }
+
+/** `state` with `card` face up and the phase set for its type (test-only shortcut past the deck). */
+export function withCard(state: GameState, card: string): GameState {
+  return { ...state, deck: { ...state.deck, currentCard: card }, turn: { ...state.turn, phase: PHASE.card } };
+}

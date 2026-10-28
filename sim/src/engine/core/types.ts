@@ -357,6 +357,18 @@ export interface Violation {
   readonly ruleRef: RuleRef | null;
   /** Space or box ID the violation is about. Null: the whole command. */
   readonly location: string | null;
+  /** Set when the command lacks an answer: the question to ask next (DEC-51). */
+  readonly question?: Question;
+}
+
+/** A choice the executing faction must make (PA-01). The answer goes in the command's `answers`. */
+export interface Question {
+  readonly kind: "option" | "count" | "spaces" | "plan";
+  readonly prompt: string;
+  /** Option labels, or space IDs that may be picked. Empty for count and plan. */
+  readonly options: readonly string[];
+  readonly min: number;
+  readonly max: number;
 }
 
 export interface ValidationResult {
