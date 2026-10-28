@@ -10,7 +10,7 @@ export const appName = "handful-of-bandits-sim";
 if (import.meta.main) {
   const db = openStore(process.env["HOB_DB"] ?? fileURLToPath(new URL("../playtest.sqlite", import.meta.url)));
   const packages = process.env["HOB_PACKAGES"] ?? fileURLToPath(new URL("../../game-packages", import.meta.url));
-  const app = buildApp(new SessionService(db, packages));
+  const app = buildApp(new SessionService(db, packages), fileURLToPath(new URL("../dist/ui", import.meta.url)));
   const port = Number(process.env["PORT"] ?? 5174);
   await app.listen({ host: "127.0.0.1", port });
   console.log(`${appName}: http://127.0.0.1:${String(port)}`);

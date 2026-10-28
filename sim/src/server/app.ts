@@ -1,5 +1,7 @@
 // HTTP API (11 P2-11; 03 s4, s7). Bound to 127.0.0.1 only (03 s9 item 1). Every route returns
 // JSON; a ServiceError maps to its status with `{error, detail}`.
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { extname, join, normalize } from "node:path";
 import Fastify, { type FastifyInstance } from "fastify";
 import type { UiFocus } from "../annotate/types.ts";
 import type { AnyCommand } from "../engine/core/types.ts";
@@ -22,7 +24,19 @@ function command(value: unknown): AnyCommand {
   return value as AnyCommand;
 }
 
-export function buildApp(service: SessionService): FastifyInstance {
+const TYPES: Readonly<Record<string, string>> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
+
+/** Serve the built UI (`npm run build`) from `uiDir`; unknown paths get index.html. */
+function serveUi(app: FastifyInstance, uiDir: string): void {
+  app.get("/*", (request, reply) => {
+    const path = normalize(join(uiDir, decodeURIComponent(request.url.split("?")[0] ?? "/")));
+    const file = path.startsWith(uiDir) && existsSync(path) && statSync(path).isFile() ? path : join(uiDir, "index.html");
+    if (!existsSync(file)) return reply.status(404).send({ error: "UI not built. Run npm run build.", detail: null });
+    return reply.type(TYPES[extname(file)] ?? "application/octet-stream").send(readFileSync(file));
+  });
+}
+
+export function buildApp(service: SessionService, uiDir: string | null = null): FastifyInstance {
   const app = Fastify({ logger: false });
 
   app.setErrorHandler((error, _request, reply) => {
@@ -68,5 +82,6 @@ export function buildApp(service: SessionService): FastifyInstance {
     });
     return reply.status(201).send({ annotationId: id });
   });
+  if (uiDir !== null) serveUi(app, uiDir);
   return app;
 }

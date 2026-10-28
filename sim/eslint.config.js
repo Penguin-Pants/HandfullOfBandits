@@ -4,11 +4,11 @@ import tseslint from "typescript-eslint";
 import boundaries from "./eslint/boundaries.js";
 import literals from "./eslint/literals.js";
 
-const testFiles = ["**/*.test.ts"];
+const testFiles = ["**/*.test.ts", "**/*.test.tsx"];
 const local = { rules: { ...boundaries.rules, ...literals.rules } };
 
 export default defineConfig(
-  { ignores: ["node_modules", "test/fixtures"] },
+  { ignores: ["node_modules", "test/fixtures", "dist"] },
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
   {
@@ -25,7 +25,7 @@ export default defineConfig(
   },
   // T-ARCH: module boundaries (03 s5).
   {
-    files: ["**/src/**/*.ts"],
+    files: ["**/src/**/*.ts", "**/src/**/*.tsx"],
     ignores: testFiles,
     plugins: { local },
     rules: { "local/boundaries": "error" },

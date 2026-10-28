@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 and P2-12 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-13 done.
 
 ## 1. How to use this plan
 
@@ -363,6 +363,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Component tests for the Start rule.
 - **Risks:** Styling time. Plain CSS only.
 - **Out:** UI shell.
+- **Done:** React 19.3.1 and Vite 8.3.5 (`npm run ui` dev server with `/api` proxy, `npm run build` to `sim/dist/ui`, served by `npm start`). `sim/src/ui/`: `App.tsx` (Home, package check, play), `api.ts` client, `home/Home.tsx` (package, scenario with blocked marks, options, seed with random, name, saved sessions with Resume, PA list), `home/start-rule.ts`, `check/PackageCheck.tsx`, plain CSS with light and dark variables. Engine types reach the UI through `server/api-types.ts` (03 s5). Component tests with jsdom and Testing Library in `ui/home/home.test.tsx`, mocked API in `sim/test/ui/mock-api.ts`.
 
 ### P2-14 Board and status bar
 
