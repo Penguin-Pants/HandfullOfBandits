@@ -1,10 +1,24 @@
 // Cross-file package checks (04 s9): V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS, V-RANGE, V-VICTORY.
 // Input has passed V-SCHEMA. Each issue names file, path, element ID and one sentence.
 import { own } from "../engine/core/state.ts";
-import type { FormulaTerm, SpaceCondition } from "../engine/core/types.ts";
+import { SELECTED } from "../engine/core/terms.ts";
+import type { CardEffect, FormulaTerm, SpaceCondition } from "../engine/core/types.ts";
+import { propagandaPhaseIds, sequenceModels } from "../engine/modules/registry.ts";
 import type { PackageFileData } from "./schema/index.ts";
 
-export type IssueCode = "V-SCHEMA" | "V-REF" | "V-PIECES" | "V-STACK" | "V-LINKS" | "V-PARAM" | "V-FACTIONS" | "V-RANGE" | "V-VICTORY";
+export type IssueCode =
+  | "V-SCHEMA"
+  | "V-REF"
+  | "V-PIECES"
+  | "V-STACK"
+  | "V-LINKS"
+  | "V-PARAM"
+  | "V-FACTIONS"
+  | "V-RANGE"
+  | "V-VICTORY"
+  | "V-CARDS"
+  | "V-ENCODE"
+  | "V-EFFECT";
 
 export interface PackageIssue {
   readonly level: "error" | "warning";
@@ -16,6 +30,8 @@ export interface PackageIssue {
   /** ID of the element the issue is about. Null when no element applies. */
   readonly id: string | null;
   readonly message: string;
+  /** Set on a scenario-scoped error: it blocks that scenario's start, not the package (DEC-51). */
+  readonly scenario?: string;
 }
 
 export interface PackageData {
@@ -27,11 +43,19 @@ export interface PackageData {
   readonly tracks: PackageFileData<"tracks">;
   readonly markers: PackageFileData<"markers">;
   readonly victory: PackageFileData<"victory">;
+  readonly sequence: PackageFileData<"sequence">;
+  /** Absent when the package has no assumptions.yaml. */
+  readonly assumptions?: PackageFileData<"assumptions">;
+  /** By file path, for example `cards/c1.yaml`. */
+  readonly cards: Readonly<Record<string, PackageFileData<"cards">>>;
   /** By file path, for example `scenarios/s0.yaml`. */
   readonly scenarios: Readonly<Record<string, PackageFileData<"scenario">>>;
 }
 
-/** Player faction counts the package format allows (04 s4.1). The sequence model check comes with P2-03. */
+/** Card types that a pile draws from a Campaign pool (research 05 s1.1). */
+const POOL_TYPES = new Set(["event", "capability", "momentum"]);
+
+/** Player faction counts the package format allows (04 s4.1). The sequence model narrows it. */
 const PLAYER_FACTIONS = { min: 2, max: 4 };
 
 type Space = PackageFileData<"map">["spaces"][number];
@@ -69,6 +93,27 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
   if (players < PLAYER_FACTIONS.min || players > PLAYER_FACTIONS.max) {
     error("V-FACTIONS", "factions.yaml", "", null, `Found ${String(players)} player factions. Use ${String(PLAYER_FACTIONS.min)} to ${String(PLAYER_FACTIONS.max)}.`);
   }
+  // V-FACTIONS, V-REF: sequence.yaml (04 s4.6)
+  const seq = pkg.sequence;
+  const model = own(sequenceModels, seq.model);
+  if (model === undefined) {
+    error("V-REF", "sequence.yaml", "model", seq.model, `Unknown sequence model "${seq.model}". Use one of: ${Object.keys(sequenceModels).join(", ")}.`);
+  } else if (model.players !== players) {
+    error("V-FACTIONS", "sequence.yaml", "model", seq.model, `Sequence model "${seq.model}" needs ${String(model.players)} player factions, but factions.yaml has ${String(players)}.`);
+  }
+  const playerIds = new Map(playerFactions.map((f) => [f.id, f]));
+  ref(playerIds, "player faction", seq.firstEligibleAtStart, "sequence.yaml", "firstEligibleAtStart", seq.firstEligibleAtStart);
+  for (const id of Object.keys(seq.passIncome)) ref(playerIds, "player faction", id, "sequence.yaml", `passIncome.${id}`, id);
+  for (const f of playerFactions) {
+    if (own(seq.passIncome, f.id) === undefined) error("V-REF", "sequence.yaml", "passIncome", f.id, `Player faction "${f.id}" needs a pass income.`);
+  }
+  const boxIds = seq.boxes.map((b) => b.id);
+  seq.adjacency.forEach((pair, i) => {
+    pair.forEach((box, j) => { face(boxIds, "box", box, "sequence.yaml", `adjacency.${String(i)}.${String(j)}`, box); });
+  });
+  seq.propagandaPhases.forEach((phase, i) => { face(propagandaPhaseIds, "Propaganda phase", phase, "sequence.yaml", `propagandaPhases.${String(i)}`, phase); });
+  seq.swapAfter.forEach((box, i) => { face(boxIds, "box", box, "sequence.yaml", `swapAfter.${String(i)}`, box); });
+
   pkg.factions.forEach((f, i) => {
     if (f.resourcesTrack !== undefined) ref(tracks, "track", f.resourcesTrack, "factions.yaml", `${String(i)}.resourcesTrack`, f.id);
   });
@@ -139,31 +184,45 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
 
   // V-VICTORY, V-REF, V-RANGE: victory.yaml terms (04 s8, s4.9)
   const victoryFile = "victory.yaml";
-  const condition = (c: SpaceCondition, at: string, id: string): void => {
+  const condition = (c: SpaceCondition, at: string, id: string, file: string = victoryFile): void => {
     switch (c.type) {
       case "spaceLevelIn":
         c.levels.forEach((level, j) => {
           const path = `${at}.levels.${String(j)}`;
-          if (levelRange === null) error("V-RANGE", victoryFile, path, id, "A level condition needs supportLevels in map.yaml.");
-          else if (Math.abs(level) > levelRange) error("V-RANGE", victoryFile, path, id, `Use a level from ${String(-levelRange)} to ${String(levelRange)}.`);
+          if (levelRange === null) error("V-RANGE", file, path, id, "A level condition needs supportLevels in map.yaml.");
+          else if (Math.abs(level) > levelRange) error("V-RANGE", file, path, id, `Use a level from ${String(-levelRange)} to ${String(levelRange)}.`);
         });
         return;
       case "control":
-        ref(factions, "faction", c.faction, victoryFile, `${at}.faction`, id);
+        ref(factions, "faction", c.faction, file, `${at}.faction`, id);
         return;
       case "spaceHas":
-        c.pieces.forEach((p, j) => { ref(pieces, "piece", p, victoryFile, `${at}.pieces.${String(j)}`, id); });
-        c.markers.forEach((m, j) => { ref(markers, "marker", m, victoryFile, `${at}.markers.${String(j)}`, id); });
+        c.pieces.forEach((p, j) => { ref(pieces, "piece", p, file, `${at}.pieces.${String(j)}`, id); });
+        c.markers.forEach((m, j) => { ref(markers, "marker", m, file, `${at}.markers.${String(j)}`, id); });
         return;
       case "all":
       case "any":
-        c.of.forEach((inner, j) => { condition(inner, `${at}.of.${String(j)}`, id); });
+        c.of.forEach((inner, j) => { condition(inner, `${at}.of.${String(j)}`, id, file); });
         return;
       case "not":
-        condition(c.of, `${at}.of`, id);
+        condition(c.of, `${at}.of`, id, file);
         return;
+      case "adjacentTo":
+        if (c.space !== SELECTED) ref(spaces, "space", c.space, file, `${at}.space`, id);
+        return;
+      case "trackAtLeast":
+      case "trackAtMost":
+      case "trackIn": {
+        const track = tracks.get(c.track);
+        if (track === undefined) ref(tracks, "track", c.track, file, `${at}.track`, id);
+        else if ((c.type === "trackIn") !== (track.kind === "ordinal")) error("V-REF", file, `${at}.track`, id, `Track "${track.id}" is ${track.kind}.`);
+        else if (c.type === "trackIn" && track.kind === "ordinal") c.values.forEach((v, j) => { face(track.steps, "step", v, file, `${at}.values.${String(j)}`, id); });
+        return;
+      }
       case "spaceKind":
       case "terrainIn":
+      case "selected":
+      case "flag":
         return;
     }
   };
@@ -211,6 +270,106 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
     for (const key of ["scores", "harmCount"] as const) {
       if (own(pkg.victory[key], f.id) === undefined) error("V-VICTORY", victoryFile, key, f.id, `Player faction "${f.id}" needs a ${key} entry.`);
     }
+  }
+
+  // V-CARDS, V-EFFECT, V-REF: cards/*.yaml (04 s4.8, s5)
+  const cardFiles = new Map<string, { card: PackageFileData<"cards">[number]; file: string; index: number }>();
+  for (const [file, list] of Object.entries(pkg.cards)) {
+    list.forEach((card, index) => {
+      if (cardFiles.has(card.id)) error("V-CARDS", file, `${String(index)}.id`, card.id, `Card "${card.id}" is also in ${cardFiles.get(card.id)?.file ?? ""}.`);
+      else cardFiles.set(card.id, { card, file, index });
+    });
+  }
+  const effects = (list: readonly CardEffect[], file: string, at: string, id: string): void => {
+    list.forEach((e, i) => { effectCheck(e, file, `${at}.${String(i)}`, id); });
+  };
+  const spaceRef = (value: string, file: string, at: string, id: string): void => {
+    if (value !== SELECTED) ref(spaces, "space", value, file, at, id);
+  };
+  const effectCheck = (e: CardEffect, file: string, at: string, id: string): void => {
+    const pieceFace = (piece: string, faceId: string | null, field: string): void => {
+      const p = pieces.get(piece);
+      if (p === undefined) ref(pieces, "piece", piece, file, `${at}.piece`, id);
+      else if (faceId !== null) face(p.states ?? [], "flip state", faceId, file, `${at}.${field}`, id);
+    };
+    switch (e.type) {
+      case "placePieces":
+        pieceFace(e.piece, e.state, "state");
+        spaceRef(e.space, file, `${at}.space`, id);
+        return;
+      case "removePieces":
+        pieceFace(e.piece, e.state, "state");
+        spaceRef(e.space, file, `${at}.space`, id);
+        return;
+      case "movePieces":
+        pieceFace(e.piece, e.state, "state");
+        pieceFace(e.piece, e.toState, "toState");
+        spaceRef(e.from, file, `${at}.from`, id);
+        spaceRef(e.to, file, `${at}.to`, id);
+        return;
+      case "setPieceState":
+        pieceFace(e.piece, e.from, "from");
+        pieceFace(e.piece, e.to, "to");
+        spaceRef(e.space, file, `${at}.space`, id);
+        return;
+      case "transferPool":
+        ref(pieces, "piece", e.piece, file, `${at}.piece`, id);
+        return;
+      case "adjustTrack":
+      case "setTrack":
+      case "stepOrdinal": {
+        const track = tracks.get(e.track);
+        if (track === undefined) ref(tracks, "track", e.track, file, `${at}.track`, id);
+        else if ((e.type === "adjustTrack" && track.kind !== "numeric") || (e.type === "stepOrdinal" && track.kind !== "ordinal")) {
+          error("V-EFFECT", file, `${at}.track`, id, `${e.type} cannot use ${track.kind} track "${track.id}".`);
+        } else if (e.type === "setTrack" && track.kind === "ordinal") {
+          for (const v of [e.value, e.ifEquals]) if (v !== null) face(track.steps, "step", String(v), file, `${at}.value`, id);
+        } else if (e.type === "setTrack" && [e.value, e.ifEquals].some((v) => v !== null && typeof v !== "number")) {
+          error("V-EFFECT", file, `${at}.value`, id, `Numeric track "${track.id}" needs integer values.`);
+        }
+        return;
+      }
+      case "placeMarker":
+      case "removeMarker":
+      case "flipMarker": {
+        const marker = markers.get(e.marker);
+        if (marker === undefined) ref(markers, "marker", e.marker, file, `${at}.marker`, id);
+        else if (e.side !== null) face(marker.sides ?? [], "side", e.side, file, `${at}.side`, id);
+        spaceRef(e.space, file, `${at}.space`, id);
+        return;
+      }
+      case "shiftLevel":
+        spaceRef(e.space, file, `${at}.space`, id);
+        return;
+      case "choice":
+        e.options.forEach((o, j) => { effects(o.effects, file, `${at}.options.${String(j)}.effects`, id); });
+        return;
+      case "conditional":
+        condition(e.if, `${at}.if`, id, file);
+        effects(e.then, file, `${at}.then`, id);
+        effects(e.else, file, `${at}.else`, id);
+        return;
+      case "forEachSpace":
+        condition(e.where, `${at}.where`, id, file);
+        effects(e.effects, file, `${at}.effects`, id);
+        return;
+      case "setFlag":
+      case "freeAction":
+        return;
+    }
+  };
+  for (const { card, file, index } of cardFiles.values()) {
+    const at = String(index);
+    effects(card.always, file, `${at}.always`, card.id);
+    for (const sideKey of ["unshaded", "shaded"] as const) {
+      const side = card[sideKey];
+      if (side === undefined) continue;
+      if (side.owner !== null) ref(factions, "faction", side.owner, file, `${at}.${sideKey}.owner`, card.id);
+      effects(side.effects, file, `${at}.${sideKey}.effects`, card.id);
+    }
+    card.chainAfter.forEach((other, j) => {
+      if (!cardFiles.has(other)) error("V-CARDS", file, `${at}.chainAfter.${String(j)}`, card.id, `Chain card "${other}" does not exist.`);
+    });
   }
 
   for (const [file, scenario] of Object.entries(pkg.scenarios)) {
@@ -284,6 +443,41 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
     }
     for (const f of playerFactions) {
       if (own(scenario.thresholds, f.id) === undefined) error("V-VICTORY", file, "thresholds", f.id, `Player faction "${f.id}" needs a threshold.`);
+    }
+
+    // V-REF: card IDs. V-CARDS and V-ENCODE block this scenario only (DEC-51).
+    const blocked = (code: IssueCode, path: string, id: string | null, message: string): void => {
+      issues.push({ level: "error", code, file, path, id, message, scenario: scenario.id });
+    };
+    for (const [factionId, hand] of Object.entries(scenario.pivotals ?? {})) {
+      hand.forEach((cardId, j) => {
+        const card = cardFiles.get(cardId)?.card;
+        if (card === undefined) ref(cardFiles, "card", cardId, file, `pivotals.${factionId}.${String(j)}`, cardId);
+        else if (card.encoding.status !== "encoded") blocked("V-ENCODE", `pivotals.${factionId}.${String(j)}`, cardId, `Pivotal "${cardId}" is not encoded.`);
+      });
+    }
+    (scenario.excludedCards ?? []).forEach((e, j) => { ref(cardFiles, "card", e.card, file, `excludedCards.${String(j)}.card`, e.card); });
+    const excluded = new Set((scenario.excludedCards ?? []).map((e) => e.card));
+    // The deck builder reads these parameters (05 s1.1); a package with cards needs them.
+    const numberParam = (pid: string): number | null => {
+      const value = pkg.parameters.find((p) => p.id === pid)?.value;
+      return typeof value === "number" ? value : null;
+    };
+    const pileSize = scenario.pileSize ?? numberParam("deck.pileSize") ?? 0;
+    if (cardFiles.size > 0) {
+      if (numberParam("deck.topSize") === null) error("V-PARAM", "parameters.yaml", "", "deck.topSize", "A package with cards needs integer parameter deck.topSize.");
+      if (scenario.pileSize === undefined && numberParam("deck.pileSize") === null) error("V-PARAM", file, "pileSize", scenario.id, "Set pileSize here or integer parameter deck.pileSize.");
+    }
+    for (const campaign of scenario.campaigns) {
+      const inCampaign = [...cardFiles.values()].map((c) => c.card).filter((c) => c.campaign === campaign && !excluded.has(c.id));
+      const pool = inCampaign.filter((c) => POOL_TYPES.has(c.type) && (c.mandatory || c.deckEligible));
+      const propaganda = inCampaign.filter((c) => c.type === "propaganda");
+      if (propaganda.length !== 1) blocked("V-CARDS", "campaigns", campaign, `Campaign ${campaign} needs exactly 1 Propaganda card, found ${String(propaganda.length)}.`);
+      if (pool.length < pileSize) blocked("V-CARDS", "campaigns", campaign, `Campaign ${campaign} has ${String(pool.length)} eligible cards for a pile of ${String(pileSize)}.`);
+      if (pool.filter((c) => c.mandatory).length > pileSize) blocked("V-CARDS", "campaigns", campaign, `Campaign ${campaign} has more mandatory cards than the pile holds.`);
+      for (const card of [...pool, ...propaganda]) {
+        if (card.encoding.status !== "encoded") blocked("V-ENCODE", "excludedCards", card.id, `Card "${card.id}" can be drawn but is not encoded. Encode it or exclude it.`);
+      }
     }
 
     // V-PIECES: map plus pools equals the total of each piece type. Markers on the map fit their supply.

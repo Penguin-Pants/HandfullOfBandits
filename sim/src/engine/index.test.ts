@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { adjustTrackDebug } from "../../test/debug-command.ts";
 import { loadPackage, readPackageDir } from "../package/load.ts";
 import { derive } from "./coin/derive.ts";
+import { startState } from "./coin/setup.ts";
 import { canonicalHash } from "./core/canonical.ts";
-import { setupState } from "./core/state.ts";
 import type { AnyCommand, CommandHandler, GameState } from "./core/types.ts";
 import { createEngine } from "./index.ts";
 
@@ -34,7 +34,9 @@ describe("start", () => {
   const first = engine.start(ruleset, "start", 9);
 
   it("returns the scenario start position with its hash and no open Decision", () => {
-    expect(first.state).toEqual(setupState(ruleset, "start", 9));
+    expect(first.state).toEqual(startState(ruleset, "start", 9));
+    expect(first.state.deck.piles).toEqual([[expect.any(String), expect.any(String), "T-003"]]);
+    expect(first.state.initiative).toMatchObject({ firstEligible: "red", secondEligible: "blue" });
     expect(first.stateHash).toBe(canonicalHash(first.state));
     expect(first.pending).toBeNull();
     expect(first.logEntries).toEqual([{ kind: "PhaseStarted", stateSeq: 0, ruleRef: null, assumptionRef: null, data: { phase: "setup", scenario: "start" } }]);

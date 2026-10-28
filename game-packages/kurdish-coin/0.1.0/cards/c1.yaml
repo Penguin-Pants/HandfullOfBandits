@@ -1,0 +1,351 @@
+# C1 cards from research/research-final/data/prototype-deck.csv (11 P2-05). Text is the CSV prose.
+# Stubs came from a one-time generator; effects are hand-encoded (04 s4.8).
+- id: DK-001
+  campaign: C1
+  title: "Eruh and Şemdinli (15 Aug 1984)"
+  date: "1984-08-15"
+  type: event
+  unshaded:
+    text: "Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2."
+    owner: state
+    tier: T1
+    effects:
+      - type: choice
+        options:
+          - {label: Hakkari, effects: [{type: placePieces, piece: troops, count: 2, space: hakkari}]}
+          - {label: Botan, effects: [{type: placePieces, piece: troops, count: 2, space: botan}]}
+      - {type: adjustTrack, track: resources.state, delta: 2}
+  shaded:
+    text: "Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Botan. Shift Botan one level toward Opposition."
+    owner: pkk
+    tier: T1
+    effects:
+      - {type: placePieces, piece: guerrilla, count: 2, space: hakkari, state: underground}
+      - {type: placePieces, piece: guerrilla, count: 1, space: botan, state: underground}
+      - {type: shiftLevel, space: botan, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0003, S-0028, S-0245, S-0029, S-0030, S-0097]
+- id: DK-002
+  campaign: C1
+  title: "Raid in Siirt (17 Aug 1984)"
+  date: "1984-08-17"
+  type: event
+  unshaded:
+    text: "Police alert: the State conducts a free Garrison. Its Activation must be in Botan."
+    owner: state
+    tier: T1
+    effects:
+      - {type: freeAction, action: state.garrison, constraints: {activationSpace: botan}}
+  shaded:
+    text: "Second strike: the PKK conducts a free Attack in Botan with Ambush (no roll)."
+    owner: pkk
+    tier: T1
+    effects:
+      - {type: freeAction, action: pkk.attack, constraints: {spaces: [botan], sa: pkk.ambush}}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); the Ambush handler follows PA-06 (replaced), which keeps the roll"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0073, S-0028, S-0063]
+- id: DK-003
+  campaign: C1
+  title: "Law 3175 (Mar 1985)"
+  date: "1985-03-26"
+  type: event
+  mandatory: true
+  always:
+    - {type: transferPool, piece: guards, from: outOfPlay, to: available, count: all}
+    - {type: setFlag, flag: law3175, value: true}
+  unshaded:
+    text: "Guard recruitment: place up to 2 Village Guards in each of up to 2 Mountain or Plain spaces with State Control and Police."
+    owner: state
+    tier: T0
+    effects:
+      - type: forEachSpace
+        where:
+          type: all
+          of:
+            - {type: terrainIn, terrain: [mountain, plain]}
+            - {type: control, faction: state}
+            - {type: spaceHas, pieces: [police]}
+        min: 0
+        max: 2
+        effects: [{type: placePieces, piece: guards, count: {min: 0, max: 2}, space: selected}]
+  shaded:
+    text: "Recruitment under pressure and pay: State Resources -3. Shift one space with a Village Guard and no PKK Harm marker one level toward Opposition."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: resources.state, delta: -3}
+      - type: forEachSpace
+        where: {type: all, of: [{type: spaceHas, pieces: [guards]}, {type: not, of: {type: spaceHas, markers: [pkkHarm]}}]}
+        min: 1
+        max: 1
+        effects: [{type: shiftLevel, space: selected, direction: opposition, steps: 1}]
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Always line from 08 s2.2 and 10 s6.1. Flag law3175 opens Guard placement (06 s2.1) and Strike Collaborators (06 s5.3). Unshaded per DEC-33, no module procedure"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0004, E-0005, S-0064, S-0120, S-0241, S-0320, S-0341, S-0019, S-0020, S-0022, S-0097, S-0498, S-0501, S-0499]
+- id: DK-004
+  campaign: C1
+  title: "ERNK Founded (Mar 1985)"
+  date: "1985-03-21"
+  type: capability
+  unshaded:
+    text: "Front network exposed: remove 1 Guerrilla from Diyarbakır City or Western Cities, or PKK Resources -2 (State choice)."
+    owner: state
+    tier: T0
+    effects: []
+  shaded:
+    text: "PKK Capability (ERNK): Agitate in a Rally may select a City with a PKK Guerrilla even without a PKK Base or PKK Control."
+    owner: pkk
+    tier: T0
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0157, S-0246, S-0248]
+- id: DK-005
+  campaign: C1
+  title: "KDP Orders PKK Out (Oct 1985)"
+  date: "1985-10"
+  type: event
+  mandatory: true
+  always:
+    - {type: setTrack, track: posture.kdp, value: tolerant, ifEquals: host}
+  unshaded:
+    text: "KDP posture one more step toward Hostile."
+    owner: state
+    tier: T0
+    effects:
+      - {type: stepOrdinal, track: posture.kdp, direction: next, steps: 1}
+  shaded:
+    text: "Guests stay: the PKK moves up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground, free. PKK Resources +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - {label: PUK Zone, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: kdp-zone, to: puk-zone}]}
+          - {label: Hakkari, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: kdp-zone, to: hakkari}]}
+      - {type: adjustTrack, track: resources.pkk, delta: 1}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Always line from 08 s2.2. Shaded: moved Guerrillas arrive Underground (movePieces toState)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0160, S-0097, S-0246]
+- id: DK-006
+  campaign: C1
+  title: "Chiefs Enter the Guard System (1985)"
+  date: "1985"
+  type: capability
+  unshaded:
+    text: "State Capability (Tribal Allies): Train may place Village Guards in a Mountain or Plain space with State Control even without Police. Needs Law 3175."
+    owner: state
+    tier: T0
+    effects: []
+  shaded:
+    text: "Armed retinues: apply Guard Abuse (07, section 4.7). Then shift one space with a Village Guard one level toward Opposition."
+    owner: pkk
+    tier: T0
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0156, S-0246]
+- id: DK-007
+  campaign: C1
+  title: "ERNK Action Campaign (Jun-Nov 1985)"
+  date: "1985-06"
+  type: momentum
+  unshaded:
+    text: "Police raids: the State conducts a free Garrison. Place 1 Police in Diyarbakır City."
+    owner: state
+    tier: T1
+    effects: []
+  shaded:
+    text: "PKK Momentum: until the next Reset, each Rally may Agitate in one extra space (normal cost)."
+    owner: pkk
+    tier: T1
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0158, S-0246]
+- id: DK-008
+  campaign: C1
+  title: "Former Member Killed Abroad (Nov 1985)"
+  date: "1985-11-02"
+  type: event
+  unshaded:
+    text: "Europe -1. PKK Resources -1."
+    owner: state
+    tier: T2
+    effects:
+      - {type: adjustTrack, track: europe, delta: -1}
+      - {type: adjustTrack, track: resources.pkk, delta: -1}
+  shaded:
+    blockOnly: true
+    text: "Block only: Europe -1. No other effect."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: adjustTrack, track: europe, delta: -1}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Shaded side is block only (08 s7)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0161, S-0246]
+- id: DK-009
+  campaign: C1
+  title: "Bekaa Training Academy (1986)"
+  date: "1986"
+  type: capability
+  unshaded:
+    text: "Camp watched: the State conducts a free Diplomacy targeting Syria with +1."
+    owner: state
+    tier: T0
+    effects: []
+  shaded:
+    text: "PKK Capability (Academy): while Syria is Host or Tolerant, a Rally in Syria-Bekaa places up to 2 extra Guerrillas there."
+    owner: pkk
+    tier: T0
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0053, S-0035, S-0249, S-0253, S-0034]
+- id: DK-010
+  campaign: C1
+  title: "Rival Groups Form the TSK (1986)"
+  date: "1986"
+  type: momentum
+  unshaded:
+    text: "Recruits divided: PKK Resources -2. State Momentum: until the next Reset, a PKK Rally in a Mountain space places 1 fewer Guerrilla (minimum 1)."
+    owner: state
+    tier: T0
+    effects: []
+  shaded:
+    text: "Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van-Bitlis or Ağrı."
+    owner: pkk
+    tier: T0
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0054, S-0245, S-0035]
+- id: DK-011
+  campaign: C1
+  title: "PKK Spring Offensive (Mar 1986)"
+  date: "1986-03"
+  type: momentum
+  unshaded:
+    text: "Patrol security: the State conducts a free Sweep in up to 2 Mountain spaces."
+    owner: state
+    tier: T1
+    effects: []
+  shaded:
+    text: "PKK Momentum: until the next Reset, Ambush may select up to 3 Attack spaces."
+    owner: pkk
+    tier: T1
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0162, S-0246]
+- id: DK-012
+  campaign: C1
+  title: "Ankara Names a Guerrilla War (May 1985)"
+  date: "1985-05-24"
+  type: event
+  unshaded:
+    text: "War budget: State Resources +4. Place 2 Troops from Available in any Mountain spaces."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: resources.state, delta: 4}
+      - type: choice
+        options:
+          - label: 2 Troops in one Mountain space
+            effects: [{type: forEachSpace, where: {type: all, of: [{type: terrainIn, terrain: [mountain]}, {type: spaceKind, kind: domestic}]}, min: 1, max: 1, effects: [{type: placePieces, piece: troops, count: 2, space: selected}]}]
+          - label: 1 Troop in each of two Mountain spaces
+            effects: [{type: forEachSpace, where: {type: all, of: [{type: terrainIn, terrain: [mountain]}, {type: spaceKind, kind: domestic}]}, min: 2, max: 2, effects: [{type: placePieces, piece: troops, count: 1, space: selected}]}]
+  shaded:
+    text: "Recognition of the conflict: Europe +1. PKK Resources +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+      - {type: adjustTrack, track: resources.pkk, delta: 1}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Text (2 Troops in any Mountain spaces) reads as one space with 2 or two spaces with 1"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0275, E-0274, S-0246]
+- id: DK-013
+  campaign: C1
+  title: "Border Attack and Air Raid into Northern Iraq (Aug 1986)"
+  date: "1986-08-12"
+  type: event
+  unshaded:
+    text: "Hot pursuit raid: the State conducts a free Assault with Cross-Border in the KDP Zone (06, section 3.2, hot pursuit: at most 3 Troops). No extra Resources."
+    owner: state
+    tier: T1
+    effects: []
+  shaded:
+    text: "Camps rebuilt after the raid: the PKK places up to 2 Underground Guerrillas in the KDP Zone if its posture is Host or Tolerant. PKK Resources +1."
+    owner: pkk
+    tier: T1
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0165, S-0246, S-0250, S-0532, S-0533, S-0534]
+- id: DK-014
+  campaign: C1
+  title: "Human Rights Association Founded (Jul 1986)"
+  date: "1986-07-17"
+  type: event
+  unshaded:
+    text: "Tolerated civil society: Legitimacy +1."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+  shaded:
+    text: "Documentation begins: Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0164, S-0193, S-0530, S-0531]
+- id: DK-016
+  campaign: C1
+  title: "Propaganda"
+  type: propaganda
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Starts a Propaganda round (05 s6)"}
+  deckEligible: false
+- id: DK-100
+  campaign: C1
+  title: "Neighbors Condemn the Raid (Sep 1986)"
+  date: "1986-09"
+  type: event
+  unshaded:
+    text: "Ankara names the raid a reprisal for the loss of its soldiers: Legitimacy +1. State Resources +1."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+      - {type: adjustTrack, track: resources.state, delta: 1}
+  shaded:
+    text: "Iran and Libya condemn the raid: shift Syria posture one step toward Host. PKK Resources +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: stepOrdinal, track: posture.syria, direction: previous, steps: 1}
+      - {type: adjustTrack, track: resources.pkk, delta: 1}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Shaded: a step toward Host does nothing at Host (PA-04)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0340, E-0165, S-0534, S-0532]

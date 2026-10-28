@@ -9,6 +9,23 @@ export interface TermContext {
   readonly state: GameState;
   /** Control per space, from derive (computed first, so the `control` condition can read it). */
   readonly control: Readonly<Record<SpaceId, FactionId | null>>;
+  /** The current forEachSpace pick (DEC-33). Absent or null: none. */
+  readonly selected?: SpaceId | null;
+}
+
+/** Space reference that names the current forEachSpace pick (DEC-33). */
+export const SELECTED = "selected";
+
+/** A space ID, with `selected` resolved to the current pick. */
+export function resolveSpace(ctx: Pick<TermContext, "selected">, ref: string): SpaceId {
+  if (ref !== SELECTED) return ref;
+  if (ctx.selected === undefined || ctx.selected === null) throw new RangeError("No space is selected");
+  return ctx.selected;
+}
+
+/** Spaces linked to `spaceId` (04 s4.3), in package link order. */
+export function neighbors(ruleset: Ruleset, spaceId: SpaceId): SpaceId[] {
+  return ruleset.links.flatMap((l) => (l.a === spaceId ? [l.b] : l.b === spaceId ? [l.a] : []));
 }
 
 function spaceState(ctx: TermContext, spaceId: SpaceId): GameState["spaces"][string] {
@@ -51,6 +68,20 @@ export function matches(ctx: TermContext, spaceId: SpaceId, condition: SpaceCond
       return condition.of.some((c) => matches(ctx, spaceId, c));
     case "not":
       return !matches(ctx, spaceId, condition.of);
+    case "adjacentTo":
+      return neighbors(ctx.ruleset, resolveSpace(ctx, condition.space)).includes(spaceId);
+    case "selected":
+      return ctx.selected === spaceId;
+    case "trackAtLeast":
+    case "trackAtMost": {
+      const value = ctx.state.tracks[condition.track];
+      if (typeof value !== "number") throw new RangeError(`Track "${condition.track}" is not numeric`);
+      return condition.type === "trackAtLeast" ? value >= condition.value : value <= condition.value;
+    }
+    case "trackIn":
+      return condition.values.includes(String(ctx.state.tracks[condition.track]));
+    case "flag":
+      return (ctx.state.flags[condition.flag] ?? false) === condition.value;
   }
 }
 

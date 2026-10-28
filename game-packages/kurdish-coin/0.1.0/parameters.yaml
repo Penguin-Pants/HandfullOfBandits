@@ -1,0 +1,86 @@
+# Values from research 03, 04, 05 and 09 (11 P2-01). tune: true where the research marks [tune].
+# 03 Map
+- {id: rally.externalPop, value: 1, tune: false, source: "03 s3 item 3"}
+# 04 Tracks
+- {id: legitimacy.overflowCost, value: 2, tune: true, source: "04 s3.2; PA-04"}
+- {id: europe.income, value: [0, 0, 1, 1, 2, 2], tune: true, source: "04 s3.6 (PKK income by Europe 0 to 5)"}
+- {id: europe.drainFrom, value: 4, tune: false, source: "04 s3.6; 05 s6.4 step 6"}
+- {id: europe.banCap, value: 3, tune: false, source: "04 s3.6"}
+# 05 Sequence of play
+- {id: deck.pileSize, value: 12, tune: false, source: "05 s1.1 step 2; DD-13.1"}
+- {id: deck.topSize, value: 8, tune: false, source: "05 s1.1 step 3"}
+- {id: income.state.base, value: 8, tune: true, source: "05 s6.2 item 1"}
+- {id: income.state.legitimacyDivisor, value: 2, tune: true, source: "05 s6.2 item 1"}
+- {id: income.pkk.domesticBase, value: 1, tune: true, source: "05 s6.2 item 2"}
+- {id: income.pkk.externalBase, value: 1, tune: true, source: "05 s6.2 item 2"}
+- {id: income.pkk.leadershipHost, value: 2, tune: true, source: "05 s6.2 item 2"}
+- {id: income.pkk.leadershipTolerant, value: 1, tune: true, source: "05 s6.2 item 2"}
+- {id: upkeep.guardsPerResource, value: 2, tune: true, source: "05 s6.3 item 1"}
+- {id: emergencyRule.drain, value: [1, 1, 2, 0], tune: false, source: "05 s6.4 step 1 (by emergencyRule step)"}
+- {id: legitimacy.displacementDrain, value: 1, tune: false, source: "05 s6.4 step 2"}
+- {id: legitimacy.receptionThreshold, value: 3, tune: false, source: "05 s6.4 step 3"}
+- {id: legitimacy.disputedThreshold, value: 3, tune: false, source: "05 s6.4 step 4"}
+- {id: covert.exposureThreshold, value: 3, tune: false, source: "05 s6.4 step 5"}
+- {id: covert.revealCost, value: 2, tune: false, source: "05 s6.4 step 5; 09 s4 item 1"}
+- {id: europe.harmGap, value: 3, tune: false, source: "05 s6.4 step 6"}
+- {id: civicAction.capDivisor, value: 2, tune: true, source: "05 s6.6 item 2"}
+# 09 Victory
+- {id: harm.limit, value: 6, tune: true, source: "09 s3.1"}
+- {id: victory.covertCheckPenalty, value: 2, tune: false, source: "09 s3 step 1"}
+- {id: victory.finalHarmFactor, value: 2, tune: true, source: "09 s4 item 3"}
+- {id: victory.narrowMax, value: 5, tune: false, source: "09 s4 (record sheet labels)"}
+# 06 Operations (P2-06 to P2-08)
+- {id: terrain.mountainDivisor, value: 2, tune: false, source: "06 s1 item 6"}
+- {id: train.costPerSpace, value: 2, tune: false, source: "06 s2.1"}
+- {id: train.maxPlace, value: 3, tune: false, source: "06 s2.1 item 1"}
+- {id: train.maxGuards, value: 2, tune: false, source: "06 s2.1 item 2"}
+- {id: train.baseFromPolice, value: 2, tune: false, source: "06 s2.1 item 3"}
+- {id: train.baseLimit, value: 2, tune: false, source: "06 s2.1 item 3"}
+- {id: garrison.cost, value: 2, tune: false, source: "06 s2.2"}
+- {id: garrison.maxPolice, value: 6, tune: false, source: "06 s2.2 item 1"}
+- {id: sweep.costPerSpace, value: 2, tune: false, source: "06 s2.3"}
+- {id: sweep.costOhalExtended, value: 1, tune: true, source: "06 s2.3"}
+- {id: assault.costPerSpace, value: 2, tune: false, source: "06 s2.4"}
+# 07 Civic Action (07 s1.3)
+- {id: civicAction.coercionCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: civicAction.reliefCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: civicAction.redressCost, value: 3, tune: false, source: "07 s1.3"}
+- {id: civicAction.returnCost, value: 3, tune: false, source: "07 s1.3"}
+- {id: civicAction.returnCampaigns, value: [C5], tune: false, source: "07 s3.3"}
+- {id: civicAction.shiftCost, value: 2, tune: false, source: "07 s1.3"}
+- {id: civicAction.maxShifts, value: 2, tune: false, source: "07 s1.3"}
+- {id: rally.costPerLocation, value: 1, tune: false, source: "06 s4.1"}
+- {id: rally.europeBanCost, value: 2, tune: false, source: "06 s4.1 item 3; 04 s3.6"}
+- {id: rally.europeGain, value: 1, tune: false, source: "06 s4.1 item 3"}
+- {id: rally.baseFromGuerrillas, value: 2, tune: false, source: "06 s4.1 option 2"}
+- {id: march.costPerDestination, value: 1, tune: false, source: "06 s4.2"}
+- {id: march.restrictedExtraCost, value: 1, tune: false, source: "06 s4.2 item 2; 07 s5.1"}
+- {id: march.activationThreshold, value: 3, tune: false, source: "06 s4.2 item 4"}
+- {id: attack.costPerSpace, value: 1, tune: false, source: "06 s4.3"}
+- {id: attack.maxRemoval, value: 2, tune: false, source: "06 s4.3 item 3"}
+- {id: attack.bonusRoll, value: 1, tune: false, source: "06 s4.3 item 5"}
+- {id: coerce.costPerSpace, value: 1, tune: true, source: "06 s4.4; DD-19.4"}
+- {id: coerce.costHighPop, value: 2, tune: true, source: "06 s4.4; DD-19.4"}
+- {id: coerce.highPopFrom, value: 3, tune: true, source: "06 s4.4; DD-19.4"}
+- {id: agitation.coercionCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: agitation.redressCost, value: 2, tune: false, source: "07 s1.3"}
+- {id: agitation.shiftCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: agitation.maxShifts, value: 2, tune: false, source: "07 s1.3"}
+- {id: airMobility.maxTroops, value: 4, tune: false, source: "06 s3.1"}
+- {id: airMobility.maxSpaces, value: 3, tune: false, source: "06 s3.1"}
+- {id: ambush.maxSpaces, value: 2, tune: false, source: "06 s5.1"}
+- {id: ambush.extraRemoval, value: 1, tune: false, source: "06 s5.1; PA-06"}
+- {id: extort.minPop, value: 1, tune: false, source: "06 s5.2"}
+- {id: extort.gain, value: 1, tune: false, source: "06 s5.2"}
+- {id: strike.maxSpaces, value: 2, tune: false, source: "06 s5.3 item 1"}
+- {id: strike.costPerSpace, value: 1, tune: false, source: "06 s5.3 item 1"}
+- {id: strike.maxGuards, value: 2, tune: false, source: "06 s5.3 item 2"}
+- {id: strike.europeLoss, value: 1, tune: false, source: "06 s5.3 item 5"}
+# 05 s6 and 07 s8 Propaganda (P2-10)
+- {id: campaign.order, value: [C1, C2, C3, C4, C5], tune: false, source: "05 s1 item 1"}
+- {id: emergencyRule.extendedFrom, value: C3, tune: false, source: "07 s8.2 item 2"}
+- {id: emergencyRule.returnCost, value: 1, tune: false, source: "07 s8.2 item 3"}
+- {id: recordSheet.civilianGap, value: 2, tune: false, source: "09 s6"}
+- {id: recordSheet.boardGap, value: 3, tune: false, source: "09 s6"}
+- {id: stopRule.passStreak, value: 3, tune: false, source: "12 s9 item 6; DEC-34"}
+- {id: stopRule.passStreaks, value: 2, tune: false, source: "12 s9 item 6; DEC-34"}

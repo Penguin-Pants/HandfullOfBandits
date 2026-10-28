@@ -1,0 +1,36 @@
+# The 3 tiny cards (11 P1-06, added with the card schema in P2-05).
+- id: T-001
+  campaign: C1
+  title: Patrol
+  type: event
+  unshaded:
+    text: "Place 1 Soldier in City or Farm. Blue Resources +1."
+    owner: blue
+    effects:
+      - type: choice
+        options:
+          - {label: City, effects: [{type: placePieces, piece: soldier, count: 1, space: city}]}
+          - {label: Farm, effects: [{type: placePieces, piece: soldier, count: 1, space: farm}]}
+      - {type: adjustTrack, track: cash.blue, delta: 1}
+  shaded:
+    text: "Place up to 2 Rebels in each of up to 2 spaces next to Hills."
+    owner: red
+    effects:
+      - type: forEachSpace
+        where: {type: adjacentTo, space: hills}
+        min: 0
+        max: 2
+        effects: [{type: placePieces, piece: rebel, count: {min: 0, max: 2}, space: selected}]
+  encoding: {status: encoded, encodedBy: designer, reviewedAgainstText: true}
+  deckEligible: true
+- id: T-002
+  campaign: C1
+  title: Border closes
+  type: event
+  mandatory: true
+  always: [{type: transferPool, piece: camp, from: outOfPlay, to: available, count: all}]
+  unshaded: {text: "Border one step toward closed.", owner: blue, effects: [{type: stepOrdinal, track: border, direction: next, steps: 1}]}
+  shaded: {text: "Red Resources +2.", owner: red, effects: [{type: adjustTrack, track: cash.red, delta: 2}]}
+  encoding: {status: encoded, encodedBy: designer, reviewedAgainstText: true}
+  deckEligible: true
+- {id: T-003, campaign: C1, title: Propaganda, type: propaganda, encoding: {status: encoded, reviewedAgainstText: true}, deckEligible: false}

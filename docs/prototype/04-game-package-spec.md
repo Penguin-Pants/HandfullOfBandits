@@ -314,8 +314,8 @@ Validation runs on load, before a session starts, and in the CLI (`sim validate 
 | V-RANGE | Scenario track values within `min` and `max`. Levels within the `supportLevels` range and only on spaces with a support scale. A space with a support scale needs `supportLevels` (DEC-39, DEC-40) | error |
 | V-STACK | Scenario setup obeys stacking | error |
 | V-LINKS | Adjacency is symmetric. No link to an unknown space | error |
-| V-CARDS | Each pile has enough eligible cards. Mandatory cards exist. Chain pairs refer to real cards | error |
-| V-ENCODE | Each card a scenario can draw is encoded or excluded | error |
+| V-CARDS | Each pile has enough eligible cards and one Propaganda card (scenario-scoped, DEC-51). Card IDs are unique. Chain pairs refer to real cards | error |
+| V-ENCODE | Each card a scenario can draw is encoded or excluded | error, scenario-scoped: blocks that scenario only (DEC-51) |
 | V-EFFECT | Each effect primitive has valid parameters | error |
 | V-VICTORY | Score terms resolve. Thresholds set for each player faction | error |
 | V-OPTIONS | Every competing option has a value in each scenario | error |

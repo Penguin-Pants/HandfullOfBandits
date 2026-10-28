@@ -1,5 +1,6 @@
 // actions (06 s3.4) and the one-transaction commit (06 s5 item 1): state, action, commands,
 // log entries and session head are written together or not at all.
+import type { AnyCommand } from "../../engine/core/types.ts";
 import { now } from "../common.ts";
 import type { Db } from "../migrate.ts";
 import { insertCommands, type CommandInput } from "./commands.ts";
@@ -98,4 +99,14 @@ export function getAction(db: Db, actionId: string): ActionRow | null {
 /** Actions of a branch in branch order, undone ones included (07 s6). */
 export function listActions(db: Db, branchId: string): ActionRow[] {
   return db.prepare("SELECT * FROM actions WHERE branch_id = ? ORDER BY branch_seq").all(branchId) as ActionRow[];
+}
+
+/** Committed actions of a branch as replay steps: setup hash, then each action's commands and hash after. */
+export function storedSteps(db: Db, branchId: string): { startHash: string; steps: { id: string; commands: AnyCommand[]; hashAfter: string }[] } {
+  const actions = listActions(db, branchId).filter((a) => a.status !== "undone");
+  const commands = db.prepare("SELECT payload FROM commands WHERE action_id = ? ORDER BY n");
+  return {
+    startHash: actions[0]?.state_hash_after ?? "",
+    steps: actions.slice(1).map((a) => ({ id: a.action_id, commands: (commands.all(a.action_id) as { payload: string }[]).map((c) => JSON.parse(c.payload) as AnyCommand), hashAfter: a.state_hash_after })),
+  };
 }

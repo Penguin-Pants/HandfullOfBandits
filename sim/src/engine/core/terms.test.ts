@@ -10,8 +10,8 @@ const ruleset: Ruleset = {
   factions: [{ id: "blue", kind: "player", resourcesTrack: null }],
   pieces: [],
   spaces: [
-    { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 2 },
-    { id: "box", hasSupportScale: false, kind: "external", terrain: null, pop: 3 },
+    { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 2, tags: [] },
+    { id: "box", hasSupportScale: false, kind: "external", terrain: null, pop: 3, tags: [] },
   ],
   tracks: [
     { id: "cash", kind: "numeric", min: 0, max: 9, overflow: null },
@@ -22,6 +22,9 @@ const ruleset: Ruleset = {
   levelRange: 2,
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
+  sequence: { model: "ct-two-faction@1", boxes: [], adjacency: [], swapAfter: [], firstEligibleAtStart: "blue", passIncome: {}, propagandaPhases: [] },
+  links: [],
+  cards: {},
   harmMarkers: [],
   scenarios: {},
 };

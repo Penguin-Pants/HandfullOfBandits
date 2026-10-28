@@ -52,6 +52,28 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ok).toBe(true);
   });
 
+  it("reads an optional assumptions.yaml and checks its schema (04 s7)", () => {
+    const entry = { id: "PA-01", gap: "GAP-B01", text: "Executing faction chooses", appliesTo: ["events.choice"], status: "accepted" };
+    const present = loadPackage({ files: { ...raw.files, "assumptions.yaml": [entry] }, issues: [] });
+    if (!present.ok) throw new Error(JSON.stringify(present.issues));
+    expect(present.data.assumptions).toEqual([entry]);
+    expect(present.hash).not.toBe(result.ok ? result.hash : "");
+    const bad = loadPackage({ files: { ...raw.files, "assumptions.yaml": [{ ...entry, status: "open" }] }, issues: [] });
+    expect(bad.issues).toContainEqual(expect.objectContaining({ code: "V-SCHEMA", file: "assumptions.yaml", path: "0.status", id: "PA-01" }));
+  });
+
+  it("compiles cards and links, and blocks only the scenario with a scenario-scoped error (DEC-51)", () => {
+    if (!result.ok) throw new Error("fixture must load");
+    expect(result.ruleset.cards["F-001"]).toMatchObject({ campaign: "C1", type: "event", encoded: true, unshaded: { owner: "state", blockOnly: false } });
+    expect(result.ruleset.links.length).toBeGreaterThan(0);
+    const unencoded = loadPackage(changed("cards/c1.yaml", { "0/encoding/status": "notEncoded" }));
+    if (!unencoded.ok) throw new Error(JSON.stringify(unencoded.issues));
+    expect(unencoded.issues).toContainEqual(expect.objectContaining({ level: "error", code: "V-ENCODE", file: "scenarios/s0.yaml", id: "F-001", scenario: "s0" }));
+    expect(unencoded.ruleset.scenarios["s0"]?.blockedBy).toEqual([expect.stringContaining("V-ENCODE F-001")]);
+    const excluded = loadPackage(changed("scenarios/s0.yaml", { excludedCards: [{ card: "F-001", reason: "test" }] }));
+    expect(excluded.issues).toContainEqual(expect.objectContaining({ code: "V-CARDS", scenario: "s0", message: "Campaign C1 has 0 eligible cards for a pile of 1." }));
+  });
+
   it("compiles an overflow cost from its parameter", () => {
     const other = loadPackage(changed("tracks.yaml", { "1/overflow": { track: "resources.state", costParam: "sweep.costPerSpace" } }));
     if (!other.ok) throw new Error(JSON.stringify(other.issues));
@@ -67,15 +89,15 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.markers.find((m) => m.id === "stateHarm")?.sides).toEqual([]);
     expect(result.ruleset.tracks.find((t) => t.id === "posture")).toEqual({ id: "posture", kind: "ordinal", steps: ["host", "tolerant", "hostile"] });
     expect(result.ruleset.spaces).toEqual([
-      { id: "hills", hasSupportScale: true, kind: "domestic", terrain: "mountain", pop: 2 },
-      { id: "town", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 3 },
-      { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0 },
+      { id: "hills", hasSupportScale: true, kind: "domestic", terrain: "mountain", pop: 2, tags: [] },
+      { id: "town", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 3, tags: [] },
+      { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0, tags: [] },
     ]);
     expect(result.ruleset.levelRange).toBe(2);
     expect(result.ruleset.factions.map((f) => f.resourcesTrack)).toEqual(["resources.state", "resources.pkk"]);
     expect(result.ruleset.markers.find((m) => m.id === "office")).toEqual({ id: "office", count: 2, sides: [], blocks: [], capsLevel: 1 });
     expect(result.ruleset.stacking[1]).toEqual({ pieces: ["pkkBase"], max: 0, spaceKind: null, terrain: ["city"], spaces: null });
-    expect(result.ruleset.parameters).toEqual({ "sweep.costPerSpace": 2, "harm.limit": 6, "ui.label": "text" });
+    expect(result.ruleset.parameters).toEqual({ "sweep.costPerSpace": 2, "harm.limit": 6, "ui.label": "text", "deck.topSize": 8 });
     expect(result.ruleset.pieces.find((p) => p.id === "pkkBase")?.countsForControl).toBe(true);
     expect(result.ruleset.victory.scores["pkk"]).toEqual([
       { type: "countPieces", pieces: ["pkkBase"], where: { type: "spaceKind", kind: "domestic" } },
@@ -84,6 +106,14 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.harmMarkers).toEqual(["stateHarm", "covert"]);
     expect(result.ruleset.scenarios).toEqual({
       s0: {
+        finalRound: 1,
+        pileSize: 1,
+        propagandaLast: false,
+        excludedCards: [],
+        pivotals: null,
+        options: {},
+        blockedBy: [],
+        testOnly: false,
         campaigns: ["C1"],
         tracks: { "resources.state": 12, "resources.pkk": 5, posture: "tolerant" },
         // Bare piece counts go to the placedAs face, else `default`. Bare marker counts go to `default`.
@@ -158,6 +188,10 @@ const invalid: [string, string, string, Record<string, unknown>, string, string 
   ["V-LINKS", "space linked to itself", "map.yaml", { "links/0/b": "hills" }, "links.0.b", "hills-hills"],
   ["V-PARAM", "tune parameter without value", "parameters.yaml", { "1/value": DELETE }, "1.value", "harm.limit"],
   ["V-FACTIONS", "one player faction", "factions.yaml", { "1/kind": "nonPlayer" }, "", null],
+  ["V-REF", "unknown sequence model", "sequence.yaml", { model: "pp-three-faction@1" }, "model", "pp-three-faction@1"],
+  ["V-REF", "First Eligible not a player faction", "sequence.yaml", { firstEligibleAtStart: "army" }, "firstEligibleAtStart", "army"],
+  ["V-REF", "player faction without pass income", "sequence.yaml", { "passIncome/pkk": DELETE }, "passIncome", "pkk"],
+  ["V-REF", "adjacency box not on the track", "sequence.yaml", { boxes: ["event", "limitedOp", "opOnly", "opSa"].map((id) => ({ id, label: id })) }, "adjacency.0.0", "pass"],
   ["V-RANGE", "level beyond the support scale", "scenarios/s0.yaml", { "spaces/town/level": 3 }, "spaces.town.level", "town"],
   ["V-RANGE", "level on a space with no support scale", "scenarios/s0.yaml", { "spaces/camp/level": 0 }, "spaces.camp.level", "camp"],
   ["V-RANGE", "support scale space without supportLevels", "map.yaml", { "supportLevels": DELETE }, "spaces.0.hasSupportScale", "hills"],
@@ -173,6 +207,14 @@ const invalid: [string, string, string, Record<string, unknown>, string, string 
   ["V-VICTORY", "player faction without a score", "victory.yaml", { "scores/pkk": DELETE }, "scores", "pkk"],
   ["V-VICTORY", "player faction without a threshold", "scenarios/s0.yaml", { "thresholds/pkk": DELETE }, "thresholds", "pkk"],
   ["V-VICTORY", "player faction without a Harm count", "victory.yaml", { "harmCount/state": DELETE }, "harmCount", "state"],
+  ["V-REF", "unknown piece in a card effect", "cards/c1.yaml", { "0/unshaded/effects/0": { type: "placePieces", piece: "tank", count: 1, space: "hills", state: null } }, "0.unshaded.effects.0.piece", "F-001"],
+  ["V-REF", "unknown space in a card effect", "cards/c1.yaml", { "0/unshaded/effects/0": { type: "shiftLevel", space: "sea", direction: "support", steps: 1 } }, "0.unshaded.effects.0.space", "F-001"],
+  ["V-EFFECT", "adjustTrack on an ordinal track", "cards/c1.yaml", { "0/unshaded/effects/0/track": "posture" }, "0.unshaded.effects.0.track", "F-001"],
+  ["V-REF", "unknown side owner", "cards/c1.yaml", { "0/shaded/owner": "army" }, "0.shaded.owner", "F-001"],
+  ["V-EFFECT", "setTrack string on a numeric track", "cards/c1.yaml", { "0/unshaded/effects/0": { type: "setTrack", track: "resources.state", value: "host", ifEquals: null } }, "0.unshaded.effects.0.value", "F-001"],
+  ["V-PARAM", "cards without deck.topSize", "parameters.yaml", { "3": { id: "deck.other", value: 1, tune: false } }, "", "deck.topSize"],
+  ["V-CARDS", "chain to a missing card", "cards/c1.yaml", { "0/chainAfter": ["F-999"] }, "0.chainAfter.0", "F-001"],
+  ["V-REF", "unknown excluded card", "scenarios/s0.yaml", { excludedCards: [{ card: "F-999", reason: "test" }] }, "excludedCards.0.card", "F-999"],
   ["V-RANGE", "numeric track above max", "scenarios/s0.yaml", { "tracks/resources.pkk": 51 }, "tracks.resources.pkk", "resources.pkk"],
 ];
 
@@ -183,6 +225,11 @@ describe("loadPackage on invalid packages", () => {
     expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code, file, path, id }));
   });
 
+  it("V-FACTIONS: rejects a player count the sequence model does not support", () => {
+    const result = loadPackage(changed("factions.yaml", { "2": { id: "legal", name: "Legal", color: "blue", kind: "player" } }));
+    expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code: "V-FACTIONS", file: "sequence.yaml", path: "model", id: "ct-two-faction@1" }));
+  });
+
   it("asks for supportLevels when a term has a level condition and the map has none", () => {
     const result = loadPackage(changed("map.yaml", { supportLevels: DELETE }));
     expect(result.issues).toContainEqual(
@@ -190,9 +237,10 @@ describe("loadPackage on invalid packages", () => {
     );
   });
 
+  // V-ENCODE is scenario-scoped: "compiles cards and links" covers it.
   it("covers every error code the loader reports", () => {
     expect(new Set(invalid.map(([code]) => code))).toEqual(
-      new Set(["V-SCHEMA", "V-REF", "V-PIECES", "V-STACK", "V-LINKS", "V-PARAM", "V-FACTIONS", "V-RANGE", "V-VICTORY"]),
+      new Set(["V-SCHEMA", "V-REF", "V-PIECES", "V-STACK", "V-LINKS", "V-PARAM", "V-FACTIONS", "V-RANGE", "V-VICTORY", "V-CARDS", "V-EFFECT"]),
     );
   });
 
@@ -209,13 +257,13 @@ describe("loadPackage on invalid packages", () => {
   });
 
   it("warns about files the loader does not read, and still loads", () => {
-    const dir = tempPackage("sequence.yaml", "model: ct-two-faction@1\n");
+    const dir = tempPackage("actions.yaml", "[]\n");
     writeFileSync(join(dir, "scenarios", "s1.yml"), "id: s1\n");
     const result = loadPackage(readPackageDir(dir));
     expect(result.ok).toBe(true);
     expect(result.issues).toEqual([
+      expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "actions.yaml", path: "", id: null }),
       expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "scenarios/s1.yml", path: "", id: null }),
-      expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "sequence.yaml", path: "", id: null }),
     ]);
   });
 
@@ -273,7 +321,7 @@ describe("sim validate", () => {
   });
 
   it("prints file, path, ID and sentence with exit code 1 for an invalid package", () => {
-    const dir = tempPackage("parameters.yaml", "- {id: harm.limit, tune: true}\n");
+    const dir = tempPackage("parameters.yaml", "- {id: harm.limit, tune: true}\n- {id: deck.topSize, value: 8, tune: false}\n");
     const cli = fileURLToPath(new URL("../cli/main.ts", import.meta.url));
     let status = 0;
     let stdout = "";

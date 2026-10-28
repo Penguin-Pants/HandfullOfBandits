@@ -1,0 +1,52 @@
+# S0 Opening (docs/prototype/10-mvp-scope.md s2.1; DEC-15, DEC-20, DEC-22). Test scenario, not research.
+# Setup is the full campaign setup (research 10 s2). Deck: 8 C1 Event cards, Propaganda card last
+# (P2-04). Capability, Momentum and Pivotal cards are not dealt. DK-013 needs Cross-Border.
+id: s0
+title: S0 Opening (test)
+campaigns: [C1]
+finalRound: 1
+pileSize: 8
+propagandaLast: true
+testOnly: true
+tracks:
+  resources.state: 12
+  resources.pkk: 5
+  legitimacy: 10
+  emergencyRule: martialLaw
+  posture.syria: host
+  posture.kdp: host
+  posture.puk: tolerant
+  europe: 1
+  ceasefire: none
+  legalSpace: absent
+spaces:
+  hakkari: {level: -1, pieces: {troops: 2, police: 1, guerrilla: 2}}
+  botan: {level: -1, pieces: {troops: 2, police: 1, guerrilla: 2, pkkBase: 1}}
+  mardin-batman: {pieces: {troops: 1, police: 1, guerrilla: 1}}
+  diyarbakir-city: {pieces: {troops: 3, police: 2, stateBase: 1}}
+  diyarbakir-rural: {pieces: {police: 1}}
+  sanliurfa: {level: 1, pieces: {police: 2}}
+  adiyaman: {level: 1, pieces: {police: 1}}
+  elazig: {level: 1, pieces: {troops: 1, police: 1, stateBase: 1}}
+  dersim: {pieces: {troops: 1, police: 1}}
+  bingol-mus: {pieces: {troops: 1, police: 1}}
+  van-bitlis: {pieces: {troops: 2, police: 1, stateBase: 1}}
+  agri: {pieces: {troops: 1, police: 1}}
+  western-cities: {level: 1, pieces: {troops: 2, police: 2, stateBase: 1}}
+  kdp-zone: {pieces: {guerrilla: 3, pkkBase: 1}}
+  syria-bekaa: {pieces: {guerrilla: 2, pkkBase: 1}, markers: {leadership: {present: 1, abroad: 0}}}
+available: {troops: 14, police: 8, stateBase: 4, guerrilla: 20, pkkBase: 9}
+outOfPlay: {guards: 16}
+flags: {law3175: false}
+thresholds: {state: 49, pkk: 30}
+options: {syriaMarchRestricted: allow}
+pivotals: {state: [], pkk: []}
+excludedCards:
+  - {card: DK-004, reason: "Capability: not dealt in S0"}
+  - {card: DK-006, reason: "Capability: not dealt in S0"}
+  - {card: DK-007, reason: "Momentum: not dealt in S0"}
+  - {card: DK-009, reason: "Capability: not dealt in S0"}
+  - {card: DK-010, reason: "Momentum: not dealt in S0"}
+  - {card: DK-011, reason: "Momentum: not dealt in S0"}
+  - {card: DK-013, reason: "Needs Cross-Border (Phase 3a)"}
+  - {card: DK-015, reason: "Pivotal: removed in S0 (DEC-20)"}

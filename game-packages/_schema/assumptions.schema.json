@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^PA-\\d{2}$"
+      },
+      "gap": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "text": {
+        "type": "string",
+        "minLength": 1
+      },
+      "appliesTo": {
+        "minItems": 1,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        }
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "provisional",
+          "accepted",
+          "replaced"
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "gap",
+      "text",
+      "appliesTo",
+      "status"
+    ],
+    "additionalProperties": false
+  }
+}

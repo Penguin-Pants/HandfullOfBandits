@@ -1,0 +1,19 @@
+# Prototype assumptions (04 s7). Rule text: docs/prototype/02-rules-gap-analysis.md s4 and s5.
+# Status: docs/prototype/13-design-decisions.md s2.
+- {id: PA-01, gap: GAP-B01, status: accepted, appliesTo: [events.choice], text: "The executing faction makes every choice that the card does not assign"}
+- {id: PA-02, gap: GAP-B02, status: accepted, appliesTo: [state.diplomacy], text: "Diplomacy moves a posture one step along Host, Tolerant, Restricted, Hostile, Aligned. Hostile to Aligned needs modified 6 or more. Syria at Hostile is no effect"}
+- {id: PA-03, gap: GAP-B03, status: accepted, appliesTo: [dice], text: "Use the modified die total as is. No automatic success or failure on a natural roll"}
+- {id: PA-04, gap: GAP-B04, status: accepted, appliesTo: [tracks], text: "A track or posture change that passes an end stops at the end. The excess is lost. Legitimacy keeps its own overflow rule"}
+- {id: PA-05, gap: GAP-B05, status: accepted, appliesTo: [pkk.coerce], text: "Coerce resolves its shift before it places a marker. A Coercion marker already present blocks the shift. Activation still happens"}
+- {id: PA-06, gap: GAP-B06, status: replaced, appliesTo: [pkk.ambush], text: "In an Ambush space, resolve Attack as normal and also remove 1 extra State piece in the Attack order"}
+- {id: PA-07, gap: GAP-B07, status: accepted, appliesTo: [state.sweep, state.garrison], text: "Count pieces in the space after the movement step when activating"}
+- {id: PA-08, gap: GAP-B08, status: accepted, appliesTo: [state.assault], text: "Assault removals above the removable pieces are lost"}
+- {id: PA-09, gap: GAP-B09, status: accepted, appliesTo: [markers], text: "If no marker of the type is available, the placement does not happen and the log records supply exhausted. Harm markers also raise a warning"}
+- {id: PA-10, gap: GAP-B10, status: accepted, appliesTo: [victory.check], text: "Equal margins at a victory check: lower Harm count wins, then PKK"}
+- {id: PA-11, gap: GAP-B11, status: replaced, appliesTo: [ceasefire.talks], text: "Any no vote on Talks ends the ceasefire. Ceasefire goes to None"}
+- {id: PA-12, gap: GAP-B12, status: replaced, appliesTo: [pkk.extort], text: "The PKK chooses any subset of qualifying Extort locations. Each activates one Guerrilla and gives +1 Resource"}
+- {id: PA-13, gap: GAP-B13, status: accepted, appliesTo: [rng], text: "All random selections use the session seeded generator"}
+- {id: PA-14, gap: GAP-B14, status: accepted, appliesTo: [state.air-mobility], text: "Air Mobility never uses an external box as origin or destination. Troops leave a box only at Redeploy"}
+- {id: PA-15, gap: GAP-B15, status: replaced, appliesTo: [DK-066], text: "The executing faction chooses any 2 Offices to remove. Legitimacy -1"}
+- {id: PA-16, gap: GAP-I02, status: accepted, appliesTo: [pkk.march], text: "PKK March into Syria-Bekaa is allowed at Restricted with +1 Resource; the group Activates. Package option syriaMarchRestricted"}
+- {id: PA-17, gap: GAP-I05, status: accepted, appliesTo: [scenario-a], text: "Scenario A Pivotals: PKK ARGK Formed only. The State has none"}

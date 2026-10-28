@@ -5,10 +5,11 @@ import type { PackageIssue } from "../package/validate.ts";
 export function formatIssue(issue: PackageIssue): string {
   const where = issue.path === "" ? issue.file : `${issue.file} ${issue.path}`;
   const id = issue.id === null ? "" : ` [${issue.id}]`;
-  return `${issue.level} ${issue.code} ${where}${id}: ${issue.message}`;
+  const scope = issue.scenario === undefined ? "" : ` (blocks scenario ${issue.scenario})`;
+  return `${issue.level} ${issue.code} ${where}${id}: ${issue.message}${scope}`;
 }
 
-/** Exit code 1 when the package has an error, else 0. */
+/** Exit code 1 when the package has an error, else 0. A scenario-scoped error blocks its scenario only (DEC-51). */
 export function validateCommand(dir: string): { readonly exitCode: number; readonly lines: readonly string[] } {
   const result = loadPackage(readPackageDir(dir));
   const lines = result.issues.map(formatIssue);

@@ -36,7 +36,8 @@ const FOR_ACTIONS = [
   "calculations", "rule_refs", "assumption_refs", "rule_sources", "legal_choices_summary",
 ];
 // Fields whose source has no value for this transition: no sequence model, deck or plan yet (P2-03 to P2-05).
-const NO_SOURCE = ["active_faction", "first_eligible", "second_eligible", "current_card_id", "current_card_title", "op_id", "sa_id", "legal_choices_summary"];
+// Eligibility comes from the sequence model since P2-03.
+const NO_SOURCE = ["active_faction", "current_card_id", "current_card_title", "op_id", "sa_id", "legal_choices_summary"];
 
 const executed: ActionContextInput = { actionId: "S1-A2", kind: "advance", command, validation, entries: transition.logEntries, before, after };
 const input: ContextInput = {

@@ -3,3 +3,4 @@
 - id: ui.label
   value: text
   tune: false
+- {id: deck.topSize, value: 8, tune: true}

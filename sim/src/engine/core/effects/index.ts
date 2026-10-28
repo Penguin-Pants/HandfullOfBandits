@@ -15,6 +15,7 @@ import { setPieceState } from "./set-piece-state.ts";
 import { setTrack } from "./set-track.ts";
 import { shiftLevel } from "./shift-level.ts";
 import { stepOrdinal } from "./step-ordinal.ts";
+import { transferPool } from "./transfer-pool.ts";
 
 export type { EffectResult } from "./common.ts";
 
@@ -28,6 +29,8 @@ export function applyEffect(ruleset: Ruleset, state: GameState, effect: Effect):
       return movePieces(ruleset, state, effect);
     case "setPieceState":
       return setPieceState(ruleset, state, effect);
+    case "transferPool":
+      return transferPool(ruleset, state, effect);
     case "adjustTrack":
       return adjustTrack(ruleset, state, effect);
     case "setTrack":

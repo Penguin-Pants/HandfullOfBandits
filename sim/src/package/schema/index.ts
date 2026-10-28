@@ -1,5 +1,7 @@
 // Package file schemas (04 s3 to s4) and their JSON Schema form for editor hints (DEC-05).
 import { z } from "zod";
+import { assumptionsSchema } from "./assumptions.ts";
+import { cardsSchema } from "./cards.ts";
 import { factionsSchema } from "./factions.ts";
 import { manifestSchema } from "./manifest.ts";
 import { mapSchema } from "./map.ts";
@@ -7,10 +9,11 @@ import { markersSchema } from "./markers.ts";
 import { parametersSchema } from "./parameters.ts";
 import { piecesSchema } from "./pieces.ts";
 import { scenarioSchema } from "./scenario.ts";
+import { sequenceSchema } from "./sequence.ts";
 import { tracksSchema } from "./tracks.ts";
 import { victorySchema } from "./victory.ts";
 
-/** One schema per package file. `scenario` applies to each file in `scenarios/`. */
+/** One schema per package file. `scenario` applies to each file in `scenarios/`, `cards` to each in `cards/`. */
 export const packageFileSchemas = {
   manifest: manifestSchema,
   parameters: parametersSchema,
@@ -20,7 +23,11 @@ export const packageFileSchemas = {
   tracks: tracksSchema,
   markers: markersSchema,
   victory: victorySchema,
+  sequence: sequenceSchema,
   scenario: scenarioSchema,
+  assumptions: assumptionsSchema,
+  /** Applies to each file in `cards/`. */
+  cards: cardsSchema,
 } as const;
 
 export type PackageFile = keyof typeof packageFileSchemas;

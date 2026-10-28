@@ -6,12 +6,20 @@ import { parseDocument } from "yaml";
 import { canonicalHash } from "../engine/core/canonical.ts";
 import { SINGLE_FACE } from "../engine/core/state.ts";
 import { markersIn } from "../engine/core/terms.ts";
-import type { Ruleset, RulesetScenario } from "../engine/core/types.ts";
+import type { Card, CardSide, Ruleset, RulesetScenario } from "../engine/core/types.ts";
 import { parsePackageFile, type PackageFile } from "./schema/index.ts";
 import { validatePackage, type PackageData, type PackageIssue } from "./validate.ts";
 
-const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers", "victory"] as const;
+const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers", "victory", "sequence"] as const;
+/** Read when present. A package without them is valid. */
+const OPTIONAL_FILES = ["assumptions"] as const;
 const SCENARIO_DIR = "scenarios";
+const CARD_DIR = "cards";
+/** Folders whose `*.yaml` files the loader reads, with the schema of each file. */
+const LIST_DIRS = [
+  [SCENARIO_DIR, "scenario"],
+  [CARD_DIR, "cards"],
+] as const;
 
 /** Parsed YAML by package path (`/` separators). A file that failed to parse holds its issues instead. */
 export interface RawPackage {
@@ -23,9 +31,9 @@ export type LoadResult =
   | { readonly ok: true; readonly data: PackageData; readonly hash: string; readonly ruleset: Ruleset; readonly issues: readonly PackageIssue[] }
   | { readonly ok: false; readonly issues: readonly PackageIssue[] };
 
-const READ_ROOT = new Set(CORE_FILES.map((file) => `${file}.yaml`));
+const READ_ROOT = new Set([...CORE_FILES, ...OPTIONAL_FILES].map((file) => `${file}.yaml`));
 /** Root entries that are not read and need no warning. */
-const QUIET_ROOT = new Set([SCENARIO_DIR, "CHANGELOG.md"]);
+const QUIET_ROOT = new Set([SCENARIO_DIR, CARD_DIR, "CHANGELOG.md"]);
 
 function readError(path: string, e: unknown): PackageIssue {
   const code = (e as NodeJS.ErrnoException).code ?? "unknown error";
@@ -45,14 +53,15 @@ function entries(dir: string, path: string, issues: PackageIssue[]): string[] {
 /**
  * Read the core files and `scenarios/*.yaml`. Every other entry gets a warning, so a misnamed
  * file is never skipped in silence. Sequence, actions and cards have no schema yet (DEC-40).
+ * Optional files (assumptions) are read when present.
  */
 export function readPackageDir(dir: string): RawPackage {
   const files: Record<string, unknown> = {};
   const issues: PackageIssue[] = [];
   const root = entries(dir, ".", issues);
-  const scenarios = entries(join(dir, SCENARIO_DIR), SCENARIO_DIR, issues).map((name) => `${SCENARIO_DIR}/${name}`);
-  const paths = [...root.filter((name) => READ_ROOT.has(name)), ...scenarios.filter((path) => path.endsWith(".yaml"))];
-  const unread = [...root.filter((name) => !READ_ROOT.has(name) && !QUIET_ROOT.has(name)), ...scenarios.filter((path) => !path.endsWith(".yaml"))];
+  const listed = LIST_DIRS.flatMap(([folder]) => entries(join(dir, folder), folder, issues).map((name) => `${folder}/${name}`));
+  const paths = [...root.filter((name) => READ_ROOT.has(name)), ...listed.filter((path) => path.endsWith(".yaml"))];
+  const unread = [...root.filter((name) => !READ_ROOT.has(name) && !QUIET_ROOT.has(name)), ...listed.filter((path) => !path.endsWith(".yaml"))];
   for (const path of unread.sort()) {
     issues.push({ level: "warning", code: "V-SCHEMA", file: path, path: "", id: null, message: "Not read. The loader reads only the core files and scenarios/*.yaml (DEC-40)." });
   }
@@ -112,8 +121,10 @@ export function loadPackage(raw: RawPackage): LoadResult {
     }
   };
   for (const file of CORE_FILES) check(file, `${file}.yaml`);
-  const scenarioPaths = Object.keys(raw.files).filter((path) => path.startsWith(`${SCENARIO_DIR}/`)).sort();
-  for (const path of scenarioPaths) check("scenario", path);
+  for (const file of OPTIONAL_FILES) if (`${file}.yaml` in raw.files) check(file, `${file}.yaml`);
+  const pathsIn = (folder: string): string[] => Object.keys(raw.files).filter((path) => path.startsWith(`${folder}/`)).sort();
+  for (const [folder, file] of LIST_DIRS) for (const path of pathsIn(folder)) check(file, path);
+  const scenarioPaths = pathsIn(SCENARIO_DIR);
   if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
 
   const data: PackageData = {
@@ -125,13 +136,17 @@ export function loadPackage(raw: RawPackage): LoadResult {
     tracks: parsed["tracks.yaml"] as PackageData["tracks"],
     markers: parsed["markers.yaml"] as PackageData["markers"],
     victory: parsed["victory.yaml"] as PackageData["victory"],
+    sequence: parsed["sequence.yaml"] as PackageData["sequence"],
+    ...("assumptions.yaml" in parsed ? { assumptions: parsed["assumptions.yaml"] as NonNullable<PackageData["assumptions"]> } : {}),
+    cards: Object.fromEntries(pathsIn(CARD_DIR).map((path) => [path, parsed[path] as PackageData["cards"][string]])),
     scenarios: Object.fromEntries(scenarioPaths.map((path) => [path, parsed[path] as PackageData["scenarios"][string]])),
   };
   // 04 s10.2: hash the normalized content, so whitespace and comments do not change it.
   const hash = canonicalHash(packageContent(data));
   issues.push(...validatePackage(data));
-  if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
-  return { ok: true, data, hash, ruleset: compileRuleset(data, hash), issues };
+  // A scenario-scoped error blocks only its scenario (DEC-51).
+  if (issues.some((issue) => issue.level === "error" && issue.scenario === undefined)) return { ok: false, issues };
+  return { ok: true, data, hash, ruleset: compileRuleset(data, hash, issues), issues };
 }
 
 /**
@@ -139,12 +154,19 @@ export function loadPackage(raw: RawPackage): LoadResult {
  * is what the store saves (04 s10.3); `loadPackage({files: content, issues: []})` loads it again.
  */
 export function packageContent(data: PackageData): Record<string, unknown> {
-  const { scenarios, ...core } = data;
-  return { ...Object.fromEntries(Object.entries(core).map(([file, value]) => [`${file}.yaml`, value])), ...scenarios };
+  const { scenarios, cards, ...core } = data;
+  return { ...Object.fromEntries(Object.entries(core).map(([file, value]) => [`${file}.yaml`, value])), ...cards, ...scenarios };
 }
 
 /** The fields core reads (types.ts). Absent flip states and sides become empty lists. */
-export function compileRuleset(data: PackageData, packageHash: string): Ruleset {
+/** The ruleset a session plays: its stored options replace the scenario defaults (04 s10.3). */
+export function withSessionOptions(ruleset: Ruleset, scenarioId: string, options: Readonly<Record<string, string | number>>): Ruleset {
+  const scenario = ruleset.scenarios[scenarioId];
+  if (scenario === undefined) return ruleset;
+  return { ...ruleset, scenarios: { ...ruleset.scenarios, [scenarioId]: { ...scenario, options: { ...scenario.options, ...options } } } };
+}
+
+export function compileRuleset(data: PackageData, packageHash: string, issues: readonly PackageIssue[] = []): Ruleset {
   const parameters = Object.fromEntries(data.parameters.map((p) => [p.id, p.value ?? null]));
   return {
     packageHash,
@@ -159,7 +181,7 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
       startPool: p.startPool,
       countsForControl: p.countsForControl,
     })),
-    spaces: data.map.spaces.map((s) => ({ id: s.id, hasSupportScale: s.hasSupportScale, kind: s.kind, terrain: s.terrain ?? null, pop: s.pop })),
+    spaces: data.map.spaces.map((s) => ({ id: s.id, hasSupportScale: s.hasSupportScale, kind: s.kind, terrain: s.terrain ?? null, pop: s.pop, tags: s.tags ?? [] })),
     tracks: data.tracks.map((t) => {
       if (t.kind === "ordinal") return { id: t.id, kind: t.kind, steps: t.steps };
       // V-PARAM guarantees an integer cost for every overflow.
@@ -178,8 +200,21 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
     levelRange: data.map.supportLevels === undefined ? 0 : (data.map.supportLevels.length - 1) / 2,
     parameters,
     victory: data.victory,
+    sequence: {
+      model: data.sequence.model,
+      boxes: data.sequence.boxes.map((b) => b.id),
+      adjacency: data.sequence.adjacency.map(([a, b]) => [a ?? "", b ?? ""] as const),
+      swapAfter: data.sequence.swapAfter,
+      firstEligibleAtStart: data.sequence.firstEligibleAtStart,
+      passIncome: data.sequence.passIncome,
+      propagandaPhases: data.sequence.propagandaPhases,
+    },
     harmMarkers: markersIn(Object.values(data.victory.harmCount).flat()),
-    scenarios: Object.fromEntries(Object.values(data.scenarios).map((s) => [s.id, compileScenario(data, s)])),
+    links: data.map.links.map((l) => ({ a: l.a, b: l.b, kind: l.kind })),
+    cards: Object.fromEntries(Object.values(data.cards).flat().map((c) => [c.id, compileCard(c)])),
+    scenarios: Object.fromEntries(
+      Object.values(data.scenarios).map((s) => [s.id, compileScenario(data, s, issues.filter((i) => i.scenario === s.id).map((i) => `${i.code} ${i.id ?? ""}: ${i.message}`))]),
+    ),
   };
 }
 
@@ -190,9 +225,35 @@ function faces(counts: Readonly<Record<string, FaceCountsData>> | undefined, fac
   return Object.fromEntries(Object.entries(counts ?? {}).map(([type, n]) => [type, typeof n === "number" ? { [face(type)]: n } : { ...n }]));
 }
 
-function compileScenario(data: PackageData, scenario: PackageData["scenarios"][string]): RulesetScenario {
+function compileCard(card: PackageData["cards"][string][number]): Card {
+  const side = (s: typeof card.unshaded): CardSide | null =>
+    s === undefined ? null : { text: s.text, owner: s.owner, effects: s.effects, blockOnly: s.blockOnly };
+  return {
+    id: card.id,
+    campaign: card.campaign,
+    title: card.title,
+    type: card.type,
+    mandatory: card.mandatory,
+    deckEligible: card.deckEligible,
+    always: card.always,
+    unshaded: side(card.unshaded),
+    shaded: side(card.shaded),
+    chainAfter: card.chainAfter,
+    encoded: card.encoding.status === "encoded",
+  };
+}
+
+function compileScenario(data: PackageData, scenario: PackageData["scenarios"][string], blockedBy: readonly string[]): RulesetScenario {
   const placedAs = new Map(data.pieces.map((p) => [p.id, p.placedAs ?? SINGLE_FACE]));
   return {
+    finalRound: scenario.finalRound,
+    pileSize: scenario.pileSize ?? null,
+    propagandaLast: scenario.propagandaLast ?? false,
+    excludedCards: (scenario.excludedCards ?? []).map((e) => e.card),
+    pivotals: scenario.pivotals ?? null,
+    options: scenario.options ?? {},
+    testOnly: scenario.testOnly ?? false,
+    blockedBy,
     campaigns: scenario.campaigns,
     tracks: scenario.tracks,
     spaces: Object.fromEntries(

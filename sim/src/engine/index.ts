@@ -1,15 +1,18 @@
 // Engine entry points (05 s1): start, validate and apply. Pure: no I/O, and the caller stores
 // the result. Command handlers are passed in, so a test-only command such as AdjustTrackDebug
-// never ships in production (11 P1-10). Turn sequence and Decisions come with P2-03 and later.
+// never ships in production (11 P1-10). Production handlers: coin/handlers.ts.
 import { control } from "./coin/derive.ts";
+import { startState } from "./coin/setup.ts";
+import { afterCommand } from "./coin/turn.ts";
 import { canonicalHash } from "./core/canonical.ts";
-import { applyEffect } from "./core/effects/index.ts";
+import { createExec, PreviewStop } from "./core/exec.ts";
 import { logEntry } from "./core/log.ts";
-import { own, setupState } from "./core/state.ts";
+import { own } from "./core/state.ts";
 import type {
   AnyCommand,
   ApplyResult,
   CommandHandler,
+  Effect,
   GameState,
   LogEntry,
   Ruleset,
@@ -38,6 +41,18 @@ function controlChanges(ruleset: Ruleset, before: GameState, after: GameState): 
   });
 }
 
+/** Effects a valid command applies, up to its first die roll (05 s4 preview). */
+function previewEffects(ruleset: Ruleset, state: GameState, handler: CommandHandler, command: AnyCommand): readonly Effect[] {
+  if (handler.execute === undefined) return handler.resolve?.(ruleset, state, command) ?? [];
+  const ctx = createExec(ruleset, state, true);
+  try {
+    handler.execute(ctx, command);
+  } catch (e) {
+    if (!(e instanceof PreviewStop)) throw e;
+  }
+  return ctx.effects;
+}
+
 export function createEngine(handlers: Readonly<Record<string, CommandHandler>>): Engine {
   const handlerFor = (type: string): CommandHandler | undefined => own(handlers, type);
 
@@ -49,12 +64,12 @@ export function createEngine(handlers: Readonly<Record<string, CommandHandler>>)
     }
     const violations = handler.check(ruleset, state, command);
     const ok = violations.length === 0;
-    return { ok, violations, warnings: [], preview: { effects: ok ? handler.resolve(ruleset, state, command) : [] } };
+    return { ok, violations, warnings: [], preview: { effects: ok ? previewEffects(ruleset, state, handler, command) : [] } };
   }
 
   return {
     start(ruleset, scenarioId, seed) {
-      const state = setupState(ruleset, scenarioId, seed);
+      const state = startState(ruleset, scenarioId, seed);
       return transition(state, [logEntry(state, "PhaseStarted", { phase: state.turn.phase, scenario: scenarioId })]);
     },
     validate,
@@ -63,15 +78,13 @@ export function createEngine(handlers: Readonly<Record<string, CommandHandler>>)
       const validation = validate(ruleset, state, command);
       const handler = handlerFor(command.type);
       if (!validation.ok || handler === undefined) return { ok: false, validation };
-      let next: GameState = { ...state, meta: { ...state.meta, stateSeq: state.meta.stateSeq + 1 } };
-      const logEntries: LogEntry[] = [logEntry(next, "ValidationPassed", { command: command.type }, handler.ruleRef)];
-      for (const effect of validation.preview.effects) {
-        const result = applyEffect(ruleset, next, effect);
-        next = result.state;
-        logEntries.push(...result.entries);
-      }
-      logEntries.push(...controlChanges(ruleset, state, next));
-      return { ok: true, validation, transition: transition(next, logEntries) };
+      const ctx = createExec(ruleset, { ...state, meta: { ...state.meta, stateSeq: state.meta.stateSeq + 1 } });
+      ctx.log("ValidationPassed", { command: command.type }, handler.ruleRef);
+      if (handler.execute === undefined) ctx.apply(...(handler.resolve?.(ruleset, state, command) ?? []));
+      else handler.execute(ctx, command);
+      afterCommand(ctx);
+      const logEntries = [...ctx.entries, ...controlChanges(ruleset, state, ctx.state)];
+      return { ok: true, validation, transition: transition(ctx.state, logEntries) };
     },
   };
 }

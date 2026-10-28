@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2: P2-01 to P2-18, IC-2a and IC-2 item 1 done. IC-2 items 2 and 3 wait on the designer's manual S0 session.
 
 ## 1. How to use this plan
 
@@ -98,7 +98,7 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Risks:** None.
 - **Out:** Fixture package.
 - **Done:** `sim/test/packages/tiny/`: factions `blue` and `red`, pieces `soldier`, `fort`, `rebel` (flip states), `camp`; spaces `city`, `farm`, `hills` and external `refuge`; tracks `cash.blue`, `cash.red` and ordinal `border`; markers `harm` (blocks), `mark` (sides), `office` (`capsLevel`). Scenario `start` added for P1-10 `start` and IC-1. `make validate DIR=sim/test/packages/tiny` passes; `sim/test/tiny.test.ts` checks it.
-- **Blocked:** the 3 cards. No card schema exists until P2-05 (04 s4.8), so the loader cannot read or check them. Add them to tiny in P2-05.
+- **Done in P2-05:** the 3 cards (`sim/test/packages/tiny/cards/c1.yaml`).
 
 ### P1-07 Core effect primitives
 
@@ -202,6 +202,9 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-SCORE for the full campaign setup.
 - **Risks:** Typos in adjacency. Test that adjacency equals the 03 s4.1 list.
 - **Out:** Package data.
+- **Done:** `game-packages/kurdish-coin/0.1.0/`: manifest, parameters (03, 04, 05, 09 values), factions, pieces, map (18 locations, 25 links), tracks, markers, victory, `assumptions.yaml` (PA-01 to PA-17) and `scenarios/full-campaign.yaml`. `sim/test/kurdish.test.ts`: validate passes with no issues, adjacency equals the 03 s4.1 list, T-SCORE 21 and 4, margins -28 and -26, Control as in 10 s2.2. New optional schema `assumptions` (04 s7, DEC-49).
+- **Moved:** the full campaign scenario file came with P2-01, because its accept test (start scores) needs a setup. P2-02 adds S0 and the totals check.
+- **Open for later tasks:** operation and SA parameters come with their handlers (P2-06 to P2-08). Host posture limits on external links are handler rules (07 s5), not map gates (DEC-49). Pivotal hands and `excludedCards` come with cards (P2-05).
 
 ### P2-02 Scenarios: full campaign setup and S0
 
@@ -213,6 +216,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-PKG.
 - **Risks:** None.
 - **Out:** Scenario files.
+- **Done:** `scenarios/s0.yaml` (10-mvp-scope s2.1): full campaign setup, `testOnly`, `finalRound: 1`, new optional scenario field `pileSize: 8`, no Pivotals, `excludedCards` for the 7 C1 Capability, Momentum and DK-013 cards plus Pivotal DK-015. `full-campaign.yaml` gains its 10 s2.3 Pivotals. `sim/test/kurdish.test.ts`: both setups reconcile with the 10 s2.2 totals table. `sim/test/state-size.test.ts` now measures the package setup; `sim/test/full-setup.ts` is deleted.
+- **Open for later tasks:** `propagandaLast` (P2-04). V-REF for card IDs in `pivotals` and `excludedCards` (P2-05).
 
 ### P2-03 CT sequence model
 
@@ -224,6 +229,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-SEQ.
 - **Risks:** Hidden two-faction assumptions leak. Keep them inside this file.
 - **Out:** Sequence model.
+- **Done:** `sequence.yaml` with schema (`model`, `boxes`, `adjacency`, `swapAfter`, `firstEligibleAtStart`, `passIncome`), loaded as a core file into `Ruleset.sequence`. V-FACTIONS checks the player count against the model in `engine/modules/registry.ts`; V-REF checks factions and boxes. `engine/coin/sequence/ct.ts`: legal boxes from the graph, sequence violations, cylinder placement, eligibility adjustment. `Pass` handler with pass income (`coin/handlers.ts`). `start` sets the PKK First Eligible. Resolution context `engine/core/exec.ts` and optional `CommandHandler.execute` (DEC-50). T-SEQ: `engine/coin/sequence/ct.test.ts`.
+- **Open for later tasks:** `legalChoices` (05 s1 item 2) grows with the handlers (P2-06 to P2-09). Pivotal window (Phase 3a). `propagandaPhases` in `sequence.yaml` (P2-10).
 
 ### P2-04 Deck building
 
@@ -235,6 +242,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** Property tests.
 - **Risks:** Scaled pile rule for S0 differs from research. S0 is `testOnly`.
 - **Out:** Deck builder.
+- **Done:** `engine/coin/deck.ts` `buildDeck(ruleset, rng, cards, chains, options)`: pure, seeded, one pile per Campaign. Parameters `deck.pileSize` (12) and `deck.topSize` (8). Scenario fields `pileSize` and `propagandaLast` (S0 sets both); `RulesetScenario` now carries `finalRound`, `pileSize`, `propagandaLast`, `excludedCards`, `pivotals` and `options`. Property tests over 1000 seeds in `engine/coin/deck.test.ts`.
+- **Open for P2-05:** the builder takes card data as input, because cards have no schema until P2-05. P2-05 feeds it from the card files and builds the deck at `start`.
 
 ### P2-05 Card schema and encoding of 8 C1 cards plus Propaganda
 
@@ -246,6 +255,9 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-EVT fixture per side (16 fixtures).
 - **Risks:** Encoder misreads prose. Side-by-side review output (09 s5).
 - **Out:** Encoded cards.
+- **Done:** Card schema `sim/src/package/schema/cards.ts` (type-key form like `victory.yaml`): all core primitives plus `transferPool` and `movePieces.toState`, card-level `choice`, `conditional`, `forEachSpace`, `freeAction`, `count {min, max}`, conditions `adjacentTo`, `selected`, `trackAtLeast`, `trackAtMost`, `trackIn`, `flag`. Loader reads `cards/*.yaml`; checks V-REF, V-EFFECT, V-CARDS and scenario-scoped V-ENCODE (DEC-51). `cards/c1.yaml`: 16 C1 cards from a one-time stub generator, 8 S0 cards and DK-016 hand-encoded; `cards/pivotal.yaml`: the 4 Pivotal stubs. `start` builds the deck and Pivotal hands (`engine/coin/setup.ts`) and refuses a blocked scenario. Tests in `sim/test/kurdish.test.ts`, `load.test.ts`, `schema.test.ts`. Tiny gets its 3 cards (closes the P1-06 block).
+- **Moved:** the 16 T-EVT fixtures need the event runner, so they come with P2-09. `forEachPiece` has no S0 user; it comes with its first card (Phase 3a).
+- **Open:** the full campaign scenario stays blocked by V-CARDS and V-ENCODE until C2 to C5 are encoded (Phase 3). Faction default `pivotalHand` is not compiled; scenarios list hands.
 
 ### P2-06 State Ops: Train, Garrison, Sweep, Assault
 
@@ -257,6 +269,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-VAL and T-OPS for each op.
 - **Risks:** Train option 3 and Civic Action costs interplay. Separate fixtures.
 - **Out:** Four handlers.
+- **Done:** Operation framework `engine/coin/ops/`: `ActionHandler` (check, cost, execute), `ChooseOperation` command (box, Limited Op one location, SA only in Op + SA, SA pairing, total cost against Resources, SA timing before or after with each part checked on the board it meets), plan readers, shared helpers and package IDs (`ids.ts`, DEC-52). Handlers `state.train` (3 options, Civic Action sub-action), `state.garrison`, `state.sweep`, `state.assault`; `state/civic-action.ts` is shared with Propaganda (P2-10). Parameters for 06 s2 and 07 s1.3. Preview is the effects up to the first die roll. T-VAL and T-OPS in `ops/state/state-ops.test.ts`, with the 06 s7 worked example.
+- **Open:** Cross-Border Sweep and Assault in the KDP and PUK Zones (Phase 3a). `legalChoices` lists (P2-11 uses `validate` per plan).
 
 ### P2-07 PKK Ops: Rally, March, Attack, Coerce
 
@@ -268,6 +282,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-VAL, T-OPS.
 - **Risks:** Rally option 3 limit (Pop + Bases) on external boxes. Fixture for box Pop 1.
 - **Out:** Four handlers.
+- **Done:** `ops/pkk/rally.ts` (place, base, grow, flip, Europe track with the Ban cost and cap, host posture rules, Agitate sub-action), `ops/pkk/march.ts` (one-step groups, activation condition, Restricted entry cost and activation, Syria under PA-16 option), `ops/pkk/attack.ts` (seeded roll, removal order with a Police-first choice, attrition, bonus Guerrilla), `ops/pkk/coerce.ts` (PA-05 order, Pop 3+ cost). `ops/pkk/agitation.ts` is shared with Propaganda. Map tag `rallyAtSupport` on Western Cities. One fixture per 06 s4 rule line in `ops/pkk/pkk-ops.test.ts`.
+- **Decided:** the Attack removal choice is a plan field (`prefer: police`), made before the roll, not a Decision after it (DEC-51). Rally takes no piece from the map when Available is empty (04 s2.1 item 1 is not in the slice).
 
 ### P2-08 SAs: Air Mobility, Ambush, Extort, Strike Collaborators
 
@@ -279,6 +295,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-VAL, T-OPS.
 - **Risks:** "Interleaved" timing complexity. MVP allows `before` and `after` only. Record as a decision.
 - **Out:** Three handlers.
+- **Done:** four SA handlers in `ops/sa/`: `state.air-mobility` (PA-14), `pkk.ambush` (PA-06: Attack as normal plus 1 extra removal in the Attack order), `pkk.extort` (PA-12 subset), `pkk.strike-collaborators` (Law 3175, PKK Harm, Europe -1). Pairing and timing in `ChooseOperation` (DEC-16); an SA sees its Op's locations (`ActionOptions.opLocations`). Tests in `ops/sa/sa.test.ts`: SA with a Limited Op or Op Only is rejected; the PA-06 case removes 1 extra piece.
+- **Decided:** Ambush is checked before the Attack activates, so its plan uses timing `before`; its extra removal has no attrition (06 s5.1 "No attrition" kept for the extra piece). Strike Collaborators removes 1 Guard per space unless the plan says `guards`.
 
 ### P2-09 Event execution and Always lines
 
@@ -290,6 +308,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-EVT.
 - **Risks:** Free action needs the full plan UI. Reuse the op plan flow.
 - **Out:** Event runner.
+- **Done:** `engine/coin/events.ts` runs card effects in order with answers from the command (`ChooseEvent.answers`: option label or index, count, space list, free action plan or null); a missing or bad answer is a `needsAnswer` or `badAnswer` violation that carries a `Question` (DEC-51). Free actions run the action handlers with `free: true` and event constraints, an SA constraint included (DK-002 Attack with Ambush). `coin/turn.ts` reveals cards (Always lines on reveal, a second Propaganda card in a row set aside) and reveals the next card once both factions acted. `Advance` reveals the first card. T-EVT: one fixture per side of the 8 S0 cards plus reveal tests in `engine/coin/events.test.ts`. DK-003 Always moves 16 Guards to Available.
+- **Open:** the PKK restriction on Legal Politics event sides (05 s5 item 1) comes with those cards (Phase 3b). Capability and Momentum cards (Phase 3a).
 
 ### P2-10 Propaganda round (slice phases) and final scoring
 
@@ -301,10 +321,14 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-PROP, T-VIC, T-PERV (formula level).
 - **Risks:** Civic Action cap and choice UI. Decision-based spend form.
 - **Out:** Propaganda pipeline.
+- **Done:** `sequence.yaml` `propagandaPhases` (checked against the handler registry). Pipeline `coin/propaganda/pipeline.ts`: a Propaganda card starts a round; `Advance` runs the open phase with no choice, `PropagandaChoice` with one. Handlers: Victory (skip in round 1; check with the Covert penalty, Harm gate and PA-10), Resources, Upkeep (Guard removal choice on a shortfall), Legitimacy (8 steps, seeded Covert exposure, 07 s8.2 Emergency steps), Legal Politics (skip while Absent), Civic Action and Agitation as two phases (cap, Control, Troops and Police). Final scoring after Agitation of the final round: Covert reveal, final margins, tie order, labels, record sheet with score change from start for test scenarios. `RoundMetrics` log entry per round; `StopRuleFlag` for rules 3, 4 and the rule 6 Pass-only proxy (`coin/stop-rules.ts`). Tests in `coin/propaganda/propaganda.test.ts`.
+- **Open:** Redeploy and Reset (Phase 3a); a non-final round stops there with `notInSlice`. The session service writes `metrics` rows from `RoundMetrics` entries (P2-11).
 
 ### IC-2a Engine-only playthrough
 
 CLI test plays S0 to the end with a scripted command list and a fixed seed. Golden replay file stored. No server or UI needed. This proves rules before UI work.
+
+- **Passed:** `sim/test/ic2a.test.ts` plays S0 with seed 7 under `scriptedPolicy` (`sim/src/cli/play.ts`: First Eligible takes the Event with auto answers, the responder takes the first legal one-location Op, else Pass; Advance through Propaganda) to final scoring in 24 commands. Golden file `sim/test/golden/s0-seed-7.json` holds the commands and every state hash; `replay` reports the first differing step. Regenerate with `UPDATE_GOLDEN=1 make test` after a deliberate rules change.
 
 ### P2-11 Session service and API
 
@@ -316,6 +340,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Integration suite.
 - **Risks:** Concurrency with two tabs. One active writer per session, reject stale `head_action_id`.
 - **Out:** Local server.
+- **Done:** Fastify 5.12.7. `sim/src/server/service.ts` (`SessionService`): package list and validation, session create (package content stored, setup action), command validate and submit as one action transaction with a stale-head check (409), legal choices, history with entry text (`server/text.ts`), states by hash, notes with auto context (`buildContext`), metrics rows from `RoundMetrics`. Sessions reload rules from stored content; a changed code fingerprint (`server/fingerprint.ts`) runs a replay check on first load and marks the session read-only on a difference. Routes in `server/app.ts` under `/api`; `npm start` serves on 127.0.0.1. Store repo `metrics.ts`. Integration suite `sim/test/api.test.ts` plays S0 to the end through the API.
+- **Open:** export route (P2-18), undo route (P2-17).
 
 ### P2-12 Replay CLI and performance check
 
@@ -326,6 +352,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** T-DET, golden replay, T-FUZZ.
 - **Risks:** None.
 - **Out:** CLI command.
+- **Done:** `sim replay <file.json>` and `sim replay <sessionId> [--db]` (`sim/src/cli/replay.ts`) on the shared `engine/replay.ts` step replay (also used by the session service resume check; `store` lists the stored steps). `sim fuzz --seeds N` (`cli/fuzz.ts`) plays S0 with a seeded random policy over legal choices and reports failures with seed and commands. Tests `sim/test/p2-12.test.ts`: the IC-2a file replays "identical", a stored session replays, 50 fuzz seeds pass. Timing in 05 s11: apply mean 0.68 ms, max 5.50 ms.
 
 ### P2-13 UI shell, Home screen, package check screen
 
@@ -336,6 +363,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Component tests for the Start rule.
 - **Risks:** Styling time. Plain CSS only.
 - **Out:** UI shell.
+- **Done:** React 19.3.1 and Vite 8.3.5 (`npm run ui` dev server with `/api` proxy, `npm run build` to `sim/dist/ui`, served by `npm start`). `sim/src/ui/`: `App.tsx` (Home, package check, play), `api.ts` client, `home/Home.tsx` (package, scenario with blocked marks, options, seed with random, name, saved sessions with Resume, PA list), `home/start-rule.ts`, `check/PackageCheck.tsx`, plain CSS with light and dark variables. Engine types reach the UI through `server/api-types.ts` (03 s5). Component tests with jsdom and Testing Library in `ui/home/home.test.tsx`, mocked API in `sim/test/ui/mock-api.ts`.
 
 ### P2-14 Board and status bar
 
@@ -346,6 +374,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** View model mapping unit tests.
 - **Risks:** Layout coordinates. Hand-set in `map.yaml`.
 - **Out:** Board.
+- **Done:** server view model `sim/src/server/view.ts` (`boardView`: 18 locations with layout, level name, Control, pieces by face with shape, variant and emblem face, markers with hidden flag, links, status bar data), sent as `head.view` and at `GET /api/sessions/:id/states/:hash/view`. UI `ui/board/Board.tsx` (SVG nodes, dashed external links, level band, Control ring, click and Shift-click selection, hover title with stack contents, `SpaceDetail` card), `ui/board/PieceIcon.tsx` (DEC-29, DEC-30), `ui/status/StatusBar.tsx`. Tests: `server/view.test.ts` (mapping), `ui/board/board.test.tsx` (components).
+- **Open:** right-click menus (DEC-47 B) come with the faction panel actions (P2-15).
 
 ### P2-15 Faction panel, event panel, Decisions, Propaganda flow
 
@@ -356,6 +386,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Component tests with mocked API.
 - **Risks:** Per-op plan forms are many. One generic form driven by handler metadata.
 - **Out:** Play controls.
+- **Done:** server `legalChoices` returns every box with its reason and every Op and SA with OK (legal locations) or the first violation, plus plan form metadata (`server/forms.ts`, one generic form). View model adds card sides and the Propaganda phase list. UI `faction/FactionPanel.tsx` (boxes, Op list, plan from board selection with per-location fields, SA choice, live validation with each violation and rule, preview, commit, clear), `faction/plan.ts`, `event/EventPanel.tsx` (both sides, inline questions for options, counts, spaces and free actions), `propaganda/PropagandaPanel.tsx` (phase list, Advance, Emergency step, Upkeep removals, Civic Action and Agitation spends), `play/Play.tsx` wiring and Space to Advance. Component tests `ui/faction/panels.test.tsx` cover T-UI-03.
+- **Open:** keyboard shortcuts 1 to 5, U and S, right-click menus (DEC-47 B). Sub-action (Civic Action, Agitate) entry in the faction form.
 
 ### P2-16 Note bar, anchors, categories, history drawer
 
@@ -366,6 +398,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Component and API tests.
 - **Risks:** Hotkey clashes with plan entry. Note bar captures keys only when focused.
 - **Out:** Annotation UI.
+- **Done:** `ui/focus-store.ts`; `ui/notes/anchor.ts` (executed within 20 s, proposed with the draft plan, state, session; `#category` tags); `ui/notes/NoteBar.tsx` (N opens outside text fields, Alt+1 to Alt+9, Enter saves, Esc cancels, Tab cycles the anchor, "Saved, linked to" status); `ui/history/HistoryDrawer.tsx` (H toggles; entries and note counts; undone struck through); `ui/notes/EndSession.tsx` with debrief. Server `endSession` and `POST /api/sessions/:id/end` (one debrief, replaced on a second save; status ended or abandoned). Tests: `ui/notes/notes.test.tsx` (T-ANN-01, T-ANN-02 UI, T-UI-02, T-UI-06) and `test/api.test.ts` (T-ANN-02 context, debrief).
 
 ### P2-17 Undo, state viewer, basic feedback review
 
@@ -376,6 +409,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Integration and component tests.
 - **Risks:** Substring search is slow on many notes. Acceptable below 10,000 notes. FTS moves to P3a-08.
 - **Out:** Review features.
+- **Done:** `sim/src/server/undo.ts` (`undoLast`: action `undone`, an `Undo` log entry with `undoneAfterRandom`, head back to the previous committed action, nothing deleted), `service.undo` with the stale-head check, `POST /api/sessions/:id/undo`. `server/review.ts` review rows and filters (faction, card, space from the selected space or plan locations, category with `general`, version, session, anchor, status, substring search), `GET /api/review`. UI: Undo button and Ctrl+Z with confirm, `ui/state-viewer/StateViewer.tsx` (read-only board, Before and After), `ui/review/Review.tsx`, history rows open the state viewer. Tests: `sim/test/undo-review.test.ts` (undo, T-ANN-05, T-ANN-06, undoneAfterRandom), `ui/review/review.test.tsx`, `ui/play/play.test.tsx` (T-UI-04).
+- **Decided:** undo adds no action row: the `Undo` entry goes on the undone action's log, so `actions.kind` needs no migration and `undone_by` stays empty (06 s6 item 2 is met by the log entry).
 
 ### P2-18 JSON export
 
@@ -386,12 +421,17 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** T-EXP.
 - **Risks:** Large files with states. States off by default.
 - **Out:** Exporters.
+- **Done:** `sim/src/export/json.ts` (`exportJson`: exportMeta, packages with manifest, parameters and assumptions, sessions with result and `debrief_annotation_id`, branches, used categories, actions with commands, entries and `undoneAfterRandom`, states with derived view and content only with `--with-states`, annotations, metrics rows plus stop rule flags, index; `validateExport` for T-EXP). `sim export <sessionId...> [--db] [--with-states] [--out]` (`cli/export.ts`), `GET /api/sessions/:id/export`, Export link on Home. Tests `sim/test/export.test.ts` (T-ANN-07, T-ANN-08, T-EXP, the S0 metrics row).
+- **Open:** the package rule index is empty until P4-08 (`rule_sources`). Markdown and CSV exports are Phase 3a and 4.
 
 ### IC-2 Integration checkpoint (Phase 2 exit, M2)
 
 1. Playwright smoke: Home, start S0, one action, one note, undo, JSON export.
 2. Manual session by the designer against 10 s2.4.
 3. Fix list from that session goes into Phase 3a tasks.
+
+- **Item 1 passed:** `make e2e` (`sim/e2e/smoke.mjs`, Playwright with Chromium, 1366 x 768): Home Start enabled for S0, first card revealed, one action (PKK Pass), one note linked to it, undo restores the board, JSON export holds the note and the undone action. Playwright is not a project dependency, so `make e2e` runs on a machine that has it and is not in CI.
+- **Blocked on the designer:** item 2 (manual session against 10 s2.4) and item 3 (its fix list into Phase 3a). Phase 3 must not start until both are done (s1 item 4).
 
 ## 4. Phase 3: full Kurdish COIN prototype
 
