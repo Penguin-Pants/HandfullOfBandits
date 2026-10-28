@@ -34,6 +34,7 @@ TDD rule from `AGENTS.md`: write the failing assertion first, then the minimum c
 | T-EXP | Export integrity | Every ID reference in a JSON export resolves. Markdown export contains each note text and its action ID. CSV has one row per note |
 | T-MOD | Module contract | Each module has tests. Each module output passes through core primitives (spy test). No module returns a state object |
 | T-ARCH | Architecture | Import boundaries (03 s5). Engine folder free of banned globals |
+| T-FUZZ | Random play | 50 seeds of S0 with random legal choices. Fail on an exception, a dead end (no legal choice and game not over) or more than 2,000 steps. Each failure saves its seed and commands as a regression case (DEC-33) |
 
 ## 3. Rule scenario fixtures
 

@@ -205,6 +205,7 @@ Per session, per Propaganda round: Resources, Legitimacy, Europe, scores, margin
 4. Annotations on the undone action stay. Their view shows "linked action was undone".
 5. The next new action gets a new seq. Its ID never equals the undone ID.
 6. Redo is out of scope for MVP. Branching from an undone action is Phase 4.
+7. If the undone action used the seeded RNG (a die roll, shuffle or random pick in its log), the undo entry sets `undoneAfterRandom: true` (DEC-33). Undo stays allowed. The flag lets analysis spot repeated rolls.
 
 ## 7. Session compatibility
 

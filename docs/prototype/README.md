@@ -36,4 +36,4 @@ Status: planning complete. Toolchain skeleton exists in `sim/` (P0-01).
 
 ## Next step
 
-Decide proposals A to C in [14-rtt-pattern-study.md](14-rtt-pattern-study.md), then start task P1-02 in [11-build-plan.md](11-build-plan.md).
+Start task P1-02 in [11-build-plan.md](11-build-plan.md).

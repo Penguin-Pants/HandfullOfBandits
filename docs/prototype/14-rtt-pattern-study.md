@@ -35,7 +35,7 @@ License: the RTT GitHub page says the framework is open source and many modules 
 | 9 | Pieces are a fixed index array (piece to space). Capabilities and Momentum are bit flags | Counts keyed by faction and space | No change. Ours supports N factions (DEC-18) |
 | 10 | Each role gets a filtered view of hidden information | Solo play shows all (DEC-23) | No change |
 
-## 3. Proposals (need designer approval)
+## 3. Proposals (approved 2026-10-28, DEC-33)
 
 ### A. Undo after a random result (06 s6, 07 s8.1)
 
@@ -54,4 +54,4 @@ Evidence: in `research/research-final/data/prototype-deck.csv`, 33 card sides sa
 
 Add suite T-FUZZ: for 50 seeds, play S0 with random legal choices through the CLI. Fail on an exception, a dead end, or more than 2,000 steps. Store the seed and command list of each failure as a regression case.
 
-Next step: decide on proposals A, B and C. B blocks P1-07.
+Next step: start task P1-02 in 11-build-plan.md.

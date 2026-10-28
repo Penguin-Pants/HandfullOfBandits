@@ -153,7 +153,7 @@ One file per export. Schema `coin-sim-export/1`.
 | `sessions` | Session rows with result, record sheet and `debrief_annotation_id` (null when none) |
 | `branches` | Branch rows referenced by sessions, actions and notes |
 | `categories` | Category rows referenced by notes, including user-defined labels and inactive ones |
-| `actions` | Action rows with commands and log entries |
+| `actions` | Action rows with commands, log entries, status and undo entries with `undoneAfterRandom` (06 s6) |
 | `states` | Always one record per referenced hash with its derived view (Control, tracks, scores, Harm counts). Full canonical content only with `--with-states` |
 | `annotations` | Annotation rows with context |
 | `metrics` | Per-round metrics |

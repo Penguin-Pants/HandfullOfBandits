@@ -96,7 +96,7 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Obj:** `placePieces`, `removePieces`, `movePieces`, `setPieceState`, `adjustTrack`, `setTrack`, `stepOrdinal`, `placeMarker`, `removeMarker`, `flipMarker`, `setFlag`, `shiftLevel` with invariants (05 s7).
 - **Files:** `sim/src/engine/core/effects/*.ts`.
 - **Deps:** P1-06.
-- **Steps:** 1. One primitive per file. 2. Each returns `{state, entries}`. 3. PA-04 and PA-09 behavior with `assumption_ref`.
+- **Steps:** 1. One primitive per file. 2. Each returns `{state, entries}`. 3. PA-04 and PA-09 behavior with `assumption_ref`. 4. `count` accepts an integer or `{min, max}` (04 s5, DEC-33).
 - **Accept:** Piece total invariant holds after every primitive in property tests.
 - **Tests:** T-PRIM.
 - **Risks:** Shift blocks need markers config. Read from ruleset.
@@ -209,11 +209,11 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 
 ### P2-05 Card schema and encoding of 8 C1 cards plus Propaganda
 
-- **Obj:** Card schema (04 s4.8), effect primitives `choice`, `conditional`, `freeAction`. Encode the 8 S0 cards.
+- **Obj:** Card schema (04 s4.8), effect primitives `choice`, `conditional`, `freeAction`, `forEachSpace`, `forEachPiece` and condition terms `terrainIn`, `spaceKind`, `adjacentTo`, `selected` (DEC-33). Encode the 8 S0 cards.
 - **Files:** `sim/src/package/schema/cards.ts`, `game-packages/kurdish-coin/0.1.0/cards/c1.yaml`.
 - **Deps:** P2-04.
 - **Steps:** 1. One-time stub generator from the deck CSV (run from `/tmp`, not committed, per `AGENTS.md`). 2. Hand-encode effects. 3. Set `reviewedAgainstText` after review.
-- **Accept:** V-ENCODE passes for S0.
+- **Accept:** V-ENCODE passes for S0. DK-003 unshaded ("up to 2 Village Guards in each of up to 2 Mountain or Plain spaces with State Control and Police") encodes without a module procedure.
 - **Tests:** T-EVT fixture per side (16 fixtures).
 - **Risks:** Encoder misreads prose. Side-by-side review output (09 s5).
 - **Out:** Encoded cards.
@@ -290,11 +290,11 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 
 ### P2-12 Replay CLI and performance check
 
-- **Obj:** `sim replay <sessionId|file>` compares hashes per action. Measure apply time.
+- **Obj:** `sim replay <sessionId|file>` compares hashes per action. Measure apply time. `sim fuzz --seeds 50` plays S0 with random legal choices (T-FUZZ).
 - **Files:** `sim/src/cli/replay.ts`.
 - **Deps:** P2-11.
 - **Accept:** Replay of the IC-2a session reports "identical". Timing recorded in 05 s11.
-- **Tests:** T-DET, golden replay.
+- **Tests:** T-DET, golden replay, T-FUZZ.
 - **Risks:** None.
 - **Out:** CLI command.
 
@@ -343,7 +343,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Obj:** Undo last action. Read-only board at a hash with before and after. Review table with filters and plain substring search.
 - **Files:** `sim/src/server/undo.ts`, `sim/src/ui/review/*`, `sim/src/ui/state-viewer/*`.
 - **Deps:** P2-16.
-- **Accept:** T-ANN-05, T-ANN-06, T-UI-04.
+- **Accept:** T-ANN-05, T-ANN-06, T-UI-04. Undo of an action with a die roll sets `undoneAfterRandom` (06 s6 item 7).
 - **Tests:** Integration and component tests.
 - **Risks:** Substring search is slow on many notes. Acceptable below 10,000 notes. FTS moves to P3a-08.
 - **Out:** Review features.
