@@ -190,6 +190,16 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Phase 1 status:** done, except the 3 tiny cards of P1-06 (blocked until P2-05). Phase 2 may start.
 - **Open for P2-11:** the session service renders log entry `text` (IC-1 uses a plain form) and fills the caller inputs of the context builder (DEC-46).
 
+### PV-01 Vassal test module (DEC-47)
+
+- **Obj:** Play the physical design in Vassal before P2 to P4. No rule automation.
+- **Files:** `vassal/` (module source and build note). The `.vmod` is a build output.
+- **Deps:** none. Uses research map, piece and card data.
+- **Steps:** 1. Original map image with one `Zone` per space. 2. Pieces in series shapes and DEC-30 colors. 3. Card deck, Sequence of Play box, eligibility pawns, edge track. 4. Toolbar: Draw Card, End Card Play, Propaganda, Undo.
+- **Accept:** Two players finish S0 in Vassal. Notes go to the 07 feedback form.
+- **Risks:** Module and package drift. Later: generate the module from the package YAML.
+- **Out:** `.vmod` for testers.
+
 ## 3. Phase 2: first playable slice (S0 Opening)
 
 ### P2-01 Kurdish package 0.1.0: static data

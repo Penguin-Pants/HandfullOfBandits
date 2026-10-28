@@ -66,6 +66,7 @@ Status: planning document. Wireframes are text sketches.
 3. Click a node to select it. Shift-click adds to a multi-select (for plan locations).
 4. Selected node shows a detail card: all pieces with flip state, markers with sides, level, Control, Pop, terrain, tags, confidence note.
 5. Hidden markers show as "Covert (face down)". A view toggle hides them (Phase 4, GAP-O01).
+6. Vassal habits (DEC-47): right-click a node or piece for its legal actions, the same as the faction panel. Hover over a node for 700 ms shows its stack contents. Buttons use the Vassal COIN names "End Card Play", "Propaganda" and "Undo".
 
 ### 3.2 Faction panel
 

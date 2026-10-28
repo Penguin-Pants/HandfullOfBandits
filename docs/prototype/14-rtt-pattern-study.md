@@ -1,6 +1,6 @@
 # 14 Rally the Troops Pattern Study
 
-Status: study for P2 and P3 (DEC-32). No code from Rally the Troops (RTT) is copied into this repository.
+Status: study for P2 and P3 (DEC-32). No code from Rally the Troops (RTT) is copied into this repository. DEC-32 now allows copies for private testing (amended 2026-10-28).
 
 ## Bottom line
 

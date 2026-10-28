@@ -27,6 +27,7 @@ Status: planning complete. Phase 1 built in `sim/`: IC-1 passes (11-build-plan.m
 | [12-architecture-review.md](12-architecture-review.md) | Critical review and resulting plan changes |
 | [13-design-decisions.md](13-design-decisions.md) | Decisions, assumptions, open questions |
 | [14-rtt-pattern-study.md](14-rtt-pattern-study.md) | Patterns from Rally the Troops COIN modules, with proposals |
+| [15-vassal-study.md](15-vassal-study.md) | Patterns from the Vassal engine and its COIN modules, with proposals |
 
 ## Method
 
