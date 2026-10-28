@@ -31,6 +31,7 @@ const ruleset: Ruleset = {
   ],
   stacking: [],
   levelRange: 2,
+  parameters: {},
 };
 
 describe("emptyState", () => {

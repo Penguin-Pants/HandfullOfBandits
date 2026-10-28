@@ -133,6 +133,7 @@ export function loadPackage(raw: RawPackage): LoadResult {
 
 /** The fields core reads (types.ts). Absent flip states and sides become empty lists. */
 export function compileRuleset(data: PackageData, packageHash: string): Ruleset {
+  const parameters = Object.fromEntries(data.parameters.map((p) => [p.id, p.value ?? null]));
   return {
     packageHash,
     rulesetVersion: data.manifest.rulesetVersion,
@@ -149,7 +150,7 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
     tracks: data.tracks.map((t) => {
       if (t.kind === "ordinal") return { id: t.id, kind: t.kind, steps: t.steps };
       // V-PARAM guarantees an integer cost for every overflow.
-      const cost = data.parameters.find((p) => p.id === t.overflow?.costParam)?.value;
+      const cost = t.overflow === undefined ? undefined : parameters[t.overflow.costParam];
       const overflow = t.overflow === undefined || typeof cost !== "number" ? null : { track: t.overflow.track, cost };
       return { id: t.id, kind: t.kind, min: t.min, max: t.max, overflow };
     }),
@@ -162,5 +163,6 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
       spaces: r.spaces ?? null,
     })),
     levelRange: data.map.supportLevels === undefined ? 0 : (data.map.supportLevels.length - 1) / 2,
+    parameters,
   };
 }

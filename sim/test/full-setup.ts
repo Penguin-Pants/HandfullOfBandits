@@ -75,6 +75,7 @@ export const fullRuleset: Ruleset = {
   ],
   stacking: [],
   levelRange: 2,
+  parameters: {},
 };
 
 type Setup = Readonly<Record<string, { level?: number; pieces: Readonly<Record<string, number>> }>>;

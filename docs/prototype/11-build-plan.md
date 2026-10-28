@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01, P1-01 to P1-05 and P1-07 done. P1-06 done except its 3 cards (blocked until P2-05).
+Status: planning document. P0-01, P1-01 to P1-05, P1-07 and P1-08 done. P1-06 done except its 3 cards (blocked until P2-05).
 
 ## 1. How to use this plan
 
@@ -123,6 +123,8 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** Scan test.
 - **Risks:** False positives. Allow-list by comment with a reason.
 - **Out:** Parameter helper.
+- **Done:** `Ruleset.parameters` and `param(ruleset, id, kind)` in `sim/src/engine/core/params.ts` (DEC-42). Lint rule `local/no-game-literals` in `sim/eslint/literals.js` scans `engine/coin` and `engine/modules` for numeric literals other than 0, 1 and 2; allow comment `// literal-ok: <reason>`. Tests: `params.test.ts` (each kind and error), load test for the compiled map, `sim/test/no-literals.test.ts` on fixtures in `sim/test/fixtures/literals/` (literal `3` in a handler fails).
+- **Changed from Steps:** the scan flags every literal other than 0, 1 and 2 (04 s4.5), not only literals above 2, so fractions fail too.
 
 ### P1-09 Derive: Control, totals, scores
 

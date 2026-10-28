@@ -76,6 +76,9 @@ export interface RulesetMarker {
   readonly capsLevel: number | null;
 }
 
+/** A parameters.yaml value (04 s4.5). */
+export type ParamValue = number | string | readonly (number | string)[];
+
 export interface Ruleset {
   readonly packageHash: string;
   readonly rulesetVersion: string;
@@ -87,6 +90,8 @@ export interface Ruleset {
   readonly stacking: readonly RulesetStacking[];
   /** Highest level magnitude: ±levelRange from Neutral (DEC-39). 0 without supportLevels. */
   readonly levelRange: number;
+  /** parameters.yaml by ID. Null: an entry with no value (only non-tune entries, V-PARAM). Read with param(). */
+  readonly parameters: Readonly<Record<string, ParamValue | null>>;
 }
 
 // Game state (05 s2). Derived values are never stored here.
