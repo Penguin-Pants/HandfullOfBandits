@@ -104,6 +104,27 @@ describe("HTTP API (P2-11)", () => {
     expect((await call<{ head: HeadView }>("GET", `/api/sessions/${sessionId}`)).body.head.actionId).toBe(before.body.head.actionId);
   });
 
+  it("stores a proposed note with the drafted plan and its violations (T-ANN-02)", async () => {
+    const proposed = { type: "Pass", faction: "state" };
+    const saved = await call<{ annotationId: string }>("POST", `/api/sessions/${sessionId}/annotations`, { anchor: "proposed", actionId: null, text: "Why not?", categoryIds: [], proposed });
+    expect(saved.status).toBe(201);
+    const notes = await call<{ annotation_id: string; anchor: string; action_id: string | null; context: string }[]>("GET", `/api/sessions/${sessionId}/annotations`);
+    const note = notes.body.find((n) => n.annotation_id === saved.body.annotationId);
+    expect(note).toMatchObject({ anchor: "proposed", action_id: null });
+    const context = JSON.parse(note?.context ?? "{}") as { plan?: unknown; validation?: { violations: unknown[] } };
+    expect(context.plan).toEqual(proposed);
+    expect(context.validation?.violations.length).toBeGreaterThan(0);
+  });
+
+  it("ends a session with one debrief; a second debrief replaces the first (T-UI-06, T-ANN-08 store part)", async () => {
+    const first = await call<{ debriefId: string }>("POST", `/api/sessions/${sessionId}/end`, { debrief: "Short game." });
+    const second = await call<{ debriefId: string }>("POST", `/api/sessions/${sessionId}/end`, { debrief: "Short game, clear PKK lead." });
+    expect(second.body.debriefId).toBe(first.body.debriefId);
+    const notes = await call<{ anchor: string; text: string }[]>("GET", `/api/sessions/${sessionId}/annotations`);
+    expect(notes.body.filter((n) => n.anchor === "debrief").map((n) => n.text)).toEqual(["Short game, clear PKK lead."]);
+    expect((await call<{ debriefId: null }>("POST", `/api/sessions/${sessionId}/end`, { debrief: null })).body.debriefId).toBeNull();
+  });
+
   it("serves a stored state by hash", async () => {
     const res = await call<{ state: GameState }>("GET", `/api/states/${head?.stateHash ?? ""}`);
     expect(res.body.state.meta.scenarioId).toBe("s0");

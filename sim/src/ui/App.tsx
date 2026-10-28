@@ -19,7 +19,7 @@ export function App({ api }: { readonly api: Api }) {
       </nav>
       {screen.name === "home" && <Home api={api} onOpen={(sessionId) => { setScreen({ name: "play", sessionId }); }} onCheck={(pkg) => { setScreen({ name: "check", pkg }); }} />}
       {screen.name === "check" && <PackageCheck pkg={screen.pkg} onBack={home} />}
-      {screen.name === "play" && <Play api={api} sessionId={screen.sessionId} />}
+      {screen.name === "play" && <Play api={api} sessionId={screen.sessionId} onExit={home} />}
     </>
   );
 }

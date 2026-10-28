@@ -290,6 +290,14 @@ export class SessionService {
     return saveAnnotation(this.db, { sessionId, branchId: session.current_branch_id, anchor: input.anchor, actionId: input.actionId, stateHash, decisionId: null, context, categoryIds: input.categoryIds, text: input.text });
   }
 
+  /** End a session (08 s1 item 2): optional debrief note (one per session), then status ended or abandoned. */
+  endSession(sessionId: string, debrief: string | null): { debriefId: string | null } {
+    const { session, head } = this.session(sessionId);
+    const debriefId = debrief === null || debrief.trim() === "" ? null : this.annotate(sessionId, { anchor: "debrief", actionId: null, text: debrief, categoryIds: [], focus: { panel: "board", selectedSpace: null, selectedPieces: [], hoveredActionId: null } });
+    if (session.status === "active") this.db.prepare("UPDATE sessions SET status = ? WHERE session_id = ?").run(head.state.ended === null ? "abandoned" : "ended", sessionId);
+    return { debriefId };
+  }
+
   private rules(hash: string): { ruleset: Ruleset; data: PackageData } {
     const cached = this.rulesets.get(hash);
     if (cached !== undefined) return cached;

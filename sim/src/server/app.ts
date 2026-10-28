@@ -72,6 +72,10 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   app.get<{ Params: Id }>("/api/sessions/:id/history", (request) => service.history(request.params.id));
   app.get<{ Params: { hash: string } }>("/api/states/:hash", (request) => service.state(request.params.hash));
   app.get<{ Params: { id: string; hash: string } }>("/api/sessions/:id/states/:hash/view", (request) => service.stateView(request.params.id, request.params.hash));
+  app.post<{ Params: Id }>("/api/sessions/:id/end", (request) => {
+    const { debrief } = body<{ debrief: string | null }>(request.body);
+    return service.endSession(request.params.id, typeof debrief === "string" ? debrief : null);
+  });
   app.get("/api/categories", () => service.categories());
   app.get<{ Params: Id }>("/api/sessions/:id/annotations", (request) => service.annotations(request.params.id));
   app.post<{ Params: Id }>("/api/sessions/:id/annotations", (request, reply) => {

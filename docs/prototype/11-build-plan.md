@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-15 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-16 done.
 
 ## 1. How to use this plan
 
@@ -398,6 +398,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** Component and API tests.
 - **Risks:** Hotkey clashes with plan entry. Note bar captures keys only when focused.
 - **Out:** Annotation UI.
+- **Done:** `ui/focus-store.ts`; `ui/notes/anchor.ts` (executed within 20 s, proposed with the draft plan, state, session; `#category` tags); `ui/notes/NoteBar.tsx` (N opens outside text fields, Alt+1 to Alt+9, Enter saves, Esc cancels, Tab cycles the anchor, "Saved, linked to" status); `ui/history/HistoryDrawer.tsx` (H toggles; entries and note counts; undone struck through); `ui/notes/EndSession.tsx` with debrief. Server `endSession` and `POST /api/sessions/:id/end` (one debrief, replaced on a second save; status ended or abandoned). Tests: `ui/notes/notes.test.tsx` (T-ANN-01, T-ANN-02 UI, T-UI-02, T-UI-06) and `test/api.test.ts` (T-ANN-02 context, debrief).
 
 ### P2-17 Undo, state viewer, basic feedback review
 

@@ -8,8 +8,9 @@ import type { ActionRow } from "../store/repos/actions.ts";
 import type { LogEntryRow } from "../store/repos/log-entries.ts";
 import type { AnyCommand, GameState, Question, ValidationResult, Violation } from "../server/api-types.ts";
 import type { ActionForm, FormField } from "../server/forms.ts";
+import type { UiFocus } from "../annotate/types.ts";
 
-export type { AnyCommand, FormField, Question, ValidationResult, Violation };
+export type { AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
 export type { AnnotationRow, BoardView, CategoryRow, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
 export interface HistoryItem {
@@ -34,6 +35,16 @@ export interface LegalChoices {
   readonly actions?: readonly ActionChoice[];
   readonly advance?: boolean;
   readonly violations?: readonly Violation[];
+}
+
+/** POST /annotations body (07 s2, s3). */
+export interface NoteInput {
+  readonly anchor: "executed" | "proposed" | "decision" | "state" | "session" | "debrief";
+  readonly actionId: string | null;
+  readonly text: string;
+  readonly categoryIds: readonly string[];
+  readonly focus: UiFocus;
+  readonly proposed?: AnyCommand;
 }
 
 export class ApiError extends Error {
@@ -70,7 +81,8 @@ export const api = {
   stateView: (id: string, hash: string) => call<BoardView>("GET", `/sessions/${id}/states/${hash}/view`),
   categories: () => call<CategoryRow[]>("GET", "/categories"),
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
-  annotate: (id: string, body: unknown) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
+  annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
+  endSession: (id: string, debrief: string | null) => call<{ debriefId: string | null }>("POST", `/sessions/${id}/end`, { debrief }),
 };
 
 export type Api = typeof api;
