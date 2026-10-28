@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, op, pieces, play, setPieces, setTrack, turnOf, withRoll } from "../../../../test/board.ts";
+import { codes, op, pieces, play, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../../test/board.ts";
 
 // Regressions for PR review findings on the operation framework (penguin-pants/handfulofbandits#20).
 const stateTurn = turnOf("state");
@@ -46,5 +46,32 @@ describe("operation review fixes", () => {
     const result = play(board, plan);
     expect(result.state.tracks["resources.pkk"]).toBe(3);
     expect(result.entries.some((e) => e.data["effect"] === "specialActivity")).toBe(true);
+  });
+
+  it("returns violations, not an exception, for Train in an unknown space", () => {
+    expect(codes(stateTurn, op("state", "limitedOp", { op: "state.train", locations: ["sea"], perLocation: { sea: { option: "place", troops: 1, police: 0 } } }))).toEqual(["trainDomestic"]);
+  });
+
+  it("checks Agitate on the board after Rally places its Guerrilla", () => {
+    // Dersim: 1 Troop, 1 Police, 2 Guerrillas (tied). Rally adds a third: PKK Control, so Agitate is legal.
+    const board = setPieces(pkkTurn, "dersim", "guerrilla", 2);
+    const plan = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["dersim"], perLocation: { dersim: { option: "place" } }, subActions: [{ action: "agitate", space: "dersim", params: { shifts: 1 } }] });
+    expect(codes(board, plan)).toEqual([]);
+    expect(play(board, plan).state.spaces["dersim"]?.level).toBe(-1);
+  });
+
+  it("rejects repeated locations in an event's free action", () => {
+    const board = withCard(pkkTurn, "DK-002");
+    const answer = { locations: ["botan", "botan"], perLocation: {}, sa: { locations: ["botan"], perLocation: {} } };
+    expect(codes(board, { type: "ChooseEvent", faction: "pkk", side: "shaded", answers: [answer] })).toEqual(["badAnswer"]);
+  });
+
+  it("moves each March group one step: arrivals in a later origin stay put", () => {
+    let board = setPieces(setPieces(pkkTurn, "botan", "guerrilla", 2), "hakkari", "guerrilla", 0);
+    board = setPieces(board, "hakkari", "guerrilla", 2, "active");
+    const plan = op("pkk", "opOnly", { op: "pkk.march", locations: ["hakkari", "van-bitlis"], perLocation: { hakkari: { moves: [{ from: "botan", count: 2 }] }, "van-bitlis": { moves: [{ from: "hakkari", count: 2 }] } } });
+    const { state } = play(board, plan);
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 2, active: 0 });
+    expect(pieces(state, "van-bitlis", "guerrilla")).toEqual({ underground: 0, active: 2 });
   });
 });

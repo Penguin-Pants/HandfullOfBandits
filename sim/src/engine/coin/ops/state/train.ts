@@ -85,9 +85,10 @@ export const train: ActionHandler = {
     }
     const civics = civic(options);
     if (civics.length > 1 || options.subActions.length > civics.length) out.push(at(null, "trainSubAction", "Train allows one Civic Action in one space.", ruleRef));
-    // Civic Action runs after the placements, so check it on that board.
+    // Civic Action runs after the placements, so check it on that board. A plan whose spaces
+    // already fail is not simulated: its primitives could meet an unknown space.
     const placed = createExec(ruleset, state, true);
-    placeAll(placed, part, { ...options, free: true });
+    if (out.length === 0) placeAll(placed, part, { ...options, free: true });
     for (const c of civics) {
       if (!part.locations.includes(c.space)) out.push(at(c.space, "civicNotSelected", "Civic Action must be in a Train space.", ruleRef));
       if (c.spend === null) out.push(at(c.space, "civicBadSpend", "Civic Action spend is not well formed.", "07 s1.3"));

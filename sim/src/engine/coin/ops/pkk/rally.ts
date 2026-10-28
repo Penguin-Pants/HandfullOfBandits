@@ -2,6 +2,7 @@
 // at a Base place up to Pop + Bases or flip all Underground. Europe as a location: Europe +1.
 // Optional Agitate in one space with a PKK Base or PKK Control (07 s1.3).
 import { stackingRoom } from "../../../core/effects/common.ts";
+import { createExec, type Exec } from "../../../core/exec.ts";
 import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "../action.ts";
@@ -99,11 +100,14 @@ export const rally: ActionHandler = {
     if (placing > 0 && (state.pools[PIECE.guerrilla]?.available ?? 0) === 0) out.push(at(null, "rallySupply", "No Guerrilla is Available.", ruleRef));
     const agits = agitations(options);
     if (agits.length > 1 || options.subActions.length > agits.length) out.push(at(null, "rallySubAction", "Rally allows one Agitate in one space.", ruleRef));
+    // Agitate runs after the placements, so check it on that board (only when the spaces pass).
+    const placed = createExec(ruleset, state, true);
+    if (out.length === 0) placeAll(placed, part, { ...options, free: true });
     for (const a of agits) {
       if (!part.locations.includes(a.space)) out.push(at(a.space, "agitateNotSelected", "Agitate must be in a Rally space.", ruleRef));
-      if (count(state, a.space, PIECE.pkkBase) === 0 && controlOf(ruleset, state, a.space) !== FACTION.pkk) out.push(at(a.space, "agitateWhere", "Agitate needs a PKK Base or PKK Control.", ruleRef));
+      if (count(placed.state, a.space, PIECE.pkkBase) === 0 && controlOf(ruleset, placed.state, a.space) !== FACTION.pkk) out.push(at(a.space, "agitateWhere", "Agitate needs a PKK Base or PKK Control.", ruleRef));
       if (a.spend === null) out.push(at(a.space, "agitateBadSpend", "Agitate spend is not well formed.", "07 s1.3"));
-      else out.push(...agitationViolations(ruleset, state, a.space, a.spend));
+      else out.push(...agitationViolations(ruleset, placed.state, a.space, a.spend));
     }
     return out;
   },
@@ -112,6 +116,13 @@ export const rally: ActionHandler = {
     return op + agitations(options).reduce((sum, a) => sum + (a.spend === null ? 0 : agitationCost(ruleset, a.spend)), 0);
   },
   execute(ctx, part, options) {
+    placeAll(ctx, part, options);
+    for (const a of agitations(options)) if (a.spend !== null) agitationExecute(ctx, a.space, a.spend);
+  },
+};
+
+/** Pay per location (unless free) and resolve each location's option. */
+function placeAll(ctx: Exec, part: ActionPart, options: ActionOptions): void {
     for (const loc of part.locations) {
       if (!options.free) pay(ctx, FACTION.pkk, costOf(ctx.ruleset, ctx.state, loc), ruleRef, loc);
       if (loc === EUROPE_SPACE) {
@@ -136,6 +147,4 @@ export const rally: ActionHandler = {
         ctx.apply({ type: "placePieces", piece: PIECE.pkkBase, count: 1, space: loc, state: null, ruleRef, assumptionRef: null });
       }
     }
-    for (const a of agitations(options)) if (a.spend !== null) agitationExecute(ctx, a.space, a.spend);
-  },
-};
+}

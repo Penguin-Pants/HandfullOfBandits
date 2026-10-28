@@ -70,10 +70,29 @@ export const march: ActionHandler = {
   cost: (ruleset, state, part, options) => (options.free ? 0 : part.locations.reduce((sum, dest) => sum + costOf(ruleset, state, dest), 0)),
   execute(ctx, part, options) {
     const threshold = param(ctx.ruleset, "march.activationThreshold", "number");
+    // Reserve each group's faces on the board before any arrival, so a piece moves one step only
+    // and a group with no face named leaves with the faces that stood there (Underground first).
+    const left = new Map<string, number>();
+    const reserve = (from: string, face: string): number => left.get(`${from}|${face}`) ?? count(ctx.state, from, PIECE.guerrilla, face);
+    const groups = new Map<string, { from: string; face: string; count: number }[]>();
+    for (const dest of part.locations) {
+      groups.set(
+        dest,
+        (asMoves(part.perLocation[dest]?.["moves"]) ?? []).flatMap((m) => {
+          let need = m.count;
+          return (m.face === null ? [FACE.underground, FACE.active] : [m.face]).flatMap((face) => {
+            const n = Math.min(need, reserve(m.from, face));
+            left.set(`${m.from}|${face}`, reserve(m.from, face) - n);
+            need -= n;
+            return n > 0 ? [{ from: m.from, face, count: n }] : [];
+          });
+        }),
+      );
+    }
     for (const dest of part.locations) {
       if (!options.free) pay(ctx, FACTION.pkk, costOf(ctx.ruleset, ctx.state, dest), ruleRef, dest);
       const restricted = entry(ctx.ruleset, ctx.state, dest) === "restricted";
-      for (const m of asMoves(part.perLocation[dest]?.["moves"]) ?? []) {
+      for (const m of groups.get(dest) ?? []) {
         // Activation (06 s4.2 item 4) uses State pieces in the destination before the group arrives.
         const crossing = space(ctx.ruleset, dest)?.kind === "external" || space(ctx.ruleset, m.from)?.kind === "external";
         const atSupport = (ctx.state.spaces[dest]?.level ?? 0) > 0;

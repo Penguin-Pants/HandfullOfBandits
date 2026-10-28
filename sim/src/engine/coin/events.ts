@@ -156,6 +156,9 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   const saId = asString(constraints["sa"]);
   const saPlan = asObject(plan["sa"]);
   const saPart = saPlan === null ? null : readPart(saPlan);
+  for (const p of [part, saPart]) {
+    if (p !== null && new Set(p.locations).size !== p.locations.length) ask(run, "badAnswer", "Select each location of a free action once.");
+  }
   const options: ActionOptions = { faction: run.faction, limited: false, free: true, constraints, op: null, sa: saId, opLocations: [], subActions: [] };
   const sa = saId === null ? undefined : actionHandlers[saId];
   if (sa !== undefined) {
