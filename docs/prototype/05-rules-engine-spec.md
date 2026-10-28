@@ -43,7 +43,7 @@ Rules:
 
 Derived values (Control, Total Support, scores, Harm counts) are never stored in `state`. `derive` recomputes them. Log entries record derived values at the moment of each step.
 
-State size: 13,751 bytes as canonical JSON (1,410 bytes gzip) for the full campaign setup (18 spaces, 6 piece types, 15 marker types, 100 card IDs). Measured at P1-03 with a hand-built research setup (`sim/test/full-setup.ts`). Types: `sim/src/engine/core/types.ts` (DEC-36).
+State size: 13,751 bytes as canonical JSON (1,410 bytes gzip) for the full campaign setup (18 spaces, 6 piece types, 15 marker types, 100 card IDs). Measured at P1-03 with a hand-built research setup. Since P2-02 the test measures the Kurdish package setup (`sim/test/state-size.test.ts`): 13,514 bytes (1,457 gzip). Types: `sim/src/engine/core/types.ts` (DEC-36).
 
 ## 3. Commands
 
