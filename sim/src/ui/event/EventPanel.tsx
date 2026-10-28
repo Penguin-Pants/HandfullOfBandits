@@ -16,6 +16,8 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit 
   const card = view.status.card;
   const [pending, setPending] = useState<{ side: string; answers: unknown[]; question: Question | null; error: string | null } | null>(null);
   const [picks, setPicks] = useState<string[]>([]);
+  const [planText, setPlanText] = useState("");
+  const [planError, setPlanError] = useState<string | null>(null);
   if (card === null) return <section className="panel">No card.</section>;
 
   const run = async (side: string, answers: unknown[]): Promise<void> => {
@@ -30,6 +32,14 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit 
     const v = result.violations[0];
     setPicks([]);
     setPending({ side, answers, question: v?.question ?? null, error: v?.question === undefined ? (v?.message ?? "Not legal.") : null });
+  };
+  const answerPlan = (): void => {
+    try {
+      setPlanError(null);
+      answer(JSON.parse(planText) as unknown);
+    } catch {
+      setPlanError("The plan is not valid JSON.");
+    }
   };
   const answer = (value: unknown): void => {
     if (pending !== null) void run(pending.side, [...pending.answers, value]);
@@ -85,9 +95,21 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit 
             </div>
           )}
           {pending.question.kind === "plan" && (
-            <button type="button" onClick={() => { answer(null); }}>
-              Skip the free action
-            </button>
+            <div>
+              <label>
+                Plan (JSON){" "}
+                <textarea rows={3} cols={48} placeholder='{"locations": ["botan"], "perLocation": {"botan": {}}}' value={planText} onChange={(e) => { setPlanText(e.target.value); }} />
+              </label>
+              {planError !== null && <p className="bad">{planError}</p>}
+              <div className="row">
+                <button type="button" onClick={answerPlan}>
+                  Submit plan
+                </button>
+                <button type="button" onClick={() => { answer(null); }}>
+                  Skip the free action
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}

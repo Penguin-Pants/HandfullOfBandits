@@ -110,6 +110,24 @@ describe("EventPanel", () => {
     await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", answers: ["Botan"] }); });
   });
 
+  it("answers a free-action plan question with the typed plan", async () => {
+    const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-001"));
+    const question = { kind: "plan" as const, prompt: "Plan the free pkk.rally (or null to skip)", options: [], min: 0, max: 1 };
+    const validate = vi.fn((_id: string, command: AnyCommand): Promise<ValidationResult> =>
+      Promise.resolve(Array.isArray(command["answers"]) && command["answers"].length > 0 ? ok : { ok: false, violations: [{ code: "needsAnswer", message: "Plan", ruleRef: "DK-001", location: null, question }], warnings: [], preview: { effects: [] } }),
+    );
+    const onCommit = vi.fn();
+    render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} />);
+    fireEvent.click(screen.getByRole("button", { name: "Execute unshaded (U)" }));
+    const input = await screen.findByLabelText("Plan (JSON)");
+    fireEvent.change(input, { target: { value: "{bad" } });
+    fireEvent.click(screen.getByRole("button", { name: "Submit plan" }));
+    expect(screen.getByText("The plan is not valid JSON.")).toBeTruthy();
+    fireEvent.change(input, { target: { value: '{"locations": ["botan"], "perLocation": {"botan": {}}}' } });
+    fireEvent.click(screen.getByRole("button", { name: "Submit plan" }));
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", answers: [{ locations: ["botan"], perLocation: { botan: {} } }] }); });
+  });
+
   it("greys Execute with a reason when the Event box is closed", () => {
     const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-014"));
     render(<EventPanel api={mockApi()} sessionId="S" view={view} faction="state" eventOpen={false} onCommit={vi.fn()} />);
@@ -132,5 +150,16 @@ describe("PropagandaPanel", () => {
     fireEvent.change(screen.getByLabelText("shifts"), { target: { value: "1" } });
     fireEvent.click(screen.getByRole("button", { name: "Spend in selected spaces" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "civicAction", choice: { spaces: { elazig: { shifts: 1 } } } });
+  });
+
+  it("sends the chosen Guard removal count per space in Upkeep", () => {
+    const base = turnOf("pkk");
+    const probe = boardView(kurdish.ruleset, kurdish.data, base).status.propagandaPhases.indexOf("upkeep");
+    const view = boardView(kurdish.ruleset, kurdish.data, { ...base, turn: { ...base.turn, phase: "propaganda", step: probe, propagandaRound: 1 } });
+    const onCommit = vi.fn();
+    render(<PropagandaPanel view={view} legal={{ faction: null, phase: "propaganda", advance: false }} selected={["elazig", "botan"]} onCommit={onCommit} />);
+    fireEvent.change(screen.getByLabelText("elazig Guards to remove"), { target: { value: "2" } });
+    fireEvent.click(screen.getByRole("button", { name: "Remove Guards in selected spaces" }));
+    expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "upkeep", choice: { removeGuards: { elazig: 2, botan: 1 } } });
   });
 });

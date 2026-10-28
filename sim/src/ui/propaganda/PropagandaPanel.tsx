@@ -55,9 +55,16 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
         </div>
       )}
       {phase === "upkeep" && (
-        <button type="button" onClick={() => { choose({ removeGuards: Object.fromEntries(selected.map((s) => [s, 1])) }); }}>
-          Remove 1 Guard in each selected space
-        </button>
+        <div aria-label="Upkeep">
+          {selected.map((s) => (
+            <label key={s}>
+              {s} Guards to remove <input size={2} value={spend[s]?.["guards"] ?? "1"} onChange={(e) => { setSpend({ ...spend, [s]: { ...spend[s], guards: e.target.value } }); }} />
+            </label>
+          ))}
+          <button type="button" disabled={selected.length === 0} onClick={() => { choose({ removeGuards: Object.fromEntries(selected.map((s) => [s, Number(spend[s]?.["guards"] ?? "1")])) }); }}>
+            Remove Guards in selected spaces
+          </button>
+        </div>
       )}
       {keys !== undefined && (
         <div aria-label="Spend">
