@@ -174,7 +174,7 @@ export function compileRuleset(data: PackageData, packageHash: string, issues: r
       startPool: p.startPool,
       countsForControl: p.countsForControl,
     })),
-    spaces: data.map.spaces.map((s) => ({ id: s.id, hasSupportScale: s.hasSupportScale, kind: s.kind, terrain: s.terrain ?? null, pop: s.pop })),
+    spaces: data.map.spaces.map((s) => ({ id: s.id, hasSupportScale: s.hasSupportScale, kind: s.kind, terrain: s.terrain ?? null, pop: s.pop, tags: s.tags ?? [] })),
     tracks: data.tracks.map((t) => {
       if (t.kind === "ordinal") return { id: t.id, kind: t.kind, steps: t.steps };
       // V-PARAM guarantees an integer cost for every overflow.

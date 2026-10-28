@@ -48,6 +48,8 @@ export interface RulesetSpace {
   readonly kind: "domestic" | "external";
   readonly terrain: string | null;
   readonly pop: number;
+  /** Rule tags from map.yaml, for example `noLandLinks` (04 s4.3). */
+  readonly tags: readonly string[];
 }
 
 /** At most `max` of `pieces` in each space that matches every non-null filter (04 s4.3). */
@@ -383,9 +385,9 @@ export type ApplyResult =
 export interface CommandHandler {
   readonly ruleRef: RuleRef;
   check(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Violation[];
-  /** Deterministic effects of a command that passed `check`: the preview (05 s4). */
-  resolve(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Effect[];
-  /** Full resolution. Absent: apply the `resolve` effects. */
+  /** Effects of a command that passed `check`. Used when the handler has no `execute`. */
+  resolve?(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Effect[];
+  /** Full resolution on the resolution context (DEC-50). The preview is its effects up to the first die roll. */
   execute?(ctx: Exec, command: AnyCommand): void;
 }
 

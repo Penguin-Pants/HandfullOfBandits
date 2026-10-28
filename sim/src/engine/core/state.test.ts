@@ -18,8 +18,8 @@ const ruleset: Ruleset = {
     { id: "rebel", faction: "red", count: 4, states: ["hidden", "shown"], placedAs: "hidden", startPool: "available", countsForControl: true },
   ],
   spaces: [
-    { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 0 },
-    { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0 },
+    { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 0, tags: [] },
+    { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0, tags: [] },
   ],
   tracks: [
     { id: "cash", kind: "numeric", min: 3, max: 9, overflow: null },

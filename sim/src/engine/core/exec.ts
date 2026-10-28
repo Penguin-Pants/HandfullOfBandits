@@ -11,6 +11,8 @@ export interface Exec {
   /** Current working state. */
   readonly state: GameState;
   readonly entries: readonly LogEntry[];
+  /** Effects applied so far, in order: the preview (05 s4). */
+  readonly effects: readonly Effect[];
   apply(...effects: readonly Effect[]): void;
   write(update: (state: GameState) => GameState): void;
   log(kind: LogKind, data: Readonly<Record<string, JsonValue>>, ruleRef?: RuleRef | null, assumptionRef?: AssumptionRef | null): void;
@@ -18,17 +20,23 @@ export interface Exec {
   roll(purpose: string, ruleRef: RuleRef): number;
 }
 
-export function createExec(ruleset: Ruleset, start: GameState): Exec {
+/** Thrown by `roll` in preview mode: the preview stops before the first random result (05 s4). */
+export class PreviewStop extends Error {}
+
+export function createExec(ruleset: Ruleset, start: GameState, preview = false): Exec {
   let state = start;
   const entries: LogEntry[] = [];
+  const effects: Effect[] = [];
   return {
     ruleset,
     get state() {
       return state;
     },
     entries,
-    apply(...effects) {
-      for (const effect of effects) {
+    effects,
+    apply(...list) {
+      for (const effect of list) {
+        effects.push(effect);
         const result = applyEffect(ruleset, state, effect);
         state = result.state;
         entries.push(...result.entries);
@@ -41,6 +49,7 @@ export function createExec(ruleset: Ruleset, start: GameState): Exec {
       entries.push(logEntry(state, kind, data, ruleRef, assumptionRef));
     },
     roll(purpose, ruleRef) {
+      if (preview) throw new PreviewStop(purpose);
       const drawn = rollDie(state.rng);
       state = { ...state, rng: drawn.rng };
       entries.push(logEntry(state, "DieRolled", { purpose, raw: drawn.value, result: drawn.value }, ruleRef, "PA-13"));

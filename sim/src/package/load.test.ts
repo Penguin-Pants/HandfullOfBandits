@@ -89,9 +89,9 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.markers.find((m) => m.id === "stateHarm")?.sides).toEqual([]);
     expect(result.ruleset.tracks.find((t) => t.id === "posture")).toEqual({ id: "posture", kind: "ordinal", steps: ["host", "tolerant", "hostile"] });
     expect(result.ruleset.spaces).toEqual([
-      { id: "hills", hasSupportScale: true, kind: "domestic", terrain: "mountain", pop: 2 },
-      { id: "town", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 3 },
-      { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0 },
+      { id: "hills", hasSupportScale: true, kind: "domestic", terrain: "mountain", pop: 2, tags: [] },
+      { id: "town", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 3, tags: [] },
+      { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0, tags: [] },
     ]);
     expect(result.ruleset.levelRange).toBe(2);
     expect(result.ruleset.factions.map((f) => f.resourcesTrack)).toEqual(["resources.state", "resources.pkk"]);

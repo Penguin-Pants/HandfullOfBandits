@@ -1,5 +1,4 @@
 # Values from research 03, 04, 05 and 09 (11 P2-01). tune: true where the research marks [tune].
-# Operation and Special Activity values come with their handlers (P2-06 to P2-08).
 # 03 Map
 - {id: rally.externalPop, value: 1, tune: false, source: "03 s3 item 3"}
 # 04 Tracks
@@ -30,3 +29,22 @@
 - {id: victory.covertCheckPenalty, value: 2, tune: false, source: "09 s3 step 1"}
 - {id: victory.finalHarmFactor, value: 2, tune: true, source: "09 s4 item 3"}
 - {id: victory.narrowMax, value: 5, tune: false, source: "09 s4 (record sheet labels)"}
+# 06 Operations (P2-06 to P2-08)
+- {id: terrain.mountainDivisor, value: 2, tune: false, source: "06 s1 item 6"}
+- {id: train.costPerSpace, value: 2, tune: false, source: "06 s2.1"}
+- {id: train.maxPlace, value: 3, tune: false, source: "06 s2.1 item 1"}
+- {id: train.maxGuards, value: 2, tune: false, source: "06 s2.1 item 2"}
+- {id: train.baseFromPolice, value: 2, tune: false, source: "06 s2.1 item 3"}
+- {id: train.baseLimit, value: 2, tune: false, source: "06 s2.1 item 3"}
+- {id: garrison.cost, value: 2, tune: false, source: "06 s2.2"}
+- {id: garrison.maxPolice, value: 6, tune: false, source: "06 s2.2 item 1"}
+- {id: sweep.costPerSpace, value: 2, tune: false, source: "06 s2.3"}
+- {id: sweep.costOhalExtended, value: 1, tune: true, source: "06 s2.3"}
+- {id: assault.costPerSpace, value: 2, tune: false, source: "06 s2.4"}
+# 07 Civic Action (07 s1.3)
+- {id: civicAction.coercionCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: civicAction.reliefCost, value: 1, tune: false, source: "07 s1.3"}
+- {id: civicAction.redressCost, value: 3, tune: false, source: "07 s1.3"}
+- {id: civicAction.returnCost, value: 3, tune: false, source: "07 s1.3"}
+- {id: civicAction.shiftCost, value: 2, tune: false, source: "07 s1.3"}
+- {id: civicAction.maxShifts, value: 2, tune: false, source: "07 s1.3"}
