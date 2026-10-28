@@ -27,9 +27,10 @@ const legal: LegalChoices = {
     { box: "pass", allowed: true, reason: null },
   ],
   actions: [
-    { id: "pkk.rally", label: "Rally", cost: "1 per location", fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "flip"] }], subAction: "agitate", kind: "op", ok: true, reason: null, locations: ["botan"] },
+    { id: "pkk.rally", label: "Rally", cost: "1 per location", fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "flip"] }], subAction: { id: "agitate", fields: [{ key: "shifts", label: "Shifts", kind: "number" }] }, kind: "op", ok: true, reason: null, locations: ["botan"] },
     { id: "pkk.coerce", label: "Coerce", cost: "1 per space", fields: [], subAction: null, kind: "op", ok: false, reason: "Coerce needs a Neutral or Support space.", locations: [] },
     { id: "pkk.extort", label: "Extort", cost: "0", fields: [], subAction: null, kind: "sa", ok: true, reason: null, locations: [] },
+    { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", fields: [{ key: "guards", label: "Guards", kind: "number" }], subAction: null, timing: "before", kind: "sa", ok: true, reason: null, locations: [] },
   ],
 };
 const ok: ValidationResult = { ok: true, violations: [], warnings: [], preview: { effects: [{ type: "adjustTrack", track: "resources.pkk", delta: -1, ruleRef: "06 s4.1", assumptionRef: null }] } };
@@ -63,6 +64,23 @@ describe("FactionPanel", () => {
     await waitFor(() => { expect(screen.getByLabelText("Preview").textContent).toMatch(/resources.pkk/); });
     fireEvent.click(screen.getByRole("button", { name: "Commit (Enter)" }));
     expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp" }));
+  });
+
+  it("puts sub-action spend and per-space SA fields into the plan", async () => {
+    const onDraft = vi.fn();
+    render(<FactionPanel api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} sessionId="S" legal={legal} selected={["botan"]} onCommit={vi.fn()} onDraft={onDraft} />);
+    fireEvent.click(screen.getByRole("button", { name: "Op + SA" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
+    fireEvent.change(screen.getByLabelText("agitate space"), { target: { value: "botan" } });
+    fireEvent.change(screen.getByLabelText("Shifts"), { target: { value: "1" } });
+    fireEvent.change(screen.getByLabelText("SA"), { target: { value: "pkk.strike-collaborators" } });
+    fireEvent.change(screen.getByLabelText("SA spaces"), { target: { value: "dersim" } });
+    fireEvent.change(screen.getByLabelText("Guards"), { target: { value: "2" } });
+    await waitFor(() => {
+      const plan = (onDraft.mock.lastCall?.[0] as { plan: Record<string, unknown> } | undefined)?.plan;
+      expect(plan?.["sa"]).toEqual({ action: "pkk.strike-collaborators", locations: ["dersim"], perLocation: { dersim: { guards: 2 } }, timing: "before" });
+      expect(plan?.["subActions"]).toEqual([{ action: "agitate", space: "botan", params: { shifts: 1 } }]);
+    });
   });
 
   it("shows violations of an illegal plan with their rule", async () => {
