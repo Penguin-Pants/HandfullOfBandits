@@ -71,15 +71,15 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Risks:** Schema churn. Keep `schemaVersion: 1` until P2 ends.
 - **Out:** Schemas and JSON Schema files.
 - **Done:** One schema per file in `sim/src/package/schema/`, `parsePackageFile(file, data)` returns issues with dot paths (DEC-37). `make schema` writes `game-packages/_schema/`; a test fails on drift. Field shapes recorded in 04 s4. T-PKG schema cases: 1 valid fixture per file, 33 invalid cases.
-- **Open for P1-05:** Compile schema output to `Ruleset` (needs the package hash). V-REF for `placedAs`, `emblemState`, `resourcesTrack`, `owner`, `countsAs`, link ends, gate steps and stacking IDs.
-- **Proposed fixes (not applied, need designer approval):** 1. 04 s4.9 `harmCount` repeats marker `countsAs`. Keep one source; proposal: drop `harmCount`. Needed by P1-09. 2. No package file holds the Support scale (5 levels, research 04 s4.1) or the Office cap (Passive Support and Passive Opposition, DD-18.4). Scenario `level` has no range check until one does. Needed by P1-07 `shiftLevel`.
+- **Open for P1-05:** Compile schema output to `Ruleset` (needs the package hash). V-REF for `placedAs`, `emblemState`, `resourcesTrack`, `owner`, link ends, gate steps and stacking IDs.
+- **Resolved after review:** Harm count only in `victory.yaml` (DEC-38). Support scale and level caps as data (DEC-39). Schema changes move to P1-05.
 
 ### P1-05 Package loader, hash and reference validation
 
 - **Obj:** Load a YAML folder, compute content hash, run V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS.
 - **Files:** `sim/src/package/load.ts`, `sim/src/package/validate.ts`, `sim/src/cli/validate.ts`.
 - **Deps:** P1-04.
-- **Steps:** 1. Load and normalize. 2. Hash. 3. Validators return messages per 04 s9. 4. CLI `sim validate <dir>`.
+- **Steps:** 1. Schema changes: remove marker `countsAs` (DEC-38); add `map.yaml` `supportLevels` and marker `capsLevel` (DEC-39). 2. Load and normalize. 3. Hash. 4. Validators return messages per 04 s9, including scenario `level` within the `supportLevels` range. 5. CLI `sim validate <dir>`.
 - **Accept:** CLI prints file, path, ID and sentence for each error. Exit code 1 on error.
 - **Tests:** T-PKG fixtures, one per code.
 - **Risks:** Hash changes on whitespace. Hash the normalized object, not the bytes.

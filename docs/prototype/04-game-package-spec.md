@@ -115,12 +115,13 @@ Default emblems (DEC-30): State Bases `crescentStar`; Guerrillas `starCircle` wi
 | `spaces[].tags` | Optional. Free tags used by rules, for example `noLandLinks`, `receptionTarget` |
 | `links[]` | `{a, b, kind}` where kind is `land` or `external` |
 | `links[].gate` | Optional posture gate `{track, steps}`: the link is open only while the track is at one of the steps |
+| `supportLevels` | Level IDs from Opposition to Support, odd length, middle item is Neutral. Range is ±(length - 1) / 2 (DEC-39). Example: `[activeOpposition, passiveOpposition, neutral, passiveSupport, activeSupport]`. Added in P1-05 |
 | `stacking[]` | `{pieces, max}` plus optional filters `spaceKind`, `terrain[]`, `spaces[]`. At most `max` of the listed piece types in each space that matches every filter. Example: `{pieces: [guards], max: 3, terrain: [mountain, plain]}` |
 
 ### 4.4 tracks.yaml and markers.yaml
 
 Tracks: `id`, `kind` (`numeric` or `ordinal`), `min` and `max` (`min` <= `max`) or `steps[]` (2 or more), optional `owner` (faction ID), `display` (display name).
-Markers: `id`, `count`, optional `sides` (2 or more, for example `[new, old]` or `[faceDown, revealed]`), optional `hidden` flag, optional `blocks` (shift directions blocked in its space: `support`, `opposition` or both), optional `countsAs` (faction whose Harm count the marker adds to).
+Markers: `id`, `count`, optional `sides` (2 or more, for example `[new, old]` or `[faceDown, revealed]`), optional `hidden` flag, optional `blocks` (shift directions blocked in its space: `support`, `opposition` or both), optional `capsLevel` (no shift takes a level past ±`capsLevel` in its space; Office: 1; added in P1-05, DEC-39). Harm counts are in `victory.yaml` only (DEC-38). The P1-04 schema field `countsAs` is removed in P1-05.
 
 ### 4.5 parameters.yaml
 
@@ -187,7 +188,7 @@ One entry per Operation and Special Activity.
 ### 4.9 victory.yaml
 
 1. `scores`: per faction, a list of formula terms.
-2. `harmCount`: per faction, a list of marker counts.
+2. `harmCount`: per faction, a list of formula terms, for example `countMarkers`. The only source of Harm counts (DEC-38).
 3. `harmLimit`, `checkSkipFirstRound`, `tieOrder`, `finalMargin` terms.
 4. `recordSheet`: dimensions from 09 s6, as derived metrics (record only).
 
