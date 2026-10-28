@@ -94,7 +94,18 @@ export type SpaceCondition =
   | { readonly type: "spaceHas"; readonly pieces: readonly PieceTypeId[]; readonly markers: readonly MarkerTypeId[] }
   | { readonly type: "all"; readonly of: readonly SpaceCondition[] }
   | { readonly type: "any"; readonly of: readonly SpaceCondition[] }
-  | { readonly type: "not"; readonly of: SpaceCondition };
+  | { readonly type: "not"; readonly of: SpaceCondition }
+  // Card terms (P2-05, DEC-33). `selected` is the current forEachSpace pick.
+  | { readonly type: "adjacentTo"; readonly space: SpaceRef }
+  | { readonly type: "selected" }
+  // Game terms: they ignore the space (04 s8).
+  | { readonly type: "trackAtLeast"; readonly track: TrackId; readonly value: number }
+  | { readonly type: "trackAtMost"; readonly track: TrackId; readonly value: number }
+  | { readonly type: "trackIn"; readonly track: TrackId; readonly values: readonly string[] }
+  | { readonly type: "flag"; readonly flag: string; readonly value: boolean };
+
+/** A space ID, or `selected`: the current forEachSpace pick (DEC-33). */
+export type SpaceRef = SpaceId;
 
 /** Pieces and markers count on the map only, never in pools. Null `where`: every space. */
 export type FormulaTerm =
@@ -153,6 +164,10 @@ export interface Ruleset {
   readonly sequence: RulesetSequence;
   /** Marker types that a harmCount term counts. Their empty supply warns (PA-09). */
   readonly harmMarkers: readonly MarkerTypeId[];
+  /** Map links, both ways implied (04 s4.3). */
+  readonly links: readonly { readonly a: SpaceId; readonly b: SpaceId; readonly kind: "land" | "external" }[];
+  /** Cards by ID (04 s4.8). */
+  readonly cards: Readonly<Record<CardId, Card>>;
   /** Scenarios by ID (04 s4.10). */
   readonly scenarios: Readonly<Record<string, RulesetScenario>>;
 }
@@ -176,6 +191,8 @@ export interface RulesetScenario {
   /** Pivotal hands per faction. Null: the faction default (factions.yaml). */
   readonly pivotals: Readonly<Record<FactionId, readonly CardId[]>> | null;
   readonly options: Readonly<Record<string, string | number>>;
+  /** Scenario-scoped validation errors (V-ENCODE, V-CARDS). Not empty: the scenario cannot start (DEC-51). */
+  readonly blockedBy: readonly string[];
   /** Campaigns in play order. The game starts in the first. */
   readonly campaigns: readonly string[];
   readonly tracks: Readonly<Record<TrackId, number | string>>;
@@ -402,6 +419,8 @@ export type Effect = EffectSource &
         readonly type: "movePieces";
         readonly piece: PieceTypeId;
         readonly state: string | null;
+        /** Face on arrival. Null: pieces keep their face. */
+        readonly toState: string | null;
         readonly count: number;
         readonly from: SpaceId;
         readonly to: SpaceId;
@@ -412,6 +431,13 @@ export type Effect = EffectSource &
         readonly space: SpaceId;
         readonly from: string;
         readonly to: string;
+        readonly count: number | "all";
+      }
+    | {
+        readonly type: "transferPool";
+        readonly piece: PieceTypeId;
+        readonly from: "available" | "outOfPlay";
+        readonly to: "available" | "outOfPlay";
         readonly count: number | "all";
       }
     | { readonly type: "adjustTrack"; readonly track: TrackId; readonly delta: number }
@@ -438,6 +464,71 @@ export type Effect = EffectSource &
         readonly steps: number;
       }
   );
+
+// Cards (04 s4.8, s5; P2-05). Card effects are authored in the package and resolved by the event
+// runner (P2-09), which turns each into core effects. `count` may be `{min, max}`: the executing
+// faction picks the number (PA-01, DEC-41).
+
+export type CountSpec = number | { readonly min: number; readonly max: number };
+
+export type CardEffect =
+  | { readonly type: "placePieces"; readonly piece: PieceTypeId; readonly count: CountSpec; readonly space: SpaceRef; readonly state: string | null }
+  | {
+      readonly type: "removePieces";
+      readonly piece: PieceTypeId;
+      readonly state: string | null;
+      readonly count: CountSpec;
+      readonly space: SpaceRef;
+      readonly to: "available" | "outOfPlay";
+    }
+  | {
+      readonly type: "movePieces";
+      readonly piece: PieceTypeId;
+      readonly state: string | null;
+      readonly toState: string | null;
+      readonly count: CountSpec;
+      readonly from: SpaceRef;
+      readonly to: SpaceRef;
+    }
+  | { readonly type: "setPieceState"; readonly piece: PieceTypeId; readonly space: SpaceRef; readonly from: string; readonly to: string; readonly count: number | "all" }
+  | { readonly type: "transferPool"; readonly piece: PieceTypeId; readonly from: "available" | "outOfPlay"; readonly to: "available" | "outOfPlay"; readonly count: number | "all" }
+  | { readonly type: "adjustTrack"; readonly track: TrackId; readonly delta: number }
+  | { readonly type: "setTrack"; readonly track: TrackId; readonly value: number | string; readonly ifEquals: number | string | null }
+  | { readonly type: "stepOrdinal"; readonly track: TrackId; readonly direction: "next" | "previous"; readonly steps: number }
+  | { readonly type: "placeMarker" | "removeMarker" | "flipMarker"; readonly marker: MarkerTypeId; readonly space: SpaceRef; readonly side: string | null }
+  | { readonly type: "setFlag"; readonly flag: string; readonly value: boolean }
+  | { readonly type: "shiftLevel"; readonly space: SpaceRef; readonly direction: "support" | "opposition" | "neutral"; readonly steps: number }
+  /** The executing faction picks one option (PA-01). */
+  | { readonly type: "choice"; readonly options: readonly { readonly label: string; readonly effects: readonly CardEffect[] }[] }
+  | { readonly type: "conditional"; readonly if: SpaceCondition; readonly then: readonly CardEffect[]; readonly else: readonly CardEffect[] }
+  /** Pick `min` to `max` spaces that match `where`; run `effects` once per pick with `selected` set. */
+  | { readonly type: "forEachSpace"; readonly where: SpaceCondition; readonly min: number; readonly max: number; readonly effects: readonly CardEffect[] }
+  /** A free Operation or Special Activity (05 s5 item 4). `constraints` are read by the action handler. */
+  | { readonly type: "freeAction"; readonly action: string; readonly constraints: JsonObject };
+
+export interface CardSide {
+  readonly text: string;
+  readonly owner: FactionId | null;
+  readonly effects: readonly CardEffect[];
+  /** The side only blocks the other side (research 08 s7). */
+  readonly blockOnly: boolean;
+}
+
+export interface Card {
+  readonly id: CardId;
+  readonly campaign: string;
+  readonly title: string;
+  readonly type: "event" | "capability" | "momentum" | "pivotal" | "propaganda";
+  readonly mandatory: boolean;
+  readonly deckEligible: boolean;
+  /** Applied on reveal, whether or not anyone executes the Event (research 05 s5 item 7). */
+  readonly always: readonly CardEffect[];
+  readonly unshaded: CardSide | null;
+  readonly shaded: CardSide | null;
+  /** Cards this card must follow in a pile (research 08 s8). */
+  readonly chainAfter: readonly CardId[];
+  readonly encoded: boolean;
+}
 
 // Log entries (05 s10). The store adds entryId and action ID (06 s2, s3.6).
 

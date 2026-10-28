@@ -2,6 +2,7 @@ id: start
 title: Tiny start
 campaigns: [C1]
 finalRound: 1
+pileSize: 2
 tracks: {cash.blue: 5, cash.red: 3, border: open}
 spaces:
   city: {level: 1, pieces: {soldier: 2, fort: 1}}

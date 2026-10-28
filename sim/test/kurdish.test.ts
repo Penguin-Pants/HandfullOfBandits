@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { validateCommand } from "../src/cli/validate.ts";
 import { derive } from "../src/engine/coin/derive.ts";
+import { startState } from "../src/engine/coin/setup.ts";
 import { setupState } from "../src/engine/core/state.ts";
 import { kurdish as result, kurdishDir as dir } from "./kurdish-package.ts";
 
@@ -30,9 +31,11 @@ const printed: Record<string, string[]> = {
 };
 
 describe("kurdish-coin 0.1.0", () => {
-  it("passes sim validate with no issues", () => {
+  it("passes sim validate; only the full campaign is blocked, by its missing C2 to C5 cards (DEC-51)", () => {
     expect(validateCommand(dir).exitCode).toBe(0);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => i.scenario !== "full-campaign")).toEqual([]);
+    expect(ruleset.scenarios["s0"]?.blockedBy).toEqual([]);
+    expect(ruleset.scenarios["full-campaign"]?.blockedBy.length).toBeGreaterThan(0);
   });
 
   it("has 13 domestic spaces with total Pop 32 and 5 external boxes (03 s1, s2)", () => {
@@ -71,6 +74,36 @@ describe("kurdish-coin 0.1.0", () => {
       ["hakkari", "mardin-batman", "diyarbakir-city", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "dersim", "bingol-mus", "van-bitlis", "agri", "western-cities"].sort(),
     );
     expect(Object.values(view.control).filter((f) => f === "pkk")).toEqual([]);
+  });
+});
+
+// P2-05: cards. Accept: V-ENCODE passes for S0; DK-003 unshaded needs no module procedure.
+describe("kurdish-coin cards", () => {
+  const s0Cards = ["DK-001", "DK-002", "DK-003", "DK-005", "DK-008", "DK-012", "DK-014", "DK-100", "DK-016"];
+
+  it("encodes the 8 S0 cards and the C1 Propaganda card, with their CSV text", () => {
+    for (const id of s0Cards) expect(ruleset.cards[id]?.encoded, id).toBe(true);
+    expect(ruleset.cards["DK-001"]?.unshaded?.text).toBe("Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2.");
+    expect(Object.values(ruleset.cards).filter((c) => c.campaign === "C1" && c.type !== "pivotal")).toHaveLength(16);
+  });
+
+  it("encodes DK-003 unshaded with forEachSpace and an up-to count, not a module procedure", () => {
+    expect(ruleset.cards["DK-003"]?.unshaded?.effects).toEqual([
+      expect.objectContaining({ type: "forEachSpace", min: 0, max: 2, effects: [expect.objectContaining({ type: "placePieces", piece: "guards", count: { min: 0, max: 2 }, space: "selected" })] }),
+    ]);
+    expect(ruleset.cards["DK-003"]?.always.map((e) => e.type)).toEqual(["transferPool", "setFlag"]);
+  });
+
+  it("deals the 8 S0 cards in a seeded order with DK-016 last (10-mvp-scope s2.1)", () => {
+    const piles = startState(ruleset, "s0", 3).deck.piles;
+    expect(piles).toHaveLength(1);
+    expect([...(piles[0] ?? [])].sort()).toEqual([...s0Cards].sort());
+    expect(piles[0]?.at(-1)).toBe("DK-016");
+    expect(startState(ruleset, "s0", 4).deck.piles).not.toEqual(piles);
+  });
+
+  it("refuses to start a blocked scenario", () => {
+    expect(() => startState(ruleset, "full-campaign", 1)).toThrow(/cannot start/);
   });
 });
 

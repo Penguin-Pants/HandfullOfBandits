@@ -2,6 +2,7 @@ id: s0
 title: Fixture start
 campaigns: [C1]
 finalRound: 1
+pileSize: 1
 tracks: {resources.state: 12, resources.pkk: 5, posture: tolerant}
 spaces:
   hills: {level: -1, pieces: {troops: 2, guerrilla: {underground: 1, active: 1}}, markers: {stateHarm: 1}}

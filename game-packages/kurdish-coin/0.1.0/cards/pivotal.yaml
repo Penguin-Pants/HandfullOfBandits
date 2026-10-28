@@ -1,0 +1,74 @@
+# Pivotal Events (research 05 s4, 08 s4) from the deck CSV. Not encoded until Phase 3a.
+- id: DK-015
+  campaign: C1
+  title: "ARGK Formed"
+  date: "1986-10"
+  type: pivotal
+  unshaded:
+    text: "Earliest C1. Precondition: 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases. Effect: place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in those spaces Underground, PKK +3 Resources."
+    owner: pkk
+    tier: T0
+    effects: []
+  shaded:
+    text: "None (single-sided Pivotal Event)"
+    owner: null
+    tier: T0
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0075, S-0246, S-0248, S-0253, S-0064]
+- id: DK-054
+  campaign: C3
+  title: "Serhildan"
+  type: pivotal
+  unshaded:
+    text: "Earliest C3. Precondition: Total Opposition is 14 or more and Mardin-Batman or Botan is at Opposition. Effect: shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1."
+    owner: pkk
+    tier: T0
+    effects: []
+  shaded:
+    text: "None (single-sided Pivotal Event)"
+    owner: null
+    tier: T0
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0271, E-0272, E-0173, S-0446]
+- id: DK-076
+  campaign: C4
+  title: "Area Domination"
+  type: pivotal
+  unshaded:
+    text: "Earliest C4. Precondition: Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more. Effect: free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost."
+    owner: state
+    tier: T1
+    effects: []
+  shaded:
+    text: "None (single-sided Pivotal Event)"
+    owner: null
+    tier: T1
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0202, E-0204, S-0258, S-0120]
+- id: DK-098
+  campaign: C5
+  title: "Coercive Diplomacy on Syria"
+  type: pivotal
+  unshaded:
+    text: "Earliest C5. Precondition: Syria posture is Tolerant or Restricted and Legitimacy is 5 or more. Effect: Syria posture to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing."
+    owner: state
+    tier: T0
+    effects: []
+  shaded:
+    text: "None (single-sided Pivotal Event)"
+    owner: null
+    tier: T0
+    effects: []
+  encoding: {status: notEncoded, reviewedAgainstText: false}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0124, E-0126, E-0127, E-0018, E-0019, S-0086, S-0087, S-0091, S-0089]

@@ -1,0 +1,9 @@
+- id: F-001
+  campaign: C1
+  title: Fixture event
+  type: event
+  unshaded: {text: "State Resources +1.", owner: state, effects: [{type: adjustTrack, track: resources.state, delta: 1}]}
+  shaded: {text: "PKK Resources +1.", owner: pkk, effects: [{type: adjustTrack, track: resources.pkk, delta: 1}]}
+  encoding: {status: encoded, reviewedAgainstText: true}
+  deckEligible: true
+- {id: F-002, campaign: C1, title: Propaganda, type: propaganda, encoding: {status: encoded, reviewedAgainstText: true}, deckEligible: false}

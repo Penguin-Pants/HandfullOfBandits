@@ -70,9 +70,9 @@ describe("piece primitives", () => {
       { type: "placePieces", piece: "rebel", count: 1, space: "hills", state: "shown" },
       { type: "placePieces", piece: "soldier", count: 2, space: "farm", state: null },
     ).state;
-    const moved = run(placed, { type: "movePieces", piece: "rebel", state: "shown", count: 1, from: "hills", to: "refuge" });
+    const moved = run(placed, { type: "movePieces", piece: "rebel", state: "shown", toState: null, count: 1, from: "hills", to: "refuge" });
     expect(at(moved.state, "refuge", "rebel", "shown")).toBe(1);
-    const blocked = run(placed, { type: "movePieces", piece: "soldier", state: null, count: 2, from: "farm", to: "refuge" });
+    const blocked = run(placed, { type: "movePieces", piece: "soldier", state: null, toState: null, count: 2, from: "farm", to: "refuge" });
     expect(at(blocked.state, "farm", "soldier")).toBe(2);
     expect(kinds(blocked.entries)).toEqual(["EffectSkipped:stacking"]);
   });
@@ -83,9 +83,23 @@ describe("piece primitives", () => {
     for (const face of ["hidden", "shown"]) {
       state = applyEffect(limited, state, { ...src, type: "placePieces", piece: "rebel", count: 2, space: "hills", state: face }).state;
     }
-    const { state: moved, entries } = applyEffect(limited, state, { ...src, type: "movePieces", piece: "rebel", state: null, count: 4, from: "hills", to: "refuge" });
+    const { state: moved, entries } = applyEffect(limited, state, { ...src, type: "movePieces", piece: "rebel", state: null, toState: null, count: 4, from: "hills", to: "refuge" });
     expect(moved.spaces["refuge"]?.pieces["rebel"]).toEqual({ hidden: 2, shown: 1 });
     expect(entries.at(-1)).toMatchObject({ kind: "EffectSkipped", data: { count: 1, reason: "stacking" } });
+  });
+
+  it("movePieces lands on toState when given (DK-005: moved Guerrillas arrive Underground)", () => {
+    const placed = run(empty, { type: "placePieces", piece: "rebel", count: 2, space: "hills", state: "shown" }).state;
+    const { state } = run(placed, { type: "movePieces", piece: "rebel", state: null, toState: "hidden", count: 2, from: "hills", to: "farm" });
+    expect(state.spaces["farm"]?.pieces["rebel"]).toEqual({ hidden: 2, shown: 0 });
+  });
+
+  it("transferPool moves a count or all between Available and Out of Play", () => {
+    const all = run(empty, { type: "transferPool", piece: "camp", from: "outOfPlay", to: "available", count: "all" });
+    expect(all.state.pools["camp"]).toEqual({ available: 2, outOfPlay: 0 });
+    const short = run(empty, { type: "transferPool", piece: "camp", from: "outOfPlay", to: "available", count: 3 });
+    expect(short.state.pools["camp"]).toEqual({ available: 2, outOfPlay: 0 });
+    expect(kinds(short.entries)).toEqual(["EffectApplied:", "EffectSkipped:absent"]);
   });
 
   it("setPieceState flips a count or all", () => {
@@ -210,7 +224,7 @@ describe("shiftLevel", () => {
 describe("unknown IDs", () => {
   it.each<EffectInput>([
     { type: "removePieces", piece: "rebel", state: null, count: 1, space: "sea", to: "available" },
-    { type: "movePieces", piece: "rebel", state: null, count: 1, from: "sea", to: "hills" },
+    { type: "movePieces", piece: "rebel", state: null, toState: null, count: 1, from: "sea", to: "hills" },
     { type: "setPieceState", piece: "rebel", space: "sea", from: "hidden", to: "shown", count: 1 },
     { type: "removeMarker", marker: "harm", space: "sea", side: "default" },
     { type: "flipMarker", marker: "mark", space: "sea", side: "old" },
@@ -230,7 +244,7 @@ describe("invariants under random effects", () => {
       r = drawn.rng;
       return drawn.value;
     };
-    const type = draw(["placePieces", "removePieces", "movePieces", "setPieceState", "adjustTrack", "setTrack", "stepOrdinal", "placeMarker", "removeMarker", "flipMarker", "setFlag", "shiftLevel"] as const);
+    const type = draw(["placePieces", "removePieces", "movePieces", "setPieceState", "transferPool", "adjustTrack", "setTrack", "stepOrdinal", "placeMarker", "removeMarker", "flipMarker", "setFlag", "shiftLevel"] as const);
     const space = draw(spaces);
     const to = draw(spaces);
     const piece = draw(["soldier", "fort", "rebel", "camp"]);
@@ -243,7 +257,8 @@ describe("invariants under random effects", () => {
     const effects: Record<Effect["type"], EffectInput> = {
       placePieces: { type: "placePieces", piece, count: n, space, state: face },
       removePieces: { type: "removePieces", piece, state: face, count: n, space, to: n % 2 === 0 ? "available" : "outOfPlay" },
-      movePieces: { type: "movePieces", piece, state: face, count: n, from: space, to },
+      movePieces: { type: "movePieces", piece, state: face, toState: n === 3 && piece === "rebel" ? "shown" : null, count: n, from: space, to },
+      transferPool: { type: "transferPool", piece, from: n % 2 === 0 ? "available" : "outOfPlay", to: n % 2 === 0 ? "outOfPlay" : "available", count: n === 3 ? "all" : n },
       setPieceState: { type: "setPieceState", piece: "rebel", space, from: "hidden", to: "shown", count: n },
       adjustTrack: { type: "adjustTrack", track: (["cash.blue", "cash.red", "standing"] as const)[n % 3] ?? "standing", delta: n * 9 - 13 },
       setTrack: { type: "setTrack", track: "border", value: "open", ifEquals: null },

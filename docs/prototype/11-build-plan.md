@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05). Phase 2 in progress: P2-01 to P2-04 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-05 done.
 
 ## 1. How to use this plan
 
@@ -98,7 +98,7 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Risks:** None.
 - **Out:** Fixture package.
 - **Done:** `sim/test/packages/tiny/`: factions `blue` and `red`, pieces `soldier`, `fort`, `rebel` (flip states), `camp`; spaces `city`, `farm`, `hills` and external `refuge`; tracks `cash.blue`, `cash.red` and ordinal `border`; markers `harm` (blocks), `mark` (sides), `office` (`capsLevel`). Scenario `start` added for P1-10 `start` and IC-1. `make validate DIR=sim/test/packages/tiny` passes; `sim/test/tiny.test.ts` checks it.
-- **Blocked:** the 3 cards. No card schema exists until P2-05 (04 s4.8), so the loader cannot read or check them. Add them to tiny in P2-05.
+- **Done in P2-05:** the 3 cards (`sim/test/packages/tiny/cards/c1.yaml`).
 
 ### P1-07 Core effect primitives
 
@@ -255,6 +255,9 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-EVT fixture per side (16 fixtures).
 - **Risks:** Encoder misreads prose. Side-by-side review output (09 s5).
 - **Out:** Encoded cards.
+- **Done:** Card schema `sim/src/package/schema/cards.ts` (type-key form like `victory.yaml`): all core primitives plus `transferPool` and `movePieces.toState`, card-level `choice`, `conditional`, `forEachSpace`, `freeAction`, `count {min, max}`, conditions `adjacentTo`, `selected`, `trackAtLeast`, `trackAtMost`, `trackIn`, `flag`. Loader reads `cards/*.yaml`; checks V-REF, V-EFFECT, V-CARDS and scenario-scoped V-ENCODE (DEC-51). `cards/c1.yaml`: 16 C1 cards from a one-time stub generator, 8 S0 cards and DK-016 hand-encoded; `cards/pivotal.yaml`: the 4 Pivotal stubs. `start` builds the deck and Pivotal hands (`engine/coin/setup.ts`) and refuses a blocked scenario. Tests in `sim/test/kurdish.test.ts`, `load.test.ts`, `schema.test.ts`. Tiny gets its 3 cards (closes the P1-06 block).
+- **Moved:** the 16 T-EVT fixtures need the event runner, so they come with P2-09. `forEachPiece` has no S0 user; it comes with its first card (Phase 3a).
+- **Open:** the full campaign scenario stays blocked by V-CARDS and V-ENCODE until C2 to C5 are encoded (Phase 3). Faction default `pivotalHand` is not compiled; scenarios list hands.
 
 ### P2-06 State Ops: Train, Garrison, Sweep, Assault
 

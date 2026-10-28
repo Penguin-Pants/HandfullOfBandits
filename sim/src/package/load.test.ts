@@ -62,6 +62,18 @@ describe("loadPackage on the valid fixture", () => {
     expect(bad.issues).toContainEqual(expect.objectContaining({ code: "V-SCHEMA", file: "assumptions.yaml", path: "0.status", id: "PA-01" }));
   });
 
+  it("compiles cards and links, and blocks only the scenario with a scenario-scoped error (DEC-51)", () => {
+    if (!result.ok) throw new Error("fixture must load");
+    expect(result.ruleset.cards["F-001"]).toMatchObject({ campaign: "C1", type: "event", encoded: true, unshaded: { owner: "state", blockOnly: false } });
+    expect(result.ruleset.links.length).toBeGreaterThan(0);
+    const unencoded = loadPackage(changed("cards/c1.yaml", { "0/encoding/status": "notEncoded" }));
+    if (!unencoded.ok) throw new Error(JSON.stringify(unencoded.issues));
+    expect(unencoded.issues).toContainEqual(expect.objectContaining({ level: "error", code: "V-ENCODE", file: "scenarios/s0.yaml", id: "F-001", scenario: "s0" }));
+    expect(unencoded.ruleset.scenarios["s0"]?.blockedBy).toEqual([expect.stringContaining("V-ENCODE F-001")]);
+    const excluded = loadPackage(changed("scenarios/s0.yaml", { excludedCards: [{ card: "F-001", reason: "test" }] }));
+    expect(excluded.issues).toContainEqual(expect.objectContaining({ code: "V-CARDS", scenario: "s0", message: "Campaign C1 has 0 eligible cards for a pile of 1." }));
+  });
+
   it("compiles an overflow cost from its parameter", () => {
     const other = loadPackage(changed("tracks.yaml", { "1/overflow": { track: "resources.state", costParam: "sweep.costPerSpace" } }));
     if (!other.ok) throw new Error(JSON.stringify(other.issues));
@@ -95,11 +107,12 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.scenarios).toEqual({
       s0: {
         finalRound: 1,
-        pileSize: null,
+        pileSize: 1,
         propagandaLast: false,
         excludedCards: [],
         pivotals: null,
         options: {},
+        blockedBy: [],
         campaigns: ["C1"],
         tracks: { "resources.state": 12, "resources.pkk": 5, posture: "tolerant" },
         // Bare piece counts go to the placedAs face, else `default`. Bare marker counts go to `default`.
@@ -193,6 +206,12 @@ const invalid: [string, string, string, Record<string, unknown>, string, string 
   ["V-VICTORY", "player faction without a score", "victory.yaml", { "scores/pkk": DELETE }, "scores", "pkk"],
   ["V-VICTORY", "player faction without a threshold", "scenarios/s0.yaml", { "thresholds/pkk": DELETE }, "thresholds", "pkk"],
   ["V-VICTORY", "player faction without a Harm count", "victory.yaml", { "harmCount/state": DELETE }, "harmCount", "state"],
+  ["V-REF", "unknown piece in a card effect", "cards/c1.yaml", { "0/unshaded/effects/0": { type: "placePieces", piece: "tank", count: 1, space: "hills", state: null } }, "0.unshaded.effects.0.piece", "F-001"],
+  ["V-REF", "unknown space in a card effect", "cards/c1.yaml", { "0/unshaded/effects/0": { type: "shiftLevel", space: "sea", direction: "support", steps: 1 } }, "0.unshaded.effects.0.space", "F-001"],
+  ["V-EFFECT", "adjustTrack on an ordinal track", "cards/c1.yaml", { "0/unshaded/effects/0/track": "posture" }, "0.unshaded.effects.0.track", "F-001"],
+  ["V-REF", "unknown side owner", "cards/c1.yaml", { "0/shaded/owner": "army" }, "0.shaded.owner", "F-001"],
+  ["V-CARDS", "chain to a missing card", "cards/c1.yaml", { "0/chainAfter": ["F-999"] }, "0.chainAfter.0", "F-001"],
+  ["V-REF", "unknown excluded card", "scenarios/s0.yaml", { excludedCards: [{ card: "F-999", reason: "test" }] }, "excludedCards.0.card", "F-999"],
   ["V-RANGE", "numeric track above max", "scenarios/s0.yaml", { "tracks/resources.pkk": 51 }, "tracks.resources.pkk", "resources.pkk"],
 ];
 
@@ -215,9 +234,10 @@ describe("loadPackage on invalid packages", () => {
     );
   });
 
+  // V-ENCODE is scenario-scoped: "compiles cards and links" covers it.
   it("covers every error code the loader reports", () => {
     expect(new Set(invalid.map(([code]) => code))).toEqual(
-      new Set(["V-SCHEMA", "V-REF", "V-PIECES", "V-STACK", "V-LINKS", "V-PARAM", "V-FACTIONS", "V-RANGE", "V-VICTORY"]),
+      new Set(["V-SCHEMA", "V-REF", "V-PIECES", "V-STACK", "V-LINKS", "V-PARAM", "V-FACTIONS", "V-RANGE", "V-VICTORY", "V-CARDS", "V-EFFECT"]),
     );
   });
 

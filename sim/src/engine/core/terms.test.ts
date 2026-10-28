@@ -23,6 +23,8 @@ const ruleset: Ruleset = {
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
   sequence: { model: "ct-two-faction@1", boxes: [], adjacency: [], swapAfter: [], firstEligibleAtStart: "blue", passIncome: {} },
+  links: [],
+  cards: {},
   harmMarkers: [],
   scenarios: {},
 };

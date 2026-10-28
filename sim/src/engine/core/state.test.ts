@@ -34,6 +34,8 @@ const ruleset: Ruleset = {
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
   sequence: { model: "ct-two-faction@1", boxes: [], adjacency: [], swapAfter: [], firstEligibleAtStart: "blue", passIncome: {} },
+  links: [],
+  cards: {},
   harmMarkers: [],
   scenarios: {},
 };
@@ -135,6 +137,7 @@ describe("setupState", () => {
     excludedCards: [],
     pivotals: null,
     options: {},
+    blockedBy: [],
     campaigns: ["C2", "C3"],
     tracks: { cash: 5, mood: "tense" },
     spaces: {

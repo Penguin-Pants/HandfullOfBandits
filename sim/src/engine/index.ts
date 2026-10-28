@@ -2,12 +2,12 @@
 // the result. Command handlers are passed in, so a test-only command such as AdjustTrackDebug
 // never ships in production (11 P1-10). Production handlers: coin/handlers.ts.
 import { control } from "./coin/derive.ts";
-import { resetEligibility } from "./coin/sequence/ct.ts";
+import { startState } from "./coin/setup.ts";
 import { afterCommand } from "./coin/turn.ts";
 import { canonicalHash } from "./core/canonical.ts";
 import { createExec } from "./core/exec.ts";
 import { logEntry } from "./core/log.ts";
-import { own, setupState } from "./core/state.ts";
+import { own } from "./core/state.ts";
 import type {
   AnyCommand,
   ApplyResult,
@@ -56,7 +56,7 @@ export function createEngine(handlers: Readonly<Record<string, CommandHandler>>)
 
   return {
     start(ruleset, scenarioId, seed) {
-      const state = resetEligibility(ruleset, setupState(ruleset, scenarioId, seed));
+      const state = startState(ruleset, scenarioId, seed);
       return transition(state, [logEntry(state, "PhaseStarted", { phase: state.turn.phase, scenario: scenarioId })]);
     },
     validate,
