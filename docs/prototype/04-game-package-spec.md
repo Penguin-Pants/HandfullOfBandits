@@ -213,6 +213,8 @@ Thresholds live in scenario files, because they differ per scenario.
 | `placePieces` | faction, piece, count, space or choice, state |
 | `removePieces` | piece filter, count, space or choice, destination |
 | `movePieces` | piece filter, count, from, to |
+| `forEachSpace` | filter (condition terms), min, max, nested effect list. The executing faction picks min to max matching spaces. The nested effects run once per picked space, in pick order |
+| `forEachPiece` | piece filter, filter (condition terms), min, max, nested effect list. Same as `forEachSpace` for pieces |
 | `setPieceState` | piece, from state, to state, space, count or all |
 | `shiftLevel` | space or choice, direction, steps |
 | `adjustTrack` | track, delta |
@@ -226,6 +228,8 @@ Thresholds live in scenario files, because they differ per scenario.
 | `runProcedure` | module procedure ID, parameters |
 | `choice` | chooser (default PA-01), options, each option a nested effect list |
 | `conditional` | condition terms, then and else effect lists |
+
+`count` is an integer or `{min, max}` for "up to N" text. The executing faction picks the number (PA-01). Inside `forEachSpace` or `forEachPiece`, `space: selected` refers to the current pick (DEC-33).
 
 Rule: every primitive is applied by core code that enforces stacking, supply, clamps and shift blocks. "Do as much as you can" (05 s5.3) is implemented by applying each primitive in order and logging the parts that could not apply.
 
@@ -271,7 +275,7 @@ Any rule element may set `status: missing`. Validation then blocks a session tha
 
 ## 8. Condition and formula terms (closed set)
 
-Conditions: `campaignAtLeast`, `campaignIn`, `trackAtLeast`, `trackAtMost`, `trackIn`, `flag`, `spaceHas`, `spaceLevelIn`, `control`, `countAtLeast`, `optionEquals`, `all`, `any`, `not`.
+Conditions: `campaignAtLeast`, `campaignIn`, `trackAtLeast`, `trackAtMost`, `trackIn`, `flag`, `spaceHas`, `spaceLevelIn`, `control`, `countAtLeast`, `optionEquals`, `terrainIn`, `spaceKind`, `adjacentTo`, `selected`, `all`, `any`, `not`.
 Formula terms: `sumPopWhere`, `countPieces`, `countMarkers`, `trackValue`, `divideFloor`, `multiply`, `add`, `constant`, `moduleTerm`.
 
 There is no expression string. A new term type needs a code change and a schema version bump.

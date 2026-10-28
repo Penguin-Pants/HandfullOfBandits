@@ -210,6 +210,7 @@ Core primitives are the only code that writes state.
 | `PhaseStarted` / `PhaseEnded` | Phase ID |
 | `ScoreCheck` | All score terms, thresholds, gates, result |
 | `GameEnded` | Result, labels, record sheet |
+| `StopRuleFlag` | Research stop rule number (12 s9) and evidence. Rule 3: a harmful action raised its user's net score. Rule 4: a faction wins with Harm above its limit (also a test failure). Rule 6 (proxy): a faction's only legal choice was Pass on 3 cards in a row, for the second time in the game. The research rule says "no useful action"; legal but useless actions stay a designer judgment through notes (DEC-34) |
 
 Every entry has `entryId = <actionId>.<n>`, the action ID and the state sequence it belongs to.
 

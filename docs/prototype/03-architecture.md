@@ -153,7 +153,7 @@ Every state structure is keyed by faction ID. No code path assumes exactly two f
 ## 9. What the architecture does not do
 
 1. No networking beyond `127.0.0.1`.
-2. No AI opponent and no move suggestion.
+2. No AI opponent and no move suggestion in the UI. Command-line scripted strategies for batch analysis are allowed (DEC-34).
 3. No LLM in rule adjudication.
 4. No generic board game platform. Generic COIN handlers exist only where the Kurdish design needs them.
 

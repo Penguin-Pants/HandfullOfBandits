@@ -91,7 +91,7 @@ Reason for the scope: one Campaign is the shortest unit that runs every core loo
 
 ## 4. Explicit exclusions
 
-1. AI opponents, bots or move suggestions.
+1. AI opponents or move suggestions in the UI. Command-line scripted strategies for batch analysis are allowed (P3a-09, DEC-34).
 2. LLM rule adjudication.
 3. Networked multiplayer.
 4. Geographic map art and animation.
