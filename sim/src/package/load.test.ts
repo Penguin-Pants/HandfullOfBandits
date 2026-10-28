@@ -94,6 +94,12 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.harmMarkers).toEqual(["stateHarm", "covert"]);
     expect(result.ruleset.scenarios).toEqual({
       s0: {
+        finalRound: 1,
+        pileSize: null,
+        propagandaLast: false,
+        excludedCards: [],
+        pivotals: null,
+        options: {},
         campaigns: ["C1"],
         tracks: { "resources.state": 12, "resources.pkk": 5, posture: "tolerant" },
         // Bare piece counts go to the placedAs face, else `default`. Bare marker counts go to `default`.
