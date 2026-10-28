@@ -23,15 +23,16 @@ const spend = (key: string, label: string): FormField => ({ key, label, kind: "n
 const civicAction = { id: "civicAction", fields: [spend("coercion", "Remove Coercion"), spend("reception", "Remove Reception"), spend("stateHarm", "Remove State Harm"), spend("displacement", "Remove Displacement"), spend("shifts", "Shifts")] };
 const agitate = { id: "agitate", fields: [spend("coercion", "Remove Coercion"), spend("pkkHarm", "Remove PKK Harm"), spend("shifts", "Shifts")] };
 const moves: FormField = { key: "moves", label: "Moves (from:count, ...)", kind: "moves" };
+const routes: FormField = { key: "moves", label: "Moves (from>to:count, ...; no >to: this space)", kind: "moves" };
 
 export const actionForms: readonly ActionForm[] = [
   { id: "state.train", label: "Train", cost: "2 per space", subAction: civicAction, fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "guards", "base"] }, { key: "troops", label: "Troops", kind: "number" }, { key: "police", label: "Police", kind: "number" }, { key: "count", label: "Guards", kind: "number" }] },
-  { id: "state.garrison", label: "Garrison", cost: "2 total", subAction: null, fields: [moves] },
+  { id: "state.garrison", label: "Garrison", cost: "2 total", subAction: null, fields: [routes] },
   { id: "state.sweep", label: "Sweep", cost: "2 per space", subAction: null, fields: [moves] },
   { id: "state.assault", label: "Assault", cost: "2 per space", subAction: null, fields: [] },
   { id: "pkk.rally", label: "Rally", cost: "1 per location", subAction: agitate, fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "base", "grow", "flip"] }, { key: "count", label: "Grow count", kind: "number" }] },
   { id: "pkk.march", label: "March", cost: "1 per destination", subAction: null, fields: [moves] },
-  { id: "pkk.attack", label: "Attack", cost: "1 per space", subAction: null, fields: [{ key: "prefer", label: "Remove first", kind: "select", options: ["troops", "police"] }] },
+  { id: "pkk.attack", label: "Attack", cost: "1 per space", subAction: null, fields: [{ key: "prefer", label: "Remove first", kind: "select", options: ["troops", "police"] }, { key: "remove", label: "Remove up to (blank: max)", kind: "number" }] },
   { id: "pkk.coerce", label: "Coerce", cost: "1 per space, 2 at Pop 3+", subAction: null, fields: [] },
   { id: "state.air-mobility", label: "Air Mobility", cost: "0", subAction: null, fields: [moves] },
   { id: "pkk.ambush", label: "Ambush", cost: "0", subAction: null, fields: [], timing: "before" },

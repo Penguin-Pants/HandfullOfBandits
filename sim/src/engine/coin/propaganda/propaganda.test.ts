@@ -43,6 +43,9 @@ describe("T-PROP: Upkeep (05 s6.3)", () => {
     expect(state.spaces["dersim"]?.pieces["guards"]).toEqual({ default: 1 });
     expect(t(state, "resources.state")).toBe(0);
   });
+  it("rejects Guard removals when the State can pay in full", () => {
+    expect(codes(at(guarded, "upkeep"), choice("upkeep", { removeGuards: { dersim: 2 } }))).toEqual(["upkeepPaid"]);
+  });
 });
 
 describe("T-PROP: Legitimacy (05 s6.4)", () => {

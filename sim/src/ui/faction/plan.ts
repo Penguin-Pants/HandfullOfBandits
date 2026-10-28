@@ -3,15 +3,16 @@ import type { AnyCommand, FormField } from "../api.ts";
 
 export type Values = Readonly<Record<string, string>>;
 
-/** "from:count, from:count[:face]" to moves. Null: malformed. */
-export function parseMoves(text: string): { from: string; count: number; face?: string }[] | null {
+/** "from[>to]:count[:face], ..." to moves; `>to` names a destination (Garrison). Null: malformed. */
+export function parseMoves(text: string): { from: string; to?: string; count: number; face?: string }[] | null {
   if (text.trim() === "") return [];
   const out = [];
   for (const part of text.split(",")) {
-    const [from = "", n = "", face] = part.trim().split(":");
+    const [route = "", n = "", face] = part.trim().split(":");
+    const [from = "", to] = route.split(">");
     const count = Number(n);
-    if (from === "" || !Number.isInteger(count) || count < 1) return null;
-    out.push(face === undefined ? { from, count } : { from, count, face });
+    if (from === "" || to === "" || !Number.isInteger(count) || count < 1) return null;
+    out.push({ from, ...(to === undefined ? {} : { to }), count, ...(face === undefined ? {} : { face }) });
   }
   return out;
 }

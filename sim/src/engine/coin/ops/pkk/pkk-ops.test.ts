@@ -115,6 +115,13 @@ describe("March (06 s4.2)", () => {
 describe("Attack (06 s4.3)", () => {
   const attack = (loc: string, perLocation: Record<string, unknown> = {}): ReturnType<typeof op> => op("pkk", "limitedOp", { op: "pkk.attack", locations: [loc], perLocation: { [loc]: perLocation } });
 
+  it("removes up to the chosen count on a hit, from 0 to 2", () => {
+    const { state } = play(withRoll(start, 2), attack("hakkari", { remove: 1 }));
+    expect(pieces(state, "hakkari", "troops")).toEqual({ default: 1 });
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 0, active: 1 });
+    expect(codes(start, attack("hakkari", { remove: 3 }))).toEqual(["badRemove"]);
+  });
+
   it("activates all Guerrillas; a roll at or below their number removes 2 State pieces, Troops first, with attrition", () => {
     const { state } = play(withRoll(start, 2), attack("hakkari"));
     expect(pieces(state, "hakkari", "troops")).toEqual({ default: 0 });

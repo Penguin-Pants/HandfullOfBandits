@@ -1,7 +1,8 @@
 // Attack (research 06 s4.3): Activate all Guerrillas, roll one die; on a roll at or below the
 // Guerrillas there, remove up to 2 State pieces (Troops or Police first, PKK choice, then Guards,
 // then Bases). One Guerrilla per Troop removed (attrition). A roll of 1 adds 1 Underground Guerrilla.
-// Per location: `prefer: police` takes Police before Troops (default Troops).
+// Per location: `prefer: police` takes Police before Troops (default Troops); `remove` is how
+// many to remove on a hit, 0 to the maximum (default the maximum).
 import type { Exec } from "../../../core/exec.ts";
 import { param } from "../../../core/params.ts";
 import type { Violation } from "../../../core/types.ts";
@@ -9,6 +10,7 @@ import { at, type ActionHandler } from "../action.ts";
 import { count, pay, space } from "../common.ts";
 import { guerrillas, statePieces } from "../common-pkk.ts";
 import { FACE, FACTION, PIECE } from "../ids.ts";
+import { asCount } from "../plan.ts";
 
 const ruleRef = "06 s4.3";
 const AMBUSH = "pkk.ambush";
@@ -28,6 +30,13 @@ export function removeInAttackOrder(ctx: Exec, loc: string, n: number, preferPol
   return troops;
 }
 
+/** Pieces to remove on a hit: the plan's `remove`, else the maximum. Null: not a count in range. */
+function removal(ruleset: Parameters<typeof param>[0], value: unknown): number | null {
+  const max = param(ruleset, "attack.maxRemoval", "number");
+  const n = asCount(value, max);
+  return n === null || n > max ? null : n;
+}
+
 export const attack: ActionHandler = {
   id: "pkk.attack",
   faction: FACTION.pkk,
@@ -41,6 +50,7 @@ export const attack: ActionHandler = {
       if (space(ruleset, loc) === undefined || guerrillas(state, loc) === 0 || statePieces(ruleset, state, loc) === 0) {
         out.push(at(loc, "attackWhere", "Attack needs Guerrillas and State pieces in the space.", ruleRef));
       }
+      if (removal(ruleset, part.perLocation[loc]?.["remove"]) === null) out.push(at(loc, "badRemove", `Remove 0 to ${String(param(ruleset, "attack.maxRemoval", "number"))} State pieces.`, ruleRef));
       if (Array.isArray(allowed) && !allowed.includes(loc)) out.push(at(loc, "eventConstraint", `The event allows Attack only in ${allowed.join(", ")}.`, "05 s5"));
     }
     return out;
@@ -55,7 +65,7 @@ export const attack: ActionHandler = {
       ctx.log("DieRolled", { purpose: "attackResult", space: loc, roll, guerrillas: guerrillas(ctx.state, loc), hit }, ruleRef);
       if (hit) {
         const prefer = part.perLocation[loc]?.["prefer"] === PIECE.police;
-        const troops = removeInAttackOrder(ctx, loc, param(ctx.ruleset, "attack.maxRemoval", "number"), prefer, ruleRef);
+        const troops = removeInAttackOrder(ctx, loc, removal(ctx.ruleset, part.perLocation[loc]?.["remove"]) ?? 0, prefer, ruleRef);
         if (troops > 0) ctx.apply({ type: "removePieces", piece: PIECE.guerrilla, state: FACE.active, count: troops, space: loc, to: "available", ruleRef: "06 s4.3 item 4", assumptionRef: null });
       }
       if (roll === param(ctx.ruleset, "attack.bonusRoll", "number")) {

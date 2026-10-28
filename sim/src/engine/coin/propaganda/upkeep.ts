@@ -42,6 +42,8 @@ export const upkeepPhase: PropagandaPhase = {
       if (n > count(state, space, PIECE.guards)) out.push(violation("upkeepGuards", `Not that many Guards in ${space}.`, ruleRef, space));
       removed += n;
     }
+    const owed = due(ruleset, guards(ruleset, state)) > resources(ruleset, state, FACTION.state);
+    if (removed > 0 && !owed) out.push(violation("upkeepPaid", "The State can pay upkeep in full, so it must pay and keep its Guards.", ruleRef));
     const left = guards(ruleset, state) - removed;
     if (due(ruleset, left) > resources(ruleset, state, FACTION.state)) {
       out.push({ ...violation("needsAnswer", `The State cannot pay upkeep for ${String(left)} Guards. Remove Guards until it can.`, ruleRef), question: { kind: "spaces", prompt: "Remove Guards (removeGuards: {space: count})", options: ruleset.spaces.filter((s) => count(state, s.id, PIECE.guards) > 0).map((s) => s.id), min: 0, max: left } });

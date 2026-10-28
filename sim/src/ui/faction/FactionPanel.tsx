@@ -105,7 +105,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
         <ul aria-label="Operations">
           {actions.filter((a) => a.kind === "op").map((a) => (
             <li key={a.id}>
-              <button type="button" disabled={!a.ok} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>
+              <button type="button" disabled={!a.ok && box !== "opSa"} title={a.ok || box !== "opSa" ? "" : "No legal standalone plan; a preceding SA may make one."} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>
                 {a.label}
               </button>{" "}
               <span className="muted">{a.cost}</span> {a.ok ? <span>OK ({a.locations.join(", ")})</span> : <span className="bad">{a.reason}</span>}

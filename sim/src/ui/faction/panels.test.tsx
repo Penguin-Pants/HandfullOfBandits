@@ -39,6 +39,8 @@ describe("plan helpers", () => {
   it("parses moves and builds a ChooseOperation command", () => {
     expect(parseMoves("hakkari:2, botan:1:active")).toEqual([{ from: "hakkari", count: 2 }, { from: "botan", count: 1, face: "active" }]);
     expect(parseMoves("x")).toBeNull();
+    expect(parseMoves("botan>hakkari:1, botan:1")).toEqual([{ from: "botan", to: "hakkari", count: 1 }, { from: "botan", count: 1 }]);
+    expect(parseMoves("botan>:1")).toBeNull();
     const command = toCommand("pkk", { box: "limitedOp", op: "pkk.rally", locations: ["botan"], values: { botan: { option: "place" } }, sa: null, subAction: null }, legal.actions ?? []);
     expect(command).toEqual({ type: "ChooseOperation", faction: "pkk", box: "limitedOp", plan: { op: "pkk.rally", locations: ["botan"], perLocation: { botan: { option: "place" } }, sa: null, subActions: [] } });
   });
@@ -51,6 +53,13 @@ describe("FactionPanel", () => {
     fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
     const coerce = screen.getByRole("button", { name: "Coerce" });
     expect((coerce as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText("Coerce needs a Neutral or Support space.")).toBeTruthy();
+  });
+
+  it("keeps an Op open in Op + SA, since a preceding SA may make it legal", () => {
+    render(<FactionPanel api={mockApi()} sessionId="S" legal={legal} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Op + SA" }));
+    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Coerce" }).disabled).toBe(false);
     expect(screen.getByText("Coerce needs a Neutral or Support space.")).toBeTruthy();
   });
 
