@@ -21,25 +21,32 @@ export type LoadResult =
   | { readonly ok: true; readonly data: PackageData; readonly hash: string; readonly ruleset: Ruleset; readonly issues: readonly PackageIssue[] }
   | { readonly ok: false; readonly issues: readonly PackageIssue[] };
 
-function yamlFiles(dir: string): string[] {
+const READ_ROOT = new Set(CORE_FILES.map((file) => `${file}.yaml`));
+/** Root entries that are not read and need no warning. */
+const QUIET_ROOT = new Set([SCENARIO_DIR, "CHANGELOG.md"]);
+
+function entries(dir: string): string[] {
   try {
-    return readdirSync(dir).filter((name) => name.endsWith(".yaml")).sort();
+    return readdirSync(dir).sort();
   } catch {
     return [];
   }
 }
 
 /**
- * Read the core files and `scenarios/*.yaml`. Other files (sequence, actions, cards, victory)
- * have no schema yet and are not read (P2 tasks add them).
+ * Read the core files and `scenarios/*.yaml`. Every other entry gets a warning, so a misnamed
+ * file is never skipped in silence. Sequence, actions, cards and victory have no schema yet (DEC-40).
  */
 export function readPackageDir(dir: string): RawPackage {
   const files: Record<string, unknown> = {};
   const issues: PackageIssue[] = [];
-  const paths = [
-    ...yamlFiles(dir).filter((name) => (CORE_FILES as readonly string[]).includes(name.slice(0, -".yaml".length))),
-    ...yamlFiles(join(dir, SCENARIO_DIR)).map((name) => `${SCENARIO_DIR}/${name}`),
-  ];
+  const root = entries(dir);
+  const scenarios = entries(join(dir, SCENARIO_DIR)).map((name) => `${SCENARIO_DIR}/${name}`);
+  const paths = [...root.filter((name) => READ_ROOT.has(name)), ...scenarios.filter((path) => path.endsWith(".yaml"))];
+  const unread = [...root.filter((name) => !READ_ROOT.has(name) && !QUIET_ROOT.has(name)), ...scenarios.filter((path) => !path.endsWith(".yaml"))];
+  for (const path of unread.sort()) {
+    issues.push({ level: "warning", code: "V-SCHEMA", file: path, path: "", id: null, message: "Not read. The loader reads only the core files and scenarios/*.yaml (DEC-40)." });
+  }
   for (const path of paths) {
     const doc = parseDocument(readFileSync(join(dir, ...path.split("/")), "utf8"));
     const first = doc.errors[0];
@@ -90,7 +97,7 @@ export function loadPackage(raw: RawPackage): LoadResult {
   for (const file of CORE_FILES) check(file, `${file}.yaml`);
   const scenarioPaths = Object.keys(raw.files).filter((path) => path.startsWith(`${SCENARIO_DIR}/`)).sort();
   for (const path of scenarioPaths) check("scenario", path);
-  if (issues.length > 0) return { ok: false, issues };
+  if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
 
   // 04 s10.2: hash the normalized content, so whitespace and comments do not change it.
   const hash = canonicalHash(parsed);

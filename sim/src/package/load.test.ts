@@ -139,6 +139,17 @@ describe("loadPackage on invalid packages", () => {
     expect(result.issues[0]?.message).toBe("YAML error: Flow map in block collection must be sufficiently indented and end with a } at line 2, column 1.");
   });
 
+  it("warns about files the loader does not read, and still loads", () => {
+    const dir = tempPackage("sequence.yaml", "model: ct-two-faction@1\n");
+    writeFileSync(join(dir, "scenarios", "s1.yml"), "id: s1\n");
+    const result = loadPackage(readPackageDir(dir));
+    expect(result.ok).toBe(true);
+    expect(result.issues).toEqual([
+      expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "scenarios/s1.yml", path: "", id: null }),
+      expect.objectContaining({ level: "warning", code: "V-SCHEMA", file: "sequence.yaml", path: "", id: null }),
+    ]);
+  });
+
   it("reports a duplicate YAML key", () => {
     const result = loadPackage(readPackageDir(tempPackage("manifest.yaml", `${readFileSync(join(validDir, "manifest.yaml"), "utf8")}title: Again\n`)));
     expect(result.issues[0]).toMatchObject({ code: "V-SCHEMA", file: "manifest.yaml" });
@@ -150,6 +161,13 @@ describe("sim validate", () => {
     const { exitCode, lines } = validateCommand(validDir);
     expect(exitCode).toBe(0);
     expect(lines).toEqual([expect.stringMatching(/^ok .+ hash [0-9a-f]{64}$/)]);
+  });
+
+  it("prints warnings and exit code 0 when only warnings are found", () => {
+    const { exitCode, lines } = validateCommand(tempPackage("victory.yaml", "scores: {}\n"));
+    expect(exitCode).toBe(0);
+    expect(lines[0]).toMatch(/^warning V-SCHEMA victory\.yaml: /);
+    expect(lines[1]).toMatch(/^ok /);
   });
 
   it("prints file, path, ID and sentence with exit code 1 for an invalid package", () => {

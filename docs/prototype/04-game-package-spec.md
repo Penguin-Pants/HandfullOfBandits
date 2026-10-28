@@ -290,7 +290,7 @@ Validation runs on load, before a session starts, and in the CLI (`sim validate 
 
 | Code | Check | Level |
 |---|---|---|
-| V-SCHEMA | Each file matches its schema version | error |
+| V-SCHEMA | Each file matches its schema version. A file the loader does not read gives a warning (DEC-40) | error |
 | V-REF | Every referenced ID exists (spaces, pieces, tracks, markers, actions, cards, parameters, modules) | error |
 | V-MODULE | Each module `id@major` exists in the registry | error |
 | V-FACTIONS | 2 to 4 player factions (s4.1). The match with the sequence model comes with P2-03 | error |
