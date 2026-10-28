@@ -190,16 +190,6 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Phase 1 status:** done, except the 3 tiny cards of P1-06 (blocked until P2-05). Phase 2 may start.
 - **Open for P2-11:** the session service renders log entry `text` (IC-1 uses a plain form) and fills the caller inputs of the context builder (DEC-46).
 
-### PV-01 Vassal test module (DEC-47)
-
-- **Obj:** Play the physical design in Vassal before P2 to P4. No rule automation.
-- **Files:** `vassal/` (module source and build note). The `.vmod` is a build output.
-- **Deps:** none. Uses research map, piece and card data.
-- **Steps:** 1. Original map image with one `Zone` per space. 2. Pieces in series shapes and DEC-30 colors. 3. Card deck, Sequence of Play box, eligibility pawns, edge track. 4. Toolbar: Draw Card, End Card Play, Propaganda, Undo.
-- **Accept:** Two players finish S0 in Vassal. Notes go to the 07 feedback form.
-- **Risks:** Module and package drift. Later: generate the module from the package YAML.
-- **Out:** `.vmod` for testers.
-
 ## 3. Phase 2: first playable slice (S0 Opening)
 
 ### P2-01 Kurdish package 0.1.0: static data
@@ -419,8 +409,8 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 | P3a-06 | Encode remaining C1 and all C2 cards | `cards/c1.yaml`, `c2.yaml` | P3a-03 | V-ENCODE passes for Scenario A | T-EVT per side | Encoding volume. Split per 5 cards per PR |
 | P3a-07 | Scenario A file and golden replay | `scenarios/scenario-a.yaml` | P3a-06 | Scenario A plays to end in CLI script | Golden | None |
 | P3a-08 | Moved from M2: auto backup, FTS search, minimal Markdown export | `store/backup.ts`, `export/markdown.ts` | IC-2 | Last 10 backups kept. FTS returns same rows as substring search on fixtures | T-EXP | FTS5 build availability |
-
 | P3a-09 | Scripted strategy batch runs: `sim batch --games 10 --strategy <state>,<pkk> --swap-seats`. Strategies are small policies that pick from legal choices. First set from research 12 s7 for Scenario A | `cli/batch.ts`, `cli/strategies/*` | P3a-07, P2-12 | CSV of round metrics and a win-rate report. A side with 8 or more wins in 10 is flagged (research 12 s9) | T-FUZZ harness | Strategies too naive to find exploits. Treat results as screens, not balance proof |
+| P3a-10 | Draft map (DEC-48): one simple SVG of the play area in real geography. Southeastern Turkey spaces from 03 s2, Western Cities box, Syria-Bekaa (northern Syria and Bekaa), KDP and PUK Zones (northern Iraq), Iran box, Europe track. Borders and rivers only, no relief art. Adds series parts: edge track, Sequence of Play box, card slots, Pop and terrain per space | `game-packages/kurdish-coin/<ver>/map/draft-map.svg`, polygon per space in `map.yaml` | P2-01 | Every `map.yaml` space has one polygon. Space adjacency on the map matches research 03 s4.1. Reads at 1366 x 768 | Test: polygon IDs equal space IDs | Draft geography is approximate. Label it "draft" |
 
 **IC-3a:** Designer plays Scenario A to the end in the UI. Notes export. Matches stage 0 of the research playtest plan (12 s2).
 
@@ -463,9 +453,19 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 
 **IC-4 (M5):** Two package versions and at least three sessions compared with recorded evidence.
 
+### PV-01 Vassal test module (DEC-47)
+
+- **Obj:** Play the finished design in Vassal, as a step toward the physical game. No rule automation.
+- **Files:** `vassal/` (module source and build note). The `.vmod` is a build output.
+- **Deps:** IC-4. Draft map from P3a-10 and final package data.
+- **Steps:** 1. Original map image with one `Zone` per space. 2. Pieces in series shapes and DEC-30 colors. 3. Card deck, Sequence of Play box, eligibility pawns, edge track. 4. Toolbar: Draw Card, End Card Play, Propaganda, Undo.
+- **Accept:** Two players finish S0 in Vassal. Notes go to the 07 feedback form.
+- **Risks:** Module and package drift. Generate the module from the package YAML where it is cheap.
+- **Out:** `.vmod` for testers.
+
 ## 6. Phase 5: evaluation only
 
-Write a one-page evaluation for each before any build: automated opponents, batch execution, AI-assisted log analysis, package generation from documents, map art, Windows installer (Electron), MOD-3B sequence model, MOD-4A, Concept B map, ranked initiative. None blocks M2 to M5.
+Write a one-page evaluation for each before any build: automated opponents, batch execution, AI-assisted log analysis, package generation from documents, final map art (the draft map is P3a-10), Windows installer (Electron), MOD-3B sequence model, MOD-4A, Concept B map, ranked initiative. None blocks M2 to M5.
 
 ## 7. Dependency view
 
