@@ -52,6 +52,12 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ok).toBe(true);
   });
 
+  it("compiles an overflow cost from its parameter", () => {
+    const other = loadPackage(changed("tracks.yaml", { "1/overflow": { track: "resources.state", costParam: "sweep.costPerSpace" } }));
+    if (!other.ok) throw new Error(JSON.stringify(other.issues));
+    expect(other.ruleset.tracks.find((t) => t.id === "resources.pkk")).toMatchObject({ overflow: { track: "resources.state", cost: 2 } });
+  });
+
   it("compiles the Ruleset core reads", () => {
     if (!result.ok) throw new Error("fixture must load");
     expect(result.ruleset.packageHash).toBe(result.hash);
@@ -61,10 +67,13 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.markers.find((m) => m.id === "stateHarm")?.sides).toEqual([]);
     expect(result.ruleset.tracks.find((t) => t.id === "posture")).toEqual({ id: "posture", kind: "ordinal", steps: ["host", "tolerant", "hostile"] });
     expect(result.ruleset.spaces).toEqual([
-      { id: "hills", hasSupportScale: true },
-      { id: "town", hasSupportScale: true },
-      { id: "camp", hasSupportScale: false },
+      { id: "hills", hasSupportScale: true, kind: "domestic", terrain: "mountain" },
+      { id: "town", hasSupportScale: true, kind: "domestic", terrain: "city" },
+      { id: "camp", hasSupportScale: false, kind: "external", terrain: null },
     ]);
+    expect(result.ruleset.levelRange).toBe(2);
+    expect(result.ruleset.markers.find((m) => m.id === "office")).toEqual({ id: "office", count: 2, sides: [], blocks: [], capsLevel: 1 });
+    expect(result.ruleset.stacking[1]).toEqual({ pieces: ["pkkBase"], max: 0, spaceKind: null, terrain: ["city"], spaces: null });
   });
 
   it("hashes content, not bytes: comments, spacing and key order do not change the hash", () => {
@@ -94,6 +103,11 @@ const invalid: [string, string, string, Record<string, unknown>, string, string 
   ["V-REF", "unknown gate step", "map.yaml", { "links/1/gate/steps/1": "open" }, "links.1.gate.steps.1", "hills-camp"],
   ["V-REF", "gate on a numeric track", "map.yaml", { "links/1/gate/track": "resources.pkk" }, "links.1.gate.track", "hills-camp"],
   ["V-REF", "unknown stacking piece", "map.yaml", { "stacking/0/pieces": ["police"] }, "stacking.0.pieces.0", "stacking.0"],
+  ["V-REF", "overflow to unknown track", "tracks.yaml", { "1/overflow": { track: "gold", costParam: "sweep.costPerSpace" } }, "1.overflow.track", "resources.pkk"],
+  ["V-REF", "overflow to an ordinal track", "tracks.yaml", { "1/overflow": { track: "posture", costParam: "sweep.costPerSpace" } }, "1.overflow.track", "resources.pkk"],
+  ["V-REF", "overflow to itself", "tracks.yaml", { "1/overflow": { track: "resources.pkk", costParam: "sweep.costPerSpace" } }, "1.overflow.track", "resources.pkk"],
+  ["V-REF", "overflow cost unknown parameter", "tracks.yaml", { "1/overflow": { track: "resources.state", costParam: "cost" } }, "1.overflow.costParam", "resources.pkk"],
+  ["V-PARAM", "overflow cost not a positive integer", "tracks.yaml", { "1/overflow": { track: "resources.state", costParam: "ui.label" } }, "1.overflow.costParam", "resources.pkk"],
   ["V-REF", "unknown scenario space", "scenarios/s0.yaml", { "spaces/city": {} }, "spaces.city", "city"],
   ["V-REF", "unknown flip state in setup", "scenarios/s0.yaml", { "spaces/hills/pieces/guerrilla": { hidden: 1, active: 1 } }, "spaces.hills.pieces.guerrilla.hidden", "hills"],
   ["V-REF", "two-sided marker as a bare count", "scenarios/s0.yaml", { "spaces/town/markers/covert": 1 }, "spaces.town.markers.covert", "town"],

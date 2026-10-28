@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01 and P1-01 to P1-05 done. P1-06 done except its 3 cards (blocked until P2-05).
+Status: planning document. P0-01, P1-01 to P1-05 and P1-07 done. P1-06 done except its 3 cards (blocked until P2-05).
 
 ## 1. How to use this plan
 
@@ -110,6 +110,8 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** T-PRIM.
 - **Risks:** Shift blocks need markers config. Read from ruleset.
 - **Out:** Primitive library.
+- **Done:** 12 primitives in `sim/src/engine/core/effects/` with `applyEffect` (DEC-41). `Ruleset` now carries stacking, space kind and terrain, `levelRange`, marker `blocks` and `capsLevel`, piece `placedAs` and track `overflow`. New track field `overflow: {track, costParam}` with V-REF and V-PARAM checks. Tiny gains track `standing` with overflow. T-PRIM: unit cases for every primitive and skip reason, unknown IDs, and a random-effects test (5 seeds x 400 effects) that checks piece totals, marker totals, track bounds, stacking, level range and input immutability.
+- **Moved by DEC-41:** step 4 (`count {min, max}`) goes to the card effect schema in P2-05. The PA-09 Harm warning goes to P1-09.
 
 ### P1-08 Parameters access and literal check
 
@@ -127,7 +129,7 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Obj:** `derive` for Control and formula terms (04 s8).
 - **Files:** `sim/src/engine/coin/derive.ts`, `sim/src/engine/core/terms.ts`.
 - **Deps:** P1-07.
-- **Steps:** 1. Control per 03 s6. 2. Term evaluator for the closed set. 3. Score and Harm count terms.
+- **Steps:** 1. Control per 03 s6. 2. Term evaluator for the closed set. 3. Score and Harm count terms. 4. PA-09 warning when a Harm marker type runs out (moved from P1-07, DEC-41).
 - **Accept:** Tiny package values match hand math.
 - **Tests:** T-SCORE (tiny).
 - **Risks:** Term set too small. Add terms only with a schema bump.
@@ -218,7 +220,7 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 
 ### P2-05 Card schema and encoding of 8 C1 cards plus Propaganda
 
-- **Obj:** Card schema (04 s4.8), effect primitives `choice`, `conditional`, `freeAction`, `forEachSpace`, `forEachPiece` and condition terms `terrainIn`, `spaceKind`, `adjacentTo`, `selected` (DEC-33). Encode the 8 S0 cards.
+- **Obj:** Card schema (04 s4.8) with `count` as an integer or `{min, max}` (moved from P1-07, DEC-41), effect primitives `choice`, `conditional`, `freeAction`, `forEachSpace`, `forEachPiece` and condition terms `terrainIn`, `spaceKind`, `adjacentTo`, `selected` (DEC-33). Encode the 8 S0 cards.
 - **Files:** `sim/src/package/schema/cards.ts`, `game-packages/kurdish-coin/0.1.0/cards/c1.yaml`.
 - **Deps:** P2-04.
 - **Steps:** 1. One-time stub generator from the deck CSV (run from `/tmp`, not committed, per `AGENTS.md`). 2. Hand-encode effects. 3. Set `reviewedAgainstText` after review.

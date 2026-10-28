@@ -46,6 +46,24 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
+          },
+          "overflow": {
+            "type": "object",
+            "properties": {
+              "track": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+              },
+              "costParam": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "track",
+              "costParam"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [

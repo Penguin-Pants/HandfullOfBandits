@@ -120,7 +120,7 @@ Default emblems (DEC-30): State Bases `crescentStar`; Guerrillas `starCircle` wi
 
 ### 4.4 tracks.yaml and markers.yaml
 
-Tracks: `id`, `kind` (`numeric` or `ordinal`), `min` and `max` (`min` <= `max`) or `steps[]` (2 or more), optional `owner` (faction ID), `display` (display name).
+Tracks: `id`, `kind` (`numeric` or `ordinal`), `min` and `max` (`min` <= `max`) or `steps[]` (2 or more), optional `owner` (faction ID), `display` (display name). Numeric tracks may set `overflow: {track, costParam}`: a loss the track cannot pay costs the `costParam` value per unpaid point on another numeric track (Legitimacy, research 04 s3.2, DEC-41).
 Markers: `id`, `count`, optional `sides` (2 or more, for example `[new, old]` or `[faceDown, revealed]`), optional `hidden` flag, optional `blocks` (shift directions blocked in its space: `support`, `opposition` or both), optional `capsLevel` (no shift takes a level past ±`capsLevel` in its space; Office: 1; DEC-39). Harm counts are in `victory.yaml` only (DEC-38).
 
 ### 4.5 parameters.yaml
@@ -233,7 +233,7 @@ Thresholds live in scenario files, because they differ per scenario.
 | `choice` | chooser (default PA-01), options, each option a nested effect list |
 | `conditional` | condition terms, then and else effect lists |
 
-`count` is an integer or `{min, max}` for "up to N" text. The executing faction picks the number (PA-01). Inside `forEachSpace` or `forEachPiece`, `space: selected` refers to the current pick (DEC-33).
+`count` is an integer or `{min, max}` for "up to N" text. `{min, max}` lives in the card effect schema (P2-05); the event runner resolves it to an integer before a core primitive runs (DEC-41). The executing faction picks the number (PA-01). Inside `forEachSpace` or `forEachPiece`, `space: selected` refers to the current pick (DEC-33).
 
 Rule: every primitive is applied by core code that enforces stacking, supply, clamps and shift blocks. "Do as much as you can" (05 s5.3) is implemented by applying each primitive in order and logging the parts that could not apply.
 
