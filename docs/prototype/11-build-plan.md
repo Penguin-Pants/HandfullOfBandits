@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-17 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-18 done.
 
 ## 1. How to use this plan
 
@@ -421,6 +421,8 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** T-EXP.
 - **Risks:** Large files with states. States off by default.
 - **Out:** Exporters.
+- **Done:** `sim/src/export/json.ts` (`exportJson`: exportMeta, packages with manifest, parameters and assumptions, sessions with result and `debrief_annotation_id`, branches, used categories, actions with commands, entries and `undoneAfterRandom`, states with derived view and content only with `--with-states`, annotations, metrics rows plus stop rule flags, index; `validateExport` for T-EXP). `sim export <sessionId...> [--db] [--with-states] [--out]` (`cli/export.ts`), `GET /api/sessions/:id/export`, Export link on Home. Tests `sim/test/export.test.ts` (T-ANN-07, T-ANN-08, T-EXP, the S0 metrics row).
+- **Open:** the package rule index is empty until P4-08 (`rule_sources`). Markdown and CSV exports are Phase 3a and 4.
 
 ### IC-2 Integration checkpoint (Phase 2 exit, M2)
 

@@ -140,7 +140,10 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
                 <td>
                   <button type="button" onClick={() => { onOpen(s.session_id); }}>
                     Resume
-                  </button>
+                  </button>{" "}
+                  <a href={`/api/sessions/${s.session_id}/export`} download>
+                    Export
+                  </a>
                 </td>
               </tr>
             ))}

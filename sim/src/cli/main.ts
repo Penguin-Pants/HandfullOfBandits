@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { coinHandlers } from "../engine/coin/handlers.ts";
 import { createEngine } from "../engine/index.ts";
 import { loadPackage, readPackageDir } from "../package/load.ts";
+import { exportCommand } from "./export.ts";
 import { fuzz } from "./fuzz.ts";
 import { replayFile, replaySession } from "./replay.ts";
 import { validateCommand } from "./validate.ts";
@@ -12,6 +13,7 @@ const usage = [
   "       sim replay <file.json> [--package <dir>]",
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
+  "       sim export <sessionId...> [--db <file>] [--with-states] [--out <file>]",
 ].join("\n");
 const args = process.argv.slice(2);
 const [command, target] = args;
@@ -30,6 +32,10 @@ if (command === "validate" && target !== undefined) {
   print(validateCommand(target));
 } else if (command === "replay" && target !== undefined) {
   print(target.endsWith(".json") ? replayFile(target, flag("--package", kurdish)) : replaySession(target, flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)))));
+} else if (command === "export" && target !== undefined) {
+  const ids = args.slice(1).filter((a, i, all) => !a.startsWith("--") && !["--db", "--out"].includes(all[i - 1] ?? ""));
+  const db = flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)));
+  print(exportCommand(ids, db, args.includes("--with-states"), args.includes("--out") ? flag("--out", "export.json") : null, "0.1.0"));
 } else if (command === "fuzz") {
   const loaded = loadPackage(readPackageDir(flag("--package", kurdish)));
   if (!loaded.ok) {

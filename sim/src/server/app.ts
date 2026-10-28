@@ -6,7 +6,8 @@ import Fastify, { type FastifyInstance } from "fastify";
 import type { UiFocus } from "../annotate/types.ts";
 import type { AnyCommand } from "../engine/core/types.ts";
 import type { Anchor } from "../store/repos/annotations.ts";
-import { ServiceError, type SessionService } from "./service.ts";
+import { exportJson, validateExport } from "../export/json.ts";
+import { APP_VERSION, ServiceError, type SessionService } from "./service.ts";
 
 interface Id {
   readonly id: string;
@@ -82,6 +83,13 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     return service.undo(request.params.id, headActionId);
   });
   app.get<{ Querystring: Record<string, string> }>("/api/review", (request) => service.review(request.query));
+  app.get<{ Params: Id; Querystring: { states?: string } }>("/api/sessions/:id/export", (request, reply) => {
+    service.session(request.params.id);
+    const data = exportJson(service.db, { sessionIds: [request.params.id], withStates: request.query.states === "1", appVersion: APP_VERSION, exportedAt: new Date().toISOString() });
+    const broken = validateExport(data);
+    if (broken.length > 0) throw new ServiceError(500, "The export has unresolved references (T-EXP).", broken);
+    return reply.header("content-disposition", `attachment; filename="session-${request.params.id}.json"`).send(data);
+  });
   app.get("/api/categories", () => service.categories());
   app.get<{ Params: Id }>("/api/sessions/:id/annotations", (request) => service.annotations(request.params.id));
   app.post<{ Params: Id }>("/api/sessions/:id/annotations", (request, reply) => {
