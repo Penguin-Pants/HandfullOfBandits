@@ -27,8 +27,8 @@ export const fullRuleset: Ruleset = {
   packageHash: "0".repeat(64),
   rulesetVersion: "R1",
   factions: [
-    { id: "state", kind: "player" },
-    { id: "pkk", kind: "player" },
+    { id: "state", kind: "player", resourcesTrack: "resources.state" },
+    { id: "pkk", kind: "player", resourcesTrack: "resources.pkk" },
   ],
   pieces: [
     { id: "troops", faction: "state", count: 30, states: [], placedAs: null, startPool: "available", countsForControl: true },
@@ -78,7 +78,7 @@ export const fullRuleset: Ruleset = {
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
   harmMarkers: [],
-  thresholds: {},
+  scenarios: {},
 };
 
 type Setup = Readonly<Record<string, { level?: number; pieces: Readonly<Record<string, number>> }>>;

@@ -1,5 +1,6 @@
 // Cross-file package checks (04 s9): V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS, V-RANGE, V-VICTORY.
 // Input has passed V-SCHEMA. Each issue names file, path, element ID and one sentence.
+import { own } from "../engine/core/state.ts";
 import type { FormulaTerm, SpaceCondition } from "../engine/core/types.ts";
 import type { PackageFileData } from "./schema/index.ts";
 
@@ -35,11 +36,6 @@ const PLAYER_FACTIONS = { min: 2, max: 4 };
 
 type Space = PackageFileData<"map">["spaces"][number];
 type FaceCounts = number | Readonly<Record<string, number>>;
-
-/** Own entry only: a key such as `constructor` must not read an Object property. */
-function own<T>(record: Readonly<Record<string, T>> | undefined, key: string): T | undefined {
-  return record !== undefined && Object.hasOwn(record, key) ? record[key] : undefined;
-}
 
 function total(faces: FaceCounts): number {
   return typeof faces === "number" ? faces : Object.values(faces).reduce((sum, n) => sum + n, 0);

@@ -4,8 +4,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseDocument } from "yaml";
 import { canonicalHash } from "../engine/core/canonical.ts";
+import { SINGLE_FACE } from "../engine/core/state.ts";
 import { markersIn } from "../engine/core/terms.ts";
-import type { Ruleset } from "../engine/core/types.ts";
+import type { Ruleset, RulesetScenario } from "../engine/core/types.ts";
 import { parsePackageFile, type PackageFile } from "./schema/index.ts";
 import { validatePackage, type PackageData, type PackageIssue } from "./validate.ts";
 
@@ -115,8 +116,6 @@ export function loadPackage(raw: RawPackage): LoadResult {
   for (const path of scenarioPaths) check("scenario", path);
   if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
 
-  // 04 s10.2: hash the normalized content, so whitespace and comments do not change it.
-  const hash = canonicalHash(parsed);
   const data: PackageData = {
     manifest: parsed["manifest.yaml"] as PackageData["manifest"],
     parameters: parsed["parameters.yaml"] as PackageData["parameters"],
@@ -128,9 +127,20 @@ export function loadPackage(raw: RawPackage): LoadResult {
     victory: parsed["victory.yaml"] as PackageData["victory"],
     scenarios: Object.fromEntries(scenarioPaths.map((path) => [path, parsed[path] as PackageData["scenarios"][string]])),
   };
+  // 04 s10.2: hash the normalized content, so whitespace and comments do not change it.
+  const hash = canonicalHash(packageContent(data));
   issues.push(...validatePackage(data));
   if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
   return { ok: true, data, hash, ruleset: compileRuleset(data, hash), issues };
+}
+
+/**
+ * Normalized package content by file path: the value the package hash covers. Its canonical JSON
+ * is what the store saves (04 s10.3); `loadPackage({files: content, issues: []})` loads it again.
+ */
+export function packageContent(data: PackageData): Record<string, unknown> {
+  const { scenarios, ...core } = data;
+  return { ...Object.fromEntries(Object.entries(core).map(([file, value]) => [`${file}.yaml`, value])), ...scenarios };
 }
 
 /** The fields core reads (types.ts). Absent flip states and sides become empty lists. */
@@ -139,7 +149,7 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
   return {
     packageHash,
     rulesetVersion: data.manifest.rulesetVersion,
-    factions: data.factions.map(({ id, kind }) => ({ id, kind })),
+    factions: data.factions.map((f) => ({ id: f.id, kind: f.kind, resourcesTrack: f.resourcesTrack ?? null })),
     pieces: data.pieces.map((p) => ({
       id: p.id,
       faction: p.faction,
@@ -169,6 +179,31 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
     parameters,
     victory: data.victory,
     harmMarkers: markersIn(Object.values(data.victory.harmCount).flat()),
-    thresholds: Object.fromEntries(Object.values(data.scenarios).map((s) => [s.id, s.thresholds ?? {}])),
+    scenarios: Object.fromEntries(Object.values(data.scenarios).map((s) => [s.id, compileScenario(data, s)])),
+  };
+}
+
+type FaceCountsData = number | Readonly<Record<string, number>>;
+
+/** A bare count is on the given face (DEC-40). */
+function faces(counts: Readonly<Record<string, FaceCountsData>> | undefined, face: (type: string) => string): Record<string, Record<string, number>> {
+  return Object.fromEntries(Object.entries(counts ?? {}).map(([type, n]) => [type, typeof n === "number" ? { [face(type)]: n } : { ...n }]));
+}
+
+function compileScenario(data: PackageData, scenario: PackageData["scenarios"][string]): RulesetScenario {
+  const placedAs = new Map(data.pieces.map((p) => [p.id, p.placedAs ?? SINGLE_FACE]));
+  return {
+    campaigns: scenario.campaigns,
+    tracks: scenario.tracks,
+    spaces: Object.fromEntries(
+      Object.entries(scenario.spaces).map(([id, s]) => [
+        id,
+        { level: s.level ?? null, pieces: faces(s.pieces, (type) => placedAs.get(type) ?? SINGLE_FACE), markers: faces(s.markers, () => SINGLE_FACE) },
+      ]),
+    ),
+    available: scenario.available ?? {},
+    outOfPlay: scenario.outOfPlay ?? {},
+    flags: scenario.flags ?? {},
+    thresholds: scenario.thresholds ?? {},
   };
 }

@@ -7,7 +7,7 @@ import type { FormulaTerm, Ruleset } from "./types.ts";
 const ruleset: Ruleset = {
   packageHash: "abc",
   rulesetVersion: "R1",
-  factions: [{ id: "blue", kind: "player" }],
+  factions: [{ id: "blue", kind: "player", resourcesTrack: null }],
   pieces: [],
   spaces: [
     { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 2 },
@@ -23,7 +23,7 @@ const ruleset: Ruleset = {
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
   harmMarkers: [],
-  thresholds: {},
+  scenarios: {},
 };
 const ctx: TermContext = { ruleset, state: emptyState(ruleset, "s", 1), control: { city: null, box: null } };
 

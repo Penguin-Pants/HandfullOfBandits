@@ -1,6 +1,7 @@
 // Derived view (05 s1 item 5, s9 item 1): Control, named totals, scores, Harm counts and
 // margins, recomputed from state and never stored in it (05 s2).
 import { total } from "../core/effects/common.ts";
+import { own } from "../core/state.ts";
 import { sumTerms, type TermContext } from "../core/terms.ts";
 import type { DerivedView, FactionId, FormulaTerm, GameState, Ruleset, SpaceId } from "../core/types.ts";
 
@@ -29,11 +30,12 @@ export function derive(ruleset: Ruleset, state: GameState): DerivedView {
   const sums = (lists: Readonly<Record<string, readonly FormulaTerm[]>>): Record<string, number> =>
     Object.fromEntries(Object.entries(lists).map(([key, terms]) => [key, sumTerms(ctx, terms)]));
   const scores = sums(ruleset.victory.scores);
-  // Own keys only: an ID such as `constructor` must not read an Object property.
-  const scenario = state.meta.scenarioId;
-  const thresholds = Object.hasOwn(ruleset.thresholds, scenario) ? (ruleset.thresholds[scenario] ?? {}) : {};
+  const thresholds = own(ruleset.scenarios, state.meta.scenarioId)?.thresholds;
   const margins = Object.fromEntries(
-    Object.entries(scores).flatMap(([faction, score]) => (Object.hasOwn(thresholds, faction) ? [[faction, score - (thresholds[faction] ?? 0)]] : [])),
+    Object.entries(scores).flatMap(([faction, score]) => {
+      const threshold = own(thresholds, faction);
+      return threshold === undefined ? [] : [[faction, score - threshold]];
+    }),
   );
   return { control: ctx.control, totals: sums(ruleset.victory.totals), scores, harm: sums(ruleset.victory.harmCount), margins };
 }

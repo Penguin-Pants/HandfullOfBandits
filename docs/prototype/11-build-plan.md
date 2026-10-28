@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01, P1-01 to P1-05 and P1-07 to P1-09 done. P1-06 done except its 3 cards (blocked until P2-05).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05).
 
 ## 1. How to use this plan
 
@@ -150,6 +150,10 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** T-DET (apply twice, same hash).
 - **Risks:** Debug command leaks to production. Register it only in tests.
 - **Out:** Engine entry points.
+- **Done:** `createEngine(handlers)` in `sim/src/engine/index.ts` with `start`, `validate`, `apply`; `logEntry` in `sim/src/engine/core/log.ts`, now used by the effect primitives (DEC-44). Types `AnyCommand`, `Violation`, `ValidationResult`, `Transition` (with `stateHash`), `ApplyResult`, `CommandHandler` in `types.ts`. `AdjustTrackDebug` lives in `sim/test/debug-command.ts`. `start` builds the scenario position from new `Ruleset.scenarios` (replaces `Ruleset.thresholds`) through `setupState`. New lint layer `engine` for files directly in `sim/src/engine/`. Tests: `index.test.ts` (start, validate, apply, rejection, input immutability, `ControlChanged`, T-DET), `setupState` cases, loader scenario compile, 4 new T-ARCH fixtures.
+- **Fixed in review:** the bare-import purity check skipped the new `engine` layer (fixture `engine/bad-bare.ts`). Three copies of the own-key lookup merged into `own` in `core/state.ts`.
+- **Size:** about 470 changed lines in `sim/src` and `sim/eslint`, tests included, above the 400-line target. Scenario compile is the only source for `start` (DEC-44).
+- **Open for later tasks:** scenario `pivotals`, `options`, `excludedCards` and `finalRound` (P2-04, P2-05, P2-10). Phase stays `setup` after `start` until the deck exists (P2-04).
 
 ### P1-11 Store schema with annotation tables
 
@@ -161,6 +165,9 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** Store integration tests on a temp file.
 - **Risks:** Schema churn. Migrations, never edits to 001 after merge.
 - **Out:** Store layer.
+- **Done:** Migration 001 `sim/src/store/schema.sql` with all 06 s3 tables plus `annotation_revisions`, 15 seeded categories (07 s5). `sim/src/store/migrate.ts` (`openStore`, `migrate`), `ulid.ts`, `common.ts`, repos `packages`, `sessions` (session, main branch and setup action in one transaction), `actions` (`commitAction`), `commands`, `log-entries`, `states`, `annotations` (revisions, one debrief per session), `categories` (DEC-45). Tests: `store.test.ts` on a temp file (atomic commit, rollback on a mid-commit error, rollback of a failed session start, state dedup, unknown session, annotations), `ulid.test.ts`. A mutation check (transaction removed) fails the rollback test.
+- **Size:** about 850 added lines, 190 of them SQL DDL and seed data and 220 tests, above the 400-line target. The plan puts all tables and 8 repos in one task.
+- **Open for later tasks:** append Decision answers to a `pending` action (P2-09 or the first handler with a Decision). Repos for branches, metrics and regression tables come with their users (P2-10, P4-04, P4-06). Undo (P2-17). Backup (P3a-08).
 
 ### P1-12 Annotation context builder
 
@@ -172,10 +179,16 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** T-ANN-03, T-ANN-04.
 - **Risks:** Field drift from spec. Test lists fields by name from 07.
 - **Out:** Context builder.
+- **Done:** `buildContext(input)` in `sim/src/annotate/context.ts`, input and context types in `types.ts` (DEC-46). `RulesetFaction.resourcesTrack` compiled from `factions.yaml`. Tests in `context.test.ts`: every 07 s4.1 and s4.2 field by name (T-ANN-03), nulls only where the source has no value yet, values for the P1-10 transition, compact diff of pieces, levels, markers and Control, costs, rolls and PA refs, proposed plan with violations, no action fields without an action, size under 8 KB, input unchanged (T-ANN-04 engine part; store part in IC-1).
+- **Open for later tasks:** `active_faction` from the sequence model (P2-03), `current_card_title` from cards (P2-05), `legal_choices_summary` from `legalChoices` (P2-03), `rule_sources` from the package rule index (P4-08). The session service fills them (P2-11).
 
 ### IC-1 Integration checkpoint (Phase 1 exit)
 
 Script test: load `tiny`, start a session in the store, apply one command, save a note anchored to the action, reload from disk, verify hashes and note links. Matches the Phase 1 exit criterion in the brief.
+
+- **Passed:** `sim/test/ic1.test.ts`. The stored package reloads with the same hash, both stored states hash to their keys, the stored command replays from the stored package to the same hashes, entries keep before and after values, the note links to the action and its after state, and saving the note does not move the head (T-ANN-04). New `packageContent(data)` in `sim/src/package/load.ts` is the one source for the package hash and the stored content (04 s10.3).
+- **Phase 1 status:** done, except the 3 tiny cards of P1-06 (blocked until P2-05). Phase 2 may start.
+- **Open for P2-11:** the session service renders log entry `text` (IC-1 uses a plain form) and fills the caller inputs of the context builder (DEC-46).
 
 ## 3. Phase 2: first playable slice (S0 Opening)
 
