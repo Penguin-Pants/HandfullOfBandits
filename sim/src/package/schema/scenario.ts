@@ -18,6 +18,8 @@ export const scenarioSchema = z.strictObject({
   campaigns: idList(1),
   /** Propaganda round that ends the game. */
   finalRound: count.min(1),
+  /** Event cards per Campaign pile. Absent: the research pile size (05 s1.1). */
+  pileSize: count.min(1).optional(),
   tracks: z.record(id, z.union([z.int(), id])),
   spaces: z.record(id, spaceSetup),
   available: z.record(id, count).optional(),

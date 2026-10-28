@@ -1,5 +1,4 @@
 # Research 10 s2 (15 Aug 1984). All Guerrillas start Underground (10 s1 step 3).
-# Pivotals (10 s2.3) and piles C1 to C5 come with cards (P2-04, P2-05).
 id: full-campaign
 title: Full campaign (1984-1999)
 campaigns: [C1, C2, C3, C4, C5]
@@ -36,3 +35,5 @@ outOfPlay: {guards: 16}
 flags: {law3175: false}
 thresholds: {state: 49, pkk: 30}
 options: {syriaMarchRestricted: allow}
+# 10 s2.3: Area Domination, Coercive Diplomacy on Syria; ARGK Formed, Serhildan (deck CSV IDs).
+pivotals: {state: [DK-076, DK-098], pkk: [DK-015, DK-054]}

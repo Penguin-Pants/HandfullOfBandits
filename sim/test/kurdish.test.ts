@@ -77,3 +77,36 @@ describe("kurdish-coin 0.1.0", () => {
     expect(Object.values(view.control).filter((f) => f === "pkk")).toEqual([]);
   });
 });
+
+// P2-02: scenarios. Accept: V-PIECES passes, totals reconcile with 10 s2.2.
+describe("kurdish-coin scenarios", () => {
+  // 10 s2.2 totals table: [on map, Available, Out of Play].
+  const totals: Record<string, [number, number, number]> = {
+    troops: [16, 14, 0],
+    police: [16, 8, 0],
+    guards: [0, 0, 16],
+    stateBase: [4, 4, 0],
+    guerrilla: [10, 20, 0],
+    pkkBase: [3, 9, 0],
+  };
+
+  it.each(["full-campaign", "s0"])("%s: piece totals reconcile with 10 s2.2", (scenario) => {
+    const state = setupState(ruleset, scenario, 1);
+    const actual = Object.fromEntries(
+      Object.entries(state.pools).map(([piece, pool]) => {
+        const onMap = Object.values(state.spaces).reduce((sum, space) => sum + Object.values(space.pieces[piece] ?? {}).reduce((a, n) => a + n, 0), 0);
+        return [piece, [onMap, pool.available, pool.outOfPlay]];
+      }),
+    );
+    expect(actual).toEqual(totals);
+  });
+
+  it("s0 starts from the full campaign setup, as a one-round test scenario (10-mvp-scope s2.1)", () => {
+    const full = setupState(ruleset, "full-campaign", 1);
+    const s0 = setupState(ruleset, "s0", 1);
+    expect(s0.spaces).toEqual(full.spaces);
+    expect(s0.tracks).toEqual(full.tracks);
+    const s0Data = data.scenarios["scenarios/s0.yaml"];
+    expect(s0Data).toMatchObject({ testOnly: true, finalRound: 1, pileSize: 8, campaigns: ["C1"], pivotals: { state: [], pkk: [] } });
+  });
+});

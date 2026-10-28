@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05). Phase 2 in progress: P2-01 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05). Phase 2 in progress: P2-01 and P2-02 done.
 
 ## 1. How to use this plan
 
@@ -216,6 +216,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** T-PKG.
 - **Risks:** None.
 - **Out:** Scenario files.
+- **Done:** `scenarios/s0.yaml` (10-mvp-scope s2.1): full campaign setup, `testOnly`, `finalRound: 1`, new optional scenario field `pileSize: 8`, no Pivotals, `excludedCards` for the 7 C1 Capability, Momentum and DK-013 cards plus Pivotal DK-015. `full-campaign.yaml` gains its 10 s2.3 Pivotals. `sim/test/kurdish.test.ts`: both setups reconcile with the 10 s2.2 totals table. `sim/test/state-size.test.ts` now measures the package setup; `sim/test/full-setup.ts` is deleted.
+- **Open for later tasks:** `propagandaLast` (P2-04). V-REF for card IDs in `pivotals` and `excludedCards` (P2-05).
 
 ### P2-03 CT sequence model
 
