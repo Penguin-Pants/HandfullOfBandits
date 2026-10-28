@@ -1,0 +1,3 @@
+- {id: stateHarm, count: 4, blocks: [support]}
+- {id: office, count: 2, capsLevel: 1}
+- {id: covert, count: 2, sides: [faceDown, revealed], hidden: true}

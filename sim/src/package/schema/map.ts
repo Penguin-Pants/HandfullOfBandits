@@ -44,6 +44,10 @@ const stackingRule = z.strictObject({
 });
 
 export const mapSchema = z.strictObject({
+  /** Level IDs from Opposition to Support. Odd length; the middle item is Neutral (DEC-39). */
+  supportLevels: idList(1)
+    .refine((levels) => levels.length % 2 === 1, "Use an odd number of levels, with Neutral in the middle")
+    .optional(),
   spaces: elementList(space),
   links: z.array(link),
   stacking: z.array(stackingRule),

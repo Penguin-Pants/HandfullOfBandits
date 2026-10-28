@@ -54,6 +54,7 @@ const valid: Record<PackageFile, unknown> = {
     },
   ],
   map: {
+    supportLevels: ["opposition", "neutral", "support"],
     spaces: [
       { id: "city", name: "City", kind: "domestic", terrain: "city", pop: 2, hasSupportScale: true, layout: { x: 10, y: -4 } },
       { id: "box", name: "Box", kind: "external", pop: 0, hasSupportScale: false, layout: { x: 0, y: 0 }, tags: ["noLandLinks"] },
@@ -66,7 +67,7 @@ const valid: Record<PackageFile, unknown> = {
     { id: "mood", kind: "ordinal", steps: ["calm", "tense"], display: "Mood", status: "tune" },
   ],
   markers: [
-    { id: "harm", count: 6, blocks: ["support"], countsAs: "blue" },
+    { id: "harm", count: 6, blocks: ["support"], capsLevel: 1 },
     { id: "secret", count: 2, sides: ["faceDown", "revealed"], hidden: true },
   ],
   scenario: {
@@ -123,6 +124,7 @@ const invalid: [PackageFile, string, string, unknown, string][] = [
   ["pieces", "one flip state", "0.states", ["active"], "0.states"],
   ["pieces", "zero count", "1.count", 0, "1.count"],
   ["map", "domestic space without terrain", "spaces.0.terrain", DELETE, "spaces.0.terrain"],
+  ["map", "even number of support levels", "supportLevels", ["opposition", "support"], "supportLevels"],
   ["map", "negative pop", "spaces.1.pop", -1, "spaces.1.pop"],
   ["map", "fraction layout", "spaces.0.layout.x", 1.5, "spaces.0.layout.x"],
   ["map", "unknown link kind", "links.0.kind", "air", "links.0.kind"],
@@ -133,6 +135,7 @@ const invalid: [PackageFile, string, string, unknown, string][] = [
   ["tracks", "unknown kind", "1.kind", "dial", "1.kind"],
   ["markers", "unknown block direction", "0.blocks", ["neutral"], "0.blocks.0"],
   ["markers", "duplicate block direction", "0.blocks", ["support", "support"], "0.blocks"],
+  ["markers", "negative level cap", "0.capsLevel", -1, "0.capsLevel"],
   ["markers", "one side", "1.sides", ["faceDown"], "1.sides"],
   ["scenario", "final round 0", "finalRound", 0, "finalRound"],
   ["scenario", "negative piece count", "spaces.city.pieces.rebel.underground", -2, "spaces.city.pieces.rebel.underground"],

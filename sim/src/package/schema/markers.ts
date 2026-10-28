@@ -11,8 +11,8 @@ export const markersSchema = elementList(
     hidden: z.boolean().optional(),
     /** Shift directions this marker blocks in its space. */
     blocks: uniqueList(z.enum(["support", "opposition"]), 1).optional(),
-    /** Faction whose Harm count this marker adds to. */
-    countsAs: id.optional(),
+    /** No shift takes a level past ±capsLevel in a space with this marker (DEC-39). */
+    capsLevel: count.optional(),
     ...ruleMeta,
   }),
 );

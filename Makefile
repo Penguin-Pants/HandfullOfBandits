@@ -1,4 +1,4 @@
-.PHONY: install test check start schema
+.PHONY: install test check start schema validate
 
 install:
 	cd sim && npm ci
@@ -14,3 +14,7 @@ start:
 
 schema:
 	cd sim && npm run schema
+
+# Usage: make validate DIR=<package-dir>
+validate:
+	cd sim && npm run --silent sim -- validate "$(abspath $(DIR))"

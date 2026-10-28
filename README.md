@@ -10,5 +10,6 @@ Needs Node.js 24 LTS or later and GNU Make. The simulator lives in `sim/`.
 3. `make test`
 4. `make start`
 5. `make schema` after a change to a package schema in `sim/src/package/schema/`
+6. `make validate DIR=<package-dir>` to check a game package
 
 Windows without Make: run `npm ci`, `npm run check`, `npm test` or `npm start` inside `sim/`.

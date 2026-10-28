@@ -1,0 +1,8 @@
+# Valid fixture for the P1-05 loader tests. Small, but uses every core file.
+packageId: fixture
+version: 0.1.0
+rulesetVersion: R1
+schemaVersion: 1
+changeDescription: Loader test fixture
+title: Fixture
+modules: [ct-two-faction@1]

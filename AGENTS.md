@@ -1,4 +1,4 @@
-Project tier: 
+Project tier:
 Conventions version: 1.0
 
 ## Agent Rules
@@ -42,6 +42,20 @@ User has diagnosed ADHD. Optimize every reply for scannability, brevity and sing
 7. Delete unused code after confirming zero references (incl. dynamic imports, config, external consumers).
 8. One-time scripts: run from /tmp, delete after, never commit.
 9. Mock data only in tests.
+
+#### Review (TWO-PASS REVIEW)
+
+Run on the complete phase diff after tests pass and before commit.
+
+1. Pass 1, correctness: trace each changed function from a real caller. Check error branches, edge inputs, Windows and Linux paths and conformance to the cited spec section.
+2. Pass 2, simplicity: remove code with no caller, merge duplicates and reuse existing patterns (Edits 4 to 7).
+3. Verify each finding before acting on it: reproduce it, or cite the line that proves it.
+4. Classify each finding:
+   - **Fix:** defect in the phase diff. Fix it in the same change, with a test that fails without the fix.
+   - **Propose:** defect outside the phase scope. Propose a diff (Edits 2) and record it in the plan.
+   - **Decide:** needs a product or design decision. Stop that part and ask one question (Process 4).
+   - **Drop:** does not reproduce, or the fix costs more than it prevents. State why in one line.
+5. Report one line per finding with its class and outcome. Run validation again after fixes.
 
 #### Testing (TDD)
 

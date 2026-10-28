@@ -1,0 +1,2 @@
+- {id: state, name: State, color: red, kind: player, resourcesTrack: resources.state}
+- {id: pkk, name: PKK, color: green, kind: player, resourcesTrack: resources.pkk}
