@@ -25,10 +25,15 @@ const READ_ROOT = new Set(CORE_FILES.map((file) => `${file}.yaml`));
 /** Root entries that are not read and need no warning. */
 const QUIET_ROOT = new Set([SCENARIO_DIR, "CHANGELOG.md"]);
 
-function entries(dir: string): string[] {
+/** Sorted names in `dir`. An absent folder has none; any other read failure is an issue. */
+function entries(dir: string, path: string, issues: PackageIssue[]): string[] {
   try {
     return readdirSync(dir).sort();
-  } catch {
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code !== "ENOENT") {
+      issues.push({ level: "error", code: "V-SCHEMA", file: path, path: "", id: null, message: `Cannot read this folder (${code ?? "unknown error"}).` });
+    }
     return [];
   }
 }
@@ -40,8 +45,8 @@ function entries(dir: string): string[] {
 export function readPackageDir(dir: string): RawPackage {
   const files: Record<string, unknown> = {};
   const issues: PackageIssue[] = [];
-  const root = entries(dir);
-  const scenarios = entries(join(dir, SCENARIO_DIR)).map((name) => `${SCENARIO_DIR}/${name}`);
+  const root = entries(dir, ".", issues);
+  const scenarios = entries(join(dir, SCENARIO_DIR), SCENARIO_DIR, issues).map((name) => `${SCENARIO_DIR}/${name}`);
   const paths = [...root.filter((name) => READ_ROOT.has(name)), ...scenarios.filter((path) => path.endsWith(".yaml"))];
   const unread = [...root.filter((name) => !READ_ROOT.has(name) && !QUIET_ROOT.has(name)), ...scenarios.filter((path) => !path.endsWith(".yaml"))];
   for (const path of unread.sort()) {

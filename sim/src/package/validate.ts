@@ -34,6 +34,11 @@ const PLAYER_FACTIONS = { min: 2, max: 4 };
 type Space = PackageFileData<"map">["spaces"][number];
 type FaceCounts = number | Readonly<Record<string, number>>;
 
+/** Own entry only: a key such as `constructor` must not read an Object property. */
+function own<T>(record: Readonly<Record<string, T>> | undefined, key: string): T | undefined {
+  return record !== undefined && Object.hasOwn(record, key) ? record[key] : undefined;
+}
+
 function total(faces: FaceCounts): number {
   return typeof faces === "number" ? faces : Object.values(faces).reduce((sum, n) => sum + n, 0);
 }
@@ -193,8 +198,8 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
     // V-PIECES: map plus pools equals the total of each piece type. Markers on the map fit their supply.
     for (const piece of pkg.pieces) {
       const map = onMap.get(piece.id) ?? 0;
-      const available = scenario.available?.[piece.id] ?? 0;
-      const outOfPlay = scenario.outOfPlay?.[piece.id] ?? 0;
+      const available = own(scenario.available, piece.id) ?? 0;
+      const outOfPlay = own(scenario.outOfPlay, piece.id) ?? 0;
       if (map + available + outOfPlay !== piece.count) {
         error("V-PIECES", file, "", piece.id, `${String(map)} on the map + ${String(available)} available + ${String(outOfPlay)} out of play = ${String(map + available + outOfPlay)}, but pieces.yaml has ${String(piece.count)}.`);
       }
@@ -210,7 +215,7 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       if (rule.spaceKind !== undefined && rule.spaceKind !== space.kind) return;
       if (rule.terrain !== undefined && (space.terrain === undefined || !rule.terrain.includes(space.terrain))) return;
       if (rule.spaces !== undefined && !rule.spaces.includes(space.id)) return;
-      const count = rule.pieces.reduce((sum, p) => sum + total(placed[p] ?? 0), 0);
+      const count = rule.pieces.reduce((sum, p) => sum + total(own(placed, p) ?? 0), 0);
       if (count > rule.max) report(`${String(count)} of ${rule.pieces.join(", ")} exceed the limit of ${String(rule.max)} (map.yaml stacking.${String(i)}).`);
     });
   }

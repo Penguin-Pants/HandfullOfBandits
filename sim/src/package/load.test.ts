@@ -150,6 +150,30 @@ describe("loadPackage on invalid packages", () => {
     ]);
   });
 
+  it("reports a scenarios entry it cannot read as a folder", () => {
+    const dir = tempPackage("scenarios/s0.yaml", null);
+    rmSync(join(dir, "scenarios"), { recursive: true });
+    writeFileSync(join(dir, "scenarios"), "not a folder\n");
+    const result = loadPackage(readPackageDir(dir));
+    expect(result.ok).toBe(false);
+    expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code: "V-SCHEMA", file: "scenarios", path: "" }));
+  });
+
+  it("treats a piece ID that names an Object property as a plain ID", () => {
+    const files = structuredClone(raw.files) as Record<string, unknown>;
+    const pieces = files["pieces.yaml"] as Record<string, unknown>[];
+    const map = files["map.yaml"] as { stacking: { pieces: string[] }[] };
+    const s0 = files["scenarios/s0.yaml"] as { spaces: Record<string, { pieces: Record<string, unknown> }>; available: Record<string, unknown> };
+    Object.assign(pieces[0] ?? {}, { id: "constructor" });
+    Object.assign(map.stacking[2] ?? {}, { pieces: ["constructor", "stateBase"] });
+    Object.assign(s0.spaces, { hills: { level: -1, pieces: { constructor: 5, guerrilla: { underground: 1, active: 1 } }, markers: { stateHarm: 1 } } });
+    Object.assign(s0.spaces["town"]?.pieces ?? {}, { constructor: 1 });
+    Reflect.deleteProperty(s0.spaces["town"]?.pieces ?? {}, "troops");
+    Reflect.deleteProperty(s0.available, "troops");
+    const result = loadPackage({ files, issues: [] });
+    expect(result.issues).toEqual([]);
+  });
+
   it("reports a duplicate YAML key", () => {
     const result = loadPackage(readPackageDir(tempPackage("manifest.yaml", `${readFileSync(join(validDir, "manifest.yaml"), "utf8")}title: Again\n`)));
     expect(result.issues[0]).toMatchObject({ code: "V-SCHEMA", file: "manifest.yaml" });
