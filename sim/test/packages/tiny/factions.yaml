@@ -1,0 +1,2 @@
+- {id: blue, name: Blue, color: blue, kind: player, resourcesTrack: cash.blue}
+- {id: red, name: Red, color: red, kind: player, resourcesTrack: cash.red}

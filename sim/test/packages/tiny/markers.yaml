@@ -1,0 +1,3 @@
+- {id: harm, count: 4, blocks: [support]}
+- {id: mark, count: 3, sides: [new, old]}
+- {id: office, count: 1, capsLevel: 1}

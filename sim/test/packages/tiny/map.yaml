@@ -1,0 +1,14 @@
+supportLevels: [activeOpposition, passiveOpposition, neutral, passiveSupport, activeSupport]
+spaces:
+  - {id: city, name: City, kind: domestic, terrain: city, pop: 2, hasSupportScale: true, layout: {x: 0, y: 0}}
+  - {id: farm, name: Farm, kind: domestic, terrain: plain, pop: 1, hasSupportScale: true, layout: {x: 10, y: 0}}
+  - {id: hills, name: Hills, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 20, y: 0}}
+  - {id: refuge, name: Refuge, kind: external, pop: 0, hasSupportScale: false, layout: {x: 30, y: 0}}
+links:
+  - {a: city, b: farm, kind: land}
+  - {a: farm, b: hills, kind: land}
+  - {a: hills, b: refuge, kind: external, gate: {track: border, steps: [open]}}
+stacking:
+  - {pieces: [fort], max: 1}
+  - {pieces: [camp], max: 1}
+  - {pieces: [soldier, fort], max: 0, spaceKind: external}

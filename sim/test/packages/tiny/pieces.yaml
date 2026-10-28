@@ -1,0 +1,13 @@
+- {id: soldier, faction: blue, count: 6, isBase: false, countsForControl: true, movable: true, startPool: available, shape: cube}
+- {id: fort, faction: blue, count: 2, isBase: true, countsForControl: true, movable: false, startPool: available, shape: disc}
+- id: rebel
+  faction: red
+  count: 6
+  isBase: false
+  states: [hidden, shown]
+  placedAs: hidden
+  countsForControl: true
+  movable: true
+  startPool: available
+  shape: octagon
+- {id: camp, faction: red, count: 2, isBase: true, countsForControl: true, movable: false, startPool: outOfPlay, shape: disc}
