@@ -26,6 +26,7 @@ Status: planning complete. Toolchain skeleton exists in `sim/` (P0-01).
 | [11-build-plan.md](11-build-plan.md) | Tasks P0-01 to P4-07 with checkpoints |
 | [12-architecture-review.md](12-architecture-review.md) | Critical review and resulting plan changes |
 | [13-design-decisions.md](13-design-decisions.md) | Decisions, assumptions, open questions |
+| [14-rtt-pattern-study.md](14-rtt-pattern-study.md) | Patterns from Rally the Troops COIN modules, with proposals |
 
 ## Method
 
@@ -35,4 +36,4 @@ Status: planning complete. Toolchain skeleton exists in `sim/` (P0-01).
 
 ## Next step
 
-Start task P1-01 in [11-build-plan.md](11-build-plan.md).
+Decide proposals A to C in [14-rtt-pattern-study.md](14-rtt-pattern-study.md), then start task P1-02 in [11-build-plan.md](11-build-plan.md).
