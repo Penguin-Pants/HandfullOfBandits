@@ -165,8 +165,17 @@ export interface ScenarioSpace {
   readonly markers: Readonly<Record<MarkerTypeId, FaceCounts>>;
 }
 
-/** The scenario fields start reads (05 s1 item 1, DEC-44). Pivotals, options and excluded cards come with the deck (P2-04, P2-05). */
+/** The scenario fields start reads (05 s1 item 1, DEC-44). */
 export interface RulesetScenario {
+  /** Propaganda round that ends the game. */
+  readonly finalRound: number;
+  /** Event cards per pile. Null: parameter `deck.pileSize`. */
+  readonly pileSize: number | null;
+  readonly propagandaLast: boolean;
+  readonly excludedCards: readonly CardId[];
+  /** Pivotal hands per faction. Null: the faction default (factions.yaml). */
+  readonly pivotals: Readonly<Record<FactionId, readonly CardId[]>> | null;
+  readonly options: Readonly<Record<string, string | number>>;
   /** Campaigns in play order. The game starts in the first. */
   readonly campaigns: readonly string[];
   readonly tracks: Readonly<Record<TrackId, number | string>>;

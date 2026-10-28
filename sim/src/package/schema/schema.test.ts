@@ -109,6 +109,7 @@ const valid: Record<PackageFile, unknown> = {
     campaigns: ["C1"],
     finalRound: 1,
     pileSize: 8,
+    propagandaLast: true,
     tracks: { "cash.blue": 5, mood: "calm" },
     spaces: { city: { level: -1, pieces: { rebel: { underground: 2 }, camp: 1 }, markers: { harm: 1 } } },
     available: { rebel: 2 },

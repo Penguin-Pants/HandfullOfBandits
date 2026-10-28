@@ -207,6 +207,12 @@ function faces(counts: Readonly<Record<string, FaceCountsData>> | undefined, fac
 function compileScenario(data: PackageData, scenario: PackageData["scenarios"][string]): RulesetScenario {
   const placedAs = new Map(data.pieces.map((p) => [p.id, p.placedAs ?? SINGLE_FACE]));
   return {
+    finalRound: scenario.finalRound,
+    pileSize: scenario.pileSize ?? null,
+    propagandaLast: scenario.propagandaLast ?? false,
+    excludedCards: (scenario.excludedCards ?? []).map((e) => e.card),
+    pivotals: scenario.pivotals ?? null,
+    options: scenario.options ?? {},
     campaigns: scenario.campaigns,
     tracks: scenario.tracks,
     spaces: Object.fromEntries(

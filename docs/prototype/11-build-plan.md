@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05). Phase 2 in progress: P2-01 to P2-03 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05). Phase 2 in progress: P2-01 to P2-04 done.
 
 ## 1. How to use this plan
 
@@ -242,6 +242,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 - **Tests:** Property tests.
 - **Risks:** Scaled pile rule for S0 differs from research. S0 is `testOnly`.
 - **Out:** Deck builder.
+- **Done:** `engine/coin/deck.ts` `buildDeck(ruleset, rng, cards, chains, options)`: pure, seeded, one pile per Campaign. Parameters `deck.pileSize` (12) and `deck.topSize` (8). Scenario fields `pileSize` and `propagandaLast` (S0 sets both); `RulesetScenario` now carries `finalRound`, `pileSize`, `propagandaLast`, `excludedCards`, `pivotals` and `options`. Property tests over 1000 seeds in `engine/coin/deck.test.ts`.
+- **Open for P2-05:** the builder takes card data as input, because cards have no schema until P2-05. P2-05 feeds it from the card files and builds the deck at `start`.
 
 ### P2-05 Card schema and encoding of 8 C1 cards plus Propaganda
 

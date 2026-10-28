@@ -6,6 +6,7 @@ title: S0 Opening (test)
 campaigns: [C1]
 finalRound: 1
 pileSize: 8
+propagandaLast: true
 testOnly: true
 tracks:
   resources.state: 12

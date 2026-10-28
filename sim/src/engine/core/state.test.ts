@@ -129,6 +129,12 @@ describe("emptyState", () => {
 
 describe("setupState", () => {
   const scenario: RulesetScenario = {
+    finalRound: 2,
+    pileSize: null,
+    propagandaLast: false,
+    excludedCards: [],
+    pivotals: null,
+    options: {},
     campaigns: ["C2", "C3"],
     tracks: { cash: 5, mood: "tense" },
     spaces: {
