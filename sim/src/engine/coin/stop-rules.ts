@@ -29,7 +29,7 @@ export function flagHarmful(ctx: Exec, action: string, faction: FactionId, befor
 function probes(ruleset: Ruleset, op: string, space: string): JsonObject[] {
   switch (op) {
     case "state.train":
-      return [{ option: "place", troops: 1, police: 0 }, { option: "guards", count: 1 }, { option: "base" }];
+      return [{ option: "place", troops: 1, police: 0 }, { option: "place", troops: 0, police: 1 }, { option: "guards", count: 1 }, { option: "base" }];
     case "pkk.rally":
       return [{ option: "place" }, { option: "flip" }];
     case "pkk.march":

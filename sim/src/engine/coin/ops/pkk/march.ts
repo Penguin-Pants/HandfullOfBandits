@@ -32,6 +32,37 @@ function costOf(ruleset: Ruleset, state: GameState, dest: string): number {
   return param(ruleset, "march.costPerDestination", "number") + extra;
 }
 
+interface Group { readonly from: string; readonly face: string; readonly count: number; readonly group: number }
+
+/**
+ * Reserve each group's faces on the board before any arrival, so a piece moves one step only and
+ * a group with no face named leaves with the faces that stood there (Underground first). One
+ * shared inventory per origin and face; `short` lists groups that could not be reserved in full.
+ */
+function reserveGroups(state: GameState, part: Parameters<ActionHandler["check"]>[2]): { groups: Map<string, Group[]>; short: { from: string; need: number }[] } {
+  const left = new Map<string, number>();
+  const reserve = (from: string, face: string): number => left.get(`${from}|${face}`) ?? count(state, from, PIECE.guerrilla, face);
+  const groups = new Map<string, Group[]>();
+  const short: { from: string; need: number }[] = [];
+  for (const dest of part.locations) {
+    groups.set(
+      dest,
+      (asMoves(part.perLocation[dest]?.["moves"]) ?? []).flatMap((m) => {
+        let need = m.count;
+        const out = (m.face === null ? [FACE.underground, FACE.active] : [m.face]).flatMap((face) => {
+          const n = Math.min(need, reserve(m.from, face));
+          left.set(`${m.from}|${face}`, reserve(m.from, face) - n);
+          need -= n;
+          return n > 0 ? [{ from: m.from, face, count: n, group: m.count }] : [];
+        });
+        if (need > 0) short.push({ from: m.from, need: m.count });
+        return out;
+      }),
+    );
+  }
+  return { groups, short };
+}
+
 export const march: ActionHandler = {
   id: "pkk.march",
   faction: FACTION.pkk,
@@ -40,7 +71,6 @@ export const march: ActionHandler = {
   accompanies: [],
   check(ruleset, state, part) {
     const out: Violation[] = [];
-    const leaving = new Map<string, number>();
     for (const dest of part.locations) {
       const v = (code: string, message: string): void => { out.push(at(dest, code, message, ruleRef)); };
       if (space(ruleset, dest) === undefined || hasTag(ruleset, dest, TAG.noLandLinks) || hasTag(ruleset, dest, TAG.noPieces) || hasTag(ruleset, dest, TAG.eventsOnly)) {
@@ -56,39 +86,18 @@ export const march: ActionHandler = {
       for (const m of list) {
         if (!adjacent(ruleset, m.from, dest)) v("marchAdjacent", `Guerrillas move one step only: ${m.from} is not adjacent.`);
         if (m.face !== null && m.face !== FACE.underground && m.face !== FACE.active) v("badMoves", `Unknown face "${m.face}".`);
-        const key = `${m.from}|${m.face ?? ""}`;
-        leaving.set(key, (leaving.get(key) ?? 0) + m.count);
       }
     }
-    for (const [key, n] of leaving) {
-      const [from = "", face = ""] = key.split("|");
-      const have = count(state, from, PIECE.guerrilla, face === "" ? null : face);
-      if (n > have) out.push(at(from, "marchGuerrillas", `Only ${String(have)} such Guerrillas are in ${from}.`, ruleRef));
+    if (out.length > 0) return out;
+    for (const s of reserveGroups(state, part).short) {
+      out.push(at(s.from, "marchGuerrillas", `Not enough such Guerrillas in ${s.from} for a group of ${String(s.need)} (each piece moves once).`, ruleRef));
     }
     return out;
   },
   cost: (ruleset, state, part, options) => (options.free ? 0 : part.locations.reduce((sum, dest) => sum + costOf(ruleset, state, dest), 0)),
   execute(ctx, part, options) {
     const threshold = param(ctx.ruleset, "march.activationThreshold", "number");
-    // Reserve each group's faces on the board before any arrival, so a piece moves one step only
-    // and a group with no face named leaves with the faces that stood there (Underground first).
-    const left = new Map<string, number>();
-    const reserve = (from: string, face: string): number => left.get(`${from}|${face}`) ?? count(ctx.state, from, PIECE.guerrilla, face);
-    const groups = new Map<string, { from: string; face: string; count: number; group: number }[]>();
-    for (const dest of part.locations) {
-      groups.set(
-        dest,
-        (asMoves(part.perLocation[dest]?.["moves"]) ?? []).flatMap((m) => {
-          let need = m.count;
-          return (m.face === null ? [FACE.underground, FACE.active] : [m.face]).flatMap((face) => {
-            const n = Math.min(need, reserve(m.from, face));
-            left.set(`${m.from}|${face}`, reserve(m.from, face) - n);
-            need -= n;
-            return n > 0 ? [{ from: m.from, face, count: n, group: m.count }] : [];
-          });
-        }),
-      );
-    }
+    const { groups } = reserveGroups(ctx.state, part);
     for (const dest of part.locations) {
       if (!options.free) pay(ctx, FACTION.pkk, costOf(ctx.ruleset, ctx.state, dest), ruleRef, dest);
       const restricted = entry(ctx.ruleset, ctx.state, dest) === "restricted";

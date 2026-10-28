@@ -99,6 +99,13 @@ describe("March (06 s4.2)", () => {
     expect(entries.some((e) => e.assumptionRef === "PA-16")).toBe(true);
   });
 
+  it("named and unnamed faces share one supply per origin", () => {
+    const moves = (face?: string): unknown[] => [{ from: "hakkari", count: 2, ...(face === undefined ? {} : { face }) }];
+    const plan = op("pkk", "opOnly", { op: "pkk.march", locations: ["van-bitlis", "botan"], perLocation: { "van-bitlis": { moves: moves("underground") }, botan: { moves: moves() } } });
+    expect(pieces(start, "hakkari", "guerrilla")).toEqual({ underground: 2, active: 0 });
+    expect(codes(start, plan)).toContain("marchGuerrillas");
+  });
+
   it("Limited Op: one destination", () => {
     const plan = op("pkk", "limitedOp", { op: "pkk.march", locations: ["van-bitlis", "botan"], perLocation: { "van-bitlis": { moves: [{ from: "hakkari", count: 1 }] }, botan: { moves: [{ from: "hakkari", count: 1 }] } } });
     expect(codes(start, plan)).toContain("limitedOneLocation");

@@ -46,6 +46,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
   const [sa, setSa] = useState<string | null>(null);
   const [saSpaces, setSaSpaces] = useState("");
   const [saValues, setSaValues] = useState<Record<string, Values>>({});
+  const [saTiming, setSaTiming] = useState<"before" | "after">("after");
   const [subSpace, setSubSpace] = useState("");
   const [subValues, setSubValues] = useState<Values>({});
   const [result, setResult] = useState<ValidationResult | null>(null);
@@ -56,7 +57,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
       ? null
       : {
           box, op, locations: selected, values,
-          sa: sa === null ? null : { action: sa, locations: list(saSpaces), values: saValues, timing: saForm?.timing ?? "after" },
+          sa: sa === null ? null : { action: sa, locations: list(saSpaces), values: saValues, timing: saForm?.timing ?? saTiming },
           subAction: form === undefined || form.subAction === null || subSpace === "" ? null : { action: form.subAction.id, space: subSpace, params: perLocation(form.subAction.fields, subValues) as Record<string, number> },
         };
   const command = draft === null ? null : toCommand(faction, draft, actions);
@@ -81,6 +82,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     setSa(null);
     setSaSpaces("");
     setSaValues({});
+    setSaTiming("after");
     setSubSpace("");
     setSubValues({});
   };
@@ -144,6 +146,15 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
               {sa !== null && (
                 <label>
                   SA spaces <input value={saSpaces} onChange={(e) => { setSaSpaces(e.target.value); }} />
+                </label>
+              )}
+              {saForm !== undefined && saForm.timing === undefined && (
+                <label>
+                  SA timing{" "}
+                  <select value={saTiming} onChange={(e) => { setSaTiming(e.target.value === "before" ? "before" : "after"); }}>
+                    <option value="before">before the Op</option>
+                    <option value="after">after the Op</option>
+                  </select>
                 </label>
               )}
             </div>

@@ -83,6 +83,19 @@ describe("FactionPanel", () => {
     });
   });
 
+  it("lets the player choose the timing of an SA with no fixed order", async () => {
+    const onDraft = vi.fn();
+    render(<FactionPanel api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} sessionId="S" legal={legal} selected={["botan"]} onCommit={vi.fn()} onDraft={onDraft} />);
+    fireEvent.click(screen.getByRole("button", { name: "Op + SA" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
+    fireEvent.change(screen.getByLabelText("SA"), { target: { value: "pkk.extort" } });
+    fireEvent.change(screen.getByLabelText("SA timing"), { target: { value: "before" } });
+    await waitFor(() => {
+      const plan = (onDraft.mock.lastCall?.[0] as { plan: { sa: { timing: string } | null } } | undefined)?.plan;
+      expect(plan?.sa?.timing).toBe("before");
+    });
+  });
+
   it("shows violations of an illegal plan with their rule", async () => {
     const validate = vi.fn(() => Promise.resolve({ ok: false, violations: [{ code: "rallyCity", message: "A City at Support cannot Rally (03 s2.1).", ruleRef: "06 s4.1", location: "botan" }], warnings: [], preview: { effects: [] } }));
     render(<FactionPanel api={mockApi({ validate })} sessionId="S" legal={legal} selected={["botan"]} onCommit={vi.fn()} onDraft={vi.fn()} />);

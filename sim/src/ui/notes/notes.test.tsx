@@ -44,6 +44,14 @@ describe("NoteBar (T-UI-02)", () => {
     expect(await screen.findByText("Saved, linked to S-A3")).toBeTruthy();
   });
 
+  it("Tab through all anchors and back keeps the executed action ID", () => {
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "executed", actionId: "S-A3" })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} />);
+    fireEvent.keyDown(window, { key: "n" });
+    const box = screen.getByLabelText("Note text");
+    for (let i = 0; i < 4; i++) fireEvent.keyDown(box, { key: "Tab" });
+    expect(screen.getByText("Note on: executed (S-A3)")).toBeTruthy();
+  });
+
   it("Esc cancels without saving; keys typed elsewhere in a field do not open it", () => {
     const onSave = vi.fn(() => Promise.resolve("N1"));
     render(

@@ -17,10 +17,16 @@ export interface NoteBarProps {
 
 export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
   const input = useRef<HTMLTextAreaElement>(null);
-  const [open, setOpen] = useState<{ anchor: ReturnType<typeof defaultAnchor>; focus: NoteInput["focus"] } | null>(null);
+  const [open, setOpen] = useState<{ anchor: ReturnType<typeof defaultAnchor>; focus: NoteInput["focus"]; executedId: string | null } | null>(null);
   const [text, setText] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
   const [saved, setSaved] = useState<string | null>(null);
+
+  /** Open at the current anchor; keep its action ID so Tab can return to it. */
+  const start = (): void => {
+    const at = anchor();
+    setOpen({ anchor: at, focus: focus(), executedId: at.actionId });
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
@@ -28,7 +34,7 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
       if (t !== null && ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName)) return;
       if (e.key === "n" || e.key === "N") {
         e.preventDefault();
-        setOpen({ anchor: anchor(), focus: focus() });
+        start();
         setTimeout(() => input.current?.focus(), 0);
       }
     };
@@ -61,7 +67,7 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
     } else if (e.key === "Tab" && open !== null) {
       e.preventDefault();
       const next = ANCHORS[(ANCHORS.indexOf(open.anchor.anchor) + 1) % ANCHORS.length] ?? "session";
-      setOpen({ ...open, anchor: { ...open.anchor, anchor: next, actionId: next === "executed" ? open.anchor.actionId : null } });
+      setOpen({ ...open, anchor: { ...open.anchor, anchor: next, actionId: next === "executed" ? open.executedId : null } });
     } else if (e.altKey && /^[1-9]$/.test(e.key)) {
       e.preventDefault();
       const cat = categories.find((c) => c.hotkey === `Alt+${e.key}`)?.category_id;
@@ -84,7 +90,7 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
         rows={open === null ? 1 : 2}
         style={{ width: "100%" }}
         value={text}
-        onFocus={() => { if (open === null) setOpen({ anchor: anchor(), focus: focus() }); }}
+        onFocus={() => { if (open === null) start(); }}
         onChange={(e) => { setText(e.target.value); }}
         onKeyDown={onKeyDown}
       />

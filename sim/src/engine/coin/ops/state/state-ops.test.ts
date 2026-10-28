@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { legalOps } from "../../stop-rules.ts";
 import { codes, engine, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../../test/board.ts";
 
 // T-VAL and T-OPS for State Operations (11 P2-06; research 06 s2, s7; 07 s1.3).
@@ -26,6 +27,12 @@ describe("06 s7 worked example: Sweep in Botan", () => {
 });
 
 describe("Train (06 s2.1)", () => {
+  it("is offered as legal with Police only when no Troops are Available", () => {
+    const noTroops = { ...start, pools: { ...start.pools, troops: { available: 0, outOfPlay: start.pools["troops"]?.outOfPlay ?? 0 } } };
+    const trains = legalOps(ruleset, noTroops, "state", Number.MAX_SAFE_INTEGER).map((c) => c["plan"] as { op: string; perLocation: Record<string, Record<string, unknown>> });
+    expect(trains.some((p) => p.op === "state.train" && Object.values(p.perLocation).some((v) => v["police"] === 1))).toBe(true);
+  });
+
   it("places up to 3 Troops and Police in a City and pays 2", () => {
     const { state } = play(start, op("state", "limitedOp", { op: "state.train", locations: ["diyarbakir-city"], perLocation: { "diyarbakir-city": { option: "place", troops: 2, police: 1 } } }));
     expect(pieces(state, "diyarbakir-city", "troops")).toEqual({ default: 5 });
@@ -67,6 +74,18 @@ describe("Train (06 s2.1)", () => {
     expect(state.spaces["elazig"]?.level).toBe(2);
     expect(state.spaces["elazig"]?.markers["stateHarm"]).toEqual({ default: 0 });
     expect(res(state)).toBe(12 - 2 - 3 - 2);
+  });
+
+  it("needs relief for every Reception marker before a shift; Return only in C5 or at Normalizing (07 s3.2, s3.3)", () => {
+    const civic = (params: Record<string, number>): ReturnType<typeof op> =>
+      op("state", "limitedOp", { op: "state.train", locations: ["elazig"], perLocation: { elazig: { option: "place", troops: 1, police: 0 } }, subActions: [{ action: "civicAction", space: "elazig", params }] });
+    const received = setMarkers(start, "elazig", "reception", 1);
+    expect(codes(received, civic({ shifts: 1 }))).toEqual(["civicBlocked"]);
+    expect(codes(received, civic({ reception: 1, shifts: 1 }))).toEqual([]);
+    const displaced = setTrack(setMarkers(start, "elazig", "displacement", 1, "old"), "emergencyRule", "martialLaw");
+    expect(codes(displaced, civic({ displacement: 1 }))).toEqual(["civicNoReturn"]);
+    expect(codes(setTrack(displaced, "emergencyRule", "normalizing"), civic({ displacement: 1 }))).toEqual([]);
+    expect(codes({ ...displaced, turn: { ...displaced.turn, campaign: "C5" } }, civic({ displacement: 1 }))).toEqual([]);
   });
 
   it("rejects a Civic Action shift that a marker blocks, or that needs State Control", () => {

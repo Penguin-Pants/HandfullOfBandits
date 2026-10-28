@@ -5,7 +5,7 @@ import { param } from "../../../core/params.ts";
 import type { GameState, JsonObject, Ruleset, Violation } from "../../../core/types.ts";
 import { at } from "../action.ts";
 import { controlOf, count, markers, pay } from "../common.ts";
-import { FACTION, MARKER, PIECE } from "../ids.ts";
+import { EMERGENCY, FACTION, MARKER, PIECE, TRACK } from "../ids.ts";
 import { asCount } from "../plan.ts";
 
 const ruleRef = "07 s1.3";
@@ -46,12 +46,18 @@ export function civicViolations(ruleset: Ruleset, state: GameState, spaceId: str
   for (const [key, marker] of STEPS) {
     if (spend[key] > markers(state, spaceId, marker)) out.push(v("civicNoMarker", `Only ${String(markers(state, spaceId, marker))} ${marker} markers are here.`));
   }
+  if (spend.displacement > 0) {
+    const campaigns = param(ruleset, "civicAction.returnCampaigns", "list");
+    const normalizing = state.tracks[TRACK.emergencyRule] === EMERGENCY.normalizing;
+    if (!normalizing && !campaigns.includes(state.turn.campaign ?? "")) out.push(at(spaceId, "civicNoReturn", "Return is legal only in C5, at Normalizing or by a Return event.", "07 s3.3"));
+  }
   if (spend.shifts > 0) {
     const maxShifts = param(ruleset, "civicAction.maxShifts", "number");
     const level = state.spaces[spaceId]?.level ?? null;
     const capped = markers(state, spaceId, MARKER.office) > 0 ? (ruleset.markers.find((m) => m.id === MARKER.office)?.capsLevel ?? ruleset.levelRange) : ruleset.levelRange;
     if (spend.shifts > maxShifts) out.push(v("civicTooManyShifts", `At most ${String(maxShifts)} shifts per space.`));
     if (markers(state, spaceId, MARKER.coercion) > spend.coercion) out.push(v("civicBlocked", "A Coercion marker blocks the shift. Remove it first."));
+    if (markers(state, spaceId, MARKER.reception) > spend.reception) out.push(at(spaceId, "civicBlocked", "A Reception marker blocks shifts toward Support. Pay relief first.", "07 s3.2"));
     if (markers(state, spaceId, MARKER.stateHarm) > spend.stateHarm) out.push(v("civicBlocked", "A State Harm marker blocks shifts toward Support. Redress it first."));
     if (level === null || level + spend.shifts > Math.min(capped, ruleset.levelRange)) out.push(v("civicNoRoom", "The space cannot shift that far toward Support."));
   }
