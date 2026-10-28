@@ -74,6 +74,13 @@ describe("loadPackage on the valid fixture", () => {
     expect(result.ruleset.levelRange).toBe(2);
     expect(result.ruleset.markers.find((m) => m.id === "office")).toEqual({ id: "office", count: 2, sides: [], blocks: [], capsLevel: 1 });
     expect(result.ruleset.stacking[1]).toEqual({ pieces: ["pkkBase"], max: 0, spaceKind: null, terrain: ["city"], spaces: null });
+    expect(result.ruleset.parameters).toEqual({ "sweep.costPerSpace": 2, "harm.limit": 6, "ui.label": "text" });
+  });
+
+  it("compiles a non-tune parameter with no value to null", () => {
+    const other = loadPackage(changed("parameters.yaml", { "2/value": DELETE }));
+    if (!other.ok) throw new Error(JSON.stringify(other.issues));
+    expect(other.ruleset.parameters["ui.label"]).toBeNull();
   });
 
   it("hashes content, not bytes: comments, spacing and key order do not change the hash", () => {
