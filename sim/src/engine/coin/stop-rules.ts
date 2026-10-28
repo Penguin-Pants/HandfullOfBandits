@@ -44,18 +44,26 @@ export function hasNonPassChoice(ruleset: Ruleset, state: GameState, faction: Fa
   const boxes = legalBoxes(ruleset, state, faction);
   const card = state.deck.currentCard === null ? undefined : ruleset.cards[state.deck.currentCard];
   if (boxes.includes(BOX.event) && card?.type === "event" && card.encoded) return true;
+  return legalOps(ruleset, state, faction).length > 0;
+}
+
+/** One-location Operations that are legal now, from default probe plans, in registry and space order. */
+export function legalOps(ruleset: Ruleset, state: GameState, faction: FactionId, limit = 1): AnyCommand[] {
+  const boxes = legalBoxes(ruleset, state, faction);
   const box = [BOX.limitedOp, BOX.opOnly, BOX.opSa].find((b) => boxes.includes(b));
-  if (box === undefined) return false;
+  const found: AnyCommand[] = [];
+  if (box === undefined) return found;
   for (const handler of Object.values(actionHandlers)) {
     if (handler.kind !== "op" || handler.faction !== faction) continue;
     for (const space of ruleset.spaces) {
       for (const choice of probes(ruleset, handler.id, space.id)) {
         const command: AnyCommand = { type: "ChooseOperation", faction, box, plan: { op: handler.id, locations: [space.id], perLocation: { [space.id]: choice }, sa: null, subActions: [] } };
-        if (chooseOperationHandler.check(ruleset, state, command).length === 0) return true;
+        if (chooseOperationHandler.check(ruleset, state, command).length === 0) found.push(command);
+        if (found.length >= limit) return found;
       }
     }
   }
-  return false;
+  return found;
 }
 
 /** Rule 6 proxy: count Pass-only cards per faction (history), flag the second 3-card streak. */

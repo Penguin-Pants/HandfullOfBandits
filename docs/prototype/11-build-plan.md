@@ -328,6 +328,8 @@ Script test: load `tiny`, start a session in the store, apply one command, save 
 
 CLI test plays S0 to the end with a scripted command list and a fixed seed. Golden replay file stored. No server or UI needed. This proves rules before UI work.
 
+- **Passed:** `sim/test/ic2a.test.ts` plays S0 with seed 7 under `scriptedPolicy` (`sim/src/cli/play.ts`: First Eligible takes the Event with auto answers, the responder takes the first legal one-location Op, else Pass; Advance through Propaganda) to final scoring in 24 commands. Golden file `sim/test/golden/s0-seed-7.json` holds the commands and every state hash; `replay` reports the first differing step. Regenerate with `UPDATE_GOLDEN=1 make test` after a deliberate rules change.
+
 ### P2-11 Session service and API
 
 - **Obj:** HTTP API: packages, validate, sessions (create, list, load), commands, legal choices, history, states, annotations, export.
