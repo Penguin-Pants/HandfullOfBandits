@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01 done.
+Status: planning document. P0-01 and P1-01 done.
 
 ## 1. How to use this plan
 
