@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01 and P1-01 to P1-04 done.
+Status: planning document. P0-01 and P1-01 to P1-05 done.
 
 ## 1. How to use this plan
 
@@ -84,6 +84,8 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** T-PKG fixtures, one per code.
 - **Risks:** Hash changes on whitespace. Hash the normalized object, not the bytes.
 - **Out:** Loader, validator, CLI command.
+- **Done:** Schema changes for DEC-38 and DEC-39. `sim/src/package/load.ts` (`readPackageDir`, `loadPackage`, `compileRuleset`), `validate.ts` (V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS and new V-RANGE), CLI `make validate DIR=<dir>` (DEC-40). Fixture `sim/test/fixtures/packages/valid/`. T-PKG: 27 invalid cases covering every code, plus missing file, YAML syntax error, duplicate key, hash stability and CLI exit codes.
+- **Open for later tasks:** V-FACTIONS match with the sequence model (P2-03). V-REF for card IDs in `pivotalHand`, `pivotals` and `excludedCards` (P2-05). V-MODULE, V-OPTIONS, V-CARDS, V-ENCODE, V-EFFECT, V-VICTORY, V-MISSING, V-PROVISIONAL and V-SCORE-CHECK with the files they check. Core `Ruleset` does not carry `supportLevels` or `capsLevel` yet; add them when P1-07 `shiftLevel` reads them.
 
 ### P1-06 Test package "tiny"
 

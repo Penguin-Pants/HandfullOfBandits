@@ -35,9 +35,10 @@
           ]
         }
       },
-      "countsAs": {
-        "type": "string",
-        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+      "capsLevel": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
       },
       "source": {
         "type": "string",

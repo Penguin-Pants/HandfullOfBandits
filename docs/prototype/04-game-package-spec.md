@@ -115,13 +115,13 @@ Default emblems (DEC-30): State Bases `crescentStar`; Guerrillas `starCircle` wi
 | `spaces[].tags` | Optional. Free tags used by rules, for example `noLandLinks`, `receptionTarget` |
 | `links[]` | `{a, b, kind}` where kind is `land` or `external` |
 | `links[].gate` | Optional posture gate `{track, steps}`: the link is open only while the track is at one of the steps |
-| `supportLevels` | Level IDs from Opposition to Support, odd length, middle item is Neutral. Range is ±(length - 1) / 2 (DEC-39). Example: `[activeOpposition, passiveOpposition, neutral, passiveSupport, activeSupport]`. Added in P1-05 |
+| `supportLevels` | Level IDs from Opposition to Support, odd length, middle item is Neutral. Range is ±(length - 1) / 2 (DEC-39). Example: `[activeOpposition, passiveOpposition, neutral, passiveSupport, activeSupport]`. Optional, but required when a space has a support scale (V-RANGE) |
 | `stacking[]` | `{pieces, max}` plus optional filters `spaceKind`, `terrain[]`, `spaces[]`. At most `max` of the listed piece types in each space that matches every filter. Example: `{pieces: [guards], max: 3, terrain: [mountain, plain]}` |
 
 ### 4.4 tracks.yaml and markers.yaml
 
 Tracks: `id`, `kind` (`numeric` or `ordinal`), `min` and `max` (`min` <= `max`) or `steps[]` (2 or more), optional `owner` (faction ID), `display` (display name).
-Markers: `id`, `count`, optional `sides` (2 or more, for example `[new, old]` or `[faceDown, revealed]`), optional `hidden` flag, optional `blocks` (shift directions blocked in its space: `support`, `opposition` or both), optional `capsLevel` (no shift takes a level past ±`capsLevel` in its space; Office: 1; added in P1-05, DEC-39). Harm counts are in `victory.yaml` only (DEC-38). The P1-04 schema field `countsAs` is removed in P1-05.
+Markers: `id`, `count`, optional `sides` (2 or more, for example `[new, old]` or `[faceDown, revealed]`), optional `hidden` flag, optional `blocks` (shift directions blocked in its space: `support`, `opposition` or both), optional `capsLevel` (no shift takes a level past ±`capsLevel` in its space; Office: 1; DEC-39). Harm counts are in `victory.yaml` only (DEC-38).
 
 ### 4.5 parameters.yaml
 
@@ -201,8 +201,8 @@ Thresholds live in scenario files, because they differ per scenario.
 | `id`, `title`, `campaigns` | For example `[C1, C2]` |
 | `finalRound` | Propaganda round that ends the game |
 | `tracks` | Start values |
-| `spaces` | Pieces, levels and markers per space |
-| `available`, `outOfPlay` | Pools. Validation checks totals against `pieces.yaml` |
+| `spaces` | Pieces, levels and markers per space. Counts per flip state or side, for example `guerrilla: {underground: 2}`. A bare count places pieces on their `placedAs` face. A marker with sides always needs counts per side (DEC-40) |
+| `available`, `outOfPlay` | Pools. A piece type not listed has 0 in that pool. Validation checks totals against `pieces.yaml` |
 | `pivotals` | Per faction |
 | `flags` | For example `law3175: true`, `northernIraqVacuum: true` |
 | `thresholds` | Per faction |
@@ -293,8 +293,9 @@ Validation runs on load, before a session starts, and in the CLI (`sim validate 
 | V-SCHEMA | Each file matches its schema version | error |
 | V-REF | Every referenced ID exists (spaces, pieces, tracks, markers, actions, cards, parameters, modules) | error |
 | V-MODULE | Each module `id@major` exists in the registry | error |
-| V-FACTIONS | Player faction count fits the sequence model | error |
-| V-PIECES | Scenario pieces plus pools equal totals | error |
+| V-FACTIONS | 2 to 4 player factions (s4.1). The match with the sequence model comes with P2-03 | error |
+| V-PIECES | Scenario pieces plus pools equal totals. Markers on the map do not exceed their count | error |
+| V-RANGE | Scenario track values within `min` and `max`. Levels within the `supportLevels` range and only on spaces with a support scale. A space with a support scale needs `supportLevels` (DEC-39, DEC-40) | error |
 | V-STACK | Scenario setup obeys stacking | error |
 | V-LINKS | Adjacency is symmetric. No link to an unknown space | error |
 | V-CARDS | Each pile has enough eligible cards. Mandatory cards exist. Chain pairs refer to real cards | error |

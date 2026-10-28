@@ -1,0 +1,15 @@
+- {id: troops, faction: state, count: 6, isBase: false, countsForControl: true, movable: true, startPool: available, shape: cube}
+- {id: stateBase, faction: state, count: 2, isBase: true, countsForControl: true, movable: false, startPool: available, shape: disc, emblem: crescentStar}
+- id: guerrilla
+  faction: pkk
+  count: 6
+  isBase: false
+  states: [underground, active]
+  placedAs: underground
+  countsForControl: true
+  movable: true
+  startPool: available
+  shape: octagon
+  emblem: starCircle
+  emblemState: active
+- {id: pkkBase, faction: pkk, count: 2, isBase: true, countsForControl: true, movable: false, startPool: outOfPlay, shape: disc}

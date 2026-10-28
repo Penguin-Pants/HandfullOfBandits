@@ -1,0 +1,12 @@
+id: s0
+title: Fixture start
+campaigns: [C1]
+finalRound: 1
+tracks: {resources.state: 12, resources.pkk: 5, posture: tolerant}
+spaces:
+  hills: {level: -1, pieces: {troops: 2, guerrilla: {underground: 1, active: 1}}, markers: {stateHarm: 1}}
+  town: {level: 1, pieces: {troops: 1, stateBase: 1}, markers: {office: 1, covert: {faceDown: 1}}}
+  camp: {pieces: {guerrilla: 2, pkkBase: 1}}
+available: {troops: 3, stateBase: 1, guerrilla: 2}
+outOfPlay: {pkkBase: 1}
+thresholds: {state: 30, pkk: 20}
