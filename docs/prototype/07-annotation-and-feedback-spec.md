@@ -80,6 +80,8 @@ A proposed note gains a link if the same plan is then executed. It keeps `anchor
 | `rule_sources` | Research references of those rules (from the package) |
 | `legal_choices_summary` | For proposed and decision anchors: legal boxes, actions and answers at note time |
 
+Builder: `sim/src/annotate/context.ts` (DEC-46). The annotation row, not the context JSON, holds `annotation_id` and `created_at`.
+
 ### 4.3 Size control
 
 Context JSON stores values, not full state. The full state is reachable by `state_hash`. Target size: under 8 KB per note.

@@ -140,7 +140,7 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
   return {
     packageHash,
     rulesetVersion: data.manifest.rulesetVersion,
-    factions: data.factions.map(({ id, kind }) => ({ id, kind })),
+    factions: data.factions.map((f) => ({ id: f.id, kind: f.kind, resourcesTrack: f.resourcesTrack ?? null })),
     pieces: data.pieces.map((p) => ({
       id: p.id,
       faction: p.faction,

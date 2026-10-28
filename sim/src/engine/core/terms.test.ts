@@ -7,7 +7,7 @@ import type { FormulaTerm, Ruleset } from "./types.ts";
 const ruleset: Ruleset = {
   packageHash: "abc",
   rulesetVersion: "R1",
-  factions: [{ id: "blue", kind: "player" }],
+  factions: [{ id: "blue", kind: "player", resourcesTrack: null }],
   pieces: [],
   spaces: [
     { id: "city", hasSupportScale: true, kind: "domestic", terrain: "city", pop: 2 },

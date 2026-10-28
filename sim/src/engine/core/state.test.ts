@@ -8,9 +8,9 @@ const ruleset: Ruleset = {
   packageHash: "abc123",
   rulesetVersion: "R1",
   factions: [
-    { id: "blue", kind: "player" },
-    { id: "red", kind: "player" },
-    { id: "town", kind: "nonPlayer" },
+    { id: "blue", kind: "player", resourcesTrack: null },
+    { id: "red", kind: "player", resourcesTrack: null },
+    { id: "town", kind: "nonPlayer", resourcesTrack: null },
   ],
   pieces: [
     { id: "soldier", faction: "blue", count: 5, states: [], placedAs: null, startPool: "available", countsForControl: true },

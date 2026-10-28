@@ -25,6 +25,8 @@ export interface JsonObject {
 export interface RulesetFaction {
   readonly id: FactionId;
   readonly kind: "player" | "nonPlayer";
+  /** Track that holds this faction's Resources. Null: none. */
+  readonly resourcesTrack: TrackId | null;
 }
 
 export interface RulesetPiece {

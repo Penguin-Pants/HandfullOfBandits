@@ -72,6 +72,7 @@ describe("loadPackage on the valid fixture", () => {
       { id: "camp", hasSupportScale: false, kind: "external", terrain: null, pop: 0 },
     ]);
     expect(result.ruleset.levelRange).toBe(2);
+    expect(result.ruleset.factions.map((f) => f.resourcesTrack)).toEqual(["resources.state", "resources.pkk"]);
     expect(result.ruleset.markers.find((m) => m.id === "office")).toEqual({ id: "office", count: 2, sides: [], blocks: [], capsLevel: 1 });
     expect(result.ruleset.stacking[1]).toEqual({ pieces: ["pkkBase"], max: 0, spaceKind: null, terrain: ["city"], spaces: null });
     expect(result.ruleset.parameters).toEqual({ "sweep.costPerSpace": 2, "harm.limit": 6, "ui.label": "text" });
@@ -97,6 +98,12 @@ describe("loadPackage on the valid fixture", () => {
         thresholds: { state: 30, pkk: 20 },
       },
     });
+  });
+
+  it("compiles a faction with no Resources track to null", () => {
+    const other = loadPackage(changed("factions.yaml", { "1/resourcesTrack": DELETE }));
+    if (!other.ok) throw new Error(JSON.stringify(other.issues));
+    expect(other.ruleset.factions[1]?.resourcesTrack).toBeNull();
   });
 
   it("compiles a non-tune parameter with no value to null", () => {
