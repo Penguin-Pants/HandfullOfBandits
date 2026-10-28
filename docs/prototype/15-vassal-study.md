@@ -6,7 +6,7 @@ Status: study for P2 to P4 (DEC-32). B and C approved, A rejected (DEC-47). Noth
 
 1. Vassal code gives us no reuse. It is Java 17 desktop code (LGPL v2). The simulator is TypeScript. Our engine already covers its log, undo and replay model.
 2. Vassal COIN modules give us the series UX standard. Players know it from years of online play. The goal is a physical game, so the simulator board must look like a physical COIN board, not a schematic graph (08 s3.1 item 1 conflicts).
-3. Biggest saving: a Vassal module of our map, pieces and cards lets testers play the physical design now, with no rule enforcement, before P2 to P4 are built.
+3. A Vassal module of our map, pieces and cards lets testers play the finished design with no rule enforcement. Build it after IC-4 (DEC-47).
 
 ## 1. Sources
 
@@ -48,12 +48,10 @@ Colonial Twilight is the closest model: COIN, 2 factions (Government and FLN), P
 2. Hover shows stack contents.
 3. Toolbar names match Vassal COIN modules: "End Card Play", "Propaganda", "Undo".
 
-### C. Vassal module for early tests (PV-01), approved
+### C. Vassal module after IC-4 (PV-01), approved
 
 1. Build a plain `.vmod` from the package: map, spaces, pieces, cards, tracks. No automation.
-2. Testers play the physical design in Vassal now. Notes go in the existing feedback form (07).
-3. Later: generate the module from the package YAML so both stay in step.
+2. Build it after IC-4, from the draft maps and final package data. Notes go in the existing feedback form (07).
+3. Generate the module from the package YAML where it is cheap, so both stay in step.
 
-Open: does the research plan (12 s4) accept unenforced Vassal games as S0 data?
-
-Next step: start task PV-01 in 11-build-plan.md.
+Next step: PV-01 waits for IC-4 in 11-build-plan.md.
