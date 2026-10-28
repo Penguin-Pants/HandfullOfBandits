@@ -93,7 +93,20 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
 
   return (
     <section className="panel" aria-label="Faction panel" onKeyDown={(e) => { if (e.key === "Escape") clear(); }}>
-      <strong>{faction}</strong> <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
+      <h3>
+        {faction} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
+      </h3>
+      <p className="hint" aria-live="polite">
+        {box === null
+          ? "Step 1: pick a box. For the Event, use the card panel above."
+          : op === null
+            ? "Step 2: pick an Operation."
+            : selected.length === 0
+              ? "Step 3: click spaces on the map (Shift-click adds more)."
+              : result?.ok === true
+                ? "Step 4: check the preview, then Commit."
+                : "Fix the problems shown below, or change the plan."}
+      </p>
       <div className="row" role="group" aria-label="Boxes">
         {boxes.map((b) => (
           <button key={b.box} type="button" disabled={!b.allowed || b.box === "event"} title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")} aria-pressed={box === b.box} onClick={() => { pickBox(b.box); }}>
@@ -183,7 +196,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
         </div>
       )}
       <div className="row">
-        <button type="button" disabled={command === null || result?.ok !== true} onClick={() => { if (command !== null) { onCommit(command); clear(); } }}>
+        <button type="button" className="primary" disabled={command === null || result?.ok !== true} onClick={() => { if (command !== null) { onCommit(command); clear(); } }}>
           Commit (Enter)
         </button>
         <button type="button" onClick={clear}>

@@ -11,7 +11,7 @@ describe("boardView", () => {
 
   it("maps all 18 locations at their layout with level names and Control", () => {
     expect(view.spaces).toHaveLength(18);
-    expect(view.spaces.find((s) => s.id === "botan")).toMatchObject({ x: 660, y: 520, level: -1, levelName: "passiveOpposition", control: null, pop: 2, terrain: "mountain" });
+    expect(view.spaces.find((s) => s.id === "botan")).toMatchObject({ x: 722, y: 435, level: -1, levelName: "passiveOpposition", control: null, pop: 2, terrain: "mountain" });
     expect(view.spaces.find((s) => s.id === "kdp-zone")).toMatchObject({ level: null, levelName: null, control: null });
     expect(view.spaces.find((s) => s.id === "hakkari")?.control).toBe("state");
   });

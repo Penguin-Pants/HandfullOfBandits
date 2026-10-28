@@ -1,12 +1,12 @@
 // Play screen (08 s3): status bar, board, event or Propaganda panel, faction panel.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { AnyCommand, Api, CategoryRow, Head, HistoryItem, LegalChoices, SessionRow } from "../api.ts";
+import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalChoices, SessionRow } from "../api.ts";
 import { createFocusStore } from "../focus-store.ts";
 import { HistoryDrawer } from "../history/HistoryDrawer.tsx";
 import { defaultAnchor } from "../notes/anchor.ts";
 import { EndSession } from "../notes/EndSession.tsx";
 import { NoteBar } from "../notes/NoteBar.tsx";
-import { Board, SpaceDetail } from "../board/Board.tsx";
+import { Board, Legend, SpaceDetail } from "../board/Board.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
@@ -17,6 +17,27 @@ export interface PlayProps {
   readonly sessionId: string;
   readonly onExit?: () => void;
   readonly onOpenState?: (before: string | null, after: string) => void;
+}
+
+/** Spaces whose pieces, markers, level or Control differ between two views. */
+export function changedSpaces(before: BoardView, after: BoardView): string[] {
+  const key = (s: BoardView["spaces"][number]): string => JSON.stringify([s.pieces, s.markers, s.level, s.control]);
+  const was = new Map(before.spaces.map((s) => [s.id, key(s)]));
+  return after.spaces.filter((s) => was.get(s.id) !== key(s)).map((s) => s.id);
+}
+
+/** What the last committed action did, from its log entries. */
+function LastAction({ item }: { readonly item: HistoryItem | undefined }) {
+  if (item === undefined) return null;
+  const lines = item.entries.filter((e) => e.kind !== "ValidationPassed" && e.text !== "");
+  return (
+    <section className="panel last-action" aria-label="Last action">
+      <h3>Last action: {item.action.summary}</h3>
+      <ul>
+        {lines.slice(0, 12).map((e) => <li key={e.entry_id}>{e.text}</li>)}
+      </ul>
+    </section>
+  );
 }
 
 export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
@@ -31,9 +52,15 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [ending, setEnding] = useState(false);
+  const [changed, setChanged] = useState<string[]>([]);
+  /** Head on screen before a reload, to outline what the next action changed. */
+  const shown = useRef<Head | null>(null);
 
   const load = useCallback(async () => {
     const [s, l, h] = await Promise.all([api.session(sessionId), api.legal(sessionId), api.history(sessionId)]);
+    const prev = shown.current;
+    if (prev === null || prev.actionId !== s.head.actionId) setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
+    shown.current = s.head;
     setData(s);
     setLegal(l);
     setHistory(h);
@@ -106,9 +133,13 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
     <div className="screen">
       <StatusBar view={view} />
       {error !== null && <p className="bad">{error}</p>}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: 16 }}>
-        <Board view={view} selected={selected} onSelect={select} />
-        <aside style={{ display: "grid", gap: 8, alignContent: "start" }}>
+      <div className="play">
+        <div className="panel">
+          <Board view={view} selected={selected} onSelect={select} changed={changed} />
+          <Legend view={view} />
+        </div>
+        <aside className="side">
+          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} />
           {view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={selected} onCommit={(c) => void commit(c)} />
           ) : (

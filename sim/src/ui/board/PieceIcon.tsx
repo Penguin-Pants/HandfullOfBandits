@@ -2,11 +2,12 @@
 // lighter shade for `colorVariant: light`, emblem only on its face.
 import type { PieceView } from "../api.ts";
 
-const SIZE = 14;
+const SIZE = 16;
 
-export function PieceIcon({ piece, color, x, y }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number }) {
+/** `bare`: the shape only, with no count (legend). */
+export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean }) {
   const fill = piece.colorVariant === "light" ? `color-mix(in srgb, ${color} 55%, white)` : color;
-  const stroke = piece.isBase ? "black" : "none";
+  const stroke = piece.isBase ? "black" : "var(--token-line)";
   const h = SIZE / 2;
   let shape;
   switch (piece.shape) {
@@ -26,12 +27,14 @@ export function PieceIcon({ piece, color, x, y }: { readonly piece: PieceView; r
     }
   }
   return (
-    <g aria-label={`${piece.piece} ${piece.face} ${String(piece.count)}`}>
+    <g aria-label={bare ? undefined : `${piece.piece} ${piece.face} ${String(piece.count)}`}>
       {shape}
       {piece.emblem !== null && <circle cx={x} cy={y} r={h / 2} fill="none" stroke="white" strokeWidth={1.5} />}
-      <text x={x + h + 2} y={y + 4} fontSize={10}>
-        {piece.count}
-      </text>
+      {!bare && (
+        <text x={x + h + 2} y={y + 5} className="map-count">
+          {piece.count}
+        </text>
+      )}
     </g>
   );
 }
