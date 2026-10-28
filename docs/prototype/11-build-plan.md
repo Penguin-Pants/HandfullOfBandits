@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01, P1-01 to P1-05 and P1-07 to P1-12 done. P1-06 done except its 3 cards (blocked until P2-05).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. P1-06 done except its 3 cards (blocked until P2-05).
 
 ## 1. How to use this plan
 
@@ -185,6 +185,10 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 ### IC-1 Integration checkpoint (Phase 1 exit)
 
 Script test: load `tiny`, start a session in the store, apply one command, save a note anchored to the action, reload from disk, verify hashes and note links. Matches the Phase 1 exit criterion in the brief.
+
+- **Passed:** `sim/test/ic1.test.ts`. The stored package reloads with the same hash, both stored states hash to their keys, the stored command replays from the stored package to the same hashes, entries keep before and after values, the note links to the action and its after state, and saving the note does not move the head (T-ANN-04). New `packageContent(data)` in `sim/src/package/load.ts` is the one source for the package hash and the stored content (04 s10.3).
+- **Phase 1 status:** done, except the 3 tiny cards of P1-06 (blocked until P2-05). Phase 2 may start.
+- **Open for P2-11:** the session service renders log entry `text` (IC-1 uses a plain form) and fills the caller inputs of the context builder (DEC-46).
 
 ## 3. Phase 2: first playable slice (S0 Opening)
 

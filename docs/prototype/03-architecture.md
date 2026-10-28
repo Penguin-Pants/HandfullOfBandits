@@ -1,6 +1,6 @@
 # 03 Architecture
 
-Status: planning document. Toolchain skeleton exists in `sim/` (P0-01).
+Status: planning document. Phase 1 layers exist in `sim/`: engine entry points, core, coin, package, store and annotate (IC-1).
 
 ## 1. Decision summary
 

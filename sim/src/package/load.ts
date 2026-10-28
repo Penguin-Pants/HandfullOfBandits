@@ -116,8 +116,6 @@ export function loadPackage(raw: RawPackage): LoadResult {
   for (const path of scenarioPaths) check("scenario", path);
   if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
 
-  // 04 s10.2: hash the normalized content, so whitespace and comments do not change it.
-  const hash = canonicalHash(parsed);
   const data: PackageData = {
     manifest: parsed["manifest.yaml"] as PackageData["manifest"],
     parameters: parsed["parameters.yaml"] as PackageData["parameters"],
@@ -129,9 +127,20 @@ export function loadPackage(raw: RawPackage): LoadResult {
     victory: parsed["victory.yaml"] as PackageData["victory"],
     scenarios: Object.fromEntries(scenarioPaths.map((path) => [path, parsed[path] as PackageData["scenarios"][string]])),
   };
+  // 04 s10.2: hash the normalized content, so whitespace and comments do not change it.
+  const hash = canonicalHash(packageContent(data));
   issues.push(...validatePackage(data));
   if (issues.some((issue) => issue.level === "error")) return { ok: false, issues };
   return { ok: true, data, hash, ruleset: compileRuleset(data, hash), issues };
+}
+
+/**
+ * Normalized package content by file path: the value the package hash covers. Its canonical JSON
+ * is what the store saves (04 s10.3); `loadPackage({files: content, issues: []})` loads it again.
+ */
+export function packageContent(data: PackageData): Record<string, unknown> {
+  const { scenarios, ...core } = data;
+  return { ...Object.fromEntries(Object.entries(core).map(([file, value]) => [`${file}.yaml`, value])), ...scenarios };
 }
 
 /** The fields core reads (types.ts). Absent flip states and sides become empty lists. */
