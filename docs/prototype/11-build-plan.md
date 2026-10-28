@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. P0-01 and P1-01 to P1-05 done.
+Status: planning document. P0-01 and P1-01 to P1-05 done. P1-06 done except its 3 cards (blocked until P2-05).
 
 ## 1. How to use this plan
 
@@ -97,6 +97,8 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Tests:** Used by later tasks.
 - **Risks:** None.
 - **Out:** Fixture package.
+- **Done:** `sim/test/packages/tiny/`: factions `blue` and `red`, pieces `soldier`, `fort`, `rebel` (flip states), `camp`; spaces `city`, `farm`, `hills` and external `refuge`; tracks `cash.blue`, `cash.red` and ordinal `border`; markers `harm` (blocks), `mark` (sides), `office` (`capsLevel`). Scenario `start` added for P1-10 `start` and IC-1. `make validate DIR=sim/test/packages/tiny` passes; `sim/test/tiny.test.ts` checks it.
+- **Blocked:** the 3 cards. No card schema exists until P2-05 (04 s4.8), so the loader cannot read or check them. Add them to tiny in P2-05.
 
 ### P1-07 Core effect primitives
 

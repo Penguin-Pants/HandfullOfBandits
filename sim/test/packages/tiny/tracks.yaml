@@ -1,0 +1,3 @@
+- {id: cash.blue, kind: numeric, min: 0, max: 20, owner: blue, display: Blue Resources}
+- {id: cash.red, kind: numeric, min: 0, max: 20, owner: red, display: Red Resources}
+- {id: border, kind: ordinal, steps: [open, watched, closed], display: Border}

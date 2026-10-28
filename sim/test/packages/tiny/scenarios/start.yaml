@@ -1,0 +1,13 @@
+id: start
+title: Tiny start
+campaigns: [C1]
+finalRound: 1
+tracks: {cash.blue: 5, cash.red: 3, border: open}
+spaces:
+  city: {level: 1, pieces: {soldier: 2, fort: 1}}
+  farm: {pieces: {soldier: 1, rebel: 1}}
+  hills: {level: -1, pieces: {rebel: {hidden: 1, shown: 1}}}
+  refuge: {pieces: {rebel: 1, camp: 1}}
+available: {soldier: 3, fort: 1, rebel: 2}
+outOfPlay: {camp: 1}
+thresholds: {blue: 10, red: 8}

@@ -1,0 +1,8 @@
+# "tiny": 4 spaces, 2 factions. Test package for engine tests (11 P1-06). Not a game design.
+packageId: tiny
+version: 0.1.0
+rulesetVersion: R1
+schemaVersion: 1
+changeDescription: First version for engine tests
+title: Tiny
+modules: [ct-two-faction@1]
