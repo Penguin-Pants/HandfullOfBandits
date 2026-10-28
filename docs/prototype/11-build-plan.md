@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 to P2-18 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2: P2-01 to P2-18, IC-2a and IC-2 item 1 done. IC-2 items 2 and 3 wait on the designer's manual S0 session.
 
 ## 1. How to use this plan
 
@@ -429,6 +429,9 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 1. Playwright smoke: Home, start S0, one action, one note, undo, JSON export.
 2. Manual session by the designer against 10 s2.4.
 3. Fix list from that session goes into Phase 3a tasks.
+
+- **Item 1 passed:** `make e2e` (`sim/e2e/smoke.mjs`, Playwright with Chromium, 1366 x 768): Home Start enabled for S0, first card revealed, one action (PKK Pass), one note linked to it, undo restores the board, JSON export holds the note and the undone action. Playwright is not a project dependency, so `make e2e` runs on a machine that has it and is not in CI.
+- **Blocked on the designer:** item 2 (manual session against 10 s2.4) and item 3 (its fix list into Phase 3a). Phase 3 must not start until both are done (s1 item 4).
 
 ## 4. Phase 3: full Kurdish COIN prototype
 

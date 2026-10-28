@@ -20,7 +20,7 @@ export default defineConfig(
     },
   },
   {
-    files: ["**/*.js"],
+    files: ["**/*.js", "**/*.mjs"],
     extends: [tseslint.configs.disableTypeChecked],
   },
   // T-ARCH: module boundaries (03 s5).
