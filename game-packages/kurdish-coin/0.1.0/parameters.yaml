@@ -65,3 +65,13 @@
 - {id: agitation.redressCost, value: 2, tune: false, source: "07 s1.3"}
 - {id: agitation.shiftCost, value: 1, tune: false, source: "07 s1.3"}
 - {id: agitation.maxShifts, value: 2, tune: false, source: "07 s1.3"}
+- {id: airMobility.maxTroops, value: 4, tune: false, source: "06 s3.1"}
+- {id: airMobility.maxSpaces, value: 3, tune: false, source: "06 s3.1"}
+- {id: ambush.maxSpaces, value: 2, tune: false, source: "06 s5.1"}
+- {id: ambush.extraRemoval, value: 1, tune: false, source: "06 s5.1; PA-06"}
+- {id: extort.minPop, value: 1, tune: false, source: "06 s5.2"}
+- {id: extort.gain, value: 1, tune: false, source: "06 s5.2"}
+- {id: strike.maxSpaces, value: 2, tune: false, source: "06 s5.3 item 1"}
+- {id: strike.costPerSpace, value: 1, tune: false, source: "06 s5.3 item 1"}
+- {id: strike.maxGuards, value: 2, tune: false, source: "06 s5.3 item 2"}
+- {id: strike.europeLoss, value: 1, tune: false, source: "06 s5.3 item 5"}
