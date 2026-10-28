@@ -36,4 +36,4 @@ Status: planning complete. Toolchain skeleton exists in `sim/` (P0-01).
 
 ## Next step
 
-Start task P1-02 in [11-build-plan.md](11-build-plan.md).
+Start task P1-03 in [11-build-plan.md](11-build-plan.md).

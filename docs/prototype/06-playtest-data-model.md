@@ -57,7 +57,7 @@ ULIDs are generated in the store, not in the engine. They never affect rules.
 | `name` | User label |
 | `package_hash` (FK) | Exact rules |
 | `scenario_id` | From package |
-| `seed` | Integer |
+| `seed` | Integer, 0 to 2^53 - 1 (DEC-35) |
 | `options` | JSON of option values used |
 | `app_version` | Simulator build that created the session |
 | `code_fingerprint` | SHA-256 over all rules-execution code: `engine/core`, `engine/coin` and `engine/modules` |
