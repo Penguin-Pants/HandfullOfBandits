@@ -40,10 +40,10 @@ describe("Ambush (06 s5.1, PA-06)", () => {
   it("Attack resolves as normal and Ambush removes 1 extra State piece", () => {
     const board = setPieces(withRoll(pkkTurn, 2), "hakkari", "police", 2);
     const { state, entries } = play(board, plan(["hakkari"]));
-    // Ambush takes 1 Troop first; the hit takes 1 Troop and 1 Police; 1 Guerrilla lost to attrition.
+    // The hit takes 2 Troops (attrition 2 Guerrillas); then Ambush takes 1 extra Police.
     expect(pieces(state, "hakkari", "troops")).toEqual({ default: 0 });
     expect(pieces(state, "hakkari", "police")).toEqual({ default: 1 });
-    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 0, active: 1 });
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 0, active: 0 });
     expect(entries.some((e) => e.assumptionRef === "PA-06")).toBe(true);
   });
 

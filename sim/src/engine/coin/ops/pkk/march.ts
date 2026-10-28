@@ -74,7 +74,7 @@ export const march: ActionHandler = {
     // and a group with no face named leaves with the faces that stood there (Underground first).
     const left = new Map<string, number>();
     const reserve = (from: string, face: string): number => left.get(`${from}|${face}`) ?? count(ctx.state, from, PIECE.guerrilla, face);
-    const groups = new Map<string, { from: string; face: string; count: number }[]>();
+    const groups = new Map<string, { from: string; face: string; count: number; group: number }[]>();
     for (const dest of part.locations) {
       groups.set(
         dest,
@@ -84,7 +84,7 @@ export const march: ActionHandler = {
             const n = Math.min(need, reserve(m.from, face));
             left.set(`${m.from}|${face}`, reserve(m.from, face) - n);
             need -= n;
-            return n > 0 ? [{ from: m.from, face, count: n }] : [];
+            return n > 0 ? [{ from: m.from, face, count: n, group: m.count }] : [];
           });
         }),
       );
@@ -96,7 +96,7 @@ export const march: ActionHandler = {
         // Activation (06 s4.2 item 4) uses State pieces in the destination before the group arrives.
         const crossing = space(ctx.ruleset, dest)?.kind === "external" || space(ctx.ruleset, m.from)?.kind === "external";
         const atSupport = (ctx.state.spaces[dest]?.level ?? 0) > 0;
-        const exposed = (atSupport || crossing) && m.count + statePieces(ctx.ruleset, ctx.state, dest) > threshold;
+        const exposed = (atSupport || crossing) && m.group + statePieces(ctx.ruleset, ctx.state, dest) > threshold;
         ctx.apply({ type: "movePieces", piece: PIECE.guerrilla, state: m.face, toState: restricted || exposed ? FACE.active : null, count: m.count, from: m.from, to: dest, ruleRef, assumptionRef: restricted && dest === SYRIA_BOX ? "PA-16" : null });
       }
     }

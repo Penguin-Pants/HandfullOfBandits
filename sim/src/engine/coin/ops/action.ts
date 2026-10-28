@@ -25,6 +25,8 @@ export interface ActionOptions {
   readonly sa: string | null;
   /** For an SA: the locations of its Op. For an Op: empty. */
   readonly opLocations: readonly string[];
+  /** For an Op: the locations of its SA. For an SA: empty. */
+  readonly saLocations: readonly string[];
   /** Civic Action or Agitate spends (06 s2.1, s4.1). */
   readonly subActions: readonly SubAction[];
 }

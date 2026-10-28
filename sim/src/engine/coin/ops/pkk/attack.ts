@@ -11,6 +11,7 @@ import { guerrillas, statePieces } from "../common-pkk.ts";
 import { FACE, FACTION, PIECE } from "../ids.ts";
 
 const ruleRef = "06 s4.3";
+const AMBUSH = "pkk.ambush";
 
 /** Remove up to `n` State pieces in the Attack order (06 s4.3 item 3). Returns the Troops removed. */
 export function removeInAttackOrder(ctx: Exec, loc: string, n: number, preferPolice: boolean, ref: string, assumptionRef: string | null = null): number {
@@ -59,6 +60,10 @@ export const attack: ActionHandler = {
       }
       if (roll === param(ctx.ruleset, "attack.bonusRoll", "number")) {
         ctx.apply({ type: "placePieces", piece: PIECE.guerrilla, count: 1, space: loc, state: FACE.underground, ruleRef: "06 s4.3 item 5", assumptionRef: null });
+      }
+      // Ambush (06 s5.1, PA-06): after the normal Attack, remove 1 extra State piece in the Attack order.
+      if (options.sa === AMBUSH && options.saLocations.includes(loc)) {
+        removeInAttackOrder(ctx, loc, param(ctx.ruleset, "ambush.extraRemoval", "number"), false, "06 s5.1", "PA-06");
       }
     }
   },

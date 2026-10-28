@@ -159,10 +159,10 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   for (const p of [part, saPart]) {
     if (p !== null && new Set(p.locations).size !== p.locations.length) ask(run, "badAnswer", "Select each location of a free action once.");
   }
-  const options: ActionOptions = { faction: run.faction, limited: false, free: true, constraints, op: null, sa: saId, opLocations: [], subActions: [] };
+  const options: ActionOptions = { faction: run.faction, limited: false, free: true, constraints, op: null, sa: saId, opLocations: [], saLocations: saPart?.locations ?? [], subActions: [] };
   const sa = saId === null ? undefined : actionHandlers[saId];
   if (sa !== undefined) {
-    const saOptions: ActionOptions = { ...options, op: action, sa: null, opLocations: part.locations };
+    const saOptions: ActionOptions = { ...options, op: action, sa: null, opLocations: part.locations, saLocations: [] };
     const found = sa.check(ctx.ruleset, ctx.state, saPart ?? { locations: [], perLocation: {} }, saOptions);
     if (found.length > 0) ask(run, found[0]?.code ?? "badAnswer", found.map((v) => v.message).join(" "));
     sa.execute(ctx, saPart ?? { locations: [], perLocation: {} }, saOptions);

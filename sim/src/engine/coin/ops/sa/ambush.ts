@@ -6,7 +6,6 @@ import type { Violation } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";
 import { count } from "../common.ts";
 import { FACE, FACTION, PIECE } from "../ids.ts";
-import { removeInAttackOrder } from "../pkk/attack.ts";
 
 const ruleRef = "06 s5.1";
 
@@ -27,9 +26,5 @@ export const ambush: ActionHandler = {
     return out;
   },
   cost: () => 0,
-  execute(ctx, part) {
-    for (const loc of part.locations) {
-      removeInAttackOrder(ctx, loc, param(ctx.ruleset, "ambush.extraRemoval", "number"), false, ruleRef, "PA-06");
-    }
-  },
+  execute: () => undefined,
 };

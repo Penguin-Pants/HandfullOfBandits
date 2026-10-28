@@ -1,4 +1,5 @@
-// Code fingerprint (04 s10.3 item 3; DEC-19): one SHA-256 over all rules-execution code.
+// Code fingerprint (04 s10.3 item 3; DEC-19): one SHA-256 over all rules-execution code: the engine
+// entry files and engine/core, coin and modules.
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -19,11 +20,10 @@ let cached: string | null = null;
 export function codeFingerprint(): string {
   if (cached !== null) return cached;
   const hash = createHash("sha256");
-  for (const folder of FOLDERS) {
-    for (const file of files(join(engineDir, folder))) {
-      hash.update(file.slice(engineDir.length).replaceAll("\\", "/"));
-      hash.update(readFileSync(file, "utf8").replaceAll("\r\n", "\n"));
-    }
+  const root = readdirSync(engineDir, { withFileTypes: true }).filter((e) => e.isFile() && e.name.endsWith(".ts") && !e.name.endsWith(".test.ts")).map((e) => join(engineDir, e.name)).sort();
+  for (const file of [...root, ...FOLDERS.flatMap((folder) => files(join(engineDir, folder)))]) {
+    hash.update(file.slice(engineDir.length).replaceAll("\\", "/"));
+    hash.update(readFileSync(file, "utf8").replaceAll("\r\n", "\n"));
   }
   cached = hash.digest("hex");
   return cached;

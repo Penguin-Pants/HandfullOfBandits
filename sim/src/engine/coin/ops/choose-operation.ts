@@ -91,8 +91,8 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
   } else if (raw["sa"] !== undefined && raw["sa"] !== null) {
     return fail("badPlan", "The Special Activity part is not well formed.");
   }
-  const options: ActionOptions = { faction, limited, free: false, constraints: {}, op: null, sa: sa?.handler.id ?? null, opLocations: [], subActions: subs };
-  const saOptions: ActionOptions | null = sa === null ? null : { ...options, op: op.id, sa: null, opLocations: opPart.locations, subActions: [] };
+  const options: ActionOptions = { faction, limited, free: false, constraints: {}, op: null, sa: sa?.handler.id ?? null, opLocations: [], saLocations: sa?.part.locations ?? [], subActions: subs };
+  const saOptions: ActionOptions | null = sa === null ? null : { ...options, op: op.id, sa: null, opLocations: opPart.locations, saLocations: [], subActions: [] };
   // Each part is checked on the board it will meet, and paid from the Resources it will have:
   // an SA before the Op changes the Op's board and may add income (DEC-16).
   const checkPart = (handler: ActionHandler, p: ActionPart, o: ActionOptions, on: GameState): boolean => {
