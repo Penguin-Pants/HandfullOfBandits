@@ -81,7 +81,22 @@ describe("loadPackage on the valid fixture", () => {
     ]);
     expect(Object.keys(result.ruleset.victory.totals)).toEqual(["totalSupport"]);
     expect(result.ruleset.harmMarkers).toEqual(["stateHarm", "covert"]);
-    expect(result.ruleset.thresholds).toEqual({ s0: { state: 30, pkk: 20 } });
+    expect(result.ruleset.scenarios).toEqual({
+      s0: {
+        campaigns: ["C1"],
+        tracks: { "resources.state": 12, "resources.pkk": 5, posture: "tolerant" },
+        // Bare piece counts go to the placedAs face, else `default`. Bare marker counts go to `default`.
+        spaces: {
+          hills: { level: -1, pieces: { troops: { default: 2 }, guerrilla: { underground: 1, active: 1 } }, markers: { stateHarm: { default: 1 } } },
+          town: { level: 1, pieces: { troops: { default: 1 }, stateBase: { default: 1 } }, markers: { office: { default: 1 }, covert: { faceDown: 1 } } },
+          camp: { level: null, pieces: { guerrilla: { underground: 2 }, pkkBase: { default: 1 } }, markers: {} },
+        },
+        available: { troops: 3, stateBase: 1, guerrilla: 2 },
+        outOfPlay: { pkkBase: 1 },
+        flags: {},
+        thresholds: { state: 30, pkk: 20 },
+      },
+    });
   });
 
   it("compiles a non-tune parameter with no value to null", () => {

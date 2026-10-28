@@ -1,5 +1,6 @@
 // Shared helpers for the core effect primitives (05 s7). State updates are immutable.
 // An unknown ID is a defect in the caller (package data is validated on load), so it throws.
+import { logEntry } from "../log.ts";
 import { SINGLE_FACE } from "../state.ts";
 import type { AssumptionRef, Effect, FaceCounts, GameState, JsonValue, LogEntry, Ruleset } from "../types.ts";
 
@@ -38,7 +39,7 @@ export function entry(
   data: Readonly<Record<string, JsonValue>>,
   assumptionRef: AssumptionRef | null = effect.assumptionRef,
 ): LogEntry {
-  return { kind, stateSeq: state.meta.stateSeq, ruleRef: effect.ruleRef, assumptionRef, data: { effect: effect.type, ...data } };
+  return logEntry(state, kind, { effect: effect.type, ...data }, effect.ruleRef, assumptionRef);
 }
 
 /** Add `delta` to one face count of a piece or marker type in a space. */

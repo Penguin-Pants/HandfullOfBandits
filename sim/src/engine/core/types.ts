@@ -138,8 +138,29 @@ export interface Ruleset {
   readonly victory: RulesetVictory;
   /** Marker types that a harmCount term counts. Their empty supply warns (PA-09). */
   readonly harmMarkers: readonly MarkerTypeId[];
-  /** Scenario thresholds by scenario ID, then faction. */
-  readonly thresholds: Readonly<Record<string, Readonly<Record<FactionId, number>>>>;
+  /** Scenarios by ID (04 s4.10). */
+  readonly scenarios: Readonly<Record<string, RulesetScenario>>;
+}
+
+/** One space of a scenario setup. Faces are resolved: a bare count is on the placedAs face (DEC-40). */
+export interface ScenarioSpace {
+  /** Signed steps from Neutral. Null: the scenario sets no level. */
+  readonly level: number | null;
+  readonly pieces: Readonly<Record<PieceTypeId, FaceCounts>>;
+  readonly markers: Readonly<Record<MarkerTypeId, FaceCounts>>;
+}
+
+/** The scenario fields start reads (05 s1 item 1, DEC-44). Pivotals, options and excluded cards come with the deck (P2-04, P2-05). */
+export interface RulesetScenario {
+  /** Campaigns in play order. The game starts in the first. */
+  readonly campaigns: readonly string[];
+  readonly tracks: Readonly<Record<TrackId, number | string>>;
+  readonly spaces: Readonly<Record<SpaceId, ScenarioSpace>>;
+  /** A piece type not listed has 0 in that pool (04 s4.10). */
+  readonly available: Readonly<Record<PieceTypeId, number>>;
+  readonly outOfPlay: Readonly<Record<PieceTypeId, number>>;
+  readonly flags: Readonly<Record<string, boolean>>;
+  readonly thresholds: Readonly<Record<FactionId, number>>;
 }
 
 // Game state (05 s2). Derived values are never stored here.
@@ -278,6 +299,52 @@ export type Command =
   | { readonly type: "ResolveDecision"; readonly decisionId: string; readonly answer: JsonValue }
   | { readonly type: "PropagandaChoice"; readonly phase: string; readonly choice: JsonValue }
   | { readonly type: "Advance" };
+
+/** Any command the engine receives. A handler checks its own payload: commands come from outside. */
+export interface AnyCommand {
+  readonly type: string;
+  readonly [key: string]: unknown;
+}
+
+// Validation and transitions (05 s1, s4).
+
+export interface Violation {
+  readonly code: string;
+  readonly message: string;
+  readonly ruleRef: RuleRef | null;
+  /** Space or box ID the violation is about. Null: the whole command. */
+  readonly location: string | null;
+}
+
+export interface ValidationResult {
+  readonly ok: boolean;
+  readonly violations: readonly Violation[];
+  /** Legal, but worth a note: provisional rule, ceasefire breach (05 s4). */
+  readonly warnings: readonly Violation[];
+  /** Deterministic effects the command will apply. Empty when not ok. */
+  readonly preview: { readonly effects: readonly Effect[] };
+}
+
+export interface Transition {
+  readonly state: GameState;
+  /** canonicalHash of `state`. */
+  readonly stateHash: string;
+  readonly logEntries: readonly LogEntry[];
+  readonly pending: Decision | null;
+}
+
+/** `apply` result: a transition, or a rejection with no new state (05 s1 rule 3). */
+export type ApplyResult =
+  | { readonly ok: true; readonly validation: ValidationResult; readonly transition: Transition }
+  | { readonly ok: false; readonly validation: ValidationResult };
+
+/** Engine handler for one command type. Pure: it reads state and returns violations or effects. */
+export interface CommandHandler {
+  readonly ruleRef: RuleRef;
+  check(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Violation[];
+  /** Effects of a command that passed `check`. */
+  resolve(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Effect[];
+}
 
 // Effects: core primitives (04 s5; 03 s6.1 items 4 to 6). Locations and counts are
 // resolved before core applies them. Card-level primitives (choice, forEachSpace) come in P2-05.

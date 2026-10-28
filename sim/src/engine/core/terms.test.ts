@@ -23,7 +23,7 @@ const ruleset: Ruleset = {
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
   harmMarkers: [],
-  thresholds: {},
+  scenarios: {},
 };
 const ctx: TermContext = { ruleset, state: emptyState(ruleset, "s", 1), control: { city: null, box: null } };
 

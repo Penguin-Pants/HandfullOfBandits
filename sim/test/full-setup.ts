@@ -78,7 +78,7 @@ export const fullRuleset: Ruleset = {
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
   harmMarkers: [],
-  thresholds: {},
+  scenarios: {},
 };
 
 type Setup = Readonly<Record<string, { level?: number; pieces: Readonly<Record<string, number>> }>>;

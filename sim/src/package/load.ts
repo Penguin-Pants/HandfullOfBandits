@@ -4,8 +4,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseDocument } from "yaml";
 import { canonicalHash } from "../engine/core/canonical.ts";
+import { SINGLE_FACE } from "../engine/core/state.ts";
 import { markersIn } from "../engine/core/terms.ts";
-import type { Ruleset } from "../engine/core/types.ts";
+import type { Ruleset, RulesetScenario } from "../engine/core/types.ts";
 import { parsePackageFile, type PackageFile } from "./schema/index.ts";
 import { validatePackage, type PackageData, type PackageIssue } from "./validate.ts";
 
@@ -169,6 +170,31 @@ export function compileRuleset(data: PackageData, packageHash: string): Ruleset 
     parameters,
     victory: data.victory,
     harmMarkers: markersIn(Object.values(data.victory.harmCount).flat()),
-    thresholds: Object.fromEntries(Object.values(data.scenarios).map((s) => [s.id, s.thresholds ?? {}])),
+    scenarios: Object.fromEntries(Object.values(data.scenarios).map((s) => [s.id, compileScenario(data, s)])),
+  };
+}
+
+type FaceCountsData = number | Readonly<Record<string, number>>;
+
+/** A bare count is on the given face (DEC-40). */
+function faces(counts: Readonly<Record<string, FaceCountsData>> | undefined, face: (type: string) => string): Record<string, Record<string, number>> {
+  return Object.fromEntries(Object.entries(counts ?? {}).map(([type, n]) => [type, typeof n === "number" ? { [face(type)]: n } : { ...n }]));
+}
+
+function compileScenario(data: PackageData, scenario: PackageData["scenarios"][string]): RulesetScenario {
+  const placedAs = new Map(data.pieces.map((p) => [p.id, p.placedAs ?? SINGLE_FACE]));
+  return {
+    campaigns: scenario.campaigns,
+    tracks: scenario.tracks,
+    spaces: Object.fromEntries(
+      Object.entries(scenario.spaces).map(([id, s]) => [
+        id,
+        { level: s.level ?? null, pieces: faces(s.pieces, (type) => placedAs.get(type) ?? SINGLE_FACE), markers: faces(s.markers, () => SINGLE_FACE) },
+      ]),
+    ),
+    available: scenario.available ?? {},
+    outOfPlay: scenario.outOfPlay ?? {},
+    flags: scenario.flags ?? {},
+    thresholds: scenario.thresholds ?? {},
   };
 }
