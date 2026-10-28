@@ -1,5 +1,6 @@
 // Local ESLint rule: module boundaries from 03-architecture.md s5.
-// A layer is the folder under the last `src/` (two levels for `engine/`).
+// A layer is the folder under the last `src/` (two levels for `engine/`). A file directly in
+// `engine/` is layer `engine`: the entry points (05 s1) above core, coin and modules.
 // `values`: layers a file may import at runtime.
 // `types`: layers a file may import with `import type` / `export type` only.
 import { dirname, resolve, sep } from "node:path";
@@ -12,6 +13,7 @@ const engine = [core, coin, modules];
 const services = ["package", "store", "annotate", "export"];
 
 const layers = {
+  engine: { values: ["engine", ...engine] },
   [core]: { values: [core] },
   [coin]: { values: [core, coin] },
   [modules]: { values: engine },
@@ -19,10 +21,10 @@ const layers = {
   store: { values: ["store"], types: [core] },
   annotate: { values: ["annotate"], types: [core] },
   export: { values: ["export", "store", "annotate"] },
-  server: { values: [...engine, ...services, "server"] },
-  cli: { values: [...engine, ...services, "cli"] },
+  server: { values: ["engine", ...engine, ...services, "server"] },
+  cli: { values: ["engine", ...engine, ...services, "cli"] },
   ui: { values: ["ui"], types: [...services, "server"] },
-  root: { values: [...engine, ...services, "server", "cli", "ui"] },
+  root: { values: ["engine", ...engine, ...services, "server", "cli", "ui"] },
 };
 // The registry is part of engine/modules. It is separate only so `package` can import it.
 layers[registry] = layers[modules];
@@ -38,6 +40,7 @@ function layerOf(file) {
   const rest = parts.slice(src + 1);
   if (rest.length === 1) return "root";
   if (rest[0] !== "engine") return rest[0];
+  if (rest.length === 2) return "engine";
   if (rest[1] === "modules" && rest[2]?.startsWith("registry")) return registry;
   return `engine/${rest[1]}`;
 }
@@ -76,7 +79,7 @@ const rule = {
         return;
       }
       if (!source.startsWith(".")) {
-        if (!from.startsWith("engine/")) return;
+        if (from !== "engine" && !from.startsWith("engine/")) return;
         if (!engineBareImports.has(source)) {
           context.report({ node, message: `Engine code may not import "${source}" (05 s8).` });
           return;

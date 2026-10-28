@@ -33,10 +33,12 @@ beforeAll(async () => {
 
 describe("architecture lint", () => {
   it("lints every fixture", () => {
-    expect(archErrors.size).toBe(21);
+    expect(archErrors.size).toBe(25);
   });
 
   it.each([
+    "engine/bad-bare.ts",
+    "engine/bad-store.ts",
     "engine/core/bad-crypto-other.ts",
     "engine/core/bad-dynamic-template.ts",
     "engine/core/bad-fs.ts",
@@ -44,6 +46,7 @@ describe("architecture lint", () => {
     "engine/core/bad-globals.ts",
     "engine/core/bad-random-import.ts",
     "engine/core/bad-reexport.ts",
+    "engine/core/bad-root.ts",
     "engine/core/bad-upward.ts",
     "package/bad-module.ts",
     "shared/bad-folder.ts",
@@ -65,6 +68,7 @@ describe("architecture lint", () => {
     "engine/core/ok.ts",
     "engine/modules/registry.ts",
     "engine/modules/rule.ts",
+    "engine/ok-root.ts",
     "package/registry-ok.ts",
     "store/type-ok.ts",
   ])("accepts %s", (file) => {

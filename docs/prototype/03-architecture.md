@@ -1,6 +1,6 @@
 # 03 Architecture
 
-Status: planning document. Toolchain skeleton exists in `sim/` (P0-01).
+Status: planning document. Phase 1 layers exist in `sim/`: engine entry points, core, coin, package, store and annotate (IC-1).
 
 ## 1. Decision summary
 
@@ -77,6 +77,7 @@ Single Node project. One `package.json`. Folders act as modules.
 
 | Folder | Responsibility | May import |
 |---|---|---|
+| `sim/src/engine/*.ts` | Engine entry points `start`, `validate`, `apply` (05 s1, DEC-44) | core, coin, modules |
 | `sim/src/engine/core` | State types, canonical hash, seeded RNG, effect primitives, effect applier, log entry builder | nothing outside core |
 | `sim/src/engine/coin` | Generic COIN handlers: control, shifts, ops, initiative, Propaganda pipeline, victory evaluator | core |
 | `sim/src/engine/modules` | Rule module registry and game modules (`kurdish-coin/*`) | core, coin |

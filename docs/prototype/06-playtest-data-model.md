@@ -118,6 +118,7 @@ MVP uses one branch per session plus undo (section 6). The table exists from Pha
 | `action_id` (FK) | Parent |
 | `n` | Order |
 | `kind` | From 05-rules-engine-spec.md section 10 |
+| `state_seq` | Engine `stateSeq` of the entry (DEC-45) |
 | `rule_ref`, `assumption_ref` | Rule ID and PA ID if any |
 | `data` | JSON body: before and after values, roll data, reasons |
 | `text` | Rendered sentence for the history view |
@@ -134,7 +135,7 @@ Snapshot policy: store the state after every committed command. Deduplicated by 
 
 ### 3.8 annotations
 
-Full definition in 07-annotation-and-feedback-spec.md. Key links: `session_id`, `branch_id`, `action_id`, `anchor` (`executed`, `proposed`, `decision`, `state`, `session`, `debrief`), `state_hash`, `context` JSON, `category_ids`, `text`.
+Full definition in 07-annotation-and-feedback-spec.md. Key links: `session_id`, `branch_id`, `action_id`, `anchor` (`executed`, `proposed`, `decision`, `state`, `session`, `debrief`), `state_hash`, `context` JSON, `category_ids`, `text`. DDL: `sim/src/store/schema.sql` (DEC-45). Edits keep the old text in `annotation_revisions`.
 
 ### 3.9 categories
 

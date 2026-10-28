@@ -340,7 +340,7 @@ The loader computes a SHA-256 hash of the canonical package content (sorted keys
 
 ### 10.3 Preservation
 
-1. When a session starts, the store saves the full package content under its hash, if not already saved.
+1. When a session starts, the store saves the full package content under its hash, if not already saved. The content is `packageContent(data)` in `sim/src/package/load.ts`: the normalized files by path, the same value the hash covers. `loadPackage({files: content, issues: []})` loads it again (IC-1).
 2. A session can always reload its own package from the database, even if the folder is deleted.
 3. Rule modules and shared handlers are code. Each session records its own app version, each module full semver and a `code_fingerprint`: one SHA-256 over all rules-execution code (`engine/core`, `engine/coin`, `engine/modules`), computed at build time.
 4. On resume, if the `code_fingerprint` differs, the app runs a replay check before resume. Replay identical: resume. Replay differs: read-only with "rules code changed since this session".

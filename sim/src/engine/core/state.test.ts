@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { canonicalHash, canonicalJson } from "./canonical.ts";
 import { seedRng } from "./rng.ts";
-import { emptyState, SINGLE_FACE } from "./state.ts";
-import type { Ruleset } from "./types.ts";
+import { emptyState, setupState, SINGLE_FACE } from "./state.ts";
+import type { Ruleset, RulesetScenario } from "./types.ts";
 
 const ruleset: Ruleset = {
   packageHash: "abc123",
   rulesetVersion: "R1",
   factions: [
-    { id: "blue", kind: "player" },
-    { id: "red", kind: "player" },
-    { id: "town", kind: "nonPlayer" },
+    { id: "blue", kind: "player", resourcesTrack: null },
+    { id: "red", kind: "player", resourcesTrack: null },
+    { id: "town", kind: "nonPlayer", resourcesTrack: null },
   ],
   pieces: [
     { id: "soldier", faction: "blue", count: 5, states: [], placedAs: null, startPool: "available", countsForControl: true },
@@ -34,7 +34,7 @@ const ruleset: Ruleset = {
   parameters: {},
   victory: { scores: {}, harmCount: {}, totals: {} },
   harmMarkers: [],
-  thresholds: {},
+  scenarios: {},
 };
 
 describe("emptyState", () => {
@@ -123,5 +123,64 @@ describe("emptyState", () => {
   it("gives the same hash for the same inputs and a new hash for a new seed", () => {
     expect(canonicalHash(emptyState(ruleset, "s0", 42))).toBe(canonicalHash(state));
     expect(canonicalHash(emptyState(ruleset, "s0", 43))).not.toBe(canonicalHash(state));
+  });
+});
+
+describe("setupState", () => {
+  const scenario: RulesetScenario = {
+    campaigns: ["C2", "C3"],
+    tracks: { cash: 5, mood: "tense" },
+    spaces: {
+      city: { level: -1, pieces: { soldier: { [SINGLE_FACE]: 2 }, rebel: { hidden: 1, shown: 1 } }, markers: { camp: { old: 1 } } },
+      camp: { level: null, pieces: { rebel: { hidden: 1 } }, markers: { harm: { [SINGLE_FACE]: 2 } } },
+    },
+    available: { soldier: 3, rebel: 1 },
+    outOfPlay: { militia: 3 },
+    flags: { law: true },
+    thresholds: { blue: 10 },
+  };
+  const rules: Ruleset = { ...ruleset, scenarios: { s1: scenario } };
+  const state = setupState(rules, "s1", 7);
+
+  it("keeps meta and generator from emptyState", () => {
+    expect(state.meta).toEqual(emptyState(rules, "s1", 7).meta);
+    expect(state.rng).toEqual(seedRng(7));
+  });
+
+  it("writes levels, pieces and markers of the listed spaces", () => {
+    expect(state.spaces["city"]).toEqual({
+      level: -1,
+      pieces: { soldier: { [SINGLE_FACE]: 2 }, militia: { [SINGLE_FACE]: 0 }, rebel: { hidden: 1, shown: 1 } },
+      markers: { harm: { [SINGLE_FACE]: 0 }, camp: { new: 0, old: 1 } },
+    });
+    expect(state.spaces["camp"]?.level).toBeNull();
+    expect(state.spaces["camp"]?.pieces["rebel"]).toEqual({ hidden: 1, shown: 0 });
+  });
+
+  it("sets pools from the scenario, 0 when not listed, and marker supply to count minus the map", () => {
+    expect(state.pools).toEqual({
+      soldier: { available: 3, outOfPlay: 0 },
+      militia: { available: 0, outOfPlay: 3 },
+      rebel: { available: 1, outOfPlay: 0 },
+    });
+    expect(state.markerPools).toEqual({ harm: 4, camp: 1 });
+  });
+
+  it("sets tracks, flags and the first campaign", () => {
+    expect(state.tracks).toEqual({ cash: 5, mood: "tense" });
+    expect(state.flags).toEqual({ law: true });
+    expect(state.turn.campaign).toBe("C2");
+  });
+
+  it("keeps the empty value of a track or space the scenario does not list", () => {
+    const bare: Ruleset = { ...ruleset, scenarios: { s1: { ...scenario, tracks: {}, spaces: {} } } };
+    const empty = emptyState(bare, "s1", 7);
+    const set = setupState(bare, "s1", 7);
+    expect(set.tracks).toEqual(empty.tracks);
+    expect(set.spaces).toEqual(empty.spaces);
+  });
+
+  it("rejects an unknown scenario", () => {
+    expect(() => setupState(rules, "nope", 7)).toThrow('Unknown scenario "nope"');
   });
 });

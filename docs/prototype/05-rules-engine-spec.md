@@ -12,7 +12,7 @@ The engine is one pure function family:
 4. `apply(ruleset, state, command) -> Transition`
 5. `derive(ruleset, state) -> DerivedView` (Control, totals, scores, Harm counts, margins)
 
-`Transition = { state, logEntries[], pending: Decision | null }`.
+`Transition = { state, stateHash, logEntries[], pending: Decision | null }`. `apply` returns `{ ok: true, validation, transition }` or `{ ok: false, validation }` (DEC-44, `sim/src/engine/index.ts`).
 
 Rules:
 

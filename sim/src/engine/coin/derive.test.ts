@@ -57,7 +57,7 @@ describe("control", () => {
   it("needs more than all other factions combined when there are three", () => {
     const rules: Ruleset = {
       ...ruleset,
-      factions: [...ruleset.factions, { id: "green", kind: "player" }],
+      factions: [...ruleset.factions, { id: "green", kind: "player", resourcesTrack: null }],
       pieces: [...ruleset.pieces, { id: "ranger", faction: "green", count: 4, states: [], placedAs: null, startPool: "available", countsForControl: true }],
     };
     const tie = board(rules, { city: { pieces: { soldier: { default: 2 }, rebel: { hidden: 1 }, ranger: { default: 1 } } } });

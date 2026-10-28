@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: planning complete. Toolchain skeleton exists in `sim/` (P0-01).
+Status: planning complete. Phase 1 built in `sim/`: IC-1 passes (11-build-plan.md s2). Only the 3 tiny cards of P1-06 wait for P2-05.
 
 ## Bottom line
 
