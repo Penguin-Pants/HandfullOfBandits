@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -157,6 +157,15 @@ describe("loadPackage on invalid packages", () => {
     const result = loadPackage(readPackageDir(dir));
     expect(result.ok).toBe(false);
     expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code: "V-SCHEMA", file: "scenarios", path: "" }));
+  });
+
+  it("reports a package file it cannot read and checks the other files", () => {
+    const dir = tempPackage("markers.yaml", null);
+    mkdirSync(join(dir, "markers.yaml"));
+    writeFileSync(join(dir, "pieces.yaml"), "- {id: x}\n");
+    const result = loadPackage(readPackageDir(dir));
+    expect(result.issues).toContainEqual(expect.objectContaining({ level: "error", code: "V-SCHEMA", file: "markers.yaml", path: "" }));
+    expect(result.issues).toContainEqual(expect.objectContaining({ code: "V-SCHEMA", file: "pieces.yaml", path: "0.faction" }));
   });
 
   it("treats a piece ID that names an Object property as a plain ID", () => {

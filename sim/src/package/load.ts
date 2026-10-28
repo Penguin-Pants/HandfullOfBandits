@@ -25,15 +25,17 @@ const READ_ROOT = new Set(CORE_FILES.map((file) => `${file}.yaml`));
 /** Root entries that are not read and need no warning. */
 const QUIET_ROOT = new Set([SCENARIO_DIR, "CHANGELOG.md"]);
 
+function readError(path: string, e: unknown): PackageIssue {
+  const code = (e as NodeJS.ErrnoException).code ?? "unknown error";
+  return { level: "error", code: "V-SCHEMA", file: path, path: "", id: null, message: `Cannot read this entry (${code}).` };
+}
+
 /** Sorted names in `dir`. An absent folder has none; any other read failure is an issue. */
 function entries(dir: string, path: string, issues: PackageIssue[]): string[] {
   try {
     return readdirSync(dir).sort();
   } catch (e) {
-    const code = (e as NodeJS.ErrnoException).code;
-    if (code !== "ENOENT") {
-      issues.push({ level: "error", code: "V-SCHEMA", file: path, path: "", id: null, message: `Cannot read this folder (${code ?? "unknown error"}).` });
-    }
+    if ((e as NodeJS.ErrnoException).code !== "ENOENT") issues.push(readError(path, e));
     return [];
   }
 }
@@ -53,13 +55,21 @@ export function readPackageDir(dir: string): RawPackage {
     issues.push({ level: "warning", code: "V-SCHEMA", file: path, path: "", id: null, message: "Not read. The loader reads only the core files and scenarios/*.yaml (DEC-40)." });
   }
   for (const path of paths) {
-    const doc = parseDocument(readFileSync(join(dir, ...path.split("/")), "utf8"));
+    let text: string;
+    try {
+      text = readFileSync(join(dir, ...path.split("/")), "utf8");
+    } catch (e) {
+      issues.push(readError(path, e));
+      continue;
+    }
+    const doc = parseDocument(text);
     const first = doc.errors[0];
     if (first === undefined) {
       files[path] = doc.toJS();
     } else {
-      issues.push({ level: "error", code: "V-SCHEMA", file: path, path: "", id: null, // First line only: the yaml message ends with a multi-line source excerpt.
-      message: `YAML error: ${(first.message.split("\n")[0] ?? "").replace(/:$/, "")}.` });
+      // First line only: the yaml message ends with a multi-line source excerpt.
+      const message = `YAML error: ${(first.message.split("\n")[0] ?? "").replace(/:$/, "")}.`;
+      issues.push({ level: "error", code: "V-SCHEMA", file: path, path: "", id: null, message });
     }
   }
   return { files, issues };
