@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a and P2-11 done.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 in progress: P2-01 to P2-10, IC-2a, P2-11 and P2-12 done.
 
 ## 1. How to use this plan
 
@@ -352,6 +352,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Tests:** T-DET, golden replay, T-FUZZ.
 - **Risks:** None.
 - **Out:** CLI command.
+- **Done:** `sim replay <file.json>` and `sim replay <sessionId> [--db]` (`sim/src/cli/replay.ts`) on the shared `engine/replay.ts` step replay (also used by the session service resume check; `store` lists the stored steps). `sim fuzz --seeds N` (`cli/fuzz.ts`) plays S0 with a seeded random policy over legal choices and reports failures with seed and commands. Tests `sim/test/p2-12.test.ts`: the IC-2a file replays "identical", a stored session replays, 50 fuzz seeds pass. Timing in 05 s11: apply mean 0.68 ms, max 5.50 ms.
 
 ### P2-13 UI shell, Home screen, package check screen
 

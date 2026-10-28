@@ -216,6 +216,8 @@ Every engine entry has its kind, the `stateSeq` it belongs to, rule and PA refs 
 
 ## 11. Performance target
 
-One command applies in under 50 ms on a normal laptop. A full campaign replay (about 400 commands) runs in under 10 seconds. Unverified assumption; P2-12 measures it.
+One command applies in under 50 ms on a normal laptop. A full campaign replay (about 400 commands) runs in under 10 seconds.
+
+Measured at P2-12 (`sim fuzz --seeds 50`, Node 24.22.1, Linux cloud container): 1,200 commands over 50 S0 games, apply mean 0.68 ms, max 5.50 ms. At that rate 400 commands replay in about 0.3 s. A full campaign has more pieces in play; remeasure in Phase 3c.
 
 Next step: read 06-playtest-data-model.md.

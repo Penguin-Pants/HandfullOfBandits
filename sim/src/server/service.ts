@@ -12,10 +12,11 @@ import { legalOps } from "../engine/coin/stop-rules.ts";
 import { canonicalJson } from "../engine/core/canonical.ts";
 import type { AnyCommand, GameState, JsonObject, JsonValue, LogEntry, Ruleset, ValidationResult } from "../engine/core/types.ts";
 import { createEngine } from "../engine/index.ts";
+import { replaySteps } from "../engine/replay.ts";
 import { loadPackage, packageContent, readPackageDir, type LoadResult } from "../package/load.ts";
 import type { PackageData, PackageIssue } from "../package/validate.ts";
 import type { Db } from "../store/migrate.ts";
-import { commitAction, listActions, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
+import { commitAction, listActions, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
 import { listAnnotations, saveAnnotation, type Anchor, type AnnotationRow } from "../store/repos/annotations.ts";
 import { listCategories, type CategoryRow } from "../store/repos/categories.ts";
 import { listCommands } from "../store/repos/commands.ts";
@@ -163,18 +164,8 @@ export class SessionService {
 
   /** Replay the session's committed actions; returns the first differing action ID or null (DEC-19). */
   replayCheck(row: SessionRow, ruleset: Ruleset): string | null {
-    const actions = listActions(this.db, row.current_branch_id).filter((a) => a.status !== "undone");
-    let state = this.engine.start(ruleset, row.scenario_id, row.seed);
-    if (state.stateHash !== actions[0]?.state_hash_after) return actions[0]?.action_id ?? "setup";
-    for (const action of actions.slice(1)) {
-      for (const c of listCommands(this.db, action.action_id)) {
-        const result = this.engine.apply(ruleset, state.state, JSON.parse(c.payload) as AnyCommand);
-        if (!result.ok) return action.action_id;
-        state = result.transition;
-      }
-      if (state.stateHash !== action.state_hash_after) return action.action_id;
-    }
-    return null;
+    const { startHash, steps } = storedSteps(this.db, row.current_branch_id);
+    return replaySteps(this.engine, ruleset, row.scenario_id, row.seed, startHash, steps)?.id ?? null;
   }
 
   validateCommand(sessionId: string, command: AnyCommand): ReturnType<typeof this.engine.validate> {

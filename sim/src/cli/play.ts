@@ -3,6 +3,7 @@
 import { legalOps } from "../engine/coin/stop-rules.ts";
 import { activeFaction } from "../engine/coin/sequence/ct.ts";
 import type { Engine } from "../engine/index.ts";
+import { replaySteps } from "../engine/replay.ts";
 import type { AnyCommand, GameState, JsonValue, Question, Ruleset } from "../engine/core/types.ts";
 
 /** Picks an answer for a question. `draw(n)` returns an integer in [0, n). */
@@ -90,15 +91,7 @@ export function playGame(engine: Engine, ruleset: Ruleset, scenario: string, see
 
 /** Replay a record; returns the first step whose hash differs, or null when identical. */
 export function replay(engine: Engine, ruleset: Ruleset, record: Pick<PlayRecord, "scenario" | "seed" | "commands" | "hashes">): { readonly step: number; readonly expected: string; readonly actual: string } | null {
-  const start = engine.start(ruleset, record.scenario, record.seed);
-  if (start.stateHash !== record.hashes[0]) return { step: 0, expected: record.hashes[0] ?? "", actual: start.stateHash };
-  let state = start.state;
-  for (const [i, command] of record.commands.entries()) {
-    const result = engine.apply(ruleset, state, command);
-    const actual = result.ok ? result.transition.stateHash : "rejected";
-    const expected = record.hashes[i + 1] ?? "";
-    if (actual !== expected) return { step: i + 1, expected, actual };
-    if (result.ok) state = result.transition.state;
-  }
-  return null;
+  const steps = record.commands.map((command, i) => ({ id: String(i + 1), commands: [command], hashAfter: record.hashes[i + 1] ?? "" }));
+  const diff = replaySteps(engine, ruleset, record.scenario, record.seed, record.hashes[0] ?? "", steps);
+  return diff === null ? null : { step: diff.id === "start" ? 0 : Number(diff.id), expected: diff.expected, actual: diff.actual };
 }
