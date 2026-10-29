@@ -60,6 +60,8 @@ export interface ForceView {
 export interface BoardView {
   readonly spaces: readonly SpaceView[];
   readonly forces: readonly ForceView[];
+  /** Support level IDs from most Opposition to most Support; level 0 is the middle one. */
+  readonly supportLevels: readonly string[];
   readonly links: readonly { readonly a: string; readonly b: string; readonly kind: string }[];
   readonly factions: readonly { readonly id: string; readonly name: string; readonly color: string }[];
   readonly status: {
@@ -139,6 +141,7 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
   return {
     spaces,
     forces,
+    supportLevels: levels,
     links: data.map.links.map((l) => ({ a: l.a, b: l.b, kind: l.kind })),
     factions: data.factions.map((f) => ({ id: f.id, name: f.name, color: factions.get(f.id)?.color ?? f.color })),
     status: {

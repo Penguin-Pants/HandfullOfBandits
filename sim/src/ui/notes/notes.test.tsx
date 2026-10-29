@@ -2,6 +2,9 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CategoryRow, NoteInput } from "../api.ts";
+import { turnOf } from "../../../test/board.ts";
+import { kurdish } from "../../../test/kurdish-package.ts";
+import { boardView } from "../../server/view.ts";
 import { HistoryDrawer } from "../history/HistoryDrawer.tsx";
 import { defaultAnchor, hashCategories } from "./anchor.ts";
 import { EndSession } from "./EndSession.tsx";
@@ -95,9 +98,11 @@ describe("EndSession (T-UI-06)", () => {
 
 describe("HistoryDrawer", () => {
   it("lists actions with entry text and note counts, undone struck through", () => {
-    const action = { action_id: "S-A2", summary: "Pass by pkk", status: "undone" } as never;
-    render(<HistoryDrawer items={[{ action, entries: [{ entry_id: "S-A2-E2", kind: "EffectApplied", text: "adjustTrack: delta 1." } as never], notes: 2 }]} />);
-    expect(screen.getByText("adjustTrack: delta 1.")).toBeTruthy();
+    const action = { action_id: "S-A2", summary: "Pass by pkk", status: "undone", faction: "pkk", box: "pass", phase: "card" } as never;
+    const entry = { entry_id: "S-A2-E2", kind: "EffectApplied", rule_ref: "05 s3.2", assumption_ref: null, data: JSON.stringify({ effect: "adjustTrack", track: "resources.pkk", before: 5, after: 6, lost: 0 }), cause: null, cardTitle: null } as never;
+    render(<HistoryDrawer items={[{ action, entries: [entry], notes: 2 }]} view={boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"))} />);
+    expect(screen.getByText("PKK Resources rose by 1 (5 → 6).")).toBeTruthy();
+    expect(screen.getByText(/PKK passed/)).toBeTruthy();
     expect(screen.getByText(/2 notes/)).toBeTruthy();
     expect(screen.getByText("S-A2").closest("li")?.getAttribute("style")).toMatch(/line-through/);
   });

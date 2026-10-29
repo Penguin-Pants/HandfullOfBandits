@@ -16,6 +16,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@radix-ui/react-tooltip": "1.4.1",
     "better-sqlite3": "13.0.3",
     "fastify": "5.12.7",
     "react": "19.3.1",

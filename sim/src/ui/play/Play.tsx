@@ -4,6 +4,8 @@ import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalC
 import { createFocusStore } from "../focus-store.ts";
 import { Help } from "../help/Help.tsx";
 import { HistoryDrawer } from "../history/HistoryDrawer.tsx";
+import { LogLines } from "../log/LogLines.tsx";
+import { actionTitle } from "../log/plain.ts";
 import { defaultAnchor } from "../notes/anchor.ts";
 import { EndSession } from "../notes/EndSession.tsx";
 import { NoteBar } from "../notes/NoteBar.tsx";
@@ -30,15 +32,12 @@ export function changedSpaces(before: BoardView, after: BoardView): string[] {
 }
 
 /** What the last committed action did, from its log entries. */
-function LastAction({ item }: { readonly item: HistoryItem | undefined }) {
+function LastAction({ item, view }: { readonly item: HistoryItem | undefined; readonly view: BoardView }) {
   if (item === undefined) return null;
-  const lines = item.entries.filter((e) => e.kind !== "ValidationPassed" && e.text !== "");
   return (
     <section className="panel last-action" aria-label="Last action">
-      <h3>Last action: {item.action.summary}</h3>
-      <ul>
-        {lines.slice(0, 12).map((e) => <li key={e.entry_id}>{e.text}</li>)}
-      </ul>
+      <h3>Last action: {actionTitle(item.action, view)}</h3>
+      <LogLines item={item} view={view} playerOnly limit={12} />
     </section>
   );
 }
@@ -146,7 +145,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
         </div>
         <aside className="side">
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
-          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} />
+          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} />
           {view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={selected} onCommit={(c) => void commit(c)} />
           ) : (
@@ -182,7 +181,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
           return annotationId;
         }}
       />
-      {showHistory && <HistoryDrawer items={history} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />}
+      {showHistory && <HistoryDrawer items={history} view={view} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />}
     </div>
   );
 }
