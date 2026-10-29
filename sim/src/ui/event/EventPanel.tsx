@@ -1,7 +1,7 @@
 // Event panel (08 s3; 05 s5): both sides with owner and text; Execute validates, then asks each
 // open question inline (Decisions, 08 s3.3) until the command is legal. Every answer is a click:
 // options, counts, spaces, and a free action's plan built on the map (UC-5).
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ActionForm, Api, AnyCommand, BoardView, Question } from "../api.ts";
 import { words } from "../common/names.ts";
 import { PlanForm } from "../faction/PlanForm.tsx";
@@ -29,17 +29,6 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
   const card = view.status.card;
   const [pending, setPending] = useState<{ side: string; answers: unknown[]; question: Question | null; error: string | null } | null>(null);
   const [picks, setPicks] = useState<string[]>([]);
-  const freeAction = pending?.question?.kind === "plan" ? pending.question : null;
-  useEffect(() => {
-    if (freeAction?.action === undefined) {
-      onFreeAction?.(false);
-      return;
-    }
-    const sa = freeAction.sa;
-    // The free action gets its own empty plan; the Faction panel's draft stays as it was.
-    onFreeAction?.(true);
-    dispatch({ type: "modes", op: dragMode(formOf(forms, freeAction.action).fields, freeAction.action), sa: sa === undefined ? null : dragMode(formOf(forms, sa).fields, sa) });
-  }, [freeAction?.action, freeAction?.sa]);
   if (card === null) return null;
 
   const run = async (side: string, answers: unknown[]): Promise<void> => {
@@ -48,12 +37,28 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
     const result = await api.validate(sessionId, command);
     if (result.ok) {
       setPending(null);
+      onFreeAction?.(false);
       onCommit(command);
       return;
     }
     const v = result.violations[0];
+    const question = v?.question ?? null;
     setPicks([]);
-    setPending({ side, answers, question: v?.question ?? null, error: v?.question === undefined ? (v?.message ?? "Not legal.") : null });
+    setPending({ side, answers, question, error: question === null ? (v?.message ?? "Not legal.") : null });
+    handOff(question);
+  };
+  /** Hand the map to a free-action plan in the same step that shows its question, so no map
+   * click can land between the two. The same question asked again keeps its draft. */
+  const handOff = (question: Question | null): void => {
+    if (question?.kind !== "plan" || question.action === undefined) {
+      onFreeAction?.(false);
+      return;
+    }
+    const before = pending?.question;
+    if (before?.kind === "plan" && before.action === question.action && before.sa === question.sa) return;
+    onFreeAction?.(true);
+    const sa = question.sa;
+    dispatch({ type: "modes", op: dragMode(formOf(forms, question.action).fields, question.action), sa: sa === undefined ? null : dragMode(formOf(forms, sa).fields, sa) });
   };
   const answer = (value: unknown): void => {
     if (pending !== null) void run(pending.side, [...pending.answers, value]);
