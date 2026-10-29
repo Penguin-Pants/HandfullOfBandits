@@ -53,6 +53,14 @@ describe("planReducer", () => {
     expect(arrowsOf(plan)).toEqual([]);
   });
 
+  it("a change between drag modes drops the moves built for the old mode (Garrison to Sweep)", () => {
+    const route = run({ type: "modes", op: "route", sa: null }, { type: "click", id: "botan", add: false }, { type: "drag", from: "hakkari", to: "van-bitlis" });
+    const sweep = planReducer(route, { type: "modes", op: "into", sa: null });
+    expect(sweep.op.locations).toEqual(["botan"]);
+    expect(sweep.op.moves).toEqual({});
+    expect(arrowsOf(sweep)).toEqual([]);
+  });
+
   it("Garrison drags keep every route under the one activation space", () => {
     const plan = run({ type: "modes", op: "route", sa: null }, { type: "drag", from: "dersim", to: "botan" }, { type: "drag", from: "agri", to: "hakkari" });
     expect(plan.op.locations).toEqual(["botan"]);

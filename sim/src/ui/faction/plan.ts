@@ -75,9 +75,10 @@ export function planReducer(state: PlanState, event: PlanEvent): PlanState {
       return { ...state, [state.target]: drag(state[state.target], event.from, event.to, state.modes[state.target]) };
     case "modes": {
       if (state.modes.op === event.op && state.modes.sa === event.sa) return state;
-      // A part whose action moves nothing keeps its spaces but no moves (they would not be sent).
-      const still = (p: SidePlan, mode: DragMode): SidePlan => (mode === null ? { ...p, moves: {} } : p);
-      return { ...state, modes: { op: event.op, sa: event.sa }, op: still(state.op, event.op), sa: still(state.sa, event.sa) };
+      // Moves follow the drag mode they were built for (a Garrison route has a `to` that Sweep or
+      // March ignore), so a part whose mode changes keeps its spaces but drops its moves.
+      const keep = (p: SidePlan, from: DragMode, to: DragMode): SidePlan => (from === to ? p : { ...p, moves: {} });
+      return { ...state, modes: { op: event.op, sa: event.sa }, op: keep(state.op, state.modes.op, event.op), sa: keep(state.sa, state.modes.sa, event.sa) };
     }
     case "clear":
       return { ...state, target: "op", [event.side]: EMPTY };
