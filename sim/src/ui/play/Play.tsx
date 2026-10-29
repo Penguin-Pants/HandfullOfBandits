@@ -4,6 +4,8 @@ import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalC
 import { createFocusStore } from "../focus-store.ts";
 import { Help } from "../help/Help.tsx";
 import { HistoryDrawer } from "../history/HistoryDrawer.tsx";
+import { LogLines } from "../log/LogLines.tsx";
+import { actionTitle } from "../log/plain.ts";
 import { defaultAnchor } from "../notes/anchor.ts";
 import { EndSession } from "../notes/EndSession.tsx";
 import { NoteBar } from "../notes/NoteBar.tsx";
@@ -30,15 +32,12 @@ export function changedSpaces(before: BoardView, after: BoardView): string[] {
 }
 
 /** What the last committed action did, from its log entries. */
-function LastAction({ item }: { readonly item: HistoryItem | undefined }) {
+function LastAction({ item, view }: { readonly item: HistoryItem | undefined; readonly view: BoardView }) {
   if (item === undefined) return null;
-  const lines = item.entries.filter((e) => e.kind !== "ValidationPassed" && e.text !== "");
   return (
     <section className="panel last-action" aria-label="Last action">
-      <h3>Last action: {item.action.summary}</h3>
-      <ul>
-        {lines.slice(0, 12).map((e) => <li key={e.entry_id}>{e.text}</li>)}
-      </ul>
+      <h3>Last action: {actionTitle(item.action, view)}</h3>
+      <LogLines item={item} view={view} playerOnly limit={12} />
     </section>
   );
 }
@@ -134,27 +133,37 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
   };
   const detail = view.spaces.find((s) => s.id === selected.at(-1));
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
+  // One view (UC-3): status on top, map with forces below it on the left, a right column that
+  // scrolls inside itself, note bar at the bottom. Help, History and End session overlay.
   return (
-    <div className="screen">
+    <div className="screen play-screen">
       <StatusBar view={view} />
-      {showHelp && <Help onClose={() => { setShowHelp(false); }} />}
-      {error !== null && <p className="bad">{error}</p>}
-      <div className="play">
-        <div className="panel">
-          <Board view={view} selected={selected} onSelect={select} changed={changed} />
-          <Legend view={view} />
+      {showHelp && (
+        <div className="overlay">
+          <Help onClose={() => { setShowHelp(false); }} />
         </div>
-        <aside className="side">
+      )}
+      <div className="play">
+        <div className="play-main">
+          {error !== null && <p className="bad">{error}</p>}
+          <div className="panel map-panel">
+            <Board view={view} selected={selected} onSelect={select} changed={changed} />
+            <Legend view={view} />
+          </div>
+          <div className="forces-row">
+            <Forces view={view} />
+          </div>
+        </div>
+        <aside className="side" aria-label="Side panel">
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
-          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} />
           {view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={selected} onCommit={(c) => void commit(c)} />
           ) : (
             <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} />
           )}
           {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} legal={legal} selected={selected} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
+          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} />
           {detail !== undefined && <SpaceDetail space={detail} />}
-          <Forces view={view} />
           <div className="row">
             <button type="button" onClick={() => { setShowHelp(!showHelp); }}>
               Help (?)
@@ -171,7 +180,11 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
           </div>
         </aside>
       </div>
-      {ending && <EndSession onEnd={(d) => void end(d)} onCancel={() => { setEnding(false); }} />}
+      {ending && (
+        <div className="overlay">
+          <EndSession onEnd={(d) => void end(d)} onCancel={() => { setEnding(false); }} />
+        </div>
+      )}
       <NoteBar
         categories={categories}
         anchor={anchor}
@@ -182,7 +195,11 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
           return annotationId;
         }}
       />
-      {showHistory && <HistoryDrawer items={history} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />}
+      {showHistory && (
+        <div className="overlay">
+          <HistoryDrawer items={history} view={view} onClose={() => { setShowHistory(false); }} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />
+        </div>
+      )}
     </div>
   );
 }

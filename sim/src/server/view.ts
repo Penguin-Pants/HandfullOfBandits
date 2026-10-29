@@ -60,6 +60,8 @@ export interface ForceView {
 export interface BoardView {
   readonly spaces: readonly SpaceView[];
   readonly forces: readonly ForceView[];
+  /** Support level IDs from most Opposition to most Support; level 0 is the middle one. */
+  readonly supportLevels: readonly string[];
   readonly links: readonly { readonly a: string; readonly b: string; readonly kind: string }[];
   readonly factions: readonly { readonly id: string; readonly name: string; readonly color: string }[];
   readonly status: {
@@ -80,7 +82,8 @@ export interface BoardView {
     readonly firstEligible: string | null;
     readonly secondEligible: string | null;
     readonly boxes: Readonly<Record<string, string | null>>;
-    readonly tracks: readonly { readonly id: string; readonly display: string; readonly value: string | number }[];
+    /** Tracks with their range (numeric) or steps (ordinal), for the status pills (R4). */
+    readonly tracks: readonly { readonly id: string; readonly display: string; readonly value: string | number; readonly min?: number; readonly max?: number; readonly steps?: readonly string[] }[];
     readonly scores: Readonly<Record<string, number>>;
     readonly thresholds: Readonly<Record<string, number>>;
     readonly margins: Readonly<Record<string, number>>;
@@ -139,6 +142,7 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
   return {
     spaces,
     forces,
+    supportLevels: levels,
     links: data.map.links.map((l) => ({ a: l.a, b: l.b, kind: l.kind })),
     factions: data.factions.map((f) => ({ id: f.id, name: f.name, color: factions.get(f.id)?.color ?? f.color })),
     status: {
@@ -156,7 +160,10 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
       firstEligible: state.initiative.firstEligible,
       secondEligible: state.initiative.secondEligible,
       boxes: state.initiative.boxes,
-      tracks: data.tracks.map((t) => ({ id: t.id, display: t.display, value: state.tracks[t.id] ?? "" })),
+      tracks: data.tracks.map((t) => ({
+        id: t.id, display: t.display, value: state.tracks[t.id] ?? "",
+        ...(t.kind === "numeric" ? { min: t.min, max: t.max } : { steps: t.steps }),
+      })),
       scores: view.scores,
       thresholds: ruleset.scenarios[state.meta.scenarioId]?.thresholds ?? {},
       margins: view.margins,

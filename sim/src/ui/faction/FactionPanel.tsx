@@ -2,6 +2,7 @@
 // with board locations, live validation, preview, commit with Enter.
 import { useEffect, useRef, useState } from "react";
 import type { Api, AnyCommand, FormField, LegalChoices, ValidationResult } from "../api.ts";
+import { words } from "../common/names.ts";
 import { perLocation, toCommand, type Draft, type Values } from "./plan.ts";
 
 export interface FactionPanelProps {
@@ -15,7 +16,6 @@ export interface FactionPanelProps {
 }
 
 const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
-const LABEL: Readonly<Record<string, string>> = { event: "Event", limitedOp: "Limited Op", opOnly: "Op Only", opSa: "Op + SA", pass: "Pass" };
 
 /** One row of form fields for one location (op, SA or sub-action). */
 function Fields({ fields, values, onChange }: { fields: readonly FormField[]; values: Values; onChange: (key: string, value: string) => void }) {
@@ -87,11 +87,16 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     setSubValues({});
   };
   const panel = useRef<HTMLElement>(null);
+  // The key listener is registered once and reads the latest render through this ref, so a key
+  // pressed right after a validation result arrives never sees an older plan.
+  const latest = useRef({ command, result, onCommit, clear });
+  latest.current = { command, result, onCommit, clear };
   // Enter commits a valid plan and Esc clears it, anywhere on the page except the note bar.
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       const target = e.target instanceof Element ? e.target : null;
       if (target?.tagName === "TEXTAREA") return;
+      const { command, result, onCommit, clear } = latest.current;
       if (e.key === "Escape") clear();
       // Enter commits only from the page itself or a text field of this panel. Buttons, map spaces,
       // dropdowns, checkboxes and other panels keep Enter for their own action.
@@ -105,7 +110,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     };
     window.addEventListener("keydown", onKey);
     return () => { window.removeEventListener("keydown", onKey); };
-  });
+  }, []);
   const pickBox = (b: string): void => {
     if (b === "pass") onCommit({ type: "Pass", faction });
     else if (b !== "event") setBox(b);
@@ -114,7 +119,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
   return (
     <section ref={panel} className="panel" aria-label="Faction panel">
       <h3>
-        {faction} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
+        {words(faction)} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
       </h3>
       <p className="hint" aria-live="polite">
         {box === null
@@ -131,19 +136,19 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
         {boxes.map((b) => {
           const here = Object.entries(legal.placed ?? {}).filter(([, at]) => at === b.box).map(([f]) => f);
           return (
-            <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}`} aria-label={`${LABEL[b.box] ?? b.box} box`}>
+            <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}`} aria-label={`${words(b.box)} box`}>
               <button type="button" disabled={!b.allowed || b.box === "event"} title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")} aria-pressed={box === b.box} onClick={() => { pickBox(b.box); }}>
-                {LABEL[b.box] ?? b.box}
+                {words(b.box)}
               </button>
               {here.map((f) => (
-                <span key={f} className="elig-cylinder">{f}</span>
+                <span key={f} className="elig-cylinder">{words(f)}</span>
               ))}
               {b.allowed && b.otherMay != null && (
                 <span className="elig-note">
-                  Then {legal.other}: {b.otherMay.map((o) => LABEL[o] ?? o).join(", ")}
+                  Then {words(legal.other ?? "")}: {b.otherMay.map(words).join(", ")}
                 </span>
               )}
-              {b.allowed && b.nextFirst != null && <span className="elig-note">Next card 1st: {b.nextFirst}</span>}
+              {b.allowed && b.nextFirst != null && <span className="elig-note">Next card 1st: {words(b.nextFirst)}</span>}
               {!b.allowed && <span className="elig-note">Closed</span>}
             </div>
           );

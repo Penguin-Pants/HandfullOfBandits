@@ -30,7 +30,8 @@ describe("boardView", () => {
   it("marks hidden markers, and fills the status bar from the server", () => {
     expect(view.spaces.find((s) => s.id === "dersim")?.markers).toEqual([{ marker: "covert", side: "default", count: 1, hidden: true }]);
     expect(view.status).toMatchObject({ campaign: "C1", scores: { state: 21, pkk: 4 }, thresholds: { state: 49, pkk: 30 }, margins: { state: -28, pkk: -26 }, harmLimit: 6, active: "pkk" });
-    expect(view.status.tracks.find((t) => t.id === "legitimacy")).toEqual({ id: "legitimacy", display: "Legitimacy", value: 10 });
+    expect(view.status.tracks.find((t) => t.id === "legitimacy")).toEqual({ id: "legitimacy", display: "Legitimacy", value: 10, min: 0, max: 20 });
+    expect(view.status.tracks.find((t) => t.id === "ceasefire")?.steps).toEqual(["none", "declared", "reciprocalRestraint", "talks"]);
     expect(view.links).toHaveLength(25);
   });
 });

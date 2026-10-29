@@ -27,6 +27,7 @@ import { createSession, getSession, type SessionRow } from "../store/repos/sessi
 import { loadState } from "../store/repos/states.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { codeFingerprint } from "./fingerprint.ts";
+import { cardTitle, causeOf, type Cause } from "./cause.ts";
 import { actionForms } from "./forms.ts";
 import { filterRows, reviewRow, type ReviewFilter, type ReviewRow } from "./review.ts";
 import { undoLast, type UndoResult } from "./undo.ts";
@@ -36,6 +37,9 @@ import { boardView, type BoardView } from "./view.ts";
 export const APP_VERSION = "0.1.0";
 
 /** A request the service refuses; the HTTP layer maps `status`. */
+/** A stored log entry with what caused it and the title of the card it names (plain log, R1). */
+export type HistoryEntry = LogEntryRow & { readonly cause: Cause | null; readonly cardTitle: string | null };
+
 export class ServiceError extends Error {
   readonly status: number;
   readonly detail: unknown;
@@ -247,10 +251,11 @@ export class SessionService {
     return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions } as unknown as JsonValue;
   }
 
-  history(sessionId: string): { action: ActionRow; entries: LogEntryRow[]; notes: number }[] {
-    const { session } = this.session(sessionId);
+  history(sessionId: string): { action: ActionRow; entries: HistoryEntry[]; notes: number }[] {
+    const { session, ruleset } = this.session(sessionId);
     const notes = listAnnotations(this.db, sessionId);
-    return listActions(this.db, session.current_branch_id).map((action) => ({ action, entries: listEntries(this.db, action.action_id), notes: notes.filter((n) => n.action_id === action.action_id).length }));
+    const enrich = (e: LogEntryRow): HistoryEntry => ({ ...e, cause: causeOf(ruleset, e.rule_ref), cardTitle: cardTitle(ruleset, (JSON.parse(e.data) as Record<string, unknown>)["card"]) });
+    return listActions(this.db, session.current_branch_id).map((action) => ({ action, entries: listEntries(this.db, action.action_id).map(enrich), notes: notes.filter((n) => n.action_id === action.action_id).length }));
   }
 
   /** A state's board view in a session's rules (08 s2 state viewer). */
