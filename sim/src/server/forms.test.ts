@@ -18,6 +18,13 @@ describe("action summaries match the engine", () => {
   it("Extort: host boxes also pay (extort.ts)", () => {
     expect(summary("pkk.extort")).toMatch(/external box whose host is Host or Tolerant/);
   });
+  it("Train: Guards and a new Base need a Mountain or Plain space with State Control (train.ts)", () => {
+    expect(summary("state.train")).toMatch(/Mountain or Plain space with State Control and Police, place up to 2 Village Guards/);
+    expect(summary("state.train")).toMatch(/Mountain or Plain space with State Control, replace 2 Police with 1 State Base/);
+  });
+  it("Strike Collaborators: at most 2 Guards in total (strike-collaborators.ts)", () => {
+    expect(summary("pkk.strike-collaborators")).toMatch(/up to 2 Guards in total/);
+  });
   it("every action has a summary", () => {
     for (const f of actionForms) expect(f.summary.length).toBeGreaterThan(20);
   });
