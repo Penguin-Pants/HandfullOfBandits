@@ -18,7 +18,7 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit 
   const [picks, setPicks] = useState<string[]>([]);
   const [planText, setPlanText] = useState("");
   const [planError, setPlanError] = useState<string | null>(null);
-  if (card === null) return <section className="panel">No card.</section>;
+  if (card === null) return null;
 
   const run = async (side: string, answers: unknown[]): Promise<void> => {
     if (faction === null) return;
