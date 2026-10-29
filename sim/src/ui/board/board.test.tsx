@@ -8,7 +8,7 @@ import { Forces } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 import { setMarkers, setPieces } from "../../../test/board.ts";
 import { changedSpaces } from "../play/Play.tsx";
-import { Board, Legend, SpaceDetail } from "./Board.tsx";
+import { Board, Legend, SpaceDetail, spaceTooltip } from "./Board.tsx";
 import { isInset, regionCells, voronoi } from "./region.ts";
 
 // P2-14: the board draws every location from the server view model; selection and detail card.
@@ -123,5 +123,18 @@ describe("map markers", () => {
     expect(screen.getByLabelText("Coercion (like Terror) 2")).toBeTruthy();
     expect(screen.getByLabelText("Displacement old 1").textContent).toContain("old");
     expect(screen.getByLabelText("Leadership present 1").textContent).toContain("present");
+  });
+});
+
+describe("map tooltip", () => {
+  it("lists level, Control, pieces and markers on separate lines", () => {
+    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(turnOf("pkk"), "botan", "coercion", 1));
+    const botan = marked.spaces.find((s) => s.id === "botan");
+    if (botan === undefined) throw new Error("botan");
+    const lines = spaceTooltip(botan).split("\n");
+    expect(lines[0]).toBe("Botan · Pop 2 · mountain");
+    expect(lines[1]).toBe("Level: passiveOpposition · Control: none");
+    expect(lines[2]).toMatch(/^Pieces: .*guerrilla \(underground\)/);
+    expect(lines[3]).toBe("Markers: 1 coercion");
   });
 });

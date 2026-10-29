@@ -124,3 +124,9 @@ table.forces td:first-child, table.forces th:first-child { text-align: left; }
 .chip-code { font-size: 9px; font-weight: 700; fill: #fff; pointer-events: none; }
 .chip-count { font-size: 10px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 3px; }
 .chip-side { font-size: 9px; fill: var(--muted); paint-order: stroke; stroke: var(--cell); stroke-width: 3px; }
+.phase-guide { border-left: 4px solid var(--accent); padding: 4px 10px; margin: 8px 0; }
+.phase-guide p { margin: 4px 0; font-size: 13px; }
+.help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 14px; }
+@media (max-width: 900px) { .help-grid { grid-template-columns: 1fr; } }
+.help ol, .help ul { padding-left: 20px; margin: 4px 0 10px; }
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font: 12px ui-monospace, monospace; background: var(--bg); }

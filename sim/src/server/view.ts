@@ -1,5 +1,6 @@
 // Board and status view model (11 P2-14; 08 s3.1, s3.5). The server builds it from the package and
 // the state, so the UI draws without computing rules (DEC-04).
+import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { derive } from "../engine/coin/derive.ts";
 import { activeFaction } from "../engine/coin/sequence/ct.ts";
 import { param } from "../engine/core/params.ts";
@@ -73,6 +74,8 @@ export interface BoardView {
     /** Propaganda phase IDs and the open one (05 s6). */
     readonly propagandaPhases: readonly string[];
     readonly propagandaStep: number;
+    /** Emergency Rule steps the State may move to in the Legitimacy phase (07 s8.2). */
+    readonly emergencyMoves: readonly string[];
     readonly active: string | null;
     readonly firstEligible: string | null;
     readonly secondEligible: string | null;
@@ -148,6 +151,7 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
       playedCount: state.deck.played.length,
       propagandaPhases: ruleset.sequence.propagandaPhases,
       propagandaStep: state.turn.step,
+      emergencyMoves: emergencyMoves(ruleset, state),
       active: activeFaction(state),
       firstEligible: state.initiative.firstEligible,
       secondEligible: state.initiative.secondEligible,

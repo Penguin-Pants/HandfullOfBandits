@@ -3,6 +3,7 @@
 // Upkeep Guard removals) for the selected spaces.
 import { useState } from "react";
 import type { AnyCommand, BoardView, LegalChoices } from "../api.ts";
+import { guideOf } from "./phases.ts";
 
 export interface PropagandaPanelProps {
   readonly view: BoardView;
@@ -20,7 +21,6 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
   const { propagandaPhases, propagandaStep } = view.status;
   const phase = propagandaPhases[propagandaStep] ?? "";
   const [spend, setSpend] = useState<Record<string, Record<string, string>>>({});
-  const [step, setStep] = useState("");
   const keys = SPEND_KEYS[phase];
   const choose = (choice: unknown): void => { onCommit({ type: "PropagandaChoice", phase, choice }); };
   const spends = (): Record<string, Record<string, number>> =>
@@ -30,10 +30,17 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
       <ol>
         {propagandaPhases.map((p, i) => (
           <li key={p} style={{ fontWeight: i === propagandaStep ? 700 : 400 }} aria-current={i === propagandaStep ? "step" : undefined}>
-            {p}
+            {guideOf(p).title}
           </li>
         ))}
       </ol>
+      <div className="phase-guide" aria-label="Phase guide">
+        <h3>{guideOf(phase).title}</h3>
+        <p>{guideOf(phase).what}</p>
+        <p>
+          <strong>You:</strong> {guideOf(phase).you}
+        </p>
+      </div>
       {legal.violations?.map((v, i) => (
         <p key={i} className="bad">
           {v.message}
@@ -44,14 +51,14 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           Advance (Space)
         </button>
       </div>
-      {phase === "legitimacy" && (
-        <div className="row">
-          <label>
-            Emergency step <input value={step} onChange={(e) => { setStep(e.target.value); }} />
-          </label>
-          <button type="button" onClick={() => { choose({ emergencyStep: step }); }}>
-            Move
-          </button>
+      {phase === "legitimacy" && view.status.emergencyMoves.length > 0 && (
+        <div className="row" aria-label="Emergency Rule step">
+          <span>Move Emergency Rule to:</span>
+          {view.status.emergencyMoves.map((m) => (
+            <button key={m} type="button" onClick={() => { choose({ emergencyStep: m }); }}>
+              {m}
+            </button>
+          ))}
         </div>
       )}
       {phase === "upkeep" && (

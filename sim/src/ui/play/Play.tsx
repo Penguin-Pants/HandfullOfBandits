@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalChoices, SessionRow } from "../api.ts";
 import { createFocusStore } from "../focus-store.ts";
+import { Help } from "../help/Help.tsx";
 import { HistoryDrawer } from "../history/HistoryDrawer.tsx";
 import { defaultAnchor } from "../notes/anchor.ts";
 import { EndSession } from "../notes/EndSession.tsx";
@@ -53,6 +54,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [ending, setEnding] = useState(false);
   const [changed, setChanged] = useState<string[]>([]);
   /** Head on screen before a reload, to outline what the next action changed. */
@@ -93,6 +95,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
       const target = e.target as HTMLElement | null;
       if (target !== null && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
       if (e.key === "h" || e.key === "H") setShowHistory((v) => !v);
+      if (e.key === "?") setShowHelp((v) => !v);
       if (e.key === "z" && (e.ctrlKey || e.metaKey)) void undo();
       if (e.key === " " && legal?.advance === true) {
         e.preventDefault();
@@ -134,6 +137,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
   return (
     <div className="screen">
       <StatusBar view={view} />
+      {showHelp && <Help onClose={() => { setShowHelp(false); }} />}
       {error !== null && <p className="bad">{error}</p>}
       <div className="play">
         <div className="panel">
@@ -152,6 +156,9 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
           {detail !== undefined && <SpaceDetail space={detail} />}
           <Forces view={view} />
           <div className="row">
+            <button type="button" onClick={() => { setShowHelp(!showHelp); }}>
+              Help (?)
+            </button>
             <button type="button" onClick={() => { setShowHistory(!showHistory); }}>
               History (H)
             </button>

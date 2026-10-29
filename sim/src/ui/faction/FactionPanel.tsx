@@ -86,13 +86,28 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     setSubSpace("");
     setSubValues({});
   };
+  // Enter commits a valid plan and Esc clears it, anywhere on the page except the note bar.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      // A focused button already acts on Enter; the note bar textarea has its own keys.
+      if (["TEXTAREA", "BUTTON"].includes((e.target as HTMLElement | null)?.tagName ?? "")) return;
+      if (e.key === "Escape") clear();
+      if (e.key === "Enter" && command !== null && result?.ok === true) {
+        e.preventDefault();
+        onCommit(command);
+        clear();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("keydown", onKey); };
+  });
   const pickBox = (b: string): void => {
     if (b === "pass") onCommit({ type: "Pass", faction });
     else if (b !== "event") setBox(b);
   };
 
   return (
-    <section className="panel" aria-label="Faction panel" onKeyDown={(e) => { if (e.key === "Escape") clear(); }}>
+    <section className="panel" aria-label="Faction panel">
       <h3>
         {faction} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
       </h3>
