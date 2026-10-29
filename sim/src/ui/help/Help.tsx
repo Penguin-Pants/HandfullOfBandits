@@ -2,6 +2,7 @@
 export const KEYS: readonly (readonly [string, string])[] = [
   ["Space", "Reveal the first card, or Advance when nothing needs a choice"],
   ["Click / Shift-click", "Select a space / add a space to the selection"],
+  ["Drag", "From one space to another: move pieces (March, Sweep, Garrison, Air Mobility)"],
   ["Enter", "Commit the plan (Faction panel) or save a note (note bar)"],
   ["Esc", "Clear the plan or close the note bar"],
   ["N", "Write a note; Tab changes what it is attached to"],
@@ -31,8 +32,8 @@ export function Help({ onClose }: { readonly onClose: () => void }) {
           <h3>An Operation</h3>
           <ol>
             <li>Pick a box, then an Operation.</li>
-            <li>Click spaces on the map (Shift-click for more).</li>
-            <li>Fill in the fields per space. The plan is checked as you type.</li>
+            <li>Click spaces on the map (Shift-click for more). To move pieces, drag from the start space to the destination; each drag adds 1 piece.</li>
+            <li>Set counts with the − and + buttons and choices with their buttons. The plan is checked at each click.</li>
             <li>Check the preview, then Commit. Changed spaces get an amber outline.</li>
           </ol>
         </div>

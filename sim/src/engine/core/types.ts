@@ -372,6 +372,9 @@ export interface Question {
   readonly options: readonly string[];
   readonly min: number;
   readonly max: number;
+  /** Plan questions: the free action to plan, and the SA it carries, so the UI can build it. */
+  readonly action?: string;
+  readonly sa?: string;
 }
 
 export interface ValidationResult {

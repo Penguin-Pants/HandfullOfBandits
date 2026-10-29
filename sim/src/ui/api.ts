@@ -11,7 +11,7 @@ import type { AnyCommand, GameState, Question, ValidationResult, Violation } fro
 import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
 
-export type { AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
+export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
 export type { HistoryEntry, ReviewRow };
 export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
@@ -42,6 +42,8 @@ export interface LegalChoices {
    */
   readonly boxes?: readonly { readonly box: string; readonly allowed: boolean; readonly reason: string | null; readonly otherMay?: readonly string[] | null; readonly nextFirst?: string | null }[];
   readonly actions?: readonly ActionChoice[];
+  /** Plan forms of every action, for an Event's free action (UC-5). */
+  readonly forms?: readonly ActionForm[];
   readonly advance?: boolean;
   readonly violations?: readonly Violation[];
 }

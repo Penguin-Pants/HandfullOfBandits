@@ -63,7 +63,7 @@ Status: planning document. Wireframes are text sketches.
 
 1. Node positions come from `map.yaml` `layout`. No geographic art.
 2. Pieces show as flat SVG icons from `pieces.yaml` `shape` and `colorVariant` (04 s4.2), each with its count. Shapes are solid faction color. `emblem` draws on top, only in `emblemState` when set: an Underground Guerrilla is solid green, an Active one is green with the star in circle. Bases: heavy border.
-3. Click a node to select it. Shift-click adds to a multi-select (for plan locations).
+3. Click a node to select it. Shift-click adds to a multi-select (for plan locations). A drag from one node to another adds a move to the plan and draws an arrow with its piece count (UC-5). Plans never need typed text: counts use - and + steppers, choices use buttons.
 4. Selected node shows a detail card: all pieces with flip state, markers with sides, level, Control, Pop, terrain, tags, confidence note.
 5. Hidden markers show as "Covert (face down)". A view toggle hides them (Phase 4, GAP-O01).
 6. Vassal habits (DEC-47): right-click a node or piece for its legal actions, the same as the faction panel. Hover over a node for 700 ms shows its stack contents. Buttons use the Vassal COIN names "End Card Play", "Propaganda" and "Undo".

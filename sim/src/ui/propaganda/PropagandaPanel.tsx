@@ -1,9 +1,10 @@
 // Propaganda flow (08 s3.4): phase list with the open phase highlighted; Advance runs a phase with
 // no choice; choice phases take a small form (Emergency step, Civic Action and Agitation spends,
-// Upkeep Guard removals) for the selected spaces.
+// Upkeep Guard removals) for the selected spaces, set with - and + buttons (UC-5).
 import { useState } from "react";
 import type { AnyCommand, BoardView, LegalChoices } from "../api.ts";
 import { words } from "../common/names.ts";
+import { Stepper } from "../common/Stepper.tsx";
 import { guideOf } from "./phases.ts";
 
 export interface PropagandaPanelProps {
@@ -23,6 +24,8 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
   const phase = propagandaPhases[propagandaStep] ?? "";
   const [spend, setSpend] = useState<Record<string, Record<string, string>>>({});
   const keys = SPEND_KEYS[phase];
+  const name = (id: string): string => view.spaces.find((x) => x.id === id)?.name ?? words(id);
+  const set = (s: string, k: string, v: string): void => { setSpend({ ...spend, [s]: { ...spend[s], [k]: v } }); };
   const choose = (choice: unknown): void => { onCommit({ type: "PropagandaChoice", phase, choice }); };
   const spends = (): Record<string, Record<string, number>> =>
     Object.fromEntries(selected.map((s) => [s, Object.fromEntries(Object.entries(spend[s] ?? {}).filter(([, v]) => v !== "").map(([k, v]) => [k, Number(v)]))]));
@@ -65,9 +68,10 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
       {phase === "upkeep" && (
         <div aria-label="Upkeep">
           {selected.map((s) => (
-            <label key={s}>
-              {s} Guards to remove <input size={2} value={spend[s]?.["guards"] ?? "1"} onChange={(e) => { setSpend({ ...spend, [s]: { ...spend[s], guards: e.target.value } }); }} />
-            </label>
+            <div key={s} className="row">
+              <strong>{name(s)}</strong>
+              <Stepper label="Guards to remove" name={`${name(s)} Guards to remove`} value={spend[s]?.["guards"] ?? "1"} onChange={(v) => { set(s, "guards", v); }} />
+            </div>
           ))}
           <button type="button" disabled={selected.length === 0} onClick={() => { choose({ removeGuards: Object.fromEntries(selected.map((s) => [s, Number(spend[s]?.["guards"] ?? "1")])) }); }}>
             Remove Guards in selected spaces
@@ -78,11 +82,9 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
         <div aria-label="Spend">
           {selected.map((s) => (
             <div key={s} className="row">
-              <span>{s}</span>
+              <strong>{name(s)}</strong>
               {keys.map((k) => (
-                <label key={k}>
-                  {k} <input size={2} value={spend[s]?.[k] ?? ""} onChange={(e) => { setSpend({ ...spend, [s]: { ...spend[s], [k]: e.target.value } }); }} />
-                </label>
+                <Stepper key={k} label={words(k)} name={`${name(s)} ${words(k)}`} value={spend[s]?.[k] ?? ""} onChange={(v) => { set(s, k, v); }} />
               ))}
             </div>
           ))}

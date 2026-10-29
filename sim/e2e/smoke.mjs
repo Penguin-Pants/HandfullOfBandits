@@ -85,6 +85,23 @@ try {
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
   check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: cards, card text, Faction panel");
   await page.setViewportSize({ width: 1366, height: 768 });
+  // UC-5: a March is planned by a mouse drag on the map, never by typed text.
+  await page.getByRole("button", { name: "Limited Op" }).click();
+  await page.getByRole("button", { name: "March", exact: true }).click();
+  const centre = async (name) => {
+    const b = await page.locator("text.map-label", { hasText: name }).first().boundingBox();
+    return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+  };
+  const [from, to] = [await centre("Hakkari"), await centre("Botan")];
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(to.x, to.y, { steps: 8 });
+  await page.mouse.up();
+  await page.getByLabel("Move Hakkari to Botan", { exact: true }).waitFor();
+  await page.getByLabel("Preview").waitFor();
+  check((await page.locator("[aria-label='Planned moves'] line").count()) === 1, "March planned by a drag: move row, arrow and legal preview");
+  check((await page.locator("aside input, aside select, aside textarea").count()) === 0, "no text, number or list fields in the right column");
+  await page.getByRole("button", { name: "Clear (Esc)" }).click();
   await page.getByRole("button", { name: "Pass" }).last().click();
   await page.getByText("1st: PKK (Pass)", { exact: true }).waitFor();
   check(true, "one action committed (PKK Pass)");

@@ -145,7 +145,8 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   const { ctx } = run;
   const handler = actionHandlers[action];
   if (handler === undefined) ask(run, "unknownAction", `Unknown free action "${action}".`);
-  const value = answer(run, cursor, { kind: "plan", prompt: `Plan the free ${action} (or null to skip)`, options: [], min: 0, max: 1 });
+  const saId = asString(constraints["sa"]);
+  const value = answer(run, cursor, { kind: "plan", prompt: `Plan the free ${action} (or null to skip)`, options: [], min: 0, max: 1, action, ...(saId === null ? {} : { sa: saId }) });
   if (value === null) {
     ctx.log("EffectSkipped", { effect: "freeAction", action, reason: "declined" }, run.ruleRef);
     return;
@@ -153,7 +154,6 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   const plan = asObject(value);
   const part = plan === null ? null : readPart(plan);
   if (plan === null || part === null) ask(run, "badAnswer", `The free ${action} plan is not well formed.`);
-  const saId = asString(constraints["sa"]);
   const saPlan = asObject(plan["sa"]);
   const saPart = saPlan === null ? null : readPart(saPlan);
   for (const p of [part, saPart]) {

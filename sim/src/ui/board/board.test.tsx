@@ -169,3 +169,25 @@ describe("status pills (UC-2)", () => {
     expect(screen.getByLabelText("Mood").querySelector("[aria-current]")?.textContent).toBe("Very Tense");
   });
 });
+
+describe("map drag (UC-5)", () => {
+  it("a drag from one space to another reports the move; a press and release on one space does not", () => {
+    const onDrag = vi.fn();
+    render(<Board view={view} selected={[]} onSelect={vi.fn()} onDrag={onDrag} />);
+    const hakkari = screen.getByRole("button", { name: "Hakkari" });
+    const botan = screen.getByRole("button", { name: "Botan" });
+    fireEvent.pointerDown(hakkari, { button: 0 });
+    fireEvent.pointerUp(hakkari, { button: 0 });
+    expect(onDrag).not.toHaveBeenCalled();
+    fireEvent.pointerDown(hakkari, { button: 0 });
+    fireEvent.pointerUp(botan, { button: 0 });
+    expect(onDrag).toHaveBeenCalledWith("hakkari", "botan");
+  });
+
+  it("draws an arrow with the piece count for each planned move", () => {
+    render(<Board view={view} selected={[]} onSelect={vi.fn()} arrows={[{ from: "hakkari", to: "botan", count: 3 }]} />);
+    const moves = screen.getByLabelText("Planned moves");
+    expect(moves.querySelectorAll("line")).toHaveLength(1);
+    expect(moves.textContent).toBe("3");
+  });
+});

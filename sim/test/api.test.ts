@@ -82,6 +82,12 @@ describe("HTTP API (P2-11)", () => {
       headId = res.body.actionId;
       state = res.body.head.state;
       steps++;
+      if (steps === 1) {
+        // UC-5: forms for every action, so an Event's free action of the other faction can be planned.
+        const legal = (await call<{ faction: string; forms: { id: string }[] }>("GET", `/api/sessions/${sessionId}/legal`)).body;
+        expect(legal.faction).not.toBeNull();
+        expect(legal.forms.map((f) => f.id)).toEqual(expect.arrayContaining(["state.garrison", "pkk.march"]));
+      }
     }
     expect(state?.ended).not.toBeNull();
     const history = await call<{ action: { kind: string }; entries: { text: string }[] }[]>("GET", `/api/sessions/${sessionId}/history`);

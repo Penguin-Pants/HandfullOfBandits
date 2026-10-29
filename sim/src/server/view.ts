@@ -52,6 +52,8 @@ export interface ForceView {
   readonly shape: string;
   readonly colorVariant: string;
   readonly isBase: boolean;
+  /** Flip states (faces) of this piece type; empty: one face. */
+  readonly states: readonly string[];
   readonly onMap: number;
   readonly available: number;
   readonly outOfPlay: number;
@@ -134,7 +136,7 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
   });
   const card = state.deck.currentCard;
   const forces = data.pieces.map((p): ForceView => ({
-    piece: p.id, faction: p.faction, shape: p.shape, colorVariant: p.colorVariant ?? "base", isBase: p.isBase,
+    piece: p.id, faction: p.faction, shape: p.shape, colorVariant: p.colorVariant ?? "base", isBase: p.isBase, states: p.states ?? [],
     onMap: Object.values(state.spaces).reduce((sum, sp) => sum + Object.values(sp.pieces[p.id] ?? {}).reduce((a, n) => a + n, 0), 0),
     available: state.pools[p.id]?.available ?? 0,
     outOfPlay: state.pools[p.id]?.outOfPlay ?? 0,

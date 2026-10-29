@@ -1,5 +1,5 @@
 // Play screen (08 s3): status bar, board, event or Propaganda panel, faction panel.
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalChoices, SessionRow } from "../api.ts";
 import { createFocusStore } from "../focus-store.ts";
 import { Help } from "../help/Help.tsx";
@@ -13,6 +13,7 @@ import { Board, Legend, SpaceDetail } from "../board/Board.tsx";
 import { CardTable } from "../cards/CardTable.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
+import { arrowsOf, emptyPlans, plansReducer, type PlanEvent } from "../faction/plan.ts";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
@@ -46,7 +47,14 @@ function LastAction({ item, view }: { readonly item: HistoryItem | undefined; re
 export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
   const [data, setData] = useState<{ session: SessionRow; head: Head } | null>(null);
   const [legal, setLegal] = useState<LegalChoices | null>(null);
-  const [selected, setSelected] = useState<string[]>([]);
+  // The map-built plans (UC-5): one for the Faction panel, one for an Event's free action. Map
+  // clicks and drags build the active one.
+  const [plans, dispatch] = useReducer(plansReducer, emptyPlans);
+  const plan = plans[plans.active];
+  const toFaction = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "faction" }); }, []);
+  const toEvent = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "event" }); }, []);
+  /** The space last clicked, shown in the space detail. */
+  const [focused, setFocused] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const draft = useRef<AnyCommand | null>(null);
   const last = useRef<{ id: string | null; at: number | null }>({ id: null, at: null });
@@ -85,7 +93,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       const result = await api.submit(sessionId, command, data.head.actionId);
       last.current = { id: result.actionId, at: Date.now() };
       draft.current = null;
-      setSelected([]);
+      dispatch({ type: "resetAll" });
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -112,10 +120,11 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   if (data === null || legal === null) return <p className="screen">Loading…</p>;
   const view = data.head.view;
   const select = (id: string, add: boolean): void => {
-    const next = add ? (selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id]) : [id];
-    setSelected(next);
-    focusStore.set({ panel: "board", selectedSpace: next.at(-1) ?? null });
+    dispatch({ type: "click", id, add });
+    setFocused(id);
+    focusStore.set({ panel: "board", selectedSpace: id });
   };
+  const selected = plan[plan.target].locations;
   const anchor = (): ReturnType<typeof defaultAnchor> =>
     defaultAnchor({ lastActionId: last.current.id, lastActionAt: last.current.at, now: Date.now(), draft: draft.current, selectedSpace: focusStore.get().selectedSpace });
   const undo = async (): Promise<void> => {
@@ -135,7 +144,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     setEnding(false);
     onExit?.();
   };
-  const detail = view.spaces.find((s) => s.id === selected.at(-1));
+  const detail = view.spaces.find((s) => s.id === focused);
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
   // One view (UC-3, UC-4): status on top, map with the forces bar below it on the left, a right
   // column that scrolls inside itself, note bar at the bottom. Help, History and End session
@@ -169,7 +178,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
                 {mapOnly ? "Show panels (M)" : "Map only (M)"}
               </button>
             </div>
-            <Board view={view} selected={selected} onSelect={select} changed={changed} />
+            <Board view={view} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
             {showKey && (
               <div className="map-key">
                 <Legend view={view} />
@@ -181,11 +190,11 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
         <aside className="side" aria-label="Side panel" hidden={mapOnly}>
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           {view.status.phase === "propaganda" ? (
-            <PropagandaPanel view={view} legal={legal} selected={selected} onCommit={(c) => void commit(c)} />
+            <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
           ) : (
-            <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} />
+            <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
           )}
-          {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} legal={legal} selected={selected} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
+          {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} />
           {detail !== undefined && <SpaceDetail space={detail} />}
           <div className="row">
