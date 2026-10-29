@@ -1,15 +1,16 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useReducer } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { turnOf, withCard } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { mockApi } from "../../../test/ui/mock-api.ts";
 import { boardView } from "../../server/view.ts";
-import type { AnyCommand, LegalChoices, ValidationResult } from "../api.ts";
+import type { AnyCommand, Api, LegalChoices, ValidationResult } from "../api.ts";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { FactionPanel } from "./FactionPanel.tsx";
-import { parseMoves, toCommand } from "./plan.ts";
+import { emptyPlan, planReducer } from "./plan.ts";
 
 // P2-15 component tests with a mocked API: every illegal action shows a reason (T-UI-03), plan
 // building with live validation and preview, inline Decisions, Propaganda flow.
@@ -35,20 +36,26 @@ const legal: LegalChoices = {
 };
 const ok: ValidationResult = { ok: true, violations: [], warnings: [], preview: { effects: [{ type: "adjustTrack", track: "resources.pkk", delta: -1, ruleRef: "06 s4.1", assumptionRef: null }] } };
 
-describe("plan helpers", () => {
-  it("parses moves and builds a ChooseOperation command", () => {
-    expect(parseMoves("hakkari:2, botan:1:active")).toEqual([{ from: "hakkari", count: 2 }, { from: "botan", count: 1, face: "active" }]);
-    expect(parseMoves("x")).toBeNull();
-    expect(parseMoves("botan>hakkari:1, botan:1")).toEqual([{ from: "botan", to: "hakkari", count: 1 }, { from: "botan", count: 1 }]);
-    expect(parseMoves("botan>:1")).toBeNull();
-    const command = toCommand("pkk", { box: "limitedOp", op: "pkk.rally", locations: ["botan"], values: { botan: { option: "place" } }, sa: null, subAction: null }, legal.actions ?? []);
-    expect(command).toEqual({ type: "ChooseOperation", faction: "pkk", box: "limitedOp", plan: { op: "pkk.rally", locations: ["botan"], perLocation: { botan: { option: "place" } }, sa: null, subActions: [] } });
-  });
-});
+const pkkView = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));
+
+/** FactionPanel with the shared plan reducer and stand-ins for map clicks and drags (UC-5). */
+function Faction({ api, legal: choices = legal, onCommit = vi.fn(), onDraft = vi.fn() }: { api: Api; legal?: LegalChoices; onCommit?: (c: AnyCommand) => void; onDraft?: (c: AnyCommand | null) => void }) {
+  const [plan, dispatch] = useReducer(planReducer, emptyPlan);
+  return (
+    <>
+      <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
+      <button type="button" onClick={() => { dispatch({ type: "click", id: "dersim", add: false }); }}>map dersim</button>
+      <button type="button" onClick={() => { dispatch({ type: "drag", from: "hakkari", to: "botan" }); }}>drag hakkari botan</button>
+      <FactionPanel api={api} sessionId="S" view={pkkView} legal={choices} plan={plan} dispatch={dispatch} onCommit={onCommit} onDraft={onDraft} />
+    </>
+  );
+}
+const click = (name: string | RegExp): void => { fireEvent.click(screen.getByRole("button", { name })); };
+const lastPlan = (onDraft: ReturnType<typeof vi.fn>): Record<string, unknown> | undefined => (onDraft.mock.lastCall?.[0] as { plan: Record<string, unknown> } | undefined)?.plan;
 
 describe("FactionPanel", () => {
   it("shows a reason for every grey box and action (T-UI-03)", () => {
-    render(<FactionPanel api={mockApi()} sessionId="S" legal={legal} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
+    render(<Faction api={mockApi()} />);
     expect(screen.getByRole("button", { name: "Op Only" }).getAttribute("title")).toMatch(/Not open/);
     fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
     const coerce = screen.getByRole("button", { name: "Coerce" });
@@ -61,7 +68,7 @@ describe("FactionPanel", () => {
       { box: "opSa", allowed: true, reason: null, otherMay: ["event", "limitedOp", "pass"], nextFirst: "state" },
       { box: "limitedOp", allowed: true, reason: null, otherMay: ["opOnly", "opSa", "pass"], nextFirst: "pkk" },
     ] };
-    render(<FactionPanel api={mockApi()} sessionId="S" legal={track} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
+    render(<Faction api={mockApi()} legal={track} />);
     const opSa = screen.getByLabelText("Op + SA box").textContent;
     expect(opSa).toContain("Then State: Event, Limited Op, Pass");
     expect(opSa).toContain("Next card 1st: State");
@@ -73,13 +80,13 @@ describe("FactionPanel", () => {
       { box: "opSa", allowed: false, reason: "Not open", otherMay: null, nextFirst: null },
       { box: "event", allowed: true, reason: null, otherMay: null, nextFirst: null },
     ] };
-    render(<FactionPanel api={mockApi()} sessionId="S" legal={second} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
+    render(<Faction api={mockApi()} legal={second} />);
     expect(screen.getByLabelText("Op + SA box").textContent).toContain("PKK");
     expect(screen.getByLabelText("Op + SA box").textContent).toContain("Closed");
   });
 
   it("keeps an Op open in Op + SA, since a preceding SA may make it legal", () => {
-    render(<FactionPanel api={mockApi()} sessionId="S" legal={legal} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
+    render(<Faction api={mockApi()} />);
     fireEvent.click(screen.getByRole("button", { name: "Op + SA" }));
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Coerce" }).disabled).toBe(false);
     expect(screen.getByText("Coerce needs a Neutral or Support space.")).toBeTruthy();
@@ -88,82 +95,91 @@ describe("FactionPanel", () => {
   it("validates the plan live, previews effects and commits", async () => {
     const validate = vi.fn(() => Promise.resolve(ok));
     const onCommit = vi.fn();
-    render(<FactionPanel api={mockApi({ validate })} sessionId="S" legal={legal} selected={["botan"]} onCommit={onCommit} onDraft={vi.fn()} />);
-    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
-    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
-    fireEvent.change(screen.getByLabelText("Option"), { target: { value: "place" } });
+    render(<Faction api={mockApi({ validate })} onCommit={onCommit} />);
+    click("Limited Op");
+    click("Rally");
+    click("map botan");
+    click("Place");
     await waitFor(() => { expect(screen.getByLabelText("Preview").textContent).toMatch(/resources.pkk/); });
-    fireEvent.click(screen.getByRole("button", { name: "Commit (Enter)" }));
-    expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp" }));
+    click("Commit (Enter)");
+    expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp", plan: expect.objectContaining({ perLocation: { botan: { option: "place" } } }) as unknown }));
   });
 
-  it("puts sub-action spend and per-space SA fields into the plan", async () => {
+  it("builds sub-action spend and the SA's spaces and counts by clicks only (UC-5)", async () => {
     const onDraft = vi.fn();
-    render(<FactionPanel api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} sessionId="S" legal={legal} selected={["botan"]} onCommit={vi.fn()} onDraft={onDraft} />);
-    fireEvent.click(screen.getByRole("button", { name: "Op + SA" }));
-    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
-    fireEvent.change(screen.getByLabelText("agitate space"), { target: { value: "botan" } });
-    fireEvent.change(screen.getByLabelText("Shifts"), { target: { value: "1" } });
-    fireEvent.change(screen.getByLabelText("SA"), { target: { value: "pkk.strike-collaborators" } });
-    fireEvent.change(screen.getByLabelText("SA spaces"), { target: { value: "dersim" } });
-    fireEvent.change(screen.getByLabelText("Guards"), { target: { value: "2" } });
+    render(<Faction api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} onDraft={onDraft} />);
+    click("Op + SA");
+    click("Rally");
+    click("map botan");
+    click("Botan");
+    click("More Shifts");
+    click("Strike Collaborators");
+    click("Strike Collaborators spaces");
+    click("map dersim");
+    click("More Dersim Guards");
+    click("More Dersim Guards");
     await waitFor(() => {
-      const plan = (onDraft.mock.lastCall?.[0] as { plan: Record<string, unknown> } | undefined)?.plan;
+      const plan = lastPlan(onDraft);
+      expect(plan?.["locations"]).toEqual(["botan"]);
       expect(plan?.["sa"]).toEqual({ action: "pkk.strike-collaborators", locations: ["dersim"], perLocation: { dersim: { guards: 2 } }, timing: "before" });
       expect(plan?.["subActions"]).toEqual([{ action: "agitate", space: "botan", params: { shifts: 1 } }]);
     });
+    expect(document.querySelectorAll("input, textarea, select")).toHaveLength(0);
   });
 
   it("lets the player choose the timing of an SA with no fixed order", async () => {
     const onDraft = vi.fn();
-    render(<FactionPanel api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} sessionId="S" legal={legal} selected={["botan"]} onCommit={vi.fn()} onDraft={onDraft} />);
-    fireEvent.click(screen.getByRole("button", { name: "Op + SA" }));
-    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
-    fireEvent.change(screen.getByLabelText("SA"), { target: { value: "pkk.extort" } });
-    fireEvent.change(screen.getByLabelText("SA timing"), { target: { value: "before" } });
-    await waitFor(() => {
-      const plan = (onDraft.mock.lastCall?.[0] as { plan: { sa: { timing: string } | null } } | undefined)?.plan;
-      expect(plan?.sa?.timing).toBe("before");
-    });
+    render(<Faction api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} onDraft={onDraft} />);
+    click("Op + SA");
+    click("Rally");
+    click("Extort");
+    click("Before the Op");
+    await waitFor(() => { expect((lastPlan(onDraft)?.["sa"] as { timing: string } | null)?.timing).toBe("before"); });
+  });
+
+  it("a drag on the map adds a move with a piece count stepper (UC-5)", async () => {
+    const march: LegalChoices = { ...legal, actions: [{ id: "pkk.march", label: "March", cost: "1 per destination", fields: [{ key: "moves", label: "Moves", kind: "moves" }], subAction: null, kind: "op", ok: true, reason: null, locations: [] }] };
+    const onDraft = vi.fn();
+    render(<Faction api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} legal={march} onDraft={onDraft} />);
+    click("Limited Op");
+    click("March");
+    expect(screen.getByText(/drag on the map/)).toBeTruthy();
+    click("drag hakkari botan");
+    click("More Pieces Hakkari to Botan");
+    await waitFor(() => { expect(lastPlan(onDraft)?.["perLocation"]).toEqual({ botan: { moves: [{ from: "hakkari", count: 2 }] } }); });
+    click("Remove move Hakkari to Botan");
+    await waitFor(() => { expect(lastPlan(onDraft)?.["perLocation"]).toEqual({ botan: {} }); });
   });
 
   it("commits a valid plan with Enter and clears it with Esc", async () => {
     const onCommit = vi.fn();
-    render(<FactionPanel api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} sessionId="S" legal={legal} selected={["botan"]} onCommit={onCommit} onDraft={vi.fn()} />);
-    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
-    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
-    await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
+    render(<Faction api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} onCommit={onCommit} />);
+    const build = async (): Promise<void> => {
+      click("Limited Op");
+      click("Rally");
+      click("map botan");
+      await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
+    };
+    await build();
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
-    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
-    await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
-    const space = document.createElement("div");
-    space.setAttribute("role", "button");
-    document.body.append(space);
-    fireEvent.keyDown(space, { key: "Enter" });
-    fireEvent.keyDown(screen.getByLabelText("Option"), { key: "Enter" });
-    const box = document.createElement("input");
-    box.type = "checkbox";
-    document.body.append(box);
-    fireEvent.keyDown(box, { key: "Enter" });
-    box.remove();
+    await build();
+    fireEvent.keyDown(screen.getByRole("button", { name: "Place" }), { key: "Enter" });
+    fireEvent.keyDown(screen.getByRole("button", { name: "map botan" }), { key: "Enter" });
     expect(onCommit).not.toHaveBeenCalled();
     fireEvent.keyDown(screen.getByRole("button", { name: "Rally" }), { key: "Escape" });
     expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
-    space.remove();
-    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
-    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
-    await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
+    await build();
     fireEvent.keyDown(window, { key: "Enter" });
     expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp" }));
   });
 
   it("shows violations of an illegal plan with their rule", async () => {
     const validate = vi.fn(() => Promise.resolve({ ok: false, violations: [{ code: "rallyCity", message: "A City at Support cannot Rally (03 s2.1).", ruleRef: "06 s4.1", location: "botan" }], warnings: [], preview: { effects: [] } }));
-    render(<FactionPanel api={mockApi({ validate })} sessionId="S" legal={legal} selected={["botan"]} onCommit={vi.fn()} onDraft={vi.fn()} />);
-    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
-    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
+    render(<Faction api={mockApi({ validate })} />);
+    click("Limited Op");
+    click("Rally");
+    click("map botan");
     await waitFor(() => { expect(screen.getByText(/botan: A City at Support cannot Rally/)).toBeTruthy(); });
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Commit (Enter)" }).disabled).toBe(true);
   });
@@ -180,33 +196,42 @@ describe("EventPanel", () => {
       ),
     );
     const onCommit = vi.fn();
-    render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} />);
+    render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
     fireEvent.click(screen.getByRole("button", { name: "Execute unshaded (U)" }));
     fireEvent.click(await screen.findByRole("button", { name: "2. Botan" }));
     await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", answers: ["Botan"] }); });
   });
 
-  it("answers a free-action plan question with the typed plan", async () => {
-    const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-001"));
-    const question = { kind: "plan" as const, prompt: "Plan the free pkk.rally (or null to skip)", options: [], min: 0, max: 1 };
+  it("answers a free-action plan question with a plan built by clicks (UC-5)", async () => {
+    const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("pkk"), "DK-001"));
+    const question = { kind: "plan" as const, prompt: "Plan the free pkk.rally (or null to skip)", options: [], min: 0, max: 1, action: "pkk.rally" };
     const validate = vi.fn((_id: string, command: AnyCommand): Promise<ValidationResult> =>
       Promise.resolve(Array.isArray(command["answers"]) && command["answers"].length > 0 ? ok : { ok: false, violations: [{ code: "needsAnswer", message: "Plan", ruleRef: "DK-001", location: null, question }], warnings: [], preview: { effects: [] } }),
     );
     const onCommit = vi.fn();
-    render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} />);
-    fireEvent.click(screen.getByRole("button", { name: "Execute unshaded (U)" }));
-    const input = await screen.findByLabelText("Plan (JSON)");
-    fireEvent.change(input, { target: { value: "{bad" } });
-    fireEvent.click(screen.getByRole("button", { name: "Submit plan" }));
-    expect(screen.getByText("The plan is not valid JSON.")).toBeTruthy();
-    fireEvent.change(input, { target: { value: '{"locations": ["botan"], "perLocation": {"botan": {}}}' } });
-    fireEvent.click(screen.getByRole("button", { name: "Submit plan" }));
-    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", answers: [{ locations: ["botan"], perLocation: { botan: {} } }] }); });
+    function Harness() {
+      const [plan, dispatch] = useReducer(planReducer, emptyPlan);
+      return (
+        <>
+          <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
+          <EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="pkk" eventOpen onCommit={onCommit} forms={legal.actions ?? []} plan={plan} dispatch={dispatch} />
+        </>
+      );
+    }
+    render(<Harness />);
+    click("Execute unshaded (U)");
+    expect(await screen.findByText(/Plan the free Rally, or skip it/)).toBeTruthy();
+    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Submit plan" }).disabled).toBe(true);
+    click("map botan");
+    click("Place");
+    click("Submit plan");
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "pkk", side: "unshaded", answers: [{ op: "pkk.rally", locations: ["botan"], perLocation: { botan: { option: "place" } }, sa: null }] }); });
+    expect(document.querySelectorAll("textarea")).toHaveLength(0);
   });
 
   it("greys Execute with a reason when the Event box is closed", () => {
     const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-014"));
-    render(<EventPanel api={mockApi()} sessionId="S" view={view} faction="state" eventOpen={false} onCommit={vi.fn()} />);
+    render(<EventPanel api={mockApi()} sessionId="S" view={view} faction="state" eventOpen={false} onCommit={vi.fn()} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
     const button = screen.getByRole("button", { name: "Execute unshaded (U)" });
     expect((button as HTMLButtonElement).disabled).toBe(true);
     expect(button.getAttribute("title")).toMatch(/not open/);
@@ -224,7 +249,7 @@ describe("PropagandaPanel", () => {
     expect(screen.getByLabelText("Phase guide").textContent).toContain("at most half of Legitimacy");
     fireEvent.click(screen.getByRole("button", { name: "Advance (Space)" }));
     expect(onCommit).toHaveBeenCalledWith({ type: "Advance" });
-    fireEvent.change(screen.getByLabelText("shifts"), { target: { value: "1" } });
+    click(/^More .+ Shifts$/);
     fireEvent.click(screen.getByRole("button", { name: "Spend in selected spaces" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "civicAction", choice: { spaces: { elazig: { shifts: 1 } } } });
   });
@@ -246,7 +271,7 @@ describe("PropagandaPanel", () => {
     const view = boardView(kurdish.ruleset, kurdish.data, { ...base, turn: { ...base.turn, phase: "propaganda", step: probe, propagandaRound: 1 } });
     const onCommit = vi.fn();
     render(<PropagandaPanel view={view} legal={{ faction: null, phase: "propaganda", advance: false }} selected={["elazig", "botan"]} onCommit={onCommit} />);
-    fireEvent.change(screen.getByLabelText("elazig Guards to remove"), { target: { value: "2" } });
+    click(/^More Elaz.+ Guards to remove$/);
     fireEvent.click(screen.getByRole("button", { name: "Remove Guards in selected spaces" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "upkeep", choice: { removeGuards: { elazig: 2, botan: 1 } } });
   });

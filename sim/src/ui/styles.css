@@ -212,3 +212,18 @@ nav { height: 50px; box-sizing: border-box; }
   .play-screen .status-grid > .pills { flex-wrap: wrap; }
   .track-pill { white-space: normal; flex-wrap: wrap; }
 }
+/* Mouse-only plans (UC-5): steppers, choice buttons, move arrows on the map. */
+.stepper, .choice { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.stepper-label { color: var(--muted); font-size: 13px; }
+.stepper button { min-width: 30px; min-height: 28px; padding: 0 6px; font-weight: 700; }
+.stepper output { min-width: 28px; text-align: center; font-weight: 700; }
+.choice button { min-height: 28px; padding: 0 8px; }
+.plan-part { border-top: 1px solid var(--line); padding-top: 6px; margin-top: 6px; }
+.plan-loc { display: grid; gap: 4px; margin: 4px 0; }
+.plan-move { padding-left: 16px; }
+.map { user-select: none; -webkit-user-select: none; }
+.map.dragging, .map.dragging .map-space { cursor: crosshair; }
+.map-arrow line { stroke: var(--accent); stroke-width: 6; stroke-linecap: round; }
+.map-arrow.live line { stroke-dasharray: 10 8; opacity: 0.8; }
+.map-arrow-head { fill: var(--accent); }
+.map-arrow-count { font-size: 18px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 5px; }

@@ -11,7 +11,7 @@ import type { AnyCommand, GameState, Question, ValidationResult, Violation } fro
 import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
 
-export type { AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
+export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
 export type { HistoryEntry, ReviewRow };
 export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 

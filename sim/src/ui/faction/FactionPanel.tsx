@@ -1,64 +1,46 @@
 // Faction panel (08 s3.2): boxes, Op list with OK or the first violation (T-UI-03), plan building
-// with board locations, live validation, preview, commit with Enter.
+// on the map by mouse (UC-5), live validation, preview, commit with Enter.
 import { useEffect, useRef, useState } from "react";
-import type { Api, AnyCommand, FormField, LegalChoices, ValidationResult } from "../api.ts";
+import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
 import { words } from "../common/names.ts";
-import { perLocation, toCommand, type Draft, type Values } from "./plan.ts";
+import { Fields, PlanForm } from "./PlanForm.tsx";
+import { dragMode, perLocation, toCommand, type Draft, type PlanEvent, type PlanState, type Values } from "./plan.ts";
 
 export interface FactionPanelProps {
   readonly api: Api;
   readonly sessionId: string;
+  readonly view: BoardView;
   readonly legal: LegalChoices;
-  /** Board selection: the plan's locations. */
-  readonly selected: readonly string[];
+  /** The map-built part of the plan (spaces, values, moves), shared with the board. */
+  readonly plan: PlanState;
+  readonly dispatch: (event: PlanEvent) => void;
   readonly onCommit: (command: AnyCommand) => void;
   readonly onDraft: (command: AnyCommand | null) => void;
 }
 
 const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
 
-/** One row of form fields for one location (op, SA or sub-action). */
-function Fields({ fields, values, onChange }: { fields: readonly FormField[]; values: Values; onChange: (key: string, value: string) => void }) {
-  return fields.map((f) => (
-    <label key={f.key}>
-      {f.label}{" "}
-      {f.kind === "select" ? (
-        <select value={values[f.key] ?? ""} onChange={(e) => { onChange(f.key, e.target.value); }}>
-          <option value="" />
-          {f.options?.map((o) => <option key={o}>{o}</option>)}
-        </select>
-      ) : (
-        <input size={f.kind === "number" ? 3 : 18} value={values[f.key] ?? ""} onChange={(e) => { onChange(f.key, e.target.value); }} />
-      )}
-    </label>
-  ));
-}
-
-const list = (text: string): string[] => text.split(",").map((x) => x.trim()).filter((x) => x !== "");
-
-export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraft }: FactionPanelProps) {
+export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
   const faction = legal.faction ?? "";
   const boxes = legal.boxes ?? [];
   const actions = legal.actions ?? [];
   const [box, setBox] = useState<string | null>(null);
   const [op, setOp] = useState<string | null>(null);
-  const [values, setValues] = useState<Record<string, Values>>({});
   const [sa, setSa] = useState<string | null>(null);
-  const [saSpaces, setSaSpaces] = useState("");
-  const [saValues, setSaValues] = useState<Record<string, Values>>({});
   const [saTiming, setSaTiming] = useState<"before" | "after">("after");
   const [subSpace, setSubSpace] = useState("");
   const [subValues, setSubValues] = useState<Values>({});
   const [result, setResult] = useState<ValidationResult | null>(null);
   const form = actions.find((a) => a.id === op);
   const saForm = actions.find((a) => a.id === sa);
+  const locations = plan.op.locations;
   const draft: Draft | null =
     box === null || op === null
       ? null
       : {
-          box, op, locations: selected, values,
-          sa: sa === null ? null : { action: sa, locations: list(saSpaces), values: saValues, timing: saForm?.timing ?? saTiming },
-          subAction: form === undefined || form.subAction === null || subSpace === "" ? null : { action: form.subAction.id, space: subSpace, params: perLocation(form.subAction.fields, subValues) as Record<string, number> },
+          box, op, plan,
+          sa: sa === null ? null : { action: sa, timing: saForm?.timing ?? saTiming },
+          subAction: form === undefined || form.subAction === null || subSpace === "" || !locations.includes(subSpace) ? null : { action: form.subAction.id, space: subSpace, params: perLocation(form.subAction.fields, subValues) as Record<string, number> },
         };
   const command = draft === null ? null : toCommand(faction, draft, actions);
   const key = JSON.stringify(command);
@@ -75,18 +57,20 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     // The command is rebuilt each render; `key` is its stable identity, so it is the only dependency.
   }, [key]);
 
+  // Drags on the map add moves only for an action that moves pieces (UC-5).
+  useEffect(() => {
+    dispatch({ type: "modes", op: dragMode(form?.fields, op), sa: dragMode(saForm?.fields, sa) });
+  }, [op, sa]);
+
   const clear = (): void => {
     setBox(null);
     setOp(null);
-    setValues({});
     setSa(null);
-    setSaSpaces("");
-    setSaValues({});
     setSaTiming("after");
     setSubSpace("");
     setSubValues({});
+    dispatch({ type: "reset" });
   };
-  const panel = useRef<HTMLElement>(null);
   // The key listener is registered once and reads the latest render through this ref, so a key
   // pressed right after a validation result arrives never sees an older plan.
   const latest = useRef({ command, result, onCommit, clear });
@@ -98,10 +82,8 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
       if (target?.tagName === "TEXTAREA") return;
       const { command, result, onCommit, clear } = latest.current;
       if (e.key === "Escape") clear();
-      // Enter commits only from the page itself or a text field of this panel. Buttons, map spaces,
-      // dropdowns, checkboxes and other panels keep Enter for their own action.
-      const panelText = target instanceof HTMLInputElement && ["text", "number", ""].includes(target.type) && panel.current?.contains(target) === true;
-      if (target !== null && target !== document.body && !panelText) return;
+      // Enter commits only from the page itself. Buttons and map spaces keep Enter for their own action.
+      if (target !== null && target !== document.body) return;
       if (e.key === "Enter" && command !== null && result?.ok === true) {
         e.preventDefault();
         onCommit(command);
@@ -117,7 +99,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
   };
 
   return (
-    <section ref={panel} className="panel" aria-label="Faction panel">
+    <section className="panel" aria-label="Faction panel">
       <h3>
         {words(faction)} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
       </h3>
@@ -126,8 +108,8 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
           ? "Step 1: pick a box. For the Event, use the card panel above."
           : op === null
             ? "Step 2: pick an Operation."
-            : selected.length === 0
-              ? "Step 3: click spaces on the map (Shift-click adds more)."
+            : locations.length === 0
+              ? "Step 3: build the plan on the map (see below)."
               : result?.ok === true
                 ? "Step 4: check the preview, then Commit."
                 : "Fix the problems shown below, or change the plan."}
@@ -167,58 +149,41 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
         </ul>
       )}
       {form !== undefined && (
-        <div aria-label="Plan">
-          <p>Locations: {selected.length === 0 ? "select spaces on the board" : selected.join(", ")}</p>
-          {selected.map((loc) => (
-            <div key={loc} className="row">
-              <span>{loc}</span>
-              <Fields fields={form.fields} values={values[loc] ?? {}} onChange={(k, v) => { setValues({ ...values, [loc]: { ...values[loc], [k]: v } }); }} />
-            </div>
-          ))}
-          {form.subAction !== null && (
-            <div className="row" aria-label="Sub-action">
-              <label>
-                {form.subAction.id} space{" "}
-                <select value={subSpace} onChange={(e) => { setSubSpace(e.target.value); }}>
-                  <option value="">none</option>
-                  {selected.map((loc) => <option key={loc}>{loc}</option>)}
-                </select>
-              </label>
-              {subSpace !== "" && <Fields fields={form.subAction.fields} values={subValues} onChange={(k, v) => { setSubValues({ ...subValues, [k]: v }); }} />}
-            </div>
-          )}
+        <>
           {box === "opSa" && (
-            <div className="row">
-              <label>
-                SA{" "}
-                <select value={sa ?? ""} onChange={(e) => { setSa(e.target.value === "" ? null : e.target.value); }}>
-                  <option value="">none</option>
-                  {actions.filter((a) => a.kind === "sa").map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
-                </select>
-              </label>
-              {sa !== null && (
-                <label>
-                  SA spaces <input value={saSpaces} onChange={(e) => { setSaSpaces(e.target.value); }} />
-                </label>
-              )}
-              {saForm !== undefined && saForm.timing === undefined && (
-                <label>
-                  SA timing{" "}
-                  <select value={saTiming} onChange={(e) => { setSaTiming(e.target.value === "before" ? "before" : "after"); }}>
-                    <option value="before">before the Op</option>
-                    <option value="after">after the Op</option>
-                  </select>
-                </label>
-              )}
+            <div className="row" role="group" aria-label="SA">
+              <span className="stepper-label">SA</span>
+              {actions.filter((a) => a.kind === "sa").map((a) => (
+                <button key={a.id} type="button" aria-pressed={sa === a.id} onClick={() => { setSa(sa === a.id ? null : a.id); if (sa === a.id) dispatch({ type: "target", target: "op" }); }}>
+                  {a.label}
+                </button>
+              ))}
             </div>
           )}
-          {saForm !== undefined && saForm.fields.length > 0 && list(saSpaces).map((loc) => (
-            <div key={loc} className="row" aria-label={`SA ${loc}`}>
-              <span>{loc}</span>
-              <Fields fields={saForm.fields} values={saValues[loc] ?? {}} onChange={(k, v) => { setSaValues({ ...saValues, [loc]: { ...saValues[loc], [k]: v } }); }} />
+          {saForm !== undefined && saForm.timing === undefined && (
+            <div className="row" role="group" aria-label="SA timing">
+              <span className="stepper-label">SA timing</span>
+              <button type="button" aria-pressed={saTiming === "before"} onClick={() => { setSaTiming("before"); }}>
+                Before the Op
+              </button>
+              <button type="button" aria-pressed={saTiming === "after"} onClick={() => { setSaTiming("after"); }}>
+                After the Op
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+          <PlanForm view={view} faction={faction} op={form} sa={saForm} plan={plan} dispatch={dispatch} />
+          {form.subAction !== null && locations.length > 0 && (
+            <div className="row" role="group" aria-label="Sub-action">
+              <span className="stepper-label">{words(form.subAction.id)} in</span>
+              {locations.map((loc) => (
+                <button key={loc} type="button" aria-pressed={subSpace === loc} onClick={() => { setSubSpace(subSpace === loc ? "" : loc); }}>
+                  {view.spaces.find((s) => s.id === loc)?.name ?? words(loc)}
+                </button>
+              ))}
+              {subSpace !== "" && locations.includes(subSpace) && <Fields fields={form.subAction.fields} values={subValues} onChange={(k, v) => { setSubValues({ ...subValues, [k]: v }); }} />}
+            </div>
+          )}
+        </>
       )}
       {result !== null && (
         <div aria-label="Validation">

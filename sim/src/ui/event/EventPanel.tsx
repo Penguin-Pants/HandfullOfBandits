@@ -1,7 +1,11 @@
 // Event panel (08 s3; 05 s5): both sides with owner and text; Execute validates, then asks each
-// open question inline (Decisions, 08 s3.3) until the command is legal.
-import { useState } from "react";
-import type { Api, AnyCommand, BoardView, Question } from "../api.ts";
+// open question inline (Decisions, 08 s3.3) until the command is legal. Every answer is a click:
+// options, counts, spaces, and a free action's plan built on the map (UC-5).
+import { useEffect, useState } from "react";
+import type { ActionForm, Api, AnyCommand, BoardView, Question } from "../api.ts";
+import { words } from "../common/names.ts";
+import { PlanForm } from "../faction/PlanForm.tsx";
+import { dragMode, partOf, type PlanEvent, type PlanState } from "../faction/plan.ts";
 
 export interface EventPanelProps {
   readonly api: Api;
@@ -10,14 +14,25 @@ export interface EventPanelProps {
   readonly faction: string | null;
   readonly eventOpen: boolean;
   readonly onCommit: (command: AnyCommand) => void;
+  /** Plan forms for a free action's plan. */
+  readonly forms: readonly ActionForm[];
+  readonly plan: PlanState;
+  readonly dispatch: (event: PlanEvent) => void;
 }
 
-export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit }: EventPanelProps) {
+const formOf = (forms: readonly ActionForm[], id: string): ActionForm =>
+  forms.find((f) => f.id === id) ?? { id, label: words(id.split(".").at(-1) ?? id), cost: "", fields: [], subAction: null };
+
+export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch }: EventPanelProps) {
   const card = view.status.card;
   const [pending, setPending] = useState<{ side: string; answers: unknown[]; question: Question | null; error: string | null } | null>(null);
   const [picks, setPicks] = useState<string[]>([]);
-  const [planText, setPlanText] = useState("");
-  const [planError, setPlanError] = useState<string | null>(null);
+  const freeAction = pending?.question?.kind === "plan" ? pending.question : null;
+  useEffect(() => {
+    if (freeAction?.action === undefined) return;
+    const sa = freeAction.sa;
+    dispatch({ type: "modes", op: dragMode(formOf(forms, freeAction.action).fields, freeAction.action), sa: sa === undefined ? null : dragMode(formOf(forms, sa).fields, sa) });
+  }, [freeAction?.action, freeAction?.sa]);
   if (card === null) return null;
 
   const run = async (side: string, answers: unknown[]): Promise<void> => {
@@ -32,14 +47,6 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit 
     const v = result.violations[0];
     setPicks([]);
     setPending({ side, answers, question: v?.question ?? null, error: v?.question === undefined ? (v?.message ?? "Not legal.") : null });
-  };
-  const answerPlan = (): void => {
-    try {
-      setPlanError(null);
-      answer(JSON.parse(planText) as unknown);
-    } catch {
-      setPlanError("The plan is not valid JSON.");
-    }
   };
   const answer = (value: unknown): void => {
     if (pending !== null) void run(pending.side, [...pending.answers, value]);
@@ -69,7 +76,7 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit 
       {pending?.question != null && (
         <div aria-label="Decision">
           <p>
-            {faction} decides: {pending.question.prompt} <span className="muted">(PA-01)</span>
+            {faction} decides: {pending.question.kind === "plan" && pending.question.action !== undefined ? `Plan the free ${formOf(forms, pending.question.action).label}, or skip it.` : pending.question.prompt} <span className="muted">(PA-01)</span>
           </p>
           {pending.question.kind === "option" && pending.question.options.map((o, i) => (
             <button key={o} type="button" onClick={() => { answer(o); }}>
@@ -94,23 +101,27 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit 
               </button>
             </div>
           )}
-          {pending.question.kind === "plan" && (
-            <div>
-              <label>
-                Plan (JSON){" "}
-                <textarea rows={3} cols={48} placeholder='{"locations": ["botan"], "perLocation": {"botan": {}}}' value={planText} onChange={(e) => { setPlanText(e.target.value); }} />
-              </label>
-              {planError !== null && <p className="bad">{planError}</p>}
-              <div className="row">
-                <button type="button" onClick={answerPlan}>
-                  Submit plan
-                </button>
-                <button type="button" onClick={() => { answer(null); }}>
-                  Skip the free action
-                </button>
+          {pending.question.kind === "plan" && pending.question.action !== undefined && (() => {
+            const op = formOf(forms, pending.question.action);
+            const sa = pending.question.sa === undefined ? undefined : formOf(forms, pending.question.sa);
+            const submit = (): void => {
+              answer({ op: op.id, ...partOf(op.fields, plan.op), sa: sa === undefined ? null : { action: sa.id, ...partOf(sa.fields, plan.sa) } });
+              dispatch({ type: "reset" });
+            };
+            return (
+              <div aria-label="Free action">
+                <PlanForm view={view} faction={faction ?? ""} op={op} sa={sa} plan={plan} dispatch={dispatch} />
+                <div className="row">
+                  <button type="button" className="primary" disabled={plan.op.locations.length === 0} onClick={submit}>
+                    Submit plan
+                  </button>
+                  <button type="button" onClick={() => { answer(null); dispatch({ type: "reset" }); }}>
+                    Skip the free action
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       )}
     </section>
