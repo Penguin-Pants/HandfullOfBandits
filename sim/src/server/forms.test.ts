@@ -25,6 +25,29 @@ describe("action summaries match the engine", () => {
   it("Strike Collaborators: at most 2 Guards in total (strike-collaborators.ts)", () => {
     expect(summary("pkk.strike-collaborators")).toMatch(/up to 2 Guards in total/);
   });
+  // Location rules from each handler's check() (round 3: audited against every violation code).
+  it("Assault: Underground Guerrillas protect Bases (assaultTargets)", () => {
+    expect(summary("state.assault")).toMatch(/A Base goes only when no Guerrilla, Underground or Active, remains/);
+  });
+  it("Rally: no Displacement, no City at Support except Western Cities, host must allow (rallyDisplaced, rallyCity, rallyHost)", () => {
+    expect(summary("pkk.rally")).toMatch(/without a Displacement marker/);
+    expect(summary("pkk.rally")).toMatch(/City at Support only in Western Cities/);
+    expect(summary("pkk.rally")).toMatch(/host box whose posture allows it/);
+  });
+  it("March: no March into Western Cities, Europe or Iran (marchWhere, marchHost)", () => {
+    expect(summary("pkk.march")).toMatch(/never into Western Cities, Europe or Iran/);
+  });
+  it("Sweep: never Western Cities (sweepWhere)", () => {
+    expect(summary("state.sweep")).toMatch(/other than Western Cities/);
+  });
+  it("Coerce and Extort: no Displacement marker (coerceDisplaced, extortDisplaced)", () => {
+    expect(summary("pkk.coerce")).toMatch(/no Displacement marker/);
+    expect(summary("pkk.extort")).toMatch(/no Displacement marker/);
+  });
+  it("Ambush and Attack: where they may go (ambushGuerrilla, attackWhere)", () => {
+    expect(summary("pkk.ambush")).toMatch(/each with an Underground Guerrilla/);
+    expect(summary("pkk.attack")).toMatch(/In a space with Guerrillas and State pieces/);
+  });
   it("every action has a summary", () => {
     for (const f of actionForms) expect(f.summary.length).toBeGreaterThan(20);
   });
