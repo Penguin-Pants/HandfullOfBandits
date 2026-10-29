@@ -29,6 +29,7 @@ describe("Help: goals and actions", () => {
     expect(win).toContain(`at least ${String(view.status.thresholds["state"])}`);
     expect(win).toContain(`at least ${String(view.status.thresholds["pkk"])}`);
     expect(win).toContain(`Harm count is ${String(view.status.harmLimit)} or less`);
+    expect(win).toMatch(/Covert marker counts as revealed: State score -2 and State Harm \+1/);
   });
 
   it("lists what every action does, by faction", () => {

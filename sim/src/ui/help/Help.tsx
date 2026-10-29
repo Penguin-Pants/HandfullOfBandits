@@ -42,6 +42,7 @@ function HowToWin({ view }: { readonly view: BoardView }) {
       <ol>
         <li>Victory check in each Propaganda round except the first: a faction wins if its score reaches its threshold and its Harm count is {s.harmLimit} or less. If both qualify, the bigger margin (score − threshold) wins.</li>
         <li>Harm count: State = State Harm markers. PKK = PKK Harm markers + Coercion markers.</li>
+        <li>At a victory check, each face-down Covert marker counts as revealed: State score -2 and State Harm +1 each. Before final scoring, every Covert marker is revealed: it becomes a State Harm marker and costs 2 Legitimacy.</li>
         <li>No winner by the end: the higher final margin wins. Final margin = score − threshold − 2 for each Harm over the limit. Ties: lower Harm, then the PKK.</li>
         <li>Removing pieces gives no points. Only Support, Opposition, Legitimacy and Bases score.</li>
       </ol>
