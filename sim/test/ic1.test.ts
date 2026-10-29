@@ -1,3 +1,4 @@
+import { boardView } from "../src/server/view.ts";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -146,5 +147,14 @@ describe("IC-1 Phase 1 exit", () => {
   it("does not move the head or change the state when a note is saved (T-ANN-04)", () => {
     expect(run.headAfterNote).toBe(run.headBeforeNote);
     expect(getSession(db, run.session.sessionId)?.head_action_id).toBe(run.action.actionId);
+  });
+});
+
+describe("board view for a package without Emergency Rule", () => {
+  it("renders the tiny package with no Emergency Rule moves", () => {
+    const loaded = loadPackage(readPackageDir(fileURLToPath(new URL("packages/tiny", import.meta.url))));
+    if (!loaded.ok) throw new Error(JSON.stringify(loaded.issues));
+    const start = engine.start(loaded.ruleset, "start", 9);
+    expect(boardView(loaded.ruleset, loaded.data, start.state).status.emergencyMoves).toEqual([]);
   });
 });

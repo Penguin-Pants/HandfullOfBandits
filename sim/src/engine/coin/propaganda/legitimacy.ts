@@ -18,6 +18,8 @@ function onMap(ruleset: Ruleset, state: GameState, marker: string, side: string 
 
 /** Emergency Rule steps the State may move to now (07 s8.2 item 3). */
 export function emergencyMoves(ruleset: Ruleset, state: GameState): string[] {
+  // A package without the Emergency Rule mechanic has no moves (and none of its parameters).
+  if (!Object.hasOwn(ruleset.parameters, "campaign.order") || !Object.hasOwn(ruleset.parameters, "emergencyRule.extendedFrom")) return [];
   const from = String(state.tracks[TRACK.emergencyRule]);
   const campaigns = param(ruleset, "campaign.order", "list").map(String);
   const fromC3 = campaigns.indexOf(state.turn.campaign ?? "") >= campaigns.indexOf(param(ruleset, "emergencyRule.extendedFrom", "string"));

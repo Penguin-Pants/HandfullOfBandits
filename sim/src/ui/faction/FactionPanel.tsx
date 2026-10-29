@@ -1,6 +1,6 @@
 // Faction panel (08 s3.2): boxes, Op list with OK or the first violation (T-UI-03), plan building
 // with board locations, live validation, preview, commit with Enter.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Api, AnyCommand, FormField, LegalChoices, ValidationResult } from "../api.ts";
 import { perLocation, toCommand, type Draft, type Values } from "./plan.ts";
 
@@ -86,13 +86,33 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     setSubSpace("");
     setSubValues({});
   };
+  const panel = useRef<HTMLElement>(null);
+  // Enter commits a valid plan and Esc clears it, anywhere on the page except the note bar.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      const target = e.target instanceof Element ? e.target : null;
+      if (target?.tagName === "TEXTAREA") return;
+      if (e.key === "Escape") clear();
+      // Enter commits only from the page itself or a text field of this panel. Buttons, map spaces,
+      // dropdowns, checkboxes and other panels keep Enter for their own action.
+      const panelText = target instanceof HTMLInputElement && ["text", "number", ""].includes(target.type) && panel.current?.contains(target) === true;
+      if (target !== null && target !== document.body && !panelText) return;
+      if (e.key === "Enter" && command !== null && result?.ok === true) {
+        e.preventDefault();
+        onCommit(command);
+        clear();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("keydown", onKey); };
+  });
   const pickBox = (b: string): void => {
     if (b === "pass") onCommit({ type: "Pass", faction });
     else if (b !== "event") setBox(b);
   };
 
   return (
-    <section className="panel" aria-label="Faction panel" onKeyDown={(e) => { if (e.key === "Escape") clear(); }}>
+    <section ref={panel} className="panel" aria-label="Faction panel">
       <h3>
         {faction} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
       </h3>

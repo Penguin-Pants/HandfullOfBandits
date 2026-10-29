@@ -127,6 +127,38 @@ describe("FactionPanel", () => {
     });
   });
 
+  it("commits a valid plan with Enter and clears it with Esc", async () => {
+    const onCommit = vi.fn();
+    render(<FactionPanel api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} sessionId="S" legal={legal} selected={["botan"]} onCommit={onCommit} onDraft={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
+    await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
+    await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
+    const space = document.createElement("div");
+    space.setAttribute("role", "button");
+    document.body.append(space);
+    fireEvent.keyDown(space, { key: "Enter" });
+    fireEvent.keyDown(screen.getByLabelText("Option"), { key: "Enter" });
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    document.body.append(box);
+    fireEvent.keyDown(box, { key: "Enter" });
+    box.remove();
+    expect(onCommit).not.toHaveBeenCalled();
+    fireEvent.keyDown(screen.getByRole("button", { name: "Rally" }), { key: "Escape" });
+    expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
+    space.remove();
+    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
+    await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
+    fireEvent.keyDown(window, { key: "Enter" });
+    expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp" }));
+  });
+
   it("shows violations of an illegal plan with their rule", async () => {
     const validate = vi.fn(() => Promise.resolve({ ok: false, violations: [{ code: "rallyCity", message: "A City at Support cannot Rally (03 s2.1).", ruleRef: "06 s4.1", location: "botan" }], warnings: [], preview: { effects: [] } }));
     render(<FactionPanel api={mockApi({ validate })} sessionId="S" legal={legal} selected={["botan"]} onCommit={vi.fn()} onDraft={vi.fn()} />);
@@ -188,12 +220,24 @@ describe("PropagandaPanel", () => {
     const view = boardView(kurdish.ruleset, kurdish.data, state);
     const onCommit = vi.fn();
     render(<PropagandaPanel view={view} legal={{ faction: null, phase: "propaganda", advance: true }} selected={["elazig"]} onCommit={onCommit} />);
-    expect(screen.getByText("civicAction").getAttribute("aria-current")).toBe("step");
+    expect(screen.getByText("Civic Action (State)", { selector: "li" }).getAttribute("aria-current")).toBe("step");
+    expect(screen.getByLabelText("Phase guide").textContent).toContain("at most half of Legitimacy");
     fireEvent.click(screen.getByRole("button", { name: "Advance (Space)" }));
     expect(onCommit).toHaveBeenCalledWith({ type: "Advance" });
     fireEvent.change(screen.getByLabelText("shifts"), { target: { value: "1" } });
     fireEvent.click(screen.getByRole("button", { name: "Spend in selected spaces" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "civicAction", choice: { spaces: { elazig: { shifts: 1 } } } });
+  });
+
+  it("offers only the legal Emergency Rule steps in the Legitimacy phase", () => {
+    const base = turnOf("pkk");
+    const probe = boardView(kurdish.ruleset, kurdish.data, base).status.propagandaPhases.indexOf("legitimacy");
+    const ohal = { ...base, tracks: { ...base.tracks, emergencyRule: "ohal" }, turn: { ...base.turn, phase: "propaganda", step: probe, propagandaRound: 1 } };
+    const onCommit = vi.fn();
+    render(<PropagandaPanel view={boardView(kurdish.ruleset, kurdish.data, ohal)} legal={{ faction: null, phase: "propaganda", advance: true }} selected={[]} onCommit={onCommit} />);
+    fireEvent.click(screen.getByRole("button", { name: "normalizing" }));
+    expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "legitimacy", choice: { emergencyStep: "normalizing" } });
+    expect(screen.queryByRole("button", { name: "martialLaw" })).toBeNull();
   });
 
   it("sends the chosen Guard removal count per space in Upkeep", () => {

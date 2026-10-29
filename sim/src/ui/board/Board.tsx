@@ -10,6 +10,18 @@ const INSET_W = 116;
 const INSET_H = 90;
 const TOKEN = 30;
 
+/** Hover text: name, Pop and terrain, level, Control, pieces and markers, one per line. */
+export function spaceTooltip(space: SpaceView): string {
+  const face = (f: string): string => (f === "default" ? "" : ` (${f})`);
+  return [
+    `${space.name} · ${space.kind === "domestic" ? `Pop ${String(space.pop)}${space.terrain === null ? "" : ` · ${space.terrain}`}` : "external box"}`,
+    `Level: ${space.levelName ?? "none"} · Control: ${space.control ?? "none"}`,
+    `Pieces: ${space.pieces.map((p) => `${String(p.count)} ${p.piece}${face(p.face)}`).join(", ") || "none"}`,
+    ...(space.markers.length === 0 ? [] : [`Markers: ${space.markers.map((m) => `${String(m.count)} ${m.hidden ? "covert" : m.marker}${face(m.side)}`).join(", ")}`]),
+    "Click to select · Shift-click to add",
+  ].join("\n");
+}
+
 export interface BoardProps {
   readonly view: BoardView;
   readonly selected: readonly string[];
@@ -60,7 +72,7 @@ function Space({ space, cell, clip, selected, changed, onSelect }: { space: Spac
       onClick={(e) => { onSelect(space.id, e.shiftKey); }}
       onKeyDown={(e) => { if (e.key === "Enter") onSelect(space.id, e.shiftKey); }}
     >
-      <title>{`${space.name}: ${space.pieces.map((p) => `${String(p.count)} ${p.piece} ${p.face}`).join(", ") || "empty"}`}</title>
+      <title>{spaceTooltip(space)}</title>
       {box === null ? (
         <>
           <path d={pathOf(cell ?? [])} clipPath={clip} fill={space.kind === "domestic" ? levelColor(space.level) : "var(--abroad)"} stroke="var(--cell-line)" strokeWidth={1.5} />
