@@ -138,6 +138,17 @@ describe("FactionPanel", () => {
     fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
     fireEvent.click(screen.getByRole("button", { name: "Rally" }));
     await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
+    const space = document.createElement("div");
+    space.setAttribute("role", "button");
+    document.body.append(space);
+    fireEvent.keyDown(space, { key: "Enter" });
+    expect(onCommit).not.toHaveBeenCalled();
+    fireEvent.keyDown(screen.getByRole("button", { name: "Rally" }), { key: "Escape" });
+    expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
+    space.remove();
+    fireEvent.click(screen.getByRole("button", { name: "Limited Op" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rally" }));
+    await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
     fireEvent.keyDown(window, { key: "Enter" });
     expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp" }));
   });

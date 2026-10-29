@@ -89,9 +89,11 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
   // Enter commits a valid plan and Esc clears it, anywhere on the page except the note bar.
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
-      // A focused button already acts on Enter; the note bar textarea has its own keys.
-      if (["TEXTAREA", "BUTTON"].includes((e.target as HTMLElement | null)?.tagName ?? "")) return;
+      const target = e.target instanceof Element ? e.target : null;
+      if (target?.tagName === "TEXTAREA") return;
       if (e.key === "Escape") clear();
+      // A focused button (HTML or role="button", such as a map space) already acts on Enter.
+      if (target?.tagName === "BUTTON" || target?.getAttribute("role") === "button") return;
       if (e.key === "Enter" && command !== null && result?.ok === true) {
         e.preventDefault();
         onCommit(command);
