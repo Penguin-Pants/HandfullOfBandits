@@ -2,6 +2,7 @@
 // with board locations, live validation, preview, commit with Enter.
 import { useEffect, useRef, useState } from "react";
 import type { Api, AnyCommand, FormField, LegalChoices, ValidationResult } from "../api.ts";
+import { words } from "../common/names.ts";
 import { perLocation, toCommand, type Draft, type Values } from "./plan.ts";
 
 export interface FactionPanelProps {
@@ -15,7 +16,6 @@ export interface FactionPanelProps {
 }
 
 const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
-const LABEL: Readonly<Record<string, string>> = { event: "Event", limitedOp: "Limited Op", opOnly: "Op Only", opSa: "Op + SA", pass: "Pass" };
 
 /** One row of form fields for one location (op, SA or sub-action). */
 function Fields({ fields, values, onChange }: { fields: readonly FormField[]; values: Values; onChange: (key: string, value: string) => void }) {
@@ -119,7 +119,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
   return (
     <section ref={panel} className="panel" aria-label="Faction panel">
       <h3>
-        {faction} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
+        {words(faction)} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
       </h3>
       <p className="hint" aria-live="polite">
         {box === null
@@ -136,19 +136,19 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
         {boxes.map((b) => {
           const here = Object.entries(legal.placed ?? {}).filter(([, at]) => at === b.box).map(([f]) => f);
           return (
-            <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}`} aria-label={`${LABEL[b.box] ?? b.box} box`}>
+            <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}`} aria-label={`${words(b.box)} box`}>
               <button type="button" disabled={!b.allowed || b.box === "event"} title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")} aria-pressed={box === b.box} onClick={() => { pickBox(b.box); }}>
-                {LABEL[b.box] ?? b.box}
+                {words(b.box)}
               </button>
               {here.map((f) => (
-                <span key={f} className="elig-cylinder">{f}</span>
+                <span key={f} className="elig-cylinder">{words(f)}</span>
               ))}
               {b.allowed && b.otherMay != null && (
                 <span className="elig-note">
-                  Then {legal.other}: {b.otherMay.map((o) => LABEL[o] ?? o).join(", ")}
+                  Then {words(legal.other ?? "")}: {b.otherMay.map(words).join(", ")}
                 </span>
               )}
-              {b.allowed && b.nextFirst != null && <span className="elig-note">Next card 1st: {b.nextFirst}</span>}
+              {b.allowed && b.nextFirst != null && <span className="elig-note">Next card 1st: {words(b.nextFirst)}</span>}
               {!b.allowed && <span className="elig-note">Closed</span>}
             </div>
           );

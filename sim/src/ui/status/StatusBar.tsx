@@ -50,18 +50,18 @@ export function StatusBar({ view }: { readonly view: BoardView }) {
         <span className="chip">1st: {name(s.firstEligible)}{box(s.firstEligible)}</span>
         <span className="chip">2nd: {name(s.secondEligible)}{box(s.secondEligible)}</span>
         {s.active !== null && <strong className="chip acting">Acting: {name(s.active)}</strong>}
+        <span className="pills" aria-label="Scores">
+          {view.factions.map((f) => (
+            <span key={f.id} className="pill" style={{ borderColor: f.color }} aria-label={`${f.name} score`}>
+              <strong style={{ color: f.color }}>{f.name}</strong>
+              <span>Score <b>{s.scores[f.id] ?? 0}</b> of {s.thresholds[f.id] ?? "-"}</span>
+              <span>Margin <b>{s.margins[f.id] ?? 0}</b></span>
+              <span>Harm <b>{s.harm[f.id] ?? 0}</b> of {s.harmLimit}</span>
+            </span>
+          ))}
+        </span>
       </div>
       <ScoreTrack view={view} />
-      <div className="pills" aria-label="Scores">
-        {view.factions.map((f) => (
-          <span key={f.id} className="pill" style={{ borderColor: f.color }} aria-label={`${f.name} score`}>
-            <strong style={{ color: f.color }}>{f.name}</strong>
-            <span>Score <b>{s.scores[f.id] ?? 0}</b> of {s.thresholds[f.id] ?? "-"}</span>
-            <span>Margin <b>{s.margins[f.id] ?? 0}</b></span>
-            <span>Harm <b>{s.harm[f.id] ?? 0}</b> of {s.harmLimit}</span>
-          </span>
-        ))}
-      </div>
       <div className="pills" aria-label="Tracks">
         {s.tracks.map((t) => (
           <span key={t.id} className="pill" aria-label={t.display}>

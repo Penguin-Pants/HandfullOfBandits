@@ -145,3 +145,31 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4p
 .mini-box { min-width: 14px; text-align: center; }
 .mini-step { padding: 0 4px; }
 .mini-box.on, .mini-step.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+
+/* One-view play layout (UC-3) */
+nav { height: 50px; box-sizing: border-box; }
+.play-screen { height: calc(100vh - 50px); box-sizing: border-box; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; padding: 8px 16px; overflow: hidden; }
+.play-screen .play { min-height: 0; height: 100%; }
+.play-main { display: flex; flex-direction: column; gap: 8px; min-height: 0; height: 100%; }
+.map-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 8px; }
+.map-panel .map { flex: 1; min-height: 0; height: 100%; }
+.forces-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.forces-row .panel { padding: 6px 10px; }
+.play-screen .side { height: 100%; overflow-y: auto; min-height: 0; }
+.score-track { max-height: 64px; }
+.overlay { position: fixed; top: 58px; right: 16px; width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 80px); overflow-y: auto; z-index: 5; box-shadow: 0 6px 24px #0004; border-radius: 8px; }
+@media (max-width: 1000px) { .play-screen { height: auto; overflow: visible; } .forces-row { grid-template-columns: 1fr; } }
+/* One-view compaction (UC-3) */
+.play-screen .status-grid { padding: 8px 12px; gap: 4px; }
+.play-screen .pill { padding: 2px 8px; font-size: 12px; }
+.play-screen .score-track { max-height: 56px; }
+.play-screen .play { grid-template-columns: minmax(0, 1fr) 460px; }
+.play-screen .side { gap: 8px; }
+.play-screen .side .panel { padding: 8px 10px; }
+.play-screen .card { width: 84px; height: 118px; padding: 6px; }
+.play-screen .card-title { font-size: 11px; }
+.play-screen .card-table { gap: 10px; }
+.play-screen .elig-note { font-size: 10px; }
+.play-screen footer.panel { padding: 6px 10px; }
+.play-screen table.forces td, .play-screen table.forces th { padding: 1px 6px; }
+.play-screen [aria-label="Event panel"] p { margin: 4px 0; font-size: 13px; }

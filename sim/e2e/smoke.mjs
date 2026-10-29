@@ -1,4 +1,4 @@
-/* global process, console, fetch, setTimeout */
+/* global process, console, fetch, setTimeout, document, innerHeight, innerWidth */
 // IC-2 item 1: Playwright smoke (11 IC-2). Home, start S0, one action, one note, undo, JSON export.
 // Needs a built UI (`npm run build`) and Playwright with Chromium (not a project dependency).
 // Run: make e2e
@@ -47,6 +47,25 @@ try {
   await page.getByRole("button", { name: /Reveal first card/ }).click();
   await page.getByText(/^Card 1$/).waitFor();
   check(true, "Play: first card revealed");
+  // UI clarity round R6: one view at 1920 x 1080 (content about 1920 x 950), right column order R3.
+  await page.setViewportSize({ width: 1920, height: 950 });
+  await page.waitForTimeout(300);
+  const layout = await page.evaluate(() => {
+    const box = (label) => document.querySelector(`[aria-label="${label}"]`)?.getBoundingClientRect();
+    const side = document.querySelector(".side").getBoundingClientRect();
+    const order = [...document.querySelector(".side").querySelectorAll("[aria-label]")].map((e) => e.getAttribute("aria-label"));
+    return {
+      fits: document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth,
+      panelVisible: box("Faction panel").bottom <= side.bottom,
+      forcesBelowMap: box("State forces").top > box("Board").bottom && Math.abs(box("State forces").top - box("PKK forces").top) < 2,
+      order: ["Cards", "Event panel", "Faction panel"].map((l) => order.indexOf(l)),
+    };
+  });
+  check(layout.fits, "one view: no page scroll at 1920 x 950");
+  check(layout.panelVisible, "one view: Faction panel fully visible");
+  check(layout.forcesBelowMap, "forces side by side below the map");
+  check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: cards, card text, Faction panel");
+  await page.setViewportSize({ width: 1366, height: 768 });
   await page.getByRole("button", { name: "Pass" }).last().click();
   await page.getByText("1st: PKK (Pass)", { exact: true }).waitFor();
   check(true, "one action committed (PKK Pass)");

@@ -63,9 +63,9 @@ describe("FactionPanel", () => {
     ] };
     render(<FactionPanel api={mockApi()} sessionId="S" legal={track} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
     const opSa = screen.getByLabelText("Op + SA box").textContent;
-    expect(opSa).toContain("Then state: Event, Limited Op, Pass");
-    expect(opSa).toContain("Next card 1st: state");
-    expect(screen.getByLabelText("Limited Op box").textContent).toContain("Next card 1st: pkk");
+    expect(opSa).toContain("Then State: Event, Limited Op, Pass");
+    expect(opSa).toContain("Next card 1st: State");
+    expect(screen.getByLabelText("Limited Op box").textContent).toContain("Next card 1st: PKK");
   });
 
   it("marks the boxes closed to the Second Eligible and shows where the First Eligible's cylinder is", () => {
@@ -74,7 +74,7 @@ describe("FactionPanel", () => {
       { box: "event", allowed: true, reason: null, otherMay: null, nextFirst: null },
     ] };
     render(<FactionPanel api={mockApi()} sessionId="S" legal={second} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
-    expect(screen.getByLabelText("Op + SA box").textContent).toContain("pkk");
+    expect(screen.getByLabelText("Op + SA box").textContent).toContain("PKK");
     expect(screen.getByLabelText("Op + SA box").textContent).toContain("Closed");
   });
 
