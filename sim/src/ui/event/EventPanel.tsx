@@ -23,7 +23,7 @@ export interface EventPanelProps {
 }
 
 const formOf = (forms: readonly ActionForm[], id: string): ActionForm =>
-  forms.find((f) => f.id === id) ?? { id, label: words(id.split(".").at(-1) ?? id), cost: "", fields: [], subAction: null };
+  forms.find((f) => f.id === id) ?? { id, label: words(id.split(".").at(-1) ?? id), cost: "", summary: "", fields: [], subAction: null };
 
 export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch, onFreeAction }: EventPanelProps) {
   const card = view.status.card;

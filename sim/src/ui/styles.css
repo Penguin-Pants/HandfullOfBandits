@@ -227,3 +227,7 @@ nav { height: 50px; box-sizing: border-box; }
 .map-arrow.live line { stroke-dasharray: 10 8; opacity: 0.8; }
 .map-arrow-head { fill: var(--accent); }
 .map-arrow-count { font-size: 18px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 5px; }
+/* Action summaries (UC-6) */
+.action-summary { margin: 2px 0 6px; font-size: 13px; color: var(--muted); }
+.help-actions { display: grid; gap: 6px; margin: 0 0 10px; font-size: 13px; }
+.help-actions dd { margin: 0 0 0 12px; }

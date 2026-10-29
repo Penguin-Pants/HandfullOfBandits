@@ -163,7 +163,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       )}
       {showHelp && (
         <div className="overlay">
-          <Help onClose={() => { setShowHelp(false); }} />
+          <Help onClose={() => { setShowHelp(false); }} view={view} forms={legal.forms ?? []} />
         </div>
       )}
       <div className="play">

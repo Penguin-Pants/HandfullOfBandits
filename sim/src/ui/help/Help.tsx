@@ -1,4 +1,6 @@
-// Help panel: how a card turn works, how to build an Operation, keyboard keys. `?` toggles it.
+// Help panel: how a card turn works, how each faction wins (research 09), what each action does
+// (research 06), how to build an Operation, keyboard keys. `?` toggles it.
+import type { ActionForm, BoardView } from "../api.ts";
 export const KEYS: readonly (readonly [string, string])[] = [
   ["Space", "Reveal the first card, or Advance when nothing needs a choice"],
   ["Click / Shift-click", "Select a space / add a space to the selection"],
@@ -11,7 +13,71 @@ export const KEYS: readonly (readonly [string, string])[] = [
   ["?", "Show or hide this help"],
 ];
 
-export function Help({ onClose }: { readonly onClose: () => void }) {
+/** Goal of each faction (research 09 s1): what its score counts and how to raise it. */
+const GOALS: Readonly<Record<string, { readonly score: string; readonly how: string }>> = {
+  state: {
+    score: "Total Support + Legitimacy. Total Support = Pop of each domestic space at Passive Support, plus 2 × Pop at Active Support.",
+    how: "Shift spaces toward Support with Civic Action (Train) and keep Legitimacy high. Find Guerrillas with Sweep and Garrison, then remove them with Assault.",
+  },
+  pkk: {
+    score: "Total Opposition + PKK Bases in domestic spaces. Total Opposition = Pop of each domestic space at Passive Opposition, plus 2 × Pop at Active Opposition.",
+    how: "Shift spaces toward Opposition with Agitation (Rally) and build Bases. Keep Guerrillas Underground, where Assault cannot remove them.",
+  },
+};
+
+/** How the game is won (research 09 s3, s4), with this game's thresholds and Harm limit. */
+function HowToWin({ view }: { readonly view: BoardView }) {
+  const s = view.status;
+  return (
+    <div aria-label="How to win">
+      <h3>How to win</h3>
+      {view.factions.map((f) => {
+        const goal = GOALS[f.id];
+        return (
+          <p key={f.id}>
+            <strong style={{ color: f.color }}>{f.name}</strong>: score = {goal?.score ?? "see the score pill."} Win at a score of at least {s.thresholds[f.id] ?? "-"}. {goal?.how}
+          </p>
+        );
+      })}
+      <ol>
+        <li>Victory check in each Propaganda round except the first: a faction wins if its score reaches its threshold and its Harm count is {s.harmLimit} or less. If both qualify, the bigger margin (score − threshold) wins.</li>
+        <li>Harm count: State = State Harm markers. PKK = PKK Harm markers + Coercion markers.</li>
+        <li>No winner by the end: the higher final margin wins. Final margin = score − threshold − 2 for each Harm over the limit. Ties: lower Harm, then the PKK.</li>
+        <li>Removing pieces gives no points. Only Support, Opposition, Legitimacy and Bases score.</li>
+      </ol>
+    </div>
+  );
+}
+
+/** What each action does, grouped by faction. */
+function Actions({ view, forms }: { readonly view: BoardView; readonly forms: readonly ActionForm[] }) {
+  return (
+    <div aria-label="Actions">
+      <h3>Actions</h3>
+      {view.factions.map((f) => (
+        <dl key={f.id} className="help-actions">
+          {forms.filter((a) => a.id.startsWith(`${f.id}.`)).map((a) => (
+            <div key={a.id}>
+              <dt>
+                <strong style={{ color: f.color }}>{a.label}</strong> <span className="muted">({a.cost})</span>
+              </dt>
+              <dd>{a.summary}</dd>
+            </div>
+          ))}
+        </dl>
+      ))}
+    </div>
+  );
+}
+
+export interface HelpProps {
+  readonly onClose: () => void;
+  /** The board, for this game's thresholds and factions; absent: those sections are hidden. */
+  readonly view?: BoardView;
+  readonly forms?: readonly ActionForm[];
+}
+
+export function Help({ onClose, view, forms = [] }: HelpProps) {
   return (
     <section className="panel help" aria-label="Help">
       <div className="row" style={{ justifyContent: "space-between" }}>
@@ -38,6 +104,7 @@ export function Help({ onClose }: { readonly onClose: () => void }) {
           </ol>
         </div>
         <div>
+          {view !== undefined && <HowToWin view={view} />}
           <h3>Reading the map</h3>
           <ul>
             <li>Cell color and the square marker: Support (red) or Opposition (green). Filled marker = Active.</li>
@@ -60,6 +127,7 @@ export function Help({ onClose }: { readonly onClose: () => void }) {
           </table>
         </div>
       </div>
+      {view !== undefined && forms.length > 0 && <Actions view={view} forms={forms} />}
     </section>
   );
 }
