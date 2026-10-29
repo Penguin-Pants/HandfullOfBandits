@@ -44,8 +44,21 @@ export interface SpaceView {
   readonly confidence: string | null;
 }
 
+/** One piece type's totals: on the map, Available and out of play (04 s2). */
+export interface ForceView {
+  readonly piece: string;
+  readonly faction: string;
+  readonly shape: string;
+  readonly colorVariant: string;
+  readonly isBase: boolean;
+  readonly onMap: number;
+  readonly available: number;
+  readonly outOfPlay: number;
+}
+
 export interface BoardView {
   readonly spaces: readonly SpaceView[];
+  readonly forces: readonly ForceView[];
   readonly links: readonly { readonly a: string; readonly b: string; readonly kind: string }[];
   readonly factions: readonly { readonly id: string; readonly name: string; readonly color: string }[];
   readonly status: {
@@ -111,8 +124,15 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
     };
   });
   const card = state.deck.currentCard;
+  const forces = data.pieces.map((p): ForceView => ({
+    piece: p.id, faction: p.faction, shape: p.shape, colorVariant: p.colorVariant ?? "base", isBase: p.isBase,
+    onMap: Object.values(state.spaces).reduce((sum, sp) => sum + Object.values(sp.pieces[p.id] ?? {}).reduce((a, n) => a + n, 0), 0),
+    available: state.pools[p.id]?.available ?? 0,
+    outOfPlay: state.pools[p.id]?.outOfPlay ?? 0,
+  }));
   return {
     spaces,
+    forces,
     links: data.map.links.map((l) => ({ a: l.a, b: l.b, kind: l.kind })),
     factions: data.factions.map((f) => ({ id: f.id, name: f.name, color: factions.get(f.id)?.color ?? f.color })),
     status: {

@@ -83,3 +83,14 @@ nav { display: flex; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(-
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; padding: 8px 4px 0; }
 .legend-item { display: inline-flex; align-items: center; gap: 4px; }
 .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; box-sizing: border-box; }
+
+/* Victory track and forces */
+:root { --track-five: #ece8dc; }
+@media (prefers-color-scheme: dark) { :root { --track-five: #34322c; } }
+.score-track { width: 100%; height: auto; display: block; }
+.track-num { font-size: 10px; fill: var(--muted); }
+.track-num.five { font-size: 12px; font-weight: 700; fill: var(--fg); }
+.track-marker { font-size: 10px; font-weight: 700; fill: #fff; }
+.track-flag { font-size: 11px; font-weight: 700; }
+table.forces td, table.forces th { text-align: center; padding: 3px 6px; }
+table.forces td:first-child, table.forces th:first-child { text-align: left; }

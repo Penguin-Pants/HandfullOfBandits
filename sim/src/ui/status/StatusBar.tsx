@@ -1,5 +1,6 @@
 // Status bar (08 s3.5): turn position, eligibility, tracks, scores with threshold and margin, Harm.
 import type { BoardView } from "../api.ts";
+import { ScoreTrack } from "./ScoreTrack.tsx";
 
 export function StatusBar({ view }: { readonly view: BoardView }) {
   const s = view.status;
@@ -14,6 +15,7 @@ export function StatusBar({ view }: { readonly view: BoardView }) {
         <span className="chip">2nd: {s.secondEligible ?? "-"}{s.secondEligible !== null && s.boxes[s.secondEligible] ? ` (${String(s.boxes[s.secondEligible])})` : ""}</span>
         {s.active !== null && <strong className="chip acting">Acting: {s.active}</strong>}
       </div>
+      <ScoreTrack view={view} />
       <div className="row">
         {view.factions.map((f) => (
           <span key={f.id} style={{ color: f.color, fontWeight: 600 }}>

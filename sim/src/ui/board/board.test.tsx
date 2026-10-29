@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { turnOf } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { boardView } from "../../server/view.ts";
+import { Forces } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 import { setPieces } from "../../../test/board.ts";
 import { changedSpaces } from "../play/Play.tsx";
@@ -82,5 +83,23 @@ describe("change outline", () => {
   it("shows a legend entry for each piece on the board", () => {
     render(<Legend view={view} />);
     expect(screen.getByLabelText("Legend").textContent).toMatch(/guerrilla \(underground\)/);
+  });
+});
+
+describe("victory track and forces", () => {
+  it("places each faction marker at its score and flags its threshold", () => {
+    render(<StatusBar view={view} />);
+    expect(screen.getByLabelText("State score 21")).toBeTruthy();
+    expect(screen.getByText("State wins at 49")).toBeTruthy();
+    expect(screen.getByText("PKK wins at 30")).toBeTruthy();
+  });
+
+  it("lists each piece type on the map, Available and out of play", () => {
+    render(<Forces view={view} />);
+    const guards = view.forces.find((f) => f.piece === "guards");
+    expect(guards?.outOfPlay).toBeGreaterThan(0);
+    expect(screen.getByLabelText("State forces").textContent).toContain(`guards00${String(guards?.outOfPlay)}`);
+    const total = view.forces.find((f) => f.piece === "guerrilla");
+    expect((total?.onMap ?? 0) + (total?.available ?? 0) + (total?.outOfPlay ?? 0)).toBe(30);
   });
 });

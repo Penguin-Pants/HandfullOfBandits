@@ -10,6 +10,7 @@ import { Board, Legend, SpaceDetail } from "../board/Board.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
+import { Forces } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 
 export interface PlayProps {
@@ -152,6 +153,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
             </button>
           )}
           {detail !== undefined && <SpaceDetail space={detail} />}
+          <Forces view={view} />
           <div className="row">
             <button type="button" onClick={() => { setShowHistory(!showHistory); }}>
               History (H)
