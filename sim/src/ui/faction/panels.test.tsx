@@ -143,6 +143,11 @@ describe("FactionPanel", () => {
     document.body.append(space);
     fireEvent.keyDown(space, { key: "Enter" });
     fireEvent.keyDown(screen.getByLabelText("Option"), { key: "Enter" });
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    document.body.append(box);
+    fireEvent.keyDown(box, { key: "Enter" });
+    box.remove();
     expect(onCommit).not.toHaveBeenCalled();
     fireEvent.keyDown(screen.getByRole("button", { name: "Rally" }), { key: "Escape" });
     expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
