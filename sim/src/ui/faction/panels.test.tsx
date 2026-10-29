@@ -56,6 +56,28 @@ describe("FactionPanel", () => {
     expect(screen.getByText("Coerce needs a Neutral or Support space.")).toBeTruthy();
   });
 
+  it("shows on the eligibility track what each box leaves open and who is First Eligible next", () => {
+    const track: LegalChoices = { ...legal, other: "state", placed: { pkk: null, state: null }, boxes: [
+      { box: "opSa", allowed: true, reason: null, otherMay: ["event", "limitedOp", "pass"], nextFirst: "state" },
+      { box: "limitedOp", allowed: true, reason: null, otherMay: ["opOnly", "opSa", "pass"], nextFirst: "pkk" },
+    ] };
+    render(<FactionPanel api={mockApi()} sessionId="S" legal={track} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
+    const opSa = screen.getByLabelText("Op + SA box").textContent;
+    expect(opSa).toContain("Then state: Event, Limited Op, Pass");
+    expect(opSa).toContain("Next card 1st: state");
+    expect(screen.getByLabelText("Limited Op box").textContent).toContain("Next card 1st: pkk");
+  });
+
+  it("marks the boxes closed to the Second Eligible and shows where the First Eligible's cylinder is", () => {
+    const second: LegalChoices = { ...legal, first: false, other: "pkk", placed: { pkk: "opSa", state: null }, boxes: [
+      { box: "opSa", allowed: false, reason: "Not open", otherMay: null, nextFirst: null },
+      { box: "event", allowed: true, reason: null, otherMay: null, nextFirst: null },
+    ] };
+    render(<FactionPanel api={mockApi()} sessionId="S" legal={second} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
+    expect(screen.getByLabelText("Op + SA box").textContent).toContain("pkk");
+    expect(screen.getByLabelText("Op + SA box").textContent).toContain("Closed");
+  });
+
   it("keeps an Op open in Op + SA, since a preceding SA may make it legal", () => {
     render(<FactionPanel api={mockApi()} sessionId="S" legal={legal} selected={[]} onCommit={vi.fn()} onDraft={vi.fn()} />);
     fireEvent.click(screen.getByRole("button", { name: "Op + SA" }));

@@ -107,12 +107,27 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
                 ? "Step 4: check the preview, then Commit."
                 : "Fix the problems shown below, or change the plan."}
       </p>
-      <div className="row" role="group" aria-label="Boxes">
-        {boxes.map((b) => (
-          <button key={b.box} type="button" disabled={!b.allowed || b.box === "event"} title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")} aria-pressed={box === b.box} onClick={() => { pickBox(b.box); }}>
-            {LABEL[b.box] ?? b.box}
-          </button>
-        ))}
+      <div className="elig-track" role="group" aria-label="Boxes">
+        {boxes.map((b) => {
+          const here = Object.entries(legal.placed ?? {}).filter(([, at]) => at === b.box).map(([f]) => f);
+          return (
+            <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}`} aria-label={`${LABEL[b.box] ?? b.box} box`}>
+              <button type="button" disabled={!b.allowed || b.box === "event"} title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")} aria-pressed={box === b.box} onClick={() => { pickBox(b.box); }}>
+                {LABEL[b.box] ?? b.box}
+              </button>
+              {here.map((f) => (
+                <span key={f} className="elig-cylinder">{f}</span>
+              ))}
+              {b.allowed && b.otherMay != null && (
+                <span className="elig-note">
+                  Then {legal.other}: {b.otherMay.map((o) => LABEL[o] ?? o).join(", ")}
+                </span>
+              )}
+              {b.allowed && b.nextFirst != null && <span className="elig-note">Next card 1st: {b.nextFirst}</span>}
+              {!b.allowed && <span className="elig-note">Closed</span>}
+            </div>
+          );
+        })}
       </div>
       {box !== null && OP_BOXES.includes(box) && (
         <ul aria-label="Operations">

@@ -31,12 +31,15 @@ export function activeFaction(state: GameState): FactionId | null {
 
 /** Boxes open to `faction` now: all for the First Eligible, the responder matrix for the Second (05 s2.3). */
 export function legalBoxes(ruleset: Ruleset, state: GameState, faction: FactionId): string[] {
-  const { boxes, adjacency } = ruleset.sequence;
-  if (faction === state.initiative.firstEligible) return [...boxes];
+  if (faction === state.initiative.firstEligible) return [...ruleset.sequence.boxes];
   const first = state.initiative.firstEligible === null ? null : own(state.initiative.boxes, state.initiative.firstEligible) ?? null;
-  if (first === null) return [];
-  const touching = new Set(adjacency.flatMap(([a, b]) => (a === first ? [b] : b === first ? [a] : [])));
-  return boxes.filter((box) => box === BOX.pass || touching.has(box));
+  return first === null ? [] : responderBoxes(ruleset, first);
+}
+
+/** Boxes the Second Eligible may pick after the First Eligible picks `first`: Pass and adjacent boxes (05 s2.3). */
+export function responderBoxes(ruleset: Ruleset, first: string): string[] {
+  const touching = new Set(ruleset.sequence.adjacency.flatMap(([a, b]) => (a === first ? [b] : b === first ? [a] : [])));
+  return ruleset.sequence.boxes.filter((box) => box === BOX.pass || touching.has(box));
 }
 
 /** Sequence layer of validation (05 s4.1 item 1): phase, eligibility, box. */

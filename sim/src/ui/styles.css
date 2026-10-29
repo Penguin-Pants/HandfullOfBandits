@@ -112,3 +112,14 @@ table.forces td:first-child, table.forces th:first-child { text-align: left; }
 .card-empty { border: 2px dashed var(--line); color: var(--muted); align-items: center; justify-content: center; }
 .card-button { padding: 0; border: none; background: none; min-height: 0; }
 .card-button:hover .card-back { filter: brightness(1.15); }
+
+/* Eligibility track */
+.elig-track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 8px; }
+.elig-box { display: grid; gap: 3px; align-content: start; padding: 4px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
+.elig-box button { padding: 0 4px; font-size: 12px; min-height: 28px; }
+.elig-box.closed { background: repeating-linear-gradient(45deg, transparent 0 5px, var(--inset) 5px 10px); }
+.elig-note { color: var(--muted); line-height: 1.25; }
+.elig-cylinder { justify-self: center; padding: 1px 6px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 600; }
+.level-marker { font-size: 11px; font-weight: 700; }
+.chip-code { font-size: 9px; font-weight: 700; fill: #fff; pointer-events: none; }
+.chip-count { font-size: 10px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 3px; }
