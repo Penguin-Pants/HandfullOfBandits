@@ -87,11 +87,16 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     setSubValues({});
   };
   const panel = useRef<HTMLElement>(null);
+  // The key listener is registered once and reads the latest render through this ref, so a key
+  // pressed right after a validation result arrives never sees an older plan.
+  const latest = useRef({ command, result, onCommit, clear });
+  latest.current = { command, result, onCommit, clear };
   // Enter commits a valid plan and Esc clears it, anywhere on the page except the note bar.
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       const target = e.target instanceof Element ? e.target : null;
       if (target?.tagName === "TEXTAREA") return;
+      const { command, result, onCommit, clear } = latest.current;
       if (e.key === "Escape") clear();
       // Enter commits only from the page itself or a text field of this panel. Buttons, map spaces,
       // dropdowns, checkboxes and other panels keep Enter for their own action.
@@ -105,7 +110,7 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
     };
     window.addEventListener("keydown", onKey);
     return () => { window.removeEventListener("keydown", onKey); };
-  });
+  }, []);
   const pickBox = (b: string): void => {
     if (b === "pass") onCommit({ type: "Pass", faction });
     else if (b !== "event") setBox(b);
