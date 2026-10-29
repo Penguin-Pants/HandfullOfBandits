@@ -142,6 +142,7 @@ describe("FactionPanel", () => {
     space.setAttribute("role", "button");
     document.body.append(space);
     fireEvent.keyDown(space, { key: "Enter" });
+    fireEvent.keyDown(screen.getByLabelText("Option"), { key: "Enter" });
     expect(onCommit).not.toHaveBeenCalled();
     fireEvent.keyDown(screen.getByRole("button", { name: "Rally" }), { key: "Escape" });
     expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();

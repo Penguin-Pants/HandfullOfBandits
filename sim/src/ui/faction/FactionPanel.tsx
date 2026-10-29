@@ -92,8 +92,9 @@ export function FactionPanel({ api, sessionId, legal, selected, onCommit, onDraf
       const target = e.target instanceof Element ? e.target : null;
       if (target?.tagName === "TEXTAREA") return;
       if (e.key === "Escape") clear();
-      // A focused button (HTML or role="button", such as a map space) already acts on Enter.
-      if (target?.tagName === "BUTTON" || target?.getAttribute("role") === "button") return;
+      // Enter commits only from the page itself or a text field. Buttons, map spaces and dropdowns
+      // keep Enter for their own action.
+      if (target !== null && target !== document.body && target.tagName !== "INPUT") return;
       if (e.key === "Enter" && command !== null && result?.ok === true) {
         e.preventDefault();
         onCommit(command);
