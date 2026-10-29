@@ -59,6 +59,11 @@ export function MarkerChips({ markers, x, y }: { readonly markers: SpaceView["ma
             <text x={cx} y={y + 3.5} textAnchor="middle" className="chip-code">
               {chip.code}
             </text>
+            {m.side !== "default" && (
+              <text x={cx} y={y + r + 9} textAnchor="middle" className="chip-side">
+                {m.side}
+              </text>
+            )}
             {m.count > 1 && (
               <text x={cx + r} y={y - r + 2} className="chip-count">
                 {m.count}

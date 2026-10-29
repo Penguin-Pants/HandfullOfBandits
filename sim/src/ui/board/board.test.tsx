@@ -121,6 +121,7 @@ describe("map markers", () => {
     render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
     expect(screen.getByRole("button", { name: "Botan" }).ownerDocument.querySelectorAll("[aria-label=\"Passive Opposition\"]").length).toBe(marked.spaces.filter((s) => s.levelName === "passiveOpposition").length);
     expect(screen.getByLabelText("Coercion (like Terror) 2")).toBeTruthy();
-    expect(screen.getByLabelText("Displacement old 1")).toBeTruthy();
+    expect(screen.getByLabelText("Displacement old 1").textContent).toContain("old");
+    expect(screen.getByLabelText("Leadership present 1").textContent).toContain("present");
   });
 });

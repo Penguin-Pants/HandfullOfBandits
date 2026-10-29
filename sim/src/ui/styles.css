@@ -123,3 +123,4 @@ table.forces td:first-child, table.forces th:first-child { text-align: left; }
 .level-marker { font-size: 11px; font-weight: 700; }
 .chip-code { font-size: 9px; font-weight: 700; fill: #fff; pointer-events: none; }
 .chip-count { font-size: 10px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 3px; }
+.chip-side { font-size: 9px; fill: var(--muted); paint-order: stroke; stroke: var(--cell); stroke-width: 3px; }
