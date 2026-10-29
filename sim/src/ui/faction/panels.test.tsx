@@ -11,7 +11,7 @@ import { EventPanel } from "../event/EventPanel.tsx";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { FactionPanel } from "./FactionPanel.tsx";
 import { actionForms } from "../../server/forms.ts";
-import { emptyPlan, planReducer } from "./plan.ts";
+import { emptyPlan, emptyPlans, planReducer, plansReducer } from "./plan.ts";
 import { PlanForm } from "./PlanForm.tsx";
 
 const rallyFields = actionForms.find((f) => f.id === "pkk.rally")?.fields ?? [];
@@ -221,12 +221,12 @@ describe("EventPanel", () => {
     );
     const onCommit = vi.fn();
     function Harness() {
-      // A Faction panel draft left the map on its SA: the free action must still build its own spaces.
-      const [plan, dispatch] = useReducer(planReducer, { ...emptyPlan, target: "sa" as const });
+      // A Faction panel draft left its map target on the SA: the free action builds its own plan.
+      const [plans, dispatch] = useReducer(plansReducer, { ...emptyPlans, faction: { ...emptyPlan, target: "sa" as const } });
       return (
         <>
           <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
-          <EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="pkk" eventOpen onCommit={onCommit} forms={legal.actions ?? []} plan={plan} dispatch={dispatch} />
+          <EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="pkk" eventOpen onCommit={onCommit} forms={legal.actions ?? []} plan={plans.event} dispatch={(e) => { dispatch({ ...e, owner: "event" }); }} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
         </>
       );
     }

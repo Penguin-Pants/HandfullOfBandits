@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { arrowsOf, dragMode, emptyPlan, planReducer, toCommand, type PlanEvent, type PlanState } from "./plan.ts";
+import { arrowsOf, dragMode, emptyPlan, emptyPlans, planReducer, plansReducer, toCommand, type PlanEvent, type PlanState } from "./plan.ts";
 
 // UC-5: mouse-only plan building. Clicks pick spaces, drags add moves, steppers set counts.
 const run = (...events: PlanEvent[]): PlanState => events.reduce(planReducer, emptyPlan);
@@ -97,5 +97,32 @@ describe("toCommand", () => {
     expect(dragMode(forms[0]?.fields, "state.air-mobility")).toBe("both");
     expect(dragMode(forms[0]?.fields, "pkk.march")).toBe("into");
     expect(dragMode(forms[1]?.fields, "pkk.rally")).toBeNull();
+  });
+});
+
+describe("plansReducer (Faction panel and Event free action)", () => {
+  it("keeps each panel's plan apart; the map builds the active one", () => {
+    let s = emptyPlans;
+    s = plansReducer(s, { type: "modes", op: "into", sa: null, owner: "faction" });
+    s = plansReducer(s, { type: "activate", owner: "event" });
+    s = plansReducer(s, { type: "modes", op: "route", sa: null, owner: "event" });
+    s = plansReducer(s, { type: "drag", from: "dersim", to: "botan" });
+    expect(s.event.op.moves).toEqual({ botan: [{ from: "dersim", count: 1 }] });
+    s = plansReducer(s, { type: "activate", owner: "faction" });
+    s = plansReducer(s, { type: "drag", from: "hakkari", to: "botan" });
+    s = plansReducer(s, { type: "drag", from: "agri", to: "van-bitlis" });
+    expect(s.faction.modes.op).toBe("into");
+    expect(s.faction.op.moves).toEqual({ botan: [{ from: "hakkari", count: 1 }], "van-bitlis": [{ from: "agri", count: 1 }] });
+  });
+
+  it("activating the free action starts it empty; resetAll empties both", () => {
+    let s = plansReducer(emptyPlans, { type: "click", id: "botan", add: false });
+    s = plansReducer(s, { type: "activate", owner: "event" });
+    s = plansReducer(s, { type: "click", id: "dersim", add: false });
+    s = plansReducer(s, { type: "activate", owner: "event" });
+    expect(s.event.op.locations).toEqual([]);
+    expect(s.faction.op.locations).toEqual(["botan"]);
+    expect(plansReducer(s, { type: "activate", owner: "faction" }).faction.op.locations).toEqual(["botan"]);
+    expect(plansReducer(s, { type: "resetAll" })).toEqual({ ...emptyPlans, active: "event" });
   });
 });

@@ -157,3 +157,33 @@ export function arrowsOf(plan: PlanState): { from: string; to: string; count: nu
   // Only spaces still in the plan: the command leaves out moves of a deselected space.
   return [plan.op, plan.sa].flatMap((p) => p.locations.flatMap((loc) => (p.moves[loc] ?? []).map((m) => ({ from: m.from, to: m.to ?? loc, count: m.count }))));
 }
+
+/** Who builds a plan: the Faction panel's Op, or an Event's free action. */
+export type Owner = "faction" | "event";
+
+/** One plan per panel, so a free action never changes the Faction panel's draft. Map clicks and
+ * drags (events without an owner) build the active plan; a panel's own events name it. */
+export interface Plans {
+  readonly active: Owner;
+  readonly faction: PlanState;
+  readonly event: PlanState;
+}
+
+export type PlansEvent =
+  | (PlanEvent & { readonly owner?: Owner })
+  | { readonly type: "activate"; readonly owner: Owner }
+  | { readonly type: "resetAll" };
+
+export const emptyPlans: Plans = { active: "faction", faction: emptyPlan, event: emptyPlan };
+
+export function plansReducer(state: Plans, event: PlansEvent): Plans {
+  if (event.type === "activate") {
+    // A free action starts empty each time; going back to the Faction panel keeps its draft.
+    if (event.owner === "faction") return state.active === "faction" ? state : { ...state, active: "faction" };
+    return { ...state, active: "event", event: emptyPlan };
+  }
+  if (event.type === "resetAll") return { ...emptyPlans, active: state.active, faction: { ...emptyPlan, modes: state.faction.modes } };
+  const owner = event.owner ?? state.active;
+  const next = planReducer(state[owner], event);
+  return next === state[owner] ? state : { ...state, [owner]: next };
+}

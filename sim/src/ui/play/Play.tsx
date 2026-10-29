@@ -13,7 +13,7 @@ import { Board, Legend, SpaceDetail } from "../board/Board.tsx";
 import { CardTable } from "../cards/CardTable.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
-import { arrowsOf, emptyPlan, planReducer } from "../faction/plan.ts";
+import { arrowsOf, emptyPlans, plansReducer, type PlanEvent } from "../faction/plan.ts";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
@@ -47,8 +47,12 @@ function LastAction({ item, view }: { readonly item: HistoryItem | undefined; re
 export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
   const [data, setData] = useState<{ session: SessionRow; head: Head } | null>(null);
   const [legal, setLegal] = useState<LegalChoices | null>(null);
-  // The map-built plan (UC-5): spaces, values and moves of the action and its SA.
-  const [plan, dispatch] = useReducer(planReducer, emptyPlan);
+  // The map-built plans (UC-5): one for the Faction panel, one for an Event's free action. Map
+  // clicks and drags build the active one.
+  const [plans, dispatch] = useReducer(plansReducer, emptyPlans);
+  const plan = plans[plans.active];
+  const toFaction = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "faction" }); }, []);
+  const toEvent = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "event" }); }, []);
   /** The space last clicked, shown in the space detail. */
   const [focused, setFocused] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +93,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       const result = await api.submit(sessionId, command, data.head.actionId);
       last.current = { id: result.actionId, at: Date.now() };
       draft.current = null;
-      dispatch({ type: "reset" });
+      dispatch({ type: "resetAll" });
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -186,11 +190,11 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
         <aside className="side" aria-label="Side panel" hidden={mapOnly}>
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           {view.status.phase === "propaganda" ? (
-            <PropagandaPanel view={view} legal={legal} selected={plan.op.locations} onCommit={(c) => void commit(c)} />
+            <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
           ) : (
-            <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plan} dispatch={dispatch} />
+            <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
           )}
-          {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} view={view} legal={legal} plan={plan} dispatch={dispatch} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
+          {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} />
           {detail !== undefined && <SpaceDetail space={detail} />}
           <div className="row">

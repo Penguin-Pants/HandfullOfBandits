@@ -18,21 +18,26 @@ export interface EventPanelProps {
   readonly forms: readonly ActionForm[];
   readonly plan: PlanState;
   readonly dispatch: (event: PlanEvent) => void;
+  /** A free-action plan question opened (true) or closed (false): the map builds that plan. */
+  readonly onFreeAction?: (open: boolean) => void;
 }
 
 const formOf = (forms: readonly ActionForm[], id: string): ActionForm =>
   forms.find((f) => f.id === id) ?? { id, label: words(id.split(".").at(-1) ?? id), cost: "", fields: [], subAction: null };
 
-export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch }: EventPanelProps) {
+export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch, onFreeAction }: EventPanelProps) {
   const card = view.status.card;
   const [pending, setPending] = useState<{ side: string; answers: unknown[]; question: Question | null; error: string | null } | null>(null);
   const [picks, setPicks] = useState<string[]>([]);
   const freeAction = pending?.question?.kind === "plan" ? pending.question : null;
   useEffect(() => {
-    if (freeAction?.action === undefined) return;
+    if (freeAction?.action === undefined) {
+      onFreeAction?.(false);
+      return;
+    }
     const sa = freeAction.sa;
-    // Start a clean plan, built on the free action itself, whatever a Faction panel draft left behind.
-    dispatch({ type: "reset" });
+    // The free action gets its own empty plan; the Faction panel's draft stays as it was.
+    onFreeAction?.(true);
     dispatch({ type: "modes", op: dragMode(formOf(forms, freeAction.action).fields, freeAction.action), sa: sa === undefined ? null : dragMode(formOf(forms, sa).fields, sa) });
   }, [freeAction?.action, freeAction?.sa]);
   if (card === null) return null;
@@ -108,7 +113,6 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
             const sa = pending.question.sa === undefined ? undefined : formOf(forms, pending.question.sa);
             const submit = (): void => {
               answer({ op: op.id, ...partOf(op.fields, plan.op), sa: sa === undefined ? null : { action: sa.id, ...partOf(sa.fields, plan.sa) } });
-              dispatch({ type: "reset" });
             };
             return (
               <div aria-label="Free action">
@@ -117,7 +121,7 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
                   <button type="button" className="primary" disabled={plan.op.locations.length === 0} onClick={submit}>
                     Submit plan
                   </button>
-                  <button type="button" onClick={() => { answer(null); dispatch({ type: "reset" }); }}>
+                  <button type="button" onClick={() => { answer(null); }}>
                     Skip the free action
                   </button>
                 </div>
