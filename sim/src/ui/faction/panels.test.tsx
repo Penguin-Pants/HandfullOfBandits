@@ -235,9 +235,9 @@ describe("PropagandaPanel", () => {
     const ohal = { ...base, tracks: { ...base.tracks, emergencyRule: "ohal" }, turn: { ...base.turn, phase: "propaganda", step: probe, propagandaRound: 1 } };
     const onCommit = vi.fn();
     render(<PropagandaPanel view={boardView(kurdish.ruleset, kurdish.data, ohal)} legal={{ faction: null, phase: "propaganda", advance: true }} selected={[]} onCommit={onCommit} />);
-    fireEvent.click(screen.getByRole("button", { name: "normalizing" }));
+    fireEvent.click(screen.getByRole("button", { name: "Normalizing" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "legitimacy", choice: { emergencyStep: "normalizing" } });
-    expect(screen.queryByRole("button", { name: "martialLaw" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Martial Law" })).toBeNull();
   });
 
   it("sends the chosen Guard removal count per space in Upkeep", () => {

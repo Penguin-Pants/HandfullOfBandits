@@ -438,7 +438,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 Requirements agreed with the designer in session; no rule changes. Plain CSS stays (08 s1 item 7); the one new dependency is `@radix-ui/react-tooltip` 1.4.1.
 
 - **UC-1 Plain-language log and tooltips (R1, R7).** Last action box and History drawer show plain sentences built at display time from stored entry `kind` and `data` (`sim/src/ui/log/plain.ts`); bookkeeping kinds only in History; rule and assumption references in a tooltip (`sim/src/ui/common/Tip.tsx`). History entries gain `cause` and `cardTitle` (`sim/src/server/cause.ts`); `BoardView.supportLevels` added. Export and stored text unchanged. **Status:** done.
-- **UC-2 Status pills (R4).** One labeled pill per track; numbered mini track for Legitimacy and Europe; step mini track for Emergency Rule, postures, Ceasefire and Legal Space; Resources value only; readable value names; one score pill per faction. **Status:** not started.
+- **UC-2 Status pills (R4).** One labeled pill per track; numbered mini track for Legitimacy and Europe; step mini track for Emergency Rule, postures, Ceasefire and Legal Space; Resources value only; readable value names; one score pill per faction. `BoardView.status.tracks` gains `min`/`max` or `steps`; mini track rule: numeric range of 20 or less, or any ordinal track (`sim/src/ui/status/StatusBar.tsx`). **Status:** done.
 - **UC-3 Layout (R2, R3, R5, R6).** Card text under the deck; right column order deck, card text or Propaganda, Faction panel, Last action, space detail, buttons; forces side by side under the map; no page scroll at 1920 x 1080 during normal card play, right column scrolls. **Status:** not started.
 
 ## 4. Phase 3: full Kurdish COIN prototype

@@ -48,7 +48,7 @@ try {
   await page.getByText(/^Card 1$/).waitFor();
   check(true, "Play: first card revealed");
   await page.getByRole("button", { name: "Pass" }).last().click();
-  await page.getByText(/1st: pkk \(pass\)/).waitFor();
+  await page.getByText("1st: PKK (Pass)", { exact: true }).waitFor();
   check(true, "one action committed (PKK Pass)");
   await page.locator("svg").first().click({ position: { x: 5, y: 5 } });
   await page.keyboard.press("n");
@@ -57,7 +57,7 @@ try {
   await page.getByRole("status").filter({ hasText: /Saved, linked to/ }).waitFor();
   check(true, "note saved and linked to the action");
   await page.getByRole("button", { name: "Undo (Ctrl+Z)" }).click();
-  await page.getByText("1st: pkk", { exact: true }).waitFor();
+  await page.getByText("1st: PKK", { exact: true }).waitFor();
   check(true, "undo restored the board");
   const sessions = await (await fetch(`${base}/api/sessions`)).json();
   const exported = await (await fetch(`${base}/api/sessions/${sessions[0].session_id}/export`)).json();

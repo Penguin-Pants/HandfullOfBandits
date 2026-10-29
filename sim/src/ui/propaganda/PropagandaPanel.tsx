@@ -3,6 +3,7 @@
 // Upkeep Guard removals) for the selected spaces.
 import { useState } from "react";
 import type { AnyCommand, BoardView, LegalChoices } from "../api.ts";
+import { words } from "../common/names.ts";
 import { guideOf } from "./phases.ts";
 
 export interface PropagandaPanelProps {
@@ -56,7 +57,7 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           <span>Move Emergency Rule to:</span>
           {view.status.emergencyMoves.map((m) => (
             <button key={m} type="button" onClick={() => { choose({ emergencyStep: m }); }}>
-              {m}
+              {words(m)}
             </button>
           ))}
         </div>

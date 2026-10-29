@@ -40,7 +40,7 @@ describe("Board", () => {
       </>,
     );
     expect(screen.getByText(/Level: passiveOpposition/)).toBeTruthy();
-    expect(screen.getByText(/score 21\/49 \(-28\)/)).toBeTruthy();
+    expect(screen.getByLabelText("State score").textContent).toBe("StateScore 21 of 49Margin -28Harm 0 of 6");
   });
 });
 
@@ -136,5 +136,36 @@ describe("map tooltip", () => {
     expect(lines[1]).toBe("Level: passiveOpposition · Control: none");
     expect(lines[2]).toMatch(/^Pieces: .*guerrilla \(underground\)/);
     expect(lines[3]).toBe("Markers: 1 coercion");
+  });
+});
+
+describe("status pills (UC-2)", () => {
+  it("gives each track its own labeled pill with readable values", () => {
+    render(<StatusBar view={view} />);
+    expect(screen.getByLabelText("Emergency Rule").textContent).toMatch(/^Emergency RuleMartial Law/);
+    expect(screen.getByLabelText("Syria posture").textContent).toMatch(/^Syria postureHost/);
+    expect(screen.getByLabelText("State Resources").textContent).toBe("State Resources12");
+  });
+
+  it("shows numbered mini tracks for Legitimacy (0-20) and Europe (0-5) with the value marked, none for Resources", () => {
+    render(<StatusBar view={view} />);
+    const legit = screen.getByLabelText("Legitimacy");
+    expect(legit.querySelectorAll(".mini-box")).toHaveLength(21);
+    expect(legit.querySelector("[aria-current]")?.textContent).toBe("10");
+    expect(screen.getByLabelText("Europe").querySelectorAll(".mini-box")).toHaveLength(6);
+    expect(screen.getByLabelText("State Resources").querySelector(".mini-track")).toBeNull();
+  });
+
+  it("shows every step of a step track with the current one highlighted", () => {
+    render(<StatusBar view={view} />);
+    const er = screen.getByLabelText("Emergency Rule");
+    expect([...er.querySelectorAll(".mini-step")].map((e) => e.textContent)).toEqual(["Martial Law", "OHAL", "OHAL Extended Powers", "Normalizing"]);
+    expect(er.querySelector("[aria-current]")?.textContent).toBe("Martial Law");
+  });
+
+  it("falls back to words for a value with no readable name", () => {
+    const odd = { ...view, status: { ...view.status, tracks: [{ id: "mood", display: "Mood", value: "veryTense", steps: ["calm", "veryTense"] }] } };
+    render(<StatusBar view={odd} />);
+    expect(screen.getByLabelText("Mood").querySelector("[aria-current]")?.textContent).toBe("Very Tense");
   });
 });
