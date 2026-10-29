@@ -64,6 +64,8 @@ describe("HTTP API (P2-11)", () => {
     const result = await call<{ ok: boolean }>("POST", `/api/sessions/${sessionId}/validate`, { command: { type: "Pass", faction: "pkk" } });
     expect(result.body.ok).toBe(false);
     expect((await call<{ phase: string; advance: boolean }>("GET", `/api/sessions/${sessionId}/legal`)).body).toMatchObject({ phase: "setup", advance: true });
+    // UC-6: the action reference is there before the first card too.
+    expect((await call<{ forms: unknown[] }>("GET", `/api/sessions/${sessionId}/legal`)).body.forms.length).toBeGreaterThan(0);
   });
 
   it("rejects a stale head (one active writer per session)", async () => {

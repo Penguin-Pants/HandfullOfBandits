@@ -32,10 +32,10 @@ const legal: LegalChoices = {
     { box: "pass", allowed: true, reason: null },
   ],
   actions: [
-    { id: "pkk.rally", label: "Rally", cost: "1 per location", fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "flip"] }], subAction: { id: "agitate", fields: [{ key: "shifts", label: "Shifts", kind: "number" }] }, kind: "op", ok: true, reason: null, locations: ["botan"] },
-    { id: "pkk.coerce", label: "Coerce", cost: "1 per space", fields: [], subAction: null, kind: "op", ok: false, reason: "Coerce needs a Neutral or Support space.", locations: [] },
-    { id: "pkk.extort", label: "Extort", cost: "0", fields: [], subAction: null, kind: "sa", ok: true, reason: null, locations: [] },
-    { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", fields: actionForms.find((f) => f.id === "pkk.strike-collaborators")?.fields ?? [], subAction: null, timing: "before", kind: "sa", ok: true, reason: null, locations: [] },
+    { id: "pkk.rally", label: "Rally", cost: "1 per location", summary: "", fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "flip"] }], subAction: { id: "agitate", fields: [{ key: "shifts", label: "Shifts", kind: "number" }] }, kind: "op", ok: true, reason: null, locations: ["botan"] },
+    { id: "pkk.coerce", label: "Coerce", cost: "1 per space", summary: "", fields: [], subAction: null, kind: "op", ok: false, reason: "Coerce needs a Neutral or Support space.", locations: [] },
+    { id: "pkk.extort", label: "Extort", cost: "0", summary: "", fields: [], subAction: null, kind: "sa", ok: true, reason: null, locations: [] },
+    { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", summary: "", fields: actionForms.find((f) => f.id === "pkk.strike-collaborators")?.fields ?? [], subAction: null, timing: "before", kind: "sa", ok: true, reason: null, locations: [] },
   ],
 };
 const ok: ValidationResult = { ok: true, violations: [], warnings: [], preview: { effects: [{ type: "adjustTrack", track: "resources.pkk", delta: -1, ruleRef: "06 s4.1", assumptionRef: null }] } };
@@ -149,12 +149,16 @@ describe("FactionPanel", () => {
   });
 
   it("a drag on the map adds a move with a piece count stepper (UC-5)", async () => {
-    const march: LegalChoices = { ...legal, actions: [{ id: "pkk.march", label: "March", cost: "1 per destination", fields: [{ key: "moves", label: "Moves", kind: "moves" }], subAction: null, kind: "op", ok: true, reason: null, locations: [] }] };
+    const marchForm = actionForms.find((f) => f.id === "pkk.march");
+    if (marchForm === undefined) throw new Error("no March form");
+    const march: LegalChoices = { ...legal, actions: [{ ...marchForm, kind: "op", ok: true, reason: null, locations: [] }] };
     const onDraft = vi.fn();
     render(<Faction api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} legal={march} onDraft={onDraft} />);
     click("Limited Op");
+    expect(screen.getByRole("button", { name: "March" }).getAttribute("title")).toMatch(/Move Guerrillas 1 step/);
     click("March");
     expect(screen.getByText(/drag on the map/)).toBeTruthy();
+    expect(screen.getByLabelText("Plan").textContent).toMatch(/Move Guerrillas 1 step/);
     click("drag hakkari botan");
     click("More Pieces Hakkari to Botan");
     await waitFor(() => { expect(lastPlan(onDraft)?.["perLocation"]).toEqual({ botan: { moves: [{ from: "hakkari", count: 2 }] } }); });

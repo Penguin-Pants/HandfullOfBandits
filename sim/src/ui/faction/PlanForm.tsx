@@ -34,8 +34,8 @@ export function Fields({ fields, values, onChange, at }: { readonly fields: read
 export interface PlanFormProps {
   readonly view: BoardView;
   readonly faction: string;
-  readonly op: { readonly id: string; readonly label: string; readonly fields: readonly FormField[] };
-  readonly sa?: { readonly id: string; readonly label: string; readonly fields: readonly FormField[] } | undefined;
+  readonly op: { readonly id: string; readonly label: string; readonly fields: readonly FormField[]; readonly summary?: string };
+  readonly sa?: { readonly id: string; readonly label: string; readonly fields: readonly FormField[]; readonly summary?: string } | undefined;
   readonly plan: PlanState;
   readonly dispatch: (event: PlanEvent) => void;
 }
@@ -59,6 +59,7 @@ export function PlanForm({ view, faction, op, sa, plan, dispatch }: PlanFormProp
               : "drag on the map from a space to the destination of the pieces. Each drag adds 1 piece."
             : "click the button above to build this part on the map."}
         </p>
+        {form.summary !== undefined && form.summary !== "" && <p className="action-summary">{form.summary}</p>}
         {p.locations.length === 0 && <p className="muted">No spaces yet.</p>}
         {p.locations.map((loc) => (
           <div key={loc} className="plan-loc">

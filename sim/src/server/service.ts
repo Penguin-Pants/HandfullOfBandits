@@ -225,7 +225,7 @@ export class SessionService {
     const faction = activeFaction(state);
     if (faction === null) {
       const advance = this.engine.validate(ruleset, state, { type: "Advance" });
-      return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })) } as unknown as JsonValue;
+      return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })), forms: actionForms } as unknown as JsonValue;
     }
     const open = legalBoxes(ruleset, state, faction);
     // What each box leaves open to the other faction and who is First Eligible next card (05 s2.3, s2.4).
