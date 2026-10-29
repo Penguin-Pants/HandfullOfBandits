@@ -67,7 +67,8 @@ function sentence(e: HistoryEntry, d: Data, view: BoardView, actor: string | nul
     case "CardRevealed":
       return `${d["type"] === "propaganda" ? "Propaganda card" : "Card"} "${e.cardTitle ?? str(d["card"])}" revealed.`;
     case "ChoiceMade": {
-      const f = n.faction(d["faction"]);
+      // Free-action choices carry no faction (coin/events.ts); the acting faction made them.
+      const f = n.faction(d["faction"] ?? actor);
       if (d["box"] !== undefined) {
         const event = d["box"] === "event" && e.cardTitle !== null ? `: "${e.cardTitle}"${d["side"] === undefined ? "" : `, ${str(d["side"])}`}` : "";
         return `${f} chose ${words(str(d["box"]))}${event}.`;
@@ -129,8 +130,10 @@ function skipped(d: Data, n: ReturnType<typeof namer>, why: string | null): stri
       return "No card left to reveal.";
     case "always":
       return `The Always line of "${str(d["card"])}" needs a choice and was skipped.`;
-    case "specialActivity":
-      return `The ${words(str(d["action"]).split(".").pop() ?? "")} Special Activity was not carried out.`;
+    case "specialActivity": {
+      const reasons = str(d["reason"]).split(",").filter((r) => r !== "").map(words);
+      return `The ${words(str(d["action"]).split(".").pop() ?? "")} Special Activity was not carried out${reasons.length === 0 ? "" : `: ${reasons.join(", ")}`}.`;
+    }
     case "coerceShift":
       return `Coerce could not shift ${n.space(d["space"])}: a marker blocks it.`;
     case "assault":

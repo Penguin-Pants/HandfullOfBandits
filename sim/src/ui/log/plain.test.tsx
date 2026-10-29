@@ -30,7 +30,7 @@ describe("plain sentences per log kind", () => {
     [entry("ChoiceMade", { faction: "state", box: "opSa" }), "State chose Op + SA."],
     [entry("ChoiceMade", { faction: "pkk", choice: "Hakkari" }), 'PKK chose "Hakkari".'],
     [entry("ChoiceMade", { faction: "pkk", spaces: ["botan", "hakkari"] }), "PKK picked Botan, Hakkari."],
-    [entry("ChoiceMade", { faction: "pkk", freeAction: "pkk.attack", locations: ["botan"] }), "PKK planned a free Attack in Botan."],
+    [entry("ChoiceMade", { freeAction: "pkk.attack", locations: ["botan"] }), "PKK planned a free Attack in Botan."],
     [entry("DieRolled", { purpose: "attackResult", space: "hakkari", roll: 2, guerrillas: 3, hit: true }), "Attack in Hakkari: rolled 2 against 3 Guerrillas, a hit."],
     [entry("ControlChanged", { space: "hakkari", before: "state", after: "pkk" }), "Hakkari: Control passed from State to PKK."],
     [entry("ControlChanged", { space: "botan", before: null, after: "pkk" }), "Botan: Control passed from no one to PKK."],
@@ -64,6 +64,7 @@ describe("plain sentences per effect", () => {
     [entry("EffectApplied", { effect: "transferPool", piece: "guards", from: "outOfPlay", to: "available", count: 16 }), "16 Village Guards moved from Out of Play to Available."],
     [entry("EffectSkipped", { effect: "freeAction", action: "pkk.attack", reason: "declined" }), "The free Attack was declined."],
     [entry("EffectSkipped", { effect: "legalPolitics", reason: "legalSpaceAbsent" }), "Legal Politics skipped: Legal Space is Absent."],
+    [entry("EffectSkipped", { effect: "specialActivity", action: "pkk.ambush", reason: "ambushNotAttack,ambushGuerrilla" }), "The Ambush Special Activity was not carried out: Ambush Not Attack, Ambush Guerrilla."],
     [entry("EffectSkipped", { effect: "coerceShift", space: "botan", reason: "block" }), "Coerce could not shift Botan: a marker blocks it."],
   ])("%#", (e, text) => {
     expect(one(e)).toBe(text);
