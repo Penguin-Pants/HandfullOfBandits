@@ -69,6 +69,17 @@ try {
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
   check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
+  await page.keyboard.press("m");
+  await page.keyboard.press("n");
+  await page.getByLabel("Note text").waitFor();
+  const mapOnly = await page.evaluate(() => {
+    const r = (l) => document.querySelector(`[aria-label="${l}"]`).getBoundingClientRect();
+    const box = document.querySelector('[aria-label="Note text"]').getBoundingClientRect();
+    return r("Board").top >= 0 && box.top >= r("Note bar").top && box.bottom <= r("Note bar").bottom && r("Note bar").bottom <= innerHeight;
+  });
+  check(mapOnly, "map only: map and open note both fully visible");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("m");
   await page.setViewportSize({ width: 800, height: 900 });
   await page.waitForTimeout(300);
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
