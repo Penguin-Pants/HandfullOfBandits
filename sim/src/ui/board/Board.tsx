@@ -2,6 +2,7 @@
 // Support level, the badge shows Control, tokens show pieces with counts. Spaces the last action
 // changed get an amber outline. Click selects; Shift-click adds to the selection.
 import type { BoardView, SpaceView } from "../api.ts";
+import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
 import { isInset, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, TURKEY, type Point } from "./region.ts";
 
@@ -40,11 +41,8 @@ function Tokens({ space, view, x, y }: { space: SpaceView; view: BoardView; x: n
         const left = x - (inRow * TOKEN) / 2 + 8;
         return <PieceIcon key={`${p.piece}-${p.face}`} piece={p} color={color(p.faction)} x={left + (i % perRow) * TOKEN} y={top + 8 + Math.floor(i / perRow) * 20} />;
       })}
-      {space.markers.length > 0 && (
-        <text x={x} y={top + rows * 20 + 12} textAnchor="middle" className="map-marker">
-          {space.markers.map((m) => `${m.hidden ? "Covert" : m.marker}${m.side === "default" ? "" : ` ${m.side}`}×${String(m.count)}`).join(" · ")}
-        </text>
-      )}
+      <LevelMarker space={space} x={x} y={top - 36} />
+      {space.markers.length > 0 && <MarkerChips markers={space.markers} x={x} y={top + rows * 20 + 12} />}
     </g>
   );
 }
@@ -138,6 +136,14 @@ export function Legend({ view }: { readonly view: BoardView }) {
       <span className="legend-item">
         <span className="swatch" style={{ background: levelColor(-2) }} /> Opposition
       </span>
+      {[...new Set(view.spaces.flatMap((s) => s.markers.map((m) => (m.hidden ? "covert" : m.marker))))].map((id) => {
+        const chip = chipOf(id);
+        return (
+          <span key={id} className="legend-item">
+            <span className="swatch" style={{ background: chip.fill, borderRadius: "50%", color: "#fff", fontSize: 9, textAlign: "center", lineHeight: "14px" }}>{chip.code}</span> {chip.name}
+          </span>
+        );
+      })}
       <span className="legend-item">
         <span className="swatch" style={{ border: "3px dashed var(--changed)" }} /> Changed by last action
       </span>

@@ -67,6 +67,9 @@ export interface BoardView {
     readonly cardIndex: number;
     readonly propagandaRound: number;
     readonly card: CardView | null;
+    /** Cards left face down in the draw piles, and cards already played. */
+    readonly deckCount: number;
+    readonly playedCount: number;
     /** Propaganda phase IDs and the open one (05 s6). */
     readonly propagandaPhases: readonly string[];
     readonly propagandaStep: number;
@@ -141,6 +144,8 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
       cardIndex: state.turn.cardIndex,
       propagandaRound: state.turn.propagandaRound,
       card: card === null ? null : cardView(ruleset, card),
+      deckCount: state.deck.piles.reduce((n, pile) => n + pile.length, 0),
+      playedCount: state.deck.played.length,
       propagandaPhases: ruleset.sequence.propagandaPhases,
       propagandaStep: state.turn.step,
       active: activeFaction(state),

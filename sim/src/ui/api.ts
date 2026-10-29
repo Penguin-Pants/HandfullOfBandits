@@ -33,7 +33,14 @@ export interface LegalChoices {
   readonly faction: string | null;
   readonly phase: string;
   readonly first?: boolean;
-  readonly boxes?: readonly { readonly box: string; readonly allowed: boolean; readonly reason: string | null }[];
+  /** The other player faction on this card, and which box each faction's cylinder is in. */
+  readonly other?: string | null;
+  readonly placed?: Readonly<Record<string, string | null>>;
+  /**
+   * Per box: open now; why not; if the First Eligible picks it, the boxes the other faction may
+   * then pick (`otherMay`) and who is First Eligible on the next card (`nextFirst`).
+   */
+  readonly boxes?: readonly { readonly box: string; readonly allowed: boolean; readonly reason: string | null; readonly otherMay?: readonly string[] | null; readonly nextFirst?: string | null }[];
   readonly actions?: readonly ActionChoice[];
   readonly advance?: boolean;
   readonly violations?: readonly Violation[];

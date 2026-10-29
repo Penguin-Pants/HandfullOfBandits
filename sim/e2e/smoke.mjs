@@ -57,7 +57,7 @@ try {
   await page.getByRole("status").filter({ hasText: /Saved, linked to/ }).waitFor();
   check(true, "note saved and linked to the action");
   await page.getByRole("button", { name: "Undo (Ctrl+Z)" }).click();
-  await page.getByText(/1st: pkk$/).waitFor();
+  await page.getByText("1st: pkk", { exact: true }).waitFor();
   check(true, "undo restored the board");
   const sessions = await (await fetch(`${base}/api/sessions`)).json();
   const exported = await (await fetch(`${base}/api/sessions/${sessions[0].session_id}/export`)).json();

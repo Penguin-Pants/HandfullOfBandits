@@ -7,6 +7,7 @@ import { defaultAnchor } from "../notes/anchor.ts";
 import { EndSession } from "../notes/EndSession.tsx";
 import { NoteBar } from "../notes/NoteBar.tsx";
 import { Board, Legend, SpaceDetail } from "../board/Board.tsx";
+import { CardTable } from "../cards/CardTable.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
@@ -140,6 +141,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
           <Legend view={view} />
         </div>
         <aside className="side">
+          <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} />
           {view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={selected} onCommit={(c) => void commit(c)} />
@@ -147,11 +149,6 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
             <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} />
           )}
           {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} legal={legal} selected={selected} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
-          {legal.faction === null && view.status.phase === "setup" && (
-            <button type="button" onClick={() => void commit({ type: "Advance" })}>
-              Reveal first card (Space)
-            </button>
-          )}
           {detail !== undefined && <SpaceDetail space={detail} />}
           <Forces view={view} />
           <div className="row">

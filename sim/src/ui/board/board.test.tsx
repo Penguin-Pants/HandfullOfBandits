@@ -6,7 +6,7 @@ import { kurdish } from "../../../test/kurdish-package.ts";
 import { boardView } from "../../server/view.ts";
 import { Forces } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
-import { setPieces } from "../../../test/board.ts";
+import { setMarkers, setPieces } from "../../../test/board.ts";
 import { changedSpaces } from "../play/Play.tsx";
 import { Board, Legend, SpaceDetail } from "./Board.tsx";
 import { isInset, regionCells, voronoi } from "./region.ts";
@@ -112,5 +112,16 @@ describe("victory track and forces", () => {
     expect(screen.getByLabelText("State forces").textContent).toContain(`guards00${String(guards?.outOfPlay)}`);
     const total = view.forces.find((f) => f.piece === "guerrilla");
     expect((total?.onMap ?? 0) + (total?.available ?? 0) + (total?.outOfPlay ?? 0)).toBe(30);
+  });
+});
+
+describe("map markers", () => {
+  it("draws a level marker for Support or Opposition and a chip per space marker", () => {
+    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(setMarkers(turnOf("pkk"), "botan", "coercion", 2), "botan", "displacement", 1, "old"));
+    render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "Botan" }).ownerDocument.querySelectorAll("[aria-label=\"Passive Opposition\"]").length).toBe(marked.spaces.filter((s) => s.levelName === "passiveOpposition").length);
+    expect(screen.getByLabelText("Coercion (like Terror) 2")).toBeTruthy();
+    expect(screen.getByLabelText("Displacement old 1").textContent).toContain("old");
+    expect(screen.getByLabelText("Leadership present 1").textContent).toContain("present");
   });
 });

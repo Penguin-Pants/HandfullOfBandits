@@ -7,7 +7,7 @@ import { buildContext } from "../annotate/context.ts";
 import type { UiFocus } from "../annotate/types.ts";
 import { derive } from "../engine/coin/derive.ts";
 import { coinHandlers } from "../engine/coin/handlers.ts";
-import { activeFaction, legalBoxes } from "../engine/coin/sequence/ct.ts";
+import { activeFaction, legalBoxes, responderBoxes } from "../engine/coin/sequence/ct.ts";
 import { legalOps } from "../engine/coin/stop-rules.ts";
 import { canonicalJson } from "../engine/core/canonical.ts";
 import type { AnyCommand, GameState, JsonObject, JsonValue, LogEntry, Ruleset, ValidationResult } from "../engine/core/types.ts";
@@ -224,7 +224,16 @@ export class SessionService {
       return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })) } as unknown as JsonValue;
     }
     const open = legalBoxes(ruleset, state, faction);
-    const boxes = ruleset.sequence.boxes.map((box) => ({ box, allowed: open.includes(box), reason: open.includes(box) ? null : `Not open after the First Eligible's choice (05 s2.3).` }));
+    // What each box leaves open to the other faction and who is First Eligible next card (05 s2.3, s2.4).
+    const first = faction === state.initiative.firstEligible;
+    const other = first ? state.initiative.secondEligible : state.initiative.firstEligible;
+    const boxes = ruleset.sequence.boxes.map((box) => ({
+      box,
+      allowed: open.includes(box),
+      reason: open.includes(box) ? null : `Not open after the First Eligible's choice (05 s2.3).`,
+      otherMay: first && other !== null ? responderBoxes(ruleset, box) : null,
+      nextFirst: first ? (ruleset.sequence.swapAfter.includes(box) ? other : faction) : null,
+    }));
     const ops = legalOps(ruleset, state, faction, Number.MAX_SAFE_INTEGER).map((c) => (c["plan"] as { op: string; locations: string[] }));
     const actions = actionForms
       .filter((f) => actionHandlers[f.id]?.faction === faction)
@@ -235,7 +244,7 @@ export class SessionService {
         const probe = this.engine.validate(ruleset, state, { type: "ChooseOperation", faction, box: open.find((b) => b !== "event" && b !== "pass") ?? "limitedOp", plan: { op: form.id, locations: [ruleset.spaces[0]?.id ?? ""], perLocation: {}, sa: null, subActions: [] } });
         return { ...form, kind: "op", ok: where.length > 0, reason: where.length > 0 ? null : (probe.violations[0]?.message ?? "No legal location."), locations: [...new Set(where)] };
       });
-    return { faction, phase: state.turn.phase, first: faction === state.initiative.firstEligible, boxes, actions } as unknown as JsonValue;
+    return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions } as unknown as JsonValue;
   }
 
   history(sessionId: string): { action: ActionRow; entries: LogEntryRow[]; notes: number }[] {
