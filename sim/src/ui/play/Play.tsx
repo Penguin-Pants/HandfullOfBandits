@@ -197,7 +197,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
       />
       {showHistory && (
         <div className="overlay">
-          <HistoryDrawer items={history} view={view} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />
+          <HistoryDrawer items={history} view={view} onClose={() => { setShowHistory(false); }} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />
         </div>
       )}
     </div>

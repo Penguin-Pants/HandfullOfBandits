@@ -106,4 +106,11 @@ describe("HistoryDrawer", () => {
     expect(screen.getByText(/2 notes/)).toBeTruthy();
     expect(screen.getByText("S-A2").closest("li")?.getAttribute("style")).toMatch(/line-through/);
   });
+
+  it("closes with its Close button", () => {
+    const onClose = vi.fn();
+    render(<HistoryDrawer items={[]} view={boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"))} onClose={onClose} />);
+    fireEvent.click(screen.getByRole("button", { name: "Close (H)" }));
+    expect(onClose).toHaveBeenCalled();
+  });
 });
