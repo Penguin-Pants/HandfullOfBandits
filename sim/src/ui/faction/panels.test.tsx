@@ -35,7 +35,7 @@ const legal: LegalChoices = {
     { id: "pkk.rally", label: "Rally", cost: "1 per location", fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "flip"] }], subAction: { id: "agitate", fields: [{ key: "shifts", label: "Shifts", kind: "number" }] }, kind: "op", ok: true, reason: null, locations: ["botan"] },
     { id: "pkk.coerce", label: "Coerce", cost: "1 per space", fields: [], subAction: null, kind: "op", ok: false, reason: "Coerce needs a Neutral or Support space.", locations: [] },
     { id: "pkk.extort", label: "Extort", cost: "0", fields: [], subAction: null, kind: "sa", ok: true, reason: null, locations: [] },
-    { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", fields: [{ key: "guards", label: "Guards", kind: "number" }], subAction: null, timing: "before", kind: "sa", ok: true, reason: null, locations: [] },
+    { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", fields: actionForms.find((f) => f.id === "pkk.strike-collaborators")?.fields ?? [], subAction: null, timing: "before", kind: "sa", ok: true, reason: null, locations: [] },
   ],
 };
 const ok: ValidationResult = { ok: true, violations: [], warnings: [], preview: { effects: [{ type: "adjustTrack", track: "resources.pkk", delta: -1, ruleRef: "06 s4.1", assumptionRef: null }] } };
@@ -120,7 +120,8 @@ describe("FactionPanel", () => {
     click("Strike Collaborators");
     click("Strike Collaborators spaces");
     click("map dersim");
-    click("More Dersim Guards");
+    // Strike Collaborators removes 1 Guard when unset, so the stepper starts at 1.
+    expect(screen.getByRole("group", { name: "Dersim Guards" }).querySelector("output")?.textContent).toBe("1");
     click("More Dersim Guards");
     await waitFor(() => {
       const plan = lastPlan(onDraft);
@@ -129,6 +130,12 @@ describe("FactionPanel", () => {
       expect(plan?.["subActions"]).toEqual([{ action: "agitate", space: "botan", params: { shifts: 1 } }]);
     });
     expect(document.querySelectorAll("input, textarea, select")).toHaveLength(0);
+    click("Strike Collaborators");
+    await waitFor(() => { expect(lastPlan(onDraft)?.["sa"]).toBeNull(); });
+    expect(screen.queryByLabelText("SA plan")).toBeNull();
+    click("Strike Collaborators");
+    click("Strike Collaborators spaces");
+    expect(screen.getByText("No spaces yet.", { selector: "[aria-label='SA plan'] p" })).toBeTruthy();
   });
 
   it("lets the player choose the timing of an SA with no fixed order", async () => {

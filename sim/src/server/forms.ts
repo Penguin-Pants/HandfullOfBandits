@@ -8,6 +8,8 @@ export interface FormField {
   readonly options?: readonly string[];
   /** Word shown while a number is unset (the handler's default), such as "max". */
   readonly blank?: string;
+  /** The handler's value when unset, shown and sent as the starting value. */
+  readonly default?: string;
 }
 
 export interface ActionForm {
@@ -40,5 +42,5 @@ export const actionForms: readonly ActionForm[] = [
   { id: "state.air-mobility", label: "Air Mobility", cost: "0", subAction: null, fields: [moves] },
   { id: "pkk.ambush", label: "Ambush", cost: "0", subAction: null, fields: [], timing: "before" },
   { id: "pkk.extort", label: "Extort", cost: "0", subAction: null, fields: [] },
-  { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", subAction: null, fields: [{ key: "guards", label: "Guards", kind: "number" }], timing: "before" },
+  { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", subAction: null, fields: [{ key: "guards", label: "Guards", kind: "number", default: "1" }], timing: "before" },
 ];

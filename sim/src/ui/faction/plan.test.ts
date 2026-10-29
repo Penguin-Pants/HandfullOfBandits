@@ -40,6 +40,19 @@ describe("planReducer", () => {
     expect(plan.sa.moves).toEqual({ botan: [{ from: "hakkari", count: 1 }] });
   });
 
+  it("clear empties one part and sends the map back to the Op", () => {
+    const plan = run({ type: "modes", op: null, sa: "both" }, { type: "target", target: "sa" }, { type: "drag", from: "hakkari", to: "botan" }, { type: "clear", side: "sa" });
+    expect(plan.sa).toEqual(emptyPlan.sa);
+    expect(plan.target).toBe("op");
+    expect(arrowsOf(plan)).toEqual([]);
+  });
+
+  it("a part whose action stops moving pieces drops its moves and arrows", () => {
+    const plan = run(into, { type: "drag", from: "hakkari", to: "botan" }, { type: "modes", op: null, sa: null });
+    expect(plan.op.locations).toEqual(["botan"]);
+    expect(arrowsOf(plan)).toEqual([]);
+  });
+
   it("Garrison drags keep every route under the one activation space", () => {
     const plan = run({ type: "modes", op: "route", sa: null }, { type: "drag", from: "dersim", to: "botan" }, { type: "drag", from: "agri", to: "hakkari" });
     expect(plan.op.locations).toEqual(["botan"]);

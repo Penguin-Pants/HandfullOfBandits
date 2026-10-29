@@ -26,7 +26,7 @@ export function Fields({ fields, values, onChange, at }: { readonly fields: read
     f.kind === "select" ? (
       <Choice key={f.key} label={f.label} name={name(f.label)} options={f.options ?? []} value={values[f.key] ?? ""} onChange={(v) => { onChange(f.key, v); }} />
     ) : f.kind === "number" ? (
-      <Stepper key={f.key} label={f.label} name={name(f.label)} value={values[f.key] ?? ""} onChange={(v) => { onChange(f.key, v); }} {...(f.blank === undefined ? {} : { blank: f.blank })} />
+      <Stepper key={f.key} label={f.label} name={name(f.label)} value={values[f.key] ?? f.default ?? ""} onChange={(v) => { onChange(f.key, v); }} {...(f.blank === undefined ? {} : { blank: f.blank })} />
     ) : null,
   );
 }

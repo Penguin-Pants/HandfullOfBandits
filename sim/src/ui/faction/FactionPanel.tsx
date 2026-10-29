@@ -154,7 +154,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
             <div className="row" role="group" aria-label="SA">
               <span className="stepper-label">SA</span>
               {actions.filter((a) => a.kind === "sa").map((a) => (
-                <button key={a.id} type="button" aria-pressed={sa === a.id} onClick={() => { setSa(sa === a.id ? null : a.id); if (sa === a.id) dispatch({ type: "target", target: "op" }); }}>
+                <button key={a.id} type="button" aria-pressed={sa === a.id} onClick={() => { setSa(sa === a.id ? null : a.id); dispatch({ type: "clear", side: "sa" }); }}>
                   {a.label}
                 </button>
               ))}

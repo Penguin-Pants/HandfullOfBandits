@@ -43,6 +43,7 @@ export type PlanEvent =
   | { readonly type: "target"; readonly target: Side }
   | { readonly type: "value"; readonly side: Side; readonly loc: string; readonly key: string; readonly value: string }
   | { readonly type: "move"; readonly side: Side; readonly loc: string; readonly index: number; readonly count: number; readonly face?: string | null }
+  | { readonly type: "clear"; readonly side: Side }
   | { readonly type: "reset" };
 
 const EMPTY: SidePlan = { locations: [], values: {}, moves: {} };
@@ -72,8 +73,14 @@ export function planReducer(state: PlanState, event: PlanEvent): PlanState {
       return { ...state, [state.target]: click(state[state.target], event.id, event.add) };
     case "drag":
       return { ...state, [state.target]: drag(state[state.target], event.from, event.to, state.modes[state.target]) };
-    case "modes":
-      return state.modes.op === event.op && state.modes.sa === event.sa ? state : { ...state, modes: { op: event.op, sa: event.sa } };
+    case "modes": {
+      if (state.modes.op === event.op && state.modes.sa === event.sa) return state;
+      // A part whose action moves nothing keeps its spaces but no moves (they would not be sent).
+      const still = (p: SidePlan, mode: DragMode): SidePlan => (mode === null ? { ...p, moves: {} } : p);
+      return { ...state, modes: { op: event.op, sa: event.sa }, op: still(state.op, event.op), sa: still(state.sa, event.sa) };
+    }
+    case "clear":
+      return { ...state, target: "op", [event.side]: EMPTY };
     case "target":
       return { ...state, target: event.target };
     case "value": {
@@ -110,7 +117,7 @@ export function perLocation(fields: readonly FormField[], values: Values, moves:
       if (moves.length > 0) out[f.key] = moves;
       continue;
     }
-    const v = values[f.key];
+    const v = values[f.key] ?? f.default;
     if (v === undefined || v === "") continue;
     out[f.key] = f.kind === "number" ? Number(v) : v;
   }
