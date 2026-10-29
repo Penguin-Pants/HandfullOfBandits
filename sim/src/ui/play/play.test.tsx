@@ -37,3 +37,37 @@ describe("Play undo (T-UI-04)", () => {
     expect(screen.getByRole("heading", { name: /^PKK (First|Second) Eligible/ })).toBeTruthy();
   });
 });
+
+describe("Play map space (UC-4)", () => {
+  const render1 = async (): Promise<void> => {
+    const h = head("S-A3", "DK-012", "state");
+    const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))) });
+    render(<Play api={api} sessionId="S" />);
+    await screen.findByText(/DK-012/, { selector: "span" });
+  };
+
+  it("Key shows and hides the legend", async () => {
+    await render1();
+    expect(screen.queryByLabelText("Legend")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Key" }));
+    expect(screen.getByLabelText("Legend")).toBeTruthy();
+  });
+
+  it("M hides the status bar, side panel and forces bar, and shows them again", async () => {
+    await render1();
+    expect(screen.getByLabelText("Forces")).toBeTruthy();
+    fireEvent.keyDown(window, { key: "m" });
+    expect(screen.queryByLabelText("Status")).toBeNull();
+    expect(screen.queryByLabelText("Forces")).toBeNull();
+    expect(screen.queryByRole("complementary", { name: "Side panel" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Show panels (M)" }));
+    expect(screen.getByLabelText("Status")).toBeTruthy();
+  });
+
+  it("forces bar shows counts and opens the full tables", async () => {
+    await render1();
+    expect(screen.queryByLabelText("State forces")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: /Show forces table/ }));
+    expect(screen.getByLabelText("State forces")).toBeTruthy();
+  });
+});

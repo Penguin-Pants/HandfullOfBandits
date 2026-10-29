@@ -1,6 +1,6 @@
 // Note bar (07 s2 to s5): `N` opens it anywhere outside a text field; type text, `#category` or
 // Alt+1 to Alt+9; Enter saves; Esc cancels; Tab cycles the anchor. It captures keys only while
-// focused, so plan entry keeps its keys (11 P2-16 risk).
+// focused, so plan entry keeps its keys (11 P2-16 risk). Closed, it is one button (UC-4).
 import { useEffect, useRef, useState } from "react";
 import type { CategoryRow, NoteInput } from "../api.ts";
 import { hashCategories, type defaultAnchor } from "./anchor.ts";
@@ -35,18 +35,22 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
       if (e.key === "n" || e.key === "N") {
         e.preventDefault();
         start();
-        setTimeout(() => input.current?.focus(), 0);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => { window.removeEventListener("keydown", onKey); };
   }, [anchor, focus]);
 
+  // Collapsed to a button while closed (UC-4); focus the text box once it renders.
+  const isOpen = open !== null;
+  useEffect(() => {
+    if (isOpen) input.current?.focus();
+  }, [isOpen]);
+
   const close = (): void => {
     setOpen(null);
     setText("");
     setPicked([]);
-    input.current?.blur();
   };
   const save = async (): Promise<void> => {
     if (open === null || text.trim() === "") return;
@@ -75,22 +79,30 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
     }
   };
 
+  if (open === null) {
+    return (
+      <footer className="note-closed" aria-label="Note bar">
+        {saved !== null && <strong role="status">{saved}</strong>}
+        <button type="button" onClick={start}>
+          Note (N)
+        </button>
+      </footer>
+    );
+  }
   return (
     <footer className="panel" aria-label="Note bar">
       <div className="row">
-        <span className="muted">{open === null ? "Press N for a note" : `Note on: ${open.anchor.anchor}${open.anchor.actionId === null ? "" : ` (${open.anchor.actionId})`}`}</span>
+        <span className="muted">{`Note on: ${open.anchor.anchor}${open.anchor.actionId === null ? "" : ` (${open.anchor.actionId})`}`}</span>
         {picked.map((c) => (
           <span key={c}>#{c}</span>
         ))}
-        {saved !== null && <strong role="status">{saved}</strong>}
       </div>
       <textarea
         ref={input}
         aria-label="Note text"
-        rows={open === null ? 1 : 2}
+        rows={2}
         style={{ width: "100%" }}
         value={text}
-        onFocus={() => { if (open === null) start(); }}
         onChange={(e) => { setText(e.target.value); }}
         onKeyDown={onKeyDown}
       />

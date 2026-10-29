@@ -179,3 +179,29 @@ nav { height: 50px; box-sizing: border-box; }
   .play-screen .side, .play-main { height: auto; overflow: visible; }
   .map-panel .map { height: auto; }
 }
+/* Bigger map (UC-4): no nav on play, compact status row, map tools and key overlay, forces bar,
+   map focus mode (M), larger labels. */
+.play-screen { height: 100vh; }
+.play-screen .status-grid > .pills { flex-wrap: nowrap; }
+.play-screen .score-track { max-height: 40px; }
+.track-pill { position: relative; flex-wrap: nowrap; white-space: nowrap; }
+.mini-pop { display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 4px 12px #0003; z-index: 6; white-space: normal; width: max-content; max-width: 420px; }
+.track-pill:hover .mini-pop, .track-pill:focus .mini-pop, .track-pill:focus-within .mini-pop { display: block; }
+.map-panel { position: relative; }
+.map-tools { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; z-index: 2; }
+.map-key { position: absolute; left: 12px; bottom: 12px; max-width: 60%; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px 8px; z-index: 2; }
+.forces-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; padding: 4px 10px; }
+.forces-bar > button { margin-left: auto; min-height: 28px; }
+.forces-group { display: inline-flex; gap: 10px; align-items: center; font-size: 13px; flex-wrap: wrap; }
+.map-only .play { grid-template-columns: 1fr; }
+.map-only .side[hidden] { display: none; }
+.map-label { font-size: 18px; stroke-width: 5px; }
+.map-count { font-size: 18px; stroke-width: 4px; }
+.map-marker { font-size: 14px; }
+.chip-code { font-size: 12px; }
+.chip-count { font-size: 13px; }
+.note-closed { position: fixed; right: 16px; bottom: 8px; display: flex; gap: 8px; align-items: center; z-index: 4; }
+.play-screen { grid-template-rows: auto minmax(0, 1fr); }
+.play-screen:has(footer.panel) { grid-template-rows: auto minmax(0, 1fr) auto; }
+.play-screen .side { padding-bottom: 44px; box-sizing: border-box; }
+@media (max-width: 1000px) { .play-screen { height: auto; } .map-tools, .map-key { position: static; } }

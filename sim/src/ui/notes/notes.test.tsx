@@ -34,6 +34,15 @@ describe("defaultAnchor", () => {
 });
 
 describe("NoteBar (T-UI-02)", () => {
+  it("stays a Note (N) button until opened (UC-4)", () => {
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "session", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} />);
+    expect(screen.queryByLabelText("Note text")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Note (N)" }));
+    expect(screen.getByLabelText("Note text")).toBeTruthy();
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Escape" });
+    expect(screen.queryByLabelText("Note text")).toBeNull();
+  });
+
   it("N opens it, Alt+2 and #tags add categories, Enter saves with the frozen anchor and focus", async () => {
     const onSave = vi.fn(() => Promise.resolve("N1"));
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "executed", actionId: "S-A3" })} focus={focus} onSave={onSave} />);
@@ -64,13 +73,13 @@ describe("NoteBar (T-UI-02)", () => {
       </>,
     );
     fireEvent.keyDown(screen.getByLabelText("plan field"), { key: "n" });
-    expect(screen.getByText("Press N for a note")).toBeTruthy();
+    expect(screen.queryByLabelText("Note text")).toBeNull();
     fireEvent.keyDown(window, { key: "N" });
     const box = screen.getByLabelText("Note text");
     fireEvent.change(box, { target: { value: "x" } });
     fireEvent.keyDown(box, { key: "Escape" });
     expect(onSave).not.toHaveBeenCalled();
-    expect(screen.getByText("Press N for a note")).toBeTruthy();
+    expect(screen.queryByLabelText("Note text")).toBeNull();
   });
 
   it("sends the drafted plan with a proposed note", async () => {
