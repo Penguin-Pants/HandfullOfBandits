@@ -14,13 +14,14 @@ import { CardTable } from "../cards/CardTable.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
-import { Forces } from "../status/Forces.tsx";
+import { ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 
 export interface PlayProps {
   readonly api: Api;
   readonly sessionId: string;
   readonly onExit?: () => void;
+  readonly onReview?: () => void;
   readonly onOpenState?: (before: string | null, after: string) => void;
 }
 
@@ -42,7 +43,7 @@ function LastAction({ item, view }: { readonly item: HistoryItem | undefined; re
   );
 }
 
-export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
+export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
   const [data, setData] = useState<{ session: SessionRow; head: Head } | null>(null);
   const [legal, setLegal] = useState<LegalChoices | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -54,6 +55,8 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showKey, setShowKey] = useState(false);
+  const [mapOnly, setMapOnly] = useState(false);
   const [ending, setEnding] = useState(false);
   const [changed, setChanged] = useState<string[]>([]);
   /** Head on screen before a reload, to outline what the next action changed. */
@@ -95,6 +98,7 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
       if (target !== null && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
       if (e.key === "h" || e.key === "H") setShowHistory((v) => !v);
       if (e.key === "?") setShowHelp((v) => !v);
+      if (e.key === "m" || e.key === "M") setMapOnly((v) => !v);
       if (e.key === "z" && (e.ctrlKey || e.metaKey)) void undo();
       if (e.key === " " && legal?.advance === true) {
         e.preventDefault();
@@ -133,11 +137,21 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
   };
   const detail = view.spaces.find((s) => s.id === selected.at(-1));
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
-  // One view (UC-3): status on top, map with forces below it on the left, a right column that
-  // scrolls inside itself, note bar at the bottom. Help, History and End session overlay.
+  // One view (UC-3, UC-4): status on top, map with the forces bar below it on the left, a right
+  // column that scrolls inside itself, note bar at the bottom. Help, History and End session
+  // overlay. Map focus mode (M) hides the status bar and the right column.
   return (
-    <div className="screen play-screen">
-      <StatusBar view={view} />
+    <div className={mapOnly ? "screen play-screen map-only" : "screen play-screen"}>
+      {!mapOnly && (
+        <StatusBar view={view}>
+          <button type="button" onClick={onExit}>
+            Home
+          </button>
+          <button type="button" onClick={onReview}>
+            Feedback review
+          </button>
+        </StatusBar>
+      )}
       {showHelp && (
         <div className="overlay">
           <Help onClose={() => { setShowHelp(false); }} />
@@ -147,14 +161,24 @@ export function Play({ api, sessionId, onExit, onOpenState }: PlayProps) {
         <div className="play-main">
           {error !== null && <p className="bad">{error}</p>}
           <div className="panel map-panel">
+            <div className="map-tools">
+              <button type="button" aria-pressed={showKey} onClick={() => { setShowKey(!showKey); }}>
+                Key
+              </button>
+              <button type="button" aria-pressed={mapOnly} onClick={() => { setMapOnly(!mapOnly); }}>
+                {mapOnly ? "Show panels (M)" : "Map only (M)"}
+              </button>
+            </div>
             <Board view={view} selected={selected} onSelect={select} changed={changed} />
-            <Legend view={view} />
+            {showKey && (
+              <div className="map-key">
+                <Legend view={view} />
+              </div>
+            )}
           </div>
-          <div className="forces-row">
-            <Forces view={view} />
-          </div>
+          {!mapOnly && <ForcesBar view={view} />}
         </div>
-        <aside className="side" aria-label="Side panel">
+        <aside className="side" aria-label="Side panel" hidden={mapOnly}>
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           {view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={selected} onCommit={(c) => void commit(c)} />

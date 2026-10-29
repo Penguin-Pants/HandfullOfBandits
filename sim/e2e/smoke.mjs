@@ -57,13 +57,32 @@ try {
     return {
       fits: document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth,
       panelVisible: box("Faction panel").bottom <= side.bottom,
-      forcesBelowMap: box("State forces").top > box("Board").bottom && Math.abs(box("State forces").top - box("PKK forces").top) < 2,
+      forcesBelowMap: box("Forces").top > box("Board").bottom,
       order: ["Cards", "Event panel", "Faction panel"].map((l) => order.indexOf(l)),
     };
   });
   check(layout.fits, "one view: no page scroll at 1920 x 950");
   check(layout.panelVisible, "one view: Faction panel fully visible");
-  check(layout.forcesBelowMap, "forces side by side below the map");
+  check(layout.forcesBelowMap, "forces bar below the map");
+  // UC-4: the map is large enough to read at the designer's 1907 x 863 screen.
+  await page.setViewportSize({ width: 1907, height: 863 });
+  await page.waitForTimeout(300);
+  const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
+  check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
+  await page.keyboard.press("m");
+  await page.keyboard.press("n");
+  await page.getByLabel("Note text").waitFor();
+  const mapOnly = await page.evaluate(() => {
+    const r = (l) => document.querySelector(`[aria-label="${l}"]`).getBoundingClientRect();
+    const box = document.querySelector('[aria-label="Note text"]').getBoundingClientRect();
+    return r("Board").top >= 0 && box.top >= r("Note bar").top && box.bottom <= r("Note bar").bottom && r("Note bar").bottom <= innerHeight;
+  });
+  check(mapOnly, "map only: map and open note both fully visible");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("m");
+  await page.setViewportSize({ width: 800, height: 900 });
+  await page.waitForTimeout(300);
+  check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
   check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: cards, card text, Faction panel");
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.getByRole("button", { name: "Pass" }).last().click();

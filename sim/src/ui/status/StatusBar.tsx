@@ -2,6 +2,7 @@
 // labeled pill per faction score and per track. Short tracks get a mini track: numbered boxes
 // for a small numeric range (Legitimacy, Europe), all steps for an ordinal track. Resources
 // (a long range) show the value only.
+import type { ReactNode } from "react";
 import type { BoardView } from "../api.ts";
 import { words } from "../common/names.ts";
 import { ScoreTrack } from "./ScoreTrack.tsx";
@@ -36,13 +37,15 @@ function MiniTrack({ track }: { readonly track: Track }) {
   );
 }
 
-export function StatusBar({ view }: { readonly view: BoardView }) {
+/** `children`: screen buttons (Home, Feedback review) at the start of the first row. */
+export function StatusBar({ view, children }: { readonly view: BoardView; readonly children?: ReactNode }) {
   const s = view.status;
   const name = (id: string | null): string => (id === null ? "-" : (view.factions.find((f) => f.id === id)?.name ?? words(id)));
   const box = (id: string | null): string => (id !== null && s.boxes[id] ? ` (${words(s.boxes[id] ?? "")})` : "");
   return (
     <header className="panel status-grid" aria-label="Status">
       <div className="row">
+        {children}
         <strong className="chip">{s.campaign ?? "-"}</strong>
         <span className="chip">Card {s.cardIndex}</span>
         <span>{s.card === null ? "No card" : `${s.card.id} "${s.card.title}"`}</span>
@@ -64,10 +67,12 @@ export function StatusBar({ view }: { readonly view: BoardView }) {
       <ScoreTrack view={view} />
       <div className="pills" aria-label="Tracks">
         {s.tracks.map((t) => (
-          <span key={t.id} className="pill" aria-label={t.display}>
+          <span key={t.id} className="pill track-pill" aria-label={t.display} tabIndex={0}>
             <span className="pill-label">{t.display}</span>
             <b>{typeof t.value === "number" ? t.value : words(t.value)}</b>
-            <MiniTrack track={t} />
+            <span className="mini-pop">
+              <MiniTrack track={t} />
+            </span>
           </span>
         ))}
       </div>

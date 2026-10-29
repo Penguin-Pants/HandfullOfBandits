@@ -19,18 +19,20 @@ export function App({ api }: { readonly api: Api }) {
   const home = (): void => { setScreen({ name: "home" }); };
   return (
     <>
-      <nav>
+      {screen.name !== "play" && (
+        <nav>
         <button type="button" onClick={home}>
           Home
         </button>
         <button type="button" onClick={() => { setScreen({ name: "review" }); }}>
           Feedback review (F)
         </button>
-      </nav>
+        </nav>
+      )}
       {screen.name === "home" && <Home api={api} onOpen={(sessionId) => { setScreen({ name: "play", sessionId }); }} onCheck={(pkg) => { setScreen({ name: "check", pkg }); }} />}
       {screen.name === "check" && <PackageCheck pkg={screen.pkg} onBack={home} />}
       {screen.name === "play" && (
-        <Play api={api} sessionId={screen.sessionId} onExit={home} onOpenState={(before, after) => { setScreen({ name: "state", sessionId: screen.sessionId, before, after, back: screen }); }} />
+        <Play api={api} sessionId={screen.sessionId} onExit={home} onReview={() => { setScreen({ name: "review" }); }} onOpenState={(before, after) => { setScreen({ name: "state", sessionId: screen.sessionId, before, after, back: screen }); }} />
       )}
       {screen.name === "review" && <Review api={api} onOpenState={(sessionId, hash) => { setScreen({ name: "state", sessionId, before: null, after: hash, back: screen }); }} />}
       {screen.name === "state" && <StateViewer api={api} sessionId={screen.sessionId} before={screen.before} after={screen.after} onBack={() => { setScreen(screen.back); }} />}
