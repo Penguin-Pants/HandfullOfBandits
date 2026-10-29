@@ -30,10 +30,10 @@ describe("Play undo (T-UI-04)", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<Play api={mockApi({ session, legal, undo })} sessionId="S" />);
     expect(await screen.findByText(/DK-012/, { selector: "span" })).toBeTruthy();
-    expect(screen.getByText("state", { selector: "strong" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /^state/ })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
     await waitFor(() => { expect(undo).toHaveBeenCalledWith("S", "S-A3"); });
     expect(await screen.findByText(/DK-001/, { selector: "span" })).toBeTruthy();
-    expect(screen.getByText("pkk", { selector: "strong" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /^pkk/ })).toBeTruthy();
   });
 });

@@ -3,7 +3,7 @@ import type { AnnotationRow } from "../store/repos/annotations.ts";
 import type { CategoryRow } from "../store/repos/categories.ts";
 import type { SessionRow } from "../store/repos/sessions.ts";
 import type { Head, PackageSummary } from "../server/service.ts";
-import type { BoardView, PieceView, SpaceView } from "../server/view.ts";
+import type { BoardView, ForceView, PieceView, SpaceView } from "../server/view.ts";
 import type { ReviewRow } from "../server/review.ts";
 import type { ActionRow } from "../store/repos/actions.ts";
 import type { LogEntryRow } from "../store/repos/log-entries.ts";
@@ -13,7 +13,7 @@ import type { UiFocus } from "../annotate/types.ts";
 
 export type { AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
 export type { ReviewRow };
-export type { AnnotationRow, BoardView, CategoryRow, Head, PackageSummary, PieceView, SessionRow, SpaceView };
+export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
 export interface HistoryItem {
   readonly action: ActionRow;

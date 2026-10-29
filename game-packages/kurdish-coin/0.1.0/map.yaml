@@ -1,25 +1,26 @@
 # Research 03. Pop values are design weights [design] (03 s1). Terrain tags and adjacency are
-# unverified (03 s2 note 3, s4; GAP-I09). Layout is a hand-set schematic grid (11 P2-14), x east, y south.
+# unverified (03 s2 note 3, s4; GAP-I09). Layout: approximate province centers, x = (lon - 37.3) * 108 + 150,
+# y = (40.4 - lat) * 150 (sim/src/ui/board/region.ts). Western Cities and Europe sit in a left inset.
 supportLevels: [activeOpposition, passiveOpposition, neutral, passiveSupport, activeSupport]
 spaces:
-  - {id: hakkari, name: Hakkari, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 820, y: 520}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: botan, name: Botan, kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 660, y: 520}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: mardin-batman, name: Mardin-Batman, kind: domestic, terrain: plain, pop: 4, hasSupportScale: true, layout: {x: 500, y: 460}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: diyarbakir-city, name: "Diyarbakır City (Amed)", kind: domestic, terrain: city, pop: 2, hasSupportScale: true, layout: {x: 360, y: 300}, tags: [receptionTarget], confidence: "Pop Low", source: "03 s2, s2 note 1"}
-  - {id: diyarbakir-rural, name: Diyarbakır Rural, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 380, y: 400}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: sanliurfa, name: Şanlıurfa, kind: domestic, terrain: plain, pop: 4, hasSupportScale: true, layout: {x: 260, y: 500}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: adiyaman, name: Adıyaman, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 200, y: 380}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: elazig, name: Elazığ, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 300, y: 200}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: dersim, name: Dersim, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 360, y: 100}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 1"}
-  - {id: bingol-mus, name: Bingöl-Muş, kind: domestic, terrain: mountain, pop: 3, hasSupportScale: true, layout: {x: 520, y: 220}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: van-bitlis, name: Van-Bitlis, kind: domestic, terrain: mountain, pop: 4, hasSupportScale: true, layout: {x: 720, y: 360}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: agri, name: Ağrı, kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 720, y: 180}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
-  - {id: western-cities, name: Western Cities, kind: domestic, terrain: city, pop: 3, hasSupportScale: true, layout: {x: 60, y: 120}, tags: [noLandLinks, receptionTarget, rallyAtSupport], confidence: "Design node, no census basis", source: "03 s2, s4.2"}
-  - {id: syria-bekaa, name: Syria-Bekaa, kind: external, pop: 0, hasSupportScale: false, layout: {x: 380, y: 640}, source: "03 s3"}
-  - {id: kdp-zone, name: KDP Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 760, y: 640}, source: "03 s3; 06 s3.2 item 3"}
-  - {id: puk-zone, name: PUK Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 920, y: 640}, source: "03 s3; 06 s3.2 item 3"}
-  - {id: iran, name: Iran, kind: external, pop: 0, hasSupportScale: false, layout: {x: 920, y: 300}, tags: [eventsOnly], confidence: "Evidence Low", source: "03 s3"}
-  - {id: europe, name: Europe, kind: external, pop: 0, hasSupportScale: false, layout: {x: 60, y: 300}, tags: [noPieces], source: "03 s3; 04 s3.6"}
+  - {id: hakkari, name: Hakkari, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 863, y: 442}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: botan, name: Botan, kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 722, y: 435}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: mardin-batman, name: Mardin-Batman, kind: domestic, terrain: plain, pop: 4, hasSupportScale: true, layout: {x: 550, y: 428}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: diyarbakir-city, name: "Diyarbakır City (Amed)", kind: domestic, terrain: city, pop: 2, hasSupportScale: true, layout: {x: 465, y: 372}, tags: [receptionTarget], confidence: "Pop Low", source: "03 s2, s2 note 1"}
+  - {id: diyarbakir-rural, name: Diyarbakır Rural, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 469, y: 300}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: sanliurfa, name: Şanlıurfa, kind: domestic, terrain: plain, pop: 4, hasSupportScale: true, layout: {x: 334, y: 472}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: adiyaman, name: Adıyaman, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 258, y: 390}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: elazig, name: Elazığ, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 366, y: 262}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: dersim, name: Dersim, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 398, y: 172}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 1"}
+  - {id: bingol-mus, name: Bingöl-Muş, kind: domestic, terrain: mountain, pop: 3, hasSupportScale: true, layout: {x: 571, y: 232}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: van-bitlis, name: Van-Bitlis, kind: domestic, terrain: mountain, pop: 4, hasSupportScale: true, layout: {x: 755, y: 285}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: agri, name: Ağrı, kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 798, y: 120}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: western-cities, name: Western Cities, kind: domestic, terrain: city, pop: 3, hasSupportScale: true, layout: {x: 70, y: 80}, tags: [noLandLinks, receptionTarget, rallyAtSupport], confidence: "Design node, no census basis", source: "03 s2, s4.2"}
+  - {id: syria-bekaa, name: Syria-Bekaa, kind: external, pop: 0, hasSupportScale: false, layout: {x: 442, y: 607}, source: "03 s3"}
+  - {id: kdp-zone, name: KDP Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 798, y: 562}, source: "03 s3; 06 s3.2 item 3"}
+  - {id: puk-zone, name: PUK Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 938, y: 630}, source: "03 s3; 06 s3.2 item 3"}
+  - {id: iran, name: Iran, kind: external, pop: 0, hasSupportScale: false, layout: {x: 982, y: 270}, tags: [eventsOnly], confidence: "Evidence Low", source: "03 s3"}
+  - {id: europe, name: Europe, kind: external, pop: 0, hasSupportScale: false, layout: {x: 70, y: 200}, tags: [noPieces], source: "03 s3; 04 s3.6"}
 # 03 s4.1: 20 domestic links, 4 KDP and PUK links, 2 Syria-Bekaa links. Iran links are events only
 # and Europe is a track, so neither has a link. Host posture limits are rules (07 s5), not gates.
 links:
