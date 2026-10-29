@@ -114,7 +114,9 @@ table.forces td:first-child, table.forces th:first-child { text-align: left; }
 .card-button:hover .card-back { filter: brightness(1.15); }
 
 /* Eligibility track */
-.elig-track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 8px; }
+.elig-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin-bottom: 8px; }
+.elig-box button { white-space: normal; overflow-wrap: anywhere; }
+.side > * { min-width: 0; overflow-wrap: anywhere; }
 .elig-box { display: grid; gap: 3px; align-content: start; padding: 4px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
 .elig-box button { padding: 0 4px; font-size: 12px; min-height: 28px; }
 .elig-box.closed { background: repeating-linear-gradient(45deg, transparent 0 5px, var(--inset) 5px 10px); }
