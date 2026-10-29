@@ -31,9 +31,10 @@ export interface PlanState {
   readonly sa: SidePlan;
 }
 
-/** How a drag adds a move: into the destination (March, Sweep, Air Mobility) or a route ending
- * anywhere, kept under the one activation space (Garrison). Null: the action moves nothing. */
-export type DragMode = "into" | "route" | null;
+/** How a drag adds a move: into the destination (March, Sweep); into the destination with the
+ * origin also among the spaces (Air Mobility, 06 s3.1); or a route ending anywhere, kept under the
+ * one activation space (Garrison). Null: the action moves nothing. */
+export type DragMode = "into" | "both" | "route" | null;
 
 export type PlanEvent =
   | { readonly type: "click"; readonly id: string; readonly add: boolean }
@@ -56,7 +57,8 @@ function drag(plan: SidePlan, from: string, to: string, mode: DragMode): SidePla
   if (mode === null || from === to) return plan;
   // Garrison: one activation space holds every route; the first drag's destination becomes it.
   const loc = mode === "route" ? (plan.locations[0] ?? to) : to;
-  const locations = plan.locations.includes(loc) ? plan.locations : [...plan.locations, loc];
+  const locations = [...plan.locations];
+  for (const id of mode === "both" ? [loc, from] : [loc]) if (!locations.includes(id)) locations.push(id);
   const dest = mode === "route" && to !== loc ? to : undefined;
   const list = plan.moves[loc] ?? [];
   const same = list.findIndex((m) => m.from === from && m.to === dest && m.face === undefined);
@@ -93,10 +95,11 @@ export function planReducer(state: PlanState, event: PlanEvent): PlanState {
   }
 }
 
-/** The drag mode of an action form: routes for Garrison, moves into the space for other movers. */
+/** The drag mode of an action form: routes for Garrison, both ends for Air Mobility, moves into
+ * the space for other movers. */
 export function dragMode(fields: readonly FormField[] | undefined, id: string | null): DragMode {
   if (fields === undefined || !fields.some((f) => f.kind === "moves")) return null;
-  return id === "state.garrison" ? "route" : "into";
+  return id === "state.garrison" ? "route" : id === "state.air-mobility" ? "both" : "into";
 }
 
 /** One location's per-location object: numbers, choices and its moves. */

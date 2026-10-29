@@ -251,6 +251,17 @@ describe("plan fields", () => {
   });
 });
 
+describe("move faces", () => {
+  it("offers every flip state of the moving piece, even when the origin holds one face now (UC-5)", () => {
+    const hakkari = pkkView.spaces.find((x) => x.id === "hakkari");
+    const onlyUnderground = { ...pkkView, spaces: pkkView.spaces.map((x) => (x === hakkari ? { ...x, pieces: x.pieces.filter((p) => p.face !== "active") } : x)) };
+    const plan = { ...emptyPlan, op: { locations: ["botan"], values: {}, moves: { botan: [{ from: "hakkari", count: 1 }] } } };
+    render(<PlanForm view={onlyUnderground} faction="pkk" op={{ id: "pkk.march", label: "March", fields: [{ key: "moves", label: "Moves", kind: "moves" }] }} plan={plan} dispatch={vi.fn()} />);
+    const faces = screen.getByRole("group", { name: "Face Hakkari to Botan" });
+    expect([...faces.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Underground", "Active"]);
+  });
+});
+
 describe("PropagandaPanel", () => {
   it("lists phases with the open one, advances, and sends spends for the selected spaces", () => {
     const base = turnOf("pkk");

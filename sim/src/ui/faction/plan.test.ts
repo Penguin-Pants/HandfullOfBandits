@@ -34,6 +34,12 @@ describe("planReducer", () => {
     expect(arrowsOf(plan)).toEqual([]);
   });
 
+  it("Air Mobility drags add the origin and the destination to the SA spaces", () => {
+    const plan = run({ type: "modes", op: null, sa: "both" }, { type: "target", target: "sa" }, { type: "drag", from: "hakkari", to: "botan" });
+    expect(plan.sa.locations).toEqual(["botan", "hakkari"]);
+    expect(plan.sa.moves).toEqual({ botan: [{ from: "hakkari", count: 1 }] });
+  });
+
   it("Garrison drags keep every route under the one activation space", () => {
     const plan = run({ type: "modes", op: "route", sa: null }, { type: "drag", from: "dersim", to: "botan" }, { type: "drag", from: "agri", to: "hakkari" });
     expect(plan.op.locations).toEqual(["botan"]);
@@ -73,8 +79,9 @@ describe("toCommand", () => {
     });
   });
 
-  it("dragMode: route for Garrison, into for other movers, null otherwise", () => {
+  it("dragMode: route for Garrison, both for Air Mobility, into for other movers, null otherwise", () => {
     expect(dragMode(forms[0]?.fields, "state.garrison")).toBe("route");
+    expect(dragMode(forms[0]?.fields, "state.air-mobility")).toBe("both");
     expect(dragMode(forms[0]?.fields, "pkk.march")).toBe("into");
     expect(dragMode(forms[1]?.fields, "pkk.rally")).toBeNull();
   });

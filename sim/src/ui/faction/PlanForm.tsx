@@ -42,12 +42,9 @@ export interface PlanFormProps {
 
 export function PlanForm({ view, faction, op, sa, plan, dispatch }: PlanFormProps) {
   const name = (id: string): string => view.spaces.find((s) => s.id === id)?.name ?? words(id);
-  /** Faces of this faction's mobile pieces in a space, when more than one can move. */
-  const faces = (id: string): string[] => {
-    const here = view.spaces.find((s) => s.id === id)?.pieces.filter((p) => p.faction === faction && !p.isBase) ?? [];
-    const all = [...new Set(here.map((p) => p.face))];
-    return all.length > 1 ? all : [];
-  };
+  /** Faces this faction's mobile pieces can show, from the piece data: a preceding SA can flip
+   * pieces, so the faces at the origin now are not the limit. */
+  const faces = [...new Set(view.forces.filter((p) => p.faction === faction && !p.isBase).flatMap((p) => p.states))];
   const part = (side: Side, form: NonNullable<PlanFormProps["sa"]>) => {
     const p = plan[side];
     const mode = dragMode(form.fields, form.id);
@@ -71,7 +68,7 @@ export function PlanForm({ view, faction, op, sa, plan, dispatch }: PlanFormProp
             </div>
             {(p.moves[loc] ?? []).map((m, index) => {
               const label = `${name(m.from)} to ${name(m.to ?? loc)}`;
-              const options = faces(m.from);
+              const options = faces.length > 1 ? faces : [];
               return (
                 <div key={`${m.from}-${m.to ?? ""}-${String(index)}`} className="row plan-move" aria-label={`Move ${label}`}>
                   <span>
