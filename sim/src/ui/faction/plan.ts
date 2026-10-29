@@ -163,7 +163,8 @@ export function arrowsOf(plan: PlanState): { from: string; to: string; count: nu
 export type Owner = "faction" | "event";
 
 /** One plan per panel, so a free action never changes the Faction panel's draft. Map clicks and
- * drags (events without an owner) build the active plan; a panel's own events name it. */
+ * drags (events without an owner) build the active plan; a panel's own events name it and make
+ * it active. */
 export interface Plans {
   readonly active: Owner;
   readonly faction: PlanState;
@@ -184,7 +185,8 @@ export function plansReducer(state: Plans, event: PlansEvent): Plans {
     return { ...state, active: "event", event: emptyPlan };
   }
   if (event.type === "resetAll") return { ...emptyPlans, active: state.active, faction: { ...emptyPlan, modes: state.faction.modes } };
+  // A panel's own event also hands it the map, so the map builds the plan last worked on.
   const owner = event.owner ?? state.active;
   const next = planReducer(state[owner], event);
-  return next === state[owner] ? state : { ...state, [owner]: next };
+  return next === state[owner] && owner === state.active ? state : { ...state, active: owner, [owner]: next };
 }

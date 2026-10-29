@@ -123,6 +123,18 @@ describe("plansReducer (Faction panel and Event free action)", () => {
     expect(s.faction.op.moves).toEqual({ botan: [{ from: "hakkari", count: 1 }], "van-bitlis": [{ from: "agri", count: 1 }] });
   });
 
+  it("using a panel hands the map to its plan; the free action keeps its draft", () => {
+    let s = plansReducer(emptyPlans, { type: "activate", owner: "event" });
+    s = plansReducer(s, { type: "click", id: "dersim", add: false });
+    s = plansReducer(s, { type: "modes", op: "into", sa: null, owner: "faction" });
+    expect(s.active).toBe("faction");
+    s = plansReducer(s, { type: "click", id: "botan", add: false });
+    expect(s.faction.op.locations).toEqual(["botan"]);
+    s = plansReducer(s, { type: "value", side: "op", loc: "dersim", key: "option", value: "place", owner: "event" });
+    expect(s.active).toBe("event");
+    expect(s.event.op.locations).toEqual(["dersim"]);
+  });
+
   it("activating the free action starts it empty; resetAll empties both", () => {
     let s = plansReducer(emptyPlans, { type: "click", id: "botan", add: false });
     s = plansReducer(s, { type: "activate", owner: "event" });
