@@ -42,6 +42,8 @@ export interface LegalChoices {
    */
   readonly boxes?: readonly { readonly box: string; readonly allowed: boolean; readonly reason: string | null; readonly otherMay?: readonly string[] | null; readonly nextFirst?: string | null }[];
   readonly actions?: readonly ActionChoice[];
+  /** Plan forms of every action, for an Event's free action (UC-5). */
+  readonly forms?: readonly ActionForm[];
   readonly advance?: boolean;
   readonly violations?: readonly Violation[];
 }

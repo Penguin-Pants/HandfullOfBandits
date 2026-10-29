@@ -188,7 +188,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           {view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={plan.op.locations} onCommit={(c) => void commit(c)} />
           ) : (
-            <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.actions ?? []} plan={plan} dispatch={dispatch} />
+            <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plan} dispatch={dispatch} />
           )}
           {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} view={view} legal={legal} plan={plan} dispatch={dispatch} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} />

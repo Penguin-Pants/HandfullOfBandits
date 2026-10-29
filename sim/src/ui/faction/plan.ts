@@ -144,5 +144,6 @@ export function toCommand(faction: string, draft: Draft, forms: readonly { id: s
 
 /** Arrows to draw on the map for every planned move. */
 export function arrowsOf(plan: PlanState): { from: string; to: string; count: number }[] {
-  return [plan.op, plan.sa].flatMap((p) => Object.entries(p.moves).flatMap(([loc, list]) => list.map((m) => ({ from: m.from, to: m.to ?? loc, count: m.count }))));
+  // Only spaces still in the plan: the command leaves out moves of a deselected space.
+  return [plan.op, plan.sa].flatMap((p) => p.locations.flatMap((loc) => (p.moves[loc] ?? []).map((m) => ({ from: m.from, to: m.to ?? loc, count: m.count }))));
 }

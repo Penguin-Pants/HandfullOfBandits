@@ -33,7 +33,7 @@ export const actionForms: readonly ActionForm[] = [
   { id: "state.garrison", label: "Garrison", cost: "2 total", subAction: null, fields: [routes] },
   { id: "state.sweep", label: "Sweep", cost: "2 per space", subAction: null, fields: [moves] },
   { id: "state.assault", label: "Assault", cost: "2 per space", subAction: null, fields: [] },
-  { id: "pkk.rally", label: "Rally", cost: "1 per location", subAction: agitate, fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "base", "grow", "flip"] }, { key: "count", label: "Grow count", kind: "number" }] },
+  { id: "pkk.rally", label: "Rally", cost: "1 per location", subAction: agitate, fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "base", "grow", "flip"] }, { key: "count", label: "Grow count", kind: "number", blank: "max" }] },
   { id: "pkk.march", label: "March", cost: "1 per destination", subAction: null, fields: [moves] },
   { id: "pkk.attack", label: "Attack", cost: "1 per space", subAction: null, fields: [{ key: "prefer", label: "Remove first", kind: "select", options: ["troops", "police"] }, { key: "remove", label: "Remove up to", kind: "number", blank: "max" }] },
   { id: "pkk.coerce", label: "Coerce", cost: "1 per space, 2 at Pop 3+", subAction: null, fields: [] },

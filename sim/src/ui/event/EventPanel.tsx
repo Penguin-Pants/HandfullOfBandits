@@ -31,6 +31,8 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
   useEffect(() => {
     if (freeAction?.action === undefined) return;
     const sa = freeAction.sa;
+    // Start a clean plan, built on the free action itself, whatever a Faction panel draft left behind.
+    dispatch({ type: "reset" });
     dispatch({ type: "modes", op: dragMode(formOf(forms, freeAction.action).fields, freeAction.action), sa: sa === undefined ? null : dragMode(formOf(forms, sa).fields, sa) });
   }, [freeAction?.action, freeAction?.sa]);
   if (card === null) return null;

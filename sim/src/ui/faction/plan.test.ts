@@ -29,6 +29,11 @@ describe("planReducer", () => {
     expect(arrowsOf(plan)).toEqual([{ from: "hakkari", to: "botan", count: 2 }]);
   });
 
+  it("draws arrows only for moves into spaces still in the plan", () => {
+    const plan = run(into, { type: "drag", from: "hakkari", to: "botan" }, { type: "click", id: "dersim", add: false });
+    expect(arrowsOf(plan)).toEqual([]);
+  });
+
   it("Garrison drags keep every route under the one activation space", () => {
     const plan = run({ type: "modes", op: "route", sa: null }, { type: "drag", from: "dersim", to: "botan" }, { type: "drag", from: "agri", to: "hakkari" });
     expect(plan.op.locations).toEqual(["botan"]);

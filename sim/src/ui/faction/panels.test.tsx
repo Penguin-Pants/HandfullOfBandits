@@ -10,7 +10,11 @@ import type { AnyCommand, Api, LegalChoices, ValidationResult } from "../api.ts"
 import { EventPanel } from "../event/EventPanel.tsx";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { FactionPanel } from "./FactionPanel.tsx";
+import { actionForms } from "../../server/forms.ts";
 import { emptyPlan, planReducer } from "./plan.ts";
+import { PlanForm } from "./PlanForm.tsx";
+
+const rallyFields = actionForms.find((f) => f.id === "pkk.rally")?.fields ?? [];
 
 // P2-15 component tests with a mocked API: every illegal action shows a reason (T-UI-03), plan
 // building with live validation and preview, inline Decisions, Propaganda flow.
@@ -210,7 +214,8 @@ describe("EventPanel", () => {
     );
     const onCommit = vi.fn();
     function Harness() {
-      const [plan, dispatch] = useReducer(planReducer, emptyPlan);
+      // A Faction panel draft left the map on its SA: the free action must still build its own spaces.
+      const [plan, dispatch] = useReducer(planReducer, { ...emptyPlan, target: "sa" as const });
       return (
         <>
           <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
@@ -235,6 +240,14 @@ describe("EventPanel", () => {
     const button = screen.getByRole("button", { name: "Execute unshaded (U)" });
     expect((button as HTMLButtonElement).disabled).toBe(true);
     expect(button.getAttribute("title")).toMatch(/not open/);
+  });
+});
+
+describe("plan fields", () => {
+  it("shows the handler default for an unset Rally grow count (UC-5)", () => {
+    const view = pkkView;
+    render(<PlanForm view={view} faction="pkk" op={{ id: "pkk.rally", label: "Rally", fields: rallyFields }} plan={{ ...emptyPlan, op: { locations: ["botan"], values: {}, moves: {} } }} dispatch={vi.fn()} />);
+    expect(screen.getByRole("group", { name: "Botan Grow count" }).querySelector("output")?.textContent).toBe("max");
   });
 });
 

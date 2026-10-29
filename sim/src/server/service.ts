@@ -248,7 +248,8 @@ export class SessionService {
         const probe = this.engine.validate(ruleset, state, { type: "ChooseOperation", faction, box: open.find((b) => b !== "event" && b !== "pass") ?? "limitedOp", plan: { op: form.id, locations: [ruleset.spaces[0]?.id ?? ""], perLocation: {}, sa: null, subActions: [] } });
         return { ...form, kind: "op", ok: where.length > 0, reason: where.length > 0 ? null : (probe.violations[0]?.message ?? "No legal location."), locations: [...new Set(where)] };
       });
-    return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions } as unknown as JsonValue;
+    // Every form, for an Event's free action of either faction (05 s5 item 4).
+    return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions, forms: actionForms } as unknown as JsonValue;
   }
 
   history(sessionId: string): { action: ActionRow; entries: HistoryEntry[]; notes: number }[] {
