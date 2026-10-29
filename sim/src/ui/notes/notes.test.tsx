@@ -56,6 +56,16 @@ describe("NoteBar (T-UI-02)", () => {
     expect(await screen.findByText("Saved, linked to S-A3")).toBeTruthy();
   });
 
+  it("N moves focus back to an open note (UC-4)", async () => {
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "session", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} />);
+    fireEvent.keyDown(window, { key: "n" });
+    const box = screen.getByLabelText("Note text");
+    await waitFor(() => { expect(document.activeElement).toBe(box); });
+    box.blur();
+    fireEvent.keyDown(window, { key: "n" });
+    await waitFor(() => { expect(document.activeElement).toBe(box); });
+  });
+
   it("Tab through all anchors and back keeps the executed action ID", () => {
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "executed", actionId: "S-A3" })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} />);
     fireEvent.keyDown(window, { key: "n" });

@@ -69,6 +69,9 @@ try {
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
   check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
+  await page.setViewportSize({ width: 800, height: 900 });
+  await page.waitForTimeout(300);
+  check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
   check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: cards, card text, Faction panel");
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.getByRole("button", { name: "Pass" }).last().click();

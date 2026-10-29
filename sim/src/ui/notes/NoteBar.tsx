@@ -35,6 +35,7 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
       if (e.key === "n" || e.key === "N") {
         e.preventDefault();
         start();
+        input.current?.focus(); // already open: take focus back; just opened: the effect focuses it
       }
     };
     window.addEventListener("keydown", onKey);

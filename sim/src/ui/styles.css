@@ -204,4 +204,9 @@ nav { height: 50px; box-sizing: border-box; }
 .play-screen { grid-template-rows: auto minmax(0, 1fr); }
 .play-screen:has(footer.panel) { grid-template-rows: auto minmax(0, 1fr) auto; }
 .play-screen .side { padding-bottom: 44px; box-sizing: border-box; }
-@media (max-width: 1000px) { .play-screen { height: auto; } .map-tools, .map-key { position: static; } }
+@media (max-width: 1000px) {
+  .play-screen { height: auto; }
+  .map-tools, .map-key { position: static; }
+  .play-screen .status-grid > .pills { flex-wrap: wrap; }
+  .track-pill { white-space: normal; flex-wrap: wrap; }
+}
