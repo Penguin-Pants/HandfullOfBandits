@@ -64,6 +64,17 @@ describe("map geometry", () => {
     expect(view.spaces.filter(isInset).map((s) => s.id).sort()).toEqual(["europe", "western-cities"]);
   });
 
+  it("falls back to one unclipped diagram for a session stored with the old schematic layout", () => {
+    const old = { ...view, spaces: view.spaces.map((s) => (s.id === "hakkari" ? { ...s, x: 820, y: 520 } : s)) };
+    const cells = regionCells(old.spaces);
+    expect(cells.geographic).toBe(false);
+    expect(cells.external.size).toBe(0);
+    expect(cells.domestic.has("kdp-zone")).toBe(true);
+    expect(regionCells(view.spaces).geographic).toBe(true);
+    render(<Board view={old} selected={[]} onSelect={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "Hakkari" }).querySelector("path")?.getAttribute("clip-path")).toBeNull();
+  });
+
   it("splits the plane on the bisector of two sites", () => {
     const cells = voronoi([{ id: "a", at: [300, 350] }, { id: "b", at: [700, 350] }]);
     expect(Math.max(...(cells.get("a") ?? []).map((p) => p[0]))).toBeCloseTo(500);

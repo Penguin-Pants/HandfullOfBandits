@@ -97,13 +97,13 @@ export function Board({ view, selected, onSelect, changed = [] }: BoardProps) {
           key={s.id}
           space={s}
           cell={isInset(s) ? null : (cells.domestic.get(s.id) ?? cells.external.get(s.id) ?? null)}
-          clip={isInset(s) ? undefined : s.kind === "domestic" ? "url(#clip-turkey)" : "url(#clip-abroad)"}
+          clip={isInset(s) || !cells.geographic ? undefined : s.kind === "domestic" ? "url(#clip-turkey)" : "url(#clip-abroad)"}
           selected={selected.includes(s.id)}
           changed={changed.includes(s.id)}
           onSelect={onSelect}
         />
       ))}
-      <path d={turkey} fill="none" stroke="var(--border)" strokeWidth={2.5} pointerEvents="none" />
+      {cells.geographic && <path d={turkey} fill="none" stroke="var(--border)" strokeWidth={2.5} pointerEvents="none" />}
       {view.spaces.map((s) => (
         <Tokens key={s.id} space={s} view={view} x={s.x} y={s.y + 6} />
       ))}

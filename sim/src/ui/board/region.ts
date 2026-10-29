@@ -54,9 +54,25 @@ export function pathOf(poly: readonly Point[]): string {
   return poly.length === 0 ? "" : `M${poly.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join("L")}Z`;
 }
 
-/** Cells for located spaces: domestic and external sets are split separately. */
-export function regionCells(spaces: readonly SpaceView[]): { domestic: Map<string, Point[]>; external: Map<string, Point[]> } {
+/** Even-odd ray test. */
+export function inside(p: Point, poly: readonly Point[]): boolean {
+  let hit = false;
+  poly.forEach((a, i) => {
+    const b = poly[(i + 1) % poly.length] ?? a;
+    if (a[1] > p[1] !== b[1] > p[1] && p[0] < a[0] + ((p[1] - a[1]) * (b[0] - a[0])) / (b[1] - a[1])) hit = !hit;
+  });
+  return hit;
+}
+
+/**
+ * Cells for located spaces. `geographic`: every domestic point lies inside the border, so domestic
+ * and external sets are split at the border. Otherwise (a session stored with an older schematic
+ * layout) all located spaces share one diagram with no border clip.
+ */
+export function regionCells(spaces: readonly SpaceView[]): { geographic: boolean; domestic: Map<string, Point[]>; external: Map<string, Point[]> } {
   const located = spaces.filter((s) => !isInset(s));
-  const sites = (kind: boolean): { id: string; at: Point }[] => located.filter((s) => (s.kind === "domestic") === kind).map((s) => ({ id: s.id, at: [s.x, s.y] }));
-  return { domestic: voronoi(sites(true)), external: voronoi(sites(false)) };
+  const site = (s: SpaceView): { id: string; at: Point } => ({ id: s.id, at: [s.x, s.y] });
+  const geographic = located.every((s) => (s.kind === "domestic") === inside([s.x, s.y], TURKEY));
+  if (!geographic) return { geographic, domestic: voronoi(located.map(site)), external: new Map() };
+  return { geographic, domestic: voronoi(located.filter((s) => s.kind === "domestic").map(site)), external: voronoi(located.filter((s) => s.kind !== "domestic").map(site)) };
 }
