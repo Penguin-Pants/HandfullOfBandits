@@ -1,41 +1,10 @@
-// Status bar (08 s3.5; UI clarity round R4): turn position, eligibility, the victory track, one
-// labeled pill per faction score and per track. Short tracks get a mini track: numbered boxes
-// for a small numeric range (Legitimacy, Europe), all steps for an ordinal track. Resources
-// (a long range) show the value only.
+// Status bar (08 s3.5; UI clarity round R4): turn position, eligibility, one labeled pill per
+// faction score and the victory track. Tracks are on the map (UC-7): host postures and Europe on
+// their boxes, the rest in the Resources and politics card.
 import type { ReactNode } from "react";
 import type { BoardView } from "../api.ts";
 import { words } from "../common/names.ts";
 import { ScoreTrack } from "./ScoreTrack.tsx";
-
-/** Numeric tracks with at most this many steps get numbered boxes. */
-const MINI_MAX = 20;
-
-type Track = BoardView["status"]["tracks"][number];
-
-function MiniTrack({ track }: { readonly track: Track }) {
-  const { min, max, steps, value } = track;
-  if (steps !== undefined) {
-    return (
-      <span className="mini-track">
-        {steps.map((s) => (
-          <span key={s} className={s === value ? "mini-step on" : "mini-step"} aria-current={s === value ? "true" : undefined}>
-            {words(s)}
-          </span>
-        ))}
-      </span>
-    );
-  }
-  if (min === undefined || max === undefined || max - min > MINI_MAX) return null;
-  return (
-    <span className="mini-track">
-      {Array.from({ length: max - min + 1 }, (_, i) => min + i).map((n) => (
-        <span key={n} className={n === value ? "mini-box on" : "mini-box"} aria-current={n === value ? "true" : undefined}>
-          {n}
-        </span>
-      ))}
-    </span>
-  );
-}
 
 /** `children`: screen buttons (Home, Feedback review) at the start of the first row. */
 export function StatusBar({ view, children }: { readonly view: BoardView; readonly children?: ReactNode }) {
@@ -65,17 +34,6 @@ export function StatusBar({ view, children }: { readonly view: BoardView; readon
         </span>
       </div>
       <ScoreTrack view={view} />
-      <div className="pills" aria-label="Tracks">
-        {s.tracks.map((t) => (
-          <span key={t.id} className="pill track-pill" aria-label={t.display} tabIndex={0}>
-            <span className="pill-label">{t.display}</span>
-            <b>{typeof t.value === "number" ? t.value : words(t.value)}</b>
-            <span className="mini-pop">
-              <MiniTrack track={t} />
-            </span>
-          </span>
-        ))}
-      </div>
       {s.ended !== null && (
         <div className="row">
           <strong>Game over: {s.ended.winner === null ? "no winner" : name(s.ended.winner)}</strong> <span>{s.ended.labels.join(", ")}</span>

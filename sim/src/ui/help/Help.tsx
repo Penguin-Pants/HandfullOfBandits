@@ -112,6 +112,8 @@ export function Help({ onClose, view, forms = [] }: HelpProps) {
             <li>■ after a name: who Controls the space.</li>
             <li>Round chips: space markers. C is Coercion, this game's Terror.</li>
             <li>Victory track at the top: each marker is a score; the flag is the winning score.</li>
+            <li>Mountain marks: Mountain spaces (Activation and Assault work at half rate there). Blue lines: the Euphrates and Tigris; blue area: Lake Van.</li>
+            <li>Host posture of Syria, KDP and PUK under their boxes; Europe in its box. The other tracks are in the Resources and politics card (Tracks button).</li>
           </ul>
           <h3>Keys</h3>
           <table>

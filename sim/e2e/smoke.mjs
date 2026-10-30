@@ -69,6 +69,13 @@ try {
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
   check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
+  // UC-7: the Resources and politics card sits inside the map panel, clear of the right column.
+  const card = await page.evaluate(() => {
+    const c = document.querySelector('[aria-label="Resources and politics"]').getBoundingClientRect();
+    const m = document.querySelector(".map-panel").getBoundingClientRect();
+    return c.left >= m.left && c.right <= m.right && c.bottom <= m.bottom;
+  });
+  check(card, "Resources and politics card inside the map panel");
   await page.keyboard.press("m");
   await page.keyboard.press("n");
   await page.getByLabel("Note text").waitFor();
