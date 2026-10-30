@@ -1,6 +1,6 @@
 # Phase 3a TWO-PASS REVIEW
 
-Status: implementation review complete. P3a-01 to P3a-10 are implemented. The phase exit remains open for IC-3a, the designer's own Scenario A UI playthrough and notes export. Automated browser play is recorded separately and does not close that checkpoint.
+Status: implementation review complete against base `711ce32`. Draft PR [#32](https://github.com/Penguin-Pants/HandfullOfBandits/pull/32) now requires integration of the newer DD-20 changes in main ([#31](https://github.com/Penguin-Pants/HandfullOfBandits/pull/31)) and validation again before it is ready to merge. P3a-01 to P3a-10 are implemented. The phase exit remains open for IC-3a, the designer's own Scenario A UI playthrough and notes export. Automated browser play is recorded separately and does not close that checkpoint.
 
 Review scope: the complete Phase 3a diff, including P3a-08 in `acb2428` and the remaining Scenario A implementation. Passes ran after local tests passed. Fixes were reproduced and checked again. Confidence in the verified fixes: high.
 
@@ -31,7 +31,7 @@ The automated browser flow creates Scenario A through Home, plays both rounds th
 
 ## Card text review batches
 
-The planned encoding review size was kept at five cards or fewer. No PR was opened by this task; the implementation is delivered after validation of the complete phase diff.
+The planned encoding review size was kept at five cards or fewer. The implementation was validated as a complete phase diff. It is now in draft PR #32, pending the main-branch integration noted above.
 
 | Batch | Cards |
 |---|---|
