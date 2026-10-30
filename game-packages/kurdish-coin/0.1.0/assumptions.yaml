@@ -5,7 +5,7 @@
 - {id: PA-03, gap: GAP-B03, status: accepted, appliesTo: [dice], text: "Use the modified die total as is. No automatic success or failure on a natural roll"}
 - {id: PA-04, gap: GAP-B04, status: accepted, appliesTo: [tracks], text: "A track or posture change that passes an end stops at the end. The excess is lost. Legitimacy keeps its own overflow rule"}
 - {id: PA-05, gap: GAP-B05, status: accepted, appliesTo: [pkk.coerce], text: "Coerce resolves its shift before it places a marker. A Coercion marker already present blocks the shift. Activation still happens"}
-- {id: PA-06, gap: GAP-B06, status: replaced, appliesTo: [pkk.ambush], text: "In an Ambush space, resolve Attack as normal and also remove 1 extra State piece in the Attack order"}
+- {id: PA-06, gap: GAP-B06, status: accepted, appliesTo: [pkk.ambush], text: "In an Ambush space the Attack has no roll: Activate only 1 Underground Guerrilla, remove 1 State piece in the Attack order, no attrition and no bonus Guerrilla (06 s5.1; designer decision after the S0 playtests)"}
 - {id: PA-07, gap: GAP-B07, status: accepted, appliesTo: [state.sweep, state.garrison], text: "Count pieces in the space after the movement step when activating"}
 - {id: PA-08, gap: GAP-B08, status: accepted, appliesTo: [state.assault], text: "Assault removals above the removable pieces are lost"}
 - {id: PA-09, gap: GAP-B09, status: accepted, appliesTo: [markers], text: "If no marker of the type is available, the placement does not happen and the log records supply exhausted. Harm markers also raise a warning"}

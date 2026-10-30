@@ -37,13 +37,13 @@ describe("Air Mobility (06 s3.1, PA-14)", () => {
 describe("Ambush (06 s5.1, PA-06)", () => {
   const plan = (sa: string[]): ReturnType<typeof op> => op("pkk", "opSa", { op: "pkk.attack", locations: ["hakkari"], sa: { action: "pkk.ambush", locations: sa, perLocation: {}, timing: "before" } });
 
-  it("Attack resolves as normal and Ambush removes 1 extra State piece", () => {
-    const board = setPieces(withRoll(pkkTurn, 2), "hakkari", "police", 2);
+  it("in an Ambush space: no roll, 1 Guerrilla Activates, 1 State piece removed, no attrition (06 s5.1, PA-06)", () => {
+    const board = setPieces(withRoll(pkkTurn, 6), "hakkari", "police", 2);
     const { state, entries } = play(board, plan(["hakkari"]));
-    // The hit takes 2 Troops (attrition 2 Guerrillas); then Ambush takes 1 extra Police.
-    expect(pieces(state, "hakkari", "troops")).toEqual({ default: 0 });
-    expect(pieces(state, "hakkari", "police")).toEqual({ default: 1 });
-    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 0, active: 0 });
+    expect(pieces(state, "hakkari", "troops")).toEqual({ default: 1 });
+    expect(pieces(state, "hakkari", "police")).toEqual({ default: 2 });
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 1, active: 1 });
+    expect(entries.some((e) => e.kind === "DieRolled")).toBe(false);
     expect(entries.some((e) => e.assumptionRef === "PA-06")).toBe(true);
   });
 

@@ -9,6 +9,8 @@ import { income } from "./resources.ts";
 
 // T-PROP, T-VIC, T-PERV (11 P2-10; research 05 s6, 09 s3 to s7, 12 s9).
 const s0 = turnOf("pkk");
+/** The same board in a scenario whose round 1 is not the final round. */
+const campaign: GameState = { ...s0, meta: { ...s0.meta, scenarioId: "full-campaign" } };
 /** `state` at the start of Propaganda phase `phase` of round `round`. */
 function at(state: GameState, phase: string, round = 1): GameState {
   const step = ruleset.sequence.propagandaPhases.indexOf(phase);
@@ -21,8 +23,14 @@ const t = (s: GameState, k: string): unknown => s.tracks[k];
 describe("T-PROP: Resources (05 s6.2)", () => {
   it("hand-computed income on the 1984 setup: State 8 + 10/2 + Elazığ 2 + Van-Bitlis 4 = 19; PKK 1 + 2 + 2 + 0 = 5", () => {
     expect(income(ruleset, s0)).toEqual({ state: 19, pkk: 5 });
-    const { state } = play(at(s0, "resources"), advance);
+    const { state } = play(at(campaign, "resources"), advance);
     expect([t(state, "resources.state"), t(state, "resources.pkk")]).toEqual([31, 10]);
+  });
+
+  it("pays no income in the final Propaganda round (designer, playtest D2)", () => {
+    const { state, entries } = play(at(s0, "resources"), advance);
+    expect([t(state, "resources.state"), t(state, "resources.pkk")]).toEqual([12, 5]);
+    expect(entries.some((e) => e.kind === "EffectSkipped" && e.data["effect"] === "income")).toBe(true);
   });
 
   it("drops host and Leadership income when Syria turns Restricted, adds Europe income", () => {
@@ -80,10 +88,13 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
     expect(play(at(s0, "civicAction"), spend("elazig", 1)).state.spaces["elazig"]?.level).toBe(2);
   });
 
-  it("PKK Agitation needs a PKK piece and no State Control", () => {
+  it("PKK Agitation needs a PKK Base or PKK Control, as in Rally (designer, playtest C2)", () => {
     const spend = (space: string): AnyCommand => choice("agitation", { spaces: { [space]: { shifts: 1 } } });
     expect(play(at(s0, "agitation"), spend("botan")).state.spaces["botan"]?.level).toBe(-2);
     expect(codes(at(s0, "agitation"), spend("hakkari"))).toEqual(["agitateWhere"]);
+    // A Base under State Control is enough; Guerrillas with no Control and no Base are not.
+    expect(codes(at(setPieces(s0, "diyarbakir-city", "pkkBase", 1), "agitation"), spend("diyarbakir-city"))).toEqual([]);
+    expect(codes(at(setPieces(s0, "mardin-batman", "guerrilla", 2, "underground"), "agitation"), spend("mardin-batman"))).toEqual(["agitateWhere"]);
   });
 
   it("ends the final round after Agitation: metrics row, final scoring, test-result label (S0)", () => {

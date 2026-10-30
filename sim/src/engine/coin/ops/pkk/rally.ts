@@ -6,11 +6,11 @@ import { createExec, type Exec } from "../../../core/exec.ts";
 import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "../action.ts";
-import { controlOf, count, hasTag, isTerrain, markers, pay, space } from "../common.ts";
+import { count, hasTag, isTerrain, markers, pay, space } from "../common.ts";
 import { rallyBaseOpen, rallyGuerrillasOpen } from "../common-pkk.ts";
 import { EUROPE_SPACE, FACE, FACTION, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
 import { asCount, asString } from "../plan.ts";
-import { agitationCost, agitationExecute, agitationViolations, readAgitation, type AgitationSpend } from "./agitation.ts";
+import { agitationCost, agitationExecute, agitationViolations, canAgitate, readAgitation, type AgitationSpend } from "./agitation.ts";
 
 const ruleRef = "06 s4.1";
 const AGITATE = "agitate";
@@ -105,7 +105,7 @@ export const rally: ActionHandler = {
     if (out.length === 0) placeAll(placed, part, { ...options, free: true });
     for (const a of agits) {
       if (!part.locations.includes(a.space)) out.push(at(a.space, "agitateNotSelected", "Agitate must be in a Rally space.", ruleRef));
-      if (count(placed.state, a.space, PIECE.pkkBase) === 0 && controlOf(ruleset, placed.state, a.space) !== FACTION.pkk) out.push(at(a.space, "agitateWhere", "Agitate needs a PKK Base or PKK Control.", ruleRef));
+      if (!canAgitate(ruleset, placed.state, a.space)) out.push(at(a.space, "agitateWhere", "Agitate needs a PKK Base or PKK Control.", ruleRef));
       if (a.spend === null) out.push(at(a.space, "agitateBadSpend", "Agitate spend is not well formed.", "07 s1.3"));
       else out.push(...agitationViolations(ruleset, placed.state, a.space, a.spend));
     }

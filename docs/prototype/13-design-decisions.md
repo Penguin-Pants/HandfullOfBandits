@@ -70,7 +70,7 @@ Designer decisions recorded 2026-10-27. Rule text for each PA is in 02-rules-gap
 | PA-03 | Modified die totals used as is. No automatic results | accepted |
 | PA-04 | Track changes stop at the end. Excess lost. Legitimacy keeps its unpaid-loss rule (2 State Resources per point) | accepted |
 | PA-05 | Coerce shifts first, then places its marker. A marker already present blocks the shift. The Guerrilla still activates | accepted |
-| PA-06 | In an Ambush space, resolve Attack as normal (activate all, roll, attrition, bonus Guerrilla on a 1) and also remove 1 extra State piece | replaced |
+| PA-06 | In an Ambush space the Attack has no roll: Activate only 1 Underground Guerrilla, remove 1 State piece in the Attack order, no attrition and no bonus Guerrilla (06 s5.1). Replaced the earlier "Attack as normal plus 1 extra removal" after the S0 playtests (designer, DD-20) | accepted |
 | PA-07 | Count State pieces after the move when activating | accepted |
 | PA-08 | Assault removals beyond legal targets are lost | accepted |
 | PA-09 | Exhausted marker supply: skip placement, log "supply exhausted", warn when Harm markers run out | accepted |
