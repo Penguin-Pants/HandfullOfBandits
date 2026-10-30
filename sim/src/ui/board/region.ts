@@ -92,22 +92,3 @@ export const RIVERS: readonly { readonly name: string; readonly path: readonly P
 export const LAKE_VAN: readonly Point[] = [
   geo(42.3, 38.75), geo(42.7, 38.95), geo(43.2, 39.0), geo(43.55, 38.85), geo(43.45, 38.45), geo(43.1, 38.4), geo(42.75, 38.55), geo(42.45, 38.55),
 ];
-
-/**
- * Points for mountain marks in a cell (UC-7): a grid inside the cell, kept clear of the space's
- * label and tokens around its site. Deterministic, so the map does not change between renders.
- */
-export function mountainMarks(cell: readonly Point[], site: Point, keepIn: (p: Point) => boolean): Point[] {
-  const xs = cell.map((p) => p[0]);
-  const ys = cell.map((p) => p[1]);
-  const out: Point[] = [];
-  const step = 44;
-  for (let y = Math.min(...ys) + step / 2, row = 0; y < Math.max(...ys); y += step, row++) {
-    for (let x = Math.min(...xs) + (row % 2 === 0 ? step / 2 : step); x < Math.max(...xs); x += step) {
-      const p: Point = [x, y];
-      const nearLabel = Math.abs(x - site[0]) < 95 && y - site[1] > -60 && y - site[1] < 52;
-      if (!nearLabel && inside(p, cell) && keepIn(p)) out.push(p);
-    }
-  }
-  return out;
-}

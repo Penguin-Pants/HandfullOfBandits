@@ -101,7 +101,8 @@ describe("change outline", () => {
 describe("victory track and forces", () => {
   it("places each faction marker at its score and flags its threshold", () => {
     render(<StatusBar view={view} />);
-    expect(screen.getByLabelText("State score 21")).toBeTruthy();
+    expect(screen.getByLabelText("State score 21").textContent).toBe("State 21");
+    expect(screen.getByLabelText("Victory track").querySelectorAll(".vt-cell")).toHaveLength(51);
     expect(screen.getByText("State wins at 49")).toBeTruthy();
     expect(screen.getByText("PKK wins at 30")).toBeTruthy();
   });
@@ -185,7 +186,7 @@ describe("map boxes and terrain (UC-7)", () => {
     expect(europe.querySelector("[aria-current]")?.textContent).toBe(String(view.status.tracks.find((t) => t.id === "europe")?.value));
   });
 
-  it("draws mountains in every Mountain space, the two rivers and Lake Van, and no links between spaces", () => {
+  it("shades relief over every Mountain space, draws the two rivers and Lake Van, and no links between spaces", () => {
     const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
     const mountains = view.spaces.filter((s) => s.terrain === "mountain" && !isInset(s)).map((s) => s.id);
     const drawn = new Set([...container.querySelectorAll("[data-terrain='mountain']")].map((e) => e.getAttribute("data-of")));

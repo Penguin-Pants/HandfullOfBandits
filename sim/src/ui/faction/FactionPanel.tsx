@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
 import { words } from "../common/names.ts";
+import { EligibilityTrack } from "./EligibilityTrack.tsx";
 import { Fields, PlanForm } from "./PlanForm.tsx";
 import { dragMode, perLocation, toCommand, type Draft, type PlanEvent, type PlanState, type Values } from "./plan.ts";
 
@@ -22,7 +23,6 @@ const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
 
 export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
   const faction = legal.faction ?? "";
-  const boxes = legal.boxes ?? [];
   const actions = legal.actions ?? [];
   const [box, setBox] = useState<string | null>(null);
   const [op, setOp] = useState<string | null>(null);
@@ -114,28 +114,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
                 ? "Step 4: check the preview, then Commit."
                 : "Fix the problems shown below, or change the plan."}
       </p>
-      <div className="elig-track" role="group" aria-label="Boxes">
-        {boxes.map((b) => {
-          const here = Object.entries(legal.placed ?? {}).filter(([, at]) => at === b.box).map(([f]) => f);
-          return (
-            <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}`} aria-label={`${words(b.box)} box`}>
-              <button type="button" disabled={!b.allowed || b.box === "event"} title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")} aria-pressed={box === b.box} onClick={() => { pickBox(b.box); }}>
-                {words(b.box)}
-              </button>
-              {here.map((f) => (
-                <span key={f} className="elig-cylinder">{words(f)}</span>
-              ))}
-              {b.allowed && b.otherMay != null && (
-                <span className="elig-note">
-                  Then {words(legal.other ?? "")}: {b.otherMay.map(words).join(", ")}
-                </span>
-              )}
-              {b.allowed && b.nextFirst != null && <span className="elig-note">Next card 1st: {words(b.nextFirst)}</span>}
-              {!b.allowed && <span className="elig-note">Closed</span>}
-            </div>
-          );
-        })}
-      </div>
+      <EligibilityTrack legal={legal} view={view} picked={box} onPick={pickBox} />
       {box !== null && OP_BOXES.includes(box) && (
         <ul aria-label="Operations">
           {actions.filter((a) => a.kind === "op").map((a) => (
