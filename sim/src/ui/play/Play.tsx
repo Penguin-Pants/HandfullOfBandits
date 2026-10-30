@@ -183,8 +183,10 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
                 {mapOnly ? "Show panels (M)" : "Map only (M)"}
               </button>
             </div>
+            <div className="map-body">
             <Board view={view} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
             {showTracks && <TrackCard view={view} />}
+            </div>
             {showKey && (
               <div className="map-key">
                 <Legend view={view} />

@@ -92,6 +92,13 @@ try {
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
   check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: cards, card text, Faction panel");
   await page.setViewportSize({ width: 1366, height: 768 });
+  await page.waitForTimeout(300);
+  // UC-7 review: at 1366 x 768 the card covers no space name on the map.
+  const clear = await page.evaluate(() => {
+    const c = document.querySelector('[aria-label="Resources and politics"]').getBoundingClientRect();
+    return [...document.querySelectorAll("text.map-label")].every((t) => { const r = t.getBoundingClientRect(); return r.right <= c.left || r.left >= c.right || r.bottom <= c.top || r.top >= c.bottom; });
+  });
+  check(clear, "Resources and politics card covers no space name at 1366 x 768");
   // UC-5: a March is planned by a mouse drag on the map, never by typed text.
   await page.getByRole("button", { name: "Limited Op" }).click();
   await page.getByRole("button", { name: "March", exact: true }).click();

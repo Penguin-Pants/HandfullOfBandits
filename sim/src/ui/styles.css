@@ -243,7 +243,11 @@ nav { height: 50px; box-sizing: border-box; }
 .box-track text { font-size: 11px; font-weight: 600; fill: var(--muted); }
 .box-track .on rect { fill: var(--accent); stroke: var(--accent); }
 .box-track .on text { fill: #fff; }
-.track-card { position: absolute; top: 12px; right: 12px; z-index: 2; width: 240px; display: grid; gap: 6px; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 10px #0003; }
+/* The map and the card share a row: the card has its own column, so it never covers a space; on a
+   wide screen the column takes only the empty side margin of the map. */
+.map-body { flex: 1; min-height: 0; display: flex; gap: 8px; }
+.map-body .map { flex: 1; min-width: 0; min-height: 0; height: 100%; }
+.track-card { flex: none; align-self: flex-start; max-height: 100%; overflow-y: auto; box-sizing: border-box; width: 240px; display: grid; gap: 6px; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 10px #0003; }
 .track-card h4 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
 .track-row { display: grid; gap: 3px; font-size: 12px; }
 .track-name { color: var(--muted); }
@@ -252,4 +256,4 @@ nav { height: 50px; box-sizing: border-box; }
 .track-row .mini-box { min-width: 12px; font-size: 10px; }
 .track-bar { position: relative; display: block; height: 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); overflow: hidden; }
 .track-fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
-@media (max-width: 1000px) { .track-card { position: static; width: auto; } }
+@media (max-width: 1000px) { .map-body { flex-direction: column; } .track-card { width: auto; } }
