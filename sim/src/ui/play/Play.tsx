@@ -17,6 +17,7 @@ import { arrowsOf, emptyPlans, plansReducer, type PlanEvent } from "../faction/p
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
+import { TrackCard } from "../status/TrackCard.tsx";
 
 export interface PlayProps {
   readonly api: Api;
@@ -64,6 +65,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const [showHistory, setShowHistory] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showKey, setShowKey] = useState(false);
+  const [showTracks, setShowTracks] = useState(true);
   const [mapOnly, setMapOnly] = useState(false);
   const [ending, setEnding] = useState(false);
   const [changed, setChanged] = useState<string[]>([]);
@@ -174,11 +176,17 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
               <button type="button" aria-pressed={showKey} onClick={() => { setShowKey(!showKey); }}>
                 Key
               </button>
+              <button type="button" aria-pressed={showTracks} onClick={() => { setShowTracks(!showTracks); }}>
+                Tracks
+              </button>
               <button type="button" aria-pressed={mapOnly} onClick={() => { setMapOnly(!mapOnly); }}>
                 {mapOnly ? "Show panels (M)" : "Map only (M)"}
               </button>
             </div>
+            <div className="map-body">
             <Board view={view} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
+            {showTracks && <TrackCard view={view} />}
+            </div>
             {showKey && (
               <div className="map-key">
                 <Legend view={view} />

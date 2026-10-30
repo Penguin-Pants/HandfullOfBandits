@@ -76,3 +76,38 @@ export function regionCells(spaces: readonly SpaceView[]): { geographic: boolean
   if (!geographic) return { geographic, domestic: voronoi(located.map(site)), external: new Map() };
   return { geographic, domestic: voronoi(located.filter((s) => s.kind === "domestic").map(site)), external: voronoi(located.filter((s) => s.kind !== "domestic").map(site)) };
 }
+
+/** A longitude and latitude in map units (the map.yaml layout projection). */
+const geo = (lon: number, lat: number): Point => [(lon - 37.3) * 108 + 150, (40.4 - lat) * 150];
+
+/** Rivers for orientation (UC-7), traced through approximate towns on their course. */
+export const RIVERS: readonly { readonly name: string; readonly path: readonly Point[] }[] = [
+  // Euphrates: Keban, Malatya plain, Atatürk Dam, Birecik, into Syria at Jarablus.
+  { name: "Euphrates", path: [geo(39.6, 38.85), geo(39.3, 38.8), geo(38.9, 38.45), geo(38.6, 37.95), geo(38.3, 37.55), geo(38.0, 37.05), geo(38.0, 36.6)] },
+  // Tigris: Hazar Lake, Diyarbakır, Hasankeyf, Cizre, the Iraq border.
+  { name: "Tigris", path: [geo(39.4, 38.5), geo(39.9, 38.15), geo(40.2, 37.9), geo(40.9, 37.85), geo(41.4, 37.7), geo(41.9, 37.45), geo(42.2, 37.3), geo(42.5, 37.0), geo(42.9, 36.6)] },
+];
+
+/** Lake Van outline (UC-7), approximate. */
+export const LAKE_VAN: readonly Point[] = [
+  geo(42.3, 38.75), geo(42.7, 38.95), geo(43.2, 39.0), geo(43.55, 38.85), geo(43.45, 38.45), geo(43.1, 38.4), geo(42.75, 38.55), geo(42.45, 38.55),
+];
+
+/**
+ * Points for mountain marks in a cell (UC-7): a grid inside the cell, kept clear of the space's
+ * label and tokens around its site. Deterministic, so the map does not change between renders.
+ */
+export function mountainMarks(cell: readonly Point[], site: Point, keepIn: (p: Point) => boolean): Point[] {
+  const xs = cell.map((p) => p[0]);
+  const ys = cell.map((p) => p[1]);
+  const out: Point[] = [];
+  const step = 44;
+  for (let y = Math.min(...ys) + step / 2, row = 0; y < Math.max(...ys); y += step, row++) {
+    for (let x = Math.min(...xs) + (row % 2 === 0 ? step / 2 : step); x < Math.max(...xs); x += step) {
+      const p: Point = [x, y];
+      const nearLabel = Math.abs(x - site[0]) < 95 && y - site[1] > -60 && y - site[1] < 52;
+      if (!nearLabel && inside(p, cell) && keepIn(p)) out.push(p);
+    }
+  }
+  return out;
+}

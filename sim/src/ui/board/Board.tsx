@@ -1,12 +1,15 @@
 // Regional board (08 s3.1): approximate map of the region (region.ts). Cell fill shows the
 // Support level, the badge shows Control, tokens show pieces with counts. Spaces the last action
 // changed get an amber outline. Click selects; Shift-click adds to the selection. A drag from one
-// space to another plans a move (UC-5); planned moves show as arrows.
+// space to another plans a move (UC-5); planned moves show as arrows. Light terrain (mountain
+// marks, rivers, Lake Van) and the tracks that belong to a box sit on the map (UC-7).
 import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { BoardView, SpaceView } from "../api.ts";
 import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
-import { isInset, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, TURKEY, type Point } from "./region.ts";
+import { words } from "../common/names.ts";
+import { spaceOfTrack } from "../status/tracks.ts";
+import { inside, isInset, LAKE_VAN, MAP_H, MAP_W, MAP_X0, mountainMarks, pathOf, regionCells, RIVERS, TURKEY, type Point } from "./region.ts";
 
 const INSET_W = 116;
 const INSET_H = 90;
@@ -134,6 +137,87 @@ function Arrow({ a, b, label, live = false }: { readonly a: Pt; readonly b: Pt; 
   );
 }
 
+type Cells = ReturnType<typeof regionCells>;
+
+/** Mountain marks in every Mountain space, the Euphrates and Tigris, Lake Van (UC-7). */
+function Terrain({ view, cells }: { readonly view: BoardView; readonly cells: Cells }) {
+  return (
+    <g pointerEvents="none" aria-hidden="true">
+      {cells.geographic && <path d={pathOf(LAKE_VAN)} className="map-lake" />}
+      {cells.geographic && RIVERS.map((r) => <path key={r.name} d={`M${r.path.map((p) => p.join(",")).join("L")}`} className="map-river" />)}
+      {view.spaces
+        .filter((s) => s.terrain === "mountain" && !isInset(s))
+        .map((s) => {
+          const cell = cells.domestic.get(s.id) ?? cells.external.get(s.id);
+          if (cell === undefined) return null;
+          const keepIn = (p: Point): boolean => !cells.geographic || (s.kind === "domestic") === inside(p, TURKEY);
+          return (
+            <g key={s.id} data-terrain="mountain" data-of={s.id}>
+              {mountainMarks(cell, [s.x, s.y], keepIn).map(([x, y]) => (
+                <path key={`${String(x)},${String(y)}`} d={`M${String(x - 11)},${String(y + 6)}l7,-12l4,6l3,-4l8,10`} className="map-mountain" />
+              ))}
+            </g>
+          );
+        })}
+    </g>
+  );
+}
+
+const STEP_SHORT: Readonly<Record<string, string>> = { host: "Host", tolerant: "Tol", restricted: "Restr", hostile: "Hostile", aligned: "Align" };
+
+/** A track drawn on its box: host posture under an external box, Europe inside its inset (UC-7). */
+type Box = { readonly x0: number; readonly x1: number; readonly y0: number; readonly y1: number };
+
+/** Approximate area of a space's label and tokens, for keeping box tracks clear of them. */
+function footprint(s: SpaceView): Box {
+  const half = Math.max(s.name.length * 5.5 + 8, 50);
+  return { x0: s.x - half, x1: s.x + half, y0: s.y - 34, y1: s.y + 32 };
+}
+
+const overlaps = (a: Box, b: Box): boolean => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+
+/**
+ * Where a host posture track goes: under its box, else shifted left or right, else above; the
+ * first spot clear of every other space's label and tokens.
+ */
+function placeTrack(space: SpaceView, others: readonly SpaceView[], total: number): { x0: number; y: number } {
+  const fit = (x0: number): number => Math.min(Math.max(x0, MAP_X0 + 2), MAP_W - total - 2);
+  const spots = [
+    { x0: fit(space.x - total / 2), y: space.y + 44 },
+    { x0: fit(space.x - total + 40), y: space.y + 44 },
+    { x0: fit(space.x - 40), y: space.y + 44 },
+    { x0: fit(space.x - total / 2), y: space.y - 62 },
+  ];
+  const free = spots.find((p) => others.every((o) => o.id === space.id || !overlaps({ x0: p.x0, x1: p.x0 + total, y0: p.y, y1: p.y + 18 }, footprint(o))));
+  return free ?? spots[0] ?? { x0: space.x, y: space.y };
+}
+
+function BoxTrack({ track, space, others }: { readonly track: BoardView["status"]["tracks"][number]; readonly space: SpaceView; readonly others: readonly SpaceView[] }) {
+  const numeric = track.steps === undefined && track.min !== undefined && track.max !== undefined;
+  const steps = numeric ? Array.from({ length: (track.max ?? 0) - (track.min ?? 0) + 1 }, (_, i) => String((track.min ?? 0) + i)) : (track.steps ?? []);
+  const label = (st: string): string => (numeric ? st : (STEP_SHORT[st] ?? words(st)));
+  const w = numeric ? 16 : 44;
+  const total = steps.length * (w + 2) - 2;
+  // An inset box (Europe) holds its track inside; an external box gets a free spot near it.
+  const { x0, y } = isInset(space) ? { x0: space.x - total / 2, y: space.y + 12 } : placeTrack(space, others, total);
+  return (
+    <g role="group" aria-label={`${track.display} track`} className="box-track" pointerEvents="none">
+      <title>{`${track.display}: ${words(String(track.value))}`}</title>
+      {steps.map((st, i) => {
+        const on = st === String(track.value);
+        return (
+          <g key={st} className={on ? "on" : undefined} aria-current={on ? "true" : undefined}>
+            <rect x={x0 + i * (w + 2)} y={y} width={w} height={18} rx={3} />
+            <text x={x0 + i * (w + 2) + w / 2} y={y + 13} textAnchor="middle">
+              {label(st)}
+            </text>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
 export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [] }: BoardProps) {
   const cells = regionCells(view.spaces);
   const turkey = pathOf(TURKEY);
@@ -191,10 +275,15 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
           onGrab={(id) => { if (onDrag !== undefined) setGrab({ from: id, at: null }); }}
         />
       ))}
+      <Terrain view={view} cells={cells} />
       {cells.geographic && <path d={turkey} fill="none" stroke="var(--border)" strokeWidth={2.5} pointerEvents="none" />}
       {view.spaces.map((s) => (
         <Tokens key={s.id} space={s} view={view} x={s.x} y={s.y + 6} />
       ))}
+      {view.status.tracks.map((t) => {
+        const at = spaceOfTrack(t.id, view.spaces);
+        return at === undefined ? null : <BoxTrack key={t.id} track={t} space={at} others={view.spaces.filter((o) => !isInset(o))} />;
+      })}
       <g pointerEvents="none" aria-label="Planned moves">
         {arrows.map((m, i) => {
           const a = centre(m.from);

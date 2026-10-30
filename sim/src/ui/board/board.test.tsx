@@ -6,6 +6,7 @@ import { kurdish } from "../../../test/kurdish-package.ts";
 import { boardView } from "../../server/view.ts";
 import { Forces } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
+import { TrackCard } from "../status/TrackCard.tsx";
 import { setMarkers, setPieces } from "../../../test/board.ts";
 import { changedSpaces } from "../play/Play.tsx";
 import { Board, Legend, SpaceDetail, spaceTooltip } from "./Board.tsx";
@@ -139,25 +140,21 @@ describe("map tooltip", () => {
   });
 });
 
-describe("status pills (UC-2)", () => {
-  it("gives each track its own labeled pill with readable values", () => {
-    render(<StatusBar view={view} />);
-    expect(screen.getByLabelText("Emergency Rule").textContent).toMatch(/^Emergency RuleMartial Law/);
-    expect(screen.getByLabelText("Syria posture").textContent).toMatch(/^Syria postureHost/);
-    expect(screen.getByLabelText("State Resources").textContent).toBe("State Resources12");
+describe("Resources and politics card (UC-7)", () => {
+  it("lists the tracks that have no place on the map, none of the ones drawn on a map box", () => {
+    render(<TrackCard view={view} />);
+    const card = screen.getByLabelText("Resources and politics");
+    for (const name of ["State Resources", "PKK Resources", "Legitimacy", "Emergency Rule", "Ceasefire", "Legal Space"]) expect(card.querySelector(`[aria-label="${name}"]`)).not.toBeNull();
+    for (const name of ["Syria posture", "KDP posture", "PUK posture", "Europe"]) expect(card.querySelector(`[aria-label="${name}"]`)).toBeNull();
   });
 
-  it("shows numbered mini tracks for Legitimacy (0-20) and Europe (0-5) with the value marked, none for Resources", () => {
-    render(<StatusBar view={view} />);
+  it("draws Resources as a bar with the value, Legitimacy as numbered boxes, step tracks as steps", () => {
+    render(<TrackCard view={view} />);
+    expect(screen.getByLabelText("State Resources").textContent).toContain("12");
+    expect(screen.getByLabelText("State Resources").querySelector(".track-bar")).not.toBeNull();
     const legit = screen.getByLabelText("Legitimacy");
     expect(legit.querySelectorAll(".mini-box")).toHaveLength(21);
     expect(legit.querySelector("[aria-current]")?.textContent).toBe("10");
-    expect(screen.getByLabelText("Europe").querySelectorAll(".mini-box")).toHaveLength(6);
-    expect(screen.getByLabelText("State Resources").querySelector(".mini-track")).toBeNull();
-  });
-
-  it("shows every step of a step track with the current one highlighted", () => {
-    render(<StatusBar view={view} />);
     const er = screen.getByLabelText("Emergency Rule");
     expect([...er.querySelectorAll(".mini-step")].map((e) => e.textContent)).toEqual(["Martial Law", "OHAL", "OHAL Extended Powers", "Normalizing"]);
     expect(er.querySelector("[aria-current]")?.textContent).toBe("Martial Law");
@@ -165,8 +162,37 @@ describe("status pills (UC-2)", () => {
 
   it("falls back to words for a value with no readable name", () => {
     const odd = { ...view, status: { ...view.status, tracks: [{ id: "mood", display: "Mood", value: "veryTense", steps: ["calm", "veryTense"] }] } };
-    render(<StatusBar view={odd} />);
+    render(<TrackCard view={odd} />);
     expect(screen.getByLabelText("Mood").querySelector("[aria-current]")?.textContent).toBe("Very Tense");
+  });
+
+  it("the status bar no longer repeats the tracks", () => {
+    render(<StatusBar view={view} />);
+    expect(screen.queryByLabelText("Tracks")).toBeNull();
+    expect(screen.queryByLabelText("Legitimacy")).toBeNull();
+  });
+});
+
+describe("map boxes and terrain (UC-7)", () => {
+  it("shows each host posture on its box and the Europe track in the Europe box", () => {
+    render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    const kdp = screen.getByLabelText("KDP posture track");
+    expect(kdp.querySelector("[aria-current]")?.textContent).toBe("Host");
+    expect(screen.getByLabelText("Syria posture track")).toBeTruthy();
+    expect(screen.getByLabelText("PUK posture track")).toBeTruthy();
+    const europe = screen.getByLabelText("Europe track");
+    expect(europe.querySelectorAll("text")).toHaveLength(6);
+    expect(europe.querySelector("[aria-current]")?.textContent).toBe(String(view.status.tracks.find((t) => t.id === "europe")?.value));
+  });
+
+  it("draws mountains in every Mountain space, the two rivers and Lake Van, and no links between spaces", () => {
+    const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    const mountains = view.spaces.filter((s) => s.terrain === "mountain" && !isInset(s)).map((s) => s.id);
+    const drawn = new Set([...container.querySelectorAll("[data-terrain='mountain']")].map((e) => e.getAttribute("data-of")));
+    expect([...drawn].sort()).toEqual([...mountains].sort());
+    expect(container.querySelectorAll(".map-river")).toHaveLength(2);
+    expect(container.querySelectorAll(".map-lake")).toHaveLength(1);
+    expect(container.querySelectorAll("line:not(.map-arrow line)")).toHaveLength(0);
   });
 });
 

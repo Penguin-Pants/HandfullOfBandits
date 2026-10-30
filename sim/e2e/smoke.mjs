@@ -69,6 +69,13 @@ try {
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
   check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
+  // UC-7: the Resources and politics card sits inside the map panel, clear of the right column.
+  const card = await page.evaluate(() => {
+    const c = document.querySelector('[aria-label="Resources and politics"]').getBoundingClientRect();
+    const m = document.querySelector(".map-panel").getBoundingClientRect();
+    return c.left >= m.left && c.right <= m.right && c.bottom <= m.bottom;
+  });
+  check(card, "Resources and politics card inside the map panel");
   await page.keyboard.press("m");
   await page.keyboard.press("n");
   await page.getByLabel("Note text").waitFor();
@@ -85,6 +92,13 @@ try {
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
   check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: cards, card text, Faction panel");
   await page.setViewportSize({ width: 1366, height: 768 });
+  await page.waitForTimeout(300);
+  // UC-7 review: at 1366 x 768 the card covers no space name on the map.
+  const clear = await page.evaluate(() => {
+    const c = document.querySelector('[aria-label="Resources and politics"]').getBoundingClientRect();
+    return [...document.querySelectorAll("text.map-label")].every((t) => { const r = t.getBoundingClientRect(); return r.right <= c.left || r.left >= c.right || r.bottom <= c.top || r.top >= c.bottom; });
+  });
+  check(clear, "Resources and politics card covers no space name at 1366 x 768");
   // UC-5: a March is planned by a mouse drag on the map, never by typed text.
   await page.getByRole("button", { name: "Limited Op" }).click();
   await page.getByRole("button", { name: "March", exact: true }).click();
