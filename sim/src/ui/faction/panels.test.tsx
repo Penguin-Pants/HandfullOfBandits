@@ -67,26 +67,46 @@ describe("FactionPanel", () => {
     expect(screen.getByText("Coerce needs a Neutral or Support space.")).toBeTruthy();
   });
 
-  it("shows on the eligibility track what each box leaves open and who is First Eligible next", () => {
+  it("E4 track: pointing at a box shows what it leaves open for the other faction and who is 1st next (UC-8)", () => {
     const track: LegalChoices = { ...legal, other: "state", placed: { pkk: null, state: null }, boxes: [
-      { box: "opSa", allowed: true, reason: null, otherMay: ["event", "limitedOp", "pass"], nextFirst: "state" },
+      { box: "event", allowed: true, reason: null, otherMay: ["opSa", "pass"], nextFirst: "pkk" },
       { box: "limitedOp", allowed: true, reason: null, otherMay: ["opOnly", "opSa", "pass"], nextFirst: "pkk" },
+      { box: "opOnly", allowed: true, reason: null, otherMay: ["limitedOp", "pass"], nextFirst: "state" },
+      { box: "opSa", allowed: true, reason: null, otherMay: ["event", "limitedOp", "pass"], nextFirst: "state" },
+      { box: "pass", allowed: true, reason: null, otherMay: ["event", "limitedOp", "opOnly", "opSa", "pass"], nextFirst: "pkk" },
     ] };
     render(<Faction api={mockApi()} legal={track} />);
-    const opSa = screen.getByLabelText("Op + SA box").textContent;
-    expect(opSa).toContain("Then State: Event, Limited Op, Pass");
-    expect(opSa).toContain("Next card 1st: State");
-    expect(screen.getByLabelText("Limited Op box").textContent).toContain("Next card 1st: PKK");
+    const effect = screen.getByLabelText("Choice effect");
+    expect(effect.textContent).toMatch(/Point at a box/);
+    fireEvent.mouseEnter(screen.getByRole("button", { name: "Op Only" }));
+    expect(effect.textContent).toBe("If PKK takes Op Only: State may take Limited Op or Pass. Next card State is 1st Eligible.");
+    const theirs = screen.getByRole("group", { name: "State (2nd) boxes" });
+    expect(theirs.querySelector('[aria-label="State Limited Op: open"]')).not.toBeNull();
+    expect(theirs.querySelector('[aria-label="State Event: closed"]')).not.toBeNull();
+    fireEvent.mouseLeave(screen.getByRole("button", { name: "Op Only" }));
+    fireEvent.focus(screen.getByRole("button", { name: "Op + SA" }));
+    expect(effect.textContent).toContain("State may take Event, Limited Op or Pass");
+    // The Event box previews its effect from the keyboard too; the Event itself runs from the card panel.
+    const event = screen.getByRole("button", { name: "Event" });
+    expect(event.getAttribute("aria-disabled")).toBe("true");
+    fireEvent.focus(event);
+    expect(effect.textContent).toContain("If PKK takes Event: State may take Op + SA or Pass");
   });
 
-  it("marks the boxes closed to the Second Eligible and shows where the First Eligible's cylinder is", () => {
+  it("E4 track for the Second Eligible: the 1st faction's cylinder in its box, own boxes as buttons (UC-8)", () => {
     const second: LegalChoices = { ...legal, first: false, other: "pkk", placed: { pkk: "opSa", state: null }, boxes: [
-      { box: "opSa", allowed: false, reason: "Not open", otherMay: null, nextFirst: null },
       { box: "event", allowed: true, reason: null, otherMay: null, nextFirst: null },
+      { box: "limitedOp", allowed: true, reason: null, otherMay: null, nextFirst: null },
+      { box: "opOnly", allowed: false, reason: "Not open", otherMay: null, nextFirst: null },
+      { box: "opSa", allowed: false, reason: "Not open", otherMay: null, nextFirst: null },
+      { box: "pass", allowed: true, reason: null, otherMay: null, nextFirst: null },
     ] };
-    render(<Faction api={mockApi()} legal={second} />);
-    expect(screen.getByLabelText("Op + SA box").textContent).toContain("PKK");
-    expect(screen.getByLabelText("Op + SA box").textContent).toContain("Closed");
+    render(<Faction api={mockApi()} legal={{ ...second, faction: "state" }} />);
+    const firstRow = screen.getByRole("group", { name: "PKK (1st) boxes" });
+    expect(firstRow.querySelector('[aria-label="PKK Op + SA: taken"]')?.textContent).toContain("PKK");
+    expect(screen.getByLabelText("Choice effect").textContent).toBe("PKK took Op + SA: State may take Event, Limited Op or Pass.");
+    expect(screen.getByRole("button", { name: "Op Only" }).getAttribute("aria-disabled")).toBe("true");
+    expect(screen.getByRole("button", { name: "Limited Op" }).getAttribute("aria-disabled")).toBeNull();
   });
 
   it("keeps an Op open in Op + SA, since a preceding SA may make it legal", () => {

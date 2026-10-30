@@ -101,7 +101,11 @@ describe("change outline", () => {
 describe("victory track and forces", () => {
   it("places each faction marker at its score and flags its threshold", () => {
     render(<StatusBar view={view} />);
-    expect(screen.getByLabelText("State score 21")).toBeTruthy();
+    expect(screen.getByLabelText("State score 21").textContent).toBe("State 21");
+    expect(screen.getByLabelText("Victory track").querySelectorAll(".vt-cell")).toHaveLength(51);
+    // A flag label near the end of the track is right-aligned so it stays on screen.
+    expect(screen.getByText("State wins at 49").parentElement?.classList.contains("end")).toBe(true);
+    expect(screen.getByText("PKK wins at 30").parentElement?.classList.contains("end")).toBe(false);
     expect(screen.getByText("State wins at 49")).toBeTruthy();
     expect(screen.getByText("PKK wins at 30")).toBeTruthy();
   });
@@ -185,11 +189,19 @@ describe("map boxes and terrain (UC-7)", () => {
     expect(europe.querySelector("[aria-current]")?.textContent).toBe(String(view.status.tracks.find((t) => t.id === "europe")?.value));
   });
 
-  it("draws mountains in every Mountain space, the two rivers and Lake Van, and no links between spaces", () => {
+  it("shades relief over every Mountain space, draws the two rivers and Lake Van, and no links between spaces", () => {
     const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
     const mountains = view.spaces.filter((s) => s.terrain === "mountain" && !isInset(s)).map((s) => s.id);
     const drawn = new Set([...container.querySelectorAll("[data-terrain='mountain']")].map((e) => e.getAttribute("data-of")));
     expect([...drawn].sort()).toEqual([...mountains].sort());
+    // Each mountain's relief is clipped to its own side of the border, like its space.
+    for (const id of mountains) {
+      const space = view.spaces.find((x) => x.id === id);
+      const mask = container.querySelector(`[data-of='${id}']`)?.closest("clipPath")?.getAttribute("id");
+      expect(mask).toBe(space?.kind === "domestic" ? "clip-mountains-domestic" : "clip-mountains-external");
+    }
+    expect(container.querySelector("[clip-path='url(#clip-turkey)'] .map-relief.mountain")).not.toBeNull();
+    expect(container.querySelector("[clip-path='url(#clip-abroad)'] .map-relief.mountain")).not.toBeNull();
     expect(container.querySelectorAll(".map-river")).toHaveLength(2);
     expect(container.querySelectorAll(".map-lake")).toHaveLength(1);
     expect(container.querySelectorAll("line:not(.map-arrow line)")).toHaveLength(0);

@@ -2,14 +2,14 @@
 // Support level, the badge shows Control, tokens show pieces with counts. Spaces the last action
 // changed get an amber outline. Click selects; Shift-click adds to the selection. A drag from one
 // space to another plans a move (UC-5); planned moves show as arrows. Light terrain (mountain
-// marks, rivers, Lake Van) and the tracks that belong to a box sit on the map (UC-7).
+// relief, rivers, Lake Van) and the tracks that belong to a box sit on the map (UC-7, UC-8).
 import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { BoardView, SpaceView } from "../api.ts";
 import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
 import { words } from "../common/names.ts";
 import { spaceOfTrack } from "../status/tracks.ts";
-import { inside, isInset, LAKE_VAN, MAP_H, MAP_W, MAP_X0, mountainMarks, pathOf, regionCells, RIVERS, TURKEY, type Point } from "./region.ts";
+import { isInset, LAKE_VAN, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, RIVERS, TURKEY, type Point } from "./region.ts";
 
 const INSET_W = 116;
 const INSET_H = 90;
@@ -86,7 +86,7 @@ function Space({ space, cell, clip, selected, changed, onSelect, onGrab }: { spa
       <title>{spaceTooltip(space)}</title>
       {box === null ? (
         <>
-          <path d={pathOf(cell ?? [])} clipPath={clip} fill={space.kind === "domestic" ? levelColor(space.level) : "var(--abroad)"} stroke="var(--cell-line)" strokeWidth={1.5} />
+          <path d={pathOf(cell ?? [])} clipPath={clip} fill={space.kind === "domestic" ? levelColor(space.level) : "var(--abroad)"} stroke="var(--cell-line)" strokeWidth={1.2} strokeDasharray="6 3" />
           {outline !== null && <path d={pathOf(cell ?? [])} clipPath={clip} fill="none" stroke={outline} strokeWidth={6} strokeDasharray={selected ? undefined : "8 5"} />}
         </>
       ) : (
@@ -139,26 +139,44 @@ function Arrow({ a, b, label, live = false }: { readonly a: Pt; readonly b: Pt; 
 
 type Cells = ReturnType<typeof regionCells>;
 
-/** Mountain marks in every Mountain space, the Euphrates and Tigris, Lake Van (UC-7). */
+/**
+ * Light terrain like a road map's terrain view (UC-8): a soft hillshade, very faint everywhere and
+ * stronger in Mountain spaces, plus the Euphrates, Tigris and Lake Van. The relief is generated
+ * (fractal noise lit from the north-west), not elevation data: it marks terrain, not real peaks.
+ */
 function Terrain({ view, cells }: { readonly view: BoardView; readonly cells: Cells }) {
+  const mountains = view.spaces.filter((s) => s.terrain === "mountain" && !isInset(s));
+  const relief = { x: MAP_X0, y: 0, width: MAP_W - MAP_X0, height: MAP_H, filter: "url(#map-relief)" };
   return (
     <g pointerEvents="none" aria-hidden="true">
+      <defs>
+        <filter id="map-relief" filterUnits="userSpaceOnUse" x={0} y={0} width={MAP_W} height={MAP_H}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.009" numOctaves={5} seed={11} />
+          <feDiffuseLighting surfaceScale={5} lightingColor="#ffffff">
+            <feDistantLight azimuth={315} elevation={42} />
+          </feDiffuseLighting>
+        </filter>
+        {(["domestic", "external"] as const).map((side) => (
+          <clipPath key={side} id={`clip-mountains-${side}`}>
+            {mountains
+              .filter((s) => (s.kind === "domestic") === (side === "domestic"))
+              .map((s) => {
+                const cell = cells.domestic.get(s.id) ?? cells.external.get(s.id);
+                return cell === undefined ? null : <path key={s.id} d={pathOf(cell)} data-terrain="mountain" data-of={s.id} />;
+              })}
+          </clipPath>
+        ))}
+      </defs>
+      <rect {...relief} className="map-relief" />
+      {/* Each side of the border keeps its own relief, cut like the spaces (Voronoi cells span the map). */}
+      <g clipPath={cells.geographic ? "url(#clip-turkey)" : undefined}>
+        <rect {...relief} className="map-relief mountain" clipPath="url(#clip-mountains-domestic)" />
+      </g>
+      <g clipPath={cells.geographic ? "url(#clip-abroad)" : undefined}>
+        <rect {...relief} className="map-relief mountain" clipPath="url(#clip-mountains-external)" />
+      </g>
       {cells.geographic && <path d={pathOf(LAKE_VAN)} className="map-lake" />}
       {cells.geographic && RIVERS.map((r) => <path key={r.name} d={`M${r.path.map((p) => p.join(",")).join("L")}`} className="map-river" />)}
-      {view.spaces
-        .filter((s) => s.terrain === "mountain" && !isInset(s))
-        .map((s) => {
-          const cell = cells.domestic.get(s.id) ?? cells.external.get(s.id);
-          if (cell === undefined) return null;
-          const keepIn = (p: Point): boolean => !cells.geographic || (s.kind === "domestic") === inside(p, TURKEY);
-          return (
-            <g key={s.id} data-terrain="mountain" data-of={s.id}>
-              {mountainMarks(cell, [s.x, s.y], keepIn).map(([x, y]) => (
-                <path key={`${String(x)},${String(y)}`} d={`M${String(x - 11)},${String(y + 6)}l7,-12l4,6l3,-4l8,10`} className="map-mountain" />
-              ))}
-            </g>
-          );
-        })}
     </g>
   );
 }

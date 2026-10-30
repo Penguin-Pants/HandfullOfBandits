@@ -10,9 +10,9 @@
   --good: #2e7d32;
   --state: #c62828;
   --pkk: #2e7d32;
-  --cell: #f1ead8;
-  --cell-line: #ffffff;
-  --abroad: #dcdad3;
+  --cell: #f5f1e6;
+  --cell-line: #b3ab9d;
+  --abroad: #e9e6de;
   --inset: #e8e6df;
   --border: #4a4a44;
   --changed: #f2a900;
@@ -32,8 +32,8 @@
     --accent: #7fb0ff;
     --bad: #ff6b81;
     --good: #7bd17f;
-    --cell: #3a3730;
-    --cell-line: #151515;
+    --cell: #34322d;
+    --cell-line: #5d5850;
     --abroad: #262626;
     --inset: #202020;
     --border: #bdbdb5;
@@ -50,7 +50,7 @@ button {
 button:hover:not(:disabled) { border-color: var(--accent); }
 button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
 button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-button:disabled { opacity: 0.45; cursor: default; }
+button:disabled, button[aria-disabled="true"] { opacity: 0.45; cursor: default; }
 input, select, textarea { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--fg); }
 .screen { padding: 16px; display: grid; gap: 12px; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
@@ -87,11 +87,6 @@ nav { display: flex; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(-
 /* Victory track and forces */
 :root { --track-five: #ece8dc; }
 @media (prefers-color-scheme: dark) { :root { --track-five: #34322c; } }
-.score-track { width: 100%; height: auto; display: block; }
-.track-num { font-size: 10px; fill: var(--muted); }
-.track-num.five { font-size: 12px; font-weight: 700; fill: var(--fg); }
-.track-marker { font-size: 10px; font-weight: 700; fill: #fff; }
-.track-flag { font-size: 11px; font-weight: 700; }
 table.forces td, table.forces th { text-align: center; padding: 3px 6px; }
 table.forces td:first-child, table.forces th:first-child { text-align: left; }
 
@@ -114,7 +109,6 @@ table.forces td:first-child, table.forces th:first-child { text-align: left; }
 .card-button:hover .card-back { filter: brightness(1.15); }
 
 /* Eligibility track */
-.elig-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin-bottom: 8px; }
 .elig-box button { white-space: normal; overflow-wrap: anywhere; }
 .side > * { min-width: 0; overflow-wrap: anywhere; }
 .elig-box { display: grid; gap: 3px; align-content: start; padding: 4px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
@@ -156,13 +150,11 @@ nav { height: 50px; box-sizing: border-box; }
 .forces-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .forces-row .panel { padding: 6px 10px; }
 .play-screen .side { height: 100%; overflow-y: auto; min-height: 0; }
-.score-track { max-height: 64px; }
 .overlay { position: fixed; top: 58px; right: 16px; width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 80px); overflow-y: auto; z-index: 5; box-shadow: 0 6px 24px #0004; border-radius: 8px; }
 @media (max-width: 1000px) { .play-screen { height: auto; overflow: visible; } .forces-row { grid-template-columns: 1fr; } }
 /* One-view compaction (UC-3) */
 .play-screen .status-grid { padding: 8px 12px; gap: 4px; }
 .play-screen .pill { padding: 2px 8px; font-size: 12px; }
-.play-screen .score-track { max-height: 56px; }
 .play-screen .play { grid-template-columns: minmax(0, 1fr) 460px; }
 .play-screen .side { gap: 8px; }
 .play-screen .side .panel { padding: 8px 10px; }
@@ -183,7 +175,6 @@ nav { height: 50px; box-sizing: border-box; }
    map focus mode (M), larger labels. */
 .play-screen { height: 100vh; }
 .play-screen .status-grid > .pills { flex-wrap: nowrap; }
-.play-screen .score-track { max-height: 40px; }
 .track-pill { position: relative; flex-wrap: nowrap; white-space: nowrap; }
 .mini-pop { display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 4px 12px #0003; z-index: 6; white-space: normal; width: max-content; max-width: 420px; }
 .track-pill:hover .mini-pop, .track-pill:focus .mini-pop, .track-pill:focus-within .mini-pop { display: block; }
@@ -234,11 +225,12 @@ nav { height: 50px; box-sizing: border-box; }
 .help-actions { display: grid; gap: 6px; margin: 0 0 10px; font-size: 13px; }
 .help-actions dd { margin: 0 0 0 12px; }
 /* Map terrain, box tracks and the Resources and politics card (UC-7) */
-:root { --mountain: #6d5a43; --water: #4a7fb0; }
-@media (prefers-color-scheme: dark) { :root { --mountain: #b8a47f; --water: #5b8fc4; } }
-.map-mountain { fill: none; stroke: var(--mountain); stroke-width: 2; stroke-linejoin: round; opacity: 0.45; }
-.map-river { fill: none; stroke: var(--water); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0.6; }
-.map-lake { fill: var(--water); opacity: 0.35; }
+:root { --water: #7cb5e4; --lake: #a9d3f1; --relief: 0.1; --relief-mountain: 0.5; }
+@media (prefers-color-scheme: dark) { :root { --water: #4f86b8; --lake: #2f5a80; --relief: 0.22; --relief-mountain: 0.7; } }
+.map-relief { mix-blend-mode: multiply; opacity: var(--relief); }
+.map-relief.mountain { opacity: var(--relief-mountain); }
+.map-river { fill: none; stroke: var(--water); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.6; }
+.map-lake { fill: var(--lake); stroke: var(--water); stroke-width: 1; }
 .box-track rect { fill: var(--panel); stroke: var(--line); }
 .box-track text { font-size: 11px; font-weight: 600; fill: var(--muted); }
 .box-track .on rect { fill: var(--accent); stroke: var(--accent); }
@@ -257,3 +249,24 @@ nav { height: 50px; box-sizing: border-box; }
 .track-bar { position: relative; display: block; height: 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); overflow: hidden; }
 .track-fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
 @media (max-width: 1000px) { .map-body { flex-direction: column; } .track-card { width: auto; } }
+/* Victory track (UC-8): readable numbered cells, labeled markers and flags */
+.victory-track { position: relative; display: grid; gap: 1px; margin: 22px 0; }
+.vt-cell { min-width: 0; overflow: hidden; font-size: 11px; font-weight: 600; text-align: center; line-height: 22px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
+.vt-cell.five { background: var(--track-five); color: var(--fg); }
+.vt-marker { position: absolute; top: -21px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: #fff; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+.vt-marker.below { top: auto; bottom: -21px; }
+.vt-flag { position: absolute; top: 0; bottom: 0; width: 3px; transform: translateX(-50%); }
+.vt-flag-label { position: absolute; top: -20px; transform: translateX(-50%); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.vt-flag-label.below { top: auto; bottom: -20px; }
+.vt-flag-label.end { transform: translateX(calc(-100% + 8px)); }
+.vt-flag-label.start { transform: translateX(-8px); }
+/* Eligibility track E4 (UC-8) */
+.elig-track { display: grid; gap: 4px; margin-bottom: 8px; }
+.elig-row { display: grid; grid-template-columns: 64px repeat(5, minmax(0, 1fr)); gap: 4px; }
+.elig-who { display: grid; gap: 2px; align-content: start; font-size: 11px; }
+.elig-box.pointed { outline: 3px solid var(--changed); }
+.elig-box.dim { opacity: 0.4; }
+.elig-box.open { border-color: var(--good); }
+.elig-box b { font-size: 12px; }
+.elig-effect { margin: 2px 0 0; padding: 4px 8px; border-left: 4px solid var(--changed); font-size: 13px; }
+@media (max-width: 1000px) { .vt-cell { font-size: 8px; } }
