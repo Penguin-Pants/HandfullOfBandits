@@ -88,10 +88,13 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
     expect(play(at(s0, "civicAction"), spend("elazig", 1)).state.spaces["elazig"]?.level).toBe(2);
   });
 
-  it("PKK Agitation needs a PKK piece and no State Control", () => {
+  it("PKK Agitation needs a PKK Base or PKK Control, as in Rally (designer, playtest C2)", () => {
     const spend = (space: string): AnyCommand => choice("agitation", { spaces: { [space]: { shifts: 1 } } });
     expect(play(at(s0, "agitation"), spend("botan")).state.spaces["botan"]?.level).toBe(-2);
     expect(codes(at(s0, "agitation"), spend("hakkari"))).toEqual(["agitateWhere"]);
+    // A Base under State Control is enough; Guerrillas with no Control and no Base are not.
+    expect(codes(at(setPieces(s0, "diyarbakir-city", "pkkBase", 1), "agitation"), spend("diyarbakir-city"))).toEqual([]);
+    expect(codes(at(setPieces(s0, "mardin-batman", "guerrilla", 2, "underground"), "agitation"), spend("mardin-batman"))).toEqual(["agitateWhere"]);
   });
 
   it("ends the final round after Agitation: metrics row, final scoring, test-result label (S0)", () => {

@@ -5,8 +5,8 @@ import { SINGLE_FACE } from "../../../core/state.ts";
 import { param } from "../../../core/params.ts";
 import type { GameState, JsonObject, Ruleset, Violation } from "../../../core/types.ts";
 import { at } from "../action.ts";
-import { markers, pay } from "../common.ts";
-import { FACTION, MARKER } from "../ids.ts";
+import { controlOf, count, markers, pay } from "../common.ts";
+import { FACTION, MARKER, PIECE } from "../ids.ts";
 import { asCount } from "../plan.ts";
 
 const ruleRef = "07 s1.3";
@@ -57,4 +57,10 @@ export function agitationExecute(ctx: Exec, spaceId: string, spend: AgitationSpe
   remove(MARKER.coercion, spend.coercion);
   remove(MARKER.pkkHarm, spend.pkkHarm);
   if (spend.shifts > 0) ctx.apply({ type: "shiftLevel", space: spaceId, direction: "opposition", steps: spend.shifts, ruleRef, assumptionRef: null });
+}
+
+/** Where the PKK may Agitate, in a Rally or in Propaganda: a space with a PKK Base or PKK Control
+ * (07 s1.3; one rule for both, designer decision after the S0 playtests). */
+export function canAgitate(ruleset: Ruleset, state: GameState, spaceId: string): boolean {
+  return count(state, spaceId, PIECE.pkkBase) > 0 || controlOf(ruleset, state, spaceId) === FACTION.pkk;
 }

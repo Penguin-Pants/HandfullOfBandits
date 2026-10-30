@@ -13,7 +13,7 @@ export const PHASE_GUIDE: Readonly<Record<string, PhaseGuide>> = {
   legitimacy: { title: "Legitimacy and Emergency Rule", what: "Legitimacy drains for Emergency Rule, new Displacement, Reception, Disputed Harm and Covert exposure, then gains are applied.", you: "The State may move Emergency Rule one step, or press Advance to keep it." },
   legalPolitics: { title: "Legal Politics", what: "From C3 only. Skipped while Legal Space is Absent.", you: "Press Advance." },
   civicAction: { title: "Civic Action (State)", what: "The State spends Resources in spaces it Controls with Troops and Police. Total spend is at most half of Legitimacy.", you: "Select spaces, enter the spends, then Spend. Or press Advance to spend nothing." },
-  agitation: { title: "Agitation (PKK)", what: "The PKK spends Resources in spaces with a PKK piece and no State Control.", you: "Select spaces, enter the spends, then Spend. Or press Advance to spend nothing." },
+  agitation: { title: "Agitation (PKK)", what: "The PKK spends Resources in spaces with a PKK Base or PKK Control.", you: "Select spaces, enter the spends, then Spend. Or press Advance to spend nothing." },
   redeploy: { title: "Redeploy", what: "State moves Troops and Police, then PKK moves Guerrillas to Bases. Not in the S0 slice yet.", you: "Not available in S0." },
   reset: { title: "Reset", what: "Remove one Coercion per space, flip Guerrillas Underground, advance the Campaign, reveal the next card. Not in the S0 slice yet.", you: "Not available in S0." },
 };

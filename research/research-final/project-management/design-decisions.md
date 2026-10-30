@@ -206,6 +206,9 @@ Source: section 6 of `package-b-coin-design/11-critical-design-review.md` (IR-31
 Source: `playtestresults.md` (October 2026, finding D2).
 
 1. No income in the final Propaganda round. The Resources phase is skipped in the round that ends the game. Reason: the income came after the last card and could not be spent.
+2. Agitation in Propaganda uses the Rally rule: a space with a PKK Base or PKK Control (was: a PKK piece and no State Control). Reason: one rule for both, and Propaganda Agitation was almost never possible (finding D6).
+3. Strike Collaborators keeps its PKK Harm marker: violence against civilians costs the PKK local support, as State Harm does for the State. The action text now warns that the marker blocks Agitation shifts until the PKK pays to remove it (finding D7).
+4. Shaded sides that could have no effect now always do something (finding D9): DK-002 places 1 Underground Guerrilla in Botan before the free Attack; DK-003 may shift a Mountain space with State Control; DK-005 may place 2 Guerrillas in the PUK Zone; DK-008 adds PKK Resources +1 and is no longer block only; DK-100 gives Europe +1 when Syria is already Host.
 
 ## Decision record
 

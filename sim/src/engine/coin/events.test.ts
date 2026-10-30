@@ -32,12 +32,18 @@ describe("T-EVT: S0 cards", () => {
     expect(codes(on(state0, "DK-002"), event("state", "unshaded", [{ locations: ["hakkari"], perLocation: {} }]))).toEqual(["eventConstraint"]);
   });
 
-  it("DK-002 S: free Attack in Botan with Ambush: Attack as normal plus 1 extra removal (PA-06), no cost", () => {
+  it("DK-002 S: 1 Guerrilla placed, then free Attack in Botan with Ambush: Attack as normal plus 1 extra removal (PA-06), no cost", () => {
     const board = withRoll(on(pkk0, "DK-002"), 6);
     const { state } = play(board, event("pkk", "shaded", [{ locations: ["botan"], perLocation: {}, sa: { locations: ["botan"], perLocation: {} } }]));
     expect(pieces(state, "botan", "troops")).toEqual({ default: 1 });
-    expect(pieces(state, "botan", "guerrilla")).toEqual({ underground: 0, active: 2 });
+    expect(pieces(state, "botan", "guerrilla")).toEqual({ underground: 0, active: 3 });
     expect(t(state, "resources.pkk")).toBe(5);
+  });
+
+  it("DK-002 S: places 1 Underground Guerrilla in Botan first, so Ambush works after a Sweep (playtest D9)", () => {
+    const swept = setPieces(setPieces(on(pkk0, "DK-002"), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
+    const plan = { locations: ["botan"], perLocation: {}, sa: { locations: ["botan"], perLocation: {} } };
+    expect(codes(swept, event("pkk", "shaded", [plan]))).toEqual([]);
   });
 
   it("DK-003 U: up to 2 Guards in each of up to 2 controlled Mountain or Plain spaces with Police", () => {
@@ -60,8 +66,11 @@ describe("T-EVT: S0 cards", () => {
     const { state } = play(board, event("pkk", "shaded", [["dersim"]]));
     expect(t(state, "resources.state")).toBe(9);
     expect(state.spaces["dersim"]?.level).toBe(-1);
-    // No Guard on the map: the shift does as much as it can (nothing), the cost still applies.
-    expect(t(play(on(pkk0, "DK-003"), event("pkk", "shaded", [[]])).state, "resources.state")).toBe(9);
+  });
+
+  it("DK-003 S: with no Guard on the map, a Mountain space with State Control can shift (playtest D9)", () => {
+    const { state } = play(on(pkk0, "DK-003"), event("pkk", "shaded", [["dersim"]]));
+    expect(state.spaces["dersim"]?.level).toBe(-1);
   });
 
   it("DK-005 U: KDP posture one more step toward Hostile", () => {
@@ -75,14 +84,20 @@ describe("T-EVT: S0 cards", () => {
     expect(t(state, "resources.pkk")).toBe(6);
   });
 
+  it("DK-005 S: or places 2 Underground Guerrillas in the PUK Zone (playtest D9)", () => {
+    const { state } = play(on(pkk0, "DK-005"), event("pkk", "shaded", ["Place 2 in the PUK Zone"]));
+    expect(pieces(state, "puk-zone", "guerrilla")).toEqual({ underground: 2, active: 0 });
+    expect(t(state, "resources.pkk")).toBe(6);
+  });
+
   it("DK-008 U: Europe -1, PKK Resources -1", () => {
     const { state } = play(on(state0, "DK-008"), event("state", "unshaded"));
     expect([t(state, "europe"), t(state, "resources.pkk")]).toEqual([0, 4]);
   });
 
-  it("DK-008 S: block only, Europe -1", () => {
+  it("DK-008 S: Europe -1, PKK Resources +1 (playtest D9)", () => {
     const { state } = play(on(pkk0, "DK-008"), event("pkk", "shaded"));
-    expect([t(state, "europe"), t(state, "resources.pkk")]).toEqual([0, 5]);
+    expect([t(state, "europe"), t(state, "resources.pkk")]).toEqual([0, 6]);
   });
 
   it("DK-012 U: State Resources +4; 2 Troops in any Mountain spaces", () => {
@@ -109,11 +124,11 @@ describe("T-EVT: S0 cards", () => {
     expect([t(state, "legitimacy"), t(state, "resources.state")]).toEqual([11, 13]);
   });
 
-  it("DK-100 S: Syria one step toward Host (no effect at Host, PA-04); PKK Resources +1", () => {
+  it("DK-100 S: Syria one step toward Host, or Europe +1 if Syria is already Host (playtest D9); PKK Resources +1", () => {
     const host = play(on(pkk0, "DK-100"), event("pkk", "shaded"));
-    expect([t(host.state, "posture.syria"), t(host.state, "resources.pkk")]).toEqual(["host", 6]);
-    expect(host.entries.some((e) => e.data["track"] === "posture.syria" && e.assumptionRef === "PA-04")).toBe(true);
-    expect(t(play(setTrack(on(pkk0, "DK-100"), "posture.syria", "restricted"), event("pkk", "shaded")).state, "posture.syria")).toBe("tolerant");
+    expect([t(host.state, "posture.syria"), t(host.state, "europe"), t(host.state, "resources.pkk")]).toEqual(["host", 2, 6]);
+    const restricted = play(setTrack(on(pkk0, "DK-100"), "posture.syria", "restricted"), event("pkk", "shaded")).state;
+    expect([t(restricted, "posture.syria"), t(restricted, "europe")]).toEqual(["tolerant", 1]);
   });
 });
 

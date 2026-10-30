@@ -9,6 +9,9 @@ describe("action summaries match the engine", () => {
     expect(summary("pkk.ambush")).toMatch(/after the normal Attack/);
     expect(summary("pkk.ambush")).not.toMatch(/no die roll/i);
   });
+  it("Strike Collaborators warns that its PKK Harm blocks Agitation there (agitation.ts, playtest B1)", () => {
+    expect(summary("pkk.strike-collaborators")).toMatch(/PKK Harm marker blocks Agitation shifts in that space until the PKK pays 2 to remove it/);
+  });
   it("Assault: Police count as Troops in a City (assault.ts)", () => {
     expect(summary("state.assault")).toMatch(/City, Police count as Troops/);
   });
