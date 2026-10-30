@@ -2,7 +2,7 @@
 // entry, with display names, the cause when known and before -> after for tracks. Rule and
 // assumption references go to `ref` (tooltip), never into the sentence. Built at display time
 // from the stored `kind` and `data`, so older sessions read the same way.
-import type { BoardView, HistoryEntry } from "../api.ts";
+import type { BoardView, HistoryEntry, ValidationResult } from "../api.ts";
 import { counted, words } from "../common/names.ts";
 import { guideOf } from "../propaganda/phases.ts";
 
@@ -233,4 +233,41 @@ export function actionTitle(action: { readonly faction: string | null; readonly 
   if (action.box === "event") return `${who} took the Event`;
   if (action.box === "pass") return `${who} passed`;
   return action.box === null ? `${who} acted` : `${who} chose ${words(action.box)}`;
+}
+
+type Effect = ValidationResult["preview"]["effects"][number];
+
+/** One preview line for an effect the command will apply (UC-9): the same names as the log, in
+ * the imperative, since it has not happened yet. */
+export function previewLine(e: Effect, view: BoardView): string {
+  const n = namer(view);
+  const some = (c: number | "all", id: string): string => (c === "all" ? `all ${words(id)}` : counted(c, id));
+  switch (e.type) {
+    case "adjustTrack":
+      return `${n.track(e.track)} ${e.delta < 0 ? "−" : "+"}${String(Math.abs(e.delta))}`;
+    case "setTrack":
+      return `Set ${n.track(e.track)} to ${words(String(e.value))}`;
+    case "stepOrdinal":
+      return `Move ${n.track(e.track)} ${String(e.steps)} step${e.steps === 1 ? "" : "s"} ${e.direction === "next" ? "up" : "down"}`;
+    case "placePieces":
+      return `Place ${piece(e.count, e.piece, e.state)} in ${n.space(e.space)}`;
+    case "removePieces":
+      return `Remove ${piece(e.count, e.piece, e.state)} from ${n.space(e.space)}${e.to === "available" ? "" : " to Out of Play"}`;
+    case "movePieces":
+      return `Move ${piece(e.count, e.piece, e.state)} from ${n.space(e.from)} to ${n.space(e.to)}${e.toState === null ? "" : `, now ${words(e.toState)}`}`;
+    case "setPieceState":
+      return `Flip ${some(e.count, e.piece)} in ${n.space(e.space)} from ${words(e.from)} to ${words(e.to)}`;
+    case "transferPool":
+      return `Move ${some(e.count, e.piece)} from ${words(e.from)} to ${words(e.to)}`;
+    case "placeMarker":
+      return `Place ${markerName({ marker: e.marker, side: e.side })} marker in ${n.space(e.space)}`;
+    case "removeMarker":
+      return `Remove ${markerName({ marker: e.marker, side: e.side })} marker from ${n.space(e.space)}`;
+    case "flipMarker":
+      return `Flip ${words(e.marker)} marker in ${n.space(e.space)} to ${words(e.side)}`;
+    case "setFlag":
+      return `${words(e.flag)} ${e.value ? "in force" : "off"}`;
+    case "shiftLevel":
+      return `Shift ${n.space(e.space)} ${String(e.steps)} level${e.steps === 1 ? "" : "s"} toward ${words(e.direction)}`;
+  }
 }

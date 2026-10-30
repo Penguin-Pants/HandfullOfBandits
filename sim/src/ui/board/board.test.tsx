@@ -40,7 +40,8 @@ describe("Board", () => {
         <StatusBar view={view} />
       </>,
     );
-    expect(screen.getByText(/Level: passiveOpposition/)).toBeTruthy();
+    expect(screen.getByText("Level: Passive Opposition · Control: none")).toBeTruthy();
+    expect(screen.getByText(/Underground Guerrilla/)).toBeTruthy();
     expect(screen.getByLabelText("State score").textContent).toBe("StateScore 21 of 49Margin -28Harm 0 of 6");
   });
 });
@@ -138,9 +139,9 @@ describe("map tooltip", () => {
     if (botan === undefined) throw new Error("botan");
     const lines = spaceTooltip(botan).split("\n");
     expect(lines[0]).toBe("Botan · Pop 2 · mountain");
-    expect(lines[1]).toBe("Level: passiveOpposition · Control: none");
-    expect(lines[2]).toMatch(/^Pieces: .*guerrilla \(underground\)/);
-    expect(lines[3]).toBe("Markers: 1 coercion");
+    expect(lines[1]).toBe("Level: Passive Opposition · Control: none");
+    expect(lines[2]).toMatch(/^Pieces: .*Underground Guerrilla/);
+    expect(lines[3]).toBe("Markers: 1 Coercion");
   });
 });
 

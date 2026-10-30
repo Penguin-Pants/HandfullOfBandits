@@ -149,7 +149,8 @@ nav { height: 50px; box-sizing: border-box; }
 .map-panel .map { flex: 1; min-height: 0; height: 100%; }
 .forces-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .forces-row .panel { padding: 6px 10px; }
-.play-screen .side { height: 100%; overflow-y: auto; min-height: 0; }
+/* The closed Note button is fixed at the bottom right: the column ends above it, so it never covers a row (UC-9). */
+.play-screen .side { height: calc(100% - 44px); overflow-y: auto; min-height: 0; }
 .overlay { position: fixed; top: 58px; right: 16px; width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 80px); overflow-y: auto; z-index: 5; box-shadow: 0 6px 24px #0004; border-radius: 8px; }
 @media (max-width: 1000px) { .play-screen { height: auto; overflow: visible; } .forces-row { grid-template-columns: 1fr; } }
 /* One-view compaction (UC-3) */

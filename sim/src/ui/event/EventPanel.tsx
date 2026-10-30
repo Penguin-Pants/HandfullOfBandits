@@ -1,6 +1,6 @@
 // Event panel (08 s3; 05 s5): both sides with owner and text; Execute validates, then asks each
 // open question inline (Decisions, 08 s3.3) until the command is legal. Every answer is a click:
-// options, counts, spaces, and a free action's plan built on the map (UC-5).
+// options, counts, spaces picked on the map (UC-9), and a free action's plan built on the map (UC-5).
 import { useState } from "react";
 import type { ActionForm, Api, AnyCommand, BoardView, Question } from "../api.ts";
 import { words } from "../common/names.ts";
@@ -18,7 +18,8 @@ export interface EventPanelProps {
   readonly forms: readonly ActionForm[];
   readonly plan: PlanState;
   readonly dispatch: (event: PlanEvent) => void;
-  /** A free-action plan question opened (true) or closed (false): the map builds that plan. */
+  /** A spaces or free-action plan question opened (true) or closed (false): the map builds the
+   * Event's plan, whose spaces are the picks of a spaces question. */
   readonly onFreeAction?: (open: boolean) => void;
 }
 
@@ -28,7 +29,6 @@ const formOf = (forms: readonly ActionForm[], id: string): ActionForm =>
 export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch, onFreeAction }: EventPanelProps) {
   const card = view.status.card;
   const [pending, setPending] = useState<{ side: string; answers: unknown[]; question: Question | null; error: string | null } | null>(null);
-  const [picks, setPicks] = useState<string[]>([]);
   if (card === null) return null;
 
   const run = async (side: string, answers: unknown[]): Promise<void> => {
@@ -43,13 +43,16 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
     }
     const v = result.violations[0];
     const question = v?.question ?? null;
-    setPicks([]);
     setPending({ side, answers, question, error: question === null ? (v?.message ?? "Not legal.") : null });
     handOff(question);
   };
   /** Hand the map to a free-action plan in the same step that shows its question, so no map
    * click can land between the two. The same question asked again keeps its draft. */
   const handOff = (question: Question | null): void => {
+    if (question?.kind === "spaces") {
+      onFreeAction?.(true);
+      return;
+    }
     if (question?.kind !== "plan" || question.action === undefined) {
       onFreeAction?.(false);
       return;
@@ -88,7 +91,7 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
       {pending?.question != null && (
         <div aria-label="Decision">
           <p>
-            {faction} decides: {pending.question.kind === "plan" && pending.question.action !== undefined ? `Plan the free ${formOf(forms, pending.question.action).label}, or skip it.` : pending.question.prompt} <span className="muted">(PA-01)</span>
+            {words(faction ?? "")} decides: {pending.question.space === undefined ? "" : `${view.spaces.find((s) => s.id === pending.question?.space)?.name ?? words(pending.question.space)}: `}{pending.question.kind === "plan" && pending.question.action !== undefined ? `Plan the free ${formOf(forms, pending.question.action).label}, or skip it.` : pending.question.prompt} <span className="muted">(PA-01)</span>
           </p>
           {pending.question.kind === "option" && pending.question.options.map((o, i) => (
             <button key={o} type="button" onClick={() => { answer(o); }}>
@@ -101,18 +104,25 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
                 {n}
               </button>
             ))}
-          {pending.question.kind === "spaces" && (
-            <div className="row">
-              {pending.question.options.map((o) => (
-                <label key={o}>
-                  <input type="checkbox" checked={picks.includes(o)} onChange={() => { setPicks(picks.includes(o) ? picks.filter((p) => p !== o) : [...picks, o]); }} /> {o}
-                </label>
-              ))}
-              <button type="button" onClick={() => { answer(picks); }}>
-                Pick {picks.length}
-              </button>
-            </div>
-          )}
+          {pending.question.kind === "spaces" && (() => {
+            const options = pending.question.options;
+            const picks = plan.op.locations.filter((l) => options.includes(l));
+            return (
+              <>
+                <p className="hint">Click spaces on the map (Shift-click adds more), or use the buttons.</p>
+                <div className="row" role="group" aria-label="Spaces">
+                  {options.map((o) => (
+                    <button key={o} type="button" aria-pressed={picks.includes(o)} onClick={() => { dispatch({ type: "click", id: o, add: true }); }}>
+                      {view.spaces.find((s) => s.id === o)?.name ?? words(o)}
+                    </button>
+                  ))}
+                  <button type="button" className="primary" onClick={() => { answer(picks); }}>
+                    Pick {picks.length}
+                  </button>
+                </div>
+              </>
+            );
+          })()}
           {pending.question.kind === "plan" && pending.question.action !== undefined && (() => {
             const op = formOf(forms, pending.question.action);
             const sa = pending.question.sa === undefined ? undefined : formOf(forms, pending.question.sa);

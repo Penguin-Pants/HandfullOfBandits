@@ -99,6 +99,15 @@ try {
     return [...document.querySelectorAll("text.map-label")].every((t) => { const r = t.getBoundingClientRect(); return r.right <= c.left || r.left >= c.right || r.bottom <= c.top || r.top >= c.bottom; });
   });
   check(clear, "Resources and politics card covers no space name at 1366 x 768");
+  // UC-9: the right column ends above the fixed Note button, so the button covers none of it.
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.waitForTimeout(300);
+  const noteClear = await page.evaluate(() => {
+    const side = document.querySelector("aside.side").getBoundingClientRect();
+    const n = document.querySelector(".note-closed button").getBoundingClientRect();
+    return side.bottom <= n.top;
+  });
+  check(noteClear, "right column ends above the Note button at 1600 x 900");
   // UC-5: a March is planned by a mouse drag on the map, never by typed text.
   await page.getByRole("button", { name: "Limited Op" }).click();
   await page.getByRole("button", { name: "March", exact: true }).click();

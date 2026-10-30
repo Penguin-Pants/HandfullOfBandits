@@ -67,6 +67,13 @@ describe("FactionPanel", () => {
     expect(screen.getByText("Coerce needs a Neutral or Support space.")).toBeTruthy();
   });
 
+  it("names the legal spaces of an Op, and shortens a long list (UC-9)", () => {
+    const many = { ...legal, actions: (legal.actions ?? []).map((a) => (a.id === "pkk.rally" ? { ...a, locations: ["diyarbakir-city", "sanliurfa", "elazig", "van-bitlis", "botan"] } : a)) };
+    render(<Faction api={mockApi()} legal={many} />);
+    click("Limited Op");
+    expect(screen.getByText("OK in Diyarbakır City (Amed), Şanlıurfa, Elazığ and 2 more")).toBeTruthy();
+  });
+
   it("E4 track: pointing at a box shows what it leaves open for the other faction and who is 1st next (UC-8)", () => {
     const track: LegalChoices = { ...legal, other: "state", placed: { pkk: null, state: null }, boxes: [
       { box: "event", allowed: true, reason: null, otherMay: ["opSa", "pass"], nextFirst: "pkk" },
@@ -124,7 +131,7 @@ describe("FactionPanel", () => {
     click("Rally");
     click("map botan");
     click("Place");
-    await waitFor(() => { expect(screen.getByLabelText("Preview").textContent).toMatch(/resources.pkk/); });
+    await waitFor(() => { expect(screen.getByLabelText("Preview").textContent).toBe("PKK Resources −1"); });
     click("Commit (Enter)");
     expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp", plan: expect.objectContaining({ perLocation: { botan: { option: "place" } } }) as unknown }));
   });
@@ -215,7 +222,7 @@ describe("FactionPanel", () => {
     click("Limited Op");
     click("Rally");
     click("map botan");
-    await waitFor(() => { expect(screen.getByText(/botan: A City at Support cannot Rally/)).toBeTruthy(); });
+    await waitFor(() => { expect(screen.getByText(/^Botan: A City at Support cannot Rally/)).toBeTruthy(); });
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Commit (Enter)" }).disabled).toBe(true);
   });
 });
@@ -263,6 +270,42 @@ describe("EventPanel", () => {
     click("Submit plan");
     await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "pkk", side: "unshaded", answers: [{ op: "pkk.rally", locations: ["botan"], perLocation: { botan: { option: "place" } }, sa: null }] }); });
     expect(document.querySelectorAll("textarea")).toHaveLength(0);
+  });
+
+  it("asks for spaces by name and takes them from map clicks (UC-9)", async () => {
+    const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-012"));
+    const question = { kind: "spaces" as const, prompt: "Pick 1 to 2 spaces", options: ["hakkari", "botan"], min: 1, max: 2 };
+    const validate = vi.fn((_id: string, command: AnyCommand): Promise<ValidationResult> =>
+      Promise.resolve(Array.isArray(command["answers"]) && command["answers"].length > 0 ? ok : { ok: false, violations: [{ code: "needsAnswer", message: "Pick", ruleRef: "DK-012", location: null, question }], warnings: [], preview: { effects: [] } }),
+    );
+    const onCommit = vi.fn();
+    function Harness() {
+      const [plans, dispatch] = useReducer(plansReducer, emptyPlans);
+      return (
+        <>
+          <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
+          <EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} forms={[]} plan={plans.event} dispatch={(e) => { dispatch({ ...e, owner: "event" }); }} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
+        </>
+      );
+    }
+    render(<Harness />);
+    click("Execute unshaded (U)");
+    expect(await screen.findByText(/Click spaces on the map/)).toBeTruthy();
+    expect(screen.queryByRole("checkbox")).toBeNull();
+    click("map botan");
+    expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
+    click("Hakkari");
+    click("Pick 2");
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", answers: [["botan", "hakkari"]] }); });
+  });
+
+  it("names the space a count question is for (UC-9)", async () => {
+    const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-003"));
+    const question = { kind: "count" as const, prompt: "How many guards? (0 to 2)", options: [], min: 0, max: 2, space: "hakkari" };
+    const validate = vi.fn((): Promise<ValidationResult> => Promise.resolve({ ok: false, violations: [{ code: "needsAnswer", message: "How many", ruleRef: "DK-003", location: null, question }], warnings: [], preview: { effects: [] } }));
+    render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={vi.fn()} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
+    click("Execute unshaded (U)");
+    expect(await screen.findByText(/Hakkari: How many guards/)).toBeTruthy();
   });
 
   it("greys Execute with a reason when the Event box is closed", () => {

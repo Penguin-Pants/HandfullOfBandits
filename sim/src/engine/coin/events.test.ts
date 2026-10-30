@@ -48,6 +48,13 @@ describe("T-EVT: S0 cards", () => {
     expect(codes(law, event("state", "unshaded", [["botan"]]))).toEqual(["badAnswer"]);
   });
 
+  it("DK-003 U: each count question names the space it is for (UC-9)", () => {
+    const law = { ...on(state0, "DK-003"), flags: { law3175: true }, pools: { ...state0.pools, guards: { available: 16, outOfPlay: 0 } } };
+    const asked = (answers: unknown[]): unknown => engine.validate(ruleset, law, event("state", "unshaded", answers)).violations[0]?.question;
+    expect(asked([["dersim", "elazig"]])).toMatchObject({ kind: "count", space: "dersim" });
+    expect(asked([["dersim", "elazig"], 2])).toMatchObject({ kind: "count", space: "elazig" });
+  });
+
   it("DK-003 S: State Resources -3; shift one space with a Guard and no PKK Harm toward Opposition", () => {
     const board = setPieces(on(pkk0, "DK-003"), "dersim", "guards", 1);
     const { state } = play(board, event("pkk", "shaded", [["dersim"]]));

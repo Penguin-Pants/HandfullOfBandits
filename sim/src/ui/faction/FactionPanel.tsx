@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
 import { words } from "../common/names.ts";
+import { previewLine } from "../log/plain.ts";
 import { EligibilityTrack } from "./EligibilityTrack.tsx";
 import { Fields, PlanForm } from "./PlanForm.tsx";
 import { dragMode, perLocation, toCommand, type Draft, type PlanEvent, type PlanState, type Values } from "./plan.ts";
@@ -98,6 +99,12 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
     else if (b !== "event") setBox(b);
   };
 
+  const spaceName = (id: string): string => view.spaces.find((s) => s.id === id)?.name ?? words(id);
+  /** "OK in A, B, C and 2 more": names, with a long list cut so the plan stays in view (UC-9). */
+  const where = (ids: readonly string[]): string => {
+    const names = ids.map(spaceName);
+    return names.length <= 4 ? names.join(", ") : `${names.slice(0, 3).join(", ")} and ${String(names.length - 3)} more`;
+  };
   return (
     <section className="panel" aria-label="Faction panel">
       <h3>
@@ -122,7 +129,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
               <button type="button" disabled={!a.ok && box !== "opSa"} title={a.ok || box !== "opSa" ? a.summary : `${a.summary} No legal standalone plan; a preceding SA may make one.`} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>
                 {a.label}
               </button>{" "}
-              <span className="muted">{a.cost}</span> {a.ok ? <span>OK ({a.locations.join(", ")})</span> : <span className="bad">{a.reason}</span>}
+              <span className="muted">{a.cost}</span> {a.ok ? <span title={a.locations.map(spaceName).join(", ")}>OK{a.locations.length === 0 ? "" : ` in ${where(a.locations)}`}</span> : <span className="bad">{a.reason}</span>}
             </li>
           ))}
         </ul>
@@ -168,13 +175,13 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
         <div aria-label="Validation">
           {result.violations.map((v, i) => (
             <p key={i} className="bad">
-              {v.location === null ? "" : `${v.location}: `}
+              {v.location === null ? "" : `${spaceName(v.location)}: `}
               {v.message} {v.ruleRef === null ? "" : `(${v.ruleRef})`}
             </p>
           ))}
           {result.ok && (
             <ul aria-label="Preview">
-              {result.preview.effects.map((e, i) => <li key={i}>{JSON.stringify({ ...e, ruleRef: undefined, assumptionRef: undefined })}</li>)}
+              {result.preview.effects.map((e, i) => <li key={i}>{previewLine(e, view)}</li>)}
             </ul>
           )}
         </div>
