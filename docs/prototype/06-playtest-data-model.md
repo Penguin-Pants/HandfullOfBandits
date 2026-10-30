@@ -135,6 +135,8 @@ Snapshot policy: store the state after every committed command. Deduplicated by 
 
 ### 3.8 annotations
 
+P3a-08 migration 002 adds `annotations_fts`, an FTS5 trigram index over note text. Insert, edit and delete triggers keep it current. The migration indexes existing notes. The final substring filter stays in place, including short and Unicode queries. Search keeps the review screen's session and note order.
+
 Full definition in 07-annotation-and-feedback-spec.md. Key links: `session_id`, `branch_id`, `action_id`, `anchor` (`executed`, `proposed`, `decision`, `state`, `session`, `debrief`), `state_hash`, `context` JSON, `category_ids`, `text`. DDL: `sim/src/store/schema.sql` (DEC-45). Edits keep the old text in `annotation_revisions`.
 
 ### 3.9 categories
@@ -196,7 +198,7 @@ Per session, per Propaganda round: Resources, Legitimacy, Europe, scores, margin
 1. One SQLite transaction per accepted command: command, log entries, state, action update.
 2. Rows in `commands`, `log_entries` and `states` are never updated after commit. An `actions` row with status `pending` (open Decision) may update `state_hash_after`, `summary` and `status`. When its Action Transaction completes, the row freezes, except `status` and `undone_by` for undo.
 3. Annotations are editable. Each edit keeps the previous text in `annotation_revisions`.
-4. WAL mode on. Auto backup at session start through the SQLite online backup API (or `VACUUM INTO`), never a raw file copy, because committed rows can still sit in the WAL. Keep the last 10 (P3a-08).
+4. WAL mode on. Auto backup at session start through the SQLite online backup API (or `VACUUM INTO`), never a raw file copy, because committed rows can still sit in the WAL. Keep the last 10 (P3a-08, implemented in `store/backup.ts`). Each store has its own sequence of backup files in a `backups/` folder beside it. A failed backup stops session creation and keeps earlier backups. Memory stores skip backup.
 
 ## 6. Undo
 

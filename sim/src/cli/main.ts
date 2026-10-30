@@ -13,7 +13,7 @@ const usage = [
   "       sim replay <file.json> [--package <dir>]",
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
-  "       sim export <sessionId...> [--db <file>] [--with-states] [--out <file>]",
+  "       sim export <sessionId...> [--db <file>] [--with-states] [--format json|markdown] [--out <file>]",
 ].join("\n");
 const args = process.argv.slice(2);
 const [command, target] = args;
@@ -33,9 +33,11 @@ if (command === "validate" && target !== undefined) {
 } else if (command === "replay" && target !== undefined) {
   print(target.endsWith(".json") ? replayFile(target, flag("--package", kurdish)) : replaySession(target, flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)))));
 } else if (command === "export" && target !== undefined) {
-  const ids = args.slice(1).filter((a, i, all) => !a.startsWith("--") && !["--db", "--out"].includes(all[i - 1] ?? ""));
+  const ids = args.slice(1).filter((a, i, all) => !a.startsWith("--") && !["--db", "--out", "--format"].includes(all[i - 1] ?? ""));
   const db = flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)));
-  print(exportCommand(ids, db, args.includes("--with-states"), args.includes("--out") ? flag("--out", "export.json") : null, "0.1.0"));
+  const format = flag("--format", "json");
+  if (format !== "json" && format !== "markdown") print({ exitCode: 1, lines: ["error: format must be json or markdown"] });
+  else print(exportCommand(ids, db, args.includes("--with-states"), args.includes("--out") ? flag("--out", "export.json") : null, "0.1.0", format));
 } else if (command === "fuzz") {
   const loaded = loadPackage(readPackageDir(flag("--package", kurdish)));
   if (!loaded.ok) {

@@ -1,6 +1,8 @@
 // Session service (11 P2-11; 03 s4): wraps the engine and the store. The only writer to SQLite.
 // A session reloads its rules from the stored package content (04 s10.3, DEC-12). A changed code
 // fingerprint forces a replay check on first load (DEC-19): identical resumes, else read-only.
+import { searchAnnotations } from "../store/search.ts";
+import { backupStore } from "../store/backup.ts";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { buildContext } from "../annotate/context.ts";
@@ -132,6 +134,7 @@ export class SessionService {
     if (scenario === undefined) throw new ServiceError(404, `Unknown scenario "${input.scenarioId}".`);
     if (scenario.blockedBy.length > 0) throw new ServiceError(422, `Scenario "${input.scenarioId}" cannot start.`, scenario.blockedBy);
     if (!Number.isSafeInteger(input.seed) || input.seed < 0) throw new ServiceError(400, "The seed must be a safe integer of 0 or more.");
+    backupStore(this.db);
     const m = loaded.data.manifest;
     savePackageVersion(this.db, {
       packageHash: loaded.hash, packageId: m.packageId, version: m.version, rulesetVersion: m.rulesetVersion, schemaVersion: m.schemaVersion,
@@ -336,7 +339,8 @@ export class SessionService {
   /** Notes across sessions for the review screen (07 s7). */
   review(filter: ReviewFilter): ReviewRow[] {
     const sessions = new Map(this.listSessions().map((s) => [s.session_id, s.name]));
-    const rows = [...sessions.keys()].flatMap((id) => listAnnotations(this.db, id).map((n) => reviewRow(n, sessions.get(id) ?? id)));
+    const notes = filter.q === undefined ? [...sessions.keys()].flatMap((id) => listAnnotations(this.db, id)) : searchAnnotations(this.db, filter.q);
+    const rows = notes.map((n) => reviewRow(n, sessions.get(n.session_id) ?? n.session_id));
     return filterRows(rows, filter);
   }
 

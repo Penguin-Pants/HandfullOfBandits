@@ -1,5 +1,5 @@
-// Feedback review (07 s7 basic; 11 P2-17): notes across sessions with filters and plain substring
-// search. FTS comes with P3a-08.
+// Feedback review (07 s7; P2-17, P3a-08): filters and the final substring match. The service
+// uses FTS5 to narrow search candidates before applying these filters.
 import type { AnnotationRow } from "../store/repos/annotations.ts";
 
 export interface ReviewRow {

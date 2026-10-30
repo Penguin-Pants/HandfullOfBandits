@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2: P2-01 to P2-18, IC-2a and IC-2 item 1 done. IC-2 items 2 and 3 wait on the designer's manual S0 session.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a blocked on a Reset rule decision; independent P3a-08 tooling complete.
 
 ## 1. How to use this plan
 
@@ -431,7 +431,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 3. Fix list from that session goes into Phase 3a tasks.
 
 - **Item 1 passed:** `make e2e` (`sim/e2e/smoke.mjs`, Playwright with Chromium, 1366 x 768): Home Start enabled for S0, first card revealed, one action (PKK Pass), one note linked to it, undo restores the board, JSON export holds the note and the undone action. Playwright is not a project dependency, so `make e2e` runs on a machine that has it and is not in CI.
-- **Blocked on the designer:** item 2 (manual session against 10 s2.4) and item 3 (its fix list into Phase 3a). Phase 3 must not start until both are done (s1 item 4).
+- **Items 2 and 3 passed (designer confirmation, 2026-10-30):** the designer and Claude Code played several sessions. The designer confirmed that UC-1 to UC-9 cover all findings and there are no additional fixes. IC-2 is complete. The UC-9 eligibility streak follows research 05 s2.4 items 1 and 2; taking an Event keeps First Eligible. No rule change is required.
 
 ### UC UI clarity round (playtest feedback before IC-2 items 2 and 3)
 
@@ -452,6 +452,17 @@ Requirements agreed with the designer in session; no rule changes. **Round statu
 Split into three sub-phases. Each sub-phase ends with a scenario played to the end.
 
 ### Phase 3a: Scenario A (C1 and C2)
+
+**Status (2026-10-30): blocked, not complete.** IC-2 is closed by the designer's confirmation above. P3a-08 is complete. Local validation and TWO-PASS REVIEW are recorded below. P3a-01 to P3a-07, P3a-09 and P3a-10 remain incomplete. IC-3a has not run. Proposed out-of-scope fixes: none.
+
+- **Decide, P3a-01:** research 05 s6.8 item 2 says to flip all Guerrillas Underground at Reset. Research 07 s5.1, Hostile and Aligned rows, says Guerrillas in those boxes are always Active. No PA or recorded designer decision resolves the conflict. The designer has been asked whether those boxes stay Active or flip Underground at Reset. Reset implementation is paused; no disputed rule is committed. Tasks that depend on P3a-01 cannot proceed until this is resolved. P3a-10 remains unstarted while the phase is paused.
+- **P3a-08 implementation:** `store/backup.ts` backs up the store before each valid session start with SQLite `VACUUM INTO`, including committed WAL rows. Backups sit beside the store in `backups/`; ten are kept per store. Memory stores skip backup. Failed backup attempts preserve previous backups and stop session creation. Migration 002 adds an FTS5 trigram index with insert, edit and delete triggers and a rebuild for existing notes. Review uses indexed candidates, with the existing JS substring match retained for exact behavior on short, Unicode and punctuation searches. `sim export <sessionId...> --format markdown [--db <file>] [--out <file>]` adds the minimal Markdown export: versions, scope, scenario, seed, result, assumptions, debrief first, action log with note and rule IDs and notes without an action. Full Markdown sections stay in P4-02. Tests: `sim/test/phase3a-tools.test.ts` and the store migration suite.
+- **TWO-PASS REVIEW:** Pass 1 traced session start through backup failure, review through the FTS index and final filters and CLI export through JSON reference validation into Markdown. Paths use Node path helpers and file URLs for Windows and Linux. Linux execution is verified; Windows execution is not available here. Pass 2 retained the existing JSON exporter and substring matcher; no unused new code or duplicate implementation remains.
+  - **Fix:** a backup filename collision could delete another process's complete backup. Exclusive destination creation preserves it. The survival test fails without the fix with `ENOENT`, then passes with it.
+  - **Fix:** multiline action notes lost their Markdown nesting. Indent every line under the action. The multiline assertion fails without the fix, then passes with it.
+  - **Fix:** FTS changed note order across sessions. Keep the existing session order and creation order within each session. The two-session order test failed before the fix and passed after it.
+  - **Validation:** `make test`: 48 files and 695 tests passed. `make check`: TypeScript and ESLint passed. UI build and all `make e2e` smoke assertions passed. The smoke used installed `/usr/bin/chromium` through a temporary launch shim because the Playwright-managed browser is absent; no browser dependency or repository test script changed. The test suite needs child-process access for its CLI integration tests; the restricted sandbox otherwise returns `EPERM`. Required P3a-08 acceptance: backup retention and WAL recovery, FTS/substring equivalence, schema upgrade with old notes, edit and delete synchronization and Markdown CLI export are covered by tests. Scenario A and IC-3a cannot be verified before the remaining tasks are built and the Reset decision is resolved.
+- **Drop, UC-9 eligibility streak:** research 05 s2.4 item 2 explicitly keeps First Eligible after an Event. The recorded streak does not prove a defect. Keep the rule unchanged.
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|

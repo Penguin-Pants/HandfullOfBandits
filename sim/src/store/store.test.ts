@@ -59,11 +59,11 @@ describe("migrate", () => {
   it("creates every 06 s3 table and seeds the 07 s5 categories once", () => {
     const tables = (db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' ORDER BY name").all() as { name: string }[]).map((t) => t.name);
     expect(tables).toEqual([
-      "actions", "annotation_revisions", "annotations", "branches", "categories", "commands", "log_entries", "metrics",
+      "actions", "annotation_revisions", "annotations", "annotations_fts", "annotations_fts_config", "annotations_fts_data", "annotations_fts_docsize", "annotations_fts_idx", "branches", "categories", "commands", "log_entries", "metrics",
       "package_versions", "regression_cases", "regression_runs", "sessions", "states",
     ]);
-    expect(db.pragma("user_version", { simple: true })).toBe(1);
-    expect(migrate(db)).toBe(1);
+    expect(db.pragma("user_version", { simple: true })).toBe(2);
+    expect(migrate(db)).toBe(2);
     const categories = listCategories(db);
     expect(categories).toHaveLength(15);
     expect(categories[0]).toEqual({ category_id: "balance", label: "Balance concern", hotkey: "Alt+1", color: null, sort: 1, active: 1 });

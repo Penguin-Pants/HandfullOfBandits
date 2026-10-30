@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 
 export type Db = Database.Database;
 
-const MIGRATIONS = [new URL("./schema.sql", import.meta.url)];
+const MIGRATIONS = [new URL("./schema.sql", import.meta.url), new URL("./search.sql", import.meta.url)];
 
 /** Run each migration above the file's `user_version`, each in one transaction. Returns the new version. */
 export function migrate(db: Db): number {
