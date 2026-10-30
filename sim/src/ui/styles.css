@@ -50,7 +50,7 @@ button {
 button:hover:not(:disabled) { border-color: var(--accent); }
 button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
 button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-button:disabled { opacity: 0.45; cursor: default; }
+button:disabled, button[aria-disabled="true"] { opacity: 0.45; cursor: default; }
 input, select, textarea { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--fg); }
 .screen { padding: 16px; display: grid; gap: 12px; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
@@ -258,6 +258,8 @@ nav { height: 50px; box-sizing: border-box; }
 .vt-flag { position: absolute; top: 0; bottom: 0; width: 3px; transform: translateX(-50%); }
 .vt-flag-label { position: absolute; top: -20px; transform: translateX(-50%); font-size: 11px; font-weight: 700; white-space: nowrap; }
 .vt-flag-label.below { top: auto; bottom: -20px; }
+.vt-flag-label.end { transform: translateX(calc(-100% + 8px)); }
+.vt-flag-label.start { transform: translateX(-8px); }
 /* Eligibility track E4 (UC-8) */
 .elig-track { display: grid; gap: 4px; margin-bottom: 8px; }
 .elig-row { display: grid; grid-template-columns: 64px repeat(5, minmax(0, 1fr)); gap: 4px; }

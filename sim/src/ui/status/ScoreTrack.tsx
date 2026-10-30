@@ -10,6 +10,8 @@ export function ScoreTrack({ view }: { readonly view: BoardView }) {
   const max = Math.max(MIN_MAX, ...Object.values(s.thresholds), ...Object.values(s.scores));
   /** Centre of cell n, as a percentage of the track width. */
   const at = (n: number): string => `${String((100 * (Math.max(0, Math.min(max, n)) + 0.5)) / (max + 1))}%`;
+  /** Flag labels near either end align to that end, so they stay on screen. */
+  const edge = (n: number): string => (n > max * 0.85 ? " end" : n < max * 0.15 ? " start" : "");
   return (
     <div className="victory-track" role="img" aria-label="Victory track" style={{ gridTemplateColumns: `repeat(${String(max + 1)}, minmax(0, 1fr))` }}>
       {Array.from({ length: max + 1 }, (_, i) => (
@@ -29,7 +31,7 @@ export function ScoreTrack({ view }: { readonly view: BoardView }) {
             {thr !== undefined && (
               <>
                 <span className="vt-flag" style={{ left: at(thr), background: f.color }} />
-                <span className={above ? "vt-flag-label" : "vt-flag-label below"} style={{ left: at(thr), color: f.color }}>
+                <span className={`vt-flag-label${above ? "" : " below"}${edge(thr)}`} style={{ left: at(thr), color: f.color }}>
                   <span aria-hidden="true">▼ </span>
                   <span>
                     {f.name} wins at {thr}

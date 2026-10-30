@@ -39,10 +39,12 @@ export function EligibilityTrack({ legal, view, picked, onPick }: EligibilityTra
     <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}${focus?.box === b.box && first ? " pointed" : ""}`} aria-label={`${words(b.box)} box`}>
       <button
         type="button"
-        disabled={!b.allowed || b.box === "event"}
+        // aria-disabled, not disabled: a closed box and the Event box still take focus and hover,
+        // so their effect can be previewed; the Event itself runs from the card panel.
+        aria-disabled={!b.allowed || b.box === "event" ? true : undefined}
         title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")}
         aria-pressed={picked === b.box}
-        onClick={() => { onPick(b.box); }}
+        onClick={() => { if (b.allowed && b.box !== "event") onPick(b.box); }}
         onMouseEnter={() => { setPointed(b.box); }}
         onMouseLeave={() => { setPointed(null); }}
         onFocus={() => { setPointed(b.box); }}

@@ -86,6 +86,11 @@ describe("FactionPanel", () => {
     fireEvent.mouseLeave(screen.getByRole("button", { name: "Op Only" }));
     fireEvent.focus(screen.getByRole("button", { name: "Op + SA" }));
     expect(effect.textContent).toContain("State may take Event, Limited Op or Pass");
+    // The Event box previews its effect from the keyboard too; the Event itself runs from the card panel.
+    const event = screen.getByRole("button", { name: "Event" });
+    expect(event.getAttribute("aria-disabled")).toBe("true");
+    fireEvent.focus(event);
+    expect(effect.textContent).toContain("If PKK takes Event: State may take Op + SA or Pass");
   });
 
   it("E4 track for the Second Eligible: the 1st faction's cylinder in its box, own boxes as buttons (UC-8)", () => {
@@ -100,8 +105,8 @@ describe("FactionPanel", () => {
     const firstRow = screen.getByRole("group", { name: "PKK (1st) boxes" });
     expect(firstRow.querySelector('[aria-label="PKK Op + SA: taken"]')?.textContent).toContain("PKK");
     expect(screen.getByLabelText("Choice effect").textContent).toBe("PKK took Op + SA: State may take Event, Limited Op or Pass.");
-    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Op Only" }).disabled).toBe(true);
-    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Limited Op" }).disabled).toBe(false);
+    expect(screen.getByRole("button", { name: "Op Only" }).getAttribute("aria-disabled")).toBe("true");
+    expect(screen.getByRole("button", { name: "Limited Op" }).getAttribute("aria-disabled")).toBeNull();
   });
 
   it("keeps an Op open in Op + SA, since a preceding SA may make it legal", () => {
