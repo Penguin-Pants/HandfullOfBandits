@@ -1,3 +1,4 @@
+import { cardModifiers, cardModifierParameters } from "../engine/modules/registry.ts";
 // Cross-file package checks (04 s9): V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS, V-RANGE, V-VICTORY.
 // Input has passed V-SCHEMA. Each issue names file, path, element ID and one sentence.
 import { own } from "../engine/core/state.ts";
@@ -219,6 +220,9 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
         else if (c.type === "trackIn" && track.kind === "ordinal") c.values.forEach((v, j) => { face(track.steps, "step", v, file, `${at}.values.${String(j)}`, id); });
         return;
       }
+      case "spaceIn":
+        c.spaces.forEach((s, j) => {ref(spaces, "space", s, file, `${at}.spaces.${String(j)}`, id);});
+        return;
       case "spaceKind":
       case "terrainIn":
       case "selected":
@@ -349,10 +353,21 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
         effects(e.then, file, `${at}.then`, id);
         effects(e.else, file, `${at}.else`, id);
         return;
+      case "forEachPiece":
+        pieceFace(e.piece, e.state, "state");
+        condition(e.where, `${at}.where`, id, file);
+        effects(e.effects, file, `${at}.effects`, id);
+        return;
       case "forEachSpace":
         condition(e.where, `${at}.where`, id, file);
         effects(e.effects, file, `${at}.effects`, id);
         return;
+      case "addModifier": {
+        if (!(Object.values(cardModifiers) as readonly string[]).includes(e.id)) error("V-EFFECT", file, `${at}.id`, id, `Unknown modifier "${e.id}".`);
+        const keys = cardModifierParameters[e.id] ?? [];
+        if (keys.some(k => e.params[k] === undefined) || Object.keys(e.params).some(k => !keys.includes(k)) || Object.values(e.params).some(n => typeof n !== "number" || !Number.isSafeInteger(n) || n < 1)) error("V-EFFECT", file, `${at}.params`, id, `Modifier "${e.id}" needs positive integer parameters: ${keys.join(", ") || "none"}.`);
+        return;
+      }
       case "setFlag":
       case "freeAction":
         return;

@@ -89,23 +89,54 @@
   sources: [E-0004, E-0005, S-0064, S-0120, S-0241, S-0320, S-0341, S-0019, S-0020, S-0022, S-0097, S-0498, S-0501, S-0499]
 - id: DK-004
   campaign: C1
-  title: "ERNK Founded (Mar 1985)"
-  date: "1985-03-21"
+  title: ERNK Founded (Mar 1985)
+  date: '1985-03-21'
   type: capability
   unshaded:
-    text: "Front network exposed: remove 1 Guerrilla from Diyarbakır City or Western Cities, or PKK Resources -2 (State choice)."
+    text: 'Front network exposed: remove 1 Guerrilla from Diyarbakır City or Western Cities, or PKK Resources -2
+      (State choice).'
     owner: state
     tier: T0
-    effects: []
+    effects:
+    - type: choice
+      options:
+      - label: Diyarbakir City
+        effects:
+        - type: removePieces
+          piece: guerrilla
+          count: 1
+          space: diyarbakir-city
+      - label: Western Cities
+        effects:
+        - type: removePieces
+          piece: guerrilla
+          count: 1
+          space: western-cities
+      - label: PKK Resources
+        effects:
+        - type: adjustTrack
+          track: resources.pkk
+          delta: -2
   shaded:
-    text: "PKK Capability (ERNK): Agitate in a Rally may select a City with a PKK Guerrilla even without a PKK Base or PKK Control."
+    text: 'PKK Capability (ERNK): Agitate in a Rally may select a City with a PKK Guerrilla even without a PKK Base
+      or PKK Control.'
     owner: pkk
     tier: T0
-    effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+    effects:
+    - type: addModifier
+      id: ernk
+      duration: game
+      params: {}
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
   eventConfidence: Moderate
   deckEligible: true
-  sources: [E-0157, S-0246, S-0248]
+  sources:
+  - E-0157
+  - S-0246
+  - S-0248
 - id: DK-005
   campaign: C1
   title: "KDP Orders PKK Out (Oct 1985)"
@@ -136,42 +167,104 @@
   sources: [E-0160, S-0097, S-0246]
 - id: DK-006
   campaign: C1
-  title: "Chiefs Enter the Guard System (1985)"
-  date: "1985"
+  title: Chiefs Enter the Guard System (1985)
+  date: '1985'
   type: capability
   unshaded:
-    text: "State Capability (Tribal Allies): Train may place Village Guards in a Mountain or Plain space with State Control even without Police. Needs Law 3175."
+    text: 'State Capability (Tribal Allies): Train may place Village Guards in a Mountain or Plain space with State
+      Control even without Police. Needs Law 3175.'
     owner: state
     tier: T0
-    effects: []
+    effects:
+    - type: addModifier
+      id: tribal-allies
+      duration: game
+      params: {}
   shaded:
-    text: "Armed retinues: apply Guard Abuse (07, section 4.7). Then shift one space with a Village Guard one level toward Opposition."
+    text: 'Armed retinues: apply Guard Abuse (07, section 4.7). Then shift one space with a Village Guard one level
+      toward Opposition.'
     owner: pkk
     tier: T0
-    effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+    effects:
+    - type: forEachSpace
+      all: true
+      where:
+        type: all
+        of:
+        - type: spaceHas
+          pieces:
+          - guards
+        - type: spaceHas
+          markers:
+          - stateHarm
+          - pkkHarm
+          - disputedHarm
+      effects:
+      - type: adjustTrack
+        track: legitimacy
+        delta: -1
+      - type: removePieces
+        piece: guards
+        count: 1
+        space: selected
+    - type: forEachSpace
+      min: 1
+      max: 1
+      where:
+        type: spaceHas
+        pieces:
+        - guards
+      effects:
+      - type: shiftLevel
+        space: selected
+        direction: opposition
+        steps: 1
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+    note: 'DEC-57: Guard Abuse applies once in every qualifying space before the chosen Guard-space shift.'
   eventConfidence: Moderate
   deckEligible: true
-  sources: [E-0156, S-0246]
+  sources:
+  - E-0156
+  - S-0246
 - id: DK-007
   campaign: C1
-  title: "ERNK Action Campaign (Jun-Nov 1985)"
-  date: "1985-06"
+  title: ERNK Action Campaign (Jun-Nov 1985)
+  date: 1985-06
   type: momentum
   unshaded:
-    text: "Police raids: the State conducts a free Garrison. Place 1 Police in Diyarbakır City."
+    text: 'Police raids: the State conducts a free Garrison. Place 1 Police in Diyarbakır City.'
     owner: state
     tier: T1
-    effects: []
+    effects:
+    - type: freeAction
+      action: state.garrison
+      constraints: {}
+    - type: placePieces
+      piece: police
+      count: 1
+      space: diyarbakir-city
   shaded:
-    text: "PKK Momentum: until the next Reset, each Rally may Agitate in one extra space (normal cost)."
+    text: 'PKK Momentum: until the next Reset, each Rally may Agitate in one extra space (normal cost).'
     owner: pkk
     tier: T1
-    effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+    effects:
+    - type: addModifier
+      id: extra-agitate
+      duration: untilReset
+      params:
+        maxSpaces: 2
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
   eventConfidence: Moderate
   deckEligible: true
-  sources: [E-0158, S-0246]
+  sources:
+  - E-0158
+  - S-0246
 - id: DK-008
   campaign: C1
   title: "Former Member Killed Abroad (Nov 1985)"
@@ -197,61 +290,131 @@
   sources: [E-0161, S-0246]
 - id: DK-009
   campaign: C1
-  title: "Bekaa Training Academy (1986)"
-  date: "1986"
+  title: Bekaa Training Academy (1986)
+  date: '1986'
   type: capability
   unshaded:
-    text: "Camp watched: the State conducts a free Diplomacy targeting Syria with +1."
+    text: 'Camp watched: the State conducts a free Diplomacy targeting Syria with +1.'
     owner: state
     tier: T0
-    effects: []
+    effects:
+    - type: freeAction
+      action: state.diplomacy
+      constraints:
+        spaces:
+        - syria-bekaa
+        bonus: 1
   shaded:
-    text: "PKK Capability (Academy): while Syria is Host or Tolerant, a Rally in Syria-Bekaa places up to 2 extra Guerrillas there."
+    text: 'PKK Capability (Academy): while Syria is Host or Tolerant, a Rally in Syria-Bekaa places up to 2 extra
+      Guerrillas there.'
     owner: pkk
     tier: T0
-    effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+    effects:
+    - type: addModifier
+      id: academy
+      duration: game
+      params:
+        extra: 2
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
   eventConfidence: Moderate
   deckEligible: true
-  sources: [E-0053, S-0035, S-0249, S-0253, S-0034]
+  sources:
+  - E-0053
+  - S-0035
+  - S-0249
+  - S-0253
+  - S-0034
 - id: DK-010
   campaign: C1
-  title: "Rival Groups Form the TSK (1986)"
-  date: "1986"
+  title: Rival Groups Form the TSK (1986)
+  date: '1986'
   type: momentum
   unshaded:
-    text: "Recruits divided: PKK Resources -2. State Momentum: until the next Reset, a PKK Rally in a Mountain space places 1 fewer Guerrilla (minimum 1)."
+    text: 'Recruits divided: PKK Resources -2. State Momentum: until the next Reset, a PKK Rally in a Mountain space
+      places 1 fewer Guerrilla (minimum 1).'
     owner: state
     tier: T0
-    effects: []
+    effects:
+    - type: adjustTrack
+      track: resources.pkk
+      delta: -2
+    - type: addModifier
+      id: rivals
+      duration: untilReset
+      params:
+        reduction: 1
   shaded:
-    text: "Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van-Bitlis or Ağrı."
+    text: 'Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van-Bitlis or Ağrı.'
     owner: pkk
     tier: T0
-    effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+    effects:
+    - type: adjustTrack
+      track: resources.pkk
+      delta: 2
+    - type: choice
+      options:
+      - label: van-bitlis
+        effects:
+        - type: placePieces
+          piece: guerrilla
+          count: 1
+          space: van-bitlis
+          state: underground
+      - label: agri
+        effects:
+        - type: placePieces
+          piece: guerrilla
+          count: 1
+          space: agri
+          state: underground
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
   eventConfidence: Moderate
   deckEligible: true
-  sources: [E-0054, S-0245, S-0035]
+  sources:
+  - E-0054
+  - S-0245
+  - S-0035
 - id: DK-011
   campaign: C1
-  title: "PKK Spring Offensive (Mar 1986)"
-  date: "1986-03"
+  title: PKK Spring Offensive (Mar 1986)
+  date: 1986-03
   type: momentum
   unshaded:
-    text: "Patrol security: the State conducts a free Sweep in up to 2 Mountain spaces."
+    text: 'Patrol security: the State conducts a free Sweep in up to 2 Mountain spaces.'
     owner: state
     tier: T1
-    effects: []
+    effects:
+    - type: freeAction
+      action: state.sweep
+      constraints:
+        terrain:
+        - mountain
+        maxLocations: 2
   shaded:
-    text: "PKK Momentum: until the next Reset, Ambush may select up to 3 Attack spaces."
+    text: 'PKK Momentum: until the next Reset, Ambush may select up to 3 Attack spaces.'
     owner: pkk
     tier: T1
-    effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+    effects:
+    - type: addModifier
+      id: ambush
+      duration: untilReset
+      params:
+        maxSpaces: 3
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
   eventConfidence: Moderate
   deckEligible: true
-  sources: [E-0162, S-0246]
+  sources:
+  - E-0162
+  - S-0246
 - id: DK-012
   campaign: C1
   title: "Ankara Names a Guerrilla War (May 1985)"
@@ -282,23 +445,60 @@
   sources: [E-0275, E-0274, S-0246]
 - id: DK-013
   campaign: C1
-  title: "Border Attack and Air Raid into Northern Iraq (Aug 1986)"
-  date: "1986-08-12"
+  title: Border Attack and Air Raid into Northern Iraq (Aug 1986)
+  date: '1986-08-12'
   type: event
   unshaded:
-    text: "Hot pursuit raid: the State conducts a free Assault with Cross-Border in the KDP Zone (06, section 3.2, hot pursuit: at most 3 Troops). No extra Resources."
+    text: 'Hot pursuit raid: the State conducts a free Assault with Cross-Border in the KDP Zone (06, section 3.2,
+      hot pursuit: at most 3 Troops). No extra Resources.'
     owner: state
     tier: T1
-    effects: []
+    effects:
+    - type: freeAction
+      action: state.assault
+      constraints:
+        spaces:
+        - kdp-zone
+        sa: state.cross-border
+        maxTroops: 3
   shaded:
-    text: "Camps rebuilt after the raid: the PKK places up to 2 Underground Guerrillas in the KDP Zone if its posture is Host or Tolerant. PKK Resources +1."
+    text: 'Camps rebuilt after the raid: the PKK places up to 2 Underground Guerrillas in the KDP Zone if its posture
+      is Host or Tolerant. PKK Resources +1.'
     owner: pkk
     tier: T1
-    effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+    effects:
+    - type: conditional
+      if:
+        type: trackIn
+        track: posture.kdp
+        values:
+        - host
+        - tolerant
+      then:
+      - type: placePieces
+        piece: guerrilla
+        count:
+          min: 0
+          max: 2
+        space: kdp-zone
+        state: underground
+      else: []
+    - type: adjustTrack
+      track: resources.pkk
+      delta: 1
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
   eventConfidence: Moderate
   deckEligible: true
-  sources: [E-0165, S-0246, S-0250, S-0532, S-0533, S-0534]
+  sources:
+  - E-0165
+  - S-0246
+  - S-0250
+  - S-0532
+  - S-0533
+  - S-0534
 - id: DK-014
   campaign: C1
   title: "Human Rights Association Founded (Jul 1986)"

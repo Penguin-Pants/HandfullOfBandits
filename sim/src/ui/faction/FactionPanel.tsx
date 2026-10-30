@@ -23,16 +23,21 @@ export interface FactionPanelProps {
 const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
 
 export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
+  const resume = view.status.pending?.resume;
   const faction = legal.faction ?? "";
   const actions = legal.actions ?? [];
-  const [box, setBox] = useState<string | null>(null);
-  const [op, setOp] = useState<string | null>(null);
+  const [box, setBox] = useState<string | null>(resume?.box ?? null);
+  const [op, setOp] = useState<string | null>(resume?.op ?? null);
   const [sa, setSa] = useState<string | null>(null);
   const [saTiming, setSaTiming] = useState<"before" | "after">("after");
-  const [subSpace, setSubSpace] = useState("");
-  const [subValues, setSubValues] = useState<Values>({});
+  const [subSpaces, setSubSpaces] = useState<readonly string[]>([]);
+  const [subValues, setSubValues] = useState<Readonly<Record<string, Values>>>({});
   const [result, setResult] = useState<ValidationResult | null>(null);
+  useEffect(() => {
+    if (resume !== undefined) {setBox(resume.box); setOp(resume.op); setSa(null);}
+  }, [view.status.pending?.id]);
   const form = actions.find((a) => a.id === op);
+  const sub = form?.subAction ?? null;
   const saForm = actions.find((a) => a.id === sa);
   const locations = plan.op.locations;
   const draft: Draft | null =
@@ -41,7 +46,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
       : {
           box, op, plan,
           sa: sa === null ? null : { action: sa, timing: saForm?.timing ?? saTiming },
-          subAction: form === undefined || form.subAction === null || subSpace === "" || !locations.includes(subSpace) ? null : { action: form.subAction.id, space: subSpace, params: perLocation(form.subAction.fields, subValues) as Record<string, number> },
+          subActions: sub === null ? [] : subSpaces.filter(s => locations.includes(s)).map(space => ({action: sub.id, space, params: perLocation(sub.fields, subValues[space] ?? {}) as Record<string, number>})),
         };
   const command = draft === null ? null : toCommand(faction, draft, actions);
   const key = JSON.stringify(command);
@@ -64,11 +69,11 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
   }, [op, sa]);
 
   const clear = (): void => {
-    setBox(null);
-    setOp(null);
+    setBox(resume?.box ?? null);
+    setOp(resume?.op ?? null);
     setSa(null);
     setSaTiming("after");
-    setSubSpace("");
+    setSubSpaces([]);
     setSubValues({});
     dispatch({ type: "reset" });
   };
@@ -121,6 +126,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
                 ? "Step 4: check the preview, then Commit."
                 : "Fix the problems shown below, or change the plan."}
       </p>
+      {view.status.pending?.resume !== undefined && <p role="status">{view.status.pending.prompt}</p>}
       <EligibilityTrack legal={legal} view={view} picked={box} onPick={pickBox} />
       {box !== null && OP_BOXES.includes(box) && (
         <ul aria-label="Operations">
@@ -162,11 +168,11 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
             <div className="row" role="group" aria-label="Sub-action">
               <span className="stepper-label">{words(form.subAction.id)} in</span>
               {locations.map((loc) => (
-                <button key={loc} type="button" aria-pressed={subSpace === loc} onClick={() => { setSubSpace(subSpace === loc ? "" : loc); }}>
+                <button key={loc} type="button" aria-pressed={subSpaces.includes(loc)} onClick={() => { setSubSpaces(subSpaces.includes(loc) ? subSpaces.filter(s => s !== loc) : (form.subAction?.maxSpaces ?? 1) === 1 ? [loc] : [...subSpaces, loc].slice(-(form.subAction?.maxSpaces ?? 1))); }}>
                   {view.spaces.find((s) => s.id === loc)?.name ?? words(loc)}
                 </button>
               ))}
-              {subSpace !== "" && locations.includes(subSpace) && <Fields fields={form.subAction.fields} values={subValues} onChange={(k, v) => { setSubValues({ ...subValues, [k]: v }); }} />}
+              {subSpaces.filter(s => locations.includes(s)).map(space => <Fields key={space} at={view.spaces.find(s => s.id === space)?.name ?? words(space)} fields={sub?.fields ?? []} values={subValues[space] ?? {}} onChange={(k, v) => { setSubValues({...subValues, [space]: {...subValues[space], [k]: v}}); }} />)}
             </div>
           )}
         </>
@@ -193,7 +199,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
         <button type="button" onClick={clear}>
           Clear (Esc)
         </button>
-        <button type="button" onClick={() => { onCommit({ type: "Pass", faction }); }}>
+        <button type="button" disabled={resume !== undefined} onClick={() => { onCommit({ type: "Pass", faction }); }}>
           Pass
         </button>
       </div>

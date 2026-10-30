@@ -1,3 +1,5 @@
+import { modifierLimit } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
 // Ambush (research 06 s5.1; PA-06 replaced): in up to 2 Attack spaces with an Underground
 // Guerrilla, Attack resolves as normal and Ambush removes 1 extra State piece in the Attack order.
 // Ambush is checked on the board before the Attack, so it uses timing `before` (DEC-16).
@@ -17,7 +19,7 @@ export const ambush: ActionHandler = {
   accompanies: ["pkk.attack"],
   check(ruleset, state, part, options) {
     const out: Violation[] = [];
-    const max = param(ruleset, "ambush.maxSpaces", "number");
+    const max = modifierLimit(state, MOD.ambush, "maxSpaces", param(ruleset, "ambush.maxSpaces", "number"));
     if (part.locations.length > max) out.push(at(null, "ambushSpaces", `Ambush selects at most ${String(max)} Attack spaces.`, ruleRef));
     for (const loc of part.locations) {
       if (!options.opLocations.includes(loc)) out.push(at(loc, "ambushNotAttack", "Ambush selects Attack spaces only.", ruleRef));

@@ -8,6 +8,7 @@ import { resources } from "../ops/common.ts";
 import { FACTION, TRACK } from "../ops/ids.ts";
 import { asObject } from "../ops/plan.ts";
 import { PHASE } from "../phases.ts";
+import { revealNext } from "../turn.ts";
 import { finalScoring } from "../victory.ts";
 import { FINAL_AFTER, propagandaPhases } from "./registry.ts";
 
@@ -31,26 +32,24 @@ export function propagandaViolations(ruleset: Ruleset, state: GameState, choice:
 }
 
 /** Round metrics (research 12 s4 per-round fields; DEC-34). */
-function metrics(ctx: Exec): void {
-  const view = derive(ctx.ruleset, ctx.state);
-  const factions = [FACTION.state, FACTION.pkk];
-  ctx.log(
-    "RoundMetrics",
-    {
-      round: ctx.state.turn.propagandaRound,
-      campaign: ctx.state.turn.campaign,
+function roundMetrics(ruleset: Ruleset, state: GameState): JsonObject {
+  const view = derive(ruleset,state);
+  const factions = [FACTION.state,FACTION.pkk];
+  const resourceStep = ruleset.sequence.propagandaPhases.indexOf("resources");
+  const incomeReceived = resourceStep >= 0 && state.turn.step > resourceStep;
+  return {
+      round: state.turn.propagandaRound,
+      campaign: state.turn.campaign,
       scores: { ...view.scores },
       margins: { ...view.margins },
       harm: { ...view.harm },
-      income: Object.fromEntries(factions.map((f) => [f, ctx.state.history[`income.${f}`] ?? 0])),
-      resources: Object.fromEntries(factions.map((f) => [f, resources(ctx.ruleset, ctx.state, f)])),
-      legitimacy: Number(ctx.state.tracks[TRACK.legitimacy]),
-      europe: Number(ctx.state.tracks[TRACK.europe]),
-      emergencyRule: String(ctx.state.tracks[TRACK.emergencyRule]),
-      postures: { syria: String(ctx.state.tracks[TRACK.syria]), kdp: String(ctx.state.tracks[TRACK.kdp]), puk: String(ctx.state.tracks[TRACK.puk]) },
-    },
-    "12 s4",
-  );
+      income: Object.fromEntries(factions.map((f) => [f, incomeReceived ? state.history[`income.${f}`] ?? 0 : 0])),
+      resources: Object.fromEntries(factions.map((f) => [f, resources(ruleset, state, f)])),
+      legitimacy: Number(state.tracks[TRACK.legitimacy]),
+      europe: Number(state.tracks[TRACK.europe]),
+      emergencyRule: String(state.tracks[TRACK.emergencyRule]),
+      postures: { syria: String(state.tracks[TRACK.syria]), kdp: String(state.tracks[TRACK.kdp]), puk: String(state.tracks[TRACK.puk]) },
+    };
 }
 
 function runPhase(ctx: Exec, choice: JsonObject | null): void {
@@ -60,10 +59,14 @@ function runPhase(ctx: Exec, choice: JsonObject | null): void {
   ctx.log("PhaseStarted", { phase: id, round: ctx.state.turn.propagandaRound }, phase.ruleRef);
   phase.run(ctx, choice);
   ctx.log("PhaseEnded", { phase: id }, phase.ruleRef);
-  if (ctx.state.ended !== null) return;
+  if (ctx.state.ended !== null) {
+    ctx.log("RoundMetrics",roundMetrics(ctx.ruleset,ctx.state),"12 s4");
+    return;
+  }
+  if (id === "reset") { revealNext(ctx); return; }
   ctx.write((s) => ({ ...s, turn: { ...s.turn, step: s.turn.step + 1 } }));
   if (id === FINAL_AFTER) {
-    metrics(ctx);
+    ctx.log("RoundMetrics",roundMetrics(ctx.ruleset,ctx.state),"12 s4");
     const final = ctx.ruleset.scenarios[ctx.state.meta.scenarioId]?.finalRound ?? 0;
     if (ctx.state.turn.propagandaRound >= final) finalScoring(ctx);
   }

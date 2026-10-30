@@ -143,7 +143,7 @@ describe("FactionPanel", () => {
     click("Rally");
     click("map botan");
     click("Botan");
-    click("More Shifts");
+    click("More Botan Shifts");
     click("Strike Collaborators");
     click("Strike Collaborators spaces");
     click("map dersim");
@@ -373,4 +373,14 @@ describe("PropagandaPanel", () => {
     fireEvent.click(screen.getByRole("button", { name: "Remove Guards in selected spaces" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "upkeep", choice: { removeGuards: { elazig: 2, botan: 1 } } });
   });
+});
+it("resumes the saved Rally without selecting another box or SA", async () => {
+  const commit = vi.fn();
+  const view = {...pkkView,status: {...pkkView.status,phase: "decision",pending: {id: "saved",faction: "pkk",prompt: "Choose new legal Rally locations.",answers: [],ruleRef: "DEC-54",resume: {kind: "operation" as const,op: "pkk.rally",box: "opSa"}}}};
+  const choices = {...legal,phase: "decision",actions: (legal.actions ?? []).filter(a => a.id === "pkk.rally")};
+  render(<FactionPanel api={mockApi({validate: vi.fn().mockResolvedValue(ok)})} sessionId="S" view={view} legal={choices} plan={{...emptyPlan,op: {...emptyPlan.op,locations: ["botan"]}}} dispatch={vi.fn()} onCommit={commit} onDraft={vi.fn()} />);
+  expect(screen.getByText("Choose new legal Rally locations.")).toBeTruthy();
+  await waitFor(() => { expect(screen.getByRole<HTMLButtonElement>("button",{name: "Commit (Enter)"}).disabled).toBe(false); });
+  click("Commit (Enter)");
+  expect(commit.mock.lastCall?.[0]).toMatchObject({type: "ChooseOperation",box: "opSa",plan: {op: "pkk.rally",locations: ["botan"],sa: null}});
 });

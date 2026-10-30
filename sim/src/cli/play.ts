@@ -44,6 +44,7 @@ export type Policy = (engine: Engine, ruleset: Ruleset, state: GameState) => Any
  * the upkeep question lists.
  */
 export const scriptedPolicy: Policy = (engine, ruleset, state) => {
+  if (state.turn.phase === "pivotal" && state.pending !== null) return {type: "ResolveDecision", decisionId: state.pending.id, answer: "decline"};
   const faction = activeFaction(state);
   if (faction === null) {
     const advance = { type: "Advance" };

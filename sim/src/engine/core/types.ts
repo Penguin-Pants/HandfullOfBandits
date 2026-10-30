@@ -87,6 +87,7 @@ export interface RulesetMarker {
 // Space conditions hold for one space. Track, campaign and card conditions come with P2-05.
 
 export type SpaceCondition =
+  | {readonly type: "spaceIn"; readonly spaces: readonly SpaceId[]}
   | { readonly type: "spaceKind"; readonly kind: "domestic" | "external" }
   | { readonly type: "terrainIn"; readonly terrain: readonly string[] }
   /** Signed levels from Neutral (DEC-36). A space with no support scale never matches. */
@@ -238,6 +239,8 @@ export interface HiddenMarker {
 }
 
 export interface Decision {
+  /** Saved operation after a stochastic SA invalidates its planned Op (DEC-54). */
+  readonly resume?: { readonly kind: "operation"; readonly op: string; readonly box: string };
   readonly id: string;
   readonly faction: FactionId;
   readonly prompt: string;
@@ -494,6 +497,7 @@ export type Effect = EffectSource &
 export type CountSpec = number | { readonly min: number; readonly max: number };
 
 export type CardEffect =
+  | { readonly type: "addModifier"; readonly id: string; readonly duration: "game" | "untilReset"; readonly params: JsonObject }
   | { readonly type: "placePieces"; readonly piece: PieceTypeId; readonly count: CountSpec; readonly space: SpaceRef; readonly state: string | null }
   | {
       readonly type: "removePieces";
@@ -524,7 +528,9 @@ export type CardEffect =
   | { readonly type: "choice"; readonly options: readonly { readonly label: string; readonly effects: readonly CardEffect[] }[] }
   | { readonly type: "conditional"; readonly if: SpaceCondition; readonly then: readonly CardEffect[]; readonly else: readonly CardEffect[] }
   /** Pick `min` to `max` spaces that match `where`; run `effects` once per pick with `selected` set. */
-  | { readonly type: "forEachSpace"; readonly where: SpaceCondition; readonly min: number; readonly max: number; readonly effects: readonly CardEffect[] }
+  | { readonly type: "forEachSpace"; readonly all?: boolean; readonly where: SpaceCondition; readonly min: number; readonly max: number; readonly effects: readonly CardEffect[] }
+  /** Pick individual on-map pieces; repeated space picks are limited by the original inventory. */
+  | {readonly type: "forEachPiece"; readonly piece: PieceTypeId; readonly state: string | null; readonly where: SpaceCondition; readonly min: number; readonly max: number; readonly effects: readonly CardEffect[]}
   /** A free Operation or Special Activity (05 s5 item 4). `constraints` are read by the action handler. */
   | { readonly type: "freeAction"; readonly action: string; readonly constraints: JsonObject };
 

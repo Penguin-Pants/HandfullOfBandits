@@ -33,7 +33,7 @@ export type LoadResult =
 
 const READ_ROOT = new Set([...CORE_FILES, ...OPTIONAL_FILES].map((file) => `${file}.yaml`));
 /** Root entries that are not read and need no warning. */
-const QUIET_ROOT = new Set([SCENARIO_DIR, CARD_DIR, "CHANGELOG.md"]);
+const QUIET_ROOT = new Set([SCENARIO_DIR, CARD_DIR, "map", "CHANGELOG.md"]);
 
 function readError(path: string, e: unknown): PackageIssue {
   const code = (e as NodeJS.ErrnoException).code ?? "unknown error";

@@ -1,0 +1,43 @@
+import { expect, it } from "vitest";
+import { engine, ruleset, turnOf } from "../../../../test/board.ts";
+import type { AnyCommand, GameState, LogEntry, Ruleset } from "../../core/types.ts";
+it("P3a-02: two rounds cross Reset, skip only the first check and end after final Agitation", () => {
+  const s0 = ruleset.scenarios["s0"];
+  if (s0 === undefined) throw new Error("Missing scenario");
+  const two: Ruleset = {...ruleset, scenarios: {...ruleset.scenarios, s0: {...s0, finalRound: 2, campaigns: ["C1", "C2"]}}};
+  const base = turnOf("pkk");
+  let state: GameState = {...base, turn: {...base.turn, phase: "propaganda", propagandaRound: 1, step: 0}, deck: {...base.deck, currentCard: "DK-016", piles: [["DK-001", "DK-016"]]}};
+  const entries: LogEntry[] = [];
+  const act = (command: AnyCommand) => {
+    const result = engine.apply(two, state, command);
+    if (!result.ok) throw new Error(JSON.stringify(result.validation.violations));
+    state = result.transition.state;
+    entries.push(...result.transition.logEntries);
+  };
+  while (state.turn.phase === "propaganda") act({type: "Advance"});
+  expect(state.turn.campaign).toBe("C2");
+  expect(state.deck.currentCard).toBe("DK-001");
+  act({type: "Pass", faction: "pkk"});
+  act({type: "Pass", faction: "state"});
+  expect(state.turn.propagandaRound).toBe(2);
+  while (state.ended === null) act({type: "Advance"});
+  expect(entries.filter(e => e.kind === "EffectSkipped" && e.data["reason"] === "firstRound")).toHaveLength(1);
+  expect(entries.filter(e => e.kind === "ScoreCheck" && e.data["final"] === false)).toHaveLength(1);
+  expect(entries.filter(e => e.kind === "RoundMetrics")).toHaveLength(2);
+  expect(entries.filter(e => e.kind === "PhaseEnded" && e.data["phase"] === "reset")).toHaveLength(1);
+  expect(state.ended.reason).toBe("final scoring");
+});
+it("records the winning round before an early victory skips income and later phases", () => {
+  const a = ruleset.scenarios["scenario-a"];
+  if (a === undefined) throw new Error("scenario-a");
+  const r = {...ruleset,scenarios: {...ruleset.scenarios,"scenario-a": {...a,thresholds: {state: -100,pkk: 1000}}}};
+  const base = turnOf("state");
+  const state = {...base,meta: {...base.meta,scenarioId: "scenario-a"},turn: {...base.turn,phase: "propaganda",propagandaRound: 2,step: 0},history: {...base.history,"income.state": 19,"income.pkk": 4}};
+  const result = engine.apply(r,state,{type: "Advance"});
+  expect(result.ok).toBe(true);
+  if (!result.ok) throw new Error("victory");
+  expect(result.transition.state.ended?.winner).toBe("state");
+  const metrics = result.transition.logEntries.filter(e => e.kind === "RoundMetrics");
+  expect(metrics).toHaveLength(1);
+  expect(metrics[0]?.data).toMatchObject({round: 2,income: {state: 0,pkk: 0}});
+});

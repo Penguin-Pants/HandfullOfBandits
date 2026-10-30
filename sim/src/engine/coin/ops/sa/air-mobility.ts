@@ -1,3 +1,5 @@
+import { modifierLimit } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
 // Air Mobility (research 06 s3.1; PA-14): move up to 4 Troops among up to 3 domestic spaces
 // (origins and destinations together, Western Cities included), never an external box.
 // SA locations: every space involved. Per destination: `moves: [{from, count}]`.
@@ -18,8 +20,8 @@ export const airMobility: ActionHandler = {
   accompanies: "any",
   check(ruleset, state, part) {
     const out: Violation[] = [];
-    const maxSpaces = param(ruleset, "airMobility.maxSpaces", "number");
-    const maxTroops = param(ruleset, "airMobility.maxTroops", "number");
+    const maxSpaces = modifierLimit(state, MOD.strikeForce, "maxSpaces", param(ruleset, "airMobility.maxSpaces", "number"));
+    const maxTroops = modifierLimit(state, MOD.strikeForce, "maxTroops", param(ruleset, "airMobility.maxTroops", "number"));
     if (part.locations.length > maxSpaces) out.push(at(null, "airMobilitySpaces", `Air Mobility uses at most ${String(maxSpaces)} spaces, origins included.`, ruleRef));
     let moved = 0;
     const leaving = new Map<string, number>();

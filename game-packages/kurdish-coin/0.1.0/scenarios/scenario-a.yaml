@@ -1,0 +1,113 @@
+# Research 10 s3: full campaign setup, C1 and C2 only.
+id: scenario-a
+title: 'Scenario A: 1984-1989'
+campaigns:
+- C1
+- C2
+finalRound: 2
+tracks:
+  resources.state: 12
+  resources.pkk: 5
+  legitimacy: 10
+  emergencyRule: martialLaw
+  posture.syria: host
+  posture.kdp: host
+  posture.puk: tolerant
+  europe: 1
+  ceasefire: none
+  legalSpace: absent
+spaces:
+  hakkari:
+    level: -1
+    pieces:
+      troops: 2
+      police: 1
+      guerrilla: 2
+  botan:
+    level: -1
+    pieces:
+      troops: 2
+      police: 1
+      guerrilla: 2
+      pkkBase: 1
+  mardin-batman:
+    pieces:
+      troops: 1
+      police: 1
+      guerrilla: 1
+  diyarbakir-city:
+    pieces:
+      troops: 3
+      police: 2
+      stateBase: 1
+  diyarbakir-rural:
+    pieces:
+      police: 1
+  sanliurfa:
+    level: 1
+    pieces:
+      police: 2
+  adiyaman:
+    level: 1
+    pieces:
+      police: 1
+  elazig:
+    level: 1
+    pieces:
+      troops: 1
+      police: 1
+      stateBase: 1
+  dersim:
+    pieces:
+      troops: 1
+      police: 1
+  bingol-mus:
+    pieces:
+      troops: 1
+      police: 1
+  van-bitlis:
+    pieces:
+      troops: 2
+      police: 1
+      stateBase: 1
+  agri:
+    pieces:
+      troops: 1
+      police: 1
+  western-cities:
+    level: 1
+    pieces:
+      troops: 2
+      police: 2
+      stateBase: 1
+  kdp-zone:
+    pieces:
+      guerrilla: 3
+      pkkBase: 1
+  syria-bekaa:
+    pieces:
+      guerrilla: 2
+      pkkBase: 1
+    markers:
+      leadership:
+        present: 1
+        abroad: 0
+available:
+  troops: 14
+  police: 8
+  stateBase: 4
+  guerrilla: 20
+  pkkBase: 9
+outOfPlay:
+  guards: 16
+flags:
+  law3175: false
+thresholds:
+  state: 49
+  pkk: 30
+options:
+  syriaMarchRestricted: allow
+pivotals:
+  state: []
+  pkk:
+  - DK-015

@@ -798,6 +798,63 @@
             "where": {
               "$ref": "#/$defs/__schema1"
             },
+            "all": {
+              "default": false,
+              "type": "boolean"
+            },
+            "min": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "max": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "effects": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/__schema0"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "where",
+            "effects"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "forEachPiece"
+            },
+            "piece": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            },
+            "state": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "where": {
+              "$ref": "#/$defs/__schema1"
+            },
             "min": {
               "type": "integer",
               "minimum": 0,
@@ -818,10 +875,50 @@
           },
           "required": [
             "type",
+            "piece",
             "where",
             "min",
             "max",
             "effects"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "addModifier"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            },
+            "duration": {
+              "type": "string",
+              "enum": [
+                "game",
+                "untilReset"
+              ]
+            },
+            "params": {
+              "default": {},
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+              },
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "duration"
           ],
           "additionalProperties": false
         },
@@ -857,6 +954,28 @@
     },
     "__schema1": {
       "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "spaceIn"
+            },
+            "spaces": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "spaces"
+          ],
+          "additionalProperties": false
+        },
         {
           "type": "object",
           "properties": {

@@ -14,7 +14,7 @@
     owner: null
     tier: T0
     effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+  encoding: {status: encoded, encodedBy: "pivotal-argk", reviewedAgainstText: true, note: "Allocation and window: coin/pivotal.ts (05 s4; PA-17). DEC-55 flips all PKK Base spaces"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0075, S-0246, S-0248, S-0253, S-0064]

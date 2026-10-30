@@ -6,29 +6,14 @@ import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";
 import { adjacent, count, hasTag, pay, space } from "../common.ts";
-import { postureOf, statePieces } from "../common-pkk.ts";
-import { FACE, FACTION, OPTION, PIECE, POSTURE, SYRIA_BOX, TAG } from "../ids.ts";
+import { entryToBox, statePieces } from "../common-pkk.ts";
+import { FACE, FACTION, PIECE, SYRIA_BOX, TAG } from "../ids.ts";
 import { asMoves } from "../plan.ts";
 
 const ruleRef = "06 s4.2";
 
-type Entry = "open" | "restricted" | "closed";
-
-/** Entry rule for a destination: domestic spaces are open; boxes follow the host posture. */
-function entry(ruleset: Ruleset, state: GameState, dest: string): Entry {
-  if (space(ruleset, dest)?.kind !== "external") return "open";
-  const posture = postureOf(state, dest);
-  if (posture === POSTURE.host || posture === POSTURE.tolerant) return "open";
-  if (posture === POSTURE.restricted) {
-    if (dest !== SYRIA_BOX) return "restricted";
-    const option = ruleset.scenarios[state.meta.scenarioId]?.options[OPTION.syriaMarchRestricted];
-    return option === "deny" ? "closed" : "restricted";
-  }
-  return "closed";
-}
-
 function costOf(ruleset: Ruleset, state: GameState, dest: string): number {
-  const extra = entry(ruleset, state, dest) === "restricted" ? param(ruleset, "march.restrictedExtraCost", "number") : 0;
+  const extra = entryToBox(ruleset, state, dest) === "restricted" ? param(ruleset, "march.restrictedExtraCost", "number") : 0;
   return param(ruleset, "march.costPerDestination", "number") + extra;
 }
 
@@ -77,7 +62,7 @@ export const march: ActionHandler = {
         v("marchWhere", "No March into Western Cities, Europe or Iran (03 s4.2, s3).");
         continue;
       }
-      if (entry(ruleset, state, dest) === "closed") v("marchHost", "The host posture closes this box to March (07 s5.1).");
+      if (entryToBox(ruleset, state, dest) === "closed") v("marchHost", "The host posture closes this box to March (07 s5.1).");
       const list = asMoves(part.perLocation[dest]?.["moves"]);
       if (list === null || list.length === 0) {
         v("badMoves", "Moves must be [{from, count, face?}] with at least one group.");
@@ -100,7 +85,7 @@ export const march: ActionHandler = {
     const { groups } = reserveGroups(ctx.state, part);
     for (const dest of part.locations) {
       if (!options.free) pay(ctx, FACTION.pkk, costOf(ctx.ruleset, ctx.state, dest), ruleRef, dest);
-      const restricted = entry(ctx.ruleset, ctx.state, dest) === "restricted";
+      const restricted = entryToBox(ctx.ruleset, ctx.state, dest) === "restricted";
       for (const m of groups.get(dest) ?? []) {
         // Activation (06 s4.2 item 4) uses State pieces in the destination before the group arrives.
         const crossing = space(ctx.ruleset, dest)?.kind === "external" || space(ctx.ruleset, m.from)?.kind === "external";

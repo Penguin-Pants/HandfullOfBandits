@@ -85,7 +85,7 @@ export const api = {
     call<{ sessionId: string; head: Head }>("POST", "/sessions", body),
   session: (id: string) => call<{ session: SessionRow; head: Head }>("GET", `/sessions/${id}`),
   validate: (id: string, command: AnyCommand) => call<ValidationResult>("POST", `/sessions/${id}/validate`, { command }),
-  submit: (id: string, command: AnyCommand, headActionId: string) => call<{ actionId: string; head: Head; entries: LogEntryRow[] }>("POST", `/sessions/${id}/commands`, { command, headActionId }),
+  submit: (id: string, command: AnyCommand, headActionId: string, headStateHash?: string) => call<{ actionId: string; head: Head; entries: LogEntryRow[] }>("POST", `/sessions/${id}/commands`, { command, headActionId, headStateHash }),
   legal: (id: string) => call<LegalChoices>("GET", `/sessions/${id}/legal`),
   history: (id: string) => call<HistoryItem[]>("GET", `/sessions/${id}/history`),
   state: (hash: string) => call<{ state: GameState; derived: unknown }>("GET", `/states/${hash}`),
@@ -93,7 +93,7 @@ export const api = {
   categories: () => call<CategoryRow[]>("GET", "/categories"),
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
-  undo: (id: string, headActionId: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean }>("POST", `/sessions/${id}/undo`, { headActionId }),
+  undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
   review: (filter: Readonly<Record<string, string>>) => call<ReviewRow[]>("GET", `/review?${new URLSearchParams(filter).toString()}`),
   endSession: (id: string, debrief: string | null) => call<{ debriefId: string | null }>("POST", `/sessions/${id}/end`, { debrief }),
 };

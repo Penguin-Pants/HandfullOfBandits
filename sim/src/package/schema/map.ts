@@ -15,6 +15,7 @@ const space = z
     pop: count,
     hasSupportScale: z.boolean(),
     layout: z.strictObject({ x: z.int(), y: z.int() }),
+    polygon: z.strictObject({scale: z.int().positive().default(1), outer: z.array(z.tuple([z.int(), z.int()])).min(3), holes: z.array(z.array(z.tuple([z.int(), z.int()])).min(3)).optional()}).optional(),
     confidence: text.optional(),
     tags: idList(0).optional(),
     ...ruleMeta,

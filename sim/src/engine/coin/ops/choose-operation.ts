@@ -9,6 +9,12 @@ import { asList, asObject, asString } from "./plan.ts";
 import { flagHarmful, notePassOnly } from "../stop-rules.ts";
 import { actionHandlers } from "./registry.ts";
 
+/** Validation view for the unexecuted Op. The real cylinder stays placed. */
+export function operationState(state: GameState): GameState {
+  if (state.pending?.resume?.kind !== "operation") return state;
+  return { ...state, pending: null, turn: {...state.turn, phase: "card"}, initiative: {...state.initiative, actedThisCard: state.initiative.actedThisCard.filter(f => f !== state.pending?.faction)} };
+}
+
 const ruleRef = "06 s1";
 const OP_BOXES: readonly string[] = [BOX.limitedOp, BOX.opOnly, BOX.opSa];
 
@@ -59,6 +65,13 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
   const faction = String(command["faction"]);
   const box = String(command["box"]);
   if (!OP_BOXES.includes(box)) return fail("notAnOpBox", `Box "${box}" is not an Operation box. Use ${OP_BOXES.join(", ")}.`);
+  const resume = state.pending?.resume;
+  const waiting = state.pending;
+  state = operationState(state);
+  if (resume !== undefined) {
+    const raw = asObject(command["plan"]);
+    if (command["faction"] !== waiting?.faction || box !== resume.box || raw?.["op"] !== resume.op || (raw["sa"] !== null && raw["sa"] !== undefined)) return fail("resumeOperation", "Choose new locations for the saved Operation, without another Special Activity (DEC-54; DEC-56).");
+  }
   const sequence = sequenceViolations(ruleset, state, command["faction"], box);
   if (sequence.length > 0) return { violations: sequence, plan: null };
   const raw = asObject(command["plan"]);
@@ -87,6 +100,7 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
     if (handler.accompanies !== "any" && !handler.accompanies.includes(op.id)) {
       violations.push(at(null, "saNotWithOp", `${handler.id} cannot accompany ${op.id}. It accompanies ${handler.accompanies.join(", ")}.`, handler.ruleRef));
     }
+    if (handler.timing !== undefined && handler.timing !== timing) violations.push(at(null, "saTiming", `${handler.id} must run ${handler.timing} the Operation.`, handler.ruleRef));
     sa = { handler, part: saPart, timing };
   } else if (raw["sa"] !== undefined && raw["sa"] !== null) {
     return fail("badPlan", "The Special Activity part is not well formed.");
@@ -119,6 +133,13 @@ export const chooseOperationHandler: CommandHandler = {
   execute(ctx: Exec, command) {
     const { plan } = parse(ctx.ruleset, ctx.state, command);
     if (plan === null) throw new Error("ChooseOperation executed without a legal plan");
+    if (ctx.state.pending?.resume?.kind === "operation") {
+      const {id, ruleRef: decisionRef} = ctx.state.pending;
+      ctx.write(s => ({...s, pending: null, turn: {...s.turn, phase: "card"}}));
+      ctx.log("DecisionAnswered", {decisionId: id, op: plan.op.id, locations: [...plan.part.locations]}, decisionRef);
+      plan.op.execute(ctx, plan.part, plan.options);
+      return;
+    }
     const placed = placeCylinder(ctx.state, plan.options.faction, String(command["box"]));
     ctx.write(() => placed.state);
     ctx.log(placed.entry.kind, { ...placed.entry.data, op: plan.op.id, sa: plan.sa?.handler.id ?? null }, placed.entry.ruleRef);
@@ -135,6 +156,14 @@ export const chooseOperationHandler: CommandHandler = {
     };
     notePassOnly(ctx, plan.options.faction, false);
     runSa("before");
+    if (plan.sa?.handler.id === "pkk.host-pressure" && plan.sa.timing === "before" && (plan.op.check(ctx.ruleset, ctx.state, plan.part, plan.options).length > 0 || plan.op.cost(ctx.ruleset, ctx.state, plan.part, plan.options) > resources(ctx.ruleset, ctx.state, plan.options.faction))) {
+      const march = plan.op.id === "pkk.march";
+      const decisionRef = march ? "DEC-56" : "DEC-54";
+      const pending = {id: `operation-${String(ctx.state.meta.stateSeq)}`, faction: plan.options.faction, prompt: `Host Pressure changed access. Choose new legal ${march ? "March destinations" : "Rally locations"}. The roll and cost remain (${decisionRef}).`, answers: [], ruleRef: decisionRef, resume: {kind: "operation" as const, op: plan.op.id, box: String(command["box"])}};
+      ctx.write(s => ({...s, pending, turn: {...s.turn, phase: "decision"}}));
+      ctx.log("DecisionOpened", {decisionId: pending.id, prompt: pending.prompt}, decisionRef);
+      return;
+    }
     plan.op.execute(ctx, plan.part, plan.options);
     runSa("after");
   },

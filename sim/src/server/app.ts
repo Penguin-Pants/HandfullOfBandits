@@ -65,9 +65,9 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   });
   app.post<{ Params: Id }>("/api/sessions/:id/validate", (request) => service.validateCommand(request.params.id, command(body<{ command: unknown }>(request.body).command)));
   app.post<{ Params: Id }>("/api/sessions/:id/commands", (request) => {
-    const b = body<{ command: unknown; headActionId: string }>(request.body);
+    const b = body<{ command: unknown; headActionId: string; headStateHash?: string }>(request.body);
     if (typeof b.headActionId !== "string") throw new ServiceError(400, "headActionId is required.");
-    return service.submit(request.params.id, command(b.command), b.headActionId);
+    return service.submit(request.params.id, command(b.command), b.headActionId, b.headStateHash);
   });
   app.get<{ Params: Id }>("/api/sessions/:id/legal", (request) => service.legalChoices(request.params.id));
   app.get<{ Params: Id }>("/api/sessions/:id/history", (request) => service.history(request.params.id));
@@ -78,9 +78,9 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     return service.endSession(request.params.id, typeof debrief === "string" ? debrief : null);
   });
   app.post<{ Params: Id }>("/api/sessions/:id/undo", (request) => {
-    const { headActionId } = body<{ headActionId: string }>(request.body);
+    const { headActionId, headStateHash } = body<{ headActionId: string; headStateHash?: string }>(request.body);
     if (typeof headActionId !== "string") throw new ServiceError(400, "headActionId is required.");
-    return service.undo(request.params.id, headActionId);
+    return service.undo(request.params.id, headActionId, headStateHash);
   });
   app.get<{ Querystring: Record<string, string> }>("/api/review", (request) => service.review(request.query));
   app.get<{ Params: Id; Querystring: { states?: string } }>("/api/sessions/:id/export", (request, reply) => {

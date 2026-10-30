@@ -84,3 +84,22 @@
 - {id: recordSheet.boardGap, value: 3, tune: false, source: "09 s6"}
 - {id: stopRule.passStreak, value: 3, tune: false, source: "12 s9 item 6; DEC-34"}
 - {id: stopRule.passStreaks, value: 2, tune: false, source: "12 s9 item 6; DEC-34"}
+
+# 06 host actions (Phase 3a)
+- {id: diplomacy.cost, value: 2, tune: false, source: "06 s3.3; s5.4"}
+- {id: diplomacy.highLeg, value: 12, tune: false, source: "06 s3.3; s5.4"}
+- {id: diplomacy.lowLeg, value: 5, tune: false, source: "06 s3.3; s5.4"}
+- {id: diplomacy.successRoll, value: 5, tune: false, source: "06 s3.3; s5.4"}
+- {id: diplomacy.alignedRoll, value: 6, tune: false, source: "06 s3.3; s5.4"}
+- {id: hostPressure.cost, value: 2, tune: false, source: "06 s3.3; s5.4"}
+- {id: hostPressure.kdpSuccess, value: 5, tune: false, source: "06 s3.3; s5.4"}
+- {id: hostPressure.otherSuccess, value: 4, tune: false, source: "06 s3.3; s5.4"}
+- {id: hostPressure.kdpBackfire, value: 2, tune: false, source: "06 s3.3; s5.4"}
+- {id: hostPressure.otherBackfire, value: 1, tune: false, source: "06 s3.3; s5.4"}
+- {id: crossBorder.cost, value: 2, tune: false, source: "06 s3.2"}
+- {id: crossBorder.maxTroops, value: 6, tune: false, source: "06 s3.2"}
+- {id: crossBorder.hotPursuitTroops, value: 3, tune: false, source: "06 s3.2"}
+- {id: argk.minGuerrillas, value: 8, tune: false, source: "DK-015; 08 s4"}
+- {id: argk.minBases, value: 2, tune: false, source: "DK-015; 08 s4"}
+- {id: argk.maxPlace, value: 4, tune: false, source: "DK-015; 08 s4"}
+- {id: argk.resources, value: 3, tune: false, source: "DK-015; 08 s4"}

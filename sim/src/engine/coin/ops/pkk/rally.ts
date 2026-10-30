@@ -1,3 +1,5 @@
+import { hasModifier, modifierLimit } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
 // Rally (research 06 s4.1): per location, place 1 Guerrilla, replace 2 Guerrillas with a Base, or
 // at a Base place up to Pop + Bases or flip all Underground. Europe as a location: Europe +1.
 // Optional Agitate in one space with a PKK Base or PKK Control (07 s1.3).
@@ -29,7 +31,8 @@ function costOf(ruleset: Ruleset, state: GameState, loc: string): number {
 function growLimit(ruleset: Ruleset, state: GameState, loc: string): number {
   const s = space(ruleset, loc);
   const pop = s?.kind === "external" ? param(ruleset, "rally.externalPop", "number") : (s?.pop ?? 0);
-  return pop + count(state, loc, PIECE.pkkBase);
+  const base = pop + count(state, loc, PIECE.pkkBase);
+  return isTerrain(ruleset, loc, TERRAIN.mountain) ? Math.max(1, base - modifierLimit(state, MOD.rivals, "reduction", 0)) : base;
 }
 
 /** Guerrillas the plan places with `grow`: `count`, default the limit. Null: outside 1 to the limit. */
@@ -77,6 +80,10 @@ export const rally: ActionHandler = {
       } else if (!rallyGuerrillasOpen(state, loc)) {
         v("rallyHost", "The host posture closes Rally in this box (07 s5.1).");
       }
+      const extra = asCount(part.perLocation[loc]?.["extra"]);
+      const extraMax = loc === "syria-bekaa" && rallyGuerrillasOpen(state, loc) ? modifierLimit(state, MOD.academy, "extra", 0) : 0;
+      if (extra === null || extra > extraMax) v("rallyExtra", `Choose 0 to ${String(extraMax)} extra Guerrillas.`);
+      placing += extra ?? 0;
       const choice = option(part, loc);
       if (choice === null) {
         v("rallyOption", "Choose option place, base, grow or flip.");
@@ -97,15 +104,15 @@ export const rally: ActionHandler = {
       }
     }
     if (basing > (state.pools[PIECE.pkkBase]?.available ?? 0)) out.push(at(null, "rallySupply", "No PKK Base is Available.", ruleRef));
-    if (placing > 0 && (state.pools[PIECE.guerrilla]?.available ?? 0) === 0) out.push(at(null, "rallySupply", "No Guerrilla is Available.", ruleRef));
+    if (placing > 0 && (state.pools[PIECE.guerrilla]?.available ?? 0) === 0 && basing === 0) out.push(at(null, "rallySupply", "No Guerrilla is Available.", ruleRef));
     const agits = agitations(options);
-    if (agits.length > 1 || options.subActions.length > agits.length) out.push(at(null, "rallySubAction", "Rally allows one Agitate in one space.", ruleRef));
+    if (agits.length > modifierLimit(state, MOD.extraAgitate, "maxSpaces", 1) || new Set(agits.map(a => a.space)).size !== agits.length || options.subActions.length > agits.length) out.push(at(null, "rallySubAction", "Choose different Agitate spaces within the current limit.", ruleRef));
     // Agitate runs after the placements, so check it on that board (only when the spaces pass).
     const placed = createExec(ruleset, state, true);
     if (out.length === 0) placeAll(placed, part, { ...options, free: true });
     for (const a of agits) {
       if (!part.locations.includes(a.space)) out.push(at(a.space, "agitateNotSelected", "Agitate must be in a Rally space.", ruleRef));
-      if (count(placed.state, a.space, PIECE.pkkBase) === 0 && controlOf(ruleset, placed.state, a.space) !== FACTION.pkk) out.push(at(a.space, "agitateWhere", "Agitate needs a PKK Base or PKK Control.", ruleRef));
+      if (count(placed.state, a.space, PIECE.pkkBase) === 0 && controlOf(ruleset, placed.state, a.space) !== FACTION.pkk && !(hasModifier(state, MOD.ernk) && isTerrain(ruleset, a.space, TERRAIN.city) && count(placed.state, a.space, PIECE.guerrilla) > 0)) out.push(at(a.space, "agitateWhere", "Agitate needs a PKK Base or PKK Control.", ruleRef));
       if (a.spend === null) out.push(at(a.space, "agitateBadSpend", "Agitate spend is not well formed.", "07 s1.3"));
       else out.push(...agitationViolations(ruleset, placed.state, a.space, a.spend));
     }
@@ -146,5 +153,6 @@ function placeAll(ctx: Exec, part: ActionPart, options: ActionOptions): void {
         }
         ctx.apply({ type: "placePieces", piece: PIECE.pkkBase, count: 1, space: loc, state: null, ruleRef, assumptionRef: null });
       }
+      place(asCount(part.perLocation[loc]?.["extra"]) ?? 0);
     }
 }

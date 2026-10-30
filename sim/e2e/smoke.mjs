@@ -2,6 +2,10 @@
 // IC-2 item 1: Playwright smoke (11 IC-2). Home, start S0, one action, one note, undo, JSON export.
 // Needs a built UI (`npm run build`) and Playwright with Chromium (not a project dependency).
 // Run: make e2e
+import { createEngine } from "../src/engine/index.ts";
+import { coinHandlers } from "../src/engine/coin/handlers.ts";
+import { loadPackage, readPackageDir } from "../src/package/load.ts";
+import { scriptedPolicy } from "../src/cli/play.ts";
 import { spawn } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -140,6 +144,39 @@ try {
   const sessions = await (await fetch(`${base}/api/sessions`)).json();
   const exported = await (await fetch(`${base}/api/sessions/${sessions[0].session_id}/export`)).json();
   check(exported.exportMeta.schema === "coin-sim-export/1" && exported.annotations.length === 1 && exported.actions.some((a) => a.status === "undone"), "JSON export holds the note and the undone action");
+  // Phase 3a automated flow. IC-3a still requires the designer's own UI playthrough.
+  await page.getByRole("button", {name: "Home",exact: true}).click();
+  await page.getByLabel("Scenario", {exact: true}).selectOption("scenario-a");
+  await page.getByLabel("Seed", {exact: true}).fill("7");
+  check(await page.getByRole("button", {name: "Start",exact: true}).isEnabled(), "Home: Scenario A starts without exclusions");
+  const creation = page.waitForResponse(r => r.url().endsWith("/api/sessions") && r.request().method() === "POST");
+  await page.getByRole("button", {name: "Start",exact: true}).click();
+  const created = await (await creation).json();
+  const packages = await (await fetch(`${base}/api/packages`)).json();
+  const pkg = packages.find(p => p.packageId === "kurdish-coin");
+  const loaded = loadPackage(readPackageDir(pkg.dir));
+  check(loaded.ok, "Scenario A package loads for automated play");
+  const engine = createEngine(coinHandlers);
+  let head = created.head;
+  let steps = 0;
+  while (head.state.ended === null) {
+    if (steps++ >= 2000) throw new Error("Scenario A exceeded 2000 commands");
+    const command = scriptedPolicy(engine,loaded.ruleset,head.state);
+    const response = await fetch(`${base}/api/sessions/${created.sessionId}/commands`, {method: "POST",headers: {"content-type": "application/json"},body: JSON.stringify({command,headActionId: head.actionId,headStateHash: head.stateHash})});
+    if (!response.ok) throw new Error(await response.text());
+    head = (await response.json()).head;
+  }
+  check(head.state.turn.propagandaRound === 2, "Scenario A completes both rounds through the session API");
+  await page.reload();
+  await page.getByRole("row").filter({hasText: "scenario-a"}).getByRole("button", {name: "Resume",exact: true}).click();
+  await page.locator('header[aria-label="Status"]').getByText(/^Game over:/).waitFor();
+  check(true, "Scenario A result renders in the UI");
+  await page.keyboard.press("n");
+  await page.getByLabel("Note text").fill("Automated Scenario A smoke note; designer IC-3a remains pending.");
+  await page.keyboard.press("Enter");
+  await page.getByRole("status").filter({hasText: /Saved/}).waitFor();
+  const aExport = await (await fetch(`${base}/api/sessions/${created.sessionId}/export`)).json();
+  check(aExport.sessions[0].scenario_id === "scenario-a" && aExport.annotations.length === 1 && aExport.metrics.filter(m => m.propaganda_round !== undefined).length === 2, "Scenario A export contains the session, both round metrics and UI note");
 } finally {
   await browser?.close();
   server.kill();

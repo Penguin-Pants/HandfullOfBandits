@@ -140,7 +140,7 @@ const valid: Record<PackageFile, unknown> = {
           { type: "choice", options: [{ label: "City", effects: [{ type: "placePieces", piece: "soldier", count: 2, space: "city", state: null }] }, { label: "Farm", effects: [] }] },
           { type: "adjustTrack", track: "cash.blue", delta: 2 },
           {
-            type: "forEachSpace",
+            type: "forEachSpace", all: false,
             where: { type: "all", of: [{ type: "terrainIn", terrain: ["plain"] }, { type: "adjacentTo", space: "city" }, { type: "trackAtLeast", track: "cash.blue", value: 1 }] },
             min: 0,
             max: 2,
@@ -195,7 +195,7 @@ const invalid: [PackageFile, string, string, unknown, string][] = [
   ["manifest", "missing title", "title", DELETE, "title"],
   ["manifest", "bad semver", "version", "0.1", "version"],
   ["manifest", "bad ruleset version", "rulesetVersion", "1", "rulesetVersion"],
-  ["manifest", "schema version 2", "schemaVersion", 2, "schemaVersion"],
+  ["manifest", "schema version 3", "schemaVersion", 3, "schemaVersion"],
   ["manifest", "module without major", "modules.1", "tiny.raid", "modules.1"],
   ["manifest", "option with one value", "options.threshold.values", [48], "options.threshold.values"],
   ["manifest", "unknown key", "titel", "x", ""],

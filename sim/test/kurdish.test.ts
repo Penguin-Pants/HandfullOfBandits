@@ -31,7 +31,7 @@ const printed: Record<string, string[]> = {
 };
 
 describe("kurdish-coin 0.1.0", () => {
-  it("passes sim validate; only the full campaign is blocked, by its missing C2 to C5 cards (DEC-51)", () => {
+  it("passes sim validate; only the full campaign is blocked, by its missing C3 to C5 cards (DEC-51)", () => {
     expect(validateCommand(dir).exitCode).toBe(0);
     expect(result.issues.filter((i) => i.scenario !== "full-campaign")).toEqual([]);
     expect(ruleset.scenarios["s0"]?.blockedBy).toEqual([]);

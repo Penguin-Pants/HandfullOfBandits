@@ -1,3 +1,6 @@
+import { modifierLimit, hasModifier } from "../engine/core/modifiers.ts";
+import type { GameState } from "../engine/core/types.ts";
+import { MOD } from "../engine/coin/modifiers.ts";
 // Plan form metadata per action (11 P2-15 risk: one generic form driven by handler metadata).
 // Fields describe each location's `perLocation` choices in the ActionPlan (05 s3.1).
 
@@ -20,7 +23,7 @@ export interface ActionForm {
   readonly summary: string;
   readonly fields: readonly FormField[];
   /** Sub-action this Op may carry in one location (Civic Action, Agitate), with its spend fields. */
-  readonly subAction: { readonly id: string; readonly fields: readonly FormField[] } | null;
+  readonly subAction: { readonly id: string; readonly fields: readonly FormField[]; readonly maxSpaces?: number } | null;
   /** Timing an SA must use (DEC-16), when fixed. */
   readonly timing?: "before" | "after";
 }
@@ -33,6 +36,9 @@ const moves: FormField = { key: "moves", label: "Moves", kind: "moves" };
 const routes: FormField = { key: "moves", label: "Police moves", kind: "moves" };
 
 export const actionForms: readonly ActionForm[] = [
+  {id: "state.cross-border", label: "Cross-Border", cost: "+2, or 0 at Aligned", summary: "Before Sweep or Assault in KDP or PUK Zone, move up to 6 Troops from Hakkari or Botan. Posture controls access; early hot pursuit allows at most 3 Troops in KDP (06 s3.2).", fields: [moves], subAction: null, timing: "before"},
+  {id: "state.diplomacy", label: "Diplomacy", cost: "2", summary: "Choose one host box or Europe. Roll with Legitimacy, campaign and target modifiers (06 s3.3).", fields: [], subAction: null},
+  {id: "pkk.host-pressure", label: "Host Pressure", cost: "2", summary: "Choose one host box with a PKK piece. Roll to improve access; a backfire worsens it. Syria needs Leadership Present (06 s5.4).", fields: [], subAction: null},
   { id: "state.train", label: "Train", cost: "2 per space", summary: "Pick one option per space. Place up to 3 Troops and Police in a City or a space with a State Base. Or, after Law 3175, in a Mountain or Plain space with State Control and Police, place up to 2 Village Guards. Or, in a Mountain or Plain space with State Control, replace 2 Police with 1 State Base (at most 2 Bases there). In one space you may also pay for Civic Action, which shifts it toward Support (06 s2.1).", subAction: civicAction, fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "guards", "base"] }, { key: "troops", label: "Troops", kind: "number" }, { key: "police", label: "Police", kind: "number" }, { key: "count", label: "Guards", kind: "number" }] },
   { id: "state.garrison", label: "Garrison", cost: "2 total", summary: "Move up to 6 Police between domestic spaces, never into or out of Western Cities. Then, in one space with Police, flip 1 Underground Guerrilla Active per Police and Village Guard there (1 per 2 in Mountains) (06 s2.2).", subAction: null, fields: [routes] },
   { id: "state.sweep", label: "Sweep", cost: "2 per space", summary: "In domestic spaces other than Western Cities: move Troops 1 step from adjacent spaces in, then flip 1 Underground Guerrilla Active per Troop, Police and Village Guard there (1 per 2 in Mountains) (06 s2.3).", subAction: null, fields: [moves] },
@@ -46,3 +52,11 @@ export const actionForms: readonly ActionForm[] = [
   { id: "pkk.extort", label: "Extort", cost: "0", summary: "Gain 1 Resource, and flip 1 Guerrilla Active, in each space with Pop 1 or more, PKK Control, an Underground Guerrilla and no Displacement marker, and in each external box whose host is Host or Tolerant and that has an Underground Guerrilla (06 s5.2).", subAction: null, fields: [] },
   { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", summary: "Needs Law 3175. In up to 2 spaces with an Underground Guerrilla and a Village Guard: remove up to 2 Guards in total, and in each space flip 1 Guerrilla Active and place PKK Harm. Europe -1 (06 s5.3).", subAction: null, fields: [{ key: "guards", label: "Guards", kind: "number", default: "1" }], timing: "before" },
 ];
+
+/** Form choices that depend on active cards. Rules still validate on the server. */
+export function formsFor(state: GameState): readonly ActionForm[] {
+  return actionForms.map(f => f.id !== "pkk.rally" || f.subAction === null ? f : {
+    ...f, subAction: {...f.subAction, maxSpaces: modifierLimit(state, MOD.extraAgitate, "maxSpaces", 1)},
+    fields: hasModifier(state, MOD.academy) ? [...f.fields, {key: "extra", label: "Academy extra recruits", kind: "number" as const}] : f.fields,
+  });
+}

@@ -95,7 +95,7 @@ Return removes one Displacement marker for 3 Resources by Civic Action. It is le
 4. Guards add to Sweep and Garrison activation in their space (local knowledge). They do not add to Assault.
 5. Upkeep: 1 Resource per 2 Guards each Propaganda round (DD-08.3) [Q-347].
 6. Removal: PKK Attack (after Troops and Police), Strike Collaborators (with a PKK Harm marker), upkeep failure, events. A removed Guard never becomes a PKK piece (DD-08.4).
-7. Guard Abuse events: when such a card is executed, if a Guard shares a space with any Harm marker, Legitimacy -1 and remove one Guard there. Card text says "some guards", not a share [F-012; Q-193 is Low].
+7. Guard Abuse events: when such a card is executed, in every space where a Guard shares a space with any Harm marker, Legitimacy -1 and remove one Guard there, once per qualifying space (DEC-57). Card text says "some guards", not a share [F-012; Q-193 is Low].
 8. Guards have no victory score and no independent aim [F-057].
 
 ## 5. Host postures (DD-09)
@@ -107,8 +107,8 @@ Return removes one Displacement marker for 3 Resources by Civic Action. It is le
 | Host | Guerrillas or Bases | Normal | +1 | Not allowed |
 | Tolerant | Guerrillas only (KDP and PUK: Bases too after Northern Iraq Vacuum) | Normal | +1 | Not allowed (allowed after Northern Iraq Vacuum) |
 | Restricted | None | +1 Resource; group Activates | 0 | Allowed (KDP and PUK) |
-| Hostile | None | Not allowed. Guerrillas in the box are always Active | 0 | Allowed (KDP and PUK) |
-| Aligned with Turkey (KDP, PUK) | None | Not allowed. Guerrillas always Active | 0 | Allowed, no extra cost; no Mountain modifier for Assault |
+| Hostile | None | Not allowed. Guerrillas in the box are Active, except that Reset flips them Underground (prototype DEC-53) | 0 | Allowed (KDP and PUK) |
+| Aligned with Turkey (KDP, PUK) | None | Not allowed. Guerrillas Active, except that Reset flips them Underground (prototype DEC-53) | 0 | Allowed, no extra cost; no Mountain modifier for Assault |
 
 Syria-Bekaa never allows Cross-Border. The C1 and C2 hot pursuit exception for the KDP Zone is in 06, section 3.2.
 

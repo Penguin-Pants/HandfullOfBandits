@@ -218,8 +218,8 @@ Thresholds live in scenario files, because they differ per scenario.
 | `placePieces` | faction, piece, count, space or choice, state |
 | `removePieces` | piece filter, count, space or choice, destination |
 | `movePieces` | piece filter, count, from, to |
-| `forEachSpace` | filter (condition terms), min, max, nested effect list. The executing faction picks min to max matching spaces. The nested effects run once per picked space, in pick order |
-| `forEachPiece` | piece filter, filter (condition terms), min, max, nested effect list. Same as `forEachSpace` for pieces |
+| `forEachSpace` | filter (condition terms), min, max, nested effect list. The executing faction picks min to max matching spaces. With `all: true`, run automatically once in every matching space; min and max apply only to choices. The nested effects run once per space, in pick order (or map order for all) |
+| `forEachPiece` | `piece`, optional `state`, `where`, `min`, `max`, `effects`. Pick a count, then one piece location per pick. A location can repeat up to its original piece inventory. Nested effects use `selected` |
 | `setPieceState` | piece, from state, to state, space, count or all |
 | `shiftLevel` | space or choice, direction, steps |
 | `adjustTrack` | track, delta |
@@ -347,3 +347,5 @@ The loader computes a SHA-256 hash of the canonical package content (sorted keys
 5. If a module major version is gone, the session opens read-only and reports "module version unavailable".
 
 Next step: read 05-rules-engine-spec.md.
+
+Schema 2 (Phase 3a): `spaceIn {spaces: [...]}` tests explicit space IDs. Card effects add `addModifier` and `forEachPiece`. The loader also accepts schema 1 packages. Kurdish ruleset R2 adds Scenario A execution.

@@ -9,3 +9,5 @@ export const sequenceModels: Readonly<Record<string, { readonly players: number 
 
 /** Propaganda phase handler IDs a package may list (research 05 s6). */
 export const propagandaPhaseIds: readonly string[] = Object.keys(propagandaPhases);
+
+export { MOD as cardModifiers, MOD_PARAMS as cardModifierParameters } from "../coin/modifiers.ts";

@@ -135,7 +135,7 @@ export interface Draft {
   readonly op: string;
   readonly plan: PlanState;
   readonly sa: { readonly action: string; readonly timing: "before" | "after" } | null;
-  readonly subAction: { readonly action: string; readonly space: string; readonly params: Readonly<Record<string, number>> } | null;
+  readonly subActions: readonly { readonly action: string; readonly space: string; readonly params: Readonly<Record<string, number>> }[];
 }
 
 export function toCommand(faction: string, draft: Draft, forms: readonly { id: string; fields: readonly FormField[] }[]): AnyCommand {
@@ -148,7 +148,7 @@ export function toCommand(faction: string, draft: Draft, forms: readonly { id: s
       op: draft.op,
       ...partOf(fields(draft.op), draft.plan.op),
       sa: draft.sa === null ? null : { action: draft.sa.action, ...partOf(fields(draft.sa.action), draft.plan.sa), timing: draft.sa.timing },
-      subActions: draft.subAction === null ? [] : [draft.subAction],
+      subActions: draft.subActions,
     },
   };
 }

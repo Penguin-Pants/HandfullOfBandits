@@ -27,7 +27,7 @@ function check(ruleset: Ruleset, state: GameState, command: AnyCommand): Violati
   if (sequence.length > 0) return sequence;
   const card = state.deck.currentCard === null ? undefined : ruleset.cards[state.deck.currentCard];
   const v = (code: string, message: string): Violation[] => [{ code, message, ruleRef, location: null }];
-  if (card === undefined || card.type !== "event") return v("noEvent", "The current card has no Event to execute.");
+  if (card === undefined || !["event", "capability", "momentum"].includes(card.type)) return v("noEvent", "The current card has no Event to execute.");
   const side = SIDES.find((s) => s === command["side"]);
   if (side === undefined) return v("badSide", "Choose side unshaded or shaded.");
   if (!card.encoded || card[side] === null) return v("notEncoded", `${card.id} ${side} is not encoded.`);

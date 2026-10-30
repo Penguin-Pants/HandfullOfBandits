@@ -32,6 +32,7 @@ export interface ActionOptions {
 }
 
 export interface ActionHandler {
+  readonly timing?: "before" | "after";
   readonly id: string;
   readonly faction: FactionId;
   readonly kind: "op" | "sa";
