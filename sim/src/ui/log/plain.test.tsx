@@ -5,10 +5,10 @@ import { turnOf } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { causeOf } from "../../server/cause.ts";
 import { boardView } from "../../server/view.ts";
-import type { HistoryEntry, HistoryItem } from "../api.ts";
+import type { HistoryEntry, HistoryItem, ValidationResult } from "../api.ts";
 import { Tip } from "../common/Tip.tsx";
 import { LogLines } from "./LogLines.tsx";
-import { actionTitle, plainLines } from "./plain.ts";
+import { actionTitle, plainLines, previewLine } from "./plain.ts";
 
 // UI clarity round R1: plain-language log lines; R7: tooltips.
 afterEach(cleanup);
@@ -139,5 +139,19 @@ describe("causeOf (server)", () => {
     expect(causeOf(kurdish.ruleset, "05 s6.3")).toEqual({ kind: "phase", id: "upkeep" });
     expect(causeOf(kurdish.ruleset, "coin.control")).toBeNull();
     expect(causeOf(kurdish.ruleset, null)).toBeNull();
+  });
+});
+
+describe("preview lines (UC-9)", () => {
+  it.each([
+    [{ type: "adjustTrack", track: "resources.pkk", delta: -1 }, "PKK Resources −1"],
+    [{ type: "adjustTrack", track: "resources.state", delta: 4 }, "State Resources +4"],
+    [{ type: "placePieces", piece: "guerrilla", count: 1, space: "dersim", state: "underground" }, "Place 1 Underground Guerrilla in Dersim"],
+    [{ type: "placePieces", piece: "troops", count: 2, space: "diyarbakir-city", state: null }, "Place 2 Troops in Diyarbakır City (Amed)"],
+    [{ type: "setPieceState", piece: "guerrilla", space: "hakkari", from: "underground", to: "active", count: 1 }, "Flip 1 Guerrilla in Hakkari from Underground to Active"],
+    [{ type: "movePieces", piece: "police", state: null, toState: null, count: 1, from: "mardin-batman", to: "botan" }, "Move 1 Police from Mardin-Batman to Botan"],
+    [{ type: "shiftLevel", space: "botan", direction: "opposition", steps: 1 }, "Shift Botan 1 level toward Opposition"],
+  ])("%o reads %s", (effect, text) => {
+    expect(previewLine({ ...effect, ruleRef: "06", assumptionRef: null } as unknown as ValidationResult["preview"]["effects"][number], view)).toBe(text);
   });
 });

@@ -45,7 +45,7 @@ function answer(run: EventRun, cursor: Cursor, question: Question): JsonValue {
 
 function countOf(run: EventRun, cursor: Cursor, spec: CountSpec, what: string): number {
   if (typeof spec === "number") return spec;
-  const value = answer(run, cursor, { kind: "count", prompt: `How many ${what}? (${String(spec.min)} to ${String(spec.max)})`, options: [], min: spec.min, max: spec.max });
+  const value = answer(run, cursor, { kind: "count", prompt: `How many ${what}? (${String(spec.min)} to ${String(spec.max)})`, options: [], min: spec.min, max: spec.max, ...(cursor.selected === null ? {} : { space: cursor.selected }) });
   if (typeof value !== "number" || !Number.isSafeInteger(value) || value < spec.min || value > spec.max) ask(run, "badAnswer", `Answer ${String(spec.min)} to ${String(spec.max)} for ${what}.`);
   return value;
 }

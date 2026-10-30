@@ -7,7 +7,7 @@ import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "rea
 import type { BoardView, SpaceView } from "../api.ts";
 import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
-import { words } from "../common/names.ts";
+import { counted, words } from "../common/names.ts";
 import { spaceOfTrack } from "../status/tracks.ts";
 import { isInset, LAKE_VAN, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, RIVERS, TURKEY, type Point } from "./region.ts";
 
@@ -15,14 +15,21 @@ const INSET_W = 116;
 const INSET_H = 90;
 const TOKEN = 30;
 
+/** "2 Underground Guerrillas": count, face and piece in words. */
+const pieceText = (p: SpaceView["pieces"][number]): string => {
+  const text = counted(p.count, p.piece);
+  return p.face === "default" ? text : text.replace(/^(\d+) /, `$1 ${words(p.face)} `);
+};
+const markerText = (m: SpaceView["markers"][number]): string => `${String(m.count)} ${m.hidden ? "Covert (face down)" : words(m.marker)}${m.side === "default" ? "" : ` (${words(m.side)})`}`;
+const levelLine = (space: SpaceView): string => `Level: ${space.levelName === null ? "none" : words(space.levelName)} · Control: ${space.control === null ? "none" : words(space.control)}`;
+
 /** Hover text: name, Pop and terrain, level, Control, pieces and markers, one per line. */
 export function spaceTooltip(space: SpaceView): string {
-  const face = (f: string): string => (f === "default" ? "" : ` (${f})`);
   return [
     `${space.name} · ${space.kind === "domestic" ? `Pop ${String(space.pop)}${space.terrain === null ? "" : ` · ${space.terrain}`}` : "external box"}`,
-    `Level: ${space.levelName ?? "none"} · Control: ${space.control ?? "none"}`,
-    `Pieces: ${space.pieces.map((p) => `${String(p.count)} ${p.piece}${face(p.face)}`).join(", ") || "none"}`,
-    ...(space.markers.length === 0 ? [] : [`Markers: ${space.markers.map((m) => `${String(m.count)} ${m.hidden ? "covert" : m.marker}${face(m.side)}`).join(", ")}`]),
+    levelLine(space),
+    `Pieces: ${space.pieces.map(pieceText).join(", ") || "none"}`,
+    ...(space.markers.length === 0 ? [] : [`Markers: ${space.markers.map(markerText).join(", ")}`]),
     "Click to select · Shift-click to add · Drag to another space to move pieces",
   ].join("\n");
 }
@@ -364,20 +371,12 @@ export function SpaceDetail({ space }: { readonly space: SpaceView }) {
       <div className="muted">
         {space.kind} {space.terrain ?? ""} · Pop {space.pop}
       </div>
-      <div>Level: {space.levelName ?? "none"} · Control: {space.control ?? "none"}</div>
+      <div>{levelLine(space)}</div>
       <ul>
-        {space.pieces.map((p) => (
-          <li key={`${p.piece}-${p.face}`}>
-            {p.count} {p.piece} {p.face === "default" ? "" : p.face}
-          </li>
-        ))}
-        {space.markers.map((m) => (
-          <li key={`${m.marker}-${m.side}`}>
-            {m.count} {m.hidden ? "Covert (face down)" : m.marker} {m.side === "default" ? "" : m.side}
-          </li>
-        ))}
+        {space.pieces.map((p) => <li key={`${p.piece}-${p.face}`}>{pieceText(p)}</li>)}
+        {space.markers.map((m) => <li key={`${m.marker}-${m.side}`}>{markerText(m)}</li>)}
       </ul>
-      {space.tags.length > 0 && <div className="muted">Tags: {space.tags.join(", ")}</div>}
+      {space.tags.length > 0 && <div className="muted">Tags: {space.tags.map(words).join(", ")}</div>}
       {space.confidence !== null && <div className="muted">Confidence: {space.confidence}</div>}
     </section>
   );

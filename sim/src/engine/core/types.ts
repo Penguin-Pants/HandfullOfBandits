@@ -375,6 +375,8 @@ export interface Question {
   /** Plan questions: the free action to plan, and the SA it carries, so the UI can build it. */
   readonly action?: string;
   readonly sa?: string;
+  /** Count questions inside a per-space effect: the space the count is for. */
+  readonly space?: string;
 }
 
 export interface ValidationResult {
