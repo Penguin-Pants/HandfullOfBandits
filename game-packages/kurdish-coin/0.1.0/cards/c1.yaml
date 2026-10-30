@@ -45,7 +45,7 @@
     effects:
       - {type: placePieces, piece: guerrilla, count: 1, space: botan, state: underground}
       - {type: freeAction, action: pkk.attack, constraints: {spaces: [botan], sa: pkk.ambush}}
-  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); the Ambush handler follows PA-06 (replaced), which keeps the roll"}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); Ambush has no roll under PA-06 (accepted after the S0 playtests)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0073, S-0028, S-0063]
