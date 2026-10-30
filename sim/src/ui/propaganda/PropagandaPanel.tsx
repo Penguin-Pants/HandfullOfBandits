@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { AnyCommand, BoardView, LegalChoices } from "../api.ts";
 import { words } from "../common/names.ts";
 import { Stepper } from "../common/Stepper.tsx";
-import { guideOf } from "./phases.ts";
+import { guideOf, skipQuestion, stepName } from "./phases.ts";
 
 export interface PropagandaPanelProps {
   readonly view: BoardView;
@@ -24,6 +24,7 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
   const phase = propagandaPhases[propagandaStep] ?? "";
   const [spend, setSpend] = useState<Record<string, Record<string, string>>>({});
   const keys = SPEND_KEYS[phase];
+  const skip = skipQuestion(phase, view.status.emergencyMoves);
   const name = (id: string): string => view.spaces.find((x) => x.id === id)?.name ?? words(id);
   const set = (s: string, k: string, v: string): void => { setSpend({ ...spend, [s]: { ...spend[s], [k]: v } }); };
   const choose = (choice: unknown): void => { onCommit({ type: "PropagandaChoice", phase, choice }); };
@@ -51,8 +52,8 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
         </p>
       ))}
       <div className="row">
-        <button type="button" disabled={legal.advance !== true} onClick={() => { onCommit({ type: "Advance" }); }}>
-          Advance (Space)
+        <button type="button" disabled={legal.advance !== true} onClick={() => { if (skip === null || window.confirm(skip)) onCommit({ type: "Advance" }); }}>
+          {skip === null ? "Advance (Space)" : `Skip ${stepName(phase)} (Space)`}
         </button>
       </div>
       {phase === "legitimacy" && view.status.emergencyMoves.length > 0 && (

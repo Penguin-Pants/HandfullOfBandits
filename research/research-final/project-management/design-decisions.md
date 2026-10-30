@@ -201,6 +201,12 @@ Source: section 6 of `package-b-coin-design/11-critical-design-review.md` (IR-31
 6. DD-02 note: the Scenario B run is one data point toward the flip trigger, not a trigger.
 7. Deferred to playtest, not changed: the Scenario B State threshold (IR-37; test 46 only after items 4 and 5 are tested) and a Legitimacy drain at Europe 5 (IR-39).
 
+## DD-20 Changes accepted after the S0 playtests
+
+Source: `playtestresults.md` (October 2026, finding D2).
+
+1. No income in the final Propaganda round. The Resources phase is skipped in the round that ends the game. Reason: the income came after the last card and could not be spent.
+
 ## Decision record
 
 | ID | Claude input | Sol input | CT lessons | Final |

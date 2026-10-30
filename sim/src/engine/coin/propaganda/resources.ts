@@ -32,10 +32,14 @@ export const resourcesPhase: PropagandaPhase = {
   ruleRef,
   check: () => [],
   run(ctx) {
-    const gain = income(ctx.ruleset, ctx.state);
+    // No income in the final round: it comes after the last card and could not be spent (designer, playtest D2).
+    const final = ctx.ruleset.scenarios[ctx.state.meta.scenarioId]?.finalRound ?? 0;
+    const last = final > 0 && ctx.state.turn.propagandaRound >= final;
+    if (last) ctx.log("EffectSkipped", { effect: "income", reason: "finalRound" }, ruleRef);
+    const gain = last ? { state: 0, pkk: 0 } : income(ctx.ruleset, ctx.state);
     for (const faction of [FACTION.state, FACTION.pkk] as const) {
       const track = ctx.ruleset.factions.find((f) => f.id === faction)?.resourcesTrack ?? null;
-      if (track !== null) ctx.apply({ type: "adjustTrack", track, delta: gain[faction], ruleRef, assumptionRef: null });
+      if (track !== null && !last) ctx.apply({ type: "adjustTrack", track, delta: gain[faction], ruleRef, assumptionRef: null });
       ctx.write((s) => ({ ...s, history: { ...s.history, [`income.${faction}`]: gain[faction] } }));
     }
   },
