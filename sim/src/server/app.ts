@@ -25,7 +25,7 @@ function command(value: unknown): AnyCommand {
   return value as AnyCommand;
 }
 
-const TYPES: Readonly<Record<string, string>> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
+const TYPES: Readonly<Record<string, string>> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png" };
 
 /** Serve the built UI (`npm run build`) from `uiDir`; unknown paths get index.html. */
 function serveUi(app: FastifyInstance, uiDir: string): void {

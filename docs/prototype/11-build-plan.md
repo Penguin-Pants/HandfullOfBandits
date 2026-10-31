@@ -486,6 +486,12 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 
 **IC-3a:** Designer plays Scenario A to the end in the UI. Notes export. Matches stage 0 of the research playtest plan (12 s2).
 
+### Board art follow-up (DEC-59, 2026-10-31)
+
+**Status: implemented and locally verified.** The designer's visual reference now guides both the draft printed board and the simulator surface. Separate generated atlas artwork adds light parchment, illustrated ridges and sage foothills. Existing vectors retain regions, borders, rivers, labels, tracks and game pieces. Research 03 and `map.yaml` remain authoritative; geometry and rule data did not change. The image is illustrative, not terrain evidence. Shared artwork is in `map/atlas-terrain.png`; Vite copies the map asset directory into the built UI. Serve the SVG with its adjacent PNG.
+
+TWO-PASS REVIEW is recorded in `16-board-art-direction.md`. Fix: dark-mode passive level badges had insufficient contrast; a browser assertion failed, then passed after map-local light panel colors. Drop: no topology or rule defect reproduced. No new Decide or Propose item. Validation: `make check`, 807 tests in 62 files, UI build and S0/Scenario A browser checks. Browser checks include artwork decoding and dark-theme label contrast. Light/dark UI and the printed board were rendered for inspection. IC-3a remains open; this artwork does not replace the designer's end-to-end Scenario A playtest.
+
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
