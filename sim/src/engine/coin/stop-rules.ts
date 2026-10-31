@@ -43,7 +43,7 @@ function probes(ruleset: Ruleset, op: string, space: string): JsonObject[] {
 export function hasNonPassChoice(ruleset: Ruleset, state: GameState, faction: FactionId): boolean {
   const boxes = legalBoxes(ruleset, state, faction);
   const card = state.deck.currentCard === null ? undefined : ruleset.cards[state.deck.currentCard];
-  if (boxes.includes(BOX.event) && card?.type === "event" && card.encoded) return true;
+  if (boxes.includes(BOX.event) && card !== undefined && ["event","capability","momentum"].includes(card.type) && card.encoded) return true;
   return legalOps(ruleset, state, faction).length > 0;
 }
 

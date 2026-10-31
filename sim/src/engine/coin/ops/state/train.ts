@@ -1,3 +1,5 @@
+import { hasModifier } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
 // Train (research 06 s2.1): per selected space one of three options, then optional Civic Action in
 // one selected space (07 s1.3).
 import { stackingRoom } from "../../../core/effects/common.ts";
@@ -67,7 +69,7 @@ export const train: ActionHandler = {
       } else if (choice.option === "guards") {
         const max = param(ruleset, "train.maxGuards", "number");
         if (state.flags[FLAG.law3175] !== true) v("trainGuardsLaw", "Village Guards need the Law 3175 event (06 s2.1 item 2).");
-        if (!mountainOrPlain || !controlled || count(state, loc, PIECE.police) === 0) v("trainGuardsWhere", "Guards need a Mountain or Plain space with State Control and Police.");
+        if (!mountainOrPlain || !controlled || (count(state, loc, PIECE.police) === 0 && !hasModifier(state, MOD.tribalAllies))) v("trainGuardsWhere", "Guards need a Mountain or Plain space with State Control and Police.");
         if (choice.count < 1 || choice.count > max) v("trainGuardsCount", `Place 1 to ${String(max)} Village Guards.`);
         if (choice.count > stackingRoom(ruleset, state, loc, PIECE.guards)) v("trainGuardsStacking", "Guard stacking limit (03 s5 item 4).");
         add(PIECE.guards, choice.count);

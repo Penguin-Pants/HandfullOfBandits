@@ -110,3 +110,19 @@ export function storedSteps(db: Db, branchId: string): { startHash: string; step
     steps: actions.slice(1).map((a) => ({ id: a.action_id, commands: (commands.all(a.action_id) as { payload: string }[]).map((c) => JSON.parse(c.payload) as AnyCommand), hashAfter: a.state_hash_after })),
   };
 }
+
+/** Append a saved operation's reply atomically, retaining its original undo boundary. */
+export function continueAction(db: Db, actionId: string, input: ActionInput): CommitResult {
+  return db.transaction((): CommitResult => {
+    const action = getAction(db, actionId);
+    const session = db.prepare("SELECT head_action_id, current_branch_id FROM sessions WHERE session_id = ?").get(input.sessionId) as {head_action_id: string; current_branch_id: string} | undefined;
+    if (action?.status !== "pending" || action.session_id !== input.sessionId || session?.head_action_id !== actionId || session.current_branch_id !== action.branch_id || action.state_hash_after !== input.stateHashBefore) throw new RangeError("The pending action moved on.");
+    saveState(db, input.stateAfter);
+    const next = (table: "commands" | "log_entries"): number => (db.prepare(`SELECT COALESCE(MAX(n), 0) + 1 AS next FROM ${table} WHERE action_id = ?`).get(actionId) as {next: number}).next;
+    const commandIds = insertCommands(db, actionId, input.commands, next("commands"));
+    const entryIds = insertEntries(db, actionId, input.entries, next("log_entries"));
+    db.prepare("UPDATE actions SET state_hash_after = ?, status = ? WHERE action_id = ?").run(input.stateAfter.hash, input.status, actionId);
+    db.prepare("UPDATE sessions SET updated_at = ? WHERE session_id = ?").run(now(), input.sessionId);
+    return {actionId, commandIds, entryIds};
+  })();
+}

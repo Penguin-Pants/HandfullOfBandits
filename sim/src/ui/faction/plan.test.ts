@@ -93,7 +93,7 @@ describe("planReducer", () => {
 describe("toCommand", () => {
   it("builds a ChooseOperation with values, moves, the SA and a sub-action", () => {
     const plan = run(into, { type: "drag", from: "hakkari", to: "botan" }, { type: "target", target: "sa" }, { type: "click", id: "dersim", add: false }, { type: "value", side: "sa", loc: "dersim", key: "count", value: "2" });
-    const command = toCommand("pkk", { box: "opSa", op: "pkk.march", plan, sa: { action: "pkk.rally", timing: "after" }, subAction: null }, forms);
+    const command = toCommand("pkk", { box: "opSa", op: "pkk.march", plan, sa: { action: "pkk.rally", timing: "after" }, subActions: [] }, forms);
     expect(command).toEqual({
       type: "ChooseOperation", faction: "pkk", box: "opSa",
       plan: { op: "pkk.march", locations: ["botan"], perLocation: { botan: { moves: [{ from: "hakkari", count: 1 }] } }, sa: { action: "pkk.rally", locations: ["dersim"], perLocation: { dersim: { count: 2 } }, timing: "after" }, subActions: [] },

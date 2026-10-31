@@ -1,6 +1,8 @@
 // Session service (11 P2-11; 03 s4): wraps the engine and the store. The only writer to SQLite.
 // A session reloads its rules from the stored package content (04 s10.3, DEC-12). A changed code
 // fingerprint forces a replay check on first load (DEC-19): identical resumes, else read-only.
+import { searchAnnotations } from "../store/search.ts";
+import { backupStore } from "../store/backup.ts";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { buildContext } from "../annotate/context.ts";
@@ -16,7 +18,7 @@ import { replaySteps } from "../engine/replay.ts";
 import { loadPackage, packageContent, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
 import type { PackageData, PackageIssue } from "../package/validate.ts";
 import type { Db } from "../store/migrate.ts";
-import { commitAction, listActions, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
+import { continueAction, commitAction, listActions, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
 import { listAnnotations, saveAnnotation, type Anchor, type AnnotationRow } from "../store/repos/annotations.ts";
 import { listCategories, type CategoryRow } from "../store/repos/categories.ts";
 import { listCommands } from "../store/repos/commands.ts";
@@ -28,7 +30,8 @@ import { loadState } from "../store/repos/states.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { codeFingerprint } from "./fingerprint.ts";
 import { cardTitle, causeOf, type Cause } from "./cause.ts";
-import { actionForms } from "./forms.ts";
+import { operationState } from "../engine/coin/ops/choose-operation.ts";
+import { formsFor } from "./forms.ts";
 import { filterRows, reviewRow, type ReviewFilter, type ReviewRow } from "./review.ts";
 import { undoLast, type UndoResult } from "./undo.ts";
 import { entryText } from "./text.ts";
@@ -132,6 +135,7 @@ export class SessionService {
     if (scenario === undefined) throw new ServiceError(404, `Unknown scenario "${input.scenarioId}".`);
     if (scenario.blockedBy.length > 0) throw new ServiceError(422, `Scenario "${input.scenarioId}" cannot start.`, scenario.blockedBy);
     if (!Number.isSafeInteger(input.seed) || input.seed < 0) throw new ServiceError(400, "The seed must be a safe integer of 0 or more.");
+    backupStore(this.db);
     const m = loaded.data.manifest;
     savePackageVersion(this.db, {
       packageHash: loaded.hash, packageId: m.packageId, version: m.version, rulesetVersion: m.rulesetVersion, schemaVersion: m.schemaVersion,
@@ -192,20 +196,21 @@ export class SessionService {
    * Apply a command and commit it as one action. `headActionId` must be the current head:
    * a stale writer (a second tab) is rejected (11 P2-11 risk).
    */
-  submit(sessionId: string, command: AnyCommand, headActionId: string): { actionId: string; head: Head; entries: readonly LogEntryRow[] } {
+  submit(sessionId: string, command: AnyCommand, headActionId: string, headStateHash?: string): { actionId: string; head: Head; entries: readonly LogEntryRow[] } {
     const { session, head, ruleset } = this.session(sessionId);
     if (session.status === "readOnly") throw new ServiceError(409, "The session is read-only: rules code changed since it was played.");
-    if (headActionId !== head.actionId) throw new ServiceError(409, "The session moved on. Reload before acting.", { head: head.actionId });
+    this.checkHead(head, headActionId, headStateHash);
     const result = this.engine.apply(ruleset, head.state, command);
     if (!result.ok) throw new ServiceError(422, "The command is not legal.", result.validation);
     const t = result.transition;
     const turn = head.state.turn;
     const faction = typeof command["faction"] === "string" ? command["faction"] : null;
-    const commit = commitAction(this.db, {
+    const write = head.state.pending?.resume?.kind === "operation" ? (input: Parameters<typeof commitAction>[1]) => continueAction(this.db, head.actionId, input) : (input: Parameters<typeof commitAction>[1]) => commitAction(this.db, input);
+    const commit = write({
       sessionId, kind: KIND[command.type] ?? "advance", faction, cardId: head.state.deck.currentCard, campaign: turn.campaign, propagandaRound: turn.propagandaRound,
       cardIndex: turn.cardIndex, phase: turn.phase, box: typeof command["box"] === "string" ? command["box"] : command.type === "ChooseEvent" ? "event" : command.type === "Pass" ? "pass" : null,
       summary: `${command.type}${faction === null ? "" : ` by ${faction}`}`, stateHashBefore: head.stateHash, stateAfter: this.stateInput(ruleset, t.state, t.stateHash),
-      status: "committed", commands: [{ type: command.type, payload: command, validation: result.validation, rngBefore: head.state.rng }],
+      status: t.state.pending?.resume?.kind === "operation" ? "pending" : "committed", commands: [{ type: command.type, payload: command, validation: result.validation, rngBefore: head.state.rng }],
       entries: t.logEntries.map((e) => ({ ...e, text: entryText(e) })),
     });
     for (const e of t.logEntries.filter((x) => x.kind === "RoundMetrics")) {
@@ -221,13 +226,14 @@ export class SessionService {
    */
   legalChoices(sessionId: string): JsonValue {
     const { head, ruleset } = this.session(sessionId);
-    const state = head.state;
+    const resume = head.state.pending?.resume;
+    const state = operationState(head.state);
     const faction = activeFaction(state);
     if (faction === null) {
       const advance = this.engine.validate(ruleset, state, { type: "Advance" });
-      return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })), forms: actionForms } as unknown as JsonValue;
+      return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })), forms: formsFor(state) } as unknown as JsonValue;
     }
-    const open = legalBoxes(ruleset, state, faction);
+    const open = resume === undefined ? legalBoxes(ruleset, state, faction) : [resume.box];
     // What each box leaves open to the other faction and who is First Eligible next card (05 s2.3, s2.4).
     const first = faction === state.initiative.firstEligible;
     const other = first ? state.initiative.secondEligible : state.initiative.firstEligible;
@@ -239,8 +245,8 @@ export class SessionService {
       nextFirst: first ? (ruleset.sequence.swapAfter.includes(box) ? other : faction) : null,
     }));
     const ops = legalOps(ruleset, state, faction, Number.MAX_SAFE_INTEGER).map((c) => (c["plan"] as { op: string; locations: string[] }));
-    const actions = actionForms
-      .filter((f) => actionHandlers[f.id]?.faction === faction)
+    const actions = formsFor(state)
+      .filter((f) => actionHandlers[f.id]?.faction === faction && (resume === undefined || f.id === resume.op))
       .map((form) => {
         const handler = actionHandlers[form.id];
         const where = ops.filter((p) => p.op === form.id).map((p) => p.locations[0] ?? "");
@@ -249,7 +255,7 @@ export class SessionService {
         return { ...form, kind: "op", ok: where.length > 0, reason: where.length > 0 ? null : (probe.violations[0]?.message ?? "No legal location."), locations: [...new Set(where)] };
       });
     // Every form, for an Event's free action of either faction (05 s5 item 4).
-    return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions, forms: actionForms } as unknown as JsonValue;
+    return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions, forms: formsFor(state) } as unknown as JsonValue;
   }
 
   history(sessionId: string): { action: ActionRow; entries: HistoryEntry[]; notes: number }[] {
@@ -320,10 +326,10 @@ export class SessionService {
   }
 
   /** Undo the head action (06 s6). `headActionId` guards against a stale tab. */
-  undo(sessionId: string, headActionId: string): UndoResult & { readonly state: Head } {
+  undo(sessionId: string, headActionId: string, headStateHash?: string): UndoResult & { readonly state: Head } {
     const { session, head } = this.session(sessionId);
     if (session.status === "readOnly") throw new ServiceError(409, "The session is read-only.");
-    if (headActionId !== head.actionId) throw new ServiceError(409, "The session moved on. Reload before acting.", { head: head.actionId });
+    this.checkHead(head, headActionId, headStateHash);
     try {
       const result = undoLast(this.db, sessionId, session.current_branch_id);
       return { ...result, state: this.head(sessionId) };
@@ -336,8 +342,14 @@ export class SessionService {
   /** Notes across sessions for the review screen (07 s7). */
   review(filter: ReviewFilter): ReviewRow[] {
     const sessions = new Map(this.listSessions().map((s) => [s.session_id, s.name]));
-    const rows = [...sessions.keys()].flatMap((id) => listAnnotations(this.db, id).map((n) => reviewRow(n, sessions.get(id) ?? id)));
+    const notes = filter.q === undefined ? [...sessions.keys()].flatMap((id) => listAnnotations(this.db, id)) : searchAnnotations(this.db, filter.q);
+    const rows = notes.map((n) => reviewRow(n, sessions.get(n.session_id) ?? n.session_id));
     return filterRows(rows, filter);
+  }
+
+  private checkHead(head: Head, actionId: string, stateHash: string | undefined): void {
+    const versionRequired = head.state.pending?.resume?.kind === "operation" || listCommands(this.db, head.actionId).length > 1;
+    if (actionId !== head.actionId || (stateHash !== undefined && stateHash !== head.stateHash) || (versionRequired && stateHash === undefined)) throw new ServiceError(409, "The session moved on. Reload before acting.", {head: head.actionId, stateHash: head.stateHash});
   }
 
   private rules(hash: string): { ruleset: Ruleset; data: PackageData } {

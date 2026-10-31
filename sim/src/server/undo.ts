@@ -14,7 +14,7 @@ export interface UndoResult {
 /** Undo the head action of `branchId`. Throws RangeError when there is nothing to undo. */
 export function undoLast(db: Db, sessionId: string, branchId: string): UndoResult {
   return db.transaction((): UndoResult => {
-    const live = listActions(db, branchId).filter((a) => a.status === "committed");
+    const live = listActions(db, branchId).filter((a) => a.status !== "undone");
     const target: ActionRow | undefined = live.at(-1);
     const previous = live.at(-2);
     if (target === undefined || previous === undefined || target.kind === "setup") throw new RangeError("Nothing to undo.");

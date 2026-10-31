@@ -95,7 +95,7 @@ Each faction starts the campaign with two Pivotal Event cards in hand (DD-13.4).
 |---|---|---|---|---|---|
 | State | Area Domination | C4 | Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more | Free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost | E-0202; E-0204; F-036 |
 | State | Coercive Diplomacy on Syria | C5 | Syria posture is Tolerant or Restricted and Legitimacy is 5 or more | Syria posture to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing | E-0124; E-0126; E-0127; E-0018; E-0019; F-020 |
-| PKK | ARGK Formed | C1 | 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases | Place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in those spaces Underground, PKK +3 Resources | E-0075 |
+| PKK | ARGK Formed | C1 | 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases | Place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in every space with a PKK Base Underground (DEC-55), PKK +3 Resources | E-0075 |
 | PKK | Serhildan | C3 | Total Opposition is 14 or more and Mardin-Batman or Botan is at Opposition (DD-19.5) | Shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1 | E-0173; E-0271; E-0272; F-035 |
 
 Procedure (CT 2.3.7):
@@ -177,7 +177,7 @@ State first. Do not adjust Control until both factions finish (CT 6.4).
 ### 6.8 Reset phase
 
 1. Remove one Coercion marker from each space that has any (CT 6.5).
-2. Flip all Guerrillas Underground (CT 6.5).
+2. Flip all Guerrillas Underground, including those in Hostile or Aligned host boxes (CT 6.5; prototype DEC-53, designer decision 2026-10-30).
 3. Discard Momentum cards (CT 6.5).
 4. Remove Restraint Broken markers.
 5. Advance the Campaign marker. Apply the structural changes for the new Campaign (10, section 6.1).

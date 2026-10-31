@@ -8,6 +8,7 @@ import { spaceKind, terrain } from "./map.ts";
 
 const condition: z.ZodType<SpaceCondition> = z.lazy(() =>
   z.discriminatedUnion("type", [
+    z.strictObject({type: z.literal("spaceIn"), spaces: idList(1)}),
     z.strictObject({ type: z.literal("spaceKind"), kind: spaceKind }),
     z.strictObject({ type: z.literal("terrainIn"), terrain: uniqueList(terrain, 1) }),
     z.strictObject({ type: z.literal("spaceLevelIn"), levels: uniqueList(z.int(), 1) }),
@@ -50,8 +51,10 @@ const effect: z.ZodType<CardEffect> = z.lazy(() =>
     z.strictObject({ type: z.literal("choice"), options: z.array(z.strictObject({ label: text, effects: z.array(effect) })).min(2) }),
     z.strictObject({ type: z.literal("conditional"), if: condition, then: z.array(effect), else: z.array(effect).default([]) }),
     z
-      .strictObject({ type: z.literal("forEachSpace"), where: condition, min: count, max: count.min(1), effects: z.array(effect).min(1) })
+      .strictObject({ type: z.literal("forEachSpace"), where: condition, all: z.boolean().default(false), min: count.default(0), max: count.min(1).default(1), effects: z.array(effect).min(1) })
       .refine((e) => e.min <= e.max, { message: "min must not exceed max", path: ["max"] }),
+    z.strictObject({type: z.literal("forEachPiece"), piece: id, state: nullableId, where: condition, min: count, max: count.min(1), effects: z.array(effect).min(1)}).refine(e => e.min <= e.max, {message: "min must not exceed max", path: ["max"]}),
+    z.strictObject({ type: z.literal("addModifier"), id, duration: z.enum(["game", "untilReset"]), params: z.record(id, z.int()).default({}) }),
     z.strictObject({ type: z.literal("freeAction"), action: id, constraints: z.record(z.string(), z.json()).default({}) }),
   ]),
 );

@@ -1,6 +1,7 @@
 // Turn flow (research 05 s2.2 steps 1, 5 and 6; 05 s5 item 7; CT 6.0).
 import type { Exec } from "../core/exec.ts";
 import { AnswerNeeded, runEffects } from "./events.ts";
+import { openPivotal } from "./pivotal.ts";
 import { PHASE } from "./phases.ts";
 import { startRound } from "./propaganda/pipeline.ts";
 import { adjustEligibility, cardComplete } from "./sequence/ct.ts";
@@ -40,6 +41,7 @@ export function revealNext(ctx: Exec): void {
       ctx.log("EffectSkipped", { effect: "always", card, reason: "needsChoice" }, `${card} Always`);
     }
   }
+  openPivotal(ctx);
 }
 
 /** When both factions have acted on the card, adjust eligibility and reveal the next card. */

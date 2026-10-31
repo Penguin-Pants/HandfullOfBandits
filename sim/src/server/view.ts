@@ -72,6 +72,8 @@ export interface BoardView {
     readonly cardIndex: number;
     readonly propagandaRound: number;
     readonly card: CardView | null;
+    readonly pending?: GameState["pending"];
+    readonly modifiers?: readonly {readonly id: string; readonly title: string; readonly duration: "game" | "untilReset"}[];
     /** Cards left face down in the draw piles, and cards already played. */
     readonly deckCount: number;
     readonly playedCount: number;
@@ -148,11 +150,13 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
     links: data.map.links.map((l) => ({ a: l.a, b: l.b, kind: l.kind })),
     factions: data.factions.map((f) => ({ id: f.id, name: f.name, color: factions.get(f.id)?.color ?? f.color })),
     status: {
+      pending: state.pending,
       campaign: state.turn.campaign,
       phase: state.turn.phase,
       cardIndex: state.turn.cardIndex,
       propagandaRound: state.turn.propagandaRound,
       card: card === null ? null : cardView(ruleset, card),
+      modifiers: state.modifiers.map(m => ({id: m.id, title: ruleset.cards[m.sourceCard]?.title ?? m.sourceCard, duration: m.duration})),
       deckCount: state.deck.piles.reduce((n, pile) => n + pile.length, 0),
       playedCount: state.deck.played.length,
       propagandaPhases: ruleset.sequence.propagandaPhases,

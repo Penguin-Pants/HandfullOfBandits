@@ -5,7 +5,8 @@ import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";
 import { count, isTerrain, pay, space, terrainRate } from "../common.ts";
-import { FACE, FACTION, PIECE, TERRAIN } from "../ids.ts";
+import { postureOf } from "../common-pkk.ts";
+import { FACE, FACTION, MARKER, PIECE, POSTURE, TERRAIN } from "../ids.ts";
 
 const ruleRef = "06 s2.4";
 
@@ -27,10 +28,10 @@ export const assault: ActionHandler = {
   kind: "op",
   ruleRef,
   accompanies: [],
-  check(ruleset, state, part) {
+  check(ruleset, state, part, options) {
     const out: Violation[] = [];
     for (const loc of part.locations) {
-      if (space(ruleset, loc)?.kind !== "domestic") out.push(at(loc, "assaultWhere", "Assault selects domestic spaces (Cross-Border comes in Phase 3a).", ruleRef));
+      if (space(ruleset, loc)?.kind !== "domestic" && !(options.sa === "state.cross-border" && options.saLocations.includes(loc) && ["kdp-zone", "puk-zone"].includes(loc))) out.push(at(loc, "assaultWhere", "Assault selects domestic spaces or its Cross-Border zone.", ruleRef));
       else if (count(state, loc, PIECE.troops) === 0 && assaultRemovals(ruleset, state, loc) === 0) out.push(at(loc, "assaultTroops", "Assault needs Troops (Police count in a City).", ruleRef));
       else if (targets(state, loc) === 0) out.push(at(loc, "assaultTargets", "No Active PKK piece is here. Underground Guerrillas protect Bases.", ruleRef));
     }
@@ -40,13 +41,14 @@ export const assault: ActionHandler = {
   execute(ctx, part, options) {
     for (const loc of part.locations) {
       if (!options.free) pay(ctx, FACTION.state, param(ctx.ruleset, "assault.costPerSpace", "number"), ruleRef, loc);
-      let left = assaultRemovals(ctx.ruleset, ctx.state, loc);
+      let left = options.sa === "state.cross-border" && options.saLocations.includes(loc) && postureOf(ctx.state, loc) === POSTURE.aligned ? count(ctx.state, loc, PIECE.troops) : assaultRemovals(ctx.ruleset, ctx.state, loc);
       const active = Math.min(left, count(ctx.state, loc, PIECE.guerrilla, FACE.active));
       if (active > 0) ctx.apply({ type: "removePieces", piece: PIECE.guerrilla, state: FACE.active, count: active, space: loc, to: "available", ruleRef, assumptionRef: null });
       left -= active;
       const bases = count(ctx.state, loc, PIECE.guerrilla) === 0 ? Math.min(left, count(ctx.state, loc, PIECE.pkkBase)) : 0;
       if (bases > 0) ctx.apply({ type: "removePieces", piece: PIECE.pkkBase, state: null, count: bases, space: loc, to: "available", ruleRef, assumptionRef: null });
       left -= bases;
+      if (active + bases > 0 && options.sa === "state.cross-border" && options.saLocations.includes(loc) && (ctx.state.spaces[loc]?.markers[MARKER.disputedHarm]?.["default"] ?? 0) === 0) ctx.apply({type: "placeMarker", marker: MARKER.disputedHarm, space: loc, side: "default", ruleRef: "06 s3.2", assumptionRef: null});
       if (left > 0) ctx.log("EffectSkipped", { effect: "assault", space: loc, count: left, reason: "noTarget" }, ruleRef, "PA-08");
     }
   },

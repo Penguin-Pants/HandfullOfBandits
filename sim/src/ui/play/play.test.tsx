@@ -32,7 +32,7 @@ describe("Play undo (T-UI-04)", () => {
     expect(await screen.findByText(/DK-012/, { selector: "span" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: /^State (First|Second) Eligible/ })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
-    await waitFor(() => { expect(undo).toHaveBeenCalledWith("S", "S-A3"); });
+    await waitFor(() => { expect(undo).toHaveBeenCalledWith("S", "S-A3", "S-A3"); });
     expect(await screen.findByText(/DK-001/, { selector: "span" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: /^PKK (First|Second) Eligible/ })).toBeTruthy();
   });

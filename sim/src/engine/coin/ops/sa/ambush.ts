@@ -1,3 +1,5 @@
+import { modifierLimit } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
 // Ambush (research 06 s5.1; PA-06): in up to 2 Attack spaces with an Underground Guerrilla, the
 // Attack there has no roll: 1 Guerrilla Activates and 1 State piece goes, with no attrition.
 // The Attack handler resolves it (attack.ts).
@@ -18,7 +20,7 @@ export const ambush: ActionHandler = {
   accompanies: ["pkk.attack"],
   check(ruleset, state, part, options) {
     const out: Violation[] = [];
-    const max = param(ruleset, "ambush.maxSpaces", "number");
+    const max = modifierLimit(state, MOD.ambush, "maxSpaces", param(ruleset, "ambush.maxSpaces", "number"));
     if (part.locations.length > max) out.push(at(null, "ambushSpaces", `Ambush selects at most ${String(max)} Attack spaces.`, ruleRef));
     for (const loc of part.locations) {
       if (!options.opLocations.includes(loc)) out.push(at(loc, "ambushNotAttack", "Ambush selects Attack spaces only.", ruleRef));

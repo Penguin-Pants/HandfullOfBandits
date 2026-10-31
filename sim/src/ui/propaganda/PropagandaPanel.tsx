@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { AnyCommand, BoardView, LegalChoices } from "../api.ts";
 import { words } from "../common/names.ts";
 import { Stepper } from "../common/Stepper.tsx";
+import { RedeployForm } from "./RedeployForm.tsx";
 import { guideOf, skipQuestion, stepName } from "./phases.ts";
 
 export interface PropagandaPanelProps {
@@ -56,6 +57,7 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           {skip === null ? "Advance (Space)" : `Skip ${stepName(phase)} (Space)`}
         </button>
       </div>
+      {phase === "redeploy" && <RedeployForm view={view} selected={selected} onChoose={choose} />}
       {phase === "legitimacy" && view.status.emergencyMoves.length > 0 && (
         <div className="row" aria-label="Emergency Rule step">
           <span>Move Emergency Rule to:</span>

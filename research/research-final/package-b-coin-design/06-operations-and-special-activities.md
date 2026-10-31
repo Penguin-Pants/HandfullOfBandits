@@ -245,6 +245,7 @@ Accompanies: Rally or March.
 2. Pay 2 Resources. Roll one die.
 3. Syria or PUK: 4 to 6, shift one step toward Host; 1, shift one step toward Hostile (backfire); 2 to 3, no effect.
 4. KDP: 5 to 6, shift one step toward Host; 1 to 2, shift one step toward Hostile (backfire); 3 to 4, no effect.
+5. If Host Pressure before Rally or March makes planned locations illegal, retain the roll and paid SA cost. The PKK chooses new legal locations for the same Operation before resolution continues (DEC-54; DEC-56).
 
 Evidence: the 1992 attempt to force host tolerance turned the KDP and PUK against the PKK [F-041 is Low; E-0080; E-0082]; host interests governed sanctuary [F-051]. Original design using the ADP 6.6.1 posture idea.
 

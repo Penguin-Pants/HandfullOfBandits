@@ -9,8 +9,8 @@ export const manifestSchema = z.strictObject({
   packageId: id,
   version: semver,
   rulesetVersion,
-  /** Keep 1 until Phase 2 ends (11 P1-04). */
-  schemaVersion: z.literal(1),
+  /** Current and previous package schemas (04 s10). */
+  schemaVersion: z.union([z.literal(1), z.literal(2)]),
   parent: z.strictObject({ version: semver, rulesetVersion }).optional(),
   changeDescription: text,
   title: text,

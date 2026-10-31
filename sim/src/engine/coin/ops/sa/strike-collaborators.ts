@@ -39,10 +39,10 @@ export const strikeCollaborators: ActionHandler = {
     if (total > max) out.push(at(null, "strikeGuards", `Remove at most ${String(max)} Guards in total.`, ruleRef));
     return out;
   },
-  cost: (ruleset, _state, part) => part.locations.length * param(ruleset, "strike.costPerSpace", "number"),
-  execute(ctx, part) {
+  cost: (ruleset, _state, part, options) => options.free ? 0 : part.locations.length * param(ruleset, "strike.costPerSpace", "number"),
+  execute(ctx, part, options) {
     for (const loc of part.locations) {
-      pay(ctx, FACTION.pkk, param(ctx.ruleset, "strike.costPerSpace", "number"), ruleRef, loc);
+      if (!options.free) pay(ctx, FACTION.pkk, param(ctx.ruleset, "strike.costPerSpace", "number"), ruleRef, loc);
       const n = guards(part, loc) ?? 0;
       if (n > 0) ctx.apply({ type: "removePieces", piece: PIECE.guards, state: null, count: n, space: loc, to: "available", ruleRef, assumptionRef: null });
       activate(ctx, loc, 1, ruleRef);

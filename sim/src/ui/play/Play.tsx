@@ -12,6 +12,7 @@ import { NoteBar } from "../notes/NoteBar.tsx";
 import { Board, Legend, SpaceDetail } from "../board/Board.tsx";
 import { CardTable } from "../cards/CardTable.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
+import { PivotalPanel } from "../pivotal/PivotalPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
 import { arrowsOf, emptyPlans, plansReducer, type PlanEvent } from "../faction/plan.ts";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
@@ -93,7 +94,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     if (data === null) return;
     setError(null);
     try {
-      const result = await api.submit(sessionId, command, data.head.actionId);
+      const result = await api.submit(sessionId, command, data.head.actionId, data.head.stateHash);
       last.current = { id: result.actionId, at: Date.now() };
       draft.current = null;
       dispatch({ type: "resetAll" });
@@ -137,7 +138,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     if (!window.confirm("Undo the last action?")) return;
     setError(null);
     try {
-      const result = await api.undo(sessionId, data.head.actionId);
+      const result = await api.undo(sessionId, data.head.actionId, data.head.stateHash);
       if (result.undoneAfterRandom) setError(`Undid ${result.undone}. It used a random result; the undo is flagged.`);
       last.current = { id: null, at: null };
       await load();
@@ -201,7 +202,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
         </div>
         <aside className="side" aria-label="Side panel" hidden={mapOnly}>
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
-          {view.status.phase === "propaganda" ? (
+          {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} /> : view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
           ) : (
             <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />

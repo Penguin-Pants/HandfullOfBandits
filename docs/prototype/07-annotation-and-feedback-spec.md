@@ -163,7 +163,9 @@ One file per export. Schema `coin-sim-export/1`.
 
 Relationships use IDs only. A validator checks that every reference in the file resolves inside the file (09-testing-and-replay.md, T-EXP).
 
-### 8.2 Markdown (Phase 4, minimal form in Phase 2)
+### 8.2 Markdown (Phase 4, minimal form in Phase 3a)
+
+Minimal export is implemented in P3a-08: `sim export <sessionId...> --format markdown [--db <file>] [--out <file>]`. It includes the scope and versions, assumptions, session metadata and result, debrief, action log with linked notes and notes without an action. Full sections 4 to 6 below remain P4-02.
 
 Structure for one or more sessions:
 

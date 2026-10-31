@@ -1,0 +1,1097 @@
+- id: DK-017
+  campaign: C2
+  title: Air Raids on Camps in Iraq (Mar 1987)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: Remove 1 Guerrilla from the KDP Zone, or 1 PKK Base there if no Guerrilla remains. Place a Disputed Harm
+      marker in the KDP Zone if it has none.
+    owner: state
+    effects:
+    - type: forEachSpace
+      where:
+        type: spaceIn
+        spaces:
+        - kdp-zone
+      min: 1
+      max: 1
+      effects:
+      - type: conditional
+        if:
+          type: spaceHas
+          pieces:
+          - guerrilla
+          markers: []
+        then:
+        - type: removePieces
+          piece: guerrilla
+          count: 1
+          space: selected
+        else:
+        - type: removePieces
+          piece: pkkBase
+          count: 1
+          space: selected
+      - type: conditional
+        if:
+          type: not
+          of:
+            type: spaceHas
+            pieces: []
+            markers:
+            - disputedHarm
+        then:
+        - type: placeMarker
+          marker: disputedHarm
+          space: selected
+        else: []
+    tier: T1
+    blockOnly: false
+  shaded:
+    text: 'Camps disperse: move up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground.'
+    owner: pkk
+    effects:
+    - type: choice
+      options:
+      - label: puk-zone
+        effects:
+        - type: movePieces
+          piece: guerrilla
+          count:
+            min: 0
+            max: 3
+          from: kdp-zone
+          to: puk-zone
+          toState: underground
+      - label: hakkari
+        effects:
+        - type: movePieces
+          piece: guerrilla
+          count:
+            min: 0
+            max: 3
+          from: kdp-zone
+          to: hakkari
+          toState: underground
+    tier: T1
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0168
+  - S-0246
+  - S-0251
+  date: '1987-03-04'
+  eventConfidence: Moderate
+- id: DK-018
+  campaign: C2
+  title: Killings at Pınarcık (Jun 1987)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: Place a Disputed Harm marker in Mardin-Batman. Place up to 2 Village Guards there (needs Law 3175). Europe
+      -1.
+    owner: state
+    effects:
+    - type: placeMarker
+      marker: disputedHarm
+      space: mardin-batman
+    - type: conditional
+      if:
+        type: flag
+        flag: law3175
+        value: true
+      then:
+      - type: placePieces
+        piece: guards
+        count:
+          min: 0
+          max: 2
+        space: mardin-batman
+      else: []
+    - type: adjustTrack
+      track: europe
+      delta: -1
+    tier: T2
+    blockOnly: false
+  shaded:
+    text: Place a Disputed Harm marker in Mardin-Batman. The PKK may pay 2 Resources to remove 1 PKK Harm marker
+      anywhere.
+    owner: pkk
+    effects:
+    - type: placeMarker
+      marker: disputedHarm
+      space: mardin-batman
+    - type: conditional
+      if:
+        type: trackAtLeast
+        track: resources.pkk
+        value: 2
+      then:
+      - type: choice
+        options:
+        - label: Keep Resources
+          effects: []
+        - label: Redress
+          effects:
+          - type: forEachSpace
+            where:
+              type: spaceHas
+              pieces: []
+              markers:
+              - pkkHarm
+            min: 0
+            max: 1
+            effects:
+            - type: adjustTrack
+              track: resources.pkk
+              delta: -2
+            - type: removeMarker
+              marker: pkkHarm
+              space: selected
+      else: []
+    tier: T2
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0169
+  - S-0158
+  date: '1987-06-20'
+  eventConfidence: Moderate
+- id: DK-019
+  campaign: C2
+  title: Syria Security Protocol (Jul 1987)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: The State conducts a free Diplomacy targeting Syria with +1.
+    owner: state
+    effects:
+    - type: freeAction
+      action: state.diplomacy
+      constraints:
+        spaces:
+        - syria-bekaa
+        bonus: 1
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Paper limits: Syria posture one step toward Host. The PKK conducts a free Rally in Syria-Bekaa.'
+    owner: pkk
+    effects:
+    - type: stepOrdinal
+      track: posture.syria
+      direction: previous
+      steps: 1
+    - type: freeAction
+      action: pkk.rally
+      constraints:
+        spaces:
+        - syria-bekaa
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0170
+  - S-0254
+  - S-0361
+  always:
+  - type: setTrack
+    track: posture.syria
+    value: tolerant
+    ifEquals: host
+  date: 1987-07
+  eventConfidence: High
+  mandatory: true
+- id: DK-020
+  campaign: C2
+  title: OHAL (Jul 1987)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Regional governor: the State conducts a free Garrison, then a free Sweep in one space.'
+    owner: state
+    effects:
+    - type: freeAction
+      action: state.garrison
+      constraints: {}
+    - type: freeAction
+      action: state.sweep
+      constraints:
+        maxLocations: 1
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Emergency rule draws scrutiny: Legitimacy -1. Europe +1.'
+    owner: pkk
+    effects:
+    - type: adjustTrack
+      track: legitimacy
+      delta: -1
+    - type: adjustTrack
+      track: europe
+      delta: 1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0055
+  - S-0129
+  - S-0130
+  - S-0257
+  - S-0302
+  - S-0041
+  - S-0042
+  - S-0043
+  - S-0044
+  - S-0060
+  - S-0097
+  always:
+  - type: setTrack
+    track: emergencyRule
+    value: ohal
+    ifEquals: martialLaw
+  date: '1987-07-19'
+  eventConfidence: High
+  mandatory: true
+- id: DK-021
+  campaign: C2
+  title: Attacks on Rival Newroz Gatherings (Mar 1987)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: Place a Disputed Harm marker in Botan or Mardin-Batman (State choice). Europe -1.
+    owner: state
+    effects:
+    - type: choice
+      options:
+      - label: botan
+        effects:
+        - type: placeMarker
+          marker: disputedHarm
+          space: botan
+      - label: mardin-batman
+        effects:
+        - type: placeMarker
+          marker: disputedHarm
+          space: mardin-batman
+    - type: adjustTrack
+      track: europe
+      delta: -1
+    tier: T2
+    blockOnly: false
+  shaded:
+    text: 'Block only: place a Disputed Harm marker in Botan or Mardin-Batman (PKK choice). No other effect.'
+    owner: pkk
+    effects:
+    - type: choice
+      options:
+      - label: botan
+        effects:
+        - type: placeMarker
+          marker: disputedHarm
+          space: botan
+      - label: mardin-batman
+        effects:
+        - type: placeMarker
+          marker: disputedHarm
+          space: mardin-batman
+    tier: T2
+    blockOnly: true
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0167
+  - S-0246
+  date: 1987-03
+  eventConfidence: Moderate
+- id: DK-022
+  campaign: C2
+  title: Special Strike Force Planned (Jul 1987)
+  type: capability
+  deckEligible: true
+  unshaded:
+    text: 'State Capability (Strike Force): Air Mobility may move up to 6 Troops among up to 4 spaces.'
+    owner: state
+    effects:
+    - type: addModifier
+      id: strike-force
+      duration: game
+      params:
+        maxTroops: 6
+        maxSpaces: 4
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Plan stalls: State Resources -3. PKK Resources +1.'
+    owner: pkk
+    effects:
+    - type: adjustTrack
+      track: resources.state
+      delta: -3
+    - type: adjustTrack
+      track: resources.pkk
+      delta: 1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0280
+  - S-0361
+  date: 1987-07
+  eventConfidence: Moderate
+- id: DK-023
+  campaign: C2
+  title: Final Anfal in Badinan (Aug 1988)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Border sealed: place 2 Troops in Hakkari and 1 in Botan.'
+    owner: state
+    effects:
+    - type: placePieces
+      piece: troops
+      count: 2
+      space: hakkari
+    - type: placePieces
+      piece: troops
+      count: 1
+      space: botan
+    tier: T2
+    blockOnly: false
+  shaded:
+    text: 'World attention to Kurds: Europe +1.'
+    owner: pkk
+    effects:
+    - type: adjustTrack
+      track: europe
+      delta: 1
+    tier: T2
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0287
+  - E-0286
+  - E-0284
+  - S-0452
+  - S-0467
+  - S-0451
+  - S-0209
+  date: '1988-08-25'
+  eventConfidence: High
+- id: DK-024
+  campaign: C2
+  title: Iraqi Kurdish Refugees Admitted (Aug-Sep 1988)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Humanitarian opening: Legitimacy +2. State Resources -2.'
+    owner: state
+    effects:
+    - type: adjustTrack
+      track: legitimacy
+      delta: 2
+    - type: adjustTrack
+      track: resources.state
+      delta: -2
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Camps under strain: place 1 Reception marker in Diyarbakır City. Europe +1.'
+    owner: pkk
+    effects:
+    - type: placeMarker
+      marker: reception
+      space: diyarbakir-city
+    - type: adjustTrack
+      track: europe
+      delta: 1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0290
+  - E-0289
+  - E-0291
+  - S-0451
+  - S-0209
+  - S-0248
+  - S-0461
+  date: 1988-09
+  eventConfidence: High
+- id: DK-025
+  campaign: C2
+  title: Attacks on Village Schools (Nov 1988)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: Place a PKK Harm marker in Mardin-Batman, Elazığ or Dersim (State choice). Europe -1.
+    owner: state
+    effects:
+    - type: choice
+      options:
+      - label: mardin-batman
+        effects:
+        - type: placeMarker
+          marker: pkkHarm
+          space: mardin-batman
+      - label: elazig
+        effects:
+        - type: placeMarker
+          marker: pkkHarm
+          space: elazig
+      - label: dersim
+        effects:
+        - type: placeMarker
+          marker: pkkHarm
+          space: dersim
+    - type: adjustTrack
+      track: europe
+      delta: -1
+    tier: T2
+    blockOnly: false
+  shaded:
+    text: 'Block only: place a PKK Harm marker in one of those spaces (PKK choice). No other effect.'
+    owner: pkk
+    effects:
+    - type: choice
+      options:
+      - label: mardin-batman
+        effects:
+        - type: placeMarker
+          marker: pkkHarm
+          space: mardin-batman
+      - label: elazig
+        effects:
+        - type: placeMarker
+          marker: pkkHarm
+          space: elazig
+      - label: dersim
+        effects:
+        - type: placeMarker
+          marker: pkkHarm
+          space: dersim
+    tier: T2
+    blockOnly: true
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0293
+  - S-0453
+  - S-0454
+  date: 1988-11
+  eventConfidence: Moderate
+- id: DK-026
+  campaign: C2
+  title: Local Elections (Mar 1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Institutions renewed: Legitimacy +2.'
+    owner: state
+    effects:
+    - type: adjustTrack
+      track: legitimacy
+      delta: 2
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Opposition mayors in the southeast: shift Diyarbakır City or Mardin-Batman one level toward Opposition.'
+    owner: pkk
+    effects:
+    - type: choice
+      options:
+      - label: diyarbakir-city
+        effects:
+        - type: shiftLevel
+          space: diyarbakir-city
+          direction: opposition
+          steps: 1
+      - label: mardin-batman
+        effects:
+        - type: shiftLevel
+          space: mardin-batman
+          direction: opposition
+          steps: 1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0297
+  - S-0457
+  - S-0458
+  date: '1989-03-26'
+  eventConfidence: High
+- id: DK-027
+  campaign: C2
+  title: Regional Force Doubled (1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: Place up to 4 Troops from Available in Botan and Hakkari. The State conducts a free Sweep in Botan.
+    owner: state
+    effects:
+    - type: choice
+      options:
+      - label: 0 in botan, 0 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: hakkari
+      - label: 0 in botan, 1 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: hakkari
+      - label: 0 in botan, 2 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 2
+          space: hakkari
+      - label: 0 in botan, 3 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 3
+          space: hakkari
+      - label: 0 in botan, 4 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 4
+          space: hakkari
+      - label: 1 in botan, 0 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: hakkari
+      - label: 1 in botan, 1 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: hakkari
+      - label: 1 in botan, 2 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 2
+          space: hakkari
+      - label: 1 in botan, 3 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 3
+          space: hakkari
+      - label: 2 in botan, 0 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 2
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: hakkari
+      - label: 2 in botan, 1 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 2
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: hakkari
+      - label: 2 in botan, 2 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 2
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 2
+          space: hakkari
+      - label: 3 in botan, 0 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 3
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: hakkari
+      - label: 3 in botan, 1 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 3
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 1
+          space: hakkari
+      - label: 4 in botan, 0 in hakkari
+        effects:
+        - type: placePieces
+          piece: troops
+          count: 4
+          space: botan
+        - type: placePieces
+          piece: troops
+          count: 0
+          space: hakkari
+    - type: freeAction
+      action: state.sweep
+      constraints:
+        spaces:
+        - botan
+    tier: T1
+    blockOnly: false
+  shaded:
+    text: 'Rising tempo: the PKK conducts a free Attack in one space with an Underground Guerrilla and Troops. State
+      Resources -2.'
+    owner: pkk
+    effects:
+    - type: freeAction
+      action: pkk.attack
+      constraints:
+        maxLocations: 1
+        undergroundAndTroops: true
+    - type: adjustTrack
+      track: resources.state
+      delta: -2
+    tier: T1
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0301
+  - S-0455
+  date: 1989-08
+  eventConfidence: Moderate
+- id: DK-028
+  campaign: C2
+  title: Paris Kurdish Conference (Oct 1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Diplomatic protest: the State conducts a free Diplomacy targeting the Europe track.'
+    owner: state
+    effects:
+    - type: freeAction
+      action: state.diplomacy
+      constraints:
+        spaces:
+        - europe
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: Europe +1. The PKK conducts a free Rally on the Europe track.
+    owner: pkk
+    effects:
+    - type: adjustTrack
+      track: europe
+      delta: 1
+    - type: freeAction
+      action: pkk.rally
+      constraints:
+        spaces:
+        - europe
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0305
+  - S-0024
+  - S-0453
+  date: '1989-10-14'
+  eventConfidence: High
+- id: DK-029
+  campaign: C2
+  title: SHP Expels Kurdish Deputies (Nov 1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Party discipline holds: shift Şanlıurfa or Adıyaman one level toward Support if it has State Control
+      and Police.'
+    owner: state
+    effects:
+    - type: forEachSpace
+      where:
+        type: all
+        of:
+        - type: spaceIn
+          spaces:
+          - sanliurfa
+          - adiyaman
+        - type: control
+          faction: state
+        - type: spaceHas
+          pieces:
+          - police
+          markers: []
+      min: 1
+      max: 1
+      effects:
+      - type: shiftLevel
+        space: selected
+        direction: support
+        steps: 1
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Expelled deputies speak abroad: Europe +1. Shift Diyarbakır City one level toward Opposition.'
+    owner: pkk
+    effects:
+    - type: adjustTrack
+      track: europe
+      delta: 1
+    - type: shiftLevel
+      space: diyarbakir-city
+      direction: opposition
+      steps: 1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0171
+  - S-0024
+  - S-0210
+  chainAfter:
+  - DK-028
+  date: 1989-11
+  eventConfidence: Moderate
+- id: DK-030
+  campaign: C2
+  title: İkikaya Village Killings (Nov 1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: Place a PKK Harm marker in Hakkari. Europe -1. Place 1 Village Guard in Hakkari (needs Law 3175).
+    owner: state
+    effects:
+    - type: placeMarker
+      marker: pkkHarm
+      space: hakkari
+    - type: adjustTrack
+      track: europe
+      delta: -1
+    - type: conditional
+      if:
+        type: flag
+        flag: law3175
+        value: true
+      then:
+      - type: placePieces
+        piece: guards
+        count: 1
+        space: hakkari
+      else: []
+    tier: T2
+    blockOnly: false
+  shaded:
+    text: 'Block only: place a PKK Harm marker in Hakkari. No other effect.'
+    owner: pkk
+    effects:
+    - type: placeMarker
+      marker: pkkHarm
+      space: hakkari
+    tier: T2
+    blockOnly: true
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0307
+  - S-0453
+  - S-0460
+  date: '1989-11-24'
+  eventConfidence: Moderate
+- id: DK-031
+  campaign: C2
+  title: Çukurca Villagers Refuse Guard Duty (1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Prosecutions hold the line: place 1 Police and 1 Village Guard in Hakkari.'
+    owner: state
+    effects:
+    - type: placePieces
+      piece: police
+      count: 1
+      space: hakkari
+    - type: placePieces
+      piece: guards
+      count: 1
+      space: hakkari
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Guards hand back weapons: remove up to 2 Village Guards from Hakkari or Botan to Available. No Harm marker.
+      State Resources -1.'
+    owner: pkk
+    effects:
+    - type: forEachPiece
+      piece: guards
+      where:
+        type: spaceIn
+        spaces:
+        - hakkari
+        - botan
+      min: 0
+      max: 2
+      effects:
+      - type: removePieces
+        piece: guards
+        count: 1
+        space: selected
+    - type: adjustTrack
+      track: resources.state
+      delta: -1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0308
+  - S-0453
+  date: '1989-12-22'
+  eventConfidence: Moderate
+- id: DK-032
+  campaign: C2
+  title: Lawyer Access Decree (Sep 1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Custody reform: Legitimacy +2.'
+    owner: state
+    effects:
+    - type: adjustTrack
+      track: legitimacy
+      delta: 2
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Lawyers barred again: Legitimacy -1. Europe +1.'
+    owner: pkk
+    effects:
+    - type: adjustTrack
+      track: legitimacy
+      delta: -1
+    - type: adjustTrack
+      track: europe
+      delta: 1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0304
+  - S-0453
+  date: '1989-09-26'
+  eventConfidence: Moderate
+- id: DK-033
+  campaign: C2
+  title: Abuse and Killings in Custody Reported (1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Block only: place a State Harm marker in Mardin-Batman or Hakkari (State choice). No other effect.'
+    owner: state
+    effects:
+    - type: choice
+      options:
+      - label: mardin-batman
+        effects:
+        - type: placeMarker
+          marker: stateHarm
+          space: mardin-batman
+      - label: hakkari
+        effects:
+        - type: placeMarker
+          marker: stateHarm
+          space: hakkari
+    tier: T2
+    blockOnly: true
+  shaded:
+    text: Place a State Harm marker in Mardin-Batman or Hakkari (PKK choice). Legitimacy -1. Shift that space one
+      level toward Opposition.
+    owner: pkk
+    effects:
+    - type: choice
+      options:
+      - label: mardin-batman
+        effects:
+        - type: placeMarker
+          marker: stateHarm
+          space: mardin-batman
+        - type: adjustTrack
+          track: legitimacy
+          delta: -1
+        - type: shiftLevel
+          space: mardin-batman
+          direction: opposition
+          steps: 1
+      - label: hakkari
+        effects:
+        - type: placeMarker
+          marker: stateHarm
+          space: hakkari
+        - type: adjustTrack
+          track: legitimacy
+          delta: -1
+        - type: shiftLevel
+          space: hakkari
+          direction: opposition
+          steps: 1
+    tier: T2
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0295
+  - E-0300
+  - E-0302
+  - S-0454
+  - S-0453
+  date: '1989'
+  eventConfidence: Moderate
+- id: DK-034
+  campaign: C2
+  title: Governors Exile Local Party Members (Sep 1989)
+  type: event
+  deckEligible: true
+  unshaded:
+    text: 'Emergency powers: the State conducts a free Garrison with Activation in Botan or Dersim.'
+    owner: state
+    effects:
+    - type: freeAction
+      action: state.garrison
+      constraints:
+        spaces:
+        - botan
+        - dersim
+    tier: T0
+    blockOnly: false
+  shaded:
+    text: 'Banishment without trial: Legitimacy -1. Shift Botan one level toward Opposition.'
+    owner: pkk
+    effects:
+    - type: adjustTrack
+      track: legitimacy
+      delta: -1
+    - type: shiftLevel
+      space: botan
+      direction: opposition
+      steps: 1
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    encodedBy: codex
+    reviewedAgainstText: true
+  sources:
+  - E-0303
+  - S-0454
+  date: 1989-09
+  eventConfidence: Moderate
+- id: DK-035
+  campaign: C2
+  title: Propaganda
+  type: propaganda
+  deckEligible: false
+  unshaded:
+    text: Conduct a Propaganda round (05, section 6).
+    owner: null
+    effects: []
+    tier: T0
+    blockOnly: false
+  encoding:
+    status: encoded
+    reviewedAgainstText: true
+  sources: []

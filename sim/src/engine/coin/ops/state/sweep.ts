@@ -20,11 +20,12 @@ export const sweep: ActionHandler = {
   kind: "op",
   ruleRef,
   accompanies: [],
-  check(ruleset, state, part) {
+  check(ruleset, state, part, options) {
     const out: Violation[] = [];
     const leaving = new Map<string, number>();
     for (const loc of part.locations) {
-      if (space(ruleset, loc)?.kind !== "domestic" || hasTag(ruleset, loc, TAG.noLandLinks)) {
+      const border = options.sa === "state.cross-border" && options.saLocations.includes(loc) && ["kdp-zone", "puk-zone"].includes(loc);
+      if ((!border && space(ruleset, loc)?.kind !== "domestic") || hasTag(ruleset, loc, TAG.noLandLinks)) {
         out.push(at(loc, "sweepWhere", "Sweep selects domestic spaces other than Western Cities.", ruleRef));
         continue;
       }
@@ -33,6 +34,7 @@ export const sweep: ActionHandler = {
         out.push(at(loc, "badMoves", "Moves must be [{from, count}].", ruleRef));
         continue;
       }
+      if (border && list.length > 0) out.push(at(loc, "crossBorderMoves", "Use only the Cross-Border lift for zone entry.", ruleRef));
       for (const m of list) {
         if (!adjacent(ruleset, m.from, loc)) out.push(at(loc, "sweepAdjacent", `Troops move one step only: ${m.from} is not adjacent.`, ruleRef));
         leaving.set(m.from, (leaving.get(m.from) ?? 0) + m.count);

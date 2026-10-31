@@ -50,6 +50,8 @@ function countIn(ctx: TermContext, spaceId: SpaceId, field: "pieces" | "markers"
 export function matches(ctx: TermContext, spaceId: SpaceId, condition: SpaceCondition): boolean {
   const space = find(ctx.ruleset.spaces, spaceId, "space");
   switch (condition.type) {
+    case "spaceIn":
+      return condition.spaces.includes(spaceId);
     case "spaceKind":
       return space.kind === condition.kind;
     case "terrainIn":

@@ -14,8 +14,8 @@ export const PHASE_GUIDE: Readonly<Record<string, PhaseGuide>> = {
   legalPolitics: { title: "Legal Politics", what: "From C3 only. Skipped while Legal Space is Absent.", you: "Press Advance." },
   civicAction: { title: "Civic Action (State)", what: "The State spends Resources in spaces it Controls with Troops and Police. Total spend is at most half of Legitimacy.", you: "Select spaces, enter the spends, then Spend. Or press Advance to spend nothing." },
   agitation: { title: "Agitation (PKK)", what: "The PKK spends Resources in spaces with a PKK Base or PKK Control.", you: "Select spaces, enter the spends, then Spend. Or press Advance to spend nothing." },
-  redeploy: { title: "Redeploy", what: "State moves Troops and Police, then PKK moves Guerrillas to Bases. Not in the S0 slice yet.", you: "Not available in S0." },
-  reset: { title: "Reset", what: "Remove one Coercion per space, flip Guerrillas Underground, advance the Campaign, reveal the next card. Not in the S0 slice yet.", you: "Not available in S0." },
+  redeploy: { title: "Redeploy", what: "State moves Troops to Cities or State Bases and Police to spaces it Controls. PKK then moves Guerrillas to adjacent PKK Bases. Troops in Iraq must leave.", you: "Build the routes with map selections and buttons, then choose Redeploy pieces." },
+  reset: { title: "Reset", what: "Remove one Coercion per space, flip all Guerrillas Underground, discard Momentum and Restraint Broken, advance the Campaign and reveal the next card.", you: "Nothing to choose. Press Advance." },
 };
 
 export function guideOf(phase: string): PhaseGuide {
