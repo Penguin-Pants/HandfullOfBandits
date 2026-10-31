@@ -1,4 +1,4 @@
-.PHONY: install test check start schema validate e2e
+.PHONY: install test check start schema validate e2e rulebook
 
 install:
 	cd sim && npm ci
@@ -22,3 +22,7 @@ validate:
 # IC-2 Playwright smoke. Needs Playwright with Chromium on the machine.
 e2e:
 	cd sim && npm run build && node e2e/smoke.mjs
+
+# A4 portrait reading edition of the current playable prototype.
+rulebook:
+	python3 docs/rules/build-rulebook.py

@@ -492,6 +492,12 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 
 TWO-PASS REVIEW is recorded in `16-board-art-direction.md`. Fix: dark-mode passive level badges had insufficient contrast; a browser assertion failed, then passed after map-local light panel colors. Drop: no topology or rule defect reproduced. No new Decide or Propose item. Validation: `make check`, 807 tests in 62 files, UI build and S0/Scenario A browser checks. Browser checks include artwork decoding and dark-theme label contrast. Light/dark UI and the printed board were rendered for inspection. IC-3a remains open; this artwork does not replace the designer's end-to-end Scenario A playtest.
 
+### Printable rules follow-up (2026-10-31)
+
+**Status: complete.** The designer confirmed the reading edition covers current Scenario A, C1/C2. `docs/rules/handful-of-bandits-rules-a4.pdf` is a 12-page A4 portrait rulebook using the Colonial Twilight format, with editable Markdown, current card text and a `make rulebook` rebuild. It incorporates DD-20 and DEC-53 to DEC-57. No game rule or package data changed. Print at 100% / Actual size; duplex long-edge binding.
+
+TWO-PASS REVIEW and validation are in `docs/rules/review.md`. PDF preflight confirms A4 geometry, embedded fonts, linked contents, matching bookmarks, no blank pages, no text overflow and no missing glyphs. All 66 Event sides match package text; both Propaganda cards and ARGK are included. Static checks and 807 tests in 62 files pass. Two research/implementation differences are explicitly recorded in Appendix B for design review: one-location Op Only and voluntary map-to-Available withdrawals. The reading edition follows current simulator behavior without inventing a rule change. IC-3a remains open.
+
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
