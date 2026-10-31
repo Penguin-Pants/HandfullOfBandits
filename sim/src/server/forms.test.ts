@@ -5,9 +5,13 @@ import { actionForms } from "./forms.ts";
 const summary = (id: string): string => actionForms.find((f) => f.id === id)?.summary ?? "";
 
 describe("action summaries match the engine", () => {
-  it("Ambush adds 1 removal after the normal Attack (attack.ts, PA-06)", () => {
-    expect(summary("pkk.ambush")).toMatch(/after the normal Attack/);
-    expect(summary("pkk.ambush")).not.toMatch(/no die roll/i);
+  it("Ambush replaces the Attack in its space: no roll, 1 Activation, 1 removal, no attrition (attack.ts, PA-06)", () => {
+    expect(summary("pkk.ambush")).toMatch(/no die roll/i);
+    expect(summary("pkk.ambush")).toMatch(/Activate only 1 Underground Guerrilla/);
+    expect(summary("pkk.ambush")).toMatch(/no Guerrilla is lost/);
+  });
+  it("Strike Collaborators warns that its PKK Harm blocks Agitation there (agitation.ts, playtest B1)", () => {
+    expect(summary("pkk.strike-collaborators")).toMatch(/PKK Harm marker blocks Agitation shifts in that space until the PKK pays 2 to remove it/);
   });
   it("Assault: Police count as Troops in a City (assault.ts)", () => {
     expect(summary("state.assault")).toMatch(/City, Police count as Troops/);

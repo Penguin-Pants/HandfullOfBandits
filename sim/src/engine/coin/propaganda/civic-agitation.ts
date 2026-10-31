@@ -1,13 +1,13 @@
 // Civic Action and Agitation phase (research 05 s6.6; 07 s1.3), split into two handler IDs so the
 // State spends first, then the PKK. Choice `{spaces: {space: spend}}`; Advance spends nothing.
 // State total is capped at Legitimacy / civicAction.capDivisor, round down; each space needs State
-// Control, Troops and Police. Agitation needs a PKK piece and no State Control.
+// Control, Troops and Police. Agitation needs a PKK Base or PKK Control, as in Rally.
 import { param } from "../../core/params.ts";
 import type { GameState, JsonObject, Ruleset, Violation } from "../../core/types.ts";
-import { controlOf, count, resources } from "../ops/common.ts";
-import { FACTION, PIECE, TRACK } from "../ops/ids.ts";
+import { resources } from "../ops/common.ts";
+import { FACTION, TRACK } from "../ops/ids.ts";
 import { asObject } from "../ops/plan.ts";
-import { agitationCost, agitationExecute, agitationViolations, readAgitation } from "../ops/pkk/agitation.ts";
+import { agitationCost, agitationExecute, agitationViolations, canAgitate, readAgitation } from "../ops/pkk/agitation.ts";
 import { civicCost, civicExecute, civicViolations, readCivic } from "../ops/state/civic-action.ts";
 import { violation, type PropagandaPhase } from "./phase.ts";
 
@@ -67,8 +67,7 @@ export const agitationPhase: PropagandaPhase = {
         out.push(violation("agitateBadSpend", "Agitation spend is not well formed.", "07 s1.3", space));
         continue;
       }
-      const pkkPiece = count(state, space, PIECE.guerrilla) + count(state, space, PIECE.pkkBase) > 0;
-      if (!pkkPiece || controlOf(ruleset, state, space) === FACTION.state) out.push(violation("agitateWhere", "Agitation needs a PKK piece and no State Control (07 s1.3).", "07 s1.3", space));
+      if (!canAgitate(ruleset, state, space)) out.push(violation("agitateWhere", "Agitation needs a PKK Base or PKK Control (07 s1.3).", "07 s1.3", space));
       out.push(...agitationViolations(ruleset, state, space, spend));
       spent += agitationCost(ruleset, spend);
     }

@@ -1,9 +1,9 @@
 # Kurdish COIN 1984-1999 (research package B). Static data from research 03, 04, 05 and 09 (11 P2-01).
 packageId: kurdish-coin
 version: 0.1.0
-rulesetVersion: R2
+rulesetVersion: R3
 schemaVersion: 2
-changeDescription: Phase 3a. Scenario A rules, C1 and C2 cards and draft map
+changeDescription: Phase 3a with DD-20 designer rules and revised C1 Events
 title: Kurdish COIN 1984-1999
 modules: [ct-two-faction@1]
 options:

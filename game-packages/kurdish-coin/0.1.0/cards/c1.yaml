@@ -39,12 +39,13 @@
     effects:
       - {type: freeAction, action: state.garrison, constraints: {activationSpace: botan}}
   shaded:
-    text: "Second strike: the PKK conducts a free Attack in Botan with Ambush (no roll)."
+    text: "Second strike: place 1 Underground Guerrilla in Botan, then the PKK conducts a free Attack in Botan with Ambush (no roll)."
     owner: pkk
     tier: T1
     effects:
+      - {type: placePieces, piece: guerrilla, count: 1, space: botan, state: underground}
       - {type: freeAction, action: pkk.attack, constraints: {spaces: [botan], sa: pkk.ambush}}
-  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); the Ambush handler follows PA-06 (replaced), which keeps the roll"}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); Ambush has no roll under PA-06 (accepted after the S0 playtests)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0073, S-0028, S-0063]
@@ -73,13 +74,17 @@
         max: 2
         effects: [{type: placePieces, piece: guards, count: {min: 0, max: 2}, space: selected}]
   shaded:
-    text: "Recruitment under pressure and pay: State Resources -3. Shift one space with a Village Guard and no PKK Harm marker one level toward Opposition."
+    text: "Recruitment under pressure and pay: State Resources -3. Shift one space with a Village Guard and no PKK Harm marker, or one Mountain space with State Control, one level toward Opposition."
     owner: pkk
     tier: T0
     effects:
       - {type: adjustTrack, track: resources.state, delta: -3}
       - type: forEachSpace
-        where: {type: all, of: [{type: spaceHas, pieces: [guards]}, {type: not, of: {type: spaceHas, markers: [pkkHarm]}}]}
+        where:
+          type: any
+          of:
+            - {type: all, of: [{type: spaceHas, pieces: [guards]}, {type: not, of: {type: spaceHas, markers: [pkkHarm]}}]}
+            - {type: all, of: [{type: terrainIn, terrain: [mountain]}, {type: control, faction: state}]}
         min: 1
         max: 1
         effects: [{type: shiftLevel, space: selected, direction: opposition, steps: 1}]
@@ -152,7 +157,7 @@
     effects:
       - {type: stepOrdinal, track: posture.kdp, direction: next, steps: 1}
   shaded:
-    text: "Guests stay: the PKK moves up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground, free. PKK Resources +1."
+    text: "Guests stay: the PKK moves up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground, free, or places 2 Underground Guerrillas in the PUK Zone. PKK Resources +1."
     owner: pkk
     tier: T0
     effects:
@@ -160,6 +165,7 @@
         options:
           - {label: PUK Zone, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: kdp-zone, to: puk-zone}]}
           - {label: Hakkari, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: kdp-zone, to: hakkari}]}
+          - {label: Place 2 in the PUK Zone, effects: [{type: placePieces, piece: guerrilla, count: 2, space: puk-zone, state: underground}]}
       - {type: adjustTrack, track: resources.pkk, delta: 1}
   encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Always line from 08 s2.2. Shaded: moved Guerrillas arrive Underground (movePieces toState)"}
   eventConfidence: Moderate
@@ -278,13 +284,13 @@
       - {type: adjustTrack, track: europe, delta: -1}
       - {type: adjustTrack, track: resources.pkk, delta: -1}
   shaded:
-    blockOnly: true
-    text: "Block only: Europe -1. No other effect."
+    text: "Damage control: Europe -1. PKK Resources +1."
     owner: pkk
     tier: T2
     effects:
       - {type: adjustTrack, track: europe, delta: -1}
-  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Shaded side is block only (08 s7)"}
+      - {type: adjustTrack, track: resources.pkk, delta: 1}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Shaded side was block only (08 s7); PKK Resources +1 added after the S0 playtests so it has an effect"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0161, S-0246]
@@ -539,13 +545,16 @@
       - {type: adjustTrack, track: legitimacy, delta: 1}
       - {type: adjustTrack, track: resources.state, delta: 1}
   shaded:
-    text: "Iran and Libya condemn the raid: shift Syria posture one step toward Host. PKK Resources +1."
+    text: "Iran and Libya condemn the raid: shift Syria posture one step toward Host, or Europe +1 if Syria is already Host. PKK Resources +1."
     owner: pkk
     tier: T0
     effects:
-      - {type: stepOrdinal, track: posture.syria, direction: previous, steps: 1}
+      - type: conditional
+        if: {type: trackIn, track: posture.syria, values: [host]}
+        then: [{type: adjustTrack, track: europe, delta: 1}]
+        else: [{type: stepOrdinal, track: posture.syria, direction: previous, steps: 1}]
       - {type: adjustTrack, track: resources.pkk, delta: 1}
-  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Shaded: a step toward Host does nothing at Host (PA-04)"}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Shaded: Europe +1 replaces the step at Host (S0 playtests)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0340, E-0165, S-0534, S-0532]

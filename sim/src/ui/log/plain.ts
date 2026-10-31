@@ -124,6 +124,8 @@ function skipped(d: Data, n: ReturnType<typeof namer>, why: string | null): stri
       return `The free ${words(str(d["action"]).split(".").pop() ?? "")} was declined${tail}.`;
     case "legalPolitics":
       return "Legal Politics skipped: Legal Space is Absent.";
+    case "income":
+      return "No income in the final Propaganda round.";
     case "victoryCheck":
       return "No victory check in the first Propaganda round.";
     case "revealCard":

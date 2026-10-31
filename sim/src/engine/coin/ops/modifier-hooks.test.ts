@@ -50,3 +50,19 @@ it("an encoded Capability is a non-Pass choice even when Resources prevent every
   expect(engine.validate(ruleset,state,{type: "ChooseEvent",faction: "state",side: "shaded",answers: []}).ok).toBe(true);
   expect(hasNonPassChoice(ruleset,state,"state")).toBe(true);
 });
+
+it("Ambush Momentum resolves three guaranteed hits without rolls, attrition or extra activation", () => {
+  const locations = ["hakkari", "botan", "mardin-batman"];
+  let state = turnOf("pkk");
+  for (const space of locations) {
+    state = setPieces(setPieces(setPieces(state, space, "guerrilla", 3), space, "guerrilla", 0, "active"), space, "troops", 2);
+  }
+  state = mod(state, "ambush", {maxSpaces: 3});
+  const result = play(state, op("pkk", "opSa", {op: "pkk.attack", locations, sa: {action: "pkk.ambush", timing: "before", locations, perLocation: {}}}));
+  expect(result.state.rng).toEqual(state.rng);
+  expect(result.entries.some(e => e.kind === "DieRolled")).toBe(false);
+  for (const space of locations) {
+    expect(result.state.spaces[space]?.pieces["guerrilla"]).toEqual({underground: 2, active: 1});
+    expect(result.state.spaces[space]?.pieces["troops"]?.["default"]).toBe(1);
+  }
+});

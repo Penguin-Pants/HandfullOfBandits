@@ -345,11 +345,35 @@ describe("PropagandaPanel", () => {
     render(<PropagandaPanel view={view} legal={{ faction: null, phase: "propaganda", advance: true }} selected={["elazig"]} onCommit={onCommit} />);
     expect(screen.getByText("Civic Action (State)", { selector: "li" }).getAttribute("aria-current")).toBe("step");
     expect(screen.getByLabelText("Phase guide").textContent).toContain("at most half of Legitimacy");
-    fireEvent.click(screen.getByRole("button", { name: "Advance (Space)" }));
-    expect(onCommit).toHaveBeenCalledWith({ type: "Advance" });
     click(/^More .+ Shifts$/);
     fireEvent.click(screen.getByRole("button", { name: "Spend in selected spaces" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "civicAction", choice: { spaces: { elazig: { shifts: 1 } } } });
+  });
+
+  it("asks before Advance skips a step with a choice (playtest S1)", () => {
+    const base = turnOf("pkk");
+    const state = { ...base, turn: { ...base.turn, phase: "propaganda", step: 5, propagandaRound: 1 } };
+    const onCommit = vi.fn();
+    const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false).mockReturnValueOnce(true);
+    render(<PropagandaPanel view={boardView(kurdish.ruleset, kurdish.data, state)} legal={{ faction: null, phase: "propaganda", advance: true }} selected={[]} onCommit={onCommit} />);
+    click("Skip Civic Action (Space)");
+    expect(confirm).toHaveBeenLastCalledWith("Skip Civic Action and spend nothing?");
+    expect(onCommit).not.toHaveBeenCalled();
+    click("Skip Civic Action (Space)");
+    expect(onCommit).toHaveBeenCalledWith({ type: "Advance" });
+    confirm.mockRestore();
+  });
+
+  it("advances a step with nothing to choose without asking", () => {
+    const base = turnOf("pkk");
+    const step = boardView(kurdish.ruleset, kurdish.data, base).status.propagandaPhases.indexOf("resources");
+    const onCommit = vi.fn();
+    const confirm = vi.spyOn(window, "confirm");
+    render(<PropagandaPanel view={boardView(kurdish.ruleset, kurdish.data, { ...base, turn: { ...base.turn, phase: "propaganda", step, propagandaRound: 1 } })} legal={{ faction: null, phase: "propaganda", advance: true }} selected={[]} onCommit={onCommit} />);
+    click("Advance (Space)");
+    expect(onCommit).toHaveBeenCalledWith({ type: "Advance" });
+    expect(confirm).not.toHaveBeenCalled();
+    confirm.mockRestore();
   });
 
   it("offers only the legal Emergency Rule steps in the Legitimacy phase", () => {

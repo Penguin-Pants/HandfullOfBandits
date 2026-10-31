@@ -1,12 +1,12 @@
 # Phase 3a TWO-PASS REVIEW
 
-Status: implementation review complete against base `711ce32`. Draft PR [#32](https://github.com/Penguin-Pants/HandfullOfBandits/pull/32) now requires integration of the newer DD-20 changes in main ([#31](https://github.com/Penguin-Pants/HandfullOfBandits/pull/31)) and validation again before it is ready to merge. P3a-01 to P3a-10 are implemented. The phase exit remains open for IC-3a, the designer's own Scenario A UI playthrough and notes export. Automated browser play is recorded separately and does not close that checkpoint.
+Status (2026-10-31): implementation and DD-20 integration reviewed against main `fba79dc` ([#31](https://github.com/Penguin-Pants/HandfullOfBandits/pull/31)). PR [#32](https://github.com/Penguin-Pants/HandfullOfBandits/pull/32) contains P3a-01 to P3a-10. The phase exit remains open for IC-3a, the designer's own Scenario A UI playthrough and notes export. Automated browser play does not close that checkpoint.
 
 Review scope: the complete Phase 3a diff, including P3a-08 in `acb2428` and the remaining Scenario A implementation. Passes ran after local tests passed. Fixes were reproduced and checked again. Confidence in the verified fixes: high.
 
 ## Pass 1: correctness
 
-Traced each changed runtime function from its caller: UI and HTTP commands into session validation, saved Operation continuation into its existing action transaction, replay and undo, card reveal through Always and Pivotal windows, Propaganda through Reset and the next reveal, card effects into core primitives and batch policies into engine validation. Checked error branches, stale requests, empty selections, supply, posture caps, first and final rounds and paired seeds. Compared card effects with the deck CSV and research 05 to 10. Card prose still matches the CSV exactly.
+Traced each changed runtime function from its caller: UI and HTTP commands into session validation, saved Operation continuation into its existing action transaction, replay and undo, card reveal through Always and Pivotal windows, Propaganda through Reset and the next reveal, card effects into core primitives and batch policies into engine validation. Checked error branches, stale requests, empty selections, supply, posture caps, first and final rounds and paired seeds. Compared card effects with the deck CSV and research 05 to 10. Card prose matches the CSV except the five C1 shaded changes explicitly approved in DD-20 (DK-002, 003, 005, 008 and 100).
 
 | Class | Finding | Verification and outcome |
 |---|---|---|
@@ -31,7 +31,7 @@ The automated browser flow creates Scenario A through Home, plays both rounds th
 
 ## Card text review batches
 
-The planned encoding review size was kept at five cards or fewer. The implementation was validated as a complete phase diff. It is now in draft PR #32, pending the main-branch integration noted above.
+The planned encoding review size was kept at five cards or fewer. The implementation was validated as a complete phase diff. It is now in PR #32, including the approved DD-20 changes from main.
 
 | Batch | Cards |
 |---|---|
@@ -50,9 +50,9 @@ Reused core effects, the event runner, form metadata, the plan reducer, action r
 
 ## Acceptance and validation
 
-All P3a task acceptance criteria are covered by implementation and local checks. Scenario A uses the full campaign setup, C1/C2 only and the PKK ARGK hand. It completes at round two, passes V-ENCODE and has a CLI-verified golden replay. Schema 2 packages and the previous schema 1 packages load. S0 and Scenario A goldens reflect the deliberate R2 package content changes.
+All P3a task acceptance criteria are covered by implementation and local checks. Scenario A uses the full campaign setup, C1/C2 only and the PKK ARGK hand. It completes at round two, passes V-ENCODE and has a CLI-verified golden replay. Schema 2 packages and the previous schema 1 packages load. S0 and Scenario A goldens reflect the deliberate R3 package content changes.
 
-Final validation: 62 files and 799 tests passed. Static checks and targeted regressions passed after the last cleanup. Scenario A CLI replay is identical across 65 commands. The tested package is R2, hash `3befb6091727ff7bf48a58ff6babda0312f5ade226d6da8d3b2515d4fbab2cb9`. The command results are also recorded in `11-build-plan.md`. The UI build and S0 plus Scenario A browser smokes pass with installed Chromium through a temporary launcher because the Playwright-managed browser is absent. Required child-process tests run outside the restricted child-process sandbox.
+Final validation: 62 files and 807 tests passed. Static checks and targeted regressions passed after the last cleanup. Scenario A CLI replay is identical across 65 commands. The tested package is R3, hash `2b88b58257e7535e3fc3b95172e53c0e052b2aa4c30ca83aa5998ceb322b022d`. The command results are also recorded in `11-build-plan.md`. The UI build and S0 plus Scenario A browser smokes pass with installed Chromium through a temporary launcher because the Playwright-managed browser is absent. Required child-process tests run outside the restricted child-process sandbox.
 
 | Paired screen, seeds 0 to 4 | State wins | PKK wins | Outcome |
 |---|---:|---:|---|
@@ -61,3 +61,14 @@ Final validation: 62 files and 799 tests passed. Static checks and targeted regr
 | emergency-rule / coerce-only | 3/10 | 7/10 | No win-rate flag |
 
 Actual round CSVs are in `phase3a-results/`. Policies are small legal-choice screens and use fallbacks after faction swaps. These results do not establish game balance. IC-3a remains the only phase checkpoint not completed; Phase 3b must wait for it.
+
+## DD-20 integration review
+
+Pass 1 rechecked the complete phase diff against current main after validation. Traced normal and card-granted Attack through the no-roll Ambush branch, including the three-space Momentum limit. The new integration test verifies unchanged RNG, one activation and one removal per space with no attrition. Traced Rally and Propaganda through the shared `canAgitate` baseline while retaining the ERNK Rally-only exception. Traced first-round income and final-round zero income through history and RoundMetrics. Checked all five approved C1 alternatives through Event questions, execution and replay. Traced both Advance button and Space key through skip confirmation. Redeploy, Reset, saved Operation continuation, Pivotal, backup/search/export and paired policy paths retain their existing regression coverage. Scenario A and S0 browser flows pass. Windows execution remains unverified.
+
+Pass 2 retains the shared Agitation predicate and existing modifier and form patterns. The merge adds no dependency or duplicate execution path. Refreshed goldens and CSVs use R3, as required by package format section 10 for changed rules or effects. All three paired win totals remain unchanged; final-round income columns are now zero.
+
+- Fix: the merged rule/effect changes required a ruleset version increase (04 s10); R3 and refreshed replay hashes now identify them.
+- Drop: no additional merge defect reproduced in the complete diff review or validation. All five conflicts preserve both DD-20 behavior and Phase 3a features.
+- Propose: retain the concentration/sanctuary 9/10 PKK flag for designer review and Phase 4. No balance rule changed.
+- Decide: none added. IC-3a remains a human acceptance checkpoint, not an unresolved rule decision.

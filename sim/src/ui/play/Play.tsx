@@ -19,6 +19,7 @@ import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 import { TrackCard } from "../status/TrackCard.tsx";
+import { skipQuestion } from "../propaganda/phases.ts";
 
 export interface PlayProps {
   readonly api: Api;
@@ -113,6 +114,9 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       if (e.key === "z" && (e.ctrlKey || e.metaKey)) void undo();
       if (e.key === " " && legal?.advance === true) {
         e.preventDefault();
+        const status = data?.head.view.status;
+        const skip = status?.phase === "propaganda" ? skipQuestion(status.propagandaPhases[status.propagandaStep] ?? "", status.emergencyMoves) : null;
+        if (skip !== null && !window.confirm(skip)) return;
         void commit({ type: "Advance" });
       }
     };

@@ -348,4 +348,4 @@ The loader computes a SHA-256 hash of the canonical package content (sorted keys
 
 Next step: read 05-rules-engine-spec.md.
 
-Schema 2 (Phase 3a): `spaceIn {spaces: [...]}` tests explicit space IDs. Card effects add `addModifier` and `forEachPiece`. The loader also accepts schema 1 packages. Kurdish ruleset R2 adds Scenario A execution.
+Schema 2 (Phase 3a): `spaceIn {spaces: [...]}` tests explicit space IDs. Card effects add `addModifier` and `forEachPiece`. The loader also accepts schema 1 packages. Kurdish ruleset R2 adds Scenario A execution. R3 integrates the DD-20 designer rule and C1 Event changes.
