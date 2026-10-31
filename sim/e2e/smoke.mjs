@@ -1,4 +1,4 @@
-/* global process, console, fetch, setTimeout, document, innerHeight, innerWidth */
+/* global process, console, fetch, setTimeout, document, innerHeight, innerWidth, Image, getComputedStyle */
 // IC-2 item 1: Playwright smoke (11 IC-2). Home, start S0, one action, one note, undo, JSON export.
 // Needs a built UI (`npm run build`) and Playwright with Chromium (not a project dependency).
 // Run: make e2e
@@ -51,6 +51,27 @@ try {
   await page.getByRole("button", { name: /Reveal first card/ }).click();
   await page.getByText(/^Card 1$/).waitFor();
   check(true, "Play: first card revealed");
+  const artwork = await page.evaluate(async () => {
+    const image = new Image();
+    image.src = document.querySelector("#atlas-artwork image")?.getAttribute("href") ?? "";
+    await image.decode();
+    return image.naturalWidth > 0;
+  });
+  check(artwork, "atlas artwork loads independently of game regions");
+  await page.emulateMedia({ colorScheme: "dark" });
+  const contrast = await page.evaluate(() => {
+    const luminance = color => {
+      const rgb = color.match(/[\d.]+/g).slice(0, 3).map(Number).map(v => v / 255).map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4);
+      return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
+    };
+    return [...document.querySelectorAll(".level-marker")].every(text => {
+      const ink = luminance(getComputedStyle(text).fill);
+      const paper = luminance(getComputedStyle(text.parentElement.querySelector("rect")).fill);
+      return (Math.max(ink, paper) + .05) / (Math.min(ink, paper) + .05) >= 4.5;
+    });
+  });
+  check(contrast, "Support and Opposition labels retain readable contrast in dark theme");
+  await page.emulateMedia({ colorScheme: "light" });
   // UI clarity round R6: one view at 1920 x 1080 (content about 1920 x 950), right column order R3.
   await page.setViewportSize({ width: 1920, height: 950 });
   await page.waitForTimeout(300);
