@@ -71,7 +71,7 @@ describe("FactionPanel", () => {
     const many = { ...legal, actions: (legal.actions ?? []).map((a) => (a.id === "pkk.rally" ? { ...a, locations: ["diyarbakir-city", "sanliurfa", "elazig", "van-bitlis", "botan"] } : a)) };
     render(<Faction api={mockApi()} legal={many} />);
     click("Limited Op");
-    expect(screen.getByText("OK in Diyarbakır City (Amed), Şanlıurfa, Elazığ and 2 more")).toBeTruthy();
+    expect(screen.getByText("OK in Diyarbakir, Şanlıurfa, Elazığ and 2 more")).toBeTruthy();
   });
 
   it("E4 track: pointing at a box shows what it leaves open for the other faction and who is 1st next (UC-8)", () => {

@@ -89,8 +89,8 @@ describe("change outline", () => {
     const after = boardView(kurdish.ruleset, kurdish.data, setPieces(turnOf("pkk"), "dersim", "guerrilla", 1));
     expect(changedSpaces(view, after)).toEqual(["dersim"]);
     render(<Board view={after} selected={[]} onSelect={vi.fn()} changed={["dersim"]} />);
-    expect(screen.getByRole("button", { name: "Dersim" }).querySelectorAll("path")).toHaveLength(2);
-    expect(screen.getByRole("button", { name: "Botan" }).querySelectorAll("path")).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Dersim" }).querySelector('[stroke-width="4"]')).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Botan" }).querySelector('[stroke-width="4"]')).toBeNull();
   });
 
   it("shows a legend entry for each piece on the board", () => {
@@ -190,20 +190,13 @@ describe("map boxes and terrain (UC-7)", () => {
     expect(europe.querySelector("[aria-current]")?.textContent).toBe(String(view.status.tracks.find((t) => t.id === "europe")?.value));
   });
 
-  it("shades relief over every Mountain space, draws the two rivers and Lake Van, and no links between spaces", () => {
+  it("shades every Mountain space, draws the sourced lake without rivers and no links between spaces", () => {
     const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
     const mountains = view.spaces.filter((s) => s.terrain === "mountain" && !isInset(s)).map((s) => s.id);
     const drawn = new Set([...container.querySelectorAll("[data-terrain='mountain']")].map((e) => e.getAttribute("data-of")));
     expect([...drawn].sort()).toEqual([...mountains].sort());
-    // Each mountain's relief is clipped to its own side of the border, like its space.
-    for (const id of mountains) {
-      const space = view.spaces.find((x) => x.id === id);
-      const mask = container.querySelector(`[data-of='${id}']`)?.closest("clipPath")?.getAttribute("id");
-      expect(mask).toBe(space?.kind === "domestic" ? "clip-mountains-domestic" : "clip-mountains-external");
-    }
-    expect(container.querySelector("[clip-path='url(#clip-turkey)'] .map-relief.mountain")).not.toBeNull();
-    expect(container.querySelector("[clip-path='url(#clip-abroad)'] .map-relief.mountain")).not.toBeNull();
-    expect(container.querySelectorAll(".map-river")).toHaveLength(2);
+    expect(container.querySelector(".map-relief.mountain")?.getAttribute("clip-path")).toBe("url(#clip-mountains)");
+    expect(container.querySelectorAll(".map-river")).toHaveLength(0);
     expect(container.querySelectorAll(".map-lake")).toHaveLength(1);
     expect(container.querySelectorAll("line:not(.map-arrow line)")).toHaveLength(0);
   });
@@ -229,4 +222,55 @@ describe("map drag (UC-5)", () => {
     expect(moves.querySelectorAll("line")).toHaveLength(1);
     expect(moves.textContent).toBe("3");
   });
+});
+
+describe("approved atlas board", () => {
+  it("separates real geography from selectable areas and removes river lines", () => {
+    const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    expect(container.querySelector("[data-geography='country-borders']")).not.toBeNull();
+    expect(container.querySelector("[data-geography='lake-van']")?.getAttribute("d")?.length).toBeGreaterThan(1000);
+    expect(container.querySelectorAll(".map-river")).toHaveLength(0);
+    expect(screen.getByRole("button", { name: "Diyarbakir" }).querySelector("image")?.getAttribute("href")).toBe("/diyarbakir-city.png");
+    expect(screen.getByRole("button", { name: "Diyarbakir hinterland" })).toBeTruthy();
+  });
+
+  it("shows a printed population and separate live Control and Support counters, including empty slots", () => {
+    const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    const city = container.querySelector("[data-info='diyarbakir-city']");
+    expect(city?.querySelector("[aria-label='Population 2']")?.textContent).toBe("2");
+    expect(city?.querySelector("[aria-label='State Control']")).not.toBeNull();
+    const botan = container.querySelector("[data-info='botan']");
+    expect(botan?.querySelector("[aria-label='No Control']")).not.toBeNull();
+    expect(botan?.querySelector("[aria-label='Passive Opposition']")?.textContent).toContain("×1");
+    const rural = container.querySelector("[data-info='diyarbakir-rural']");
+    expect(rural?.querySelector("[aria-label='Neutral']")).not.toBeNull();
+  });
+
+  it("renders the same atlas for a saved view while keeping all legal links unchanged", () => {
+    const before = JSON.stringify(view);
+    const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    expect(container.querySelectorAll("[data-info]")).toHaveLength(17);
+    expect(JSON.stringify(view)).toBe(before);
+    expect(view.links.some(l => [l.a, l.b].includes("mardin-batman") && [l.a, l.b].includes("kdp-zone"))).toBe(false);
+  });
+});
+
+it.each([
+  ["activeSupport", 2, "Active Support", "×2"],
+  ["passiveSupport", 1, "Passive Support", "×1"],
+  ["activeOpposition", -2, "Active Opposition", "×2"],
+] as const)("updates live counters for %s and PKK Control", (levelName, level, label, multiplier) => {
+  const changed = { ...view, spaces: view.spaces.map(s => s.id === "botan" ? { ...s, level, levelName, control: "pkk" } : s) };
+  const { container } = render(<Board view={changed} selected={[]} onSelect={vi.fn()} />);
+  const info = container.querySelector("[data-info='botan']");
+  expect(info?.querySelector("[aria-label='PKK Control']")?.textContent).toBe("PKKCONTROL");
+  expect(info?.querySelector(`[aria-label='${label}']`)?.textContent).toContain(multiplier);
+});
+
+it("keeps the city and hinterland independently keyboard-selectable", () => {
+  const select = vi.fn();
+  render(<Board view={view} selected={[]} onSelect={select} />);
+  fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakir"}), {key: "Enter"});
+  fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakir hinterland"}), {key: "Enter",shiftKey: true});
+  expect(select.mock.calls).toEqual([["diyarbakir-city",false],["diyarbakir-rural",true]]);
 });

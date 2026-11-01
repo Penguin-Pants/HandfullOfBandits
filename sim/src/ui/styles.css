@@ -234,9 +234,8 @@ nav { height: 50px; box-sizing: border-box; }
 }
 .map { border: 1px solid #b6a589; border-radius: 3px; box-shadow: inset 0 0 0 3px #f6efdf; isolation: isolate; }
 .map-label { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: .1px; stroke-width: 4px; stroke: #f5eedce6; }
-.map-relief { mix-blend-mode: multiply; opacity: .6; }
-.map-relief.mountain { opacity: .35; }
-.map-river { fill: none; stroke: var(--water); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+.map-relief { mix-blend-mode: multiply; opacity: .4; }
+.map-relief.mountain { opacity: .2; }
 .map-lake { fill: var(--lake); stroke: var(--water); stroke-width: 1; }
 .box-track rect { fill: #f5eedf; stroke: #a99a80; }
 .box-track text { font-size: 11px; font-weight: 600; fill: var(--muted); }
@@ -277,3 +276,14 @@ nav { height: 50px; box-sizing: border-box; }
 .elig-box b { font-size: 12px; }
 .elig-effect { margin: 2px 0 0; padding: 4px 8px; border-left: 4px solid var(--changed); font-size: 13px; }
 @media (max-width: 1000px) { .vt-cell { font-size: 8px; } }
+/* Approved atlas board, DEC-60. Explicit light ink/paper keep counters legible in dark mode. */
+.atlas-label { fill: #403b30; stroke: #f5eedc; stroke-width: 2.2px; letter-spacing: 0; font-weight: 700; }
+.atlas-population rect { fill: #faf6e9; stroke: #756b59; stroke-width: .55; }
+.atlas-population text { fill: #403b30; font-family: Georgia, "Times New Roman", serif; }
+.atlas-counter text { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
+.atlas-counter .level-marker { font-weight: 600; }
+.atlas-stack .map-count { font-size: 12px; fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; }
+.atlas-area { cursor: pointer; }
+.country-border-halo { fill: none; stroke: #faf3df; stroke-width: 4.5; }
+.country-border { fill: none; stroke: #526b78; stroke-width: 2.1; stroke-dasharray: 8 3 1.2 3; }
+.country-name { fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; font: 20px Georgia, "Times New Roman", serif; }
