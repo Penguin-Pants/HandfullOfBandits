@@ -1,6 +1,6 @@
 # Printable rules: TWO-PASS REVIEW
 
-Status: complete, 31 October 2026. Scope explicitly confirmed by the designer: the current playable Scenario A, C1/C2. This is an editorial and print-layout change. No engine, package rule, parameter, scenario or card encoding changed.
+Original R3 reading edition: complete, 31 October 2026. Scope explicitly confirmed by the designer: the current playable Scenario A, C1/C2. This is an editorial and print-layout change. No engine, package rule, parameter, scenario or card encoding changed.
 
 ## Reference review
 
@@ -35,3 +35,7 @@ One Markdown rules source and one notes source supply the reading edition. The c
 - `make check`: TypeScript and ESLint pass. `make test`: 807 tests across 62 files pass. Existing golden replays remain unchanged.
 
 Print A4 portrait at 100% / Actual size. Duplex uses long-edge binding. Grayscale does not change any rule meaning. The rebuild needs Python/PyYAML, Pandoc, XeLaTeX, Liberation fonts and the TeX packages listed in the local README. Linux verified; Windows execution not run.
+
+## R4 revision: 1 November 2026
+
+The approved DD-21 change is now reflected in rule 3.3.3, the example, source notes and PDF. The current build uses the manifest ruleset identifier and the source date for the cover, running header/footer and PDF metadata. The abbreviated format note keeps the same 12-page A4 layout and font size. Original R3 review findings above remain historical. Current implementation and full-change review: `../prototype/attack-attrition-review.md`. Validation: 819 tests pass; rebuilt PDF checked for A4 dimensions, matching contents/bookmarks, current rule text and no text-area overflow.

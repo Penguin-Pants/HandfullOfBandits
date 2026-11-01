@@ -1,6 +1,7 @@
-// Attack (research 06 s4.3): Activate all Guerrillas, roll one die; on a roll at or below the
+// Attack (research 06 s4.3; DD-21): Activate all Guerrillas, roll one die; on a roll less than or equal to the
 // Guerrillas there, remove up to 2 State pieces (Troops or Police first, PKK choice, then Guards,
-// then Bases). One Guerrilla per Troop removed (attrition). A roll of 1 adds 1 Underground Guerrilla.
+// then Bases). If that roll is also less than or equal to the pre-Attack Troop count, lose one
+// Guerrilla per Troop removed. A roll of 1 then adds 1 Underground Guerrilla.
 // Per location: `prefer: police` takes Police before Troops (default Troops); `remove` is how
 // many to remove on a hit, 0 to the maximum (default the maximum).
 import type { Exec } from "../../../core/exec.ts";
@@ -66,6 +67,7 @@ export const attack: ActionHandler = {
         removeInAttackOrder(ctx, loc, param(ctx.ruleset, "ambush.removal", "number"), part.perLocation[loc]?.["prefer"] === PIECE.police, "06 s5.1", "PA-06");
         continue;
       }
+      const troopsBefore = count(ctx.state, loc, PIECE.troops);
       ctx.apply({ type: "setPieceState", piece: PIECE.guerrilla, space: loc, from: FACE.underground, to: FACE.active, count: "all", ruleRef, assumptionRef: null });
       const roll = ctx.roll(`Attack in ${loc}`, ruleRef);
       const hit = roll <= guerrillas(ctx.state, loc);
@@ -73,7 +75,7 @@ export const attack: ActionHandler = {
       if (hit) {
         const prefer = part.perLocation[loc]?.["prefer"] === PIECE.police;
         const troops = removeInAttackOrder(ctx, loc, removal(ctx.ruleset, part.perLocation[loc]?.["remove"]) ?? 0, prefer, ruleRef);
-        if (troops > 0) ctx.apply({ type: "removePieces", piece: PIECE.guerrilla, state: FACE.active, count: troops, space: loc, to: "available", ruleRef: "06 s4.3 item 4", assumptionRef: null });
+        if (troops > 0 && roll <= troopsBefore) ctx.apply({ type: "removePieces", piece: PIECE.guerrilla, state: FACE.active, count: troops, space: loc, to: "available", ruleRef: "06 s4.3 item 4", assumptionRef: null });
       }
       if (roll === param(ctx.ruleset, "attack.bonusRoll", "number")) {
         ctx.apply({ type: "placePieces", piece: PIECE.guerrilla, count: 1, space: loc, state: FACE.underground, ruleRef: "06 s4.3 item 5", assumptionRef: null });

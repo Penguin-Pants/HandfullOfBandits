@@ -1,15 +1,15 @@
 ---
 title: A Handful of Bandits
 subtitle: Kurdish COIN · Turkey, 1984–1989
-edition: Scenario A · Playable prototype · R3
-date: 31 October 2026
+edition: Scenario A · Playable prototype · R4
+date: 1 November 2026
 ---
 
 # 1.0 Introduction
 
 *A Handful of Bandits* is a two-player research prototype about the conflict in southeastern Turkey. One player directs the **State** and the other the **PKK**. The State seeks Support and Legitimacy. The PKK seeks Opposition and domestic Bases. Military Control, political attitudes and national Legitimacy are separate measures.
 
-This edition covers **Scenario A, 1984–1989**, the current playable prototype. It uses Campaigns C1 and C2 and ends no later than the second Propaganda round. It includes the designer decisions implemented in ruleset R3. It is not a balanced or final published game.
+This edition covers **Scenario A, 1984–1989**, the current playable prototype. It uses Campaigns C1 and C2 and ends no later than the second Propaganda round. It includes the designer decisions implemented in ruleset R4. It is not a balanced or final published game.
 
 **Reading the rules.** Numbered rules give the procedures. Italic examples explain them. Card text can modify a procedure (5.1). Section 10 gives the complete setup. Appendix A reproduces the current C1/C2 Event text. Appendix B identifies implementation differences and systems outside this edition.
 
@@ -253,7 +253,13 @@ Entry into a Restricted box always activates the entering group. Hostile or Alig
 
 **Cost:** 1 Resource per selected space with Guerrillas and State pieces.
 
-Activate all Guerrillas there and roll one die for each space. If the roll is at most the Guerrilla count there, remove up to two State pieces. Choose Troops or Police first, then Guards, then State Bases. For every Troop removed, remove one Guerrilla as attrition. On a roll of 1, also place one Available Underground Guerrilla. Return all removed pieces to Available.
+Before resolving the Attack, count the Troops in the space. Activate all Guerrillas there and roll one die. If the result is **less than or equal to** the number of Guerrillas, the Attack succeeds. Remove up to two State pieces: choose Troops or Police first, then Guards, then State Bases.
+
+**Attrition (DD-21):** if the Attack removes Troops, compare the **same die result** with the Troop count recorded before the Attack. If the result is **less than or equal to** that count, remove one Guerrilla for each Troop removed. If the result is **greater than** that count, remove no Guerrillas for attrition. If no Troops are removed, no attrition occurs. Return removed pieces to Available. Do not roll again.
+
+After attrition, a roll of 1 also places one Available Underground Guerrilla.
+
+> **EXAMPLE:** Four Guerrillas attack two Troops. A roll of 1–4 succeeds. If both Troops are removed, a roll of 1–2 also removes two Guerrillas; a roll of 3–4 causes no attrition. On a roll of 1, place the bonus Underground Guerrilla afterward.
 
 **Ambush replaces this procedure in its selected spaces:** no roll, activate one Underground Guerrilla, remove one State piece, no attrition and no bonus Guerrilla (4.3.1). Other Attack spaces resolve normally.
 

@@ -50,11 +50,13 @@ def card_reference() -> str:
 
 def main() -> None:
     (HERE / "prototype-card-reference.md").write_text(card_reference(), encoding="utf-8")
+    manifest = yaml.safe_load((PACKAGE / "manifest.yaml").read_text(encoding="utf-8"))
     subprocess.run([
         "pandoc", "prototype-rules.md", "prototype-card-reference.md", "prototype-notes.md",
         "--from=markdown+raw_tex", "--pdf-engine=xelatex",
         "--template=rulebook-layout.tex", "--lua-filter=rulebook-tables.lua",
         "--toc", "--toc-depth=1", "--standalone",
+        "--metadata=ruleset:" + manifest["rulesetVersion"],
         "--output=handful-of-bandits-rules-a4.pdf",
     ], cwd=HERE, check=True)
     print(HERE / "handful-of-bandits-rules-a4.pdf")

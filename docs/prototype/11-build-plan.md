@@ -498,6 +498,14 @@ TWO-PASS REVIEW is recorded in `16-board-art-direction.md`. Fix: dark-mode passi
 
 TWO-PASS REVIEW and validation are in `docs/rules/review.md`. PDF preflight confirms A4 geometry, embedded fonts, linked contents, matching bookmarks, no blank pages, no text overflow and no missing glyphs. All 66 Event sides match package text; both Propaganda cards and ARGK are included. Static checks and 807 tests in 62 files pass. Two research/implementation differences are explicitly recorded in Appendix B for design review: one-location Op Only and voluntary map-to-Available withdrawals. The reading edition follows current simulator behavior without inventing a rule change. IC-3a remains open.
 
+### Approved Attack attrition follow-up (DD-21, 2026-11-01)
+
+**Status: implemented and validated; current ruleset R4.** Ordinary Attack uses its existing die for both success and conditional attrition. Only when Troops are removed and the result is less than or equal to the Troop count before the Attack, remove one Guerrilla per Troop removed. No second roll; no attrition on a miss or when no Troops are removed. The roll-of-1 bonus remains after attrition. Ambush remains no-roll and exempt. The designer approved this rule and the explicit comparison wording. Research 06, the decision register, UI summary, mechanics inventory and the A4 reading edition now agree.
+
+TWO-PASS REVIEW: `attack-attrition-review.md`. Tests cover all six die results, equality against original Troops, Police-only/zero removals, free Event Attacks, mixed Attack/Ambush and RNG progression. `make check` and all 819 tests in 62 files pass. Both golden replays were refreshed for R4; Scenario A still verifies 65 commands through the CLI. Build and complete S0/Scenario A browser smoke pass. Package validation has no Scenario A blockers; full-campaign exclusions remain expected. The rulebook remains 12 A4 portrait pages with R4 and 1 November 2026 metadata, valid contents links and no text overflow.
+
+All 30 paired screens were rerun with the same seeds and policies. Round CSVs are byte-identical to the existing R3 reports in `phase3a-results/`, so no duplicate CSVs were added. Win totals remain 1/9, 5/5 and 3/7 (State/PKK). These policies do not establish the balance effect of the new rule; the PKK 9/10 flag and IC-3a remain open. Older saved games follow the existing code-fingerprint replay check and may become read-only if replay results differ. No new product decision is required for this change.
+
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |

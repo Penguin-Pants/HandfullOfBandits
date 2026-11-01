@@ -185,12 +185,12 @@ Cost: 1 Resource per selected space.
 
 1. Select spaces with Guerrillas and State pieces.
 2. Activate all Guerrillas there.
-3. Roll one die. If the result is equal to or less than the number of PKK Guerrillas in the space, remove up to 2 State pieces: Troops or Police first (PKK choice), then Village Guards, then State Bases.
-4. Attrition: for each Troop removed, remove one Guerrilla from the space.
-5. On a roll of 1, also place 1 Underground Guerrilla from Available in the space.
+3. Roll one die. If the result is less than or equal to the number of PKK Guerrillas in the space, remove up to 2 State pieces: Troops or Police first (PKK choice), then Village Guards, then State Bases.
+4. Attrition (DD-21): if the Attack removes Troops, compare the same die result with the number of Troops present before the Attack. If the result is less than or equal to that count, remove one Guerrilla for each Troop removed. If the result is greater than that count, or no Troops were removed, no attrition occurs. Return removed Guerrillas to Available. Do not roll again.
+5. After attrition, on a roll of 1, also place 1 Underground Guerrilla from Available in the space.
 6. Removed State pieces go to State Available.
 
-Evidence: attacks on army patrols and stations [E-0003; E-0073; F-009]. Adapts CT 3.3.3.
+Evidence: attacks on army patrols and stations [E-0003; E-0073; F-009]. Adapts CT 3.3.3. DD-21 replaces automatic attrition with the same die compared against the pre-Attack Troop count; this is an approved game abstraction, not a historically calibrated casualty ratio.
 
 ### 4.4 Coerce
 
@@ -266,7 +266,7 @@ Europe mobilization is not a separate SA. The PKK raises Europe by selecting the
 | State | Covert Action | SA, Garrison or Sweep | Hidden Legitimacy 2 | From C3; Legitimacy 4+ |
 | PKK | Rally | Op | 1 per location | No Displacement; Europe track |
 | PKK | March | Op | 1 per destination | Posture; no Western Cities |
-| PKK | Attack | Op | 1 per space | Die; attrition per Troop |
+| PKK | Attack | Op | 1 per space | One die; conditional attrition per Troop (DD-21) |
 | PKK | Coerce | Op | 1 per space | Toward Neutral only; marker |
 | PKK | Ambush | SA, Attack | 0 | 2 spaces; remove 1 |
 | PKK | Extort | SA, any Op | 0 | +1 per space with Control |

@@ -14,6 +14,13 @@ const marker = (id: string, m: string, n = 1) => ({spaces: {[id]: {markers: {[m]
 const track = (id: string, n: number | string) => ({tracks: {[id]: n}});
 const mod = (id: string) => ({modifiers: [{id}]});
 const active = (id: string, n: number) => ({spaces: {[id]: {pieces: {guerrilla: {active: n}}}}});
+it("an Event-granted free Attack uses DD-21 return fire without charging PKK Resources", () => {
+  const board = withRoll(withCard(setPieces(turnOf("pkk"), "hakkari", "guerrilla", 4), "DK-027"), 4);
+  const {state} = play(board, {type: "ChooseEvent", faction: "pkk", side: "shaded", answers: [plan(["hakkari"])]});
+  expect(state.spaces["hakkari"]?.pieces["guerrilla"]).toEqual({active: 4, underground: 0});
+  expect(state.spaces["hakkari"]?.pieces["troops"]).toEqual({default: 0});
+  expect(state.tracks["resources.pkk"]).toBe(5);
+});
 const rows: readonly [string, "unshaded" | "shaded", readonly unknown[], object][] = [
   ["DK-004","unshaded",["PKK Resources"],track("resources.pkk",3)], ["DK-004","shaded",[],mod("ernk")],
   ["DK-006","unshaded",[],mod("tribal-allies")],

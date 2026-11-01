@@ -72,7 +72,7 @@ ARGK variant: after DK-001 the PKK had 8 domestic Guerrillas and the Botan Base.
 5. Martial Law and OHAL drain -1, and the restraint gain gives +1 whenever no Displacement marker flips. In C1 and C2 the Emergency Rule costs nothing. Open (proposal in section 3).
 6. State Resources run dry by card 4, then the State earns 19 against 6 per round. Ops cost the State 2 per space and the PKK 1. Open watch item.
 7. Train option 3 turns 2 Police into a State Base for 2 Resources. In Şanlıurfa this adds Pop 4 to State income at every round. Open watch item.
-8. Attack with 6 or more Guerrillas never fails (die result at most 6). CT has the same rule. Logged only.
+8. Attack with 6 or more Guerrillas never fails (die result less than or equal to 6). CT has the same rule. Logged only.
 9. Campaign length. With the Propaganda card at position 9 to 13, a Campaign has 8 to 16 cards (12 + this pile's position - last pile's position). DD-13.1 says about 9 to 12. Proposed DD text change.
 
 ### 1.7 Full-campaign arithmetic

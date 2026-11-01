@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { rollDie } from "../../../core/rng.ts";
 import { codes, op, pieces, play, setLevel, setMarkers, setPieces, setTrack, turnOf, withRoll } from "../../../../../test/board.ts";
 
 // T-VAL and T-OPS for PKK Operations: one fixture per rule line of research 06 s4 (11 P2-07).
@@ -122,12 +123,57 @@ describe("Attack (06 s4.3)", () => {
     expect(codes(start, attack("hakkari", { remove: 3 }))).toEqual(["badRemove"]);
   });
 
-  it("activates all Guerrillas; a roll at or below their number removes 2 State pieces, Troops first, with attrition", () => {
+  it("activates all Guerrillas; a roll less than or equal to their number removes 2 State pieces, Troops first, with attrition", () => {
     const { state } = play(withRoll(start, 2), attack("hakkari"));
     expect(pieces(state, "hakkari", "troops")).toEqual({ default: 0 });
     expect(pieces(state, "hakkari", "police")).toEqual({ default: 1 });
     expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 0, active: 0 });
     expect(res(state)).toBe(4);
+  });
+
+  it.each([
+    [1, 0, 2, 1],
+    [2, 0, 2, 0],
+    [3, 0, 4, 0],
+    [4, 0, 4, 0],
+    [5, 2, 4, 0],
+    [6, 2, 4, 0],
+  ])("4 Guerrillas versus 2 Troops, roll %i: resolves success, return fire and bonus with one die", (roll, troops, active, underground) => {
+    const board = withRoll(setPieces(start, "hakkari", "guerrilla", 4), roll);
+    const result = play(board, attack("hakkari"));
+    expect(pieces(result.state, "hakkari", "troops")).toEqual({default: troops});
+    expect(pieces(result.state, "hakkari", "guerrilla")).toEqual({active, underground});
+    expect(result.state.rng).toEqual(rollDie(board.rng).rng);
+  });
+
+  it("uses Troops before removals, not Troops removed or remaining, at the equality boundary", () => {
+    const board = withRoll(setPieces(setPieces(start, "hakkari", "guerrilla", 6), "hakkari", "troops", 5), 5);
+    const {state} = play(board, attack("hakkari"));
+    expect(pieces(state, "hakkari", "troops")).toEqual({default: 3});
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 4, underground: 0});
+  });
+
+  it("resolves Ambush without a roll and an ordinary Attack with one roll in the same action", () => {
+    const board = withRoll(setPieces(setPieces(start, "hakkari", "guerrilla", 4), "botan", "guerrilla", 4), 4);
+    const {state} = play(board, op("pkk", "opSa", {op: "pkk.attack", locations: ["hakkari", "botan"], sa: {action: "pkk.ambush", timing: "before", locations: ["hakkari"], perLocation: {}}}));
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 1, underground: 3});
+    expect(pieces(state, "hakkari", "troops")).toEqual({default: 1});
+    expect(pieces(state, "botan", "guerrilla")).toEqual({active: 4, underground: 0});
+    expect(pieces(state, "botan", "troops")).toEqual({default: 0});
+    expect(state.rng).toEqual(rollDie(board.rng).rng);
+  });
+
+  it("has no attrition when only Police are removed, even if the die is less than or equal to the Troop count", () => {
+    const board = withRoll(setPieces(start, "hakkari", "police", 2), 2);
+    const {state} = play(board, attack("hakkari", {prefer: "police"}));
+    expect(pieces(state, "hakkari", "troops")).toEqual({default: 2});
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 2, underground: 0});
+  });
+
+  it("has no attrition when the PKK chooses zero removals on a successful Attack", () => {
+    const {state} = play(withRoll(start, 2), attack("hakkari", {remove: 0}));
+    expect(pieces(state, "hakkari", "troops")).toEqual({default: 2});
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 2, underground: 0});
   });
 
   it("removes Police first on request, then Troops; no attrition for Police", () => {

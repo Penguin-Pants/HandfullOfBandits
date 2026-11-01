@@ -2,13 +2,15 @@
 
 ## B.1 Edition Boundary
 
-This is the playable **Scenario A, C1/C2** ruleset R3, dated 31 October 2026. It is a consolidated reading edition, not a new rules revision. The simulator source reviewed for this edition is main commit **4b5dbe8**. No rule, parameter or Event encoding was changed to make this document.
+This is the playable **Scenario A, C1/C2** ruleset R4, dated 1 November 2026. The source baseline is main commit **d9a6453**. This revision includes the approved DD-21 Attack rule in the simulator and printed text. Event encodings and numerical package parameters are unchanged.
 
 Scenarios B and C, the five-Campaign game, Legal Politics procedure, party closure, Village Clearance, Covert Action, ceasefire negotiations, later Pivotals and optional third-player modules are **not implemented as complete playable systems in this edition**. References to their tracks or markers explain existing components and generic adjustments; they do not authorize those actions in Scenario A. IC-3a still requires the designer to finish Scenario A and export notes.
 
 ## B.2 Rule Precedence and Consolidation
 
 The latest explicit designer decisions take precedence over older research wording. This edition incorporates:
+
+- **DD-21:** ordinary Attack reuses its die for attrition. Only if Troops are removed and the result is less than or equal to the Troop count before the Attack, remove one Guerrilla per Troop removed. No second roll. Apply the roll-of-1 bonus afterward. Ambush remains exempt.
 
 - **DD-20:** no income in the final Propaganda; Propaganda Agitation uses a PKK Base or PKK Control; Ambush has no roll, one activation and one State removal, with no attrition or bonus; five revised C1 Event sides and the Strike Collaborators warning.
 - **DEC-53:** Reset flips all Guerrillas Underground, including Hostile/Aligned camps.
@@ -46,8 +48,8 @@ All eight chapters are under `research/research-final/package-b-coin-design/`. T
 
 ## B.5 Format Reference
 
-The PDF and Markdown rule library in **Penguin-Pants/COIN_Research**, `research/rules`, was inspected at commit **b0e7c64**. The main format model is *Colonial Twilight*, revised May 2018. Comparative checks included *Cuba Libre*, *A Distant Plain*, *The British Way: Malaya* and *People Power*. The library's 22 rule PDFs and corresponding Markdown files were inventoried for structure and page format.
+Format model: *Colonial Twilight*, revised May 2018, checked against *Cuba Libre*, *A Distant Plain*, *The British Way: Malaya* and *People Power*. PDF and Markdown sources: **Penguin-Pants/COIN_Research**, `research/rules`, commit **b0e7c64**.
 
-This edition follows their numbered-rule hierarchy, compact two-column body, serif reading text, bold headings, running folios, italic examples, tables and illustrated title/contents page. The layout is adapted to **A4 portrait, 210 × 297 mm**. The principal originals use US Letter or similar sizes, so line endings and page counts cannot be identical. Openly available Liberation font equivalents replace the originals' embedded Times/Myriad fonts. Publisher logos, third-party cover art and official publication claims are not reproduced.
+This edition follows the numbered rules, two-column serif text, running folios, examples, tables and illustrated contents page. It adapts the original US Letter format to **A4 portrait, 210 × 297 mm**, with embedded Liberation font equivalents. Publisher branding and third-party artwork are not reproduced.
 
-**Printing:** use A4 portrait at **100% / Actual size**. The PDF has searchable text, embedded fonts, running page numbers and a linked contents list. It can be printed in grayscale; color is not needed to interpret a rule. For duplex printing, use long-edge binding. No bleed or crop marks are required.
+**Printing:** A4 portrait, **100% / Actual size**. For duplex use long-edge binding. Grayscale is supported. Text is searchable and the contents links are active.
