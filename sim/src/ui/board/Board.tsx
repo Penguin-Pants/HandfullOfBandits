@@ -1,8 +1,7 @@
-// Regional board (08 s3.1): approximate map of the region (region.ts). Cell fill shows the
-// Support level, the badge shows Control, tokens show pieces with counts. Spaces the last action
-// changed get an amber outline. Click selects; Shift-click adds to the selection. A drag from one
-// space to another plans a move (UC-5); planned moves show as arrows. Light terrain (mountain
-// relief, rivers, Lake Van) and the tracks that belong to a box sit on the map (UC-7, UC-8).
+// Approved atlas board with live counters, selection and drag planning.
+// Older layouts and other packages retain the schematic fallback (DEC-60).
+import type { AtlasSpace } from "./atlas-data.ts";
+import { atlasLayout, AtlasGeography, AtlasInfo } from "./Atlas.tsx";
 import { Terrain } from "./Terrain.tsx";
 import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { BoardView, SpaceView } from "../api.ts";
@@ -10,7 +9,7 @@ import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
 import { counted, words } from "../common/names.ts";
 import { spaceOfTrack } from "../status/tracks.ts";
-import { isInset, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, TURKEY, type Point } from "./region.ts";
+import { isInset, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, type Point } from "./region.ts";
 
 const INSET_W = 116;
 const INSET_H = 90;
@@ -76,13 +75,13 @@ function Tokens({ space, view, x, y }: { space: SpaceView; view: BoardView; x: n
   );
 }
 
-function Space({ space, cell, clip, selected, changed, onSelect, onGrab }: { space: SpaceView; cell: Point[] | null; clip: string | undefined; selected: boolean; changed: boolean; onSelect: BoardProps["onSelect"]; onGrab: (id: string) => void }) {
+function Space({ space, cell, atlas, selected, changed, onSelect, onGrab }: { space: SpaceView; cell: Point[] | null; atlas: AtlasSpace | undefined; selected: boolean; changed: boolean; onSelect: BoardProps["onSelect"]; onGrab: (id: string) => void }) {
   const outline = selected ? "var(--accent)" : changed ? "var(--changed)" : null;
   const box = cell === null ? { x: space.x - INSET_W / 2, y: space.y - INSET_H / 2 } : null;
   return (
     <g
       role="button"
-      aria-label={space.name}
+      aria-label={atlas?.labels.map(l => l.text).join(" ") ?? space.name}
       aria-pressed={selected}
       tabIndex={0}
       className="map-space"
@@ -92,10 +91,20 @@ function Space({ space, cell, clip, selected, changed, onSelect, onGrab }: { spa
       onKeyDown={(e) => { if (e.key === "Enter") onSelect(space.id, e.shiftKey); }}
     >
       <title>{spaceTooltip(space)}</title>
-      {box === null ? (
+      {atlas !== undefined ? (
         <>
-          <path d={pathOf(cell ?? [])} clipPath={clip} fill={space.kind === "domestic" ? levelColor(space.level) : "var(--abroad)"} stroke="var(--cell-line)" strokeWidth={1.2} strokeDasharray="6 3" />
-          {outline !== null && <path d={pathOf(cell ?? [])} clipPath={clip} fill="none" stroke={outline} strokeWidth={6} strokeDasharray={selected ? undefined : "8 5"} />}
+          <path d={atlas.path} fill="#fff6dd" fillOpacity={.1} fillRule="evenodd" className="atlas-area" />
+          {atlas.circle !== undefined && <>
+            <defs><clipPath id="clip-city"><circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} /></clipPath></defs>
+            <circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} fill="#f2e9d6" />
+            <image href="/diyarbakir-city.png" x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.3} clipPath="url(#clip-city)" pointerEvents="none" />
+          </>}
+          <path d={atlas.path} fill="none" stroke={outline ?? "#887456"} strokeWidth={outline === null ? 1.05 : 4} strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
+        </>
+      ) : box === null ? (
+        <>
+          <path d={pathOf(cell ?? [])} fill={levelColor(space.level)} stroke="var(--cell-line)" strokeWidth={1.2} strokeDasharray="6 3" />
+          {outline !== null && <path d={pathOf(cell ?? [])} fill="none" stroke={outline} strokeWidth={6} strokeDasharray={selected ? undefined : "8 5"} />}
         </>
       ) : (
         <rect x={box.x} y={box.y} width={INSET_W} height={INSET_H} rx={6} fill={levelColor(space.level)} stroke={outline ?? "var(--cell-line)"} strokeWidth={outline === null ? 1.5 : 5} />
@@ -202,11 +211,12 @@ function BoxTrack({ track, space, others }: { readonly track: BoardView["status"
 
 export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [] }: BoardProps) {
   const cells = regionCells(view.spaces);
-  const turkey = pathOf(TURKEY);
+
   const [grab, setGrab] = useState<{ from: string; at: Pt | null } | null>(null);
   const centre = (id: string): Pt | null => {
     const s = view.spaces.find((x) => x.id === id);
-    return s === undefined ? null : { x: s.x, y: s.y };
+    const layout = cells.geographic && s !== undefined ? atlasLayout(s) : undefined;
+    return s === undefined ? null : layout === undefined ? { x: s.x, y: s.y } : { x: layout.stack[0] + layout.stack[2] / 2, y: layout.stack[1] + layout.stack[3] / 2 };
   };
   // A release outside the map ends the drag without a move.
   useEffect(() => {
@@ -218,7 +228,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
   const from = grab === null ? null : centre(grab.from);
   return (
     <svg
-      viewBox={`0 0 ${String(MAP_W)} ${String(MAP_H)}`}
+      viewBox={cells.geographic ? "0 40 1000 660" : `0 0 ${String(MAP_W)} ${String(MAP_H)}`}
       role="img"
       aria-label="Board"
       className={grab === null ? "map" : "map dragging"}
@@ -231,37 +241,32 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       }}
     >
       <defs>
-        <clipPath id="clip-turkey">
-          <path d={turkey} />
-        </clipPath>
-        <clipPath id="clip-abroad">
-          <path d={`M${String(MAP_X0)},0H${String(MAP_W)}V${String(MAP_H)}H${String(MAP_X0)}Z${turkey}`} clipRule="evenodd" />
-        </clipPath>
         <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
           <path d="M0,0L10,5L0,10Z" className="map-arrow-head" />
         </marker>
       </defs>
       <rect x={0} y={0} width={MAP_X0 - 10} height={MAP_H} fill="var(--inset)" />
-      <text x={(MAP_X0 - 10) / 2} y={20} textAnchor="middle" className="map-marker">
+      <text x={(MAP_X0 - 10) / 2} y={cells.geographic ? 50 : 20} textAnchor="middle" className="map-marker">
         Off map
       </text>
+      <Terrain view={view} cells={cells} />
       {view.spaces.map((s) => (
         <Space
           key={s.id}
           space={s}
           cell={isInset(s) ? null : (cells.domestic.get(s.id) ?? cells.external.get(s.id) ?? null)}
-          clip={isInset(s) || !cells.geographic ? undefined : s.kind === "domestic" ? "url(#clip-turkey)" : "url(#clip-abroad)"}
+          atlas={cells.geographic ? atlasLayout(s) : undefined}
           selected={selected.includes(s.id)}
           changed={changed.includes(s.id)}
           onSelect={onSelect}
           onGrab={(id) => { if (onDrag !== undefined) setGrab({ from: id, at: null }); }}
         />
       ))}
-      <Terrain view={view} cells={cells} />
-      {cells.geographic && <path d={turkey} fill="none" stroke="var(--border)" strokeWidth={2.5} pointerEvents="none" />}
-      {view.spaces.map((s) => (
-        <Tokens key={s.id} space={s} view={view} x={s.x} y={s.y + 6} />
-      ))}
+      {cells.geographic && <AtlasGeography />}
+      {view.spaces.map((s) => {
+        const layout = cells.geographic ? atlasLayout(s) : undefined;
+        return layout === undefined ? <Tokens key={s.id} space={s} view={view} x={s.x} y={s.y + 6} /> : <AtlasInfo key={s.id} space={s} view={view} layout={layout} />;
+      })}
       {view.status.tracks.map((t) => {
         const at = spaceOfTrack(t.id, view.spaces);
         return at === undefined ? null : <BoxTrack key={t.id} track={t} space={at} others={view.spaces.filter((o) => !isInset(o))} />;
@@ -313,6 +318,7 @@ export function Legend({ view }: { readonly view: BoardView }) {
           </span>
         );
       })}
+      <span className="legend-item">Slate dash-dot: country border. Fine brown: playable area. Borders alone do not allow movement.</span>
       <span className="legend-item">
         <span className="swatch" style={{ border: "3px dashed var(--changed)" }} /> Changed by last action
       </span>

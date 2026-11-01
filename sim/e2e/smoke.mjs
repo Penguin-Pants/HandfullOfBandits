@@ -1,4 +1,4 @@
-/* global process, console, fetch, setTimeout, document, innerHeight, innerWidth, Image, getComputedStyle */
+/* global process, console, fetch, setTimeout, document, innerHeight, innerWidth, Image, DOMPoint, getComputedStyle */
 // IC-2 item 1: Playwright smoke (11 IC-2). Home, start S0, one action, one note, undo, JSON export.
 // Needs a built UI (`npm run build`) and Playwright with Chromium (not a project dependency).
 // Run: make e2e
@@ -39,7 +39,7 @@ async function waitForServer() {
 let browser;
 try {
   await waitForServer();
-  browser = await chromium.launch();
+  browser = await chromium.launch({ executablePath: process.env.HOB_CHROMIUM });
   const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
   page.on("dialog", (d) => void d.accept());
   await page.goto(base);
@@ -58,6 +58,33 @@ try {
     return image.naturalWidth > 0;
   });
   check(artwork, "atlas artwork loads independently of game regions");
+  const atlas = await page.evaluate(async () => {
+    const svg = document.querySelector('[aria-label="Board"]');
+    const outside = [];
+    for (const info of svg.querySelectorAll('[data-info]')) {
+      const area = svg.querySelector(`[data-space="${info.dataset.info}"] .atlas-area`);
+      for (const el of info.querySelectorAll('text, rect, circle, polygon')) {
+        const b = el.getBBox();
+        const matrix = area.getCTM().inverse().multiply(el.getCTM());
+        for (const [x,y] of [[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]]) {
+          if (!area.isPointInFill(new DOMPoint(x,y).matrixTransform(matrix))) outside.push(`${info.dataset.info}: ${el.textContent}`);
+        }
+      }
+    }
+    for (const counter of svg.querySelectorAll('.atlas-counter')) {
+      const r = counter.querySelector('rect').getBBox();
+      for (const text of counter.querySelectorAll('text')) {
+        const b = text.getBBox();
+        if (b.x < r.x || b.x + b.width > r.x + r.width) outside.push(`counter text: ${text.textContent}`);
+      }
+    }
+    const cityPoint = new DOMPoint(466.44,372);
+    const citySeparated = svg.querySelector('[data-space="diyarbakir-city"] .atlas-area').isPointInFill(cityPoint) && !svg.querySelector('[data-space="diyarbakir-rural"] .atlas-area').isPointInFill(cityPoint);
+    const city = new Image(); city.src = '/diyarbakir-city.png'; await city.decode();
+    return {outside, citySeparated, city: city.naturalWidth > 0, countries: svg.querySelectorAll('[data-geography="country-borders"]').length, countryLength: svg.querySelector('[data-geography="country-borders"]').getTotalLength(), rivers: svg.querySelectorAll('.map-river').length};
+  });
+  check(atlas.outside.length === 0, `atlas labels, population, counters and stacks remain inside their areas: ${atlas.outside.join(', ')}`);
+  check(atlas.city && atlas.citySeparated && atlas.countries === 1 && atlas.countryLength > 500 && atlas.rivers === 0, 'city art loads, country borders are separate and rivers are absent');
   await page.emulateMedia({ colorScheme: "dark" });
   const contrast = await page.evaluate(() => {
     const luminance = color => {

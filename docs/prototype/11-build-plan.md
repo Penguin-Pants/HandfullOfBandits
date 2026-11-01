@@ -492,6 +492,14 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 
 TWO-PASS REVIEW is recorded in `16-board-art-direction.md`. Fix: dark-mode passive level badges had insufficient contrast; a browser assertion failed, then passed after map-local light panel colors. Drop: no topology or rule defect reproduced. No new Decide or Propose item. Validation: `make check`, 807 tests in 62 files, UI build and S0/Scenario A browser checks. Browser checks include artwork decoding and dark-theme label contrast. Light/dark UI and the printed board were rendered for inspection. IC-3a remains open; this artwork does not replace the designer's end-to-end Scenario A playtest.
 
+### Approved interactive atlas follow-up (DEC-60, 2026-11-01)
+
+**Scope:** implement the designer-approved option 3 refinement 2 with sourced Lake Van and shared KDP–Syria frontier. This is a simulator presentation phase. Dependencies: P2-14/UC board interaction, DEC-59 artwork, research 03 §2 and §4, and the designer's completed visual approvals.
+
+**Acceptance:** the closer atlas uses gently bent province-based areas and distinct country borders; no river lines; Diyarbakir is a separate illustrated circular space inside Diyarbakir hinterland; every domestic population, name, Control and Support/Opposition counter fits inside its space; display B reflects live state; all 18 locations, pieces, markers, selection, keyboard input, drag plans, postures and Europe remain usable. All 20 domestic links and all 25 legal links stay unchanged. KDP shares the actual Syria frontier for orientation only. Generic/older layouts retain their fallback. Existing package hashes and golden replays stay valid.
+
+**Status:** complete and locally validated. All 831 tests in 63 files, TypeScript/ESLint, production build, package/hash validation and the complete S0/Scenario A browser smoke pass. After the final counter text correction, 32 focused board tests, static checks and the full browser smoke pass again. TWO-PASS REVIEW fixes and outcomes are recorded in `17-approved-atlas-board.md`. No out-of-scope fixes are proposed. Source provenance: `game-packages/kurdish-coin/0.1.0/map/SOURCES.md`. Review: `17-approved-atlas-board.md`. The prior printed draft and rulebook are historical artifacts; this phase does not rebuild them. IC-3a remains open for the designer's full Scenario A playthrough. No blocker or new product decision is open.
+
 ### Printable rules follow-up (2026-10-31)
 
 **Status: complete.** The designer confirmed the reading edition covers current Scenario A, C1/C2. `docs/rules/handful-of-bandits-rules-a4.pdf` is a 12-page A4 portrait rulebook using the Colonial Twilight format, with editable Markdown, current card text and a `make rulebook` rebuild. It incorporates DD-20 and DEC-53 to DEC-57. No game rule or package data changed. Print at 100% / Actual size; duplex long-edge binding.

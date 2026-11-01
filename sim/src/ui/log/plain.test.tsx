@@ -147,7 +147,7 @@ describe("preview lines (UC-9)", () => {
     [{ type: "adjustTrack", track: "resources.pkk", delta: -1 }, "PKK Resources −1"],
     [{ type: "adjustTrack", track: "resources.state", delta: 4 }, "State Resources +4"],
     [{ type: "placePieces", piece: "guerrilla", count: 1, space: "dersim", state: "underground" }, "Place 1 Underground Guerrilla in Dersim"],
-    [{ type: "placePieces", piece: "troops", count: 2, space: "diyarbakir-city", state: null }, "Place 2 Troops in Diyarbakır City (Amed)"],
+    [{ type: "placePieces", piece: "troops", count: 2, space: "diyarbakir-city", state: null }, "Place 2 Troops in Diyarbakir"],
     [{ type: "setPieceState", piece: "guerrilla", space: "hakkari", from: "underground", to: "active", count: 1 }, "Flip 1 Guerrilla in Hakkari from Underground to Active"],
     [{ type: "movePieces", piece: "police", state: null, toState: null, count: 1, from: "mardin-batman", to: "botan" }, "Move 1 Police from Mardin-Batman to Botan"],
     [{ type: "shiftLevel", space: "botan", direction: "opposition", steps: 1 }, "Shift Botan 1 level toward Opposition"],

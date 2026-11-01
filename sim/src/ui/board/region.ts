@@ -1,7 +1,5 @@
-// Map geometry for the board (08 s3.1): each located space gets a Voronoi cell around its
-// map.yaml layout point. Domestic cells are clipped to an approximate Turkey border, external
-// cells to the land outside it. Western Cities and Europe have no place on the regional map,
-// so they sit in a left inset. Approximate, for orientation only: not a survey map.
+// Approved atlas geometry with a generic Voronoi fallback for older layouts and other packages.
+import { ATLAS } from "./atlas-data.ts";
 import type { SpaceView } from "../api.ts";
 
 export type Point = readonly [number, number];
@@ -9,15 +7,6 @@ export const MAP_W = 1000;
 export const MAP_H = 700;
 /** Left edge of the regional map; the inset column is to its left. */
 export const MAP_X0 = 130;
-
-/**
- * Turkey's border in map units, same projection as map.yaml layout:
- * x = (lon - 37.3) * 108 + 150, y = (40.4 - lat) * 150. Closed along the top and left edges.
- */
-export const TURKEY: readonly Point[] = [
-  [MAP_X0, 0], [MAP_W, 0], [960, 97], [922, 210], [901, 315], [917, 397], [960, 480],
-  [809, 472], [695, 495], [571, 499], [463, 525], [334, 558], [226, 532], [MAP_X0, 540],
-];
 
 /** True when the space belongs in the inset (no regional location). */
 export function isInset(space: SpaceView): boolean {
@@ -64,31 +53,19 @@ export function inside(p: Point, poly: readonly Point[]): boolean {
   return hit;
 }
 
-/**
- * Cells for located spaces. `geographic`: every domestic point lies inside the border, so domestic
- * and external sets are split at the border. Otherwise (a session stored with an older schematic
- * layout) all located spaces share one diagram with no border clip.
- */
-export function regionCells(spaces: readonly SpaceView[]): { geographic: boolean; domestic: Map<string, Point[]>; external: Map<string, Point[]> } {
-  const located = spaces.filter((s) => !isInset(s));
-  const site = (s: SpaceView): { id: string; at: Point } => ({ id: s.id, at: [s.x, s.y] });
-  const geographic = located.every((s) => (s.kind === "domestic") === inside([s.x, s.y], TURKEY));
-  if (!geographic) return { geographic, domestic: voronoi(located.map(site)), external: new Map() };
-  return { geographic, domestic: voronoi(located.filter((s) => s.kind === "domestic").map(site)), external: voronoi(located.filter((s) => s.kind !== "domestic").map(site)) };
+/** Match the approved geometry only to its original package layout, including saved sessions. */
+export function usesAtlas(spaces: readonly SpaceView[]): boolean {
+  const located = spaces.filter(s => !isInset(s));
+  return located.length === Object.keys(ATLAS.spaces).length && located.every(s => {
+    const expected = ATLAS.spaces[s.id]?.source;
+    return expected !== undefined && expected[0] === s.x && expected[1] === s.y;
+  });
 }
 
-/** A longitude and latitude in map units (the map.yaml layout projection). */
-const geo = (lon: number, lat: number): Point => [(lon - 37.3) * 108 + 150, (40.4 - lat) * 150];
-
-/** Rivers for orientation (UC-7), traced through approximate towns on their course. */
-export const RIVERS: readonly { readonly name: string; readonly path: readonly Point[] }[] = [
-  // Euphrates: Keban, Malatya plain, Atatürk Dam, Birecik, into Syria at Jarablus.
-  { name: "Euphrates", path: [geo(39.6, 38.85), geo(39.3, 38.8), geo(38.9, 38.45), geo(38.6, 37.95), geo(38.3, 37.55), geo(38.0, 37.05), geo(38.0, 36.6)] },
-  // Tigris: Hazar Lake, Diyarbakır, Hasankeyf, Cizre, the Iraq border.
-  { name: "Tigris", path: [geo(39.4, 38.5), geo(39.9, 38.15), geo(40.2, 37.9), geo(40.9, 37.85), geo(41.4, 37.7), geo(41.9, 37.45), geo(42.2, 37.3), geo(42.5, 37.0), geo(42.9, 36.6)] },
-];
-
-/** Lake Van outline (UC-7), approximate. */
-export const LAKE_VAN: readonly Point[] = [
-  geo(42.3, 38.75), geo(42.7, 38.95), geo(43.2, 39.0), geo(43.55, 38.85), geo(43.45, 38.45), geo(43.1, 38.4), geo(42.75, 38.55), geo(42.45, 38.55),
-];
+/** Old schematic layouts and other game packages keep their generated cells. */
+export function regionCells(spaces: readonly SpaceView[]): { geographic: boolean; domestic: Map<string, Point[]>; external: Map<string, Point[]> } {
+  const located = spaces.filter(s => !isInset(s));
+  if (!usesAtlas(spaces)) return { geographic: false, domestic: voronoi(located.map(s => ({ id: s.id, at: [s.x, s.y] }))), external: new Map() };
+  const cells = (kind: string): Map<string, Point[]> => new Map(located.filter(s => (s.kind === "domestic") === (kind === "domestic")).map(s => [s.id, [...(ATLAS.spaces[s.id]?.rings[0] ?? [])]]));
+  return { geographic: true, domestic: cells("domestic"), external: cells("external") };
+}
