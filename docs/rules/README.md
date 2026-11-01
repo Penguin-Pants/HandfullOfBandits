@@ -2,7 +2,7 @@
 
 [Download the A4 portrait PDF](handful-of-bandits-rules-a4.pdf).
 
-Scope: Scenario A, C1/C2, ruleset R3. This reading edition consolidates the implemented prototype and accepted designer decisions. It includes the complete current Event text, setup, rules differences and source notes. It does not enable the later Campaign systems.
+Scope: Scenario A, C1/C2, ruleset R4. This reading edition consolidates the implemented prototype and accepted designer decisions. It includes the complete current Event text, setup, rules differences and source notes. It does not enable the later Campaign systems.
 
 The format follows the Colonial Twilight rulebook in `Penguin-Pants/COIN_Research/research/rules`, with comparative checks against other COIN PDFs and Markdown. A4 replaces the originals' US Letter page geometry. Typography uses embedded Liberation Serif and Sans equivalents. Publisher art, branding and third-party rules text are not copied.
 

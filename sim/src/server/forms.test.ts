@@ -5,6 +5,13 @@ import { actionForms } from "./forms.ts";
 const summary = (id: string): string => actionForms.find((f) => f.id === id)?.summary ?? "";
 
 describe("action summaries match the engine", () => {
+  it("Attack reuses its die against the Troop count before removals (DD-21)", () => {
+    expect(summary("pkk.attack")).toContain("less than or equal to the number of Guerrillas");
+    expect(summary("pkk.attack")).toContain("same die result");
+    expect(summary("pkk.attack")).toContain("Troops present before the Attack");
+    expect(summary("pkk.attack")).toContain("only if Troops are removed");
+    expect(summary("pkk.attack")).not.toMatch(/at most|at or below/);
+  });
   it("Ambush replaces the Attack in its space: no roll, 1 Activation, 1 removal, no attrition (attack.ts, PA-06)", () => {
     expect(summary("pkk.ambush")).toMatch(/no die roll/i);
     expect(summary("pkk.ambush")).toMatch(/Activate only 1 Underground Guerrilla/);

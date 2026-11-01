@@ -13,7 +13,7 @@
 \usepackage[breakable,skins]{tcolorbox}
 \usepackage{xurl}
 \usepackage{hyperref}
-\hypersetup{unicode=true,hidelinks,pdftitle={$title$ — Rules of Play},pdfauthor={Research prototype},pdfsubject={Scenario A; ruleset R3; A4 portrait}}
+\hypersetup{unicode=true,hidelinks,pdftitle={$title$ — Rules of Play},pdfauthor={Research prototype},pdfsubject={Scenario A; ruleset $ruleset$; A4 portrait}}
 \setlength{\columnsep}{6mm}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{3pt plus .3pt minus .3pt}
@@ -33,8 +33,8 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[LE,RO]{\sffamily\fontsize{8}{9}\selectfont\thepage}
-\fancyhead[CE,CO]{\sffamily\itshape\fontsize{8}{9}\selectfont A Handful of Bandits\quad\textcolor{ruleblue}{Scenario A · R3}}
-\fancyfoot[C]{\sffamily\fontsize{7}{8}\selectfont Research prototype · 31 October 2026 · Rules of Play}
+\fancyhead[CE,CO]{\sffamily\itshape\fontsize{8}{9}\selectfont A Handful of Bandits\quad\textcolor{ruleblue}{Scenario A · $ruleset$}}
+\fancyfoot[C]{\sffamily\fontsize{7}{8}\selectfont Research prototype · $date$ · Rules of Play}
 \renewcommand{\headrulewidth}{.4pt}
 \renewcommand{\footrulewidth}{0pt}
 \begin{document}
@@ -49,11 +49,11 @@
 \vspace{6mm}
 \includegraphics[width=\textwidth,height=80mm]{../../game-packages/kurdish-coin/0.1.0/map/atlas-terrain.png}
 \vspace{5mm}
-{\sffamily\bfseries\fontsize{11}{13}\selectfont SCENARIO A · C1/C2 · RULESET R3\par}
+{\sffamily\bfseries\fontsize{11}{13}\selectfont SCENARIO A · C1/C2 · RULESET $ruleset$\par}
 \vspace{4mm}
 {\fontsize{29}{32}\selectfont R U L E S\; O F\; P L A Y\par}
 \vspace{3mm}
-{\sffamily\fontsize{10}{12}\selectfont Playable research prototype · 31 October 2026\par}
+{\sffamily\fontsize{10}{12}\selectfont Playable research prototype · $date$\par}
 \vspace{4mm}
 \begin{tcolorbox}[colback=white!48!coverpaper,colframe=white,arc=0pt,boxrule=.7pt,left=8mm,right=8mm,top=4mm,bottom=4mm]
 {\centering\sffamily\bfseries\fontsize{10}{12}\selectfont T A B L E\; O F\; C O N T E N T S\par}

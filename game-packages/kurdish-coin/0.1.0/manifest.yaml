@@ -1,9 +1,9 @@
 # Kurdish COIN 1984-1999 (research package B). Static data from research 03, 04, 05 and 09 (11 P2-01).
 packageId: kurdish-coin
 version: 0.1.0
-rulesetVersion: R3
+rulesetVersion: R4
 schemaVersion: 2
-changeDescription: Phase 3a with DD-20 designer rules and revised C1 Events
+changeDescription: DD-21. Attack reuses its die for conditional attrition against pre-Attack Troops
 title: Kurdish COIN 1984-1999
 modules: [ct-two-faction@1]
 options:

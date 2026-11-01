@@ -149,7 +149,7 @@ State variables, actions and automatic effects use the names in 05-rules-engine-
 | OPS-09 | Covert Action | From C3. Legitimacy 4+. Remove 1 Underground Guerrilla. Face-down marker | 06 s3.5 | F-028 (alleged) | Approved | MKR-05 | hidden markers | SA | none now | M | P | Y |
 | OPS-10 | Rally | 1 per location. Three options. Europe location. Agitate in one space | 06 s4.1 | F-007, F-040 | Tune | MAP-06, MAP-07, TRK-06 | pieces, europe | Op | Underground placement | H | P | N |
 | OPS-11 | March | 1 per destination. Posture entry. Activation condition | 06 s4.2 | F-023 | Competing (see GAP-I02) | MAP-02, TRK-04 | pieces | Op | activation | M | P | N |
-| OPS-12 | Attack | 1 per space. Activate all. Die roll. Attrition. Roll of 1 adds a Guerrilla | 06 s4.3 | E-0003 | Recommended | none | pieces, rng | Op | removal | M | P | N |
+| OPS-12 | Attack | 1 per space. Activate all. One die for success and conditional attrition (DD-21). Roll of 1 adds a Guerrilla | 06 s4.3 | E-0003 | Recommended | none | pieces, rng | Op | removal | M | P | N |
 | OPS-13 | Coerce | 1 per space, 2 in Pop 3+. Coercion marker. Shift toward Neutral | 06 s4.4 | F-034; DD-19.4 | Tune | MKR-02 | markers | Op | shift | M | P | N |
 | OPS-14 | Ambush | Up to 2 Attack spaces. No roll. Remove 1. No attrition | 06 s5.1 | E-0162 | Recommended | OPS-12 | pieces | SA | removal | M | P | N |
 | OPS-15 | Extort | +1 per qualifying space or box. Activate one | 06 s5.2 | F-034 (Low) | Recommended | none | resources | SA | income | L | P | N |

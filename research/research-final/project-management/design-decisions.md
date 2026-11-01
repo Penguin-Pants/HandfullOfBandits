@@ -211,6 +211,20 @@ Source: `playtestresults.md` (October 2026, finding D2).
 4. Shaded sides that could have no effect now always do something (finding D9): DK-002 places 1 Underground Guerrilla in Botan before the free Attack; DK-003 may shift a Mountain space with State Control; DK-005 may place 2 Guerrillas in the PUK Zone; DK-008 adds PKK Resources +1 and is no longer block only; DK-100 gives Europe +1 when Syria is already Host.
 5. Ambush follows 06 s5.1: in an Ambush space the Attack has no roll, Activates only 1 Underground Guerrilla, removes 1 State piece and has no attrition (PA-06 accepted; finding D5).
 
+## DD-21 Attack return fire uses the existing die
+
+Approved by the designer on 1 November 2026 after reviewing attrition and its historical basis. Applies to ordinary Attacks, including Event-granted free Attacks. Supersedes the automatic attrition in research 06 §4.3 item 4. Ambush remains governed by DD-20 and PA-06.
+
+1. Before resolving an ordinary Attack in a space, count the Troops there.
+2. Roll once. If the result is less than or equal to the Guerrilla count, the Attack succeeds and may remove State pieces in the usual order.
+3. If Troops are removed and that same die result is less than or equal to the Troop count recorded before the Attack, remove one Guerrilla for each Troop removed. If the result is greater than that count, or no Troops are removed, no attrition occurs. Return removed Guerrillas to Available.
+4. Resolve the existing roll-of-1 bonus after attrition. Never roll a second die for attrition.
+5. Ambush has no roll and no attrition. Use “less than or equal to” and “greater than or equal to” for inclusive comparisons in Attack rules; avoid “at most” and “at least” as shorthand for those comparisons.
+
+Example: four Guerrillas attack two Troops. Rolls 1–4 succeed. If both Troops are removed, rolls 1–2 also remove two Guerrillas, while rolls 3–4 cause no attrition. Roll 1 then places the bonus Underground Guerrilla. Rolls 5–6 fail and cause no attrition.
+
+Reason: retain the danger of engaging regular forces while allowing a successful attack without Guerrilla losses. One roll resolves success and conditional return fire, with stronger Troop concentrations posing greater risk. The two outcomes are deliberately correlated. Research supports combat risk, but does not validate a fixed piece exchange or a precise die probability. Pieces are design weights, not equal head counts. The rule borrows the general distinction between ordinary Attack and Ambush from Colonial Twilight, with a project-specific attrition procedure. Balance remains subject to Scenario A playtests. Ruleset R4 records this change; no extra random draw or parameter is needed.
+
 ## Decision record
 
 | ID | Claude input | Sol input | CT lessons | Final |
