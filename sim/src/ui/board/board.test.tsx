@@ -10,6 +10,7 @@ import { TrackCard } from "../status/TrackCard.tsx";
 import { setMarkers, setPieces } from "../../../test/board.ts";
 import { changedSpaces } from "../play/Play.tsx";
 import { Board, Legend, SpaceDetail, spaceTooltip } from "./Board.tsx";
+import { ATLAS } from "./atlas-data.ts";
 import { isInset, regionCells, voronoi } from "./region.ts";
 
 // P2-14: the board draws every location from the server view model; selection and detail card.
@@ -47,7 +48,7 @@ describe("Board", () => {
 });
 
 describe("map geometry", () => {
-  it("gives every located space a cell that holds its own point; Western Cities and Europe go in the inset", () => {
+  it("gives every located space its projected area; Western Cities and Europe move to the ribbon", () => {
     const cells = regionCells(view.spaces);
     for (const s of view.spaces) {
       const cell = cells.domestic.get(s.id) ?? cells.external.get(s.id);
@@ -56,12 +57,15 @@ describe("map geometry", () => {
         continue;
       }
       expect(cell?.length ?? 0).toBeGreaterThanOrEqual(3);
-      const xs = (cell ?? []).map((p) => p[0]);
-      const ys = (cell ?? []).map((p) => p[1]);
-      expect(s.x).toBeGreaterThanOrEqual(Math.min(...xs));
-      expect(s.x).toBeLessThanOrEqual(Math.max(...xs));
-      expect(s.y).toBeGreaterThanOrEqual(Math.min(...ys));
-      expect(s.y).toBeLessThanOrEqual(Math.max(...ys));
+      const label = ATLAS.spaces[s.id]?.labels[0];
+      expect(label).toBeDefined();
+      if (label === undefined) continue;
+      const xs = (cell ?? []).map(p => p[0]);
+      const ys = (cell ?? []).map(p => p[1]);
+      expect(label.x).toBeGreaterThanOrEqual(Math.min(...xs));
+      expect(label.x).toBeLessThanOrEqual(Math.max(...xs));
+      expect(label.y).toBeGreaterThanOrEqual(Math.min(...ys));
+      expect(label.y).toBeLessThanOrEqual(Math.max(...ys));
     }
     expect(view.spaces.filter(isInset).map((s) => s.id).sort()).toEqual(["europe", "western-cities"]);
   });
@@ -249,7 +253,7 @@ describe("approved atlas board", () => {
   it("renders the same atlas for a saved view while keeping all legal links unchanged", () => {
     const before = JSON.stringify(view);
     const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    expect(container.querySelectorAll("[data-info]")).toHaveLength(17);
+    expect(container.querySelectorAll("[data-info]")).toHaveLength(18);
     expect(JSON.stringify(view)).toBe(before);
     expect(view.links.some(l => [l.a, l.b].includes("mardin-batman") && [l.a, l.b].includes("kdp-zone"))).toBe(false);
   });
@@ -273,4 +277,34 @@ it("keeps the city and hinterland independently keyboard-selectable", () => {
   fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakir"}), {key: "Enter"});
   fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakir hinterland"}), {key: "Enter",shiftKey: true});
   expect(select.mock.calls).toEqual([["diyarbakir-city",false],["diyarbakir-rural",true]]);
+});
+
+describe("approved readable layout", () => {
+  it("moves both off-map areas to a top ribbon and draws each shared border once", () => {
+    const {container} = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    expect(container.querySelector("[data-ribbon]")).not.toBeNull();
+    expect(Number(container.querySelector("[data-info='western-cities'] .map-label")?.getAttribute("y"))).toBeLessThan(0);
+    expect(Number(container.querySelector("[data-info='europe'] .map-label")?.getAttribute("y"))).toBeLessThan(0);
+    expect(container.querySelectorAll(".playable-boundaries")).toHaveLength(1);
+    expect(container.querySelectorAll(".map-space > path[stroke]")).toHaveLength(0);
+    expect(screen.getAllByRole("button")).toHaveLength(18);
+  });
+
+  it("keeps main map names and counter words at the reviewed readable sizes", () => {
+    const {container} = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    for (const id of ["botan", "hakkari", "mardin-batman"]) {
+      const info = container.querySelector(`[data-info='${id}']`);
+      expect((info?.querySelector(".map-label") as SVGTextElement | null)?.style.fontSize).toBe("19px");
+      expect((info?.querySelector(".atlas-counter text") as SVGTextElement | null)?.style.fontSize).toBe("12px");
+    }
+  });
+
+  it("shows compact resources with the full track available on expansion", () => {
+    render(<TrackCard view={view} />);
+    const card = screen.getByLabelText("Resources and politics");
+    expect(card.querySelectorAll("details")).toHaveLength(6);
+    expect(card.querySelector("[aria-label='Emergency Rule'] summary")?.textContent).toContain("Martial Law");
+    expect(card.querySelector("[aria-label='State Resources'] summary")?.textContent).toContain("12");
+    expect(card.querySelector("[aria-label='Legitimacy'] .mini-track")?.children).toHaveLength(21);
+  });
 });

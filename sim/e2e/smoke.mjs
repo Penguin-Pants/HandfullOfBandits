@@ -40,7 +40,7 @@ let browser;
 try {
   await waitForServer();
   browser = await chromium.launch({ executablePath: process.env.HOB_CHROMIUM });
-  const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+  const page = await browser.newPage({ viewport: { width: 1908, height: 904 } });
   page.on("dialog", (d) => void d.accept());
   await page.goto(base);
   const start = page.getByRole("button", { name: "Start" });
@@ -71,6 +71,14 @@ try {
         }
       }
     }
+    for (const info of svg.querySelectorAll('[data-info]')) {
+      const pop = info.querySelector('.atlas-population rect')?.getBBox();
+      if (pop === undefined) continue;
+      for (const name of info.querySelectorAll('.map-label')) {
+        const b = name.getBBox();
+        if (b.x < pop.x + pop.width && b.x + b.width > pop.x && b.y < pop.y + pop.height && b.y + b.height > pop.y) outside.push(`name overlaps population: ${info.dataset.info}`);
+      }
+    }
     for (const counter of svg.querySelectorAll('.atlas-counter')) {
       const r = counter.querySelector('rect').getBBox();
       for (const text of counter.querySelectorAll('text')) {
@@ -78,13 +86,32 @@ try {
         if (b.x < r.x || b.x + b.width > r.x + r.width) outside.push(`counter text: ${text.textContent}`);
       }
     }
-    const cityPoint = new DOMPoint(466.44,372);
+    const circle = svg.querySelector("#clip-city circle");
+    const cityPoint = new DOMPoint(Number(circle.getAttribute("cx")), Number(circle.getAttribute("cy")));
     const citySeparated = svg.querySelector('[data-space="diyarbakir-city"] .atlas-area').isPointInFill(cityPoint) && !svg.querySelector('[data-space="diyarbakir-rural"] .atlas-area').isPointInFill(cityPoint);
     const city = new Image(); city.src = '/diyarbakir-city.png'; await city.decode();
     return {outside, citySeparated, city: city.naturalWidth > 0, countries: svg.querySelectorAll('[data-geography="country-borders"]').length, countryLength: svg.querySelector('[data-geography="country-borders"]').getTotalLength(), rivers: svg.querySelectorAll('.map-river').length};
   });
   check(atlas.outside.length === 0, `atlas labels, population, counters and stacks remain inside their areas: ${atlas.outside.join(', ')}`);
   check(atlas.city && atlas.citySeparated && atlas.countries === 1 && atlas.countryLength > 500 && atlas.rivers === 0, 'city art loads, country borders are separate and rivers are absent');
+  const readable = await page.evaluate(() => {
+    const ids = ['botan','hakkari','mardin-batman'];
+    const pixels = el => parseFloat(getComputedStyle(el).fontSize) * Math.abs(el.getScreenCTM().d);
+    return ids.every(id => {
+      const info = document.querySelector(`[data-info="${id}"]`);
+      return pixels(info.querySelector('.map-label')) >= 18 && pixels(info.querySelector('.atlas-counter text')) >= 11.5 && [...info.querySelectorAll('.map-count')].every(t => pixels(t) >= 16);
+    });
+  });
+  check(readable, 'reviewed name, counter and piece-count sizes at 1908 x 904');
+  const legitimacy = page.locator('aside.side [aria-label="Legitimacy"]');
+  await legitimacy.locator('summary').focus();
+  await page.keyboard.press('Space');
+  check(await legitimacy.evaluate(el => el.open), 'compact tracks expand with the keyboard');
+  await page.keyboard.press('Space');
+  await page.getByRole('button', {name:'Europe',exact:true}).click();
+  await page.getByRole('button', {name:'Western Cities',exact:true}).click({modifiers:['Shift']});
+  check(await page.getByRole('button', {name:'Europe',exact:true}).getAttribute('aria-pressed') === 'true' && await page.getByRole('button', {name:'Western Cities',exact:true}).getAttribute('aria-pressed') === 'true', 'ribbon spaces remain selectable with Shift');
+  await page.getByRole('button', {name:'Clear (Esc)',exact:true}).click();
   await page.emulateMedia({ colorScheme: "dark" });
   const contrast = await page.evaluate(() => {
     const luminance = color => {
@@ -121,13 +148,9 @@ try {
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
   check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
-  // UC-7: the Resources and politics card sits inside the map panel, clear of the right column.
-  const card = await page.evaluate(() => {
-    const c = document.querySelector('[aria-label="Resources and politics"]').getBoundingClientRect();
-    const m = document.querySelector(".map-panel").getBoundingClientRect();
-    return c.left >= m.left && c.right <= m.right && c.bottom <= m.bottom;
-  });
-  check(card, "Resources and politics card inside the map panel");
+  // Readability review: resources now belong to the right sidebar.
+  const card = await page.evaluate(() => document.querySelector('aside.side [aria-label="Resources and politics"]') !== null);
+  check(card, "Resources and politics card is in the right sidebar");
   await page.keyboard.press("m");
   await page.keyboard.press("n");
   await page.getByLabel("Note text").waitFor();

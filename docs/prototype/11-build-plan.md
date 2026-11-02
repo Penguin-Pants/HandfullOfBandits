@@ -500,6 +500,14 @@ TWO-PASS REVIEW is recorded in `16-board-art-direction.md`. Fix: dark-mode passi
 
 **Status:** complete and locally validated. All 831 tests in 63 files, TypeScript/ESLint, production build, package/hash validation and the complete S0/Scenario A browser smoke pass. After the final counter text correction, 32 focused board tests, static checks and the full browser smoke pass again. TWO-PASS REVIEW fixes and outcomes are recorded in `17-approved-atlas-board.md`. No out-of-scope fixes are proposed. Source provenance: `game-packages/kurdish-coin/0.1.0/map/SOURCES.md`. Review: `17-approved-atlas-board.md`. The prior printed draft and rulebook are historical artifacts; this phase does not rebuild them. IC-3a remains open for the designer's full Scenario A playthrough. No blocker or new product decision is open.
 
+### Readable atlas follow-up (DEC-61, approved 2026-11-01)
+
+**Scope and dependencies:** implement the corrected readable layout approved by the designer. Depends on DEC-60, its original province outlines, research 03 §2/§4 and existing board interactions. This is a simulator presentation change.
+
+**Acceptance:** use the full map width with larger interior names, population, Control/Support and counts at 1908 × 904. Place Western Cities and Europe in the top ribbon and Resources and politics in the sidebar with full scales on expansion. Preserve shared borders without overlapping domestic interiors, the city circle, Lake Van, distinct country lines, all 18 selectable locations and all 25 legal links. Retain keyboard controls, drag plans, responsive fallback, rule hashes and saved-session compatibility.
+
+**Status:** complete and locally validated on 2026-11-02. Validation and TWO-PASS REVIEW are in `18-readable-atlas-layout.md`. The designer accepted this as an interim visual layout. No further polish is required for this phase. No blockers, unresolved decisions or proposed out-of-scope fixes remain. IC-3a still requires the designer's complete Scenario A playthrough. Later campaign work remains outside this phase. PRs #35 and #36 are merged; this follow-up starts from main at `dd30e64`.
+
 ### Printable rules follow-up (2026-10-31)
 
 **Status: complete.** The designer confirmed the reading edition covers current Scenario A, C1/C2. `docs/rules/handful-of-bandits-rules-a4.pdf` is a 12-page A4 portrait rulebook using the Colonial Twilight format, with editable Markdown, current card text and a `make rulebook` rebuild. It incorporates DD-20 and DEC-53 to DEC-57. No game rule or package data changed. Print at 100% / Actual size; duplex long-edge binding.

@@ -241,15 +241,12 @@ nav { height: 50px; box-sizing: border-box; }
 .box-track text { font-size: 11px; font-weight: 600; fill: var(--muted); }
 .box-track .on rect { fill: var(--accent); stroke: var(--accent); }
 .box-track .on text { fill: #fff; }
-/* The map and the card share a row: the card has its own column, so it never covers a space; on a
-   wide screen the column takes only the empty side margin of the map. */
+/* The board uses the full map panel. Resources move to the sidebar (DEC-61). */
 .map-body { flex: 1; min-height: 0; display: flex; gap: 8px; }
 .map-body .map { flex: 1; min-width: 0; min-height: 0; height: 100%; }
 .track-card { flex: none; align-self: flex-start; max-height: 100%; overflow-y: auto; box-sizing: border-box; width: 240px; display: grid; gap: 6px; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 10px #0003; }
 .track-card h4 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
 .track-row { display: grid; gap: 3px; font-size: 12px; }
-.track-name { color: var(--muted); }
-.track-name b { color: var(--fg); }
 .track-row .mini-track { flex-wrap: wrap; }
 .track-row .mini-box { min-width: 12px; font-size: 10px; }
 .track-bar { position: relative; display: block; height: 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); overflow: hidden; }
@@ -282,8 +279,33 @@ nav { height: 50px; box-sizing: border-box; }
 .atlas-population text { fill: #403b30; font-family: Georgia, "Times New Roman", serif; }
 .atlas-counter text { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
 .atlas-counter .level-marker { font-weight: 600; }
-.atlas-stack .map-count { font-size: 12px; fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; }
+.atlas-stack .map-count { font-size: 17px; fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; }
 .atlas-area { cursor: pointer; }
 .country-border-halo { fill: none; stroke: #faf3df; stroke-width: 4.5; }
 .country-border { fill: none; stroke: #526b78; stroke-width: 2.1; stroke-dasharray: 8 3 1.2 3; }
-.country-name { fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; font: 20px Georgia, "Times New Roman", serif; }
+
+/* Reviewed readable layout at 1908 x 904, including the off-map ribbon. */
+.map-body { overflow: hidden; }
+.playable-boundaries { fill: none; stroke: #857354; stroke-width: 1.15; stroke-linejoin: round; }
+.ribbon-key { font: 12px Arial, sans-serif; fill: #75674f; }
+.map-panel:has(.readable-map) .map-tools { top: 14px; right: 12px; bottom: auto; left: auto; flex-direction: row; }
+.map-panel:has(.readable-map) .map-tools button { font-size: 12px; padding: 4px 7px; }
+.track-card.compact { width: 100%; max-height: none; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; }
+.track-card.compact h4 { grid-column: 1 / -1; }
+.track-card.compact summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 23px; cursor: pointer; font-size: 12px; }
+.track-card.compact summary b { font-size: 14px; }
+.track-card.compact summary::after { content: "⌄"; font-size: 12px; color: var(--muted); }
+.track-card.compact details[open] { grid-column: 1 / -1; }
+.map-only .map-body .track-card { flex: 0 0 260px; }
+.side { grid-auto-rows: max-content; }
+.card-summary { display: none; }
+.side .card-table .card { width: 58px; height: 48px; padding: 5px; }
+.side .card-table .card-title { display: none; }
+.side .card-table .card-type { font-size: 9px; }
+.side .card-summary { display: block; align-self: center; margin-left: 8px; max-width: 240px; font: 14px/1.4 Georgia, "Times New Roman", serif; }
+
+.play-screen .side h3 { font-size: 15px; }
+.play-screen .side .panel { padding: 8px; }
+.play-screen .side [aria-label="Event panel"] p { font-size: 12px; line-height: 1.4; margin: 5px 0; }
+.play-screen .side button { font-size: 12px; padding: 6px 9px; }
+.play-screen .side .elig-row { grid-template-columns: 46px repeat(5, minmax(0, 1fr)); }

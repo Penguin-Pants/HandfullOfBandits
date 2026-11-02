@@ -71,3 +71,18 @@ describe("Play map space (UC-4)", () => {
     expect(screen.getByLabelText("State forces")).toBeTruthy();
   });
 });
+
+it("opens a compact track without using Space to advance the game", async () => {
+  const h = head("S-A3", "DK-012", "state");
+  const submit = vi.fn(() => Promise.reject(new Error("Unexpected advance")));
+  const api = mockApi({session: () => Promise.resolve({session: {name:"t",status:"active"} as SessionRow,head:h}),legal: () => Promise.resolve({...legalFor("state"),advance:true}),submit});
+  render(<Play api={api} sessionId="S" />);
+  await screen.findByLabelText("Resources and politics");
+  const track = screen.getByLabelText("Legitimacy");
+  const summary = track.querySelector("summary");
+  if (summary === null) throw new Error("Track summary missing");
+  fireEvent.keyDown(summary,{key:" "});
+  expect(submit).not.toHaveBeenCalled();
+  fireEvent.click(summary);
+  expect((track as HTMLDetailsElement).open).toBe(true);
+});

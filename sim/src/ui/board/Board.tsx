@@ -1,7 +1,7 @@
 // Approved atlas board with live counters, selection and drag planning.
 // Older layouts and other packages retain the schematic fallback (DEC-60).
-import type { AtlasSpace } from "./atlas-data.ts";
-import { atlasLayout, AtlasGeography, AtlasInfo } from "./Atlas.tsx";
+import { ATLAS, type AtlasSpace, type AtlasTrack } from "./atlas-data.ts";
+import { atlasLayout, AtlasGeography, AtlasInfo, AtlasRibbon } from "./Atlas.tsx";
 import { Terrain } from "./Terrain.tsx";
 import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { BoardView, SpaceView } from "../api.ts";
@@ -81,6 +81,7 @@ function Space({ space, cell, atlas, selected, changed, onSelect, onGrab }: { sp
   return (
     <g
       role="button"
+      clipPath={atlas !== undefined && !isInset(space) ? "url(#clip-map)" : undefined}
       aria-label={atlas?.labels.map(l => l.text).join(" ") ?? space.name}
       aria-pressed={selected}
       tabIndex={0}
@@ -99,7 +100,7 @@ function Space({ space, cell, atlas, selected, changed, onSelect, onGrab }: { sp
             <circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} fill="#f2e9d6" />
             <image href="/diyarbakir-city.png" x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.3} clipPath="url(#clip-city)" pointerEvents="none" />
           </>}
-          <path d={atlas.path} fill="none" stroke={outline ?? "#887456"} strokeWidth={outline === null ? 1.05 : 4} strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
+          {outline !== null && <path d={atlas.path} fill="none" stroke={outline} strokeWidth={4} strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />}
         </>
       ) : box === null ? (
         <>
@@ -183,14 +184,16 @@ function placeTrack(space: SpaceView, others: readonly SpaceView[], total: numbe
   return free ?? spots[0] ?? { x0: space.x, y: space.y };
 }
 
-function BoxTrack({ track, space, others }: { readonly track: BoardView["status"]["tracks"][number]; readonly space: SpaceView; readonly others: readonly SpaceView[] }) {
+function BoxTrack({ track, space, others, layout }: { readonly track: BoardView["status"]["tracks"][number]; readonly space: SpaceView; readonly others: readonly SpaceView[]; readonly layout: AtlasTrack | undefined }) {
   const numeric = track.steps === undefined && track.min !== undefined && track.max !== undefined;
   const steps = numeric ? Array.from({ length: (track.max ?? 0) - (track.min ?? 0) + 1 }, (_, i) => String((track.min ?? 0) + i)) : (track.steps ?? []);
   const label = (st: string): string => (numeric ? st : (STEP_SHORT[st] ?? words(st)));
-  const w = numeric ? 16 : 44;
-  const total = steps.length * (w + 2) - 2;
+  const w = layout?.w ?? (numeric ? 16 : 44);
+  const h = layout?.h ?? 18;
+  const gap = layout?.gap ?? 2;
+  const total = steps.length * (w + gap) - gap;
   // An inset box (Europe) holds its track inside; an external box gets a free spot near it.
-  const { x0, y } = isInset(space) ? { x0: space.x - total / 2, y: space.y + 12 } : placeTrack(space, others, total);
+  const { x0, y } = layout !== undefined ? { x0: layout.x, y: layout.y } : isInset(space) ? { x0: space.x - total / 2, y: space.y + 12 } : placeTrack(space, others, total);
   return (
     <g role="group" aria-label={`${track.display} track`} className="box-track" pointerEvents="none">
       <title>{`${track.display}: ${words(String(track.value))}`}</title>
@@ -198,8 +201,8 @@ function BoxTrack({ track, space, others }: { readonly track: BoardView["status"
         const on = st === String(track.value);
         return (
           <g key={st} className={on ? "on" : undefined} aria-current={on ? "true" : undefined}>
-            <rect x={x0 + i * (w + 2)} y={y} width={w} height={18} rx={3} />
-            <text x={x0 + i * (w + 2) + w / 2} y={y + 13} textAnchor="middle">
+            <rect x={x0 + i * (w + gap)} y={y} width={w} height={h} rx={3} />
+            <text x={x0 + i * (w + gap) + w / 2} y={y + (layout === undefined ? 13 : h / 2 + layout.font * .35)} style={layout === undefined ? undefined : { fontSize: layout.font }} textAnchor="middle">
               {label(st)}
             </text>
           </g>
@@ -228,10 +231,11 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
   const from = grab === null ? null : centre(grab.from);
   return (
     <svg
-      viewBox={cells.geographic ? "0 40 1000 660" : `0 0 ${String(MAP_W)} ${String(MAP_H)}`}
+      viewBox={cells.geographic ? `0 -${String(ATLAS.ribbonHeight)} ${String(ATLAS.width)} ${String(ATLAS.height + ATLAS.ribbonHeight)}` : `0 0 ${String(MAP_W)} ${String(MAP_H)}`}
+      preserveAspectRatio={cells.geographic ? "none" : "xMidYMid meet"}
       role="img"
       aria-label="Board"
-      className={grab === null ? "map" : "map dragging"}
+      className={`map${cells.geographic ? " readable-map" : ""}${grab === null ? "" : " dragging"}`}
       onPointerMove={(e) => { if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
       onPointerUp={(e) => {
         if (grab === null) return;
@@ -241,14 +245,15 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       }}
     >
       <defs>
+        <clipPath id="clip-map"><rect x={0} y={0} width={ATLAS.width} height={ATLAS.height} /></clipPath>
         <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
           <path d="M0,0L10,5L0,10Z" className="map-arrow-head" />
         </marker>
       </defs>
-      <rect x={0} y={0} width={MAP_X0 - 10} height={MAP_H} fill="var(--inset)" />
-      <text x={(MAP_X0 - 10) / 2} y={cells.geographic ? 50 : 20} textAnchor="middle" className="map-marker">
-        Off map
-      </text>
+      {cells.geographic ? <AtlasRibbon /> : <>
+        <rect x={0} y={0} width={MAP_X0 - 10} height={MAP_H} fill="var(--inset)" />
+        <text x={(MAP_X0 - 10) / 2} y={20} textAnchor="middle" className="map-marker">Off map</text>
+      </>}
       <Terrain view={view} cells={cells} />
       {view.spaces.map((s) => (
         <Space
@@ -269,7 +274,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       })}
       {view.status.tracks.map((t) => {
         const at = spaceOfTrack(t.id, view.spaces);
-        return at === undefined ? null : <BoxTrack key={t.id} track={t} space={at} others={view.spaces.filter((o) => !isInset(o))} />;
+        return at === undefined ? null : <BoxTrack key={t.id} track={t} space={at} others={view.spaces.filter((o) => !isInset(o))} layout={cells.geographic ? ATLAS.tracks[t.id] : undefined} />;
       })}
       <g pointerEvents="none" aria-label="Planned moves">
         {arrows.map((m, i) => {
