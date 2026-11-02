@@ -6,6 +6,8 @@ const SIZE = 16;
 
 /** `bare`: the shape only, with no count (legend). */
 export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean }) {
+  const code: Readonly<Record<string,string>> = {troops:"T",police:"P",guards:"G"};
+  const letter=code[piece.piece];
   const fill = piece.colorVariant === "light" ? `color-mix(in srgb, ${color} 55%, white)` : color;
   const stroke = piece.isBase ? "black" : "var(--token-line)";
   const h = SIZE / 2;
@@ -29,6 +31,7 @@ export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece
   return (
     <g aria-label={bare ? undefined : `${piece.piece} ${piece.face} ${String(piece.count)}`}>
       {shape}
+      {letter !== undefined && <text x={x} y={y+3} textAnchor="middle" className="piece-code" fill={piece.colorVariant === "light" ? "#332c20" : "#fff"}>{letter}</text>}
       {piece.emblem !== null && <circle cx={x} cy={y} r={h / 2} fill="none" stroke="white" strokeWidth={1.5} />}
       {!bare && (
         <text x={x + h + 2} y={y + 5} className="map-count">

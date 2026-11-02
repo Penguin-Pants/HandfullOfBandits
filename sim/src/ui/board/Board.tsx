@@ -1,9 +1,10 @@
 // Approved atlas board with live counters, selection and drag planning.
 // Older layouts and other packages retain the schematic fallback (DEC-60).
-import { ATLAS, type AtlasSpace, type AtlasTrack } from "./atlas-data.ts";
-import { atlasLayout, AtlasGeography, AtlasInfo, AtlasRibbon } from "./Atlas.tsx";
+import { ATLAS } from "./atlas-data.ts";
+import type { AtlasSpace } from "./atlas-data.ts";
+import { atlasLayout, AtlasContext, AtlasGeography, AtlasInfo } from "./Atlas.tsx";
 import { Terrain } from "./Terrain.tsx";
-import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { BoardView, SpaceView } from "../api.ts";
 import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
@@ -35,6 +36,11 @@ export function spaceTooltip(space: SpaceView): string {
 }
 
 export interface BoardProps {
+  readonly onReveal?: (id:string) => void;
+  readonly mode?: "full" | "forces" | "political" | "terrain";
+  readonly eligible?: readonly string[] | null;
+  readonly camera?: {readonly zoom: number; readonly x: number; readonly y: number};
+  readonly onPan?: (dx: number, dy: number) => void;
   readonly view: BoardView;
   readonly selected: readonly string[];
   readonly onSelect: (spaceId: string, add: boolean) => void;
@@ -62,36 +68,35 @@ function Tokens({ space, view, x, y }: { space: SpaceView; view: BoardView; x: n
     <g pointerEvents="none">
       <text x={x} y={top - 10} textAnchor="middle" className="map-label">
         {space.name}
-        {control !== undefined && <tspan fill={control.color}>{" ■"}</tspan>}
+        {control !== undefined && <tspan className="control-layer" fill={control.color}>{" ■"}</tspan>}
       </text>
-      {space.pieces.map((p, i) => {
+      <g className="force-layer">{space.pieces.map((p, i) => {
         const inRow = Math.min(perRow, space.pieces.length - Math.floor(i / perRow) * perRow);
         const left = x - (inRow * TOKEN) / 2 + 8;
         return <PieceIcon key={`${p.piece}-${p.face}`} piece={p} color={color(p.faction)} x={left + (i % perRow) * TOKEN} y={top + 8 + Math.floor(i / perRow) * 20} />;
-      })}
-      <LevelMarker space={space} x={x} y={top - 36} />
-      {space.markers.length > 0 && <MarkerChips markers={space.markers} x={x} y={top + rows * 20 + 12} />}
+      })}</g>
+      <g className="political-layer"><LevelMarker space={space} x={x} y={top - 36} /></g>
+      <g className="force-layer">{space.markers.length > 0 && <MarkerChips markers={space.markers} x={x} y={top + rows * 20 + 12} />}</g>
     </g>
   );
 }
 
-function Space({ space, cell, atlas, selected, changed, onSelect, onGrab }: { space: SpaceView; cell: Point[] | null; atlas: AtlasSpace | undefined; selected: boolean; changed: boolean; onSelect: BoardProps["onSelect"]; onGrab: (id: string) => void }) {
+function Space({ space, cell, atlas, selected, neighbor, changed, eligible, onSelect, onGrab }: { space: SpaceView; cell: Point[] | null; atlas: AtlasSpace | undefined; selected: boolean; neighbor: boolean; changed: boolean; eligible: boolean | null; onSelect: BoardProps["onSelect"]; onGrab: (id: string) => void }) {
   const outline = selected ? "var(--accent)" : changed ? "var(--changed)" : null;
   const box = cell === null ? { x: space.x - INSET_W / 2, y: space.y - INSET_H / 2 } : null;
   return (
     <g
       role="button"
-      clipPath={atlas !== undefined && !isInset(space) ? "url(#clip-map)" : undefined}
       aria-label={atlas?.labels.map(l => l.text).join(" ") ?? space.name}
       aria-pressed={selected}
       tabIndex={0}
-      className="map-space"
+      className={`map-space${neighbor ? " neighbor" : ""}${selected ? " selected" : ""}${eligible === true ? " eligible" : eligible === false ? " ineligible" : ""}`}
       data-space={space.id}
       onPointerDown={(e) => { if (e.button === 0) onGrab(space.id); }}
       onClick={(e) => { onSelect(space.id, e.shiftKey); }}
-      onKeyDown={(e) => { if (e.key === "Enter") onSelect(space.id, e.shiftKey); }}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(space.id, e.shiftKey); } }}
     >
-      <title>{spaceTooltip(space)}</title>
+      <title>{spaceTooltip(space)}{eligible === null ? "" : eligible ? "\nCandidate target. Validate the complete plan before committing." : "\nNot listed as a standalone target by the rules engine. Inspect or validate a combined plan for details."}</title>
       {atlas !== undefined ? (
         <>
           <path d={atlas.path} fill="#fff6dd" fillOpacity={.1} fillRule="evenodd" className="atlas-area" />
@@ -100,7 +105,7 @@ function Space({ space, cell, atlas, selected, changed, onSelect, onGrab }: { sp
             <circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} fill="#f2e9d6" />
             <image href="/diyarbakir-city.png" x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.3} clipPath="url(#clip-city)" pointerEvents="none" />
           </>}
-          {outline !== null && <path d={atlas.path} fill="none" stroke={outline} strokeWidth={4} strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />}
+          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-outline" fill="none" stroke={outline ?? "#887456"} strokeWidth={outline === null ? 1.6 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
         </>
       ) : box === null ? (
         <>
@@ -155,65 +160,29 @@ function Arrow({ a, b, label, live = false }: { readonly a: Pt; readonly b: Pt; 
   );
 }
 
-const STEP_SHORT: Readonly<Record<string, string>> = { host: "Host", tolerant: "Tol", restricted: "Restr", hostile: "Hostile", aligned: "Align" };
-
-/** A track drawn on its box: host posture under an external box, Europe inside its inset (UC-7). */
-type Box = { readonly x0: number; readonly x1: number; readonly y0: number; readonly y1: number };
-
-/** Approximate area of a space's label and tokens, for keeping box tracks clear of them. */
-function footprint(s: SpaceView): Box {
-  const half = Math.max(s.name.length * 5.5 + 8, 50);
-  return { x0: s.x - half, x1: s.x + half, y0: s.y - 34, y1: s.y + 32 };
+function BoxTrack({ track, space, geographic }: {readonly geographic: boolean; readonly track: BoardView["status"]["tracks"][number]; readonly space: SpaceView }) {
+  const numeric = track.steps === undefined;
+  const layout = geographic ? atlasLayout(space) : undefined;
+  const groups = space.pieces.length + space.markers.length;
+  const columns = groups === 4 ? 2 : Math.min(3,Math.max(1,groups));
+  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*29+9 : space.id === "europe" ? 22 : 5)};
+  const width = layout === undefined ? 116 : layout.info[2]-6;
+  const label = numeric ? `${track.display}: ${String(track.value)}` : `${track.display.replace(" posture", "")}: ${words(String(track.value))}`;
+  return <g role="group" aria-label={`${track.display} track`} data-track-space={space.id} className="box-track" pointerEvents="none">
+    <title>{`${track.display}: ${words(String(track.value))}. ${track.steps?.map(words).join(" → ") ?? ""}`}</title>
+    <rect x={at.x-width/2} y={at.y-14} width={width} height={21} rx={4} />
+    <text x={at.x} y={at.y} textAnchor="middle" aria-current="true">{label}</text>
+  </g>;
 }
 
-const overlaps = (a: Box, b: Box): boolean => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
-
-/**
- * Where a host posture track goes: under its box, else shifted left or right, else above; the
- * first spot clear of every other space's label and tokens.
- */
-function placeTrack(space: SpaceView, others: readonly SpaceView[], total: number): { x0: number; y: number } {
-  const fit = (x0: number): number => Math.min(Math.max(x0, MAP_X0 + 2), MAP_W - total - 2);
-  const spots = [
-    { x0: fit(space.x - total / 2), y: space.y + 44 },
-    { x0: fit(space.x - total + 40), y: space.y + 44 },
-    { x0: fit(space.x - 40), y: space.y + 44 },
-    { x0: fit(space.x - total / 2), y: space.y - 62 },
-  ];
-  const free = spots.find((p) => others.every((o) => o.id === space.id || !overlaps({ x0: p.x0, x1: p.x0 + total, y0: p.y, y1: p.y + 18 }, footprint(o))));
-  return free ?? spots[0] ?? { x0: space.x, y: space.y };
-}
-
-function BoxTrack({ track, space, others, layout }: { readonly track: BoardView["status"]["tracks"][number]; readonly space: SpaceView; readonly others: readonly SpaceView[]; readonly layout: AtlasTrack | undefined }) {
-  const numeric = track.steps === undefined && track.min !== undefined && track.max !== undefined;
-  const steps = numeric ? Array.from({ length: (track.max ?? 0) - (track.min ?? 0) + 1 }, (_, i) => String((track.min ?? 0) + i)) : (track.steps ?? []);
-  const label = (st: string): string => (numeric ? st : (STEP_SHORT[st] ?? words(st)));
-  const w = layout?.w ?? (numeric ? 16 : 44);
-  const h = layout?.h ?? 18;
-  const gap = layout?.gap ?? 2;
-  const total = steps.length * (w + gap) - gap;
-  // An inset box (Europe) holds its track inside; an external box gets a free spot near it.
-  const { x0, y } = layout !== undefined ? { x0: layout.x, y: layout.y } : isInset(space) ? { x0: space.x - total / 2, y: space.y + 12 } : placeTrack(space, others, total);
-  return (
-    <g role="group" aria-label={`${track.display} track`} className="box-track" pointerEvents="none">
-      <title>{`${track.display}: ${words(String(track.value))}`}</title>
-      {steps.map((st, i) => {
-        const on = st === String(track.value);
-        return (
-          <g key={st} className={on ? "on" : undefined} aria-current={on ? "true" : undefined}>
-            <rect x={x0 + i * (w + gap)} y={y} width={w} height={h} rx={3} />
-            <text x={x0 + i * (w + gap) + w / 2} y={y + (layout === undefined ? 13 : h / 2 + layout.font * .35)} style={layout === undefined ? undefined : { fontSize: layout.font }} textAnchor="middle">
-              {label(st)}
-            </text>
-          </g>
-        );
-      })}
-    </g>
-  );
-}
-
-export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [] }: BoardProps) {
+export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [], mode = "full", eligible = null, camera = {zoom:1,x:0,y:0}, onPan, onReveal }: BoardProps) {
   const cells = regionCells(view.spaces);
+  const pointerActive = useRef(false);
+  const skipClick = useRef(false);
+  const [panning, setPanning] = useState(false);
+  const base = cells.geographic ? {x:0,y:0,w:ATLAS.width,h:ATLAS.height} : {x:0,y:0,w:MAP_W,h:MAP_H};
+  const bw = base.w / camera.zoom;
+  const bh = base.h / camera.zoom;
 
   const [grab, setGrab] = useState<{ from: string; at: Pt | null } | null>(null);
   const centre = (id: string): Pt | null => {
@@ -224,20 +193,32 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
   // A release outside the map ends the drag without a move.
   useEffect(() => {
     if (grab === null) return;
-    const end = (): void => { setGrab(null); };
+    const end = (): void => { pointerActive.current = false; setGrab(null); };
     window.addEventListener("pointerup", end);
     return () => { window.removeEventListener("pointerup", end); };
   }, [grab !== null]);
   const from = grab === null ? null : centre(grab.from);
   return (
     <svg
-      viewBox={cells.geographic ? `0 -${String(ATLAS.ribbonHeight)} ${String(ATLAS.width)} ${String(ATLAS.height + ATLAS.ribbonHeight)}` : `0 0 ${String(MAP_W)} ${String(MAP_H)}`}
-      preserveAspectRatio={cells.geographic ? "none" : "xMidYMid meet"}
+      viewBox={`${String(base.x + (base.w - bw) / 2 + camera.x)} ${String(base.y + (base.h - bh) / 2 + camera.y)} ${String(bw)} ${String(bh)}`}
+      tabIndex={0}
+      onFocusCapture={(e) => {const id = e.target instanceof Element ? e.target.closest("[data-space]")?.getAttribute("data-space") : null; if (!pointerActive.current && id !== null && id !== undefined) onReveal?.(id);}}
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return;
+        const delta: Record<string, readonly [number,number]> = {ArrowLeft:[-30,0],ArrowRight:[30,0],ArrowUp:[0,-30],ArrowDown:[0,30]};
+        const d = delta[e.key];
+        if (d !== undefined) { e.preventDefault(); onPan?.(d[0] / camera.zoom, d[1] / camera.zoom); }
+      }}
+      onPointerDownCapture={(e) => { pointerActive.current = true; if (e.altKey && onPan !== undefined) { e.preventDefault(); e.stopPropagation(); setPanning(true); skipClick.current = true; e.currentTarget.setPointerCapture(e.pointerId); } }}
       role="img"
       aria-label="Board"
-      className={`map${cells.geographic ? " readable-map" : ""}${grab === null ? "" : " dragging"}`}
-      onPointerMove={(e) => { if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
+      className={`map mode-${mode}${grab === null ? "" : " dragging"}`}
+      onPointerMove={(e) => { if (panning) { const scale = e.currentTarget.getScreenCTM()?.a ?? 1; onPan?.(-e.movementX / scale, -e.movementY / scale); return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
+      onClickCapture={(e) => {if (skipClick.current) {e.preventDefault(); e.stopPropagation(); skipClick.current = false;}}}
+      onPointerCancel={() => {skipClick.current = false; pointerActive.current = false; setPanning(false); setGrab(null);}}
       onPointerUp={(e) => {
+        pointerActive.current = false;
+        if (panning) { setPanning(false); e.currentTarget.releasePointerCapture(e.pointerId); window.setTimeout(() => {skipClick.current = false;},0); return; }
         if (grab === null) return;
         const to = spaceAt(e);
         setGrab(null);
@@ -245,23 +226,25 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       }}
     >
       <defs>
-        <clipPath id="clip-map"><rect x={0} y={0} width={ATLAS.width} height={ATLAS.height} /></clipPath>
         <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
           <path d="M0,0L10,5L0,10Z" className="map-arrow-head" />
         </marker>
       </defs>
-      {cells.geographic ? <AtlasRibbon /> : <>
-        <rect x={0} y={0} width={MAP_X0 - 10} height={MAP_H} fill="var(--inset)" />
-        <text x={(MAP_X0 - 10) / 2} y={20} textAnchor="middle" className="map-marker">Off map</text>
-      </>}
+      <rect x={0} y={0} width={MAP_X0 - 1} height={cells.geographic ? ATLAS.height : MAP_H} fill="var(--inset)" />
+      <text x={(MAP_X0 - 1) / 2} y={cells.geographic ? 44 : 20} textAnchor="middle" className="map-marker">
+        {cells.geographic ? "Off-map spaces" : "Off map"}
+      </text>
       <Terrain view={view} cells={cells} />
+      {cells.geographic && <AtlasContext />}
       {view.spaces.map((s) => (
         <Space
           key={s.id}
           space={s}
           cell={isInset(s) ? null : (cells.domestic.get(s.id) ?? cells.external.get(s.id) ?? null)}
           atlas={cells.geographic ? atlasLayout(s) : undefined}
+          eligible={eligible === null ? null : eligible.includes(s.id)}
           selected={selected.includes(s.id)}
+          neighbor={view.links.some(l => l.a === s.id && selected.includes(l.b) || l.b === s.id && selected.includes(l.a))}
           changed={changed.includes(s.id)}
           onSelect={onSelect}
           onGrab={(id) => { if (onDrag !== undefined) setGrab({ from: id, at: null }); }}
@@ -270,11 +253,11 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       {cells.geographic && <AtlasGeography />}
       {view.spaces.map((s) => {
         const layout = cells.geographic ? atlasLayout(s) : undefined;
-        return layout === undefined ? <Tokens key={s.id} space={s} view={view} x={s.x} y={s.y + 6} /> : <AtlasInfo key={s.id} space={s} view={view} layout={layout} />;
+        return layout === undefined ? <Tokens key={s.id} space={s} view={view} x={s.id === "europe" && cells.geographic ? -65 : s.x} y={s.id === "europe" && cells.geographic ? 265 : s.y + 6} /> : <AtlasInfo key={s.id} space={s} view={view} layout={layout} />;
       })}
-      {view.status.tracks.map((t) => {
+      {mode !== "terrain" && view.status.tracks.map((t) => {
         const at = spaceOfTrack(t.id, view.spaces);
-        return at === undefined ? null : <BoxTrack key={t.id} track={t} space={at} others={view.spaces.filter((o) => !isInset(o))} layout={cells.geographic ? ATLAS.tracks[t.id] : undefined} />;
+        return at === undefined ? null : <BoxTrack geographic={cells.geographic} key={t.id} track={t} space={at} />;
       })}
       <g pointerEvents="none" aria-label="Planned moves">
         {arrows.map((m, i) => {
@@ -323,7 +306,8 @@ export function Legend({ view }: { readonly view: BoardView }) {
           </span>
         );
       })}
-      <span className="legend-item">Slate dash-dot: country border. Fine brown: playable area. Borders alone do not allow movement.</span>
+      <span className="legend-item">None: no faction control. Neutral: no alignment. Opp.: Opposition. Active ×2; Passive ×1.</span>
+      <span className="legend-item">Slate dash-dot: country border. Fine brown: playable area. Hatched grey: outside play. Dashed teal: rules connection to the selected space. Borders alone do not allow movement.</span>
       <span className="legend-item">
         <span className="swatch" style={{ border: "3px dashed var(--changed)" }} /> Changed by last action
       </span>
@@ -332,7 +316,7 @@ export function Legend({ view }: { readonly view: BoardView }) {
 }
 
 /** Detail card for the selected space (08 s3.1 item 4). */
-export function SpaceDetail({ space }: { readonly space: SpaceView }) {
+export function SpaceDetail({ space, tracks = [] }: { readonly space: SpaceView; readonly tracks?: BoardView["status"]["tracks"] }) {
   return (
     <section className="panel" aria-label={`${space.name} detail`}>
       <h3>{space.name}</h3>
@@ -344,6 +328,7 @@ export function SpaceDetail({ space }: { readonly space: SpaceView }) {
         {space.pieces.map((p) => <li key={`${p.piece}-${p.face}`}>{pieceText(p)}</li>)}
         {space.markers.map((m) => <li key={`${m.marker}-${m.side}`}>{markerText(m)}</li>)}
       </ul>
+      {tracks.filter(t => spaceOfTrack(t.id,[space]) !== undefined).map(t => <p key={t.id}><strong>{t.display}: {words(String(t.value))}</strong> · {t.steps?.map(words).join(" → ") ?? `${String(t.min)} to ${String(t.max)}`}</p>)}
       {space.tags.length > 0 && <div className="muted">Tags: {space.tags.map(words).join(", ")}</div>}
       {space.confidence !== null && <div className="muted">Confidence: {space.confidence}</div>}
     </section>

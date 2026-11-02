@@ -9,6 +9,7 @@ import { Fields, PlanForm } from "./PlanForm.tsx";
 import { dragMode, perLocation, toCommand, type Draft, type PlanEvent, type PlanState, type Values } from "./plan.ts";
 
 export interface FactionPanelProps {
+  readonly onTargets?: (ids: readonly string[] | null) => void;
   readonly api: Api;
   readonly sessionId: string;
   readonly view: BoardView;
@@ -22,7 +23,7 @@ export interface FactionPanelProps {
 
 const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
 
-export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
+export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
   const resume = view.status.pending?.resume;
   const faction = legal.faction ?? "";
   const actions = legal.actions ?? [];
@@ -39,6 +40,8 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
   const form = actions.find((a) => a.id === op);
   const sub = form?.subAction ?? null;
   const saForm = actions.find((a) => a.id === sa);
+  const targetIds = plan.target === "sa" ? saForm?.locations : form?.locations;
+  useEffect(() => { onTargets?.(targetIds ?? null); return () => {onTargets?.(null);}; }, [targetIds, onTargets]);
   const locations = plan.op.locations;
   const draft: Draft | null =
     box === null || op === null
@@ -85,7 +88,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       const target = e.target instanceof Element ? e.target : null;
-      if (target?.tagName === "TEXTAREA") return;
+      if (target instanceof HTMLElement && (["INPUT","TEXTAREA","SELECT"].includes(target.tagName) || target.isContentEditable)) return;
       const { command, result, onCommit, clear } = latest.current;
       if (e.key === "Escape") clear();
       // Enter commits only from the page itself. Buttons and map spaces keep Enter for their own action.
@@ -117,7 +120,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
       </h3>
       <p className="hint" aria-live="polite">
         {box === null
-          ? "Step 1: pick a box. For the Event, use the card panel above."
+          ? "Step 1: pick a box. For the Event, use the card panel below."
           : op === null
             ? "Step 2: pick an Operation."
             : locations.length === 0
@@ -129,7 +132,7 @@ export function FactionPanel({ api, sessionId, view, legal, plan, dispatch, onCo
       {view.status.pending?.resume !== undefined && <p role="status">{view.status.pending.prompt}</p>}
       <EligibilityTrack legal={legal} view={view} picked={box} onPick={pickBox} />
       {box !== null && OP_BOXES.includes(box) && (
-        <ul aria-label="Operations">
+        <ul className="operation-list" aria-label="Operations">
           {actions.filter((a) => a.kind === "op").map((a) => (
             <li key={a.id}>
               <button type="button" disabled={!a.ok && box !== "opSa"} title={a.ok || box !== "opSa" ? a.summary : `${a.summary} No legal standalone plan; a preceding SA may make one.`} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>

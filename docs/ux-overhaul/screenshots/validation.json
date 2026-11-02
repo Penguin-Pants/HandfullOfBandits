@@ -1,0 +1,243 @@
+[
+  {
+    "name": "no overlapping map text",
+    "ok": true,
+    "detail": {
+      "outside": [],
+      "collisions": []
+    }
+  },
+  {
+    "name": "interior contents remain in their regions",
+    "ok": true,
+    "detail": {
+      "outside": [],
+      "collisions": []
+    }
+  },
+  {
+    "name": "normal setup shows every force and marker group",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "viewport 1920",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 18.791666666666664,
+      "mapHeight": 820,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 1920",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 18.791666666666664,
+      "mapHeight": 820,
+      "task": true
+    }
+  },
+  {
+    "name": "viewport 1920-at-125",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 17.05,
+      "mapHeight": 496,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 1920-at-125",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 17.05,
+      "mapHeight": 496,
+      "task": true
+    }
+  },
+  {
+    "name": "125% device-pixel emulation",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "viewport 2560",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 27.041666666666668,
+      "mapHeight": 1180,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 2560",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 27.041666666666668,
+      "mapHeight": 1180,
+      "task": true
+    }
+  },
+  {
+    "name": "viewport 1366",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 17.554166666666667,
+      "mapHeight": 383,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 1366",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 17.554166666666667,
+      "mapHeight": 383,
+      "task": true
+    }
+  },
+  {
+    "name": "inspection exposes full forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "zoom and keyboard pan",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "fit restores camera",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "mouse selection at zoom",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "mouse focus preserves camera",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Political",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Political",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Political",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Terrain",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Terrain",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Terrain",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Full",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Full",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Full",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "server candidate highlighting",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "dense overflow is explicit",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "dense inspection retains all groups",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "empty spaces retain labels without phantom forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "older coordinate snapshots use schematic fallback",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "legacy Terrain hides forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "legacy Terrain hides alignment",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "legacy Full restores forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "external scale is fully inspectable",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "no browser runtime errors",
+    "ok": true,
+    "detail": []
+  }
+]

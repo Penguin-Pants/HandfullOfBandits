@@ -1,13 +1,14 @@
 // Event panel (08 s3; 05 s5): both sides with owner and text; Execute validates, then asks each
 // open question inline (Decisions, 08 s3.3) until the command is legal. Every answer is a click:
 // options, counts, spaces picked on the map (UC-9), and a free action's plan built on the map (UC-5).
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ActionForm, Api, AnyCommand, BoardView, Question } from "../api.ts";
 import { words } from "../common/names.ts";
 import { PlanForm } from "../faction/PlanForm.tsx";
 import { dragMode, partOf, type PlanEvent, type PlanState } from "../faction/plan.ts";
 
 export interface EventPanelProps {
+  readonly onTargets?: (ids: readonly string[] | null) => void;
   readonly api: Api;
   readonly sessionId: string;
   readonly view: BoardView;
@@ -26,9 +27,11 @@ export interface EventPanelProps {
 const formOf = (forms: readonly ActionForm[], id: string): ActionForm =>
   forms.find((f) => f.id === id) ?? { id, label: words(id.split(".").at(-1) ?? id), cost: "", summary: "", fields: [], subAction: null };
 
-export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch, onFreeAction }: EventPanelProps) {
+export function EventPanel({ onTargets, api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch, onFreeAction }: EventPanelProps) {
   const card = view.status.card;
   const [pending, setPending] = useState<{ side: string; answers: unknown[]; question: Question | null; error: string | null } | null>(null);
+  const candidates = pending?.question?.kind === "spaces" ? pending.question.options : null;
+  useEffect(() => {onTargets?.(candidates); return () => {onTargets?.(null);};}, [candidates, onTargets]);
   if (card === null) return null;
 
   const run = async (side: string, answers: unknown[]): Promise<void> => {
@@ -77,7 +80,7 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
         const s = card[side];
         if (s === null) return null;
         return (
-          <div key={side}>
+          <div key={side} className={`event-side ${side}`}>
             <p>
               <em>{side}</em> ({s.owner ?? "either"}){s.blockOnly ? " block only" : ""}: {s.text}
             </p>
@@ -87,6 +90,7 @@ export function EventPanel({ api, sessionId, view, faction, eventOpen, onCommit,
           </div>
         );
       })}
+      {(!eventOpen || !card.encoded) && <p className="hint">{!card.encoded ? "Event unavailable: this card is not encoded." : "Event unavailable: the Event box is closed for the acting faction."}</p>}
       {pending?.error != null && <p className="bad">{pending.error}</p>}
       {pending?.question != null && (
         <div aria-label="Decision">

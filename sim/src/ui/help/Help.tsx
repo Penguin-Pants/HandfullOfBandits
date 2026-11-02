@@ -4,6 +4,8 @@ import type { ActionForm, BoardView } from "../api.ts";
 export const KEYS: readonly (readonly [string, string])[] = [
   ["Space", "Reveal the first card, or Advance when nothing needs a choice"],
   ["Click / Shift-click", "Select a space / add a space to the selection"],
+  ["Alt-drag / Arrow keys", "Pan the map; focus the board first for arrow keys. Fit map resets the camera."],
+  ["M", "Show the map only or restore the panels"],
   ["Drag", "From one space to another: move pieces (March, Sweep, Garrison, Air Mobility)"],
   ["Enter", "Commit the plan (Faction panel) or save a note (note bar)"],
   ["Esc", "Clear the plan or close the note bar"],

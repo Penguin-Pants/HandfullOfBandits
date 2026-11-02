@@ -176,12 +176,7 @@ nav { height: 50px; box-sizing: border-box; }
    map focus mode (M), larger labels. */
 .play-screen { height: 100vh; }
 .play-screen .status-grid > .pills { flex-wrap: nowrap; }
-.track-pill { position: relative; flex-wrap: nowrap; white-space: nowrap; }
-.mini-pop { display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 4px 12px #0003; z-index: 6; white-space: normal; width: max-content; max-width: 420px; }
-.track-pill:hover .mini-pop, .track-pill:focus .mini-pop, .track-pill:focus-within .mini-pop { display: block; }
 .map-panel { position: relative; }
-.map-tools { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; z-index: 2; }
-.play-screen .map-tools { top: auto; bottom: 12px; flex-direction: column; align-items: flex-start; }
 .play-screen .map-key { bottom: 12px; left: 140px; }
 .map-key { position: absolute; left: 12px; bottom: 12px; max-width: 60%; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px 8px; z-index: 2; }
 .forces-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; padding: 4px 10px; }
@@ -202,9 +197,7 @@ nav { height: 50px; box-sizing: border-box; }
 .play-screen .side { padding-bottom: 44px; box-sizing: border-box; }
 @media (max-width: 1000px) {
   .play-screen { height: auto; }
-  .map-tools, .map-key { position: static; }
   .play-screen .status-grid > .pills { flex-wrap: wrap; }
-  .track-pill { white-space: normal; flex-wrap: wrap; }
 }
 /* Mouse-only plans (UC-5): steppers, choice buttons, move arrows on the map. */
 .stepper, .choice { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
@@ -241,12 +234,15 @@ nav { height: 50px; box-sizing: border-box; }
 .box-track text { font-size: 11px; font-weight: 600; fill: var(--muted); }
 .box-track .on rect { fill: var(--accent); stroke: var(--accent); }
 .box-track .on text { fill: #fff; }
-/* The board uses the full map panel. Resources move to the sidebar (DEC-61). */
+/* The map and the card share a row: the card has its own column, so it never covers a space; on a
+   wide screen the column takes only the empty side margin of the map. */
 .map-body { flex: 1; min-height: 0; display: flex; gap: 8px; }
 .map-body .map { flex: 1; min-width: 0; min-height: 0; height: 100%; }
 .track-card { flex: none; align-self: flex-start; max-height: 100%; overflow-y: auto; box-sizing: border-box; width: 240px; display: grid; gap: 6px; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 10px #0003; }
 .track-card h4 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
 .track-row { display: grid; gap: 3px; font-size: 12px; }
+.track-name { color: var(--muted); }
+.track-name b { color: var(--fg); }
 .track-row .mini-track { flex-wrap: wrap; }
 .track-row .mini-box { min-width: 12px; font-size: 10px; }
 .track-bar { position: relative; display: block; height: 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); overflow: hidden; }
@@ -279,33 +275,173 @@ nav { height: 50px; box-sizing: border-box; }
 .atlas-population text { fill: #403b30; font-family: Georgia, "Times New Roman", serif; }
 .atlas-counter text { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
 .atlas-counter .level-marker { font-weight: 600; }
-.atlas-stack .map-count { font-size: 17px; fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; }
+.atlas-stack .map-count { font-size: 12px; fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; }
 .atlas-area { cursor: pointer; }
 .country-border-halo { fill: none; stroke: #faf3df; stroke-width: 4.5; }
 .country-border { fill: none; stroke: #526b78; stroke-width: 2.1; stroke-dasharray: 8 3 1.2 3; }
+.country-name { fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; font: 20px Georgia, "Times New Roman", serif; }
 
-/* Reviewed readable layout at 1908 x 904, including the off-map ribbon. */
-.map-body { overflow: hidden; }
-.playable-boundaries { fill: none; stroke: #857354; stroke-width: 1.15; stroke-linejoin: round; }
-.ribbon-key { font: 12px Arial, sans-serif; fill: #75674f; }
-.map-panel:has(.readable-map) .map-tools { top: 14px; right: 12px; bottom: auto; left: auto; flex-direction: row; }
-.map-panel:has(.readable-map) .map-tools button { font-size: 12px; padding: 4px 7px; }
-.track-card.compact { width: 100%; max-height: none; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; }
-.track-card.compact h4 { grid-column: 1 / -1; }
-.track-card.compact summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 23px; cursor: pointer; font-size: 12px; }
-.track-card.compact summary b { font-size: 14px; }
-.track-card.compact summary::after { content: "⌄"; font-size: 12px; color: var(--muted); }
-.track-card.compact details[open] { grid-column: 1 / -1; }
-.map-only .map-body .track-card { flex: 0 0 260px; }
-.side { grid-auto-rows: max-content; }
-.card-summary { display: none; }
-.side .card-table .card { width: 58px; height: 48px; padding: 5px; }
-.side .card-table .card-title { display: none; }
-.side .card-table .card-type { font-size: 9px; }
-.side .card-summary { display: block; align-self: center; margin-left: 8px; max-width: 240px; font: 14px/1.4 Georgia, "Times New Roman", serif; }
+/* Atlas UX system: readable fixed-size information and a dedicated map workspace. */
+:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --bad:#ff9a9a; --good:#a4cda5; --state:#a82d31; --pkk:#376c3b; font-size:15px; }
+button { min-height:36px; border-radius:4px; }
+button:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline:3px solid #7ebacb; outline-offset:3px; }
+button:disabled, button[aria-disabled="true"] { opacity:.65; }
+h3 {font-size:16px;}
+.play-screen { padding:10px 12px; gap:10px; }
+.play-screen .play { grid-template-columns:minmax(0,1fr) 390px; gap:12px; }
+.play-screen .side {height:calc(100% - 44px); padding-bottom:0; gap:12px; scrollbar-gutter:stable;}
+.play-screen .side .panel {padding:14px;}
+.play-screen .status-grid {padding:8px 12px;}
+.play-screen .pill {font-size:14px; padding:3px 8px;}
+.play-screen .status-grid > .row {gap:6px 10px;}
+.status-grid .chip {font-size:14px;}
+.victory-track {margin:21px 0;}
+.vt-cell {font-size:12px;}
+.map-panel {padding:0; overflow:hidden; background:#ede4cf; color:#403b30; border-color:#95856c; gap:0;}
+.board-title {font:600 15px Georgia,serif; letter-spacing:1px;}
+.board-title span {color:#706450; font:13px system-ui,sans-serif; margin-left:10px;}
+.map-body {display:flex; flex:1; min-height:0; flex-direction:column; gap:0;}
+.map-window {flex:1; min-height:0; display:flex; overflow:hidden;}
+.map-window .map {width:100%; height:100%; border:0; border-radius:0; background:#eee3c8;}
+.map-caption {display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 14px; flex:none; padding:6px 12px; font-size:12px; background:#f4eddf; color:#615640; border-top:1px solid #c7b99e;}
+.track-card {display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; width:100%; max-height:150px; padding:8px 12px; border:0; border-radius:0; box-shadow:none; background:#e8dfcb; color:#403b30; flex:none; overflow:visible; align-self:stretch;}
+.track-card h4 {display:none;}
+.track-row {font-size:13px; min-width:0; align-content:start;}
+.track-name {color:#615640;}
+.track-name b {display:block; color:#332e24; font-size:15px; font-weight:650;}
+.track-card .mini-track {display:none;}
+.track-card .track-bar {height:5px; background:#d3c7ac; border:0;}
+.track-card .track-fill {background:#315e73;}
+.next-task {border-left:4px solid #a1b8b9;}
+.next-task h2 {font-size:22px; line-height:1.2; margin:6px 0;}
+.next-task p {font-size:14px; line-height:1.45; margin:0; color:var(--muted);}
+.eyebrow {font-size:13px; text-transform:uppercase; letter-spacing:1px; color:#c4d6d8; font-weight:650;}
+.play-screen .card {width:92px; height:120px;}
+.play-screen .card-title {font-size:13px;}
+.event-side {padding:10px 0; border-top:1px solid var(--line); margin-top:10px;}
+.event-side.shaded {background:#202829; padding:10px; border-radius:4px;}
+.play-screen [aria-label="Event panel"] p {font-size:15px; line-height:1.5; margin:0 0 8px;}
+[aria-label="Event panel"] > strong {display:block; font:600 19px Georgia,serif; line-height:1.35;}
+.elig-row {grid-template-columns:48px repeat(5,minmax(0,1fr)); gap:3px;}
+.elig-box {padding:3px; font-size:12px;}
+.elig-box button {font-size:13px; min-height:42px; padding:0 2px;}
+.play-screen .elig-note {font-size:12px;}
+.operation-list {list-style:none; padding:0; display:grid; gap:8px;}
+.operation-list li {padding:8px; border:1px solid var(--line); border-radius:4px; font-size:14px;}
+.operation-list button {margin:0 6px 4px 0;}
+.space-inspector {position:relative; flex:none; max-height:170px; overflow:auto; background:#fbf5e9; color:#403b30; border-top:2px solid #7f765e; padding:8px 36px 6px 12px;}
+.space-inspector > button {position:absolute; right:8px; top:8px; background:#fbf5e9; color:#403b30; border-color:#9f9279; min-width:30px; padding:0;}
+.space-inspector .panel {padding:0; border:0; background:transparent; color:inherit;}
+.space-inspector h3 {font-size:18px;}
+.space-inspector .muted, .space-inspector .hint {color:#625944;}
+.space-inspector ul {display:flex; gap:4px 24px; flex-wrap:wrap; padding-left:18px; margin:6px 0;}
+.forces-wrap {max-height:30vh; overflow:auto; flex:none;}
+.forces-bar {gap:8px 16px; padding:8px 12px;}
+.forces-group {font-size:14px;}
+.forces-group strong {background:#f8f2e5; padding:2px 5px; border-radius:3px;}
+.map-key {left:12px!important; bottom:34px!important; background:#fbf5e9; color:#403b30; max-width:80%; max-height:40%; overflow:auto;}
+.atlas-label {font:600 16px Georgia,"Times New Roman",serif; fill:#342f25; stroke:#f5eedc; stroke-width:4px; paint-order:stroke;}
+.atlas-counter text {font:600 11px system-ui,sans-serif;}
+.atlas-population text {font:700 13px system-ui,sans-serif;}
+.atlas-political .level-marker {font:600 11.5px system-ui,sans-serif; stroke:#f5eedc; stroke-width:3px; paint-order:stroke;}
+.atlas-stack .map-count {font:700 14px system-ui,sans-serif; stroke-width:3px;}
+.atlas-stack .chip-code {font-size:10px;}
+.atlas-subtitle {font:600 12px system-ui,sans-serif; fill:#514735;}
+.atlas-overflow {font:600 12px system-ui,sans-serif; fill:#403b30; stroke:#f5eedc; stroke-width:3px; paint-order:stroke;}
+.city-name {font-size:13px;}
+.map-space.eligible .atlas-area {fill:#d3b446; fill-opacity:.24; stroke:#7a641f; stroke-width:2; vector-effect:non-scaling-stroke;}
+.map-space.ineligible .atlas-area {fill:#e1dccf; fill-opacity:.22;}
+.map-space:focus-visible .atlas-area, .map-space:hover .atlas-area {fill:#f6ce69; fill-opacity:.26; stroke:#315e73; stroke-width:2.5; vector-effect:non-scaling-stroke;}
+.map-space:focus-visible {outline:none;}
+.mode-forces .atlas-counter, .mode-forces .atlas-political {display:none;}
+.mode-political .atlas-stack {display:none;}
+.mode-terrain .atlas-counter, .mode-terrain .atlas-political, .mode-terrain .atlas-stack, .mode-terrain .atlas-population, .mode-terrain .atlas-subtitle {display:none;}
+.map-only .play {grid-template-columns:1fr!important;}
+@media (min-width:2200px) {.play-screen .play {grid-template-columns:minmax(0,1fr) 440px;} .play-screen .side {font-size:16px;}}
+@media (max-width:1550px) { .play-screen .play {grid-template-columns:minmax(0,1fr) 350px;} .track-card {grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px;} .track-name {font-size:12px;} .track-name b {font-size:13px;} .map-caption span {display:none;} }
+@media (max-width:1100px) {
+ .play-screen {height:auto; overflow:visible;}
+ .play-screen .play {grid-template-columns:1fr; height:auto;}
+ .play-screen .side {height:auto; padding-bottom:50px; overflow:visible;}
+ .play-main {height:auto;}
+ .map-window {min-height:580px;}
+ .map-window .map {min-height:580px;}
+ .track-card {grid-template-columns:repeat(3,minmax(0,1fr));}
+ .play-screen .status-grid > .pills {flex-wrap:wrap;}
+ .space-inspector {max-height:240px;}
+ .map-key {position:absolute;}
+}
+@media (max-width:600px) {.map-window {overflow:auto;}.map-window .map {min-width:860px;} .map-navigation {padding:8px;} .play-screen {padding:6px;} .forces-group {font-size:13px;}}
+/* Integrated review: protect map height and show action choices before supporting cards. */
+.score-details {font-size:13px; color:var(--muted);}
+.score-details summary {cursor:pointer; width:max-content;}
+.score-details[open] {padding-top:4px;}
+.score-details .victory-track {color:var(--fg);}
+.vt-cell.five {background:#3c4443; color:#fff;}
+[aria-label="Scores"] strong {background:#f6efdf; padding:1px 4px; border-radius:3px;}
+.vt-flag-label span {background:#f6efdf; padding:1px 4px; border-radius:3px;}
+.play-screen .status-grid {gap:4px;}
+.map-navigation {padding:5px 10px;}
+.track-card {padding:6px 12px;}
+.map-caption {padding:4px 12px;}
+.play-screen .card-table {gap:12px;}
+.play-screen .card {height:76px; width:110px; padding:5px;}
+.play-screen .card-title {font-size:12px; line-height:1.2;}
+.play-screen .card-type {display:none;}
+.atlas-counter text {font-family:system-ui,sans-serif;}
+.box-track rect {fill:#f5eedf; stroke:#8b7b5e;}
+.box-track text {font:600 11px system-ui,sans-serif; fill:#403b30;}
+.track-row {position:relative; padding-right:18px;}
+.track-scale {position:absolute; top:0; right:0;}
+.track-scale summary {cursor:pointer; color:#514735; list-style:none; padding:0 4px;}
+.track-scale-content {position:absolute; right:0; top:26px; width:220px; padding:10px; background:#fbf5e9; border:1px solid #9b8d73; box-shadow:0 4px 12px #0003; z-index:8; border-radius:4px;}
+.track-card .track-scale-content .mini-track {display:flex;}
+.track-scale-content .mini-box, .track-scale-content .mini-step {color:#403b30; background:#e6dcc6; border-color:#b4a588; font-size:13px; line-height:20px;}
+.track-scale-content .mini-box.on, .track-scale-content .mini-step.on {background:#315e73; color:white;}
+.track-name b {padding-right:4px;}
+.atlas-counter text {font-size:12px;}
+.atlas-political .level-marker {font-size:12px;}
+.find-space {font-size:13px; display:flex; gap:6px; align-items:center;}
+.find-space select {background:#fffbf2; color:#403b30; border-color:#b6a88c; font-size:13px; max-width:200px; min-height:32px;}
+@media (max-width:1550px) {.find-space {font-size:0;}.find-space select {max-width:160px;}}
+.mode-political .force-layer, .mode-terrain .force-layer, .mode-terrain .political-layer, .mode-forces .political-layer {display:none;}
+.elig-box button, .elig-box b {overflow-wrap:normal; word-break:normal;}
+.elig-row {grid-template-columns:40px repeat(5,minmax(0,1fr));}
+/* One tool row and one resource row preserve a readable board at laptop heights. */
+.map-navigation {justify-content:flex-start; gap:8px 12px;}
+.map-navigation .board-title {font-size:13px; margin-right:auto; letter-spacing:.6px;}
+.map-navigation .board-title span {font-size:12px; margin-left:4px;}
+.map-navigation .row {flex-wrap:nowrap; gap:5px;}
+.map-navigation button {padding:0 8px;}
+.track-name b {display:inline; margin-left:6px;}
+.track-row {gap:0;}
+.track-card {padding:5px 10px;}
+.elig-row {grid-template-columns:50px repeat(5,minmax(0,1fr));}
+.elig-cylinder {white-space:nowrap; font-size:11px; padding:2px 5px;}
+.mode-terrain .control-layer, .mode-forces .control-layer {display:none;}
+.piece-code {font:700 9px system-ui,sans-serif; pointer-events:none;}
+.help strong[style*="color"], .forces-row h3[style*="color"] {background:#f6efdf; padding:2px 5px; border-radius:3px;}
+.track-scale summary {min-width:24px; min-height:24px; display:grid; place-items:center;}
+@media (min-width:1101px) and (max-width:1550px) {.play-screen .play {grid-template-columns:minmax(0,1fr) 390px;}}
+.map-navigation {display:flex; justify-content:flex-start; align-items:center; gap:8px 12px; flex-wrap:wrap; padding:5px 10px; background:#f4eddf; border-bottom:1px solid #c7b99e; flex:none;}
+.map-navigation button {background:#fffbf2; color:#453c2d; border-color:#b6a88c; min-height:34px; font-size:14px; padding:0 8px;}
+.map-navigation button[aria-pressed="true"] {background:#315e73; color:#fff; border-color:#315e73;}
 
-.play-screen .side h3 { font-size: 15px; }
-.play-screen .side .panel { padding: 8px; }
-.play-screen .side [aria-label="Event panel"] p { font-size: 12px; line-height: 1.4; margin: 5px 0; }
-.play-screen .side button { font-size: 12px; padding: 6px 9px; }
-.play-screen .side .elig-row { grid-template-columns: 46px repeat(5, minmax(0, 1fr)); }
+/* Approved on-map layout. Only the two remote spaces use the left column. */
+.atlas-label {font-size:22px;}
+.atlas-counter text {font-size:14px;}
+.atlas-population text {font-size:16px;}
+.atlas-political .level-marker {font-size:14px;}
+.atlas-subtitle {font:600 12px system-ui,sans-serif;letter-spacing:2px;fill:#6f6248;}
+.atlas-special,.context-note {font:10px system-ui,sans-serif;letter-spacing:1px;fill:#5c6757;}
+.context-name {font:italic 16px Georgia,serif;fill:#53604e;}
+.map-space.neighbor:not(.selected) .atlas-outline {stroke:#2b6b77;stroke-width:3;stroke-dasharray:7 4;}
+.map-space.selected .atlas-outline {stroke:#9a6a20;stroke-width:4;}
+
+.track-card.compact .track-row {padding:0; min-width:0;}
+.track-card.compact summary {display:flex; justify-content:space-between; gap:6px; cursor:pointer; font-size:12px;}
+.track-card.compact details[open] .mini-track {display:flex;}
+
+.atlas-stack .map-count {font-size:18px;}
+
+.atlas-stack .map-count {transform:translateY(4px);}

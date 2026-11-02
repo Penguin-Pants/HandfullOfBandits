@@ -9,7 +9,9 @@ import { actionTitle } from "../log/plain.ts";
 import { defaultAnchor } from "../notes/anchor.ts";
 import { EndSession } from "../notes/EndSession.tsx";
 import { NoteBar } from "../notes/NoteBar.tsx";
-import { Board, Legend, SpaceDetail } from "../board/Board.tsx";
+import { Legend, SpaceDetail } from "../board/Board.tsx";
+import { MapCanvas } from "../board/MapCanvas.tsx";
+import { words } from "../common/names.ts";
 import { CardTable } from "../cards/CardTable.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
 import { PivotalPanel } from "../pivotal/PivotalPanel.tsx";
@@ -57,6 +59,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const toFaction = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "faction" }); }, []);
   const toEvent = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "event" }); }, []);
   /** The space last clicked, shown in the space detail. */
+  const [factionTargets, setFactionTargets] = useState<readonly string[] | null>(null);
+  const [eventTargets, setEventTargets] = useState<readonly string[] | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const draft = useRef<AnyCommand | null>(null);
@@ -107,12 +111,12 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       const target = e.target as HTMLElement | null;
-      if (target !== null && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
+      if (target !== null && (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)) return;
       if (e.key === "h" || e.key === "H") setShowHistory((v) => !v);
       if (e.key === "?") setShowHelp((v) => !v);
       if (e.key === "m" || e.key === "M") setMapOnly((v) => !v);
-      if (e.key === "z" && (e.ctrlKey || e.metaKey)) void undo();
-      if (e.key === " " && legal?.advance === true) {
+      if (e.key === "z" && (e.ctrlKey || e.metaKey)) {e.preventDefault(); void undo();}
+      if (e.key === " " && (target === null || target === document.body) && legal?.advance === true) {
         e.preventDefault();
         const status = data?.head.view.status;
         const skip = status?.phase === "propaganda" ? skipQuestion(status.propagandaPhases[status.propagandaStep] ?? "", status.emergencyMoves) : null;
@@ -153,6 +157,19 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   };
   const detail = view.spaces.find((s) => s.id === focused);
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
+  const mapTools = (
+              <div className="row">
+              <button type="button" aria-pressed={showKey} onClick={() => { setShowKey(!showKey); }}>
+                Key
+              </button>
+              <button type="button" aria-pressed={showTracks} onClick={() => { setShowTracks(!showTracks); }}>
+                Tracks
+              </button>
+              <button type="button" aria-pressed={mapOnly} onClick={() => { setMapOnly(!mapOnly); }}>
+                {mapOnly ? "Show panels (M)" : "Map only (M)"}
+              </button>
+              </div>
+  );
   // One view (UC-3, UC-4): status on top, map with the forces bar below it on the left, a right
   // column that scrolls inside itself, note bar at the bottom. Help, History and End session
   // overlay. Map focus mode (M) hides the status bar and the right column.
@@ -177,21 +194,11 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
         <div className="play-main">
           {error !== null && <p className="bad">{error}</p>}
           <div className="panel map-panel">
-            <div className="map-tools">
-              <button type="button" aria-pressed={showKey} onClick={() => { setShowKey(!showKey); }}>
-                Key
-              </button>
-              <button type="button" aria-pressed={showTracks} onClick={() => { setShowTracks(!showTracks); }}>
-                Tracks
-              </button>
-              <button type="button" aria-pressed={mapOnly} onClick={() => { setMapOnly(!mapOnly); }}>
-                {mapOnly ? "Show panels (M)" : "Map only (M)"}
-              </button>
-            </div>
+            {showTracks && <TrackCard view={view} />}
             <div className="map-body">
-            <Board view={view} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
-            {mapOnly && showTracks && <TrackCard view={view} />}
+            <MapCanvas tools={mapTools} eligible={plans.active === "event" ? eventTargets : factionTargets} view={view} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
             </div>
+            {detail !== undefined && <div className="space-inspector" aria-live="polite"><button type="button" aria-label="Close space details" onClick={() => {setFocused(null);}}>×</button><SpaceDetail space={detail} tracks={view.status.tracks} /><p className="hint">{(legal.actions ?? []).filter(a => a.locations.includes(detail.id)).map(a => a.label).join(" · ") || "No standalone operation target listed for the acting faction."} Complete plans are checked by the rules engine.</p></div>}
             {showKey && (
               <div className="map-key">
                 <Legend view={view} />
@@ -201,16 +208,19 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           {!mapOnly && <ForcesBar view={view} />}
         </div>
         <aside className="side" aria-label="Side panel" hidden={mapOnly}>
-          {!mapOnly && showTracks && <TrackCard view={view} />}
+          <section className="panel next-task" aria-label="Next action">
+            <span className="eyebrow">{legal.faction === null ? words(view.status.phase) : `${words(legal.faction)} · ${legal.first === true ? "First" : "Second"} Eligible`}</span>
+            <h2>{view.status.pending?.prompt ?? (view.status.ended !== null ? "Game complete" : view.status.phase === "setup" ? "Reveal the first card" : legal.advance === true ? "Advance the sequence" : "Choose your action")}</h2>
+            <p>{legal.faction === null ? "Follow the card or phase instructions below." : "Choose an eligibility box, build a plan on the map and check its preview."}</p>
+          </section>
+          {legal.faction !== null && <FactionPanel onTargets={setFactionTargets} api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} /> : view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
           ) : (
-            <EventPanel api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
+            <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
           )}
-          {legal.faction !== null && <FactionPanel api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} />
-          {detail !== undefined && <SpaceDetail space={detail} />}
           <div className="row">
             <button type="button" onClick={() => { setShowHelp(!showHelp); }}>
               Help (?)
