@@ -5,11 +5,14 @@ import { ATLAS } from "./atlas-data.ts";
 
 export function Terrain({ view, cells }: { view: BoardView; cells: ReturnType<typeof regionCells> }) {
   const mountains = view.spaces.filter(s => s.terrain === "mountain" && !isInset(s));
-  const relief = { x: MAP_X0, y: 0, width: MAP_W - MAP_X0, height: MAP_H, fill: "url(#atlas-artwork)" };
+  const x = cells.geographic ? 0 : MAP_X0;
+  const width = cells.geographic ? ATLAS.width : MAP_W - MAP_X0;
+  const height = cells.geographic ? ATLAS.height : MAP_H;
+  const relief = { x, y: 0, width, height, fill: "url(#atlas-artwork)" };
   return <g pointerEvents="none" aria-hidden="true" data-artwork="historical-atlas">
     <defs>
-      <pattern id="atlas-artwork" patternUnits="userSpaceOnUse" x={MAP_X0} width={MAP_W - MAP_X0} height={MAP_H}>
-        <image href="/atlas-terrain.png" width={MAP_W - MAP_X0} height={MAP_H} preserveAspectRatio="none" />
+      <pattern id="atlas-artwork" patternUnits="userSpaceOnUse" x={x} width={width} height={height}>
+        <image href="/atlas-terrain.png" width={width} height={height} preserveAspectRatio="none" />
       </pattern>
       <clipPath id="clip-mountains">
         {mountains.map(s => <path key={s.id} d={cells.geographic ? ATLAS.spaces[s.id]?.path : pathOf(cells.domestic.get(s.id) ?? [])} data-terrain="mountain" data-of={s.id} />)}

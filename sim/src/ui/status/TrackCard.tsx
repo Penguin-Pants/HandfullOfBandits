@@ -1,6 +1,4 @@
-// Resources and politics card (UC-7): every track the map does not draw on a box, each in full.
-// Long numeric tracks (Resources) are a bar with the value; short ones numbered boxes; ordinal
-// tracks all their steps. The current value is marked.
+// Readable resource summary; expand a value to inspect its existing full scale.
 import type { BoardView } from "../api.ts";
 import { words } from "../common/names.ts";
 import { spaceOfTrack } from "./tracks.ts";
@@ -43,19 +41,12 @@ function Scale({ track }: { readonly track: Track }) {
 }
 
 export function TrackCard({ view }: { readonly view: BoardView }) {
-  const tracks = view.status.tracks.filter((t) => spaceOfTrack(t.id, view.spaces) === undefined);
-  return (
-    <section className="track-card" aria-label="Resources and politics">
-      <h4>Resources and politics</h4>
-      {tracks.map((t) => (
-        <div key={t.id} className="track-row" role="group" aria-label={t.display}>
-          <span className="track-name">
-            {t.display}
-            {t.steps === undefined && <b> {String(t.value)}</b>}
-          </span>
-          <Scale track={t} />
-        </div>
-      ))}
-    </section>
-  );
+  const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined);
+  return <section className="track-card compact" aria-label="Resources and politics">
+    <h4>Resources and politics</h4>
+    {tracks.map(t => <details key={t.id} className="track-row" role="group" aria-label={t.display}>
+      <summary onKeyDown={e => { if (e.key === " ") e.stopPropagation(); }}><span>{t.display}</span><b>{typeof t.value === "number" ? t.value : words(t.value)}</b></summary>
+      <Scale track={t} />
+    </details>)}
+  </section>;
 }

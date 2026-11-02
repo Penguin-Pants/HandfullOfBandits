@@ -190,7 +190,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
             </div>
             <div className="map-body">
             <Board view={view} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
-            {showTracks && <TrackCard view={view} />}
+            {mapOnly && showTracks && <TrackCard view={view} />}
             </div>
             {showKey && (
               <div className="map-key">
@@ -201,6 +201,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           {!mapOnly && <ForcesBar view={view} />}
         </div>
         <aside className="side" aria-label="Side panel" hidden={mapOnly}>
+          {!mapOnly && showTracks && <TrackCard view={view} />}
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} /> : view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />

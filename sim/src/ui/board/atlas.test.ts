@@ -25,8 +25,11 @@ describe("approved atlas geometry", () => {
     const actual = domestic.flatMap((a, i) => domestic.slice(i + 1).filter(b => shares(a.id, b.id)).map(b => [a.id, b.id].sort().join("|"))).sort();
     expect(actual).toEqual(view.links.filter(l => l.kind === "land").map(l => [l.a, l.b].sort().join("|")).sort());
     expect(shares("diyarbakir-city", "diyarbakir-rural")).toBe(true);
-    expect(ATLAS.spaces["diyarbakir-rural"]?.rings.filter(r => inside([466.44,372],r)).length).toBe(2);
-    expect(ATLAS.spaces["diyarbakir-city"]?.rings.filter(r => inside([466.44,372],r)).length).toBe(1);
+    const circle = ATLAS.spaces["diyarbakir-city"]?.circle;
+    if (circle === undefined) throw new Error("City circle missing");
+    const point: [number, number] = [circle[0],circle[1]];
+    expect(ATLAS.spaces["diyarbakir-rural"]?.rings.filter(r => inside(point,r)).length).toBe(2);
+    expect(ATLAS.spaces["diyarbakir-city"]?.rings.filter(r => inside(point,r)).length).toBe(1);
   });
 
   it("shares the Syria frontier with KDP without a Mardin–KDP border", () => {
@@ -43,6 +46,14 @@ describe("approved atlas geometry", () => {
       for (const p of [[x,y],[x+w,y],[x,y+h],[x+w,y+h]] as const) {
         expect(area.rings.filter(r => inside(p,r)).length % 2).toBe(1);
       }
+    }
+  });
+
+  it("keeps province interiors disjoint after the common readability projection", () => {
+    const domestic = view.spaces.filter(s => s.kind === "domestic" && !s.tags.includes("noLandLinks"));
+    for (let y = 15; y < 550; y += 30) for (let x = 15; x < ATLAS.width; x += 30) {
+      const covering = domestic.filter(s => (ATLAS.spaces[s.id]?.rings.filter(r => inside([x,y],r)).length ?? 0) % 2 === 1);
+      expect(covering.length).toBeLessThanOrEqual(1);
     }
   });
 
