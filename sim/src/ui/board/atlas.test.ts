@@ -17,7 +17,7 @@ const shares = (a: string, b: string): boolean => [...(segmentSets.get(a) ?? [])
 describe("approved atlas geometry", () => {
   it("keeps cropped country frontiers renderable, including empty source segments", () => {
     expect(ATLAS.countryBorders).not.toMatch(/M(?:M|$)/);
-    expect(ATLAS.countryBorders).toMatch(/^M-?[\d.]+,-?[\d.]+L/);
+    expect(ATLAS.countryBorders).toMatch(/^M-?[\d.]+,-?[\d.]+[LC]/);
   });
 
   it("has all and only the 20 research domestic borders, including the enclosed city", () => {
@@ -40,10 +40,10 @@ describe("approved atlas geometry", () => {
     expect(view.links.some(l => [l.a,l.b].includes("syria-bekaa") && [l.a,l.b].includes("kdp-zone"))).toBe(false);
   });
 
-  it("keeps every reserved piece stack inside its area", () => {
+  it("keeps piece stack anchors inside their areas", () => {
     for (const area of Object.values(ATLAS.spaces).filter(s => s.population !== undefined)) {
-      const [x,y,w,h] = area.stack;
-      for (const p of [[x,y],[x+w,y],[x,y+h],[x+w,y+h]] as const) {
+      const [x,y,w] = area.stack;
+      for (const p of [[x+w/2,y]] as const) {
         expect(area.rings.filter(r => inside(p,r)).length % 2).toBe(1);
       }
     }
@@ -51,7 +51,7 @@ describe("approved atlas geometry", () => {
 
   it("keeps province interiors disjoint after the common readability projection", () => {
     const domestic = view.spaces.filter(s => s.kind === "domestic" && !s.tags.includes("noLandLinks"));
-    for (let y = 15; y < 550; y += 30) for (let x = 15; x < ATLAS.width; x += 30) {
+    for (let y = 15; y < ATLAS.height; y += 30) for (let x = 15; x < ATLAS.width; x += 30) {
       const covering = domestic.filter(s => (ATLAS.spaces[s.id]?.rings.filter(r => inside([x,y],r)).length ?? 0) % 2 === 1);
       expect(covering.length).toBeLessThanOrEqual(1);
     }

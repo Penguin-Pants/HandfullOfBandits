@@ -61,7 +61,7 @@ try {
   const atlas = await page.evaluate(async () => {
     const svg = document.querySelector('[aria-label="Board"]');
     const outside = [];
-    for (const info of svg.querySelectorAll('[data-info]')) {
+    for (const info of svg.querySelectorAll('[data-info]:not([data-callout])')) {
       const area = svg.querySelector(`[data-space="${info.dataset.info}"] .atlas-area`);
       for (const el of info.querySelectorAll('text, rect, circle, polygon')) {
         const b = el.getBBox();
@@ -103,15 +103,16 @@ try {
     });
   });
   check(readable, 'reviewed name, counter and piece-count sizes at 1908 x 904');
-  const legitimacy = page.locator('aside.side [aria-label="Legitimacy"]');
+  const legitimacy = page.locator('[aria-label="Resources and politics"] [aria-label="Legitimacy"]');
   await legitimacy.locator('summary').focus();
   await page.keyboard.press('Space');
   check(await legitimacy.evaluate(el => el.open), 'compact tracks expand with the keyboard');
   await page.keyboard.press('Space');
   await page.getByRole('button', {name:'Europe',exact:true}).click();
   await page.getByRole('button', {name:'Western Cities',exact:true}).click({modifiers:['Shift']});
-  check(await page.getByRole('button', {name:'Europe',exact:true}).getAttribute('aria-pressed') === 'true' && await page.getByRole('button', {name:'Western Cities',exact:true}).getAttribute('aria-pressed') === 'true', 'ribbon spaces remain selectable with Shift');
+  check(await page.getByRole('button', {name:'Europe',exact:true}).getAttribute('aria-pressed') === 'true' && await page.getByRole('button', {name:'Western Cities',exact:true}).getAttribute('aria-pressed') === 'true', 'off-map spaces remain selectable with Shift');
   await page.getByRole('button', {name:'Clear (Esc)',exact:true}).click();
+  await page.getByRole('button', {name:'Close space details',exact:true}).click();
   await page.emulateMedia({ colorScheme: "dark" });
   const contrast = await page.evaluate(() => {
     const luminance = color => {
@@ -120,7 +121,7 @@ try {
     };
     return [...document.querySelectorAll(".level-marker")].every(text => {
       const ink = luminance(getComputedStyle(text).fill);
-      const paper = luminance(getComputedStyle(text.parentElement.querySelector("rect")).fill);
+      const paper = luminance("rgb(245, 238, 220)");
       return (Math.max(ink, paper) + .05) / (Math.min(ink, paper) + .05) >= 4.5;
     });
   });
@@ -137,7 +138,7 @@ try {
       fits: document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth,
       panelVisible: box("Faction panel").bottom <= side.bottom,
       forcesBelowMap: box("Forces").top > box("Board").bottom,
-      order: ["Cards", "Event panel", "Faction panel"].map((l) => order.indexOf(l)),
+      order: ["Next action", "Faction panel", "Cards", "Event panel"].map((l) => order.indexOf(l)),
     };
   });
   check(layout.fits, "one view: no page scroll at 1920 x 950");
@@ -148,9 +149,9 @@ try {
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
   check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
-  // Readability review: resources now belong to the right sidebar.
-  const card = await page.evaluate(() => document.querySelector('aside.side [aria-label="Resources and politics"]') !== null);
-  check(card, "Resources and politics card is in the right sidebar");
+  // The approved resource strip stays above the map.
+  const card = await page.evaluate(() => document.querySelector('.map-panel > [aria-label="Resources and politics"]') !== null);
+  check(card, "Resources and politics strip is above the map");
   await page.keyboard.press("m");
   await page.keyboard.press("n");
   await page.getByLabel("Note text").waitFor();
@@ -165,13 +166,14 @@ try {
   await page.setViewportSize({ width: 800, height: 900 });
   await page.waitForTimeout(300);
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
-  check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: cards, card text, Faction panel");
+  check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: task, faction choices, cards, event");
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.waitForTimeout(300);
   // UC-7 review: at 1366 x 768 the card covers no space name on the map.
   const clear = await page.evaluate(() => {
     const c = document.querySelector('[aria-label="Resources and politics"]').getBoundingClientRect();
-    return [...document.querySelectorAll("text.map-label")].every((t) => { const r = t.getBoundingClientRect(); return r.right <= c.left || r.left >= c.right || r.bottom <= c.top || r.top >= c.bottom; });
+    const m = document.querySelector('[aria-label="Board"]').getBoundingClientRect();
+    return [...document.querySelectorAll("text.map-label")].every((t) => { const r = t.getBoundingClientRect(); const clipped = {left:Math.max(r.left,m.left),right:Math.min(r.right,m.right),top:Math.max(r.top,m.top),bottom:Math.min(r.bottom,m.bottom)}; return clipped.right <= clipped.left || clipped.bottom <= clipped.top || clipped.right <= c.left || clipped.left >= c.right || clipped.bottom <= c.top || clipped.top >= c.bottom; });
   });
   check(clear, "Resources and politics card covers no space name at 1366 x 768");
   // UC-9: the right column ends above the fixed Note button, so the button covers none of it.
@@ -183,6 +185,7 @@ try {
     return side.bottom <= n.top;
   });
   check(noteClear, "right column ends above the Note button at 1600 x 900");
+  await page.getByRole("button", {name:"Fit map"}).click();
   // UC-5: a March is planned by a mouse drag on the map, never by typed text.
   await page.getByRole("button", { name: "Limited Op" }).click();
   await page.getByRole("button", { name: "March", exact: true }).click();

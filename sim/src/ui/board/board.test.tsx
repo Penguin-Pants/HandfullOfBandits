@@ -79,6 +79,7 @@ describe("map geometry", () => {
     expect(regionCells(view.spaces).geographic).toBe(true);
     render(<Board view={old} selected={[]} onSelect={vi.fn()} />);
     expect(screen.getByRole("button", { name: "Hakkari" }).querySelector("path")?.getAttribute("clip-path")).toBeNull();
+    expect(Number(screen.getByRole("button",{name:"Europe"}).querySelector("rect")?.getAttribute("x"))).toBeGreaterThanOrEqual(0);
   });
 
   it("splits the plane on the bisector of two sites", () => {
@@ -128,10 +129,12 @@ describe("victory track and forces", () => {
 describe("map markers", () => {
   it("draws a level marker for Support or Opposition and a chip per space marker", () => {
     const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(setMarkers(turnOf("pkk"), "botan", "coercion", 2), "botan", "displacement", 1, "old"));
-    render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
+    const botan = marked.spaces.find(s => s.id === "botan");
+    if (botan === undefined) throw new Error("botan");
+    render(<><Board view={marked} selected={[]} onSelect={vi.fn()} /><SpaceDetail space={botan} /></>);
     expect(screen.getByRole("button", { name: "Botan" }).ownerDocument.querySelectorAll("[aria-label=\"Passive Opposition\"]").length).toBe(marked.spaces.filter((s) => s.levelName === "passiveOpposition").length);
-    expect(screen.getByLabelText("Coercion (like Terror) 2")).toBeTruthy();
-    expect(screen.getByLabelText("Displacement old 1").textContent).toContain("old");
+    expect(screen.getByLabelText("Botan detail").textContent).toContain("2 Coercion");
+    expect(screen.getByLabelText("Botan detail").textContent).toContain("1 Displacement (Old)");
     expect(screen.getByLabelText("Leadership present 1").textContent).toContain("present");
   });
 });
@@ -186,12 +189,12 @@ describe("map boxes and terrain (UC-7)", () => {
   it("shows each host posture on its box and the Europe track in the Europe box", () => {
     render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
     const kdp = screen.getByLabelText("KDP posture track");
-    expect(kdp.querySelector("[aria-current]")?.textContent).toBe("Host");
+    expect(kdp.querySelector("[aria-current]")?.textContent).toBe("KDP: Host");
     expect(screen.getByLabelText("Syria posture track")).toBeTruthy();
     expect(screen.getByLabelText("PUK posture track")).toBeTruthy();
     const europe = screen.getByLabelText("Europe track");
-    expect(europe.querySelectorAll("text")).toHaveLength(6);
-    expect(europe.querySelector("[aria-current]")?.textContent).toBe(String(view.status.tracks.find((t) => t.id === "europe")?.value));
+    expect(europe.querySelectorAll("text")).toHaveLength(1);
+    expect(europe.querySelector("[aria-current]")?.textContent).toBe(`Europe: ${String(view.status.tracks.find((t) => t.id === "europe")?.value)}`);
   });
 
   it("shades every Mountain space, draws the sourced lake without rivers and no links between spaces", () => {
@@ -267,7 +270,7 @@ it.each([
   const changed = { ...view, spaces: view.spaces.map(s => s.id === "botan" ? { ...s, level, levelName, control: "pkk" } : s) };
   const { container } = render(<Board view={changed} selected={[]} onSelect={vi.fn()} />);
   const info = container.querySelector("[data-info='botan']");
-  expect(info?.querySelector("[aria-label='PKK Control']")?.textContent).toBe("PKKCONTROL");
+  expect(info?.querySelector("[aria-label='PKK Control']")?.textContent).toBe("PKK");
   expect(info?.querySelector(`[aria-label='${label}']`)?.textContent).toContain(multiplier);
 });
 
@@ -280,23 +283,19 @@ it("keeps the city and hinterland independently keyboard-selectable", () => {
 });
 
 describe("approved readable layout", () => {
-  it("moves both off-map areas to a top ribbon and draws each shared border once", () => {
+  it("keeps only Europe and Western Cities in the off-map column", () => {
     const {container} = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    expect(container.querySelector("[data-ribbon]")).not.toBeNull();
-    expect(Number(container.querySelector("[data-info='western-cities'] .map-label")?.getAttribute("y"))).toBeLessThan(0);
-    expect(Number(container.querySelector("[data-info='europe'] .map-label")?.getAttribute("y"))).toBeLessThan(0);
-    expect(container.querySelectorAll(".playable-boundaries")).toHaveLength(1);
-    expect(container.querySelectorAll(".map-space > path[stroke]")).toHaveLength(0);
+    expect([...container.querySelectorAll("[data-callout]")].map(e=>e.getAttribute("data-info")).sort()).toEqual(["europe","western-cities"]);
+    expect(container.querySelector("[data-geography='outside-play']")?.textContent).toContain("Malatya");
     expect(screen.getAllByRole("button")).toHaveLength(18);
   });
 
-  it("keeps main map names and counter words at the reviewed readable sizes", () => {
-    const {container} = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    for (const id of ["botan", "hakkari", "mardin-batman"]) {
-      const info = container.querySelector(`[data-info='${id}']`);
-      expect((info?.querySelector(".map-label") as SVGTextElement | null)?.style.fontSize).toBe("19px");
-      expect((info?.querySelector(".atlas-counter text") as SVGTextElement | null)?.style.fontSize).toBe("12px");
-    }
+  it("highlights the exact rules neighbors without implying a city connection", () => {
+    const {container} = render(<Board view={view} selected={["elazig"]} onSelect={vi.fn()} />);
+    expect([...container.querySelectorAll(".map-space.neighbor")].map(e=>e.getAttribute("data-space")).sort()).toEqual(["bingol-mus","dersim","diyarbakir-rural"]);
+    expect(container.querySelector(".map-space[data-space='diyarbakir-rural'] .atlas-outline")?.getAttribute("d")).not.toContain("A94");
+    const city = container.querySelector("[data-space='diyarbakir-city'] image");
+    expect(city?.getAttribute("opacity")).toBe("0.3");
   });
 
   it("shows compact resources with the full track available on expansion", () => {

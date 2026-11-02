@@ -33,7 +33,7 @@ export function StatusBar({ view, children }: { readonly view: BoardView; readon
           ))}
         </span>
       </div>
-      <ScoreTrack view={view} />
+      <details className="score-details"><summary>Victory track</summary><ScoreTrack view={view} /></details>
       {s.ended !== null && (
         <div className="row">
           <strong>Game over: {s.ended.winner === null ? "no winner" : name(s.ended.winner)}</strong> <span>{s.ended.labels.join(", ")}</span>

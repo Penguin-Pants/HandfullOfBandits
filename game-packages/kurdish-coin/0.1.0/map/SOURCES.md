@@ -31,3 +31,7 @@ The designer approved the corrected interim layout on 1 November 2026. Implement
 Western Cities and Europe use the top ribbon. Main area names use 19-unit text, counter words 12 and normal piece counts 17. Live population and statuses stay separate from the artwork. Dense stacks still fit their reserved rectangles; space detail retains full values. Resources and politics use sidebar summaries with the existing full scales on expansion. Space toggles a focused summary without advancing the game. The map-only view retains optional tracks. The generic renderer remains for other packages and old schematic layouts.
 
 The package coordinates and YAML are unchanged. The original 18 IDs, 25 legal links, package hash and engine fingerprint are unchanged. Browser checks measure containment and readable sizes at 1908 × 904 and exercise narrower layouts. The historical printed draft and rulebook are not rebuilt in this presentation phase.
+
+## Approved on-map prototype 03
+
+The React board uses manually reshaped schematic areas approved after prototype review, with all 20 domestic borders checked against the existing land-link graph. The original package coordinates, links, country roles and Lake Van source remain unchanged. Shared-border construction is recorded in `docs/ux-overhaul/approved-map-geometry.json`. Malatya is hatched outside-play context between Adıyaman and Elazığ. The existing city asset is clipped inside the city circle at 30% opacity.

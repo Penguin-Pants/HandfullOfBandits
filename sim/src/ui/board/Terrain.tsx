@@ -5,8 +5,8 @@ import { ATLAS } from "./atlas-data.ts";
 
 export function Terrain({ view, cells }: { view: BoardView; cells: ReturnType<typeof regionCells> }) {
   const mountains = view.spaces.filter(s => s.terrain === "mountain" && !isInset(s));
-  const x = cells.geographic ? 0 : MAP_X0;
-  const width = cells.geographic ? ATLAS.width : MAP_W - MAP_X0;
+  const x = MAP_X0;
+  const width = cells.geographic ? ATLAS.width - 140 : MAP_W - MAP_X0;
   const height = cells.geographic ? ATLAS.height : MAP_H;
   const relief = { x, y: 0, width, height, fill: "url(#atlas-artwork)" };
   return <g pointerEvents="none" aria-hidden="true" data-artwork="historical-atlas">
