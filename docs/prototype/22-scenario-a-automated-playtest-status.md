@@ -19,6 +19,7 @@ Status: Phases 1 to 8 implemented and run on 2026-11-03. Report: [23](23-scenari
 | 6 Pilot and mechanic evidence | ✅ | `experiment-coverage.ts`; runs `pilot-1`, `dev-compare-v2` (pilot of the frozen roster) |
 | 7 Frozen evaluation and statistics | ✅ | `experiment-analysis.ts`; runs `baseline-1`, `options-1`, `adversarial-2`; `sim/test/experiment-analysis.test.ts` |
 | 8 Counters and disposition | ✅ | runs `dev-counter-*`, `dev-probe-spend`, `confirmation-1`; report 23 |
+| Review rerun (cand-2) | ✅ | runs `baseline-2`, `options-2`, `adversarial-3`, `confirmation-2` supersede the `cand-1` evaluation runs |
 
 CLI: `sim experiment run | replay | analyze | archive | compare | qualify`. Legacy `batch`, `replay <file>`, `fuzz` and `export` are unchanged; README labels the batch policies as legacy screens.
 
@@ -50,6 +51,10 @@ Pass 1, correctness (confidence high for the runner and statistics; medium for p
 | Fix | Real-worker tests timed out at 5 s under full-suite load | Explicit timeouts |
 | Fix | `experiment replay` printed a stack trace for a missing directory | Error message, exit 1 |
 | Decide | P-SHIELD dominance: rules property or one-ply planning? | Recorded as a hypothesis for the designer (report 23); no rule changed |
+| Fix | PR #40 review: Rally flip, Train Guards and Base pruned before their families; spending frontier cap dropped the maximum allocation | Generator `cand-2` with regression tests; frozen program rerun on fresh seeds (baseline-2, options-2, adversarial-3, confirmation-2); `cand-1` runs retained |
+| Fix | PR #40 review: replay counted a truncated journal as identical | Replay requires the recorded command count and final hash; all committed runs re-verified |
+| Fix | PR #40 review: zero completed games gave a 0% roster estimate | NaN estimate, no roster trigger |
+| Fix | PR #40 review: full-state controls skipped the decision time limit | Same check as observation players |
 | Drop | State passing: v2 capped potential did not reduce it (37.4% vs 39.6%) | Hypothesis falsified; kept as a diagnostic and a player limitation |
 
 Pass 2, simplicity: one candidate generator serves runner, search and fixtures; one replay path (`replaySteps`) serves journals and archives; analysis reads archives so bulk journals are optional; no new dependency, database or service. The legacy `runExperiment` in-memory runner was replaced and its test migrated.
