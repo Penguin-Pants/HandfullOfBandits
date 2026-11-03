@@ -69,6 +69,18 @@ Value = own margin minus opponent margin (rules 7.3, including 2 per Harm above 
 
 All weights are in `FAMILIES` (`scenario-a.ts`) and are recorded in each experiment's `players.json`. No parameter variant was tuned on evaluation seeds.
 
+## Versions, frozen roster and counters
+
+| Version | Change | Status |
+|---|---|---|
+| v1 | Table above, uncapped potential | **Frozen roster for the State families** |
+| v2 | Same weights; potential capped by the remaining Propaganda Civic Action caps and Train/Rally opportunities (two shifts per action on half the expected remaining cards) | **Frozen roster for the PKK families** |
+| P-SHIELD@3 | P-POL v2 plus Base protection: Bases with an Underground Guerrilla +1.5, Bases exposed to Troops without one −2, domestic Bases 1.5, Underground 0.15 | Qualified counter to S-MIL; confirmed |
+| S-SIEGE@3 | S-MIL plus value for exposing protected Bases (protected −2, exposed +1.5, Active Guerrillas 0.8) | Qualified counter to P-SHIELD; unsuccessful |
+| S-SPEND@3 | S-POL v2 with a −0.3 weight on unspent Resources | Development attribution probe only |
+
+Every version stays registered for paired comparison. Evidence: [report 23](23-scenario-a-automated-playtest-report.md).
+
 ## Controls and baselines
 
 Legacy research 12 s7 policies (`S-CTRL-concentration`, `S-CTRL-civic-action`, `S-CTRL-emergency-rule`, `P-CTRL-sanctuary`, `P-CTRL-concealment`, `P-CTRL-coerce-only`) read the full live state and use the scripted policy where they have no rule. They are unqualified controls. `S-RANDOM`/`P-RANDOM` choose uniformly among generated legal candidates. `S-CTRL-scripted`/`P-CTRL-scripted` is the IC-2a policy. None enters headline averages.

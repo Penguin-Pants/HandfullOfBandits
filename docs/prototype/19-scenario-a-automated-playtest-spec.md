@@ -1,6 +1,6 @@
 # Scenario A automated playtest specification
 
-Status: specified, not implemented or run. Requested 2026-11-02.
+Status: implemented and run 2026-11-03 ([report](23-scenario-a-automated-playtest-report.md)). Requested 2026-11-02.
 
 ## 1. Purpose and authority
 
