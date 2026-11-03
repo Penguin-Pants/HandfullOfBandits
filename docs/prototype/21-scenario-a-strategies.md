@@ -50,12 +50,14 @@ A wider generator (all bounds x4) is compared with the bounded one on three open
 | `cand-2` | Per-space options rotate by kind instead of a slice (Rally flip, Train Guards and Base kept); spending frontier is best first, so the cap drops the cheapest allocations | PR #40 review, round 1 |
 | `cand-3` | A shift's frontier value includes the Harm its required redress removes; Train places 1-2 Troops or 2 Police alone when supplies are low | PR #40 review, round 2 |
 
-Known gaps in `cand-3`, found in review round 3 and not fixed in PR #40 (follow-up `cand-4` with a rerun):
+Known gaps in `cand-3`, found in review rounds 3 and 4 and not fixed in PR #40 (follow-up `cand-4` with a rerun):
 
 1. The Harm benefit is capped per space, not across the whole allocation, so several redress spaces can each count the same excess Harm. A legal allocation with a higher margin can be pruned.
 2. Removal-only spending is offered only above the Harm limit. Below it, lower Harm can still decide a tied final margin, and the generator does not offer that tie-break.
+3. Final Civic Action allocations are pruned by immediate value per cost only. An allocation in a space the PKK cannot reverse by Agitation can be dropped in favor of an equal-gain one it can reverse, so a forced win can be missed.
+4. Over nine eligible spaces, the greedy frontier keeps one option per space. When one and two shifts have equal value per cost, the second shift is dropped, so large Resource totals cannot all be spent.
 
-Both affect only Civic Action and Agitation allocations. The final-round solve is exact over the generated allocations, not over all legal ones.
+All four affect only Civic Action and Agitation allocations. The final-round solve is exact over the generated allocations, not over all legal ones.
 
 ## Shared search and evaluation
 

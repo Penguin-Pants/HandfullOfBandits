@@ -16,7 +16,7 @@ Measured results are labeled with game counts. Statements marked *hypothesis* ar
 
 PR #40 review found pruning and search-order defects in two rounds. `cand-2` keeps Rally flip, Train Guards and Train Base plans and the most valuable spending allocation. `cand-3` values Harm removal in spending choices and keeps small Train placements; `search-2` evaluates action families in round-robin order so the transition budget cannot starve late families. Each change has regression tests. The whole frozen program was rerun on fresh evaluation seeds after each round, with the same players and weights. Earlier runs are retained as superseded evidence. Because each run uses different seeds, changes between runs are not paired estimates of a fix's effect.
 
-**Known gaps in `cand-3`** (review round 3, deferred to a follow-up `cand-4` with a rerun): the Harm benefit of redress is capped per space instead of across the whole allocation, and removal-only spending is not offered below the Harm limit, where lower Harm can still break a tied final margin. Both affect only Civic Action and Agitation allocations; details in [21](21-scenario-a-strategies.md).
+**Known gaps in `cand-3`** (review rounds 3 and 4, deferred to a follow-up `cand-4` with a rerun): the Harm benefit of redress is capped per space instead of across the whole allocation; removal-only spending is not offered below the Harm limit; final Civic Action pruning ignores exposure to the PKK's Agitation reply; and over nine eligible spaces the greedy frontier drops second shifts. All four affect only Civic Action and Agitation allocations; details in [21](21-scenario-a-strategies.md).
 
 ## Reproduce
 
@@ -118,7 +118,7 @@ No unresolved ledger entry in any run. Natural exposure covers Operations, Speci
 | Gate | Status | Evidence |
 |---|---|---|
 | Reliability | ✅ Pass | 24,000 evaluation games complete; all replay to their recorded final hashes; no failures |
-| Competence | ⚠️ Pass with limits | Eight qualified players pass every fixture with no illegal submission or fallback; full decision-family coverage. Limits: one-ply search, heavy State passing, sanctuary actions rarely chosen, two known `cand-3` spending gaps |
+| Competence | ⚠️ Pass with limits | Eight qualified players pass every fixture with no illegal submission or fallback; full decision-family coverage. Limits: one-ply search, heavy State passing, sanctuary actions rarely chosen, four known `cand-3` spending gaps |
 | Coverage | ✅ Pass | Every applicable mechanic covered naturally or by reviewed fixture; gaps listed above |
 | Strategic review | ✅ Pass | Every confirmed flag has a diagnosis, a tested or in-roster counter and a disposition; one unsuccessful counter recorded; one earlier flag not confirmed under `cand-3`; three baseline-3 flags are exploratory |
 | Reproducibility | ✅ Pass | Frozen manifests with fingerprints; archives replay every game; analysis reruns are deterministic |
@@ -135,7 +135,7 @@ Remaining risks, highest first:
 2. **State passivity.** The State passes on about 39% of its card choices in every roster. It is partly a player weakness (S-SPEND), so State win rates are likely underestimates.
 3. **Sanctuary system unexercised.** Postures beyond Restricted, Cross-Border and hot pursuit never occurred naturally. The option results do not show those options are harmless.
 4. **Tie order.** Equal final margins occur in about 3% of games and mostly go to the PKK. This is a designed rule, recorded for review.
-5. **Roster and generator dependence.** Results apply to these families, budgets and generator. Generator changes moved single cells by up to 57 points while the roster average stayed within 48-54%. Two known `cand-3` spending gaps remain for `cand-4`.
+5. **Roster and generator dependence.** Results apply to these families, budgets and generator. Generator changes moved single cells by up to 57 points while the roster average stayed within 48-54%. Four known `cand-3` spending gaps remain for `cand-4`.
 
 Do not change thresholds on this evidence. The designer decides whether a protected-Base network warrants a rule review.
 

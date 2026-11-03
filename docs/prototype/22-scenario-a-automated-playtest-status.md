@@ -58,7 +58,7 @@ Pass 1, correctness (confidence high for the runner and statistics; medium for p
 | Fix | PR #40 review: full-state controls skipped the decision time limit | Same check as observation players |
 | Fix | PR #40 review round 2: search budget starved late families; Harm removal unvalued in spending; low-supply Train plans missing; repeats counted as independent trials; controls pooled into roster averages; no-pair comparisons shown as 0; Propaganda checkpoints per round, not per phase; abort left workers running | `cand-3`, `search-2`, analysis v2, runner fix; each with a regression test that fails before the fix; frozen program rerun on fresh seeds |
 | Fix | PR #40 review round 3: report labels dropped player versions; coverage replayed without checking hashes | Full player IDs; coverage throws on divergence; regression tests; all 19 committed runs pass |
-| Propose | PR #40 review round 3: Harm benefit capped per space, not per allocation; removal-only spending missing below the Harm limit | Deferred to a follow-up PR (`cand-4` plus a frozen rerun); recorded in 21 and 23. Reason: each generator fix makes the frozen evaluation stale |
+| Propose | PR #40 review rounds 3 and 4: Harm benefit capped per space, not per allocation; removal-only spending missing below the Harm limit; final Civic Action pruning ignores Agitation-reply exposure; large-space greedy frontier drops second shifts | Deferred to a follow-up PR (`cand-4` plus a frozen rerun); recorded in 21 and 23. Reason: each generator fix makes the frozen evaluation stale |
 | Drop | State passing: v2 capped potential did not reduce it (37.4% vs 39.6%) | Hypothesis falsified; kept as a diagnostic and a player limitation |
 
 Pass 2, simplicity: one candidate generator serves runner, search and fixtures; one replay path (`replaySteps`) serves journals and archives; analysis reads archives so bulk journals are optional; no new dependency, database or service. The legacy `runExperiment` in-memory runner was replaced and its test migrated.
@@ -69,4 +69,4 @@ Pass 2, simplicity: one candidate generator serves runner, search and fixtures; 
 2. State passivity about 39% Pass share (player limitation).
 3. Sanctuary actions beyond Restricted never chosen naturally.
 4. Human IC-3a not done.
-5. `cand-4`: the two deferred spending gaps (Propose above).
+5. `cand-4`: the four deferred spending gaps (Propose above).
