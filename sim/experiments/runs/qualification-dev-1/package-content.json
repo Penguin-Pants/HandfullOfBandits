@@ -1,0 +1,6249 @@
+{
+ "manifest.yaml": {
+  "packageId": "kurdish-coin",
+  "version": "0.1.0",
+  "rulesetVersion": "R4",
+  "schemaVersion": 2,
+  "changeDescription": "DD-21. Attack reuses its die for conditional attrition against pre-Attack Troops",
+  "title": "Kurdish COIN 1984-1999",
+  "modules": [
+   "ct-two-faction@1"
+  ],
+  "options": {
+   "hotPursuit": {
+    "values": [
+     "allow",
+     "deny"
+    ],
+    "description": "Early KDP hot pursuit exception, C1 and C2, at most 3 Troops (06 s3.2; Low evidence)"
+   },
+   "syriaMarchRestricted": {
+    "values": [
+     "allow",
+     "deny"
+    ],
+    "description": "PA-16 (GAP-I02). allow: PKK March into Syria-Bekaa at Restricted, +1 Resource, group Activates (06 s4.2). deny: Host or Tolerant only (03 s3)"
+   }
+  },
+  "researchBase": "research/research-final/package-b-coin-design"
+ },
+ "parameters.yaml": [
+  {
+   "id": "rally.externalPop",
+   "value": 1,
+   "tune": false,
+   "source": "03 s3 item 3"
+  },
+  {
+   "id": "legitimacy.overflowCost",
+   "value": 2,
+   "tune": true,
+   "source": "04 s3.2; PA-04"
+  },
+  {
+   "id": "europe.income",
+   "value": [
+    0,
+    0,
+    1,
+    1,
+    2,
+    2
+   ],
+   "tune": true,
+   "source": "04 s3.6 (PKK income by Europe 0 to 5)"
+  },
+  {
+   "id": "europe.drainFrom",
+   "value": 4,
+   "tune": false,
+   "source": "04 s3.6; 05 s6.4 step 6"
+  },
+  {
+   "id": "europe.banCap",
+   "value": 3,
+   "tune": false,
+   "source": "04 s3.6"
+  },
+  {
+   "id": "deck.pileSize",
+   "value": 12,
+   "tune": false,
+   "source": "05 s1.1 step 2; DD-13.1"
+  },
+  {
+   "id": "deck.topSize",
+   "value": 8,
+   "tune": false,
+   "source": "05 s1.1 step 3"
+  },
+  {
+   "id": "income.state.base",
+   "value": 8,
+   "tune": true,
+   "source": "05 s6.2 item 1"
+  },
+  {
+   "id": "income.state.legitimacyDivisor",
+   "value": 2,
+   "tune": true,
+   "source": "05 s6.2 item 1"
+  },
+  {
+   "id": "income.pkk.domesticBase",
+   "value": 1,
+   "tune": true,
+   "source": "05 s6.2 item 2"
+  },
+  {
+   "id": "income.pkk.externalBase",
+   "value": 1,
+   "tune": true,
+   "source": "05 s6.2 item 2"
+  },
+  {
+   "id": "income.pkk.leadershipHost",
+   "value": 2,
+   "tune": true,
+   "source": "05 s6.2 item 2"
+  },
+  {
+   "id": "income.pkk.leadershipTolerant",
+   "value": 1,
+   "tune": true,
+   "source": "05 s6.2 item 2"
+  },
+  {
+   "id": "upkeep.guardsPerResource",
+   "value": 2,
+   "tune": true,
+   "source": "05 s6.3 item 1"
+  },
+  {
+   "id": "emergencyRule.drain",
+   "value": [
+    1,
+    1,
+    2,
+    0
+   ],
+   "tune": false,
+   "source": "05 s6.4 step 1 (by emergencyRule step)"
+  },
+  {
+   "id": "legitimacy.displacementDrain",
+   "value": 1,
+   "tune": false,
+   "source": "05 s6.4 step 2"
+  },
+  {
+   "id": "legitimacy.receptionThreshold",
+   "value": 3,
+   "tune": false,
+   "source": "05 s6.4 step 3"
+  },
+  {
+   "id": "legitimacy.disputedThreshold",
+   "value": 3,
+   "tune": false,
+   "source": "05 s6.4 step 4"
+  },
+  {
+   "id": "covert.exposureThreshold",
+   "value": 3,
+   "tune": false,
+   "source": "05 s6.4 step 5"
+  },
+  {
+   "id": "covert.revealCost",
+   "value": 2,
+   "tune": false,
+   "source": "05 s6.4 step 5; 09 s4 item 1"
+  },
+  {
+   "id": "europe.harmGap",
+   "value": 3,
+   "tune": false,
+   "source": "05 s6.4 step 6"
+  },
+  {
+   "id": "civicAction.capDivisor",
+   "value": 2,
+   "tune": true,
+   "source": "05 s6.6 item 2"
+  },
+  {
+   "id": "harm.limit",
+   "value": 6,
+   "tune": true,
+   "source": "09 s3.1"
+  },
+  {
+   "id": "victory.covertCheckPenalty",
+   "value": 2,
+   "tune": false,
+   "source": "09 s3 step 1"
+  },
+  {
+   "id": "victory.finalHarmFactor",
+   "value": 2,
+   "tune": true,
+   "source": "09 s4 item 3"
+  },
+  {
+   "id": "victory.narrowMax",
+   "value": 5,
+   "tune": false,
+   "source": "09 s4 (record sheet labels)"
+  },
+  {
+   "id": "terrain.mountainDivisor",
+   "value": 2,
+   "tune": false,
+   "source": "06 s1 item 6"
+  },
+  {
+   "id": "train.costPerSpace",
+   "value": 2,
+   "tune": false,
+   "source": "06 s2.1"
+  },
+  {
+   "id": "train.maxPlace",
+   "value": 3,
+   "tune": false,
+   "source": "06 s2.1 item 1"
+  },
+  {
+   "id": "train.maxGuards",
+   "value": 2,
+   "tune": false,
+   "source": "06 s2.1 item 2"
+  },
+  {
+   "id": "train.baseFromPolice",
+   "value": 2,
+   "tune": false,
+   "source": "06 s2.1 item 3"
+  },
+  {
+   "id": "train.baseLimit",
+   "value": 2,
+   "tune": false,
+   "source": "06 s2.1 item 3"
+  },
+  {
+   "id": "garrison.cost",
+   "value": 2,
+   "tune": false,
+   "source": "06 s2.2"
+  },
+  {
+   "id": "garrison.maxPolice",
+   "value": 6,
+   "tune": false,
+   "source": "06 s2.2 item 1"
+  },
+  {
+   "id": "sweep.costPerSpace",
+   "value": 2,
+   "tune": false,
+   "source": "06 s2.3"
+  },
+  {
+   "id": "sweep.costOhalExtended",
+   "value": 1,
+   "tune": true,
+   "source": "06 s2.3"
+  },
+  {
+   "id": "assault.costPerSpace",
+   "value": 2,
+   "tune": false,
+   "source": "06 s2.4"
+  },
+  {
+   "id": "civicAction.coercionCost",
+   "value": 1,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "civicAction.reliefCost",
+   "value": 1,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "civicAction.redressCost",
+   "value": 3,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "civicAction.returnCost",
+   "value": 3,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "civicAction.returnCampaigns",
+   "value": [
+    "C5"
+   ],
+   "tune": false,
+   "source": "07 s3.3"
+  },
+  {
+   "id": "civicAction.shiftCost",
+   "value": 2,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "civicAction.maxShifts",
+   "value": 2,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "rally.costPerLocation",
+   "value": 1,
+   "tune": false,
+   "source": "06 s4.1"
+  },
+  {
+   "id": "rally.europeBanCost",
+   "value": 2,
+   "tune": false,
+   "source": "06 s4.1 item 3; 04 s3.6"
+  },
+  {
+   "id": "rally.europeGain",
+   "value": 1,
+   "tune": false,
+   "source": "06 s4.1 item 3"
+  },
+  {
+   "id": "rally.baseFromGuerrillas",
+   "value": 2,
+   "tune": false,
+   "source": "06 s4.1 option 2"
+  },
+  {
+   "id": "march.costPerDestination",
+   "value": 1,
+   "tune": false,
+   "source": "06 s4.2"
+  },
+  {
+   "id": "march.restrictedExtraCost",
+   "value": 1,
+   "tune": false,
+   "source": "06 s4.2 item 2; 07 s5.1"
+  },
+  {
+   "id": "march.activationThreshold",
+   "value": 3,
+   "tune": false,
+   "source": "06 s4.2 item 4"
+  },
+  {
+   "id": "attack.costPerSpace",
+   "value": 1,
+   "tune": false,
+   "source": "06 s4.3"
+  },
+  {
+   "id": "attack.maxRemoval",
+   "value": 2,
+   "tune": false,
+   "source": "06 s4.3 item 3"
+  },
+  {
+   "id": "attack.bonusRoll",
+   "value": 1,
+   "tune": false,
+   "source": "06 s4.3 item 5"
+  },
+  {
+   "id": "coerce.costPerSpace",
+   "value": 1,
+   "tune": true,
+   "source": "06 s4.4; DD-19.4"
+  },
+  {
+   "id": "coerce.costHighPop",
+   "value": 2,
+   "tune": true,
+   "source": "06 s4.4; DD-19.4"
+  },
+  {
+   "id": "coerce.highPopFrom",
+   "value": 3,
+   "tune": true,
+   "source": "06 s4.4; DD-19.4"
+  },
+  {
+   "id": "agitation.coercionCost",
+   "value": 1,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "agitation.redressCost",
+   "value": 2,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "agitation.shiftCost",
+   "value": 1,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "agitation.maxShifts",
+   "value": 2,
+   "tune": false,
+   "source": "07 s1.3"
+  },
+  {
+   "id": "airMobility.maxTroops",
+   "value": 4,
+   "tune": false,
+   "source": "06 s3.1"
+  },
+  {
+   "id": "airMobility.maxSpaces",
+   "value": 3,
+   "tune": false,
+   "source": "06 s3.1"
+  },
+  {
+   "id": "ambush.maxSpaces",
+   "value": 2,
+   "tune": false,
+   "source": "06 s5.1"
+  },
+  {
+   "id": "ambush.removal",
+   "value": 1,
+   "tune": false,
+   "source": "06 s5.1; PA-06"
+  },
+  {
+   "id": "extort.minPop",
+   "value": 1,
+   "tune": false,
+   "source": "06 s5.2"
+  },
+  {
+   "id": "extort.gain",
+   "value": 1,
+   "tune": false,
+   "source": "06 s5.2"
+  },
+  {
+   "id": "strike.maxSpaces",
+   "value": 2,
+   "tune": false,
+   "source": "06 s5.3 item 1"
+  },
+  {
+   "id": "strike.costPerSpace",
+   "value": 1,
+   "tune": false,
+   "source": "06 s5.3 item 1"
+  },
+  {
+   "id": "strike.maxGuards",
+   "value": 2,
+   "tune": false,
+   "source": "06 s5.3 item 2"
+  },
+  {
+   "id": "strike.europeLoss",
+   "value": 1,
+   "tune": false,
+   "source": "06 s5.3 item 5"
+  },
+  {
+   "id": "campaign.order",
+   "value": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5"
+   ],
+   "tune": false,
+   "source": "05 s1 item 1"
+  },
+  {
+   "id": "emergencyRule.extendedFrom",
+   "value": "C3",
+   "tune": false,
+   "source": "07 s8.2 item 2"
+  },
+  {
+   "id": "emergencyRule.returnCost",
+   "value": 1,
+   "tune": false,
+   "source": "07 s8.2 item 3"
+  },
+  {
+   "id": "recordSheet.civilianGap",
+   "value": 2,
+   "tune": false,
+   "source": "09 s6"
+  },
+  {
+   "id": "recordSheet.boardGap",
+   "value": 3,
+   "tune": false,
+   "source": "09 s6"
+  },
+  {
+   "id": "stopRule.passStreak",
+   "value": 3,
+   "tune": false,
+   "source": "12 s9 item 6; DEC-34"
+  },
+  {
+   "id": "stopRule.passStreaks",
+   "value": 2,
+   "tune": false,
+   "source": "12 s9 item 6; DEC-34"
+  },
+  {
+   "id": "diplomacy.cost",
+   "value": 2,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "diplomacy.highLeg",
+   "value": 12,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "diplomacy.lowLeg",
+   "value": 5,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "diplomacy.successRoll",
+   "value": 5,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "diplomacy.alignedRoll",
+   "value": 6,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "hostPressure.cost",
+   "value": 2,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "hostPressure.kdpSuccess",
+   "value": 5,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "hostPressure.otherSuccess",
+   "value": 4,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "hostPressure.kdpBackfire",
+   "value": 2,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "hostPressure.otherBackfire",
+   "value": 1,
+   "tune": false,
+   "source": "06 s3.3; s5.4"
+  },
+  {
+   "id": "crossBorder.cost",
+   "value": 2,
+   "tune": false,
+   "source": "06 s3.2"
+  },
+  {
+   "id": "crossBorder.maxTroops",
+   "value": 6,
+   "tune": false,
+   "source": "06 s3.2"
+  },
+  {
+   "id": "crossBorder.hotPursuitTroops",
+   "value": 3,
+   "tune": false,
+   "source": "06 s3.2"
+  },
+  {
+   "id": "argk.minGuerrillas",
+   "value": 8,
+   "tune": false,
+   "source": "DK-015; 08 s4"
+  },
+  {
+   "id": "argk.minBases",
+   "value": 2,
+   "tune": false,
+   "source": "DK-015; 08 s4"
+  },
+  {
+   "id": "argk.maxPlace",
+   "value": 4,
+   "tune": false,
+   "source": "DK-015; 08 s4"
+  },
+  {
+   "id": "argk.resources",
+   "value": 3,
+   "tune": false,
+   "source": "DK-015; 08 s4"
+  }
+ ],
+ "factions.yaml": [
+  {
+   "id": "state",
+   "name": "State",
+   "color": "#c62828",
+   "kind": "player",
+   "resourcesTrack": "resources.state",
+   "source": "02; DEC-30"
+  },
+  {
+   "id": "pkk",
+   "name": "PKK",
+   "color": "#2e7d32",
+   "kind": "player",
+   "resourcesTrack": "resources.pkk",
+   "source": "02; DEC-30"
+  }
+ ],
+ "pieces.yaml": [
+  {
+   "id": "troops",
+   "faction": "state",
+   "count": 30,
+   "isBase": false,
+   "countsForControl": true,
+   "movable": true,
+   "startPool": "available",
+   "shape": "cube",
+   "source": "04 s2"
+  },
+  {
+   "id": "police",
+   "faction": "state",
+   "count": 24,
+   "isBase": false,
+   "countsForControl": true,
+   "movable": true,
+   "startPool": "available",
+   "shape": "cube",
+   "colorVariant": "light",
+   "source": "04 s2"
+  },
+  {
+   "id": "guards",
+   "faction": "state",
+   "count": 16,
+   "isBase": false,
+   "countsForControl": true,
+   "movable": false,
+   "startPool": "outOfPlay",
+   "shape": "cylinder",
+   "source": "04 s2, s2.1 item 4"
+  },
+  {
+   "id": "stateBase",
+   "faction": "state",
+   "count": 8,
+   "isBase": true,
+   "countsForControl": true,
+   "movable": false,
+   "startPool": "available",
+   "shape": "disc",
+   "emblem": "crescentStar",
+   "source": "04 s2"
+  },
+  {
+   "id": "guerrilla",
+   "faction": "pkk",
+   "count": 30,
+   "isBase": false,
+   "states": [
+    "underground",
+    "active"
+   ],
+   "placedAs": "underground",
+   "countsForControl": true,
+   "movable": true,
+   "startPool": "available",
+   "shape": "octagon",
+   "emblem": "starCircle",
+   "emblemState": "active",
+   "source": "04 s2, s2.1 item 2"
+  },
+  {
+   "id": "pkkBase",
+   "faction": "pkk",
+   "count": 12,
+   "isBase": true,
+   "countsForControl": true,
+   "movable": false,
+   "startPool": "available",
+   "shape": "disc",
+   "source": "04 s2"
+  }
+ ],
+ "map.yaml": {
+  "supportLevels": [
+   "activeOpposition",
+   "passiveOpposition",
+   "neutral",
+   "passiveSupport",
+   "activeSupport"
+  ],
+  "spaces": [
+   {
+    "id": "hakkari",
+    "name": "Hakkari",
+    "kind": "domestic",
+    "terrain": "mountain",
+    "pop": 1,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 863,
+     "y": 442
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       108665,
+       49544
+      ],
+      [
+       112078,
+       45224
+      ],
+      [
+       111670,
+       39968
+      ],
+      [
+       106000,
+       34316
+      ],
+      [
+       99945,
+       37172
+      ],
+      [
+       96900,
+       38888
+      ],
+      [
+       98212,
+       42572
+      ],
+      [
+       98405,
+       45536
+      ],
+      [
+       102203,
+       47144
+      ],
+      [
+       107911,
+       49264
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "botan",
+    "name": "Botan",
+    "kind": "domestic",
+    "terrain": "mountain",
+    "pop": 2,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 722,
+     "y": 435
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       81481,
+       47104
+      ],
+      [
+       86543,
+       47245
+      ],
+      [
+       88493,
+       49480
+      ],
+      [
+       94800,
+       46892
+      ],
+      [
+       98405,
+       45536
+      ],
+      [
+       98212,
+       42572
+      ],
+      [
+       96900,
+       38888
+      ],
+      [
+       92543,
+       36920
+      ],
+      [
+       85945,
+       38552
+      ],
+      [
+       81780,
+       42068
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "mardin-batman",
+    "name": "Mardin-Batman",
+    "kind": "domestic",
+    "terrain": "plain",
+    "pop": 4,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 550,
+     "y": 428
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       70650,
+       34040
+      ],
+      [
+       68498,
+       37208
+      ],
+      [
+       62355,
+       39800
+      ],
+      [
+       61410,
+       43400
+      ],
+      [
+       61410,
+       47168
+      ],
+      [
+       67080,
+       48260
+      ],
+      [
+       73374,
+       50864
+      ],
+      [
+       76797,
+       46973
+      ],
+      [
+       81481,
+       47104
+      ],
+      [
+       81780,
+       42068
+      ],
+      [
+       85945,
+       38552
+      ],
+      [
+       83512,
+       36668
+      ],
+      [
+       80660,
+       33680
+      ],
+      [
+       73852,
+       34760
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "diyarbakir-city",
+    "name": "Diyarbakır City (Amed)",
+    "kind": "domestic",
+    "terrain": "city",
+    "pop": 2,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 465,
+     "y": 372
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       65400,
+       37784
+      ],
+      [
+       64939,
+       37020
+      ],
+      [
+       63825,
+       36704
+      ],
+      [
+       62711,
+       37020
+      ],
+      [
+       62250,
+       37784
+      ],
+      [
+       62711,
+       38548
+      ],
+      [
+       63825,
+       38864
+      ],
+      [
+       64939,
+       38548
+      ]
+     ]
+    },
+    "confidence": "Pop Low",
+    "tags": [
+     "receptionTarget"
+    ],
+    "source": "03 s2, s2 note 1"
+   },
+   {
+    "id": "diyarbakir-rural",
+    "name": "Diyarbakır Rural",
+    "kind": "domestic",
+    "terrain": "plain",
+    "pop": 2,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 469,
+     "y": 300
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       52135,
+       38888
+      ],
+      [
+       57158,
+       38792
+      ],
+      [
+       62355,
+       39800
+      ],
+      [
+       68498,
+       37208
+      ],
+      [
+       70650,
+       34040
+      ],
+      [
+       69600,
+       30152
+      ],
+      [
+       64210,
+       30056
+      ],
+      [
+       58838,
+       31232
+      ],
+      [
+       56954,
+       34733
+      ],
+      [
+       53167,
+       35840
+      ]
+     ],
+     "holes": [
+      [
+       [
+        64939,
+        38548
+       ],
+       [
+        63825,
+        38864
+       ],
+       [
+        62711,
+        38548
+       ],
+       [
+        62250,
+        37784
+       ],
+       [
+        62711,
+        37020
+       ],
+       [
+        63825,
+        36704
+       ],
+       [
+        64939,
+        37020
+       ],
+       [
+        65400,
+        37784
+       ]
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "sanliurfa",
+    "name": "Şanlıurfa",
+    "kind": "domestic",
+    "terrain": "plain",
+    "pop": 4,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 334,
+     "y": 472
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       40689,
+       45458
+      ],
+      [
+       44498,
+       48276
+      ],
+      [
+       50001,
+       52993
+      ],
+      [
+       55740,
+       49844
+      ],
+      [
+       61410,
+       47168
+      ],
+      [
+       61410,
+       43400
+      ],
+      [
+       62355,
+       39800
+      ],
+      [
+       57158,
+       38792
+      ],
+      [
+       52135,
+       38888
+      ],
+      [
+       46080,
+       42032
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "adiyaman",
+    "name": "Adıyaman",
+    "kind": "domestic",
+    "terrain": "plain",
+    "pop": 2,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 258,
+     "y": 390
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       52135,
+       38888
+      ],
+      [
+       53167,
+       35840
+      ],
+      [
+       42090,
+       39080
+      ],
+      [
+       46080,
+       42032
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "elazig",
+    "name": "Elazığ",
+    "kind": "domestic",
+    "terrain": "plain",
+    "pop": 2,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 366,
+     "y": 262
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       48184,
+       24936
+      ],
+      [
+       46504,
+       28176
+      ],
+      [
+       50886,
+       34592
+      ],
+      [
+       54396,
+       35481
+      ],
+      [
+       56954,
+       34733
+      ],
+      [
+       58838,
+       31232
+      ],
+      [
+       64210,
+       30056
+      ],
+      [
+       64192,
+       28784
+      ],
+      [
+       61725,
+       26984
+      ],
+      [
+       55110,
+       26624
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "dersim",
+    "name": "Dersim",
+    "kind": "domestic",
+    "terrain": "mountain",
+    "pop": 1,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 398,
+     "y": 172
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       55110,
+       26624
+      ],
+      [
+       61725,
+       26984
+      ],
+      [
+       65873,
+       25544
+      ],
+      [
+       66262,
+       24774
+      ],
+      [
+       68281,
+       20782
+      ],
+      [
+       59199,
+       18622
+      ],
+      [
+       49864,
+       21696
+      ],
+      [
+       48184,
+       24936
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2, s2 note 1"
+   },
+   {
+    "id": "bingol-mus",
+    "name": "Bingöl-Muş",
+    "kind": "domestic",
+    "terrain": "mountain",
+    "pop": 3,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 571,
+     "y": 232
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       83621,
+       19153
+      ],
+      [
+       74459,
+       22251
+      ],
+      [
+       68281,
+       20782
+      ],
+      [
+       65873,
+       25544
+      ],
+      [
+       61725,
+       26984
+      ],
+      [
+       64192,
+       28784
+      ],
+      [
+       64210,
+       30056
+      ],
+      [
+       69600,
+       30152
+      ],
+      [
+       70650,
+       34040
+      ],
+      [
+       73852,
+       34760
+      ],
+      [
+       80660,
+       33680
+      ],
+      [
+       84615,
+       29612
+      ],
+      [
+       89340,
+       26288
+      ],
+      [
+       86873,
+       23672
+      ],
+      [
+       85408,
+       21637
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "van-bitlis",
+    "name": "Van-Bitlis",
+    "kind": "domestic",
+    "terrain": "mountain",
+    "pop": 4,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 755,
+     "y": 285
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       96533,
+       25580
+      ],
+      [
+       89340,
+       26288
+      ],
+      [
+       84615,
+       29612
+      ],
+      [
+       80660,
+       33680
+      ],
+      [
+       83512,
+       36668
+      ],
+      [
+       85945,
+       38552
+      ],
+      [
+       92543,
+       36920
+      ],
+      [
+       96900,
+       38888
+      ],
+      [
+       99945,
+       37172
+      ],
+      [
+       104468,
+       35038
+      ],
+      [
+       106000,
+       34316
+      ],
+      [
+       102235,
+       30562
+      ],
+      [
+       103645,
+       26851
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "agri",
+    "name": "Ağrı",
+    "kind": "domestic",
+    "terrain": "mountain",
+    "pop": 2,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 798,
+     "y": 120
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       89340,
+       26288
+      ],
+      [
+       96533,
+       25580
+      ],
+      [
+       103645,
+       26851
+      ],
+      [
+       105903,
+       20911
+      ],
+      [
+       95538,
+       15121
+      ],
+      [
+       83621,
+       19153
+      ],
+      [
+       83896,
+       19534
+      ],
+      [
+       86873,
+       23672
+      ]
+     ]
+    },
+    "confidence": "Pop Low; terrain unverified",
+    "source": "03 s2"
+   },
+   {
+    "id": "western-cities",
+    "name": "Western Cities",
+    "kind": "domestic",
+    "terrain": "city",
+    "pop": 3,
+    "hasSupportScale": true,
+    "layout": {
+     "x": 70,
+     "y": 80
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       16050,
+       13160
+      ],
+      [
+       28125,
+       13160
+      ],
+      [
+       28125,
+       20720
+      ],
+      [
+       16050,
+       20720
+      ]
+     ]
+    },
+    "confidence": "Design node, no census basis",
+    "tags": [
+     "noLandLinks",
+     "receptionTarget",
+     "rallyAtSupport"
+    ],
+    "source": "03 s2, s4.2"
+   },
+   {
+    "id": "syria-bekaa",
+    "name": "Syria-Bekaa",
+    "kind": "external",
+    "pop": 0,
+    "hasSupportScale": false,
+    "layout": {
+     "x": 442,
+     "y": 607
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       55740,
+       49844
+      ],
+      [
+       51913,
+       51944
+      ],
+      [
+       50001,
+       52993
+      ],
+      [
+       55671,
+       57853
+      ],
+      [
+       67704,
+       57308
+      ],
+      [
+       73374,
+       50864
+      ],
+      [
+       72952,
+       50689
+      ],
+      [
+       67080,
+       48260
+      ],
+      [
+       61410,
+       47168
+      ]
+     ]
+    },
+    "source": "03 s3"
+   },
+   {
+    "id": "kdp-zone",
+    "name": "KDP Zone",
+    "kind": "external",
+    "terrain": "mountain",
+    "pop": 0,
+    "hasSupportScale": false,
+    "layout": {
+     "x": 798,
+     "y": 562
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       98405,
+       45536
+      ],
+      [
+       94800,
+       46892
+      ],
+      [
+       98790,
+       51464
+      ],
+      [
+       102203,
+       47144
+      ]
+     ]
+    },
+    "source": "03 s3; 06 s3.2 item 3"
+   },
+   {
+    "id": "puk-zone",
+    "name": "PUK Zone",
+    "kind": "external",
+    "terrain": "mountain",
+    "pop": 0,
+    "hasSupportScale": false,
+    "layout": {
+     "x": 938,
+     "y": 630
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       98790,
+       51464
+      ],
+      [
+       102203,
+       47144
+      ],
+      [
+       121575,
+       60680
+      ]
+     ]
+    },
+    "source": "03 s3; 06 s3.2 item 3"
+   },
+   {
+    "id": "iran",
+    "name": "Iran",
+    "kind": "external",
+    "pop": 0,
+    "hasSupportScale": false,
+    "layout": {
+     "x": 982,
+     "y": 270
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       115800,
+       25400
+      ],
+      [
+       127350,
+       25400
+      ],
+      [
+       127350,
+       36200
+      ],
+      [
+       115800,
+       36200
+      ]
+     ]
+    },
+    "confidence": "Evidence Low",
+    "tags": [
+     "eventsOnly"
+    ],
+    "source": "03 s3"
+   },
+   {
+    "id": "europe",
+    "name": "Europe",
+    "kind": "external",
+    "pop": 0,
+    "hasSupportScale": false,
+    "layout": {
+     "x": 70,
+     "y": 200
+    },
+    "polygon": {
+     "scale": 100,
+     "outer": [
+      [
+       16050,
+       22520
+      ],
+      [
+       28125,
+       22520
+      ],
+      [
+       28125,
+       29000
+      ],
+      [
+       16050,
+       29000
+      ]
+     ]
+    },
+    "tags": [
+     "noPieces"
+    ],
+    "source": "03 s3; 04 s3.6"
+   }
+  ],
+  "links": [
+   {
+    "a": "hakkari",
+    "b": "botan",
+    "kind": "land"
+   },
+   {
+    "a": "hakkari",
+    "b": "van-bitlis",
+    "kind": "land"
+   },
+   {
+    "a": "botan",
+    "b": "van-bitlis",
+    "kind": "land"
+   },
+   {
+    "a": "botan",
+    "b": "mardin-batman",
+    "kind": "land"
+   },
+   {
+    "a": "mardin-batman",
+    "b": "van-bitlis",
+    "kind": "land"
+   },
+   {
+    "a": "mardin-batman",
+    "b": "bingol-mus",
+    "kind": "land"
+   },
+   {
+    "a": "mardin-batman",
+    "b": "diyarbakir-rural",
+    "kind": "land"
+   },
+   {
+    "a": "mardin-batman",
+    "b": "sanliurfa",
+    "kind": "land"
+   },
+   {
+    "a": "diyarbakir-city",
+    "b": "diyarbakir-rural",
+    "kind": "land"
+   },
+   {
+    "a": "diyarbakir-rural",
+    "b": "sanliurfa",
+    "kind": "land"
+   },
+   {
+    "a": "diyarbakir-rural",
+    "b": "adiyaman",
+    "kind": "land"
+   },
+   {
+    "a": "diyarbakir-rural",
+    "b": "elazig",
+    "kind": "land"
+   },
+   {
+    "a": "diyarbakir-rural",
+    "b": "bingol-mus",
+    "kind": "land"
+   },
+   {
+    "a": "sanliurfa",
+    "b": "adiyaman",
+    "kind": "land"
+   },
+   {
+    "a": "elazig",
+    "b": "bingol-mus",
+    "kind": "land"
+   },
+   {
+    "a": "elazig",
+    "b": "dersim",
+    "kind": "land"
+   },
+   {
+    "a": "dersim",
+    "b": "bingol-mus",
+    "kind": "land"
+   },
+   {
+    "a": "bingol-mus",
+    "b": "van-bitlis",
+    "kind": "land"
+   },
+   {
+    "a": "bingol-mus",
+    "b": "agri",
+    "kind": "land"
+   },
+   {
+    "a": "van-bitlis",
+    "b": "agri",
+    "kind": "land"
+   },
+   {
+    "a": "hakkari",
+    "b": "kdp-zone",
+    "kind": "external"
+   },
+   {
+    "a": "botan",
+    "b": "kdp-zone",
+    "kind": "external"
+   },
+   {
+    "a": "kdp-zone",
+    "b": "puk-zone",
+    "kind": "external"
+   },
+   {
+    "a": "mardin-batman",
+    "b": "syria-bekaa",
+    "kind": "external"
+   },
+   {
+    "a": "sanliurfa",
+    "b": "syria-bekaa",
+    "kind": "external"
+   }
+  ],
+  "stacking": [
+   {
+    "pieces": [
+     "stateBase"
+    ],
+    "max": 2,
+    "spaceKind": "domestic",
+    "source": "03 s5 item 1"
+   },
+   {
+    "pieces": [
+     "pkkBase"
+    ],
+    "max": 2,
+    "source": "03 s5 items 1 and 2"
+   },
+   {
+    "pieces": [
+     "pkkBase"
+    ],
+    "max": 0,
+    "spaces": [
+     "western-cities"
+    ],
+    "source": "03 s5 item 3"
+   },
+   {
+    "pieces": [
+     "stateBase",
+     "police",
+     "guards"
+    ],
+    "max": 0,
+    "spaceKind": "external",
+    "source": "03 s5 items 3 and 5"
+   },
+   {
+    "pieces": [
+     "troops"
+    ],
+    "max": 0,
+    "spaces": [
+     "syria-bekaa",
+     "iran",
+     "europe"
+    ],
+    "source": "03 s5 item 5"
+   },
+   {
+    "pieces": [
+     "guerrilla",
+     "pkkBase"
+    ],
+    "max": 0,
+    "spaces": [
+     "europe"
+    ],
+    "source": "03 s3 (Europe: no pieces)"
+   },
+   {
+    "pieces": [
+     "guards"
+    ],
+    "max": 3,
+    "terrain": [
+     "mountain",
+     "plain"
+    ],
+    "source": "03 s5 item 4",
+    "status": "tune"
+   },
+   {
+    "pieces": [
+     "guards"
+    ],
+    "max": 0,
+    "terrain": [
+     "city"
+    ],
+    "source": "03 s5 item 4; 03 s2.1"
+   }
+  ]
+ },
+ "tracks.yaml": [
+  {
+   "id": "resources.state",
+   "owner": "state",
+   "display": "State Resources",
+   "source": "04 s3.1",
+   "kind": "numeric",
+   "min": 0,
+   "max": 50
+  },
+  {
+   "id": "resources.pkk",
+   "owner": "pkk",
+   "display": "PKK Resources",
+   "source": "04 s3.1",
+   "kind": "numeric",
+   "min": 0,
+   "max": 50
+  },
+  {
+   "id": "legitimacy",
+   "display": "Legitimacy",
+   "source": "04 s3.2",
+   "kind": "numeric",
+   "min": 0,
+   "max": 20,
+   "overflow": {
+    "track": "resources.state",
+    "costParam": "legitimacy.overflowCost"
+   }
+  },
+  {
+   "id": "emergencyRule",
+   "display": "Emergency Rule",
+   "source": "04 s3.3",
+   "kind": "ordinal",
+   "steps": [
+    "martialLaw",
+    "ohal",
+    "ohalExtendedPowers",
+    "normalizing"
+   ]
+  },
+  {
+   "id": "posture.syria",
+   "display": "Syria posture",
+   "source": "04 s3.4",
+   "kind": "ordinal",
+   "steps": [
+    "host",
+    "tolerant",
+    "restricted",
+    "hostile"
+   ]
+  },
+  {
+   "id": "posture.kdp",
+   "display": "KDP posture",
+   "source": "04 s3.4",
+   "kind": "ordinal",
+   "steps": [
+    "host",
+    "tolerant",
+    "restricted",
+    "hostile",
+    "aligned"
+   ]
+  },
+  {
+   "id": "posture.puk",
+   "display": "PUK posture",
+   "source": "04 s3.4",
+   "kind": "ordinal",
+   "steps": [
+    "host",
+    "tolerant",
+    "restricted",
+    "hostile",
+    "aligned"
+   ]
+  },
+  {
+   "id": "europe",
+   "display": "Europe",
+   "source": "04 s3.6",
+   "kind": "numeric",
+   "min": 0,
+   "max": 5
+  },
+  {
+   "id": "ceasefire",
+   "display": "Ceasefire",
+   "source": "04 s3.5",
+   "kind": "ordinal",
+   "steps": [
+    "none",
+    "declared",
+    "reciprocalRestraint",
+    "talks"
+   ]
+  },
+  {
+   "id": "legalSpace",
+   "display": "Legal Space",
+   "source": "04 s3.7",
+   "kind": "ordinal",
+   "steps": [
+    "absent",
+    "open",
+    "prosecuted",
+    "banned"
+   ]
+  }
+ ],
+ "markers.yaml": [
+  {
+   "id": "stateHarm",
+   "count": 12,
+   "blocks": [
+    "support"
+   ],
+   "source": "04 s4"
+  },
+  {
+   "id": "pkkHarm",
+   "count": 12,
+   "blocks": [
+    "opposition"
+   ],
+   "source": "04 s4"
+  },
+  {
+   "id": "disputedHarm",
+   "count": 6,
+   "source": "04 s4"
+  },
+  {
+   "id": "coercion",
+   "count": 8,
+   "blocks": [
+    "support",
+    "opposition"
+   ],
+   "source": "04 s4"
+  },
+  {
+   "id": "displacement",
+   "count": 10,
+   "sides": [
+    "new",
+    "old"
+   ],
+   "source": "04 s4"
+  },
+  {
+   "id": "reception",
+   "count": 8,
+   "source": "04 s4"
+  },
+  {
+   "id": "covert",
+   "count": 6,
+   "hidden": true,
+   "source": "04 s4; 06 s3.5"
+  },
+  {
+   "id": "office",
+   "count": 8,
+   "capsLevel": 1,
+   "source": "04 s4; DD-18.4"
+  },
+  {
+   "id": "closureCase",
+   "count": 1,
+   "source": "04 s4"
+  },
+  {
+   "id": "successor",
+   "count": 1,
+   "source": "04 s4"
+  },
+  {
+   "id": "ban",
+   "count": 1,
+   "source": "04 s4, s3.6"
+  },
+  {
+   "id": "restraintBroken",
+   "count": 2,
+   "sides": [
+    "state",
+    "pkk"
+   ],
+   "source": "04 s4"
+  },
+  {
+   "id": "capability",
+   "count": 12,
+   "sides": [
+    "state",
+    "pkk"
+   ],
+   "source": "04 s4"
+  },
+  {
+   "id": "momentum",
+   "count": 8,
+   "source": "04 s4"
+  },
+  {
+   "id": "leadership",
+   "count": 1,
+   "sides": [
+    "present",
+    "abroad"
+   ],
+   "source": "04 s2; DD-09.6"
+  }
+ ],
+ "victory.yaml": {
+  "scores": {
+   "state": [
+    {
+     "type": "sumPopWhere",
+     "where": {
+      "type": "spaceLevelIn",
+      "levels": [
+       1
+      ]
+     }
+    },
+    {
+     "type": "multiply",
+     "of": {
+      "type": "sumPopWhere",
+      "where": {
+       "type": "spaceLevelIn",
+       "levels": [
+        2
+       ]
+      }
+     },
+     "by": 2
+    },
+    {
+     "type": "trackValue",
+     "track": "legitimacy"
+    }
+   ],
+   "pkk": [
+    {
+     "type": "sumPopWhere",
+     "where": {
+      "type": "spaceLevelIn",
+      "levels": [
+       -1
+      ]
+     }
+    },
+    {
+     "type": "multiply",
+     "of": {
+      "type": "sumPopWhere",
+      "where": {
+       "type": "spaceLevelIn",
+       "levels": [
+        -2
+       ]
+      }
+     },
+     "by": 2
+    },
+    {
+     "type": "countPieces",
+     "pieces": [
+      "pkkBase"
+     ],
+     "where": {
+      "type": "spaceKind",
+      "kind": "domestic"
+     }
+    }
+   ]
+  },
+  "harmCount": {
+   "state": [
+    {
+     "type": "countMarkers",
+     "markers": [
+      "stateHarm"
+     ],
+     "sides": null,
+     "where": null
+    }
+   ],
+   "pkk": [
+    {
+     "type": "countMarkers",
+     "markers": [
+      "pkkHarm",
+      "coercion"
+     ],
+     "sides": null,
+     "where": null
+    }
+   ]
+  },
+  "totals": {
+   "totalSupport": [
+    {
+     "type": "sumPopWhere",
+     "where": {
+      "type": "spaceLevelIn",
+      "levels": [
+       1
+      ]
+     }
+    },
+    {
+     "type": "multiply",
+     "of": {
+      "type": "sumPopWhere",
+      "where": {
+       "type": "spaceLevelIn",
+       "levels": [
+        2
+       ]
+      }
+     },
+     "by": 2
+    }
+   ],
+   "totalOpposition": [
+    {
+     "type": "sumPopWhere",
+     "where": {
+      "type": "spaceLevelIn",
+      "levels": [
+       -1
+      ]
+     }
+    },
+    {
+     "type": "multiply",
+     "of": {
+      "type": "sumPopWhere",
+      "where": {
+       "type": "spaceLevelIn",
+       "levels": [
+        -2
+       ]
+      }
+     },
+     "by": 2
+    }
+   ],
+   "domesticPkkBases": [
+    {
+     "type": "countPieces",
+     "pieces": [
+      "pkkBase"
+     ],
+     "where": {
+      "type": "spaceKind",
+      "kind": "domestic"
+     }
+    }
+   ]
+  }
+ },
+ "sequence.yaml": {
+  "model": "ct-two-faction@1",
+  "boxes": [
+   {
+    "id": "event",
+    "label": "Event"
+   },
+   {
+    "id": "limitedOp",
+    "label": "Limited Op"
+   },
+   {
+    "id": "opOnly",
+    "label": "Op Only"
+   },
+   {
+    "id": "opSa",
+    "label": "Op + SA"
+   },
+   {
+    "id": "pass",
+    "label": "Pass"
+   }
+  ],
+  "adjacency": [
+   [
+    "pass",
+    "event"
+   ],
+   [
+    "pass",
+    "limitedOp"
+   ],
+   [
+    "pass",
+    "opOnly"
+   ],
+   [
+    "pass",
+    "opSa"
+   ],
+   [
+    "opSa",
+    "event"
+   ],
+   [
+    "opSa",
+    "limitedOp"
+   ],
+   [
+    "limitedOp",
+    "opOnly"
+   ]
+  ],
+  "swapAfter": [
+   "opOnly",
+   "opSa"
+  ],
+  "firstEligibleAtStart": "pkk",
+  "passIncome": {
+   "state": 2,
+   "pkk": 1
+  },
+  "propagandaPhases": [
+   "victory",
+   "resources",
+   "upkeep",
+   "legitimacy",
+   "legalPolitics",
+   "civicAction",
+   "agitation",
+   "redeploy",
+   "reset"
+  ],
+  "source": "05 s2.1 to s2.4, s3.2; DEC-26"
+ },
+ "assumptions.yaml": [
+  {
+   "id": "PA-01",
+   "gap": "GAP-B01",
+   "text": "The executing faction makes every choice that the card does not assign",
+   "appliesTo": [
+    "events.choice"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-02",
+   "gap": "GAP-B02",
+   "text": "Diplomacy moves a posture one step along Host, Tolerant, Restricted, Hostile, Aligned. Hostile to Aligned needs modified 6 or more. Syria at Hostile is no effect",
+   "appliesTo": [
+    "state.diplomacy"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-03",
+   "gap": "GAP-B03",
+   "text": "Use the modified die total as is. No automatic success or failure on a natural roll",
+   "appliesTo": [
+    "dice"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-04",
+   "gap": "GAP-B04",
+   "text": "A track or posture change that passes an end stops at the end. The excess is lost. Legitimacy keeps its own overflow rule",
+   "appliesTo": [
+    "tracks"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-05",
+   "gap": "GAP-B05",
+   "text": "Coerce resolves its shift before it places a marker. A Coercion marker already present blocks the shift. Activation still happens",
+   "appliesTo": [
+    "pkk.coerce"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-06",
+   "gap": "GAP-B06",
+   "text": "In an Ambush space the Attack has no roll: Activate only 1 Underground Guerrilla, remove 1 State piece in the Attack order, no attrition and no bonus Guerrilla (06 s5.1; designer decision after the S0 playtests)",
+   "appliesTo": [
+    "pkk.ambush"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-07",
+   "gap": "GAP-B07",
+   "text": "Count pieces in the space after the movement step when activating",
+   "appliesTo": [
+    "state.sweep",
+    "state.garrison"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-08",
+   "gap": "GAP-B08",
+   "text": "Assault removals above the removable pieces are lost",
+   "appliesTo": [
+    "state.assault"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-09",
+   "gap": "GAP-B09",
+   "text": "If no marker of the type is available, the placement does not happen and the log records supply exhausted. Harm markers also raise a warning",
+   "appliesTo": [
+    "markers"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-10",
+   "gap": "GAP-B10",
+   "text": "Equal margins at a victory check: lower Harm count wins, then PKK",
+   "appliesTo": [
+    "victory.check"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-11",
+   "gap": "GAP-B11",
+   "text": "Any no vote on Talks ends the ceasefire. Ceasefire goes to None",
+   "appliesTo": [
+    "ceasefire.talks"
+   ],
+   "status": "replaced"
+  },
+  {
+   "id": "PA-12",
+   "gap": "GAP-B12",
+   "text": "The PKK chooses any subset of qualifying Extort locations. Each activates one Guerrilla and gives +1 Resource",
+   "appliesTo": [
+    "pkk.extort"
+   ],
+   "status": "replaced"
+  },
+  {
+   "id": "PA-13",
+   "gap": "GAP-B13",
+   "text": "All random selections use the session seeded generator",
+   "appliesTo": [
+    "rng"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-14",
+   "gap": "GAP-B14",
+   "text": "Air Mobility never uses an external box as origin or destination. Troops leave a box only at Redeploy",
+   "appliesTo": [
+    "state.air-mobility"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-15",
+   "gap": "GAP-B15",
+   "text": "The executing faction chooses any 2 Offices to remove. Legitimacy -1",
+   "appliesTo": [
+    "DK-066"
+   ],
+   "status": "replaced"
+  },
+  {
+   "id": "PA-16",
+   "gap": "GAP-I02",
+   "text": "PKK March into Syria-Bekaa is allowed at Restricted with +1 Resource; the group Activates. Package option syriaMarchRestricted",
+   "appliesTo": [
+    "pkk.march"
+   ],
+   "status": "accepted"
+  },
+  {
+   "id": "PA-17",
+   "gap": "GAP-I05",
+   "text": "Scenario A Pivotals: PKK ARGK Formed only. The State has none",
+   "appliesTo": [
+    "scenario-a"
+   ],
+   "status": "accepted"
+  }
+ ],
+ "cards/c1.yaml": [
+  {
+   "id": "DK-001",
+   "campaign": "C1",
+   "title": "Eruh and Şemdinli (15 Aug 1984)",
+   "date": "1984-08-15",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "Hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "Botan",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "botan",
+          "state": null
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": 2
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Botan. Shift Botan one level toward Opposition.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "placePieces",
+      "piece": "guerrilla",
+      "count": 2,
+      "space": "hakkari",
+      "state": "underground"
+     },
+     {
+      "type": "placePieces",
+      "piece": "guerrilla",
+      "count": 1,
+      "space": "botan",
+      "state": "underground"
+     },
+     {
+      "type": "shiftLevel",
+      "space": "botan",
+      "direction": "opposition",
+      "steps": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0003",
+    "S-0028",
+    "S-0245",
+    "S-0029",
+    "S-0030",
+    "S-0097"
+   ]
+  },
+  {
+   "id": "DK-002",
+   "campaign": "C1",
+   "title": "Raid in Siirt (17 Aug 1984)",
+   "date": "1984-08-17",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Police alert: the State conducts a free Garrison. Its Activation must be in Botan.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.garrison",
+      "constraints": {
+       "activationSpace": "botan"
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "Second strike: place 1 Underground Guerrilla in Botan, then the PKK conducts a free Attack in Botan with Ambush (no roll).",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "placePieces",
+      "piece": "guerrilla",
+      "count": 1,
+      "space": "botan",
+      "state": "underground"
+     },
+     {
+      "type": "freeAction",
+      "action": "pkk.attack",
+      "constraints": {
+       "spaces": [
+        "botan"
+       ],
+       "sa": "pkk.ambush"
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true,
+    "note": "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); Ambush has no roll under PA-06 (accepted after the S0 playtests)"
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0073",
+    "S-0028",
+    "S-0063"
+   ]
+  },
+  {
+   "id": "DK-003",
+   "campaign": "C1",
+   "title": "Law 3175 (Mar 1985)",
+   "date": "1985-03-26",
+   "type": "event",
+   "mandatory": true,
+   "always": [
+    {
+     "type": "transferPool",
+     "piece": "guards",
+     "from": "outOfPlay",
+     "to": "available",
+     "count": "all"
+    },
+    {
+     "type": "setFlag",
+     "flag": "law3175",
+     "value": true
+    }
+   ],
+   "unshaded": {
+    "text": "Guard recruitment: place up to 2 Village Guards in each of up to 2 Mountain or Plain spaces with State Control and Police.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "forEachSpace",
+      "where": {
+       "type": "all",
+       "of": [
+        {
+         "type": "terrainIn",
+         "terrain": [
+          "mountain",
+          "plain"
+         ]
+        },
+        {
+         "type": "control",
+         "faction": "state"
+        },
+        {
+         "type": "spaceHas",
+         "pieces": [
+          "police"
+         ],
+         "markers": []
+        }
+       ]
+      },
+      "all": false,
+      "min": 0,
+      "max": 2,
+      "effects": [
+       {
+        "type": "placePieces",
+        "piece": "guards",
+        "count": {
+         "min": 0,
+         "max": 2
+        },
+        "space": "selected",
+        "state": null
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Recruitment under pressure and pay: State Resources -3. Shift one space with a Village Guard and no PKK Harm marker, or one Mountain space with State Control, one level toward Opposition.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": -3
+     },
+     {
+      "type": "forEachSpace",
+      "where": {
+       "type": "any",
+       "of": [
+        {
+         "type": "all",
+         "of": [
+          {
+           "type": "spaceHas",
+           "pieces": [
+            "guards"
+           ],
+           "markers": []
+          },
+          {
+           "type": "not",
+           "of": {
+            "type": "spaceHas",
+            "pieces": [],
+            "markers": [
+             "pkkHarm"
+            ]
+           }
+          }
+         ]
+        },
+        {
+         "type": "all",
+         "of": [
+          {
+           "type": "terrainIn",
+           "terrain": [
+            "mountain"
+           ]
+          },
+          {
+           "type": "control",
+           "faction": "state"
+          }
+         ]
+        }
+       ]
+      },
+      "all": false,
+      "min": 1,
+      "max": 1,
+      "effects": [
+       {
+        "type": "shiftLevel",
+        "space": "selected",
+        "direction": "opposition",
+        "steps": 1
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true,
+    "note": "Always line from 08 s2.2 and 10 s6.1. Flag law3175 opens Guard placement (06 s2.1) and Strike Collaborators (06 s5.3). Unshaded per DEC-33, no module procedure"
+   },
+   "eventConfidence": "High",
+   "deckEligible": true,
+   "sources": [
+    "E-0004",
+    "E-0005",
+    "S-0064",
+    "S-0120",
+    "S-0241",
+    "S-0320",
+    "S-0341",
+    "S-0019",
+    "S-0020",
+    "S-0022",
+    "S-0097",
+    "S-0498",
+    "S-0501",
+    "S-0499"
+   ]
+  },
+  {
+   "id": "DK-004",
+   "campaign": "C1",
+   "title": "ERNK Founded (Mar 1985)",
+   "date": "1985-03-21",
+   "type": "capability",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Front network exposed: remove 1 Guerrilla from Diyarbakır City or Western Cities, or PKK Resources -2 (State choice).",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "Diyarbakir City",
+        "effects": [
+         {
+          "type": "removePieces",
+          "piece": "guerrilla",
+          "state": null,
+          "count": 1,
+          "space": "diyarbakir-city",
+          "to": "available"
+         }
+        ]
+       },
+       {
+        "label": "Western Cities",
+        "effects": [
+         {
+          "type": "removePieces",
+          "piece": "guerrilla",
+          "state": null,
+          "count": 1,
+          "space": "western-cities",
+          "to": "available"
+         }
+        ]
+       },
+       {
+        "label": "PKK Resources",
+        "effects": [
+         {
+          "type": "adjustTrack",
+          "track": "resources.pkk",
+          "delta": -2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "PKK Capability (ERNK): Agitate in a Rally may select a City with a PKK Guerrilla even without a PKK Base or PKK Control.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "addModifier",
+      "id": "ernk",
+      "duration": "game",
+      "params": {}
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0157",
+    "S-0246",
+    "S-0248"
+   ]
+  },
+  {
+   "id": "DK-005",
+   "campaign": "C1",
+   "title": "KDP Orders PKK Out (Oct 1985)",
+   "date": "1985-10",
+   "type": "event",
+   "mandatory": true,
+   "always": [
+    {
+     "type": "setTrack",
+     "track": "posture.kdp",
+     "value": "tolerant",
+     "ifEquals": "host"
+    }
+   ],
+   "unshaded": {
+    "text": "KDP posture one more step toward Hostile.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "stepOrdinal",
+      "track": "posture.kdp",
+      "direction": "next",
+      "steps": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Guests stay: the PKK moves up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground, free, or places 2 Underground Guerrillas in the PUK Zone. PKK Resources +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "PUK Zone",
+        "effects": [
+         {
+          "type": "movePieces",
+          "piece": "guerrilla",
+          "state": null,
+          "toState": "underground",
+          "count": {
+           "min": 0,
+           "max": 3
+          },
+          "from": "kdp-zone",
+          "to": "puk-zone"
+         }
+        ]
+       },
+       {
+        "label": "Hakkari",
+        "effects": [
+         {
+          "type": "movePieces",
+          "piece": "guerrilla",
+          "state": null,
+          "toState": "underground",
+          "count": {
+           "min": 0,
+           "max": 3
+          },
+          "from": "kdp-zone",
+          "to": "hakkari"
+         }
+        ]
+       },
+       {
+        "label": "Place 2 in the PUK Zone",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "guerrilla",
+          "count": 2,
+          "space": "puk-zone",
+          "state": "underground"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true,
+    "note": "Always line from 08 s2.2. Shaded: moved Guerrillas arrive Underground (movePieces toState)"
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0160",
+    "S-0097",
+    "S-0246"
+   ]
+  },
+  {
+   "id": "DK-006",
+   "campaign": "C1",
+   "title": "Chiefs Enter the Guard System (1985)",
+   "date": "1985",
+   "type": "capability",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "State Capability (Tribal Allies): Train may place Village Guards in a Mountain or Plain space with State Control even without Police. Needs Law 3175.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "addModifier",
+      "id": "tribal-allies",
+      "duration": "game",
+      "params": {}
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Armed retinues: apply Guard Abuse (07, section 4.7). Then shift one space with a Village Guard one level toward Opposition.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "forEachSpace",
+      "where": {
+       "type": "all",
+       "of": [
+        {
+         "type": "spaceHas",
+         "pieces": [
+          "guards"
+         ],
+         "markers": []
+        },
+        {
+         "type": "spaceHas",
+         "pieces": [],
+         "markers": [
+          "stateHarm",
+          "pkkHarm",
+          "disputedHarm"
+         ]
+        }
+       ]
+      },
+      "all": true,
+      "min": 0,
+      "max": 1,
+      "effects": [
+       {
+        "type": "adjustTrack",
+        "track": "legitimacy",
+        "delta": -1
+       },
+       {
+        "type": "removePieces",
+        "piece": "guards",
+        "state": null,
+        "count": 1,
+        "space": "selected",
+        "to": "available"
+       }
+      ]
+     },
+     {
+      "type": "forEachSpace",
+      "where": {
+       "type": "spaceHas",
+       "pieces": [
+        "guards"
+       ],
+       "markers": []
+      },
+      "all": false,
+      "min": 1,
+      "max": 1,
+      "effects": [
+       {
+        "type": "shiftLevel",
+        "space": "selected",
+        "direction": "opposition",
+        "steps": 1
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true,
+    "note": "DEC-57: Guard Abuse applies once in every qualifying space before the chosen Guard-space shift."
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0156",
+    "S-0246"
+   ]
+  },
+  {
+   "id": "DK-007",
+   "campaign": "C1",
+   "title": "ERNK Action Campaign (Jun-Nov 1985)",
+   "date": "1985-06",
+   "type": "momentum",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Police raids: the State conducts a free Garrison. Place 1 Police in Diyarbakır City.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.garrison",
+      "constraints": {}
+     },
+     {
+      "type": "placePieces",
+      "piece": "police",
+      "count": 1,
+      "space": "diyarbakir-city",
+      "state": null
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "PKK Momentum: until the next Reset, each Rally may Agitate in one extra space (normal cost).",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "addModifier",
+      "id": "extra-agitate",
+      "duration": "untilReset",
+      "params": {
+       "maxSpaces": 2
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0158",
+    "S-0246"
+   ]
+  },
+  {
+   "id": "DK-008",
+   "campaign": "C1",
+   "title": "Former Member Killed Abroad (Nov 1985)",
+   "date": "1985-11-02",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Europe -1. PKK Resources -1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": -1
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": -1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "shaded": {
+    "text": "Damage control: Europe -1. PKK Resources +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": -1
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true,
+    "note": "Shaded side was block only (08 s7); PKK Resources +1 added after the S0 playtests so it has an effect"
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0161",
+    "S-0246"
+   ]
+  },
+  {
+   "id": "DK-009",
+   "campaign": "C1",
+   "title": "Bekaa Training Academy (1986)",
+   "date": "1986",
+   "type": "capability",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Camp watched: the State conducts a free Diplomacy targeting Syria with +1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.diplomacy",
+      "constraints": {
+       "spaces": [
+        "syria-bekaa"
+       ],
+       "bonus": 1
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "PKK Capability (Academy): while Syria is Host or Tolerant, a Rally in Syria-Bekaa places up to 2 extra Guerrillas there.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "addModifier",
+      "id": "academy",
+      "duration": "game",
+      "params": {
+       "extra": 2
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0053",
+    "S-0035",
+    "S-0249",
+    "S-0253",
+    "S-0034"
+   ]
+  },
+  {
+   "id": "DK-010",
+   "campaign": "C1",
+   "title": "Rival Groups Form the TSK (1986)",
+   "date": "1986",
+   "type": "momentum",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Recruits divided: PKK Resources -2. State Momentum: until the next Reset, a PKK Rally in a Mountain space places 1 fewer Guerrilla (minimum 1).",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": -2
+     },
+     {
+      "type": "addModifier",
+      "id": "rivals",
+      "duration": "untilReset",
+      "params": {
+       "reduction": 1
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van-Bitlis or Ağrı.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": 2
+     },
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "van-bitlis",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "guerrilla",
+          "count": 1,
+          "space": "van-bitlis",
+          "state": "underground"
+         }
+        ]
+       },
+       {
+        "label": "agri",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "guerrilla",
+          "count": 1,
+          "space": "agri",
+          "state": "underground"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0054",
+    "S-0245",
+    "S-0035"
+   ]
+  },
+  {
+   "id": "DK-011",
+   "campaign": "C1",
+   "title": "PKK Spring Offensive (Mar 1986)",
+   "date": "1986-03",
+   "type": "momentum",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Patrol security: the State conducts a free Sweep in up to 2 Mountain spaces.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.sweep",
+      "constraints": {
+       "terrain": [
+        "mountain"
+       ],
+       "maxLocations": 2
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "PKK Momentum: until the next Reset, Ambush may select up to 3 Attack spaces.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "addModifier",
+      "id": "ambush",
+      "duration": "untilReset",
+      "params": {
+       "maxSpaces": 3
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0162",
+    "S-0246"
+   ]
+  },
+  {
+   "id": "DK-012",
+   "campaign": "C1",
+   "title": "Ankara Names a Guerrilla War (May 1985)",
+   "date": "1985-05-24",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "War budget: State Resources +4. Place 2 Troops from Available in any Mountain spaces.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": 4
+     },
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "2 Troops in one Mountain space",
+        "effects": [
+         {
+          "type": "forEachSpace",
+          "where": {
+           "type": "all",
+           "of": [
+            {
+             "type": "terrainIn",
+             "terrain": [
+              "mountain"
+             ]
+            },
+            {
+             "type": "spaceKind",
+             "kind": "domestic"
+            }
+           ]
+          },
+          "all": false,
+          "min": 1,
+          "max": 1,
+          "effects": [
+           {
+            "type": "placePieces",
+            "piece": "troops",
+            "count": 2,
+            "space": "selected",
+            "state": null
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "label": "1 Troop in each of two Mountain spaces",
+        "effects": [
+         {
+          "type": "forEachSpace",
+          "where": {
+           "type": "all",
+           "of": [
+            {
+             "type": "terrainIn",
+             "terrain": [
+              "mountain"
+             ]
+            },
+            {
+             "type": "spaceKind",
+             "kind": "domestic"
+            }
+           ]
+          },
+          "all": false,
+          "min": 2,
+          "max": 2,
+          "effects": [
+           {
+            "type": "placePieces",
+            "piece": "troops",
+            "count": 1,
+            "space": "selected",
+            "state": null
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Recognition of the conflict: Europe +1. PKK Resources +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true,
+    "note": "Text (2 Troops in any Mountain spaces) reads as one space with 2 or two spaces with 1"
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0275",
+    "E-0274",
+    "S-0246"
+   ]
+  },
+  {
+   "id": "DK-013",
+   "campaign": "C1",
+   "title": "Border Attack and Air Raid into Northern Iraq (Aug 1986)",
+   "date": "1986-08-12",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Hot pursuit raid: the State conducts a free Assault with Cross-Border in the KDP Zone (06, section 3.2, hot pursuit: at most 3 Troops). No extra Resources.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.assault",
+      "constraints": {
+       "spaces": [
+        "kdp-zone"
+       ],
+       "sa": "state.cross-border",
+       "maxTroops": 3
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "Camps rebuilt after the raid: the PKK places up to 2 Underground Guerrillas in the KDP Zone if its posture is Host or Tolerant. PKK Resources +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "conditional",
+      "if": {
+       "type": "trackIn",
+       "track": "posture.kdp",
+       "values": [
+        "host",
+        "tolerant"
+       ]
+      },
+      "then": [
+       {
+        "type": "placePieces",
+        "piece": "guerrilla",
+        "count": {
+         "min": 0,
+         "max": 2
+        },
+        "space": "kdp-zone",
+        "state": "underground"
+       }
+      ],
+      "else": []
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0165",
+    "S-0246",
+    "S-0250",
+    "S-0532",
+    "S-0533",
+    "S-0534"
+   ]
+  },
+  {
+   "id": "DK-014",
+   "campaign": "C1",
+   "title": "Human Rights Association Founded (Jul 1986)",
+   "date": "1986-07-17",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Tolerated civil society: Legitimacy +1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Documentation begins: Europe +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0164",
+    "S-0193",
+    "S-0530",
+    "S-0531"
+   ]
+  },
+  {
+   "id": "DK-016",
+   "campaign": "C1",
+   "title": "Propaganda",
+   "type": "propaganda",
+   "mandatory": false,
+   "always": [],
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true,
+    "note": "Starts a Propaganda round (05 s6)"
+   },
+   "deckEligible": false
+  },
+  {
+   "id": "DK-100",
+   "campaign": "C1",
+   "title": "Neighbors Condemn the Raid (Sep 1986)",
+   "date": "1986-09",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Ankara names the raid a reprisal for the loss of its soldiers: Legitimacy +1. State Resources +1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": 1
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Iran and Libya condemn the raid: shift Syria posture one step toward Host, or Europe +1 if Syria is already Host. PKK Resources +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "conditional",
+      "if": {
+       "type": "trackIn",
+       "track": "posture.syria",
+       "values": [
+        "host"
+       ]
+      },
+      "then": [
+       {
+        "type": "adjustTrack",
+        "track": "europe",
+        "delta": 1
+       }
+      ],
+      "else": [
+       {
+        "type": "stepOrdinal",
+        "track": "posture.syria",
+        "direction": "previous",
+        "steps": 1
+       }
+      ]
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "claude",
+    "reviewedAgainstText": true,
+    "note": "Shaded: Europe +1 replaces the step at Host (S0 playtests)"
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0340",
+    "E-0165",
+    "S-0534",
+    "S-0532"
+   ]
+  }
+ ],
+ "cards/c2.yaml": [
+  {
+   "id": "DK-017",
+   "campaign": "C2",
+   "title": "Air Raids on Camps in Iraq (Mar 1987)",
+   "date": "1987-03-04",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Remove 1 Guerrilla from the KDP Zone, or 1 PKK Base there if no Guerrilla remains. Place a Disputed Harm marker in the KDP Zone if it has none.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "forEachSpace",
+      "where": {
+       "type": "spaceIn",
+       "spaces": [
+        "kdp-zone"
+       ]
+      },
+      "all": false,
+      "min": 1,
+      "max": 1,
+      "effects": [
+       {
+        "type": "conditional",
+        "if": {
+         "type": "spaceHas",
+         "pieces": [
+          "guerrilla"
+         ],
+         "markers": []
+        },
+        "then": [
+         {
+          "type": "removePieces",
+          "piece": "guerrilla",
+          "state": null,
+          "count": 1,
+          "space": "selected",
+          "to": "available"
+         }
+        ],
+        "else": [
+         {
+          "type": "removePieces",
+          "piece": "pkkBase",
+          "state": null,
+          "count": 1,
+          "space": "selected",
+          "to": "available"
+         }
+        ]
+       },
+       {
+        "type": "conditional",
+        "if": {
+         "type": "not",
+         "of": {
+          "type": "spaceHas",
+          "pieces": [],
+          "markers": [
+           "disputedHarm"
+          ]
+         }
+        },
+        "then": [
+         {
+          "type": "placeMarker",
+          "marker": "disputedHarm",
+          "space": "selected",
+          "side": null
+         }
+        ],
+        "else": []
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "Camps disperse: move up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "puk-zone",
+        "effects": [
+         {
+          "type": "movePieces",
+          "piece": "guerrilla",
+          "state": null,
+          "toState": "underground",
+          "count": {
+           "min": 0,
+           "max": 3
+          },
+          "from": "kdp-zone",
+          "to": "puk-zone"
+         }
+        ]
+       },
+       {
+        "label": "hakkari",
+        "effects": [
+         {
+          "type": "movePieces",
+          "piece": "guerrilla",
+          "state": null,
+          "toState": "underground",
+          "count": {
+           "min": 0,
+           "max": 3
+          },
+          "from": "kdp-zone",
+          "to": "hakkari"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0168",
+    "S-0246",
+    "S-0251"
+   ]
+  },
+  {
+   "id": "DK-018",
+   "campaign": "C2",
+   "title": "Killings at Pınarcık (Jun 1987)",
+   "date": "1987-06-20",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Place a Disputed Harm marker in Mardin-Batman. Place up to 2 Village Guards there (needs Law 3175). Europe -1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "placeMarker",
+      "marker": "disputedHarm",
+      "space": "mardin-batman",
+      "side": null
+     },
+     {
+      "type": "conditional",
+      "if": {
+       "type": "flag",
+       "flag": "law3175",
+       "value": true
+      },
+      "then": [
+       {
+        "type": "placePieces",
+        "piece": "guards",
+        "count": {
+         "min": 0,
+         "max": 2
+        },
+        "space": "mardin-batman",
+        "state": null
+       }
+      ],
+      "else": []
+     },
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": -1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "shaded": {
+    "text": "Place a Disputed Harm marker in Mardin-Batman. The PKK may pay 2 Resources to remove 1 PKK Harm marker anywhere.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "placeMarker",
+      "marker": "disputedHarm",
+      "space": "mardin-batman",
+      "side": null
+     },
+     {
+      "type": "conditional",
+      "if": {
+       "type": "trackAtLeast",
+       "track": "resources.pkk",
+       "value": 2
+      },
+      "then": [
+       {
+        "type": "choice",
+        "options": [
+         {
+          "label": "Keep Resources",
+          "effects": []
+         },
+         {
+          "label": "Redress",
+          "effects": [
+           {
+            "type": "forEachSpace",
+            "where": {
+             "type": "spaceHas",
+             "pieces": [],
+             "markers": [
+              "pkkHarm"
+             ]
+            },
+            "all": false,
+            "min": 0,
+            "max": 1,
+            "effects": [
+             {
+              "type": "adjustTrack",
+              "track": "resources.pkk",
+              "delta": -2
+             },
+             {
+              "type": "removeMarker",
+              "marker": "pkkHarm",
+              "space": "selected",
+              "side": null
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      "else": []
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0169",
+    "S-0158"
+   ]
+  },
+  {
+   "id": "DK-019",
+   "campaign": "C2",
+   "title": "Syria Security Protocol (Jul 1987)",
+   "date": "1987-07",
+   "type": "event",
+   "mandatory": true,
+   "always": [
+    {
+     "type": "setTrack",
+     "track": "posture.syria",
+     "value": "tolerant",
+     "ifEquals": "host"
+    }
+   ],
+   "unshaded": {
+    "text": "The State conducts a free Diplomacy targeting Syria with +1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.diplomacy",
+      "constraints": {
+       "spaces": [
+        "syria-bekaa"
+       ],
+       "bonus": 1
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Paper limits: Syria posture one step toward Host. The PKK conducts a free Rally in Syria-Bekaa.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "stepOrdinal",
+      "track": "posture.syria",
+      "direction": "previous",
+      "steps": 1
+     },
+     {
+      "type": "freeAction",
+      "action": "pkk.rally",
+      "constraints": {
+       "spaces": [
+        "syria-bekaa"
+       ]
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "High",
+   "deckEligible": true,
+   "sources": [
+    "E-0170",
+    "S-0254",
+    "S-0361"
+   ]
+  },
+  {
+   "id": "DK-020",
+   "campaign": "C2",
+   "title": "OHAL (Jul 1987)",
+   "date": "1987-07-19",
+   "type": "event",
+   "mandatory": true,
+   "always": [
+    {
+     "type": "setTrack",
+     "track": "emergencyRule",
+     "value": "ohal",
+     "ifEquals": "martialLaw"
+    }
+   ],
+   "unshaded": {
+    "text": "Regional governor: the State conducts a free Garrison, then a free Sweep in one space.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.garrison",
+      "constraints": {}
+     },
+     {
+      "type": "freeAction",
+      "action": "state.sweep",
+      "constraints": {
+       "maxLocations": 1
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Emergency rule draws scrutiny: Legitimacy -1. Europe +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": -1
+     },
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "High",
+   "deckEligible": true,
+   "sources": [
+    "E-0055",
+    "S-0129",
+    "S-0130",
+    "S-0257",
+    "S-0302",
+    "S-0041",
+    "S-0042",
+    "S-0043",
+    "S-0044",
+    "S-0060",
+    "S-0097"
+   ]
+  },
+  {
+   "id": "DK-021",
+   "campaign": "C2",
+   "title": "Attacks on Rival Newroz Gatherings (Mar 1987)",
+   "date": "1987-03",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Place a Disputed Harm marker in Botan or Mardin-Batman (State choice). Europe -1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "botan",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "disputedHarm",
+          "space": "botan",
+          "side": null
+         }
+        ]
+       },
+       {
+        "label": "mardin-batman",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "disputedHarm",
+          "space": "mardin-batman",
+          "side": null
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": -1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "shaded": {
+    "text": "Block only: place a Disputed Harm marker in Botan or Mardin-Batman (PKK choice). No other effect.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "botan",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "disputedHarm",
+          "space": "botan",
+          "side": null
+         }
+        ]
+       },
+       {
+        "label": "mardin-batman",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "disputedHarm",
+          "space": "mardin-batman",
+          "side": null
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": true,
+    "tier": "T2"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0167",
+    "S-0246"
+   ]
+  },
+  {
+   "id": "DK-022",
+   "campaign": "C2",
+   "title": "Special Strike Force Planned (Jul 1987)",
+   "date": "1987-07",
+   "type": "capability",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "State Capability (Strike Force): Air Mobility may move up to 6 Troops among up to 4 spaces.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "addModifier",
+      "id": "strike-force",
+      "duration": "game",
+      "params": {
+       "maxTroops": 6,
+       "maxSpaces": 4
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Plan stalls: State Resources -3. PKK Resources +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": -3
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.pkk",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0280",
+    "S-0361"
+   ]
+  },
+  {
+   "id": "DK-023",
+   "campaign": "C2",
+   "title": "Final Anfal in Badinan (Aug 1988)",
+   "date": "1988-08-25",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Border sealed: place 2 Troops in Hakkari and 1 in Botan.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "placePieces",
+      "piece": "troops",
+      "count": 2,
+      "space": "hakkari",
+      "state": null
+     },
+     {
+      "type": "placePieces",
+      "piece": "troops",
+      "count": 1,
+      "space": "botan",
+      "state": null
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "shaded": {
+    "text": "World attention to Kurds: Europe +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "High",
+   "deckEligible": true,
+   "sources": [
+    "E-0287",
+    "E-0286",
+    "E-0284",
+    "S-0452",
+    "S-0467",
+    "S-0451",
+    "S-0209"
+   ]
+  },
+  {
+   "id": "DK-024",
+   "campaign": "C2",
+   "title": "Iraqi Kurdish Refugees Admitted (Aug-Sep 1988)",
+   "date": "1988-09",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Humanitarian opening: Legitimacy +2. State Resources -2.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": 2
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": -2
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Camps under strain: place 1 Reception marker in Diyarbakır City. Europe +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "placeMarker",
+      "marker": "reception",
+      "space": "diyarbakir-city",
+      "side": null
+     },
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "High",
+   "deckEligible": true,
+   "sources": [
+    "E-0290",
+    "E-0289",
+    "E-0291",
+    "S-0451",
+    "S-0209",
+    "S-0248",
+    "S-0461"
+   ]
+  },
+  {
+   "id": "DK-025",
+   "campaign": "C2",
+   "title": "Attacks on Village Schools (Nov 1988)",
+   "date": "1988-11",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Place a PKK Harm marker in Mardin-Batman, Elazığ or Dersim (State choice). Europe -1.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "mardin-batman",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "pkkHarm",
+          "space": "mardin-batman",
+          "side": null
+         }
+        ]
+       },
+       {
+        "label": "elazig",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "pkkHarm",
+          "space": "elazig",
+          "side": null
+         }
+        ]
+       },
+       {
+        "label": "dersim",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "pkkHarm",
+          "space": "dersim",
+          "side": null
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": -1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "shaded": {
+    "text": "Block only: place a PKK Harm marker in one of those spaces (PKK choice). No other effect.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "mardin-batman",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "pkkHarm",
+          "space": "mardin-batman",
+          "side": null
+         }
+        ]
+       },
+       {
+        "label": "elazig",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "pkkHarm",
+          "space": "elazig",
+          "side": null
+         }
+        ]
+       },
+       {
+        "label": "dersim",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "pkkHarm",
+          "space": "dersim",
+          "side": null
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": true,
+    "tier": "T2"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0293",
+    "S-0453",
+    "S-0454"
+   ]
+  },
+  {
+   "id": "DK-026",
+   "campaign": "C2",
+   "title": "Local Elections (Mar 1989)",
+   "date": "1989-03-26",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Institutions renewed: Legitimacy +2.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": 2
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Opposition mayors in the southeast: shift Diyarbakır City or Mardin-Batman one level toward Opposition.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "diyarbakir-city",
+        "effects": [
+         {
+          "type": "shiftLevel",
+          "space": "diyarbakir-city",
+          "direction": "opposition",
+          "steps": 1
+         }
+        ]
+       },
+       {
+        "label": "mardin-batman",
+        "effects": [
+         {
+          "type": "shiftLevel",
+          "space": "mardin-batman",
+          "direction": "opposition",
+          "steps": 1
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "High",
+   "deckEligible": true,
+   "sources": [
+    "E-0297",
+    "S-0457",
+    "S-0458"
+   ]
+  },
+  {
+   "id": "DK-027",
+   "campaign": "C2",
+   "title": "Regional Force Doubled (1989)",
+   "date": "1989-08",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Place up to 4 Troops from Available in Botan and Hakkari. The State conducts a free Sweep in Botan.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "0 in botan, 0 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "0 in botan, 1 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "0 in botan, 2 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "0 in botan, 3 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 3,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "0 in botan, 4 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 4,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "1 in botan, 0 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "1 in botan, 1 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "1 in botan, 2 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "1 in botan, 3 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 3,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "2 in botan, 0 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "2 in botan, 1 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "2 in botan, 2 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 2,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "3 in botan, 0 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 3,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "3 in botan, 1 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 3,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 1,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       },
+       {
+        "label": "4 in botan, 0 in hakkari",
+        "effects": [
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 4,
+          "space": "botan",
+          "state": null
+         },
+         {
+          "type": "placePieces",
+          "piece": "troops",
+          "count": 0,
+          "space": "hakkari",
+          "state": null
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "freeAction",
+      "action": "state.sweep",
+      "constraints": {
+       "spaces": [
+        "botan"
+       ]
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "Rising tempo: the PKK conducts a free Attack in one space with an Underground Guerrilla and Troops. State Resources -2.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "pkk.attack",
+      "constraints": {
+       "maxLocations": 1,
+       "undergroundAndTroops": true
+      }
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": -2
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0301",
+    "S-0455"
+   ]
+  },
+  {
+   "id": "DK-028",
+   "campaign": "C2",
+   "title": "Paris Kurdish Conference (Oct 1989)",
+   "date": "1989-10-14",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Diplomatic protest: the State conducts a free Diplomacy targeting the Europe track.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.diplomacy",
+      "constraints": {
+       "spaces": [
+        "europe"
+       ]
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Europe +1. The PKK conducts a free Rally on the Europe track.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     },
+     {
+      "type": "freeAction",
+      "action": "pkk.rally",
+      "constraints": {
+       "spaces": [
+        "europe"
+       ]
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "High",
+   "deckEligible": true,
+   "sources": [
+    "E-0305",
+    "S-0024",
+    "S-0453"
+   ]
+  },
+  {
+   "id": "DK-029",
+   "campaign": "C2",
+   "title": "SHP Expels Kurdish Deputies (Nov 1989)",
+   "date": "1989-11",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Party discipline holds: shift Şanlıurfa or Adıyaman one level toward Support if it has State Control and Police.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "forEachSpace",
+      "where": {
+       "type": "all",
+       "of": [
+        {
+         "type": "spaceIn",
+         "spaces": [
+          "sanliurfa",
+          "adiyaman"
+         ]
+        },
+        {
+         "type": "control",
+         "faction": "state"
+        },
+        {
+         "type": "spaceHas",
+         "pieces": [
+          "police"
+         ],
+         "markers": []
+        }
+       ]
+      },
+      "all": false,
+      "min": 1,
+      "max": 1,
+      "effects": [
+       {
+        "type": "shiftLevel",
+        "space": "selected",
+        "direction": "support",
+        "steps": 1
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Expelled deputies speak abroad: Europe +1. Shift Diyarbakır City one level toward Opposition.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     },
+     {
+      "type": "shiftLevel",
+      "space": "diyarbakir-city",
+      "direction": "opposition",
+      "steps": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [
+    "DK-028"
+   ],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0171",
+    "S-0024",
+    "S-0210"
+   ]
+  },
+  {
+   "id": "DK-030",
+   "campaign": "C2",
+   "title": "İkikaya Village Killings (Nov 1989)",
+   "date": "1989-11-24",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Place a PKK Harm marker in Hakkari. Europe -1. Place 1 Village Guard in Hakkari (needs Law 3175).",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "placeMarker",
+      "marker": "pkkHarm",
+      "space": "hakkari",
+      "side": null
+     },
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": -1
+     },
+     {
+      "type": "conditional",
+      "if": {
+       "type": "flag",
+       "flag": "law3175",
+       "value": true
+      },
+      "then": [
+       {
+        "type": "placePieces",
+        "piece": "guards",
+        "count": 1,
+        "space": "hakkari",
+        "state": null
+       }
+      ],
+      "else": []
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "shaded": {
+    "text": "Block only: place a PKK Harm marker in Hakkari. No other effect.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "placeMarker",
+      "marker": "pkkHarm",
+      "space": "hakkari",
+      "side": null
+     }
+    ],
+    "blockOnly": true,
+    "tier": "T2"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0307",
+    "S-0453",
+    "S-0460"
+   ]
+  },
+  {
+   "id": "DK-031",
+   "campaign": "C2",
+   "title": "Çukurca Villagers Refuse Guard Duty (1989)",
+   "date": "1989-12-22",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Prosecutions hold the line: place 1 Police and 1 Village Guard in Hakkari.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "placePieces",
+      "piece": "police",
+      "count": 1,
+      "space": "hakkari",
+      "state": null
+     },
+     {
+      "type": "placePieces",
+      "piece": "guards",
+      "count": 1,
+      "space": "hakkari",
+      "state": null
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Guards hand back weapons: remove up to 2 Village Guards from Hakkari or Botan to Available. No Harm marker. State Resources -1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "forEachPiece",
+      "piece": "guards",
+      "state": null,
+      "where": {
+       "type": "spaceIn",
+       "spaces": [
+        "hakkari",
+        "botan"
+       ]
+      },
+      "min": 0,
+      "max": 2,
+      "effects": [
+       {
+        "type": "removePieces",
+        "piece": "guards",
+        "state": null,
+        "count": 1,
+        "space": "selected",
+        "to": "available"
+       }
+      ]
+     },
+     {
+      "type": "adjustTrack",
+      "track": "resources.state",
+      "delta": -1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0308",
+    "S-0453"
+   ]
+  },
+  {
+   "id": "DK-032",
+   "campaign": "C2",
+   "title": "Lawyer Access Decree (Sep 1989)",
+   "date": "1989-09-26",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Custody reform: Legitimacy +2.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": 2
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Lawyers barred again: Legitimacy -1. Europe +1.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": -1
+     },
+     {
+      "type": "adjustTrack",
+      "track": "europe",
+      "delta": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0304",
+    "S-0453"
+   ]
+  },
+  {
+   "id": "DK-033",
+   "campaign": "C2",
+   "title": "Abuse and Killings in Custody Reported (1989)",
+   "date": "1989",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Block only: place a State Harm marker in Mardin-Batman or Hakkari (State choice). No other effect.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "mardin-batman",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "stateHarm",
+          "space": "mardin-batman",
+          "side": null
+         }
+        ]
+       },
+       {
+        "label": "hakkari",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "stateHarm",
+          "space": "hakkari",
+          "side": null
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": true,
+    "tier": "T2"
+   },
+   "shaded": {
+    "text": "Place a State Harm marker in Mardin-Batman or Hakkari (PKK choice). Legitimacy -1. Shift that space one level toward Opposition.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "choice",
+      "options": [
+       {
+        "label": "mardin-batman",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "stateHarm",
+          "space": "mardin-batman",
+          "side": null
+         },
+         {
+          "type": "adjustTrack",
+          "track": "legitimacy",
+          "delta": -1
+         },
+         {
+          "type": "shiftLevel",
+          "space": "mardin-batman",
+          "direction": "opposition",
+          "steps": 1
+         }
+        ]
+       },
+       {
+        "label": "hakkari",
+        "effects": [
+         {
+          "type": "placeMarker",
+          "marker": "stateHarm",
+          "space": "hakkari",
+          "side": null
+         },
+         {
+          "type": "adjustTrack",
+          "track": "legitimacy",
+          "delta": -1
+         },
+         {
+          "type": "shiftLevel",
+          "space": "hakkari",
+          "direction": "opposition",
+          "steps": 1
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T2"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0295",
+    "E-0300",
+    "E-0302",
+    "S-0454",
+    "S-0453"
+   ]
+  },
+  {
+   "id": "DK-034",
+   "campaign": "C2",
+   "title": "Governors Exile Local Party Members (Sep 1989)",
+   "date": "1989-09",
+   "type": "event",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Emergency powers: the State conducts a free Garrison with Activation in Botan or Dersim.",
+    "owner": "state",
+    "effects": [
+     {
+      "type": "freeAction",
+      "action": "state.garrison",
+      "constraints": {
+       "spaces": [
+        "botan",
+        "dersim"
+       ]
+      }
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "Banishment without trial: Legitimacy -1. Shift Botan one level toward Opposition.",
+    "owner": "pkk",
+    "effects": [
+     {
+      "type": "adjustTrack",
+      "track": "legitimacy",
+      "delta": -1
+     },
+     {
+      "type": "shiftLevel",
+      "space": "botan",
+      "direction": "opposition",
+      "steps": 1
+     }
+    ],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "codex",
+    "reviewedAgainstText": true
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0303",
+    "S-0454"
+   ]
+  },
+  {
+   "id": "DK-035",
+   "campaign": "C2",
+   "title": "Propaganda",
+   "type": "propaganda",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Conduct a Propaganda round (05, section 6).",
+    "owner": null,
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "reviewedAgainstText": true
+   },
+   "deckEligible": false,
+   "sources": []
+  }
+ ],
+ "cards/pivotal.yaml": [
+  {
+   "id": "DK-015",
+   "campaign": "C1",
+   "title": "ARGK Formed",
+   "date": "1986-10",
+   "type": "pivotal",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Earliest C1. Precondition: 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases. Effect: place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in those spaces Underground, PKK +3 Resources.",
+    "owner": "pkk",
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "None (single-sided Pivotal Event)",
+    "owner": null,
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "encoded",
+    "encodedBy": "pivotal-argk",
+    "reviewedAgainstText": true,
+    "note": "Allocation and window: coin/pivotal.ts (05 s4; PA-17). DEC-55 flips all PKK Base spaces"
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0075",
+    "S-0246",
+    "S-0248",
+    "S-0253",
+    "S-0064"
+   ]
+  },
+  {
+   "id": "DK-054",
+   "campaign": "C3",
+   "title": "Serhildan",
+   "type": "pivotal",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Earliest C3. Precondition: Total Opposition is 14 or more and Mardin-Batman or Botan is at Opposition. Effect: shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1.",
+    "owner": "pkk",
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "None (single-sided Pivotal Event)",
+    "owner": null,
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "notEncoded",
+    "reviewedAgainstText": false
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0271",
+    "E-0272",
+    "E-0173",
+    "S-0446"
+   ]
+  },
+  {
+   "id": "DK-076",
+   "campaign": "C4",
+   "title": "Area Domination",
+   "type": "pivotal",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Earliest C4. Precondition: Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more. Effect: free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost.",
+    "owner": "state",
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "shaded": {
+    "text": "None (single-sided Pivotal Event)",
+    "owner": null,
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T1"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "notEncoded",
+    "reviewedAgainstText": false
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0202",
+    "E-0204",
+    "S-0258",
+    "S-0120"
+   ]
+  },
+  {
+   "id": "DK-098",
+   "campaign": "C5",
+   "title": "Coercive Diplomacy on Syria",
+   "type": "pivotal",
+   "mandatory": false,
+   "always": [],
+   "unshaded": {
+    "text": "Earliest C5. Precondition: Syria posture is Tolerant or Restricted and Legitimacy is 5 or more. Effect: Syria posture to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing.",
+    "owner": "state",
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "shaded": {
+    "text": "None (single-sided Pivotal Event)",
+    "owner": null,
+    "effects": [],
+    "blockOnly": false,
+    "tier": "T0"
+   },
+   "chainAfter": [],
+   "encoding": {
+    "status": "notEncoded",
+    "reviewedAgainstText": false
+   },
+   "eventConfidence": "Moderate",
+   "deckEligible": true,
+   "sources": [
+    "E-0124",
+    "E-0126",
+    "E-0127",
+    "E-0018",
+    "E-0019",
+    "S-0086",
+    "S-0087",
+    "S-0091",
+    "S-0089"
+   ]
+  }
+ ],
+ "scenarios/full-campaign.yaml": {
+  "id": "full-campaign",
+  "title": "Full campaign (1984-1999)",
+  "campaigns": [
+   "C1",
+   "C2",
+   "C3",
+   "C4",
+   "C5"
+  ],
+  "finalRound": 5,
+  "tracks": {
+   "resources.state": 12,
+   "resources.pkk": 5,
+   "legitimacy": 10,
+   "emergencyRule": "martialLaw",
+   "posture.syria": "host",
+   "posture.kdp": "host",
+   "posture.puk": "tolerant",
+   "europe": 1,
+   "ceasefire": "none",
+   "legalSpace": "absent"
+  },
+  "spaces": {
+   "hakkari": {
+    "level": -1,
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "guerrilla": 2
+    }
+   },
+   "botan": {
+    "level": -1,
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "guerrilla": 2,
+     "pkkBase": 1
+    }
+   },
+   "mardin-batman": {
+    "pieces": {
+     "troops": 1,
+     "police": 1,
+     "guerrilla": 1
+    }
+   },
+   "diyarbakir-city": {
+    "pieces": {
+     "troops": 3,
+     "police": 2,
+     "stateBase": 1
+    }
+   },
+   "diyarbakir-rural": {
+    "pieces": {
+     "police": 1
+    }
+   },
+   "sanliurfa": {
+    "level": 1,
+    "pieces": {
+     "police": 2
+    }
+   },
+   "adiyaman": {
+    "level": 1,
+    "pieces": {
+     "police": 1
+    }
+   },
+   "elazig": {
+    "level": 1,
+    "pieces": {
+     "troops": 1,
+     "police": 1,
+     "stateBase": 1
+    }
+   },
+   "dersim": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "bingol-mus": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "van-bitlis": {
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "stateBase": 1
+    }
+   },
+   "agri": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "western-cities": {
+    "level": 1,
+    "pieces": {
+     "troops": 2,
+     "police": 2,
+     "stateBase": 1
+    }
+   },
+   "kdp-zone": {
+    "pieces": {
+     "guerrilla": 3,
+     "pkkBase": 1
+    }
+   },
+   "syria-bekaa": {
+    "pieces": {
+     "guerrilla": 2,
+     "pkkBase": 1
+    },
+    "markers": {
+     "leadership": {
+      "present": 1,
+      "abroad": 0
+     }
+    }
+   }
+  },
+  "available": {
+   "troops": 14,
+   "police": 8,
+   "stateBase": 4,
+   "guerrilla": 20,
+   "pkkBase": 9
+  },
+  "outOfPlay": {
+   "guards": 16
+  },
+  "pivotals": {
+   "state": [
+    "DK-076",
+    "DK-098"
+   ],
+   "pkk": [
+    "DK-015",
+    "DK-054"
+   ]
+  },
+  "flags": {
+   "law3175": false
+  },
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "options": {
+   "syriaMarchRestricted": "allow"
+  }
+ },
+ "scenarios/s0.yaml": {
+  "id": "s0",
+  "title": "S0 Opening (test)",
+  "campaigns": [
+   "C1"
+  ],
+  "finalRound": 1,
+  "pileSize": 8,
+  "propagandaLast": true,
+  "tracks": {
+   "resources.state": 12,
+   "resources.pkk": 5,
+   "legitimacy": 10,
+   "emergencyRule": "martialLaw",
+   "posture.syria": "host",
+   "posture.kdp": "host",
+   "posture.puk": "tolerant",
+   "europe": 1,
+   "ceasefire": "none",
+   "legalSpace": "absent"
+  },
+  "spaces": {
+   "hakkari": {
+    "level": -1,
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "guerrilla": 2
+    }
+   },
+   "botan": {
+    "level": -1,
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "guerrilla": 2,
+     "pkkBase": 1
+    }
+   },
+   "mardin-batman": {
+    "pieces": {
+     "troops": 1,
+     "police": 1,
+     "guerrilla": 1
+    }
+   },
+   "diyarbakir-city": {
+    "pieces": {
+     "troops": 3,
+     "police": 2,
+     "stateBase": 1
+    }
+   },
+   "diyarbakir-rural": {
+    "pieces": {
+     "police": 1
+    }
+   },
+   "sanliurfa": {
+    "level": 1,
+    "pieces": {
+     "police": 2
+    }
+   },
+   "adiyaman": {
+    "level": 1,
+    "pieces": {
+     "police": 1
+    }
+   },
+   "elazig": {
+    "level": 1,
+    "pieces": {
+     "troops": 1,
+     "police": 1,
+     "stateBase": 1
+    }
+   },
+   "dersim": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "bingol-mus": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "van-bitlis": {
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "stateBase": 1
+    }
+   },
+   "agri": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "western-cities": {
+    "level": 1,
+    "pieces": {
+     "troops": 2,
+     "police": 2,
+     "stateBase": 1
+    }
+   },
+   "kdp-zone": {
+    "pieces": {
+     "guerrilla": 3,
+     "pkkBase": 1
+    }
+   },
+   "syria-bekaa": {
+    "pieces": {
+     "guerrilla": 2,
+     "pkkBase": 1
+    },
+    "markers": {
+     "leadership": {
+      "present": 1,
+      "abroad": 0
+     }
+    }
+   }
+  },
+  "available": {
+   "troops": 14,
+   "police": 8,
+   "stateBase": 4,
+   "guerrilla": 20,
+   "pkkBase": 9
+  },
+  "outOfPlay": {
+   "guards": 16
+  },
+  "pivotals": {
+   "state": [],
+   "pkk": []
+  },
+  "flags": {
+   "law3175": false
+  },
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "options": {
+   "syriaMarchRestricted": "allow"
+  },
+  "excludedCards": [
+   {
+    "card": "DK-004",
+    "reason": "Capability: not dealt in S0"
+   },
+   {
+    "card": "DK-006",
+    "reason": "Capability: not dealt in S0"
+   },
+   {
+    "card": "DK-007",
+    "reason": "Momentum: not dealt in S0"
+   },
+   {
+    "card": "DK-009",
+    "reason": "Capability: not dealt in S0"
+   },
+   {
+    "card": "DK-010",
+    "reason": "Momentum: not dealt in S0"
+   },
+   {
+    "card": "DK-011",
+    "reason": "Momentum: not dealt in S0"
+   },
+   {
+    "card": "DK-013",
+    "reason": "Needs Cross-Border (Phase 3a)"
+   },
+   {
+    "card": "DK-015",
+    "reason": "Pivotal: removed in S0 (DEC-20)"
+   }
+  ],
+  "testOnly": true
+ },
+ "scenarios/scenario-a.yaml": {
+  "id": "scenario-a",
+  "title": "Scenario A: 1984-1989",
+  "campaigns": [
+   "C1",
+   "C2"
+  ],
+  "finalRound": 2,
+  "tracks": {
+   "resources.state": 12,
+   "resources.pkk": 5,
+   "legitimacy": 10,
+   "emergencyRule": "martialLaw",
+   "posture.syria": "host",
+   "posture.kdp": "host",
+   "posture.puk": "tolerant",
+   "europe": 1,
+   "ceasefire": "none",
+   "legalSpace": "absent"
+  },
+  "spaces": {
+   "hakkari": {
+    "level": -1,
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "guerrilla": 2
+    }
+   },
+   "botan": {
+    "level": -1,
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "guerrilla": 2,
+     "pkkBase": 1
+    }
+   },
+   "mardin-batman": {
+    "pieces": {
+     "troops": 1,
+     "police": 1,
+     "guerrilla": 1
+    }
+   },
+   "diyarbakir-city": {
+    "pieces": {
+     "troops": 3,
+     "police": 2,
+     "stateBase": 1
+    }
+   },
+   "diyarbakir-rural": {
+    "pieces": {
+     "police": 1
+    }
+   },
+   "sanliurfa": {
+    "level": 1,
+    "pieces": {
+     "police": 2
+    }
+   },
+   "adiyaman": {
+    "level": 1,
+    "pieces": {
+     "police": 1
+    }
+   },
+   "elazig": {
+    "level": 1,
+    "pieces": {
+     "troops": 1,
+     "police": 1,
+     "stateBase": 1
+    }
+   },
+   "dersim": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "bingol-mus": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "van-bitlis": {
+    "pieces": {
+     "troops": 2,
+     "police": 1,
+     "stateBase": 1
+    }
+   },
+   "agri": {
+    "pieces": {
+     "troops": 1,
+     "police": 1
+    }
+   },
+   "western-cities": {
+    "level": 1,
+    "pieces": {
+     "troops": 2,
+     "police": 2,
+     "stateBase": 1
+    }
+   },
+   "kdp-zone": {
+    "pieces": {
+     "guerrilla": 3,
+     "pkkBase": 1
+    }
+   },
+   "syria-bekaa": {
+    "pieces": {
+     "guerrilla": 2,
+     "pkkBase": 1
+    },
+    "markers": {
+     "leadership": {
+      "present": 1,
+      "abroad": 0
+     }
+    }
+   }
+  },
+  "available": {
+   "troops": 14,
+   "police": 8,
+   "stateBase": 4,
+   "guerrilla": 20,
+   "pkkBase": 9
+  },
+  "outOfPlay": {
+   "guards": 16
+  },
+  "pivotals": {
+   "state": [],
+   "pkk": [
+    "DK-015"
+   ]
+  },
+  "flags": {
+   "law3175": false
+  },
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "options": {
+   "syriaMarchRestricted": "allow"
+  }
+ }
+}

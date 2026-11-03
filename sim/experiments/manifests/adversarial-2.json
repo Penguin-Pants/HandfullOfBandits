@@ -1,0 +1,160 @@
+{
+ "schemaVersion": 1,
+ "id": "adversarial-2",
+ "stage": "adversarial",
+ "description": "Adversarial screens (19 s7): each faction-specific legacy control against all four qualified opponents, 20 fresh evaluation seeds per cell. Controls are unqualified; excluded from headline averages. Supersedes adversarial-1, which the freeze check refused before any game (player fingerprint changed by the Phase 8 counters; frozen-roster play verified unchanged).",
+ "scenario": "scenario-a",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "1565e7a338b2f810ba612fbf4a297c0d0ba6c19db658b8f4703802b0730b0720"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "harmLimit": 6,
+  "engineFingerprint": "69470914a3e062bc3edaf14869d3dc413e743ca884b03e9cfa7102abad964854",
+  "playerFingerprint": "f88a09965fe960d799e6d3b0720fe278004416660c57ff72fb9b3f857882f435"
+ },
+ "conditions": [
+  {
+   "id": "baseline",
+   "options": {
+    "hotPursuit": "allow",
+    "syriaMarchRestricted": "allow"
+   }
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-CTRL-concentration@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-CTRL-concentration@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-CTRL-concentration@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-CTRL-concentration@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-CTRL-civic-action@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-CTRL-civic-action@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-CTRL-civic-action@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-CTRL-civic-action@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-CTRL-emergency-rule@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-CTRL-emergency-rule@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-CTRL-emergency-rule@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-CTRL-emergency-rule@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-CTRL-sanctuary@1"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-CTRL-concealment@1"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-CTRL-coerce-only@1"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-CTRL-sanctuary@1"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-CTRL-concealment@1"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-CTRL-coerce-only@1"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-CTRL-sanctuary@1"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-CTRL-concealment@1"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-CTRL-coerce-only@1"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-CTRL-sanctuary@1"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-CTRL-concealment@1"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-CTRL-coerce-only@1"
+  }
+ ],
+ "seeds": {
+  "registry": "evaluation",
+  "blocks": [
+   {
+    "from": 1000250,
+    "count": 20
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 2000,
+  "decisionMs": 20000,
+  "gameMs": 300000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": "adversarial-1"
+}

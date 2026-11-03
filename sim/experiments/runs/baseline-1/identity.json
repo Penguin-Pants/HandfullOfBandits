@@ -1,0 +1,27 @@
+{
+ "artifactVersion": 1,
+ "experimentHash": "8b1c2b5cdfba5d0bdface0ef9443f18cff01b073442e795251939aadb6a35c94",
+ "runtime": {
+  "engineFingerprint": "69470914a3e062bc3edaf14869d3dc413e743ca884b03e9cfa7102abad964854",
+  "playerFingerprint": "db8d9f9ccf799e7b57781aaa5e1c5c9e0bf72caaf78c7fde804705649e0c6f1a",
+  "gitCommit": "1a8ec4accbcb43932c0ea489b00d5924c92f1d40",
+  "gitDirty": false,
+  "dirtyDigest": null,
+  "lockHash": "c09a2e71638c2ce8f35179b1a4f81fb62147f749a0f80689b32e4147ad3ddfe2",
+  "node": "v24.22.2",
+  "platform": "linux-x64",
+  "cpus": 4,
+  "generatorVersion": "cand-1",
+  "observationVersion": 1,
+  "rngVersion": "xoshiro128**-1.1"
+ },
+ "packageHash": "1565e7a338b2f810ba612fbf4a297c0d0ba6c19db658b8f4703802b0730b0720",
+ "scenario": "scenario-a",
+ "conditions": {
+  "baseline": {
+   "hotPursuit": "allow",
+   "syriaMarchRestricted": "allow"
+  }
+ },
+ "started": "2026-11-03T08:04:00.970Z"
+}

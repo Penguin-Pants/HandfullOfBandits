@@ -486,6 +486,8 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 
 **IC-3a:** Designer plays Scenario A to the end in the UI. Notes export. Matches stage 0 of the research playtest plan (12 s2).
 
+Automated Scenario A playtests (2026-11-03, [report](23-scenario-a-automated-playtest-report.md)) supplement but do not close IC-3a. They flag a possible dominant PKK protected-Base line for the designer to test in the IC-3a playthrough.
+
 ### Board art follow-up (DEC-59, 2026-10-31)
 
 **Status: implemented and locally verified.** The designer's visual reference now guides both the draft printed board and the simulator surface. Separate generated atlas artwork adds light parchment, illustrated ridges and sage foothills. Existing vectors retain regions, borders, rivers, labels, tracks and game pieces. Research 03 and `map.yaml` remain authoritative; geometry and rule data did not change. The image is illustrative, not terrain evidence. Shared artwork is in `map/atlas-terrain.png`; Vite copies the map asset directory into the built UI. Serve the SVG with its adjacent PNG.

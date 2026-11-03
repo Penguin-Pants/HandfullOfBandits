@@ -1,0 +1,4295 @@
+{
+ "games": 480,
+ "finals": {
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 9,
+   "opposition": 35,
+   "bases": 5
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 7,
+   "opposition": 27,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 26,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 35,
+   "bases": 6
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 31,
+   "bases": 5
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 9,
+   "opposition": 31,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 8,
+   "opposition": 21,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 27,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 9,
+   "opposition": 42,
+   "bases": 6
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 8,
+   "opposition": 30,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 31,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 9,
+   "opposition": 31,
+   "bases": 6
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 34,
+   "bases": 5
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 9,
+   "opposition": 32,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 35,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-POLv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 11,
+   "opposition": 31,
+   "bases": 5
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 5
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 36,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 28,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 35,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 35,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 27,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 27,
+   "bases": 5
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 31,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 31,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 7,
+   "opposition": 37,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 35,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 31,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 33,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 11,
+   "opposition": 38,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 29,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 7,
+   "opposition": 37,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 27,
+   "bases": 6
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 31,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-EXPv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 33,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 30,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 33,
+   "bases": 5
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 28,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 12,
+   "opposition": 27,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 33,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 31,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 31,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 37,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 34,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 41,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 11,
+   "opposition": 34,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 30,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 35,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 9,
+   "opposition": 29,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 30,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-SURVv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 28,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 21,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 16,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 19,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 7,
+   "opposition": 21,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 18,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 33,
+   "bases": 4
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 17,
+   "bases": 2
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 3
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 13,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 13,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 15,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 14,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 15,
+   "bases": 1
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 15,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 7,
+   "opposition": 16,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 21,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 17,
+   "bases": 0
+  },
+  "baseline~S-CTRL-concentrationv1~P-ADAPTv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 11,
+   "opposition": 13,
+   "bases": 0
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 11,
+   "opposition": 39,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 33,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 45,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 11,
+   "opposition": 41,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 13,
+   "opposition": 29,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 35,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 12,
+   "opposition": 32,
+   "bases": 6
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 13,
+   "opposition": 43,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 10,
+   "legitimacy": 10,
+   "opposition": 27,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 12,
+   "opposition": 31,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 10,
+   "legitimacy": 11,
+   "opposition": 36,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 11,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 14,
+   "opposition": 28,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 40,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 13,
+   "opposition": 33,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 37,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-POLv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 33,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 11,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 43,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 13,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 13,
+   "opposition": 33,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 15,
+   "opposition": 43,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 11,
+   "opposition": 33,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 12,
+   "opposition": 31,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 13,
+   "opposition": 41,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 12,
+   "opposition": 37,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 37,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 11,
+   "opposition": 43,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 10,
+   "opposition": 43,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 37,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 12,
+   "opposition": 37,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 13,
+   "opposition": 35,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 39,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-EXPv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 31,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 25,
+   "bases": 6
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 14,
+   "opposition": 35,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 9,
+   "opposition": 36,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 13,
+   "opposition": 31,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 6
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 7,
+   "opposition": 32,
+   "bases": 4
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 10,
+   "opposition": 32,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 9,
+   "opposition": 30,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 11,
+   "opposition": 35,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 27,
+   "bases": 6
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 14,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 10,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 40,
+   "bases": 6
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 10,
+   "opposition": 39,
+   "bases": 6
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 13,
+   "opposition": 31,
+   "bases": 6
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 33,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 14,
+   "opposition": 35,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-SURVv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 11,
+   "opposition": 32,
+   "bases": 5
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 33,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 13,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 31,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 13,
+   "opposition": 37,
+   "bases": 10
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 37,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 10,
+   "opposition": 31,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 14,
+   "opposition": 31,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 11,
+   "opposition": 33,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 10,
+   "opposition": 31,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 15,
+   "opposition": 35,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 10,
+   "opposition": 37,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 12,
+   "opposition": 37,
+   "bases": 8
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 14,
+   "opposition": 31,
+   "bases": 9
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 12,
+   "opposition": 33,
+   "bases": 7
+  },
+  "baseline~S-CTRL-civic-actionv1~P-ADAPTv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 13,
+   "opposition": 35,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 15,
+   "opposition": 37,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 37,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 14,
+   "opposition": 41,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 15,
+   "opposition": 36,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 13,
+   "opposition": 42,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 31,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 15,
+   "opposition": 41,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 11,
+   "opposition": 43,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 11,
+   "opposition": 39,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 38,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 11,
+   "opposition": 39,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 15,
+   "opposition": 39,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 14,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-POLv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 39,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 47,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 15,
+   "opposition": 39,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 33,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 2,
+   "legitimacy": 13,
+   "opposition": 31,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 43,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 14,
+   "opposition": 33,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 2,
+   "legitimacy": 15,
+   "opposition": 31,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 36,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 43,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 2,
+   "legitimacy": 14,
+   "opposition": 40,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 2,
+   "legitimacy": 13,
+   "opposition": 33,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 2,
+   "legitimacy": 15,
+   "opposition": 35,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 15,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 39,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 15,
+   "opposition": 37,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 2,
+   "legitimacy": 14,
+   "opposition": 37,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 33,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 2,
+   "legitimacy": 15,
+   "opposition": 33,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 14,
+   "opposition": 39,
+   "bases": 10
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-EXPv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 37,
+   "bases": 9
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 37,
+   "bases": 3
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 39,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 39,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 11,
+   "opposition": 35,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 35,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 29,
+   "bases": 3
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 32,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 12,
+   "opposition": 41,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 39,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 13,
+   "opposition": 28,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 15,
+   "opposition": 27,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 31,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 10,
+   "opposition": 35,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 40,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 9,
+   "opposition": 41,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 40,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 15,
+   "opposition": 37,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 35,
+   "bases": 4
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-SURVv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 11,
+   "opposition": 36,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001250~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001251~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 15,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001252~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 39,
+   "bases": 6
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001253~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 31,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001254~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 13,
+   "opposition": 35,
+   "bases": 6
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001255~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 13,
+   "opposition": 31,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001256~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 14,
+   "opposition": 33,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001257~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 11,
+   "opposition": 37,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001258~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 35,
+   "bases": 6
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001259~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 14,
+   "opposition": 33,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001260~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 36,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001261~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 15,
+   "opposition": 29,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001262~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 10,
+   "opposition": 39,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001263~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 12,
+   "opposition": 29,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001264~r0": {
+   "winner": "pkk",
+   "support": 6,
+   "legitimacy": 15,
+   "opposition": 29,
+   "bases": 5
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001265~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 14,
+   "opposition": 29,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001266~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 13,
+   "opposition": 28,
+   "bases": 8
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001267~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 14,
+   "opposition": 35,
+   "bases": 7
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001268~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 15,
+   "opposition": 29,
+   "bases": 6
+  },
+  "baseline~S-CTRL-emergency-rulev1~P-ADAPTv2~1001269~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 14,
+   "opposition": 33,
+   "bases": 6
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001250~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001251~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001252~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 10,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001253~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001254~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001255~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001256~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001257~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001258~r0": {
+   "winner": "state",
+   "support": 39,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001259~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001260~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001261~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001262~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001263~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 10,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001264~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001265~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001266~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001267~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001268~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-sanctuaryv1~1001269~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001250~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 9,
+   "opposition": 4,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001251~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001252~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001253~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001254~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001255~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001256~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001257~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001258~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 8,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001259~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 9,
+   "opposition": 4,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001260~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 8,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001261~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 7,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001262~r0": {
+   "winner": "state",
+   "support": 51,
+   "legitimacy": 9,
+   "opposition": 2,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001263~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001264~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 9,
+   "opposition": 2,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001265~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 7,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001266~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 8,
+   "opposition": 4,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001267~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001268~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-concealmentv1~1001269~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001250~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001251~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001252~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001253~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001254~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001255~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001256~r0": {
+   "winner": "state",
+   "support": 37,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001257~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001258~r0": {
+   "winner": "state",
+   "support": 37,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001259~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001260~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001261~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001262~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001263~r0": {
+   "winner": "state",
+   "support": 38,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001264~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001265~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001266~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001267~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001268~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-POLv1~P-CTRL-coerce-onlyv1~1001269~r0": {
+   "winner": "state",
+   "support": 36,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001250~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001251~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001252~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001253~r0": {
+   "winner": "state",
+   "support": 58,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001254~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001255~r0": {
+   "winner": "state",
+   "support": 51,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001256~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001257~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001258~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001259~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001260~r0": {
+   "winner": "state",
+   "support": 51,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001261~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001262~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 14,
+   "opposition": 2,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001263~r0": {
+   "winner": "state",
+   "support": 53,
+   "legitimacy": 10,
+   "opposition": 2,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001264~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001265~r0": {
+   "winner": "state",
+   "support": 53,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001266~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001267~r0": {
+   "winner": "state",
+   "support": 53,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001268~r0": {
+   "winner": "state",
+   "support": 51,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-sanctuaryv1~1001269~r0": {
+   "winner": "state",
+   "support": 51,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001250~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 13,
+   "opposition": 4,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001251~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001252~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001253~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001254~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001255~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001256~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001257~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001258~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001259~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001260~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001261~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001262~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001263~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001264~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 12,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001265~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001266~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001267~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001268~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-concealmentv1~1001269~r0": {
+   "winner": "state",
+   "support": 38,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001250~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001251~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001252~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001253~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001254~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001255~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001256~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001257~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001258~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 10,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001259~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001260~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001261~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001262~r0": {
+   "winner": "state",
+   "support": 51,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001263~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 10,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001264~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001265~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001266~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001267~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001268~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-MILv1~P-CTRL-coerce-onlyv1~1001269~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001250~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001251~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001252~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 10,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001253~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001254~r0": {
+   "winner": "state",
+   "support": 58,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001255~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001256~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001257~r0": {
+   "winner": "state",
+   "support": 53,
+   "legitimacy": 11,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001258~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001259~r0": {
+   "winner": "state",
+   "support": 58,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001260~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001261~r0": {
+   "winner": "state",
+   "support": 58,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001262~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001263~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 10,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001264~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 15,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001265~r0": {
+   "winner": "state",
+   "support": 56,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001266~r0": {
+   "winner": "state",
+   "support": 58,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001267~r0": {
+   "winner": "state",
+   "support": 58,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001268~r0": {
+   "winner": "state",
+   "support": 58,
+   "legitimacy": 13,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-sanctuaryv1~1001269~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001250~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001251~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001252~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001253~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001254~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001255~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001256~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 8,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001257~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001258~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 8,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001259~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001260~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 8,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001261~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 7,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001262~r0": {
+   "winner": "state",
+   "support": 51,
+   "legitimacy": 8,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001263~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001264~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001265~r0": {
+   "winner": "state",
+   "support": 54,
+   "legitimacy": 7,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001266~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 8,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001267~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001268~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-concealmentv1~1001269~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001250~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001251~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001252~r0": {
+   "winner": "state",
+   "support": 49,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001253~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001254~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001255~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001256~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001257~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001258~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 12,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001259~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001260~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001261~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001262~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 14,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001263~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001264~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001265~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001266~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001267~r0": {
+   "winner": "state",
+   "support": 52,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001268~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-CONv1~P-CTRL-coerce-onlyv1~1001269~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001250~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 8,
+   "opposition": 5,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001251~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 7,
+   "opposition": 7,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001252~r0": {
+   "winner": "state",
+   "support": 39,
+   "legitimacy": 8,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001253~r0": {
+   "winner": "state",
+   "support": 39,
+   "legitimacy": 8,
+   "opposition": 4,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001254~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001255~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001256~r0": {
+   "winner": "state",
+   "support": 39,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001257~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 10,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001258~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 8,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001259~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 7,
+   "opposition": 5,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001260~r0": {
+   "winner": "state",
+   "support": 50,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001261~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 9,
+   "opposition": 1,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001262~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001263~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001264~r0": {
+   "winner": "state",
+   "support": 37,
+   "legitimacy": 8,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001265~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001266~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001267~r0": {
+   "winner": "state",
+   "support": 39,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001268~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 9,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-sanctuaryv1~1001269~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001250~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001251~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 10,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001252~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 10,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001253~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 8,
+   "opposition": 6,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001254~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001255~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 8,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001256~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001257~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001258~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 9,
+   "opposition": 6,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001259~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 11,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001260~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 9,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001261~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001262~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 9,
+   "opposition": 7,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001263~r0": {
+   "winner": "state",
+   "support": 39,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001264~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 11,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001265~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001266~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 8,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001267~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001268~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-concealmentv1~1001269~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001250~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001251~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 11,
+   "opposition": 5,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001252~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001253~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 10,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001254~r0": {
+   "winner": "state",
+   "support": 46,
+   "legitimacy": 13,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001255~r0": {
+   "winner": "state",
+   "support": 47,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001256~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 15,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001257~r0": {
+   "winner": "state",
+   "support": 32,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001258~r0": {
+   "winner": "state",
+   "support": 40,
+   "legitimacy": 9,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001259~r0": {
+   "winner": "state",
+   "support": 39,
+   "legitimacy": 10,
+   "opposition": 1,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001260~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 10,
+   "opposition": 4,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001261~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 11,
+   "opposition": 4,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001262~r0": {
+   "winner": "state",
+   "support": 43,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 0
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001263~r0": {
+   "winner": "state",
+   "support": 44,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001264~r0": {
+   "winner": "state",
+   "support": 48,
+   "legitimacy": 14,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001265~r0": {
+   "winner": "state",
+   "support": 42,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001266~r0": {
+   "winner": "state",
+   "support": 41,
+   "legitimacy": 10,
+   "opposition": 5,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001267~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001268~r0": {
+   "winner": "state",
+   "support": 45,
+   "legitimacy": 12,
+   "opposition": 3,
+   "bases": 1
+  },
+  "baseline~S-ADAPTv1~P-CTRL-coerce-onlyv1~1001269~r0": {
+   "winner": "state",
+   "support": 37,
+   "legitimacy": 10,
+   "opposition": 3,
+   "bases": 1
+  }
+ },
+ "ledger": [
+  {
+   "id": "V-first-check-skipped",
+   "area": "Victory",
+   "label": "First Propaganda skips the victory check",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/propaganda/multi-round.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-opening-win",
+   "area": "Victory",
+   "label": "Win at the opening check",
+   "status": "natural exposure",
+   "games": 450,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-simultaneous",
+   "area": "Victory",
+   "label": "Both factions qualify at one check",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "test/mechanics-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-harm-gate",
+   "area": "Victory",
+   "label": "Harm above six blocks an otherwise qualifying check",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-negative-win",
+   "area": "Victory",
+   "label": "Final win with a negative margin",
+   "status": "natural exposure",
+   "games": 27,
+   "fixtures": [
+    "test/mechanics-a.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-tie",
+   "area": "Victory",
+   "label": "Equal final margins decided by Harm, then PKK",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "test/mechanics-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-excess-harm",
+   "area": "Victory",
+   "label": "Final margin reduced by excess Harm",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-rally-agitate",
+   "area": "Political economy",
+   "label": "Rally Agitation",
+   "status": "natural exposure",
+   "games": 239,
+   "fixtures": [
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-train-civic",
+   "area": "Political economy",
+   "label": "Train Civic Action",
+   "status": "natural exposure",
+   "games": 320,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-propaganda-civic",
+   "area": "Political economy",
+   "label": "Propaganda Civic Action spending (Legitimacy cap)",
+   "status": "natural exposure",
+   "games": 240,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-propaganda-agitation",
+   "area": "Political economy",
+   "label": "Propaganda Agitation spending",
+   "status": "natural exposure",
+   "games": 240,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-blocker-removal",
+   "area": "Political economy",
+   "label": "Removal of blocking markers before a shift (Coercion, Harm, Reception)",
+   "status": "natural exposure",
+   "games": 91,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-state-harm",
+   "area": "Civilian effects",
+   "label": "State Harm placed",
+   "status": "natural exposure",
+   "games": 78,
+   "fixtures": [
+    "src/engine/coin/events.test.ts",
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-pkk-harm",
+   "area": "Civilian effects",
+   "label": "PKK Harm placed",
+   "status": "natural exposure",
+   "games": 156,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-disputed-harm",
+   "area": "Civilian effects",
+   "label": "Disputed Harm placed (Cross-Border Assault)",
+   "status": "natural exposure",
+   "games": 207,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-coercion",
+   "area": "Civilian effects",
+   "label": "Coerce places Coercion",
+   "status": "natural exposure",
+   "games": 95,
+   "fixtures": [
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-guard-upkeep",
+   "area": "Civilian effects",
+   "label": "Guard upkeep paid",
+   "status": "natural exposure",
+   "games": 390,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-upkeep-shortfall",
+   "area": "Civilian effects",
+   "label": "Guards removed for unpaid upkeep",
+   "status": "natural exposure",
+   "games": 6,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-guard-abuse",
+   "area": "Civilian effects",
+   "label": "Guard Abuse (DK-006 shaded)",
+   "status": "natural exposure",
+   "games": 33,
+   "fixtures": [
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-strike",
+   "area": "Civilian effects",
+   "label": "Strike Collaborators",
+   "status": "natural exposure",
+   "games": 3,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-europe",
+   "area": "Civilian effects",
+   "label": "Europe track change",
+   "status": "natural exposure",
+   "games": 288,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-marker-removal",
+   "area": "Civilian effects",
+   "label": "Harm or Coercion marker removed (Redress, Reset)",
+   "status": "natural exposure",
+   "games": 87,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-reception",
+   "area": "Civilian effects",
+   "label": "Reception marker placed",
+   "status": "natural exposure",
+   "games": 24,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-displacement",
+   "area": "Civilian effects",
+   "label": "Displacement marker placed",
+   "status": "not applicable",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": "No Scenario A action or C1/C2 card places Displacement; Village Clearance is outside this edition (rules 8.4). Its Legitimacy effect has a fixture."
+  },
+  {
+   "id": "H-syria-host",
+   "area": "Sanctuary",
+   "label": "syria posture reaches host",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-tolerant",
+   "area": "Sanctuary",
+   "label": "syria posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-restricted",
+   "area": "Sanctuary",
+   "label": "syria posture reaches restricted",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-hostile",
+   "area": "Sanctuary",
+   "label": "syria posture reaches hostile",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-aligned",
+   "area": "Sanctuary",
+   "label": "syria posture reaches aligned",
+   "status": "not applicable",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": "Syria has no Aligned step (rules 8.1)"
+  },
+  {
+   "id": "H-kdp-host",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches host",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-tolerant",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-restricted",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches restricted",
+   "status": "natural exposure",
+   "games": 91,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-hostile",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches hostile",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-aligned",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches aligned",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-host",
+   "area": "Sanctuary",
+   "label": "puk posture reaches host",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-tolerant",
+   "area": "Sanctuary",
+   "label": "puk posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-restricted",
+   "area": "Sanctuary",
+   "label": "puk posture reaches restricted",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-hostile",
+   "area": "Sanctuary",
+   "label": "puk posture reaches hostile",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-aligned",
+   "area": "Sanctuary",
+   "label": "puk posture reaches aligned",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-host-pressure",
+   "area": "Sanctuary",
+   "label": "Host Pressure",
+   "status": "natural exposure",
+   "games": 1,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-diplomacy",
+   "area": "Sanctuary",
+   "label": "Diplomacy",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-cross-border",
+   "area": "Sanctuary",
+   "label": "Cross-Border Sweep or Assault",
+   "status": "natural exposure",
+   "games": 1,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-hot-pursuit",
+   "area": "Sanctuary",
+   "label": "Early KDP hot pursuit (KDP Host or Tolerant)",
+   "status": "natural exposure",
+   "games": 1,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-interrupted",
+   "area": "Sanctuary",
+   "label": "Operation resumed after Host Pressure (interrupted continuation)",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-restricted-entry",
+   "area": "Sanctuary",
+   "label": "March into a Restricted box (+1, activates)",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-leadership-abroad",
+   "area": "Sanctuary",
+   "label": "Leadership flips Abroad",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-always",
+   "area": "Sequence/cards",
+   "label": "Mandatory Always line on reveal (DK-003, DK-005, DK-019, DK-020)",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/events.test.ts",
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-event-unshaded",
+   "area": "Sequence/cards",
+   "label": "Unshaded Event executed",
+   "status": "natural exposure",
+   "games": 445,
+   "fixtures": [
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-event-shaded",
+   "area": "Sequence/cards",
+   "label": "Shaded Event executed",
+   "status": "natural exposure",
+   "games": 251,
+   "fixtures": [
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-argk-play",
+   "area": "Sequence/cards",
+   "label": "ARGK played",
+   "status": "natural exposure",
+   "games": 199,
+   "fixtures": [
+    "src/engine/coin/pivotal.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-argk-decline",
+   "area": "Sequence/cards",
+   "label": "ARGK declined",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/pivotal.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-pass",
+   "area": "Sequence/cards",
+   "label": "Pass",
+   "status": "natural exposure",
+   "games": 451,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-limited",
+   "area": "Sequence/cards",
+   "label": "Limited Op",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-op-only",
+   "area": "Sequence/cards",
+   "label": "Op Only",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-op-sa",
+   "area": "Sequence/cards",
+   "label": "Op + SA",
+   "status": "natural exposure",
+   "games": 423,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-redeploy-moves",
+   "area": "Sequence/cards",
+   "label": "Redeploy with moves",
+   "status": "natural exposure",
+   "games": 51,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-reset",
+   "area": "Sequence/cards",
+   "label": "Reset (Momentum discarded or Guerrillas flipped)",
+   "status": "natural exposure",
+   "games": 480,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-final-skips",
+   "area": "Sequence/cards",
+   "label": "Final round skips income, Redeploy and Reset",
+   "status": "natural exposure",
+   "games": 30,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/propaganda/multi-round.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-emergency",
+   "area": "Sequence/cards",
+   "label": "Emergency Rule step chosen (OHAL to Normalizing or back)",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.train",
+   "area": "Sequence/cards",
+   "label": "Operation state.train",
+   "status": "natural exposure",
+   "games": 460,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.garrison",
+   "area": "Sequence/cards",
+   "label": "Operation state.garrison",
+   "status": "natural exposure",
+   "games": 62,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.sweep",
+   "area": "Sequence/cards",
+   "label": "Operation state.sweep",
+   "status": "natural exposure",
+   "games": 107,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.assault",
+   "area": "Sequence/cards",
+   "label": "Operation state.assault",
+   "status": "natural exposure",
+   "games": 155,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.rally",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.rally",
+   "status": "natural exposure",
+   "games": 400,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.march",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.march",
+   "status": "natural exposure",
+   "games": 265,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.attack",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.attack",
+   "status": "natural exposure",
+   "games": 118,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.coerce",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.coerce",
+   "status": "natural exposure",
+   "games": 95,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-state.air-mobility",
+   "area": "Sequence/cards",
+   "label": "Special Activity state.air-mobility",
+   "status": "natural exposure",
+   "games": 68,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-pkk.ambush",
+   "area": "Sequence/cards",
+   "label": "Special Activity pkk.ambush",
+   "status": "natural exposure",
+   "games": 26,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-pkk.extort",
+   "area": "Sequence/cards",
+   "label": "Special Activity pkk.extort",
+   "status": "natural exposure",
+   "games": 240,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  }
+ ],
+ "diagnostics": {
+  "passShare": {
+   "pkk": 0.2753466417543515,
+   "state": 0.2488425925925926
+  },
+  "maxFirstEligibleStreak": 16,
+  "meanUnusedResources": {
+   "state": 6.825,
+   "pkk": 5.639583333333333
+  },
+  "passStreak3Games": {
+   "pkk": 89,
+   "state": 138
+  },
+  "stopRuleFlags": {},
+  "boxesByFaction": {
+   "state": {
+    "limitedOp": 2372,
+    "opOnly": 1405,
+    "pass": 2580,
+    "event": 3227,
+    "opSa": 784
+   },
+   "pkk": {
+    "opOnly": 1740,
+    "limitedOp": 1490,
+    "opSa": 3133,
+    "pass": 2800,
+    "event": 1006
+   }
+  },
+  "eligibilityRows": {
+   "opOnly -> limitedOp": 1114,
+   "opSa -> limitedOp": 574,
+   "opOnly -> pass": 469,
+   "limitedOp -> pass": 660,
+   "event -> pass": 1105,
+   "event -> opSa": 3188,
+   "limitedOp -> opOnly": 1092,
+   "pass -> limitedOp": 422,
+   "pass -> opOnly": 470,
+   "pass -> pass": 980,
+   "opSa -> pass": 149,
+   "pass -> event": 139,
+   "pass -> opSa": 6
+  },
+  "eventSides": {
+   "DK-012 unshaded": 216,
+   "DK-009 unshaded": 70,
+   "DK-022 shaded": 29,
+   "DK-026 shaded": 63,
+   "DK-034 shaded": 42,
+   "DK-003 shaded": 24,
+   "DK-004 unshaded": 55,
+   "DK-005 unshaded": 91,
+   "DK-010 shaded": 32,
+   "DK-032 shaded": 29,
+   "DK-027 shaded": 58,
+   "DK-020 shaded": 92,
+   "DK-033 shaded": 36,
+   "DK-001 shaded": 28,
+   "DK-019 unshaded": 140,
+   "DK-023 unshaded": 58,
+   "DK-100 unshaded": 161,
+   "DK-002 unshaded": 81,
+   "DK-018 unshaded": 64,
+   "DK-029 unshaded": 151,
+   "DK-020 unshaded": 193,
+   "DK-026 unshaded": 156,
+   "DK-001 unshaded": 178,
+   "DK-010 unshaded": 59,
+   "DK-013 shaded": 48,
+   "DK-025 unshaded": 48,
+   "DK-030 unshaded": 69,
+   "DK-006 unshaded": 66,
+   "DK-034 unshaded": 66,
+   "DK-031 shaded": 57,
+   "DK-029 shaded": 61,
+   "DK-007 unshaded": 39,
+   "DK-033 unshaded": 42,
+   "DK-032 unshaded": 78,
+   "DK-031 unshaded": 78,
+   "DK-008 unshaded": 57,
+   "DK-028 unshaded": 67,
+   "DK-014 unshaded": 108,
+   "DK-011 unshaded": 66,
+   "DK-021 unshaded": 56,
+   "DK-013 unshaded": 59,
+   "DK-012 shaded": 13,
+   "DK-100 shaded": 35,
+   "DK-027 unshaded": 79,
+   "DK-002 shaded": 51,
+   "DK-024 unshaded": 85,
+   "DK-008 shaded": 31,
+   "DK-017 unshaded": 63,
+   "DK-017 shaded": 57,
+   "DK-003 unshaded": 97,
+   "DK-005 shaded": 42,
+   "DK-009 shaded": 22,
+   "DK-004 shaded": 25,
+   "DK-025 shaded": 37,
+   "DK-021 shaded": 41,
+   "DK-028 shaded": 34,
+   "DK-019 shaded": 56,
+   "DK-030 shaded": 41,
+   "DK-022 unshaded": 31,
+   "DK-006 shaded": 33,
+   "DK-014 shaded": 34,
+   "DK-007 shaded": 33,
+   "DK-018 shaded": 39,
+   "DK-023 shaded": 30,
+   "DK-011 shaded": 29,
+   "DK-024 shaded": 24
+  }
+ }
+}

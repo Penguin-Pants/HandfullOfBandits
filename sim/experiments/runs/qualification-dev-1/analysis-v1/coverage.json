@@ -1,0 +1,935 @@
+{
+ "games": 200,
+ "ledger": [
+  {
+   "id": "V-first-check-skipped",
+   "area": "Victory",
+   "label": "First Propaganda skips the victory check",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/propaganda/multi-round.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-opening-win",
+   "area": "Victory",
+   "label": "Win at the opening check",
+   "status": "natural exposure",
+   "games": 119,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-simultaneous",
+   "area": "Victory",
+   "label": "Both factions qualify at one check",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "test/mechanics-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-harm-gate",
+   "area": "Victory",
+   "label": "Harm above six blocks an otherwise qualifying check",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-negative-win",
+   "area": "Victory",
+   "label": "Final win with a negative margin",
+   "status": "natural exposure",
+   "games": 79,
+   "fixtures": [
+    "test/mechanics-a.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-tie",
+   "area": "Victory",
+   "label": "Equal final margins decided by Harm, then PKK",
+   "status": "natural exposure",
+   "games": 1,
+   "fixtures": [
+    "test/mechanics-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-excess-harm",
+   "area": "Victory",
+   "label": "Final margin reduced by excess Harm",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-rally-agitate",
+   "area": "Political economy",
+   "label": "Rally Agitation",
+   "status": "natural exposure",
+   "games": 137,
+   "fixtures": [
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-train-civic",
+   "area": "Political economy",
+   "label": "Train Civic Action",
+   "status": "natural exposure",
+   "games": 160,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-propaganda-civic",
+   "area": "Political economy",
+   "label": "Propaganda Civic Action spending (Legitimacy cap)",
+   "status": "natural exposure",
+   "games": 140,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-propaganda-agitation",
+   "area": "Political economy",
+   "label": "Propaganda Agitation spending",
+   "status": "natural exposure",
+   "games": 119,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-blocker-removal",
+   "area": "Political economy",
+   "label": "Removal of blocking markers before a shift (Coercion, Harm, Reception)",
+   "status": "natural exposure",
+   "games": 40,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-state-harm",
+   "area": "Civilian effects",
+   "label": "State Harm placed",
+   "status": "natural exposure",
+   "games": 84,
+   "fixtures": [
+    "src/engine/coin/events.test.ts",
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-pkk-harm",
+   "area": "Civilian effects",
+   "label": "PKK Harm placed",
+   "status": "natural exposure",
+   "games": 42,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-disputed-harm",
+   "area": "Civilian effects",
+   "label": "Disputed Harm placed (Cross-Border Assault)",
+   "status": "natural exposure",
+   "games": 71,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-coercion",
+   "area": "Civilian effects",
+   "label": "Coerce places Coercion",
+   "status": "natural exposure",
+   "games": 40,
+   "fixtures": [
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-guard-upkeep",
+   "area": "Civilian effects",
+   "label": "Guard upkeep paid",
+   "status": "natural exposure",
+   "games": 157,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-upkeep-shortfall",
+   "area": "Civilian effects",
+   "label": "Guards removed for unpaid upkeep",
+   "status": "natural exposure",
+   "games": 16,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-guard-abuse",
+   "area": "Civilian effects",
+   "label": "Guard Abuse (DK-006 shaded)",
+   "status": "natural exposure",
+   "games": 13,
+   "fixtures": [
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-strike",
+   "area": "Civilian effects",
+   "label": "Strike Collaborators",
+   "status": "natural exposure",
+   "games": 1,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-europe",
+   "area": "Civilian effects",
+   "label": "Europe track change",
+   "status": "natural exposure",
+   "games": 120,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-marker-removal",
+   "area": "Civilian effects",
+   "label": "Harm or Coercion marker removed (Redress, Reset)",
+   "status": "natural exposure",
+   "games": 41,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-reception",
+   "area": "Civilian effects",
+   "label": "Reception marker placed",
+   "status": "natural exposure",
+   "games": 14,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-displacement",
+   "area": "Civilian effects",
+   "label": "Displacement marker placed",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-host",
+   "area": "Sanctuary",
+   "label": "syria posture reaches host",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-tolerant",
+   "area": "Sanctuary",
+   "label": "syria posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-restricted",
+   "area": "Sanctuary",
+   "label": "syria posture reaches restricted",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-hostile",
+   "area": "Sanctuary",
+   "label": "syria posture reaches hostile",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-aligned",
+   "area": "Sanctuary",
+   "label": "syria posture reaches aligned",
+   "status": "not applicable",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": "Syria has no Aligned step (rules 8.1)"
+  },
+  {
+   "id": "H-kdp-host",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches host",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-tolerant",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-restricted",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches restricted",
+   "status": "natural exposure",
+   "games": 29,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-hostile",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches hostile",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-aligned",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches aligned",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-host",
+   "area": "Sanctuary",
+   "label": "puk posture reaches host",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-tolerant",
+   "area": "Sanctuary",
+   "label": "puk posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-restricted",
+   "area": "Sanctuary",
+   "label": "puk posture reaches restricted",
+   "status": "natural exposure",
+   "games": 1,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-hostile",
+   "area": "Sanctuary",
+   "label": "puk posture reaches hostile",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-aligned",
+   "area": "Sanctuary",
+   "label": "puk posture reaches aligned",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-host-pressure",
+   "area": "Sanctuary",
+   "label": "Host Pressure",
+   "status": "natural exposure",
+   "games": 8,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-diplomacy",
+   "area": "Sanctuary",
+   "label": "Diplomacy",
+   "status": "natural exposure",
+   "games": 3,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-cross-border",
+   "area": "Sanctuary",
+   "label": "Cross-Border Sweep or Assault",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-hot-pursuit",
+   "area": "Sanctuary",
+   "label": "Early KDP hot pursuit (KDP Host or Tolerant)",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-interrupted",
+   "area": "Sanctuary",
+   "label": "Operation resumed after Host Pressure (interrupted continuation)",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-restricted-entry",
+   "area": "Sanctuary",
+   "label": "March into a Restricted box (+1, activates)",
+   "status": "natural exposure",
+   "games": 15,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-leadership-abroad",
+   "area": "Sanctuary",
+   "label": "Leadership flips Abroad",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-always",
+   "area": "Sequence/cards",
+   "label": "Mandatory Always line on reveal (DK-003, DK-005, DK-019, DK-020)",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/events.test.ts",
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-event-unshaded",
+   "area": "Sequence/cards",
+   "label": "Unshaded Event executed",
+   "status": "natural exposure",
+   "games": 182,
+   "fixtures": [
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-event-shaded",
+   "area": "Sequence/cards",
+   "label": "Shaded Event executed",
+   "status": "natural exposure",
+   "games": 145,
+   "fixtures": [
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-argk-play",
+   "area": "Sequence/cards",
+   "label": "ARGK played",
+   "status": "natural exposure",
+   "games": 87,
+   "fixtures": [
+    "src/engine/coin/pivotal.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-argk-decline",
+   "area": "Sequence/cards",
+   "label": "ARGK declined",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/pivotal.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-pass",
+   "area": "Sequence/cards",
+   "label": "Pass",
+   "status": "natural exposure",
+   "games": 193,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-limited",
+   "area": "Sequence/cards",
+   "label": "Limited Op",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-op-only",
+   "area": "Sequence/cards",
+   "label": "Op Only",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-op-sa",
+   "area": "Sequence/cards",
+   "label": "Op + SA",
+   "status": "natural exposure",
+   "games": 185,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-redeploy-moves",
+   "area": "Sequence/cards",
+   "label": "Redeploy with moves",
+   "status": "natural exposure",
+   "games": 29,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-reset",
+   "area": "Sequence/cards",
+   "label": "Reset (Momentum discarded or Guerrillas flipped)",
+   "status": "natural exposure",
+   "games": 200,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-final-skips",
+   "area": "Sequence/cards",
+   "label": "Final round skips income, Redeploy and Reset",
+   "status": "natural exposure",
+   "games": 81,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/propaganda/multi-round.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-emergency",
+   "area": "Sequence/cards",
+   "label": "Emergency Rule step chosen (OHAL to Normalizing or back)",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.train",
+   "area": "Sequence/cards",
+   "label": "Operation state.train",
+   "status": "natural exposure",
+   "games": 195,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.garrison",
+   "area": "Sequence/cards",
+   "label": "Operation state.garrison",
+   "status": "natural exposure",
+   "games": 81,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.sweep",
+   "area": "Sequence/cards",
+   "label": "Operation state.sweep",
+   "status": "natural exposure",
+   "games": 78,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.assault",
+   "area": "Sequence/cards",
+   "label": "Operation state.assault",
+   "status": "natural exposure",
+   "games": 118,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.rally",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.rally",
+   "status": "natural exposure",
+   "games": 180,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.march",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.march",
+   "status": "natural exposure",
+   "games": 145,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.attack",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.attack",
+   "status": "natural exposure",
+   "games": 58,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.coerce",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.coerce",
+   "status": "natural exposure",
+   "games": 40,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-state.air-mobility",
+   "area": "Sequence/cards",
+   "label": "Special Activity state.air-mobility",
+   "status": "natural exposure",
+   "games": 97,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-pkk.ambush",
+   "area": "Sequence/cards",
+   "label": "Special Activity pkk.ambush",
+   "status": "natural exposure",
+   "games": 9,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-pkk.extort",
+   "area": "Sequence/cards",
+   "label": "Special Activity pkk.extort",
+   "status": "natural exposure",
+   "games": 140,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  }
+ ],
+ "diagnostics": {
+  "passShare": {
+   "pkk": 0.23332574550421126,
+   "state": 0.31026785714285715
+  },
+  "maxFirstEligibleStreak": 16,
+  "meanUnusedResources": {
+   "state": 5.35,
+   "pkk": 3.905
+  },
+  "passStreak3Games": {
+   "state": 91,
+   "pkk": 37
+  },
+  "stopRuleFlags": {},
+  "boxesByFaction": {
+   "state": {
+    "limitedOp": 1021,
+    "opSa": 595,
+    "pass": 1390,
+    "opOnly": 444,
+    "event": 1030
+   },
+   "pkk": {
+    "opOnly": 705,
+    "limitedOp": 745,
+    "opSa": 1327,
+    "event": 591,
+    "pass": 1025
+   }
+  },
+  "eligibilityRows": {
+   "opOnly -> limitedOp": 426,
+   "opSa -> limitedOp": 427,
+   "pass -> limitedOp": 168,
+   "limitedOp -> opSa": 120,
+   "pass -> opSa": 138,
+   "event -> pass": 496,
+   "limitedOp -> opOnly": 394,
+   "opSa -> event": 76,
+   "opSa -> pass": 172,
+   "event -> opSa": 989,
+   "pass -> pass": 367,
+   "limitedOp -> pass": 231,
+   "pass -> event": 147,
+   "pass -> opOnly": 158,
+   "opOnly -> pass": 171
+  },
+  "eventSides": {
+   "DK-005 shaded": 36,
+   "DK-012 unshaded": 86,
+   "DK-033 shaded": 51,
+   "DK-031 shaded": 27,
+   "DK-029 shaded": 20,
+   "DK-020 shaded": 44,
+   "DK-027 shaded": 45,
+   "DK-032 shaded": 30,
+   "DK-100 shaded": 9,
+   "DK-022 shaded": 50,
+   "DK-020 unshaded": 71,
+   "DK-001 unshaded": 46,
+   "DK-003 shaded": 12,
+   "DK-100 unshaded": 59,
+   "DK-012 shaded": 12,
+   "DK-007 unshaded": 34,
+   "DK-011 unshaded": 27,
+   "DK-001 shaded": 13,
+   "DK-019 shaded": 27,
+   "DK-002 shaded": 13,
+   "DK-026 shaded": 22,
+   "DK-034 shaded": 27,
+   "DK-032 unshaded": 55,
+   "DK-031 unshaded": 31,
+   "DK-013 shaded": 17,
+   "DK-004 unshaded": 22,
+   "DK-010 shaded": 7,
+   "DK-029 unshaded": 42,
+   "DK-021 unshaded": 20,
+   "DK-018 shaded": 28,
+   "DK-017 shaded": 16,
+   "DK-026 unshaded": 19,
+   "DK-021 shaded": 20,
+   "DK-008 shaded": 10,
+   "DK-027 unshaded": 34,
+   "DK-025 shaded": 16,
+   "DK-024 unshaded": 44,
+   "DK-019 unshaded": 31,
+   "DK-023 unshaded": 29,
+   "DK-014 unshaded": 33,
+   "DK-005 unshaded": 27,
+   "DK-010 unshaded": 16,
+   "DK-008 unshaded": 19,
+   "DK-023 shaded": 13,
+   "DK-006 shaded": 13,
+   "DK-013 unshaded": 21,
+   "DK-024 shaded": 14,
+   "DK-006 unshaded": 17,
+   "DK-018 unshaded": 29,
+   "DK-004 shaded": 13,
+   "DK-028 shaded": 16,
+   "DK-014 shaded": 4,
+   "DK-011 shaded": 11,
+   "DK-003 unshaded": 20,
+   "DK-002 unshaded": 19,
+   "DK-022 unshaded": 22,
+   "DK-033 unshaded": 33,
+   "DK-009 shaded": 2,
+   "DK-007 shaded": 4,
+   "DK-030 shaded": 3,
+   "DK-028 unshaded": 16,
+   "DK-025 unshaded": 12,
+   "DK-017 unshaded": 10,
+   "DK-034 unshaded": 15,
+   "DK-030 unshaded": 10,
+   "DK-009 unshaded": 7
+  }
+ }
+}

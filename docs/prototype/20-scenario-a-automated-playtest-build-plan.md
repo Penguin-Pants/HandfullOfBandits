@@ -1,6 +1,6 @@
 # Scenario A automated playtest build plan
 
-Status: ready for implementation. Planning only; no code changed by this plan.
+Status: implemented and run 2026-11-03; status and corrections in [22](22-scenario-a-automated-playtest-status.md), results in [23](23-scenario-a-automated-playtest-report.md). Human IC-3a remains open.
 Date: 2026-11-03. Source: [requirements](19-scenario-a-automated-playtest-spec.md).
 The requested output path was an unfilled placeholder; this file follows the
 existing numbered prototype-document convention.

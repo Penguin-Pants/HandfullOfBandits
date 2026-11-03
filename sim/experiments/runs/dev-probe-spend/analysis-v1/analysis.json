@@ -1,0 +1,158 @@
+{
+ "analysisVersion": 1,
+ "experiment": "dev-probe-spend",
+ "stage": "development",
+ "experimentHash": "85b6f8a017a299b0766481ac34ac8b3a5ab578740df939376f8743a191350b0f",
+ "scheduled": 80,
+ "byStatus": {
+  "complete": 80
+ },
+ "conditions": [
+  {
+   "id": "baseline",
+   "cells": [
+    {
+     "condition": "baseline",
+     "state": "S-SPEND@3",
+     "pkk": "P-SHIELD@3",
+     "scheduled": 40,
+     "completed": 40,
+     "incomplete": {},
+     "stateWins": 3,
+     "stateWinRate": 0.075,
+     "ci": {
+      "low": 0.025836025573262467,
+      "high": 0.19864233651643162
+     },
+     "marginDiff": {
+      "mean": -11.225,
+      "p10": -22,
+      "p50": -10.5,
+      "p90": -0.8999999999999986
+     },
+     "earlyWins": {
+      "state": 0,
+      "pkk": 2
+     },
+     "thresholdReached": {
+      "state": 0,
+      "pkk": 3
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-SPEND@3",
+     "pkk": "P-POL@2",
+     "scheduled": 40,
+     "completed": 40,
+     "incomplete": {},
+     "stateWins": 21,
+     "stateWinRate": 0.525,
+     "ci": {
+      "low": 0.3749736199712279,
+      "high": 0.670645299905849
+     },
+     "marginDiff": {
+      "mean": -1.55,
+      "p10": -17.2,
+      "p50": 1,
+      "p90": 14.200000000000003
+     },
+     "earlyWins": {
+      "state": 2,
+      "pkk": 1
+     },
+     "thresholdReached": {
+      "state": 2,
+      "pkk": 3
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    }
+   ],
+   "roster": {
+    "mean": 0.3,
+    "low": 0.21250000000000002,
+    "high": 0.375,
+    "cells": 2
+   },
+   "warnings": {
+    "cell": [
+     "S-SPEND@3 vs P-SHIELD@3 (baseline): State 7.5%"
+    ],
+    "roster": [
+     "PKK roster average 70.0% > 60%"
+    ],
+    "margin": [
+     "S-SPEND@3 vs P-SHIELD@3 (baseline): median margin difference -10.5"
+    ]
+   }
+  }
+ ],
+ "review": {
+  "closest": [
+   "baseline~S-SPENDv3~P-SHIELDv3~3033~r0",
+   "baseline~S-SPENDv3~P-POLv2~3003~r0",
+   "baseline~S-SPENDv3~P-POLv2~3013~r0",
+   "baseline~S-SPENDv3~P-POLv2~3016~r0",
+   "baseline~S-SPENDv3~P-POLv2~3028~r0"
+  ],
+  "largest": [
+   "baseline~S-SPENDv3~P-SHIELDv3~3011~r0",
+   "baseline~S-SPENDv3~P-POLv2~3037~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3034~r0",
+   "baseline~S-SPENDv3~P-POLv2~3004~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3007~r0"
+  ],
+  "random": [
+   "baseline~S-SPENDv3~P-SHIELDv3~3007~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3018~r0",
+   "baseline~S-SPENDv3~P-POLv2~3031~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3011~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3026~r0"
+  ],
+  "failures": [],
+  "all": [
+   "baseline~S-SPENDv3~P-SHIELDv3~3033~r0",
+   "baseline~S-SPENDv3~P-POLv2~3003~r0",
+   "baseline~S-SPENDv3~P-POLv2~3013~r0",
+   "baseline~S-SPENDv3~P-POLv2~3016~r0",
+   "baseline~S-SPENDv3~P-POLv2~3028~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3011~r0",
+   "baseline~S-SPENDv3~P-POLv2~3037~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3034~r0",
+   "baseline~S-SPENDv3~P-POLv2~3004~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3007~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3018~r0",
+   "baseline~S-SPENDv3~P-POLv2~3031~r0",
+   "baseline~S-SPENDv3~P-SHIELDv3~3026~r0"
+  ]
+ },
+ "routes": {
+  "games": 80,
+  "state": {
+   "support": 21.95,
+   "legitimacy": 10.9
+  },
+  "pkk": {
+   "opposition": 16.4375,
+   "bases": 3.8
+  },
+  "stateWinners": {
+   "support": 28.291666666666668,
+   "legitimacy": 10.291666666666666,
+   "games": 24
+  },
+  "pkkWinners": {
+   "opposition": 19.035714285714285,
+   "bases": 4.714285714285714,
+   "games": 56
+  }
+ }
+}
