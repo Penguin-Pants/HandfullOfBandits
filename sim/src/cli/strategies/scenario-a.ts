@@ -24,7 +24,7 @@ export const ROSTER_VERSION: Readonly<Record<FactionId, number>> = { state: 1, p
 /** Transitions per decision for every qualified search player (19 s7: equal budgets). */
 export const SEARCH_BUDGET = 600;
 
-const BASE: Weights = { ownPotential: 0.5, oppPotential: 0.5, qualify: 6, resources: 0.05, controlPop: 0, oppControlPop: 0, pkkBases: 0, guerrillas: 0, underground: 0, active: 0, external: 0, presencePop: 0, policedPop: 0, legitimacy: 0, convertBy: 0, potentialModel: "uncapped" };
+const BASE: Weights = { ownPotential: 0.5, oppPotential: 0.5, qualify: 6, resources: 0.05, controlPop: 0, oppControlPop: 0, pkkBases: 0, guerrillas: 0, underground: 0, active: 0, external: 0, presencePop: 0, policedPop: 0, legitimacy: 0, convertBy: 0, potentialModel: "uncapped", protectedBases: 0, exposedBases: 0 };
 
 interface Family {
   readonly id: string;
@@ -60,9 +60,23 @@ const V1: readonly Omit<Family, "version">[] = [
  * the remaining Propaganda Civic Action caps and Train/Rally opportunities (pilot-1 finding:
  * uncapped potential made hoarding by Pass look better than spending).
  */
+/**
+ * Phase 8 counter (19 s10). baseline-1: no PKK family reached 50% against S-MIL, which keeps
+ * domestic Bases at 0 to 1 by Sweep or Garrison then Assault. P-SHIELD is P-POL v2 plus Base
+ * protection: value Bases that keep an Underground Guerrilla (Assault cannot remove them) and
+ * penalize Bases left beside Troops with no Underground Guerrilla.
+ */
+const POL = V1.find((f) => f.id === "P-POL")?.weights ?? BASE;
+const COUNTERS: readonly Family[] = [
+  { id: "P-SHIELD", version: 3, faction: "pkk", adaptive: false,
+    weights: { ...POL, potentialModel: "capped", pkkBases: 1.5, protectedBases: 1.5, exposedBases: 2, underground: 0.15 },
+    description: "Counter to S-MIL: P-POL priorities plus Base protection. Keeps an Underground Guerrilla with each domestic Base (Rally flip, Underground March) and avoids Bases exposed to Sweep and Assault." },
+];
+
 export const FAMILIES: readonly Family[] = [
   ...V1.map((f) => ({ ...f, version: 1 })),
   ...V1.map((f) => ({ ...f, version: 2, weights: { ...f.weights, potentialModel: "capped" as const } })),
+  ...COUNTERS,
 ];
 
 /** The frozen version of each family: the qualified roster. */

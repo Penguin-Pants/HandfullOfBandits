@@ -3,6 +3,7 @@
 // choice -> engine apply. Every applied command is emitted at once with its state hash, so the
 // parent can persist a replayable prefix. Failures end the game as incomplete, never as a loss.
 import { canonicalHash } from "../engine/core/canonical.ts";
+import { param } from "../engine/core/params.ts";
 import type { AnyCommand, FactionId, GameState, JsonObject, Ruleset } from "../engine/core/types.ts";
 import type { Engine } from "../engine/index.ts";
 import { checkStandings } from "../engine/coin/victory.ts";
@@ -76,6 +77,7 @@ export interface GameResultRecord {
 
 /** Public snapshot at a Propaganda boundary (19 s9 checkpoint level). */
 export function snapshot(r: Ruleset, s: GameState): JsonObject {
+  const limit = param(r, "harm.limit", "number");
   const view = derive(r, s);
   const home = r.spaces.filter((x) => x.kind === "domestic");
   const ext = r.spaces.filter((x) => x.kind === "external");
@@ -93,7 +95,7 @@ export function snapshot(r: Ruleset, s: GameState): JsonObject {
     harm: view.harm,
     checkMargins: Object.fromEntries(checkStandings(r, s, false).map((x) => [x.faction, x.margin])),
     finalMargins: Object.fromEntries(checkStandings(r, s, true).map((x) => [x.faction, x.margin])),
-    qualifies: Object.fromEntries(checkStandings(r, s, false).map((x) => [x.faction, x.margin >= 0 && x.harm <= 6])), // literal-ok: Scenario A Harm limit, validated at manifest load
+    qualifies: Object.fromEntries(checkStandings(r, s, false).map((x) => [x.faction, x.margin >= 0 && x.harm <= limit])),
   };
 }
 

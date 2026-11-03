@@ -64,6 +64,10 @@ export interface Features {
   readonly resources: Readonly<Record<FactionId, number>>;
   readonly income: Readonly<Record<FactionId, number>>;
   readonly pkkBases: number;
+  /** Domestic PKK Bases sharing a space with an Underground Guerrilla: Assault cannot reach them (rules 3.2.4). */
+  readonly protectedBases: number;
+  /** Domestic PKK Bases with Troops present and no Underground Guerrilla: open to Sweep then Assault. */
+  readonly exposedBases: number;
   readonly guerrillas: number;
   readonly underground: number;
   readonly active: number;
@@ -137,7 +141,10 @@ export function features(r: Ruleset, s: GameState, model: PotentialModel = "unca
   const controlPop = (f: string): number => home.filter((x) => view.control[x.id] === f).reduce((n, x) => n + x.pop, 0);
   return {
     score: view.scores, harm: view.harm, margin, qualifies, potential, resources: res, income: pay,
-    pkkBases: sum("pkkBase"), guerrillas: sum("guerrilla"), underground: sum("guerrilla", "underground"), active: sum("guerrilla", "active"),
+    pkkBases: sum("pkkBase"),
+    protectedBases: home.reduce((n, x) => n + (count(s, x.id, "guerrilla", "underground") > 0 ? count(s, x.id, "pkkBase") : 0), 0),
+    exposedBases: home.reduce((n, x) => n + (count(s, x.id, "guerrilla", "underground") === 0 && count(s, x.id, "troops") > 0 ? count(s, x.id, "pkkBase") : 0), 0),
+    guerrillas: sum("guerrilla"), underground: sum("guerrilla", "underground"), active: sum("guerrilla", "active"),
     externalGuerrillas: r.spaces.filter((x) => x.kind === "external").reduce((n, x) => n + count(s, x.id, "guerrilla"), 0),
     controlPop: { state: controlPop("state"), pkk: controlPop("pkk") },
     presencePop: home.filter((x) => count(s, x.id, "guerrilla") + count(s, x.id, "pkkBase") > 0).reduce((n, x) => n + x.pop, 0),
@@ -157,6 +164,8 @@ export interface Weights {
   readonly controlPop: number;
   readonly oppControlPop: number;
   readonly pkkBases: number;
+  readonly protectedBases: number;
+  readonly exposedBases: number;
   readonly guerrillas: number;
   readonly underground: number;
   readonly active: number;
@@ -195,7 +204,7 @@ export function evaluate(r: Ruleset, s: GameState, faction: FactionId, w: Weight
   const shaping =
     w.resources * preserve * (f.resources[faction] ?? 0) +
     w.controlPop * (f.controlPop[faction] ?? 0) - w.oppControlPop * (f.controlPop[other] ?? 0) +
-    sign * (w.pkkBases * f.pkkBases + w.guerrillas * preserve * f.guerrillas + w.underground * preserve * f.underground + w.external * preserve * f.externalGuerrillas + w.presencePop * f.presencePop) +
+    sign * (w.pkkBases * f.pkkBases + w.protectedBases * f.protectedBases - w.exposedBases * f.exposedBases + w.guerrillas * preserve * f.guerrillas + w.underground * preserve * f.underground + w.external * preserve * f.externalGuerrillas + w.presencePop * f.presencePop) +
     w.active * f.active + w.policedPop * f.policedPop + w.legitimacy * f.legitimacy;
   return {
     value: earned + potential + qualify + shaping,
