@@ -1,0 +1,5251 @@
+[
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3001~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3001,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 41,
+     "harm": 0,
+     "margin": -8
+    },
+    {
+     "faction": "pkk",
+     "score": 21,
+     "harm": 0,
+     "margin": -9
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-100",
+    "DK-008",
+    "DK-005",
+    "DK-015",
+    "DK-009",
+    "DK-002",
+    "DK-012",
+    "DK-003",
+    "DK-016",
+    "DK-006",
+    "DK-014",
+    "DK-001",
+    "DK-010",
+    "DK-018",
+    "DK-028",
+    "DK-022",
+    "DK-021",
+    "DK-019",
+    "DK-026",
+    "DK-032",
+    "DK-020",
+    "DK-027",
+    "DK-017",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "732746c6cfde673e3e482cc90127521141fdd09d410dd0c949b1569ec2269b7e",
+  "finalHash": "8ac18f9bae35efe5a3ad01d8fb08800a0c04a1c515380b0e30845be30aa9e862",
+  "ms": 9712.126965,
+  "decisions": 53,
+  "transitions": 5523,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3002~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3002,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 47,
+     "harm": 0,
+     "margin": -2
+    },
+    {
+     "faction": "pkk",
+     "score": 21,
+     "harm": 1,
+     "margin": -9
+    }
+   ],
+   "cardsPlayed": [
+    "DK-002",
+    "DK-014",
+    "DK-006",
+    "DK-010",
+    "DK-015",
+    "DK-007",
+    "DK-012",
+    "DK-003",
+    "DK-005",
+    "DK-016",
+    "DK-100",
+    "DK-009",
+    "DK-004",
+    "DK-013",
+    "DK-027",
+    "DK-019",
+    "DK-033",
+    "DK-032",
+    "DK-018",
+    "DK-020",
+    "DK-025",
+    "DK-022",
+    "DK-026",
+    "DK-030",
+    "DK-023",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "d0c741b5985dc64175582732bff286bfe36419076fe38df1e2bb5d59269a4801",
+  "finalHash": "22e2a273ec7fbe2f49834c8b3eff9a07015026640cf59ebab23ace6379248302",
+  "ms": 9073.867133,
+  "decisions": 55,
+  "transitions": 5658,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3003~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3003,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 28,
+     "harm": 1,
+     "margin": -21
+    },
+    {
+     "faction": "pkk",
+     "score": 24,
+     "harm": 0,
+     "margin": -6
+    }
+   ],
+   "cardsPlayed": [
+    "DK-013",
+    "DK-005",
+    "DK-003",
+    "DK-008",
+    "DK-015",
+    "DK-007",
+    "DK-012",
+    "DK-100",
+    "DK-006",
+    "DK-011",
+    "DK-009",
+    "DK-014",
+    "DK-004",
+    "DK-016",
+    "DK-028",
+    "DK-019",
+    "DK-023",
+    "DK-020",
+    "DK-033",
+    "DK-032",
+    "DK-030",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "0319625c2cac756282500976804cab91761b42d0b12a7e85cdd6eae9cc79886f",
+  "finalHash": "d924b8db28ddbbb4f212822df6d01d7c7c1af3b0edd9d002874870b7834c1484",
+  "ms": 9775.996409,
+  "decisions": 47,
+  "transitions": 5289,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3004~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3004,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 0,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-001",
+    "DK-008",
+    "DK-007",
+    "DK-009",
+    "DK-015",
+    "DK-003",
+    "DK-006",
+    "DK-005",
+    "DK-100",
+    "DK-011",
+    "DK-012",
+    "DK-013",
+    "DK-016",
+    "DK-010",
+    "DK-019",
+    "DK-028",
+    "DK-024",
+    "DK-025",
+    "DK-034",
+    "DK-032",
+    "DK-017",
+    "DK-020",
+    "DK-023",
+    "DK-029",
+    "DK-027",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "a2a828f99961c714c4c026a87774a9536747971bd9d2dab6397f0c079d3079b2",
+  "finalHash": "4e4a728df7592afada0e422add42d9d2b2e8156b82687716635d69c573e81b81",
+  "ms": 9588.441475,
+  "decisions": 54,
+  "transitions": 5153,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3005~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3005,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 35,
+     "harm": 1,
+     "margin": -14
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-010",
+    "DK-005",
+    "DK-001",
+    "DK-007",
+    "DK-015",
+    "DK-100",
+    "DK-013",
+    "DK-006",
+    "DK-003",
+    "DK-016",
+    "DK-012",
+    "DK-008",
+    "DK-009",
+    "DK-011",
+    "DK-021",
+    "DK-032",
+    "DK-020",
+    "DK-033",
+    "DK-017",
+    "DK-025",
+    "DK-023",
+    "DK-019",
+    "DK-026",
+    "DK-031",
+    "DK-022",
+    "DK-030",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "3f124a9156bf07e6c0bf7d0ab7981c3e5f4061af3a9d8190a2a80d805953ca01",
+  "finalHash": "79f0a46dc893d90dc09a7974319cf9152996fe58f9ca9017860c94f2df0b90e1",
+  "ms": 7942.463819999999,
+  "decisions": 55,
+  "transitions": 5777,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3006~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3006,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 35,
+     "harm": 0,
+     "margin": -14
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-001",
+    "DK-014",
+    "DK-013",
+    "DK-009",
+    "DK-015",
+    "DK-005",
+    "DK-012",
+    "DK-100",
+    "DK-003",
+    "DK-008",
+    "DK-007",
+    "DK-006",
+    "DK-016",
+    "DK-011",
+    "DK-031",
+    "DK-028",
+    "DK-021",
+    "DK-018",
+    "DK-017",
+    "DK-029",
+    "DK-020",
+    "DK-019",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "1a81ebb34a6ba878d96bc2902d1e746b7a48222bf43e1997a183d04377109f1d",
+  "finalHash": "0a44ca02eedf2df0f1cdaaaa4a60e998879c9c2273714c33d988cd8eb8763e84",
+  "ms": 6866.296312999999,
+  "decisions": 48,
+  "transitions": 5226,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3007~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3007,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 27,
+     "harm": 1,
+     "margin": -22
+    },
+    {
+     "faction": "pkk",
+     "score": 31,
+     "harm": 0,
+     "margin": 1
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-003",
+    "DK-005",
+    "DK-015",
+    "DK-007",
+    "DK-013",
+    "DK-011",
+    "DK-010",
+    "DK-004",
+    "DK-016",
+    "DK-100",
+    "DK-008",
+    "DK-006",
+    "DK-002",
+    "DK-019",
+    "DK-021",
+    "DK-020",
+    "DK-022",
+    "DK-033",
+    "DK-027",
+    "DK-024",
+    "DK-018",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "7f17f22f03d9365f0253dc67d5c56a952626660a58c0cd8c80dc5c47960b429d",
+  "finalHash": "552b0a66b07bd39a7862cacec2feb4e48ea44b57c6ad20be1a549ef985f171e1",
+  "ms": 7115.502924999999,
+  "decisions": 49,
+  "transitions": 5125,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3008~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3008,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 28,
+     "harm": 1,
+     "margin": -21
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-007",
+    "DK-014",
+    "DK-010",
+    "DK-013",
+    "DK-004",
+    "DK-001",
+    "DK-003",
+    "DK-015",
+    "DK-009",
+    "DK-100",
+    "DK-012",
+    "DK-016",
+    "DK-006",
+    "DK-025",
+    "DK-023",
+    "DK-033",
+    "DK-018",
+    "DK-028",
+    "DK-020",
+    "DK-027",
+    "DK-019",
+    "DK-032",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "240d4f59270b6302adf0a8d87d1654240715137d36daff17e305f530d47dd7f0",
+  "finalHash": "cb04cf688475a6f2868f377c0ca738a950d97e13b16cc0df9af7f3277ff449c8",
+  "ms": 6339.778662000001,
+  "decisions": 49,
+  "transitions": 4624,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3009~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3009,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 0,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 28,
+     "harm": 0,
+     "margin": -2
+    }
+   ],
+   "cardsPlayed": [
+    "DK-003",
+    "DK-014",
+    "DK-002",
+    "DK-015",
+    "DK-005",
+    "DK-100",
+    "DK-008",
+    "DK-006",
+    "DK-009",
+    "DK-010",
+    "DK-011",
+    "DK-012",
+    "DK-004",
+    "DK-016",
+    "DK-019",
+    "DK-022",
+    "DK-021",
+    "DK-027",
+    "DK-017",
+    "DK-024",
+    "DK-028",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "438973ecceea6fbacead8207450ae957f17bc9dc4821e6aabfc51843ca6ceb14",
+  "finalHash": "b820f58d5c0620225563870583e31eb1d444b49285652619cb77fe3574c861b6",
+  "ms": 6026.711060000001,
+  "decisions": 47,
+  "transitions": 4626,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3010~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3010,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 1,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 17,
+     "harm": 0,
+     "margin": -13
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-100",
+    "DK-013",
+    "DK-006",
+    "DK-015",
+    "DK-007",
+    "DK-014",
+    "DK-001",
+    "DK-003",
+    "DK-009",
+    "DK-008",
+    "DK-011",
+    "DK-004",
+    "DK-016",
+    "DK-032",
+    "DK-033",
+    "DK-025",
+    "DK-017",
+    "DK-034",
+    "DK-019",
+    "DK-027",
+    "DK-020",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "73f6b80752361107432dbfe3dfde84a0a9727fd4735f84ef183ac5afb52483eb",
+  "finalHash": "fb2b89849289dc09c4652f258f5c8df4d7a14929d3ab8cac139eba1ae0d911ee",
+  "ms": 6942.293965000001,
+  "decisions": 49,
+  "transitions": 5074,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3011~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3011,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "victory check",
+  "result": {
+   "winner": "pkk",
+   "endReason": "victory check",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 20,
+     "harm": 0,
+     "margin": -29
+    },
+    {
+     "faction": "pkk",
+     "score": 34,
+     "harm": 0,
+     "margin": 4
+    }
+   ],
+   "cardsPlayed": [
+    "DK-003",
+    "DK-014",
+    "DK-006",
+    "DK-015",
+    "DK-011",
+    "DK-005",
+    "DK-008",
+    "DK-013",
+    "DK-007",
+    "DK-002",
+    "DK-012",
+    "DK-016",
+    "DK-001",
+    "DK-004",
+    "DK-017",
+    "DK-032",
+    "DK-018",
+    "DK-019",
+    "DK-027",
+    "DK-034",
+    "DK-024",
+    "DK-020",
+    "DK-029",
+    "DK-026",
+    "DK-022",
+    "DK-023",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "0279a2817fc0d50e37be6d7450736a5c9a3bf2e0cf7ebcba73b29850695c8a38",
+  "finalHash": "c12dcbbd4d2322ea45074b3ee6d4e8d62d7c0e5f2ea45b8f94f4f2112d0ac5d7",
+  "ms": 7745.66805,
+  "decisions": 52,
+  "transitions": 5986,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3012~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3012,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 31,
+     "harm": 0,
+     "margin": -18
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 1,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-002",
+    "DK-010",
+    "DK-005",
+    "DK-015",
+    "DK-007",
+    "DK-014",
+    "DK-013",
+    "DK-003",
+    "DK-012",
+    "DK-006",
+    "DK-100",
+    "DK-016",
+    "DK-001",
+    "DK-019",
+    "DK-030",
+    "DK-022",
+    "DK-018",
+    "DK-025",
+    "DK-021",
+    "DK-028",
+    "DK-020",
+    "DK-032",
+    "DK-034",
+    "DK-023",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "0cfaaef3127dc39833318f6aad4e19868ddc52aceb57e37f3f6d7772fd9e8cab",
+  "finalHash": "b7f8378f3cbe6d1f54ac7e96c293fb4e287add157f4a798ef44b465f86b2e87f",
+  "ms": 7553.821157999999,
+  "decisions": 54,
+  "transitions": 5961,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3013~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3013,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 34,
+     "harm": 0,
+     "margin": -15
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-100",
+    "DK-006",
+    "DK-007",
+    "DK-015",
+    "DK-005",
+    "DK-003",
+    "DK-009",
+    "DK-008",
+    "DK-010",
+    "DK-001",
+    "DK-013",
+    "DK-016",
+    "DK-011",
+    "DK-031",
+    "DK-017",
+    "DK-034",
+    "DK-032",
+    "DK-024",
+    "DK-026",
+    "DK-019",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "a105c442c210375bd938703eeca89105dad77cb9f6f73aa56a584e63ce79c9d0",
+  "finalHash": "5af8660900ff59cc3817ca2f494bd3631de7baa414a485f57fa76d7c3fffd3c0",
+  "ms": 6050.082713,
+  "decisions": 47,
+  "transitions": 4730,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3014~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3014,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 28,
+     "harm": 0,
+     "margin": -21
+    },
+    {
+     "faction": "pkk",
+     "score": 27,
+     "harm": 0,
+     "margin": -3
+    }
+   ],
+   "cardsPlayed": [
+    "DK-014",
+    "DK-008",
+    "DK-001",
+    "DK-003",
+    "DK-015",
+    "DK-011",
+    "DK-009",
+    "DK-005",
+    "DK-010",
+    "DK-002",
+    "DK-007",
+    "DK-012",
+    "DK-013",
+    "DK-016",
+    "DK-028",
+    "DK-019",
+    "DK-026",
+    "DK-025",
+    "DK-031",
+    "DK-030",
+    "DK-020",
+    "DK-034",
+    "DK-017",
+    "DK-023",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "f51b326fff23e9c2915bb20252864b2247c9c856a69b0f97dab7989ccb0838c8",
+  "finalHash": "530a514ece5c1c8908dc65ae349272d7ced3d7066bd44cbe6a96d33316623c30",
+  "ms": 7727.173397999999,
+  "decisions": 51,
+  "transitions": 5591,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3015~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3015,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 35,
+     "harm": 1,
+     "margin": -14
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-002",
+    "DK-010",
+    "DK-008",
+    "DK-014",
+    "DK-015",
+    "DK-009",
+    "DK-004",
+    "DK-005",
+    "DK-003",
+    "DK-006",
+    "DK-011",
+    "DK-100",
+    "DK-001",
+    "DK-016",
+    "DK-029",
+    "DK-022",
+    "DK-033",
+    "DK-019",
+    "DK-025",
+    "DK-017",
+    "DK-023",
+    "DK-020",
+    "DK-018",
+    "DK-032",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "d90d58761bdbc30c9101716617405b5220fa8ed87f9e506a170abc55045e38bd",
+  "finalHash": "df60bf19d29a31e39dbe968be3653e93166a257e6f3656c9c43d7bfe133a884e",
+  "ms": 5977.951529000002,
+  "decisions": 54,
+  "transitions": 4866,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3016~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3016,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 36,
+     "harm": 0,
+     "margin": -13
+    },
+    {
+     "faction": "pkk",
+     "score": 29,
+     "harm": 1,
+     "margin": -1
+    }
+   ],
+   "cardsPlayed": [
+    "DK-010",
+    "DK-003",
+    "DK-008",
+    "DK-015",
+    "DK-011",
+    "DK-005",
+    "DK-100",
+    "DK-013",
+    "DK-002",
+    "DK-012",
+    "DK-006",
+    "DK-001",
+    "DK-014",
+    "DK-016",
+    "DK-023",
+    "DK-031",
+    "DK-017",
+    "DK-020",
+    "DK-026",
+    "DK-027",
+    "DK-022",
+    "DK-019",
+    "DK-032",
+    "DK-030",
+    "DK-024",
+    "DK-025",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "62f31e17a21e9a705eef27280c6ac9c0aa1d8b4fb8d1bd191def80d3bb4280a3",
+  "finalHash": "3eab85005b70265e81d60bb963d8ba2cebb0db716b4476c96788c797e51056c5",
+  "ms": 9255.715244000003,
+  "decisions": 55,
+  "transitions": 7241,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3017~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3017,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 35,
+     "harm": 0,
+     "margin": -14
+    },
+    {
+     "faction": "pkk",
+     "score": 24,
+     "harm": 0,
+     "margin": -6
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-011",
+    "DK-001",
+    "DK-007",
+    "DK-015",
+    "DK-004",
+    "DK-002",
+    "DK-005",
+    "DK-003",
+    "DK-012",
+    "DK-100",
+    "DK-006",
+    "DK-013",
+    "DK-016",
+    "DK-032",
+    "DK-020",
+    "DK-025",
+    "DK-027",
+    "DK-028",
+    "DK-024",
+    "DK-018",
+    "DK-019",
+    "DK-034",
+    "DK-029",
+    "DK-017",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "a37b219da528b284dbb7ef0b14fafcb3fdb5c518e3bbbe4169ad99e1a345386b",
+  "finalHash": "ec84b95a252aa841ed3a53e54529e2ee9c3524f86ef54a9cf0a2a682d5bbaf77",
+  "ms": 6816.180695999999,
+  "decisions": 53,
+  "transitions": 6038,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3018~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3018,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 41,
+     "harm": 0,
+     "margin": -8
+    },
+    {
+     "faction": "pkk",
+     "score": 28,
+     "harm": 0,
+     "margin": -2
+    }
+   ],
+   "cardsPlayed": [
+    "DK-003",
+    "DK-013",
+    "DK-005",
+    "DK-015",
+    "DK-008",
+    "DK-006",
+    "DK-100",
+    "DK-002",
+    "DK-011",
+    "DK-009",
+    "DK-012",
+    "DK-016",
+    "DK-010",
+    "DK-004",
+    "DK-020",
+    "DK-017",
+    "DK-023",
+    "DK-021",
+    "DK-031",
+    "DK-032",
+    "DK-028",
+    "DK-019",
+    "DK-018",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "c3c75331a859502f9391fc549000846dfa0072269ab515785e1a6518fc19c480",
+  "finalHash": "e7480b80db11189c00ee8df8375a995154989269646bb7b40938f86277d9f5b9",
+  "ms": 6902.359067999998,
+  "decisions": 51,
+  "transitions": 5801,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3019~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3019,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 35,
+     "harm": 1,
+     "margin": -14
+    },
+    {
+     "faction": "pkk",
+     "score": 23,
+     "harm": 0,
+     "margin": -7
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-005",
+    "DK-009",
+    "DK-100",
+    "DK-015",
+    "DK-007",
+    "DK-002",
+    "DK-013",
+    "DK-003",
+    "DK-010",
+    "DK-016",
+    "DK-014",
+    "DK-004",
+    "DK-008",
+    "DK-025",
+    "DK-027",
+    "DK-029",
+    "DK-020",
+    "DK-021",
+    "DK-032",
+    "DK-033",
+    "DK-019",
+    "DK-031",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "f23695eac16b7431c572ded5cd39ebcf7ed8eb61acc69fed1cdda24c6da47e26",
+  "finalHash": "a1636bd63bf5a5c518f52daaa37f706e8bcc36655b0341e25969435f1a23031b",
+  "ms": 4973.698678000001,
+  "decisions": 52,
+  "transitions": 4568,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3020~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3020,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 28,
+     "harm": 1,
+     "margin": -21
+    },
+    {
+     "faction": "pkk",
+     "score": 19,
+     "harm": 1,
+     "margin": -11
+    }
+   ],
+   "cardsPlayed": [
+    "DK-004",
+    "DK-014",
+    "DK-012",
+    "DK-005",
+    "DK-015",
+    "DK-002",
+    "DK-100",
+    "DK-013",
+    "DK-003",
+    "DK-006",
+    "DK-007",
+    "DK-009",
+    "DK-016",
+    "DK-008",
+    "DK-019",
+    "DK-033",
+    "DK-023",
+    "DK-027",
+    "DK-028",
+    "DK-021",
+    "DK-029",
+    "DK-020",
+    "DK-025",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "a0194b000c93d803df44a27463777ff369fe72e4f2766780ab7fe5962b18ac3d",
+  "finalHash": "6fc8ab9e4b590e15f156b29cb2d4c4b87a074e518f28789935b027d3206ee933",
+  "ms": 7231.029782999998,
+  "decisions": 49,
+  "transitions": 5803,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3021~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3021,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 33,
+     "harm": 1,
+     "margin": -16
+    },
+    {
+     "faction": "pkk",
+     "score": 23,
+     "harm": 0,
+     "margin": -7
+    }
+   ],
+   "cardsPlayed": [
+    "DK-010",
+    "DK-002",
+    "DK-001",
+    "DK-008",
+    "DK-015",
+    "DK-007",
+    "DK-004",
+    "DK-003",
+    "DK-005",
+    "DK-016",
+    "DK-011",
+    "DK-100",
+    "DK-006",
+    "DK-013",
+    "DK-028",
+    "DK-023",
+    "DK-033",
+    "DK-027",
+    "DK-020",
+    "DK-029",
+    "DK-031",
+    "DK-019",
+    "DK-024",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "10f58f0c045414ed7480d5e10ad85c75b43a97d8b8b4bf2764994713b451083f",
+  "finalHash": "4485df848fc2b6149642d66ed8b95212cc9315bba8d7df032ef293a33ab2fc9b",
+  "ms": 6247.946017999995,
+  "decisions": 51,
+  "transitions": 4445,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3022~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3022,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 31,
+     "harm": 1,
+     "margin": -18
+    },
+    {
+     "faction": "pkk",
+     "score": 23,
+     "harm": 0,
+     "margin": -7
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-003",
+    "DK-011",
+    "DK-015",
+    "DK-001",
+    "DK-014",
+    "DK-010",
+    "DK-006",
+    "DK-012",
+    "DK-009",
+    "DK-016",
+    "DK-004",
+    "DK-100",
+    "DK-013",
+    "DK-030",
+    "DK-017",
+    "DK-019",
+    "DK-032",
+    "DK-034",
+    "DK-025",
+    "DK-021",
+    "DK-020",
+    "DK-023",
+    "DK-033",
+    "DK-026",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "cc4b34814e0a7bfc510d88b72bbedf84f7f9c4c6746f25ba84db088dbce81cef",
+  "finalHash": "a599e8076696b0014eb11d00cce68a396d6114142e0c41417f818f4449cd7b7c",
+  "ms": 9128.721235999998,
+  "decisions": 55,
+  "transitions": 6818,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3023~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3023,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 27,
+     "harm": 1,
+     "margin": -22
+    },
+    {
+     "faction": "pkk",
+     "score": 24,
+     "harm": 1,
+     "margin": -6
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-001",
+    "DK-011",
+    "DK-004",
+    "DK-015",
+    "DK-008",
+    "DK-013",
+    "DK-006",
+    "DK-003",
+    "DK-010",
+    "DK-002",
+    "DK-009",
+    "DK-014",
+    "DK-016",
+    "DK-028",
+    "DK-020",
+    "DK-033",
+    "DK-029",
+    "DK-027",
+    "DK-034",
+    "DK-024",
+    "DK-019",
+    "DK-021",
+    "DK-025",
+    "DK-023",
+    "DK-017",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "59a50e466aa8bdcca4a7ab3a6e1b6110115bda75ebf7ce6284a3137b64bcf1e3",
+  "finalHash": "2300e412721829ecf4dc54ce731421f28a9120a0c9fab12ebd18ffc5f745faf3",
+  "ms": 7815.652228000006,
+  "decisions": 55,
+  "transitions": 5978,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3024~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3024,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 33,
+     "harm": 0,
+     "margin": -16
+    },
+    {
+     "faction": "pkk",
+     "score": 28,
+     "harm": 0,
+     "margin": -2
+    }
+   ],
+   "cardsPlayed": [
+    "DK-013",
+    "DK-005",
+    "DK-009",
+    "DK-010",
+    "DK-015",
+    "DK-003",
+    "DK-007",
+    "DK-008",
+    "DK-100",
+    "DK-006",
+    "DK-004",
+    "DK-002",
+    "DK-016",
+    "DK-001",
+    "DK-033",
+    "DK-026",
+    "DK-029",
+    "DK-031",
+    "DK-019",
+    "DK-034",
+    "DK-023",
+    "DK-020",
+    "DK-025",
+    "DK-021",
+    "DK-027",
+    "DK-017",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "610fb694642690c87bc3404862bce994deaf3ec2ebc7bc840779026b676364e4",
+  "finalHash": "305dc5ffb8072a965bf8ad5c105f33ccf02d54b38b762ac0c768a9cf0b7966f3",
+  "ms": 6222.332522999997,
+  "decisions": 55,
+  "transitions": 5661,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3025~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3025,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 34,
+     "harm": 1,
+     "margin": -15
+    },
+    {
+     "faction": "pkk",
+     "score": 27,
+     "harm": 0,
+     "margin": -3
+    }
+   ],
+   "cardsPlayed": [
+    "DK-001",
+    "DK-012",
+    "DK-005",
+    "DK-003",
+    "DK-015",
+    "DK-011",
+    "DK-002",
+    "DK-007",
+    "DK-004",
+    "DK-016",
+    "DK-014",
+    "DK-010",
+    "DK-100",
+    "DK-008",
+    "DK-018",
+    "DK-019",
+    "DK-032",
+    "DK-023",
+    "DK-033",
+    "DK-028",
+    "DK-020",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "f78c9ba485aa9fd69dc3e2c6da237cfd0290ebc4f144229a7605368a25a2dd45",
+  "finalHash": "be1db3afd1831b1bfe676d5866f5e578dc0164003cf969b22a0faebc075dc6a3",
+  "ms": 6296.296841999996,
+  "decisions": 47,
+  "transitions": 4763,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3026~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3026,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 38,
+     "harm": 0,
+     "margin": -11
+    },
+    {
+     "faction": "pkk",
+     "score": 26,
+     "harm": 0,
+     "margin": -4
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-008",
+    "DK-010",
+    "DK-005",
+    "DK-015",
+    "DK-003",
+    "DK-014",
+    "DK-009",
+    "DK-004",
+    "DK-001",
+    "DK-013",
+    "DK-016",
+    "DK-012",
+    "DK-007",
+    "DK-030",
+    "DK-026",
+    "DK-023",
+    "DK-017",
+    "DK-032",
+    "DK-019",
+    "DK-034",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "8dcfa612380ff180ac9be033ffb11236ba9f1a26c6ba24d7591fb6f80de58256",
+  "finalHash": "2cd837df897bac3779f885984e41fa6bbaed43eb59879160808ea2e3655818b6",
+  "ms": 5462.266432000004,
+  "decisions": 47,
+  "transitions": 4208,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3027~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3027,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 39,
+     "harm": 0,
+     "margin": -10
+    },
+    {
+     "faction": "pkk",
+     "score": 17,
+     "harm": 0,
+     "margin": -13
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-004",
+    "DK-003",
+    "DK-009",
+    "DK-001",
+    "DK-005",
+    "DK-007",
+    "DK-015",
+    "DK-006",
+    "DK-008",
+    "DK-016",
+    "DK-011",
+    "DK-002",
+    "DK-100",
+    "DK-027",
+    "DK-028",
+    "DK-030",
+    "DK-022",
+    "DK-033",
+    "DK-023",
+    "DK-019",
+    "DK-020",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "3ca4b641691481332439baa32734cbcdc26fad60e9f5b513e57fb13573544ceb",
+  "finalHash": "d342f1621e0a15905dd51b1ace058dc3214f3b7dd930d1353749c66993b326d2",
+  "ms": 5787.504199000003,
+  "decisions": 49,
+  "transitions": 4603,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3028~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3028,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 34,
+     "harm": 0,
+     "margin": -15
+    },
+    {
+     "faction": "pkk",
+     "score": 27,
+     "harm": 0,
+     "margin": -3
+    }
+   ],
+   "cardsPlayed": [
+    "DK-007",
+    "DK-014",
+    "DK-012",
+    "DK-004",
+    "DK-015",
+    "DK-003",
+    "DK-006",
+    "DK-001",
+    "DK-005",
+    "DK-013",
+    "DK-011",
+    "DK-009",
+    "DK-100",
+    "DK-016",
+    "DK-028",
+    "DK-029",
+    "DK-022",
+    "DK-030",
+    "DK-034",
+    "DK-026",
+    "DK-019",
+    "DK-020",
+    "DK-021",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "83b655734ab16a5e059816a0d700c85038341efbb4dd30c884376f7c15b6c1b9",
+  "finalHash": "6a29154b6565df89be0e9c07e5906b3897183f248384306dc814ac5548b3abf2",
+  "ms": 5778.787772999996,
+  "decisions": 49,
+  "transitions": 4877,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3029~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3029,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 38,
+     "harm": 0,
+     "margin": -11
+    },
+    {
+     "faction": "pkk",
+     "score": 20,
+     "harm": 0,
+     "margin": -10
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-005",
+    "DK-014",
+    "DK-010",
+    "DK-015",
+    "DK-012",
+    "DK-007",
+    "DK-011",
+    "DK-003",
+    "DK-016",
+    "DK-013",
+    "DK-006",
+    "DK-001",
+    "DK-004",
+    "DK-019",
+    "DK-027",
+    "DK-031",
+    "DK-033",
+    "DK-023",
+    "DK-026",
+    "DK-029",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "abeb0218cdd290dcd5c0f68924595d9cac422cf57d06ec65927b46445f59662a",
+  "finalHash": "eb1ab75bec6ac85cd32e097e097d681a0f6136a20d77d5397b8b418b646a8de7",
+  "ms": 8164.828603000002,
+  "decisions": 47,
+  "transitions": 5476,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3030~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3030,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 26,
+     "harm": 0,
+     "margin": -23
+    },
+    {
+     "faction": "pkk",
+     "score": 29,
+     "harm": 0,
+     "margin": -1
+    }
+   ],
+   "cardsPlayed": [
+    "DK-007",
+    "DK-003",
+    "DK-006",
+    "DK-015",
+    "DK-001",
+    "DK-011",
+    "DK-013",
+    "DK-100",
+    "DK-005",
+    "DK-016",
+    "DK-002",
+    "DK-008",
+    "DK-004",
+    "DK-010",
+    "DK-033",
+    "DK-030",
+    "DK-025",
+    "DK-019",
+    "DK-024",
+    "DK-026",
+    "DK-022",
+    "DK-020",
+    "DK-027",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "06cd4fb3126fe0f2542d16c849cbee05bd83dd44b32d2a59d352d63328a54932",
+  "finalHash": "766f3e309ddc70cad9b3c1ccd0b642220019dab0bf0429a1f9b3d0bc0931755b",
+  "ms": 7714.693057999997,
+  "decisions": 49,
+  "transitions": 5845,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3031~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3031,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 35,
+     "harm": 0,
+     "margin": -14
+    },
+    {
+     "faction": "pkk",
+     "score": 19,
+     "harm": 0,
+     "margin": -11
+    }
+   ],
+   "cardsPlayed": [
+    "DK-004",
+    "DK-009",
+    "DK-100",
+    "DK-012",
+    "DK-015",
+    "DK-003",
+    "DK-014",
+    "DK-005",
+    "DK-001",
+    "DK-011",
+    "DK-007",
+    "DK-016",
+    "DK-002",
+    "DK-008",
+    "DK-028",
+    "DK-033",
+    "DK-030",
+    "DK-023",
+    "DK-019",
+    "DK-021",
+    "DK-027",
+    "DK-020",
+    "DK-025",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "e3b2488b8f88b3324584d2a8ebae71644f5d6112d25248b02b832e3a6fa23037",
+  "finalHash": "2d11671b3ae13c782100cce2ec1ccf76cddb4e84ebdbc88de31e9079853db467",
+  "ms": 6507.481521999995,
+  "decisions": 51,
+  "transitions": 5002,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3032~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3032,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 26,
+     "harm": 0,
+     "margin": -23
+    },
+    {
+     "faction": "pkk",
+     "score": 29,
+     "harm": 0,
+     "margin": -1
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-012",
+    "DK-010",
+    "DK-008",
+    "DK-015",
+    "DK-004",
+    "DK-003",
+    "DK-009",
+    "DK-005",
+    "DK-002",
+    "DK-013",
+    "DK-014",
+    "DK-006",
+    "DK-016",
+    "DK-031",
+    "DK-028",
+    "DK-024",
+    "DK-029",
+    "DK-030",
+    "DK-021",
+    "DK-019",
+    "DK-020",
+    "DK-023",
+    "DK-025",
+    "DK-032",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "de26c81145d89264d9a3fe49ec5a856a1181e3f7070899cb70a71f88f47b4542",
+  "finalHash": "7b2917aa5a14bc074b557dc93d6e4e886fd370a934d8cd090727026e78d79f9f",
+  "ms": 6379.4088640000045,
+  "decisions": 53,
+  "transitions": 6274,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3033~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3033,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 36,
+     "harm": 0,
+     "margin": -13
+    },
+    {
+     "faction": "pkk",
+     "score": 17,
+     "harm": 0,
+     "margin": -13
+    }
+   ],
+   "cardsPlayed": [
+    "DK-100",
+    "DK-004",
+    "DK-009",
+    "DK-013",
+    "DK-015",
+    "DK-003",
+    "DK-002",
+    "DK-007",
+    "DK-005",
+    "DK-010",
+    "DK-012",
+    "DK-001",
+    "DK-016",
+    "DK-011",
+    "DK-031",
+    "DK-027",
+    "DK-026",
+    "DK-017",
+    "DK-032",
+    "DK-018",
+    "DK-020",
+    "DK-019",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "1bfd8482741ce0add3c2b667b37d3c39db3913c9f1949f2c4960ff095a9202c4",
+  "finalHash": "4608efca6c0dc03e1bce3f5ab5cd47ccbdcd42e3bad383dd948ded90eb537f59",
+  "ms": 7149.2194910000035,
+  "decisions": 49,
+  "transitions": 6138,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3034~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3034,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "victory check",
+  "result": {
+   "winner": "pkk",
+   "endReason": "victory check",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 25,
+     "harm": 0,
+     "margin": -24
+    },
+    {
+     "faction": "pkk",
+     "score": 33,
+     "harm": 0,
+     "margin": 3
+    }
+   ],
+   "cardsPlayed": [
+    "DK-008",
+    "DK-003",
+    "DK-013",
+    "DK-015",
+    "DK-010",
+    "DK-004",
+    "DK-012",
+    "DK-002",
+    "DK-005",
+    "DK-011",
+    "DK-100",
+    "DK-014",
+    "DK-016",
+    "DK-006",
+    "DK-026",
+    "DK-034",
+    "DK-031",
+    "DK-030",
+    "DK-032",
+    "DK-027",
+    "DK-020",
+    "DK-019",
+    "DK-035"
+   ]
+  },
+  "commands": 51,
+  "startHash": "76a275084f522d833eca0f85195c2e40699d9d9e9d710064b57df9df82a71abe",
+  "finalHash": "99618f84d5d3e4eb1ffaf5f79f2197b405bc6f06ee2bd3b9b0581dcf09374afd",
+  "ms": 4880.592801000006,
+  "decisions": 44,
+  "transitions": 4210,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3035~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3035,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 36,
+     "harm": 1,
+     "margin": -13
+    },
+    {
+     "faction": "pkk",
+     "score": 22,
+     "harm": 0,
+     "margin": -8
+    }
+   ],
+   "cardsPlayed": [
+    "DK-006",
+    "DK-100",
+    "DK-008",
+    "DK-001",
+    "DK-015",
+    "DK-002",
+    "DK-005",
+    "DK-014",
+    "DK-003",
+    "DK-016",
+    "DK-004",
+    "DK-013",
+    "DK-011",
+    "DK-010",
+    "DK-019",
+    "DK-017",
+    "DK-028",
+    "DK-032",
+    "DK-026",
+    "DK-030",
+    "DK-025",
+    "DK-020",
+    "DK-029",
+    "DK-031",
+    "DK-033",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "017109881a04d7d723fd9bc74d0080ba72bd690083cc3156f0809046a60615b6",
+  "finalHash": "b51aab2b1ffe96d9036a61e4e3a7d492d80e14cb68fb84d6ad6dc265598455a3",
+  "ms": 6486.198076000008,
+  "decisions": 53,
+  "transitions": 6080,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3036~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3036,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 31,
+     "harm": 1,
+     "margin": -18
+    },
+    {
+     "faction": "pkk",
+     "score": 26,
+     "harm": 1,
+     "margin": -4
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-014",
+    "DK-005",
+    "DK-003",
+    "DK-015",
+    "DK-012",
+    "DK-010",
+    "DK-009",
+    "DK-008",
+    "DK-002",
+    "DK-100",
+    "DK-004",
+    "DK-016",
+    "DK-007",
+    "DK-034",
+    "DK-020",
+    "DK-032",
+    "DK-033",
+    "DK-030",
+    "DK-017",
+    "DK-027",
+    "DK-019",
+    "DK-024",
+    "DK-025",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "d19e62667a5fd5921f04b4c0a6b02dd25107565a1694c338d4fff34f8b904e62",
+  "finalHash": "4cd4996ad5d6cd8e879c143dc73cd671e23e2c220bac11ed724c4e530f669a81",
+  "ms": 5572.219263999992,
+  "decisions": 52,
+  "transitions": 4347,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3037~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3037,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 32,
+     "harm": 0,
+     "margin": -17
+    },
+    {
+     "faction": "pkk",
+     "score": 23,
+     "harm": 0,
+     "margin": -7
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-010",
+    "DK-002",
+    "DK-003",
+    "DK-015",
+    "DK-011",
+    "DK-012",
+    "DK-004",
+    "DK-005",
+    "DK-008",
+    "DK-016",
+    "DK-001",
+    "DK-013",
+    "DK-100",
+    "DK-021",
+    "DK-019",
+    "DK-020",
+    "DK-018",
+    "DK-030",
+    "DK-026",
+    "DK-022",
+    "DK-017",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "e09cde9867cba935ea5ec862663d5b32042a204157d99fb91352a8a1153c6cba",
+  "finalHash": "ea201d8ab90470a1be2b2c7127e1ecf9aab8944131ffa8e7dddd1b2f18fcd217",
+  "ms": 6979.438492000001,
+  "decisions": 50,
+  "transitions": 5056,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3038~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3038,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 0,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 23,
+     "harm": 0,
+     "margin": -7
+    }
+   ],
+   "cardsPlayed": [
+    "DK-004",
+    "DK-011",
+    "DK-009",
+    "DK-013",
+    "DK-015",
+    "DK-002",
+    "DK-010",
+    "DK-003",
+    "DK-005",
+    "DK-008",
+    "DK-016",
+    "DK-014",
+    "DK-006",
+    "DK-100",
+    "DK-028",
+    "DK-019",
+    "DK-033",
+    "DK-020",
+    "DK-026",
+    "DK-021",
+    "DK-025",
+    "DK-030",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "e9a2bd4dc5f791764f4281d7cfd605f9f1ea47ab2635848b16bf4e5c63efaad3",
+  "finalHash": "5ecd88797c31ffe581c7e064de1613afcc61d3e543e9e922118fea52e3792725",
+  "ms": 5334.732779000005,
+  "decisions": 50,
+  "transitions": 4677,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3039~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3039,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 28,
+     "harm": 1,
+     "margin": -21
+    },
+    {
+     "faction": "pkk",
+     "score": 27,
+     "harm": 0,
+     "margin": -3
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-013",
+    "DK-001",
+    "DK-006",
+    "DK-015",
+    "DK-100",
+    "DK-007",
+    "DK-005",
+    "DK-003",
+    "DK-002",
+    "DK-004",
+    "DK-016",
+    "DK-008",
+    "DK-010",
+    "DK-033",
+    "DK-020",
+    "DK-019",
+    "DK-023",
+    "DK-025",
+    "DK-017",
+    "DK-018",
+    "DK-027",
+    "DK-022",
+    "DK-021",
+    "DK-026",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "4dccb89964627777f555c7729474adcb37b2ba952790ab51d48038dfefd1c46d",
+  "finalHash": "9e00e54b4d124aea13c40172db834fb2711959b23ebb9b76ce87dc4d805db8c1",
+  "ms": 8100.901121000003,
+  "decisions": 55,
+  "transitions": 6589,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-SHIELDv3~3040~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-SHIELD@3",
+  "seed": 3040,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 32,
+     "harm": 1,
+     "margin": -17
+    },
+    {
+     "faction": "pkk",
+     "score": 23,
+     "harm": 0,
+     "margin": -7
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-001",
+    "DK-005",
+    "DK-100",
+    "DK-015",
+    "DK-002",
+    "DK-013",
+    "DK-009",
+    "DK-003",
+    "DK-010",
+    "DK-004",
+    "DK-011",
+    "DK-016",
+    "DK-014",
+    "DK-025",
+    "DK-027",
+    "DK-021",
+    "DK-024",
+    "DK-029",
+    "DK-019",
+    "DK-034",
+    "DK-020",
+    "DK-033",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "8ab5dfa224d677e663c84fab7dde5d3259c2ff194f0dcfdff1411a0272d54b34",
+  "finalHash": "430f4783a093aac19d7b0655428d2a854de4c1c87315b5ef42d5a5f84b5f7c8c",
+  "ms": 5609.266218000004,
+  "decisions": 49,
+  "transitions": 4398,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3001~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3001,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "victory check",
+  "result": {
+   "winner": "pkk",
+   "endReason": "victory check",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 27,
+     "harm": 0,
+     "margin": -22
+    },
+    {
+     "faction": "pkk",
+     "score": 30,
+     "harm": 0,
+     "margin": 0
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-100",
+    "DK-008",
+    "DK-005",
+    "DK-009",
+    "DK-002",
+    "DK-012",
+    "DK-003",
+    "DK-016",
+    "DK-006",
+    "DK-014",
+    "DK-001",
+    "DK-010",
+    "DK-018",
+    "DK-028",
+    "DK-022",
+    "DK-021",
+    "DK-019",
+    "DK-026",
+    "DK-015",
+    "DK-032",
+    "DK-020",
+    "DK-027",
+    "DK-017",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "732746c6cfde673e3e482cc90127521141fdd09d410dd0c949b1569ec2269b7e",
+  "finalHash": "af6e8a20974623e2cd6d63e9aa2091ccbafffbc2daa6504b844afd5b5ec05c1f",
+  "ms": 6667.476653999998,
+  "decisions": 50,
+  "transitions": 4370,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3002~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3002,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 33,
+     "harm": 1,
+     "margin": -16
+    },
+    {
+     "faction": "pkk",
+     "score": 11,
+     "harm": 0,
+     "margin": -19
+    }
+   ],
+   "cardsPlayed": [
+    "DK-002",
+    "DK-014",
+    "DK-006",
+    "DK-010",
+    "DK-007",
+    "DK-012",
+    "DK-003",
+    "DK-005",
+    "DK-016",
+    "DK-100",
+    "DK-009",
+    "DK-004",
+    "DK-013",
+    "DK-027",
+    "DK-019",
+    "DK-033",
+    "DK-032",
+    "DK-018",
+    "DK-020",
+    "DK-025",
+    "DK-022",
+    "DK-026",
+    "DK-030",
+    "DK-023",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "d0c741b5985dc64175582732bff286bfe36419076fe38df1e2bb5d59269a4801",
+  "finalHash": "a4a10126df36083640ffce6fd20c1e46ede11cc11b92c7c2ca6a53c8212a1963",
+  "ms": 6888.65991799999,
+  "decisions": 56,
+  "transitions": 5534,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3003~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3003,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 34,
+     "harm": 1,
+     "margin": -15
+    },
+    {
+     "faction": "pkk",
+     "score": 14,
+     "harm": 0,
+     "margin": -16
+    }
+   ],
+   "cardsPlayed": [
+    "DK-013",
+    "DK-005",
+    "DK-003",
+    "DK-008",
+    "DK-007",
+    "DK-012",
+    "DK-100",
+    "DK-006",
+    "DK-011",
+    "DK-009",
+    "DK-014",
+    "DK-004",
+    "DK-016",
+    "DK-028",
+    "DK-019",
+    "DK-023",
+    "DK-020",
+    "DK-033",
+    "DK-032",
+    "DK-030",
+    "DK-015",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "0319625c2cac756282500976804cab91761b42d0b12a7e85cdd6eae9cc79886f",
+  "finalHash": "0a045e360158bd2358b7df4f3ec8714265df73d3b0c620c663f5d9155a6c429c",
+  "ms": 5230.146544000003,
+  "decisions": 47,
+  "transitions": 4487,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3004~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3004,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "victory check",
+  "result": {
+   "winner": "state",
+   "endReason": "victory check",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 49,
+     "harm": 0,
+     "margin": 0
+    },
+    {
+     "faction": "pkk",
+     "score": 7,
+     "harm": 0,
+     "margin": -23
+    }
+   ],
+   "cardsPlayed": [
+    "DK-001",
+    "DK-008",
+    "DK-007",
+    "DK-009",
+    "DK-003",
+    "DK-006",
+    "DK-005",
+    "DK-100",
+    "DK-011",
+    "DK-012",
+    "DK-013",
+    "DK-016",
+    "DK-010",
+    "DK-019",
+    "DK-028",
+    "DK-024",
+    "DK-025",
+    "DK-034",
+    "DK-032",
+    "DK-017",
+    "DK-020",
+    "DK-023",
+    "DK-029",
+    "DK-027",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "a2a828f99961c714c4c026a87774a9536747971bd9d2dab6397f0c079d3079b2",
+  "finalHash": "ca65c2feff01820905a45019069dd8409eb6cfb9278c20f8f2894b41a46e3bae",
+  "ms": 5202.967542999992,
+  "decisions": 50,
+  "transitions": 4247,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3005~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3005,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 0,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 30,
+     "harm": 0,
+     "margin": 0
+    }
+   ],
+   "cardsPlayed": [
+    "DK-010",
+    "DK-005",
+    "DK-001",
+    "DK-007",
+    "DK-100",
+    "DK-013",
+    "DK-006",
+    "DK-003",
+    "DK-016",
+    "DK-012",
+    "DK-008",
+    "DK-009",
+    "DK-011",
+    "DK-015",
+    "DK-021",
+    "DK-032",
+    "DK-020",
+    "DK-033",
+    "DK-017",
+    "DK-025",
+    "DK-023",
+    "DK-019",
+    "DK-026",
+    "DK-031",
+    "DK-022",
+    "DK-030",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "3f124a9156bf07e6c0bf7d0ab7981c3e5f4061af3a9d8190a2a80d805953ca01",
+  "finalHash": "a7bb086d79bc6984856ecd09aee0b91cd20aa0da9a3ae5c6844d7c6f28abd934",
+  "ms": 6812.836295999994,
+  "decisions": 55,
+  "transitions": 6384,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3006~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3006,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 29,
+     "harm": 0,
+     "margin": -20
+    },
+    {
+     "faction": "pkk",
+     "score": 7,
+     "harm": 1,
+     "margin": -23
+    }
+   ],
+   "cardsPlayed": [
+    "DK-001",
+    "DK-014",
+    "DK-013",
+    "DK-009",
+    "DK-005",
+    "DK-012",
+    "DK-100",
+    "DK-003",
+    "DK-008",
+    "DK-007",
+    "DK-006",
+    "DK-016",
+    "DK-011",
+    "DK-031",
+    "DK-028",
+    "DK-021",
+    "DK-018",
+    "DK-017",
+    "DK-029",
+    "DK-020",
+    "DK-019",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "1a81ebb34a6ba878d96bc2902d1e746b7a48222bf43e1997a183d04377109f1d",
+  "finalHash": "5931cb8dc05f48b9b82299eb57db39f24b9171d6a0beeca4120c18c8abd42bcd",
+  "ms": 5519.851222999991,
+  "decisions": 47,
+  "transitions": 3741,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3007~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3007,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "victory check",
+  "result": {
+   "winner": "state",
+   "endReason": "victory check",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 51,
+     "harm": 1,
+     "margin": 2
+    },
+    {
+     "faction": "pkk",
+     "score": 10,
+     "harm": 0,
+     "margin": -20
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-003",
+    "DK-005",
+    "DK-007",
+    "DK-013",
+    "DK-011",
+    "DK-010",
+    "DK-004",
+    "DK-016",
+    "DK-100",
+    "DK-008",
+    "DK-006",
+    "DK-002",
+    "DK-019",
+    "DK-021",
+    "DK-020",
+    "DK-022",
+    "DK-033",
+    "DK-027",
+    "DK-024",
+    "DK-018",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 53,
+  "startHash": "7f17f22f03d9365f0253dc67d5c56a952626660a58c0cd8c80dc5c47960b429d",
+  "finalHash": "144d7e053ae1fe45b7c261fe9f3efe5183486971dd15e9cf66de8880ee555762",
+  "ms": 4022.5305369999987,
+  "decisions": 46,
+  "transitions": 3350,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3008~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3008,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 36,
+     "harm": 1,
+     "margin": -13
+    },
+    {
+     "faction": "pkk",
+     "score": 10,
+     "harm": 0,
+     "margin": -20
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-007",
+    "DK-014",
+    "DK-010",
+    "DK-013",
+    "DK-004",
+    "DK-001",
+    "DK-003",
+    "DK-009",
+    "DK-100",
+    "DK-012",
+    "DK-016",
+    "DK-006",
+    "DK-025",
+    "DK-023",
+    "DK-033",
+    "DK-018",
+    "DK-028",
+    "DK-020",
+    "DK-027",
+    "DK-019",
+    "DK-032",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "240d4f59270b6302adf0a8d87d1654240715137d36daff17e305f530d47dd7f0",
+  "finalHash": "4052beff82f229db8e8408ee3049b1c0e391f8b26ee234915631bf723cd8ec54",
+  "ms": 4246.360316999999,
+  "decisions": 49,
+  "transitions": 3769,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3009~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3009,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 43,
+     "harm": 0,
+     "margin": -6
+    },
+    {
+     "faction": "pkk",
+     "score": 10,
+     "harm": 0,
+     "margin": -20
+    }
+   ],
+   "cardsPlayed": [
+    "DK-003",
+    "DK-014",
+    "DK-002",
+    "DK-005",
+    "DK-100",
+    "DK-008",
+    "DK-006",
+    "DK-009",
+    "DK-010",
+    "DK-011",
+    "DK-012",
+    "DK-004",
+    "DK-016",
+    "DK-019",
+    "DK-022",
+    "DK-021",
+    "DK-027",
+    "DK-017",
+    "DK-024",
+    "DK-028",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "438973ecceea6fbacead8207450ae957f17bc9dc4821e6aabfc51843ca6ceb14",
+  "finalHash": "6ca184585a10cbe59ef92ee658c203fa41199085f93e2623428c5a2655e452f0",
+  "ms": 4171.319545000006,
+  "decisions": 47,
+  "transitions": 4258,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3010~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3010,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 40,
+     "harm": 0,
+     "margin": -9
+    },
+    {
+     "faction": "pkk",
+     "score": 5,
+     "harm": 0,
+     "margin": -25
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-100",
+    "DK-013",
+    "DK-006",
+    "DK-007",
+    "DK-014",
+    "DK-001",
+    "DK-003",
+    "DK-009",
+    "DK-008",
+    "DK-011",
+    "DK-004",
+    "DK-016",
+    "DK-032",
+    "DK-033",
+    "DK-025",
+    "DK-017",
+    "DK-034",
+    "DK-019",
+    "DK-027",
+    "DK-020",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "73f6b80752361107432dbfe3dfde84a0a9727fd4735f84ef183ac5afb52483eb",
+  "finalHash": "c6e67fbb62a429be1e889724772c3783c57228b135d7f97d02a63b880e18a8b1",
+  "ms": 3451.192093999998,
+  "decisions": 50,
+  "transitions": 3298,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3011~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3011,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 40,
+     "harm": 0,
+     "margin": -9
+    },
+    {
+     "faction": "pkk",
+     "score": 11,
+     "harm": 0,
+     "margin": -19
+    }
+   ],
+   "cardsPlayed": [
+    "DK-003",
+    "DK-014",
+    "DK-006",
+    "DK-011",
+    "DK-005",
+    "DK-008",
+    "DK-013",
+    "DK-007",
+    "DK-002",
+    "DK-012",
+    "DK-016",
+    "DK-001",
+    "DK-004",
+    "DK-017",
+    "DK-032",
+    "DK-018",
+    "DK-019",
+    "DK-027",
+    "DK-034",
+    "DK-024",
+    "DK-020",
+    "DK-029",
+    "DK-026",
+    "DK-022",
+    "DK-023",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "0279a2817fc0d50e37be6d7450736a5c9a3bf2e0cf7ebcba73b29850695c8a38",
+  "finalHash": "e72a58cf41e68ee276d318a73a4a314c4b17c73e0d8d00bd395a52a8e1e6ef04",
+  "ms": 8021.888919999998,
+  "decisions": 55,
+  "transitions": 6276,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3012~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3012,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 17,
+     "harm": 0,
+     "margin": -32
+    },
+    {
+     "faction": "pkk",
+     "score": 15,
+     "harm": 0,
+     "margin": -15
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-002",
+    "DK-010",
+    "DK-005",
+    "DK-007",
+    "DK-014",
+    "DK-013",
+    "DK-003",
+    "DK-012",
+    "DK-006",
+    "DK-100",
+    "DK-016",
+    "DK-001",
+    "DK-019",
+    "DK-030",
+    "DK-022",
+    "DK-015",
+    "DK-018",
+    "DK-025",
+    "DK-021",
+    "DK-028",
+    "DK-020",
+    "DK-032",
+    "DK-034",
+    "DK-023",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "0cfaaef3127dc39833318f6aad4e19868ddc52aceb57e37f3f6d7772fd9e8cab",
+  "finalHash": "b8e8291c32a32e49bf849afca745b01e52e10cd54c00d9a52a566f878d20487e",
+  "ms": 5775.512287000005,
+  "decisions": 53,
+  "transitions": 4577,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3013~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3013,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 33,
+     "harm": 0,
+     "margin": -16
+    },
+    {
+     "faction": "pkk",
+     "score": 13,
+     "harm": 0,
+     "margin": -17
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-100",
+    "DK-006",
+    "DK-007",
+    "DK-005",
+    "DK-003",
+    "DK-009",
+    "DK-008",
+    "DK-010",
+    "DK-001",
+    "DK-013",
+    "DK-016",
+    "DK-011",
+    "DK-031",
+    "DK-017",
+    "DK-034",
+    "DK-032",
+    "DK-024",
+    "DK-026",
+    "DK-019",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "a105c442c210375bd938703eeca89105dad77cb9f6f73aa56a584e63ce79c9d0",
+  "finalHash": "39b2451dcceebe91f9a031aee7bffc165aa19b49615a101eed4186856753b778",
+  "ms": 3092.6301749999984,
+  "decisions": 47,
+  "transitions": 3123,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3014~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3014,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 31,
+     "harm": 0,
+     "margin": -18
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-014",
+    "DK-008",
+    "DK-001",
+    "DK-003",
+    "DK-011",
+    "DK-009",
+    "DK-005",
+    "DK-010",
+    "DK-002",
+    "DK-007",
+    "DK-012",
+    "DK-013",
+    "DK-016",
+    "DK-028",
+    "DK-019",
+    "DK-015",
+    "DK-026",
+    "DK-025",
+    "DK-031",
+    "DK-030",
+    "DK-020",
+    "DK-034",
+    "DK-017",
+    "DK-023",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "f51b326fff23e9c2915bb20252864b2247c9c856a69b0f97dab7989ccb0838c8",
+  "finalHash": "910317be14d11e213bb0735c408f52615dac3a39f3fc41127eb843103fe5d7dc",
+  "ms": 5758.7282889999915,
+  "decisions": 51,
+  "transitions": 4320,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3015~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3015,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 19,
+     "harm": 0,
+     "margin": -30
+    },
+    {
+     "faction": "pkk",
+     "score": 12,
+     "harm": 0,
+     "margin": -18
+    }
+   ],
+   "cardsPlayed": [
+    "DK-002",
+    "DK-010",
+    "DK-008",
+    "DK-014",
+    "DK-009",
+    "DK-004",
+    "DK-005",
+    "DK-003",
+    "DK-006",
+    "DK-011",
+    "DK-100",
+    "DK-001",
+    "DK-016",
+    "DK-029",
+    "DK-022",
+    "DK-015",
+    "DK-033",
+    "DK-019",
+    "DK-025",
+    "DK-017",
+    "DK-023",
+    "DK-020",
+    "DK-018",
+    "DK-032",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "d90d58761bdbc30c9101716617405b5220fa8ed87f9e506a170abc55045e38bd",
+  "finalHash": "bfde7f7782a3df80a0bf0e46148371d14c823cdd570d23f91c9e302b275fa021",
+  "ms": 6219.214785999997,
+  "decisions": 54,
+  "transitions": 4711,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3016~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3016,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 33,
+     "harm": 0,
+     "margin": -16
+    },
+    {
+     "faction": "pkk",
+     "score": 15,
+     "harm": 0,
+     "margin": -15
+    }
+   ],
+   "cardsPlayed": [
+    "DK-010",
+    "DK-003",
+    "DK-008",
+    "DK-011",
+    "DK-005",
+    "DK-100",
+    "DK-013",
+    "DK-002",
+    "DK-015",
+    "DK-012",
+    "DK-006",
+    "DK-001",
+    "DK-014",
+    "DK-016",
+    "DK-023",
+    "DK-031",
+    "DK-017",
+    "DK-020",
+    "DK-026",
+    "DK-027",
+    "DK-022",
+    "DK-019",
+    "DK-032",
+    "DK-030",
+    "DK-024",
+    "DK-025",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "62f31e17a21e9a705eef27280c6ac9c0aa1d8b4fb8d1bd191def80d3bb4280a3",
+  "finalHash": "03257d2a41add7b3f34abd96524d0114850944d63a99e05802c95232fc6647d6",
+  "ms": 6059.236065000005,
+  "decisions": 55,
+  "transitions": 5643,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3017~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3017,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 40,
+     "harm": 0,
+     "margin": -9
+    },
+    {
+     "faction": "pkk",
+     "score": 14,
+     "harm": 0,
+     "margin": -16
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-011",
+    "DK-001",
+    "DK-007",
+    "DK-004",
+    "DK-002",
+    "DK-005",
+    "DK-003",
+    "DK-012",
+    "DK-100",
+    "DK-006",
+    "DK-013",
+    "DK-016",
+    "DK-032",
+    "DK-020",
+    "DK-025",
+    "DK-027",
+    "DK-028",
+    "DK-024",
+    "DK-018",
+    "DK-019",
+    "DK-034",
+    "DK-029",
+    "DK-017",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "a37b219da528b284dbb7ef0b14fafcb3fdb5c518e3bbbe4169ad99e1a345386b",
+  "finalHash": "6539dc119b01dc8952ebd6cc6cce745c518b621edf34544d98f15b19ca4d8700",
+  "ms": 6034.930938999998,
+  "decisions": 53,
+  "transitions": 5181,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3018~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3018,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 32,
+     "harm": 0,
+     "margin": -17
+    },
+    {
+     "faction": "pkk",
+     "score": 24,
+     "harm": 0,
+     "margin": -6
+    }
+   ],
+   "cardsPlayed": [
+    "DK-003",
+    "DK-013",
+    "DK-005",
+    "DK-008",
+    "DK-006",
+    "DK-100",
+    "DK-002",
+    "DK-011",
+    "DK-009",
+    "DK-015",
+    "DK-012",
+    "DK-016",
+    "DK-010",
+    "DK-004",
+    "DK-020",
+    "DK-017",
+    "DK-023",
+    "DK-021",
+    "DK-031",
+    "DK-032",
+    "DK-028",
+    "DK-019",
+    "DK-018",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "c3c75331a859502f9391fc549000846dfa0072269ab515785e1a6518fc19c480",
+  "finalHash": "cbf37bb4ee1033f63a8b6e166cfad992dd1bb7eacc9d2f074e4d31b41a66032e",
+  "ms": 6274.090404000002,
+  "decisions": 52,
+  "transitions": 4894,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3019~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3019,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 23,
+     "harm": 1,
+     "margin": -26
+    },
+    {
+     "faction": "pkk",
+     "score": 15,
+     "harm": 0,
+     "margin": -15
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-005",
+    "DK-009",
+    "DK-100",
+    "DK-007",
+    "DK-002",
+    "DK-013",
+    "DK-003",
+    "DK-015",
+    "DK-010",
+    "DK-016",
+    "DK-014",
+    "DK-004",
+    "DK-008",
+    "DK-025",
+    "DK-027",
+    "DK-029",
+    "DK-020",
+    "DK-021",
+    "DK-032",
+    "DK-033",
+    "DK-019",
+    "DK-031",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "f23695eac16b7431c572ded5cd39ebcf7ed8eb61acc69fed1cdda24c6da47e26",
+  "finalHash": "6c0d43baf41d708d92bc8d5ae109c6174d9dc8a4437a0a1aa5b2c6dcbbaf3975",
+  "ms": 5041.279091000004,
+  "decisions": 51,
+  "transitions": 4262,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3020~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3020,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 23,
+     "harm": 0,
+     "margin": -26
+    },
+    {
+     "faction": "pkk",
+     "score": 26,
+     "harm": 1,
+     "margin": -4
+    }
+   ],
+   "cardsPlayed": [
+    "DK-004",
+    "DK-014",
+    "DK-012",
+    "DK-005",
+    "DK-002",
+    "DK-100",
+    "DK-013",
+    "DK-003",
+    "DK-015",
+    "DK-006",
+    "DK-007",
+    "DK-009",
+    "DK-016",
+    "DK-008",
+    "DK-019",
+    "DK-033",
+    "DK-023",
+    "DK-027",
+    "DK-028",
+    "DK-021",
+    "DK-029",
+    "DK-020",
+    "DK-025",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "a0194b000c93d803df44a27463777ff369fe72e4f2766780ab7fe5962b18ac3d",
+  "finalHash": "affec4a2607d8a8898d964f87025ec72fcbd7334c561d220283abcb99fadfee8",
+  "ms": 6941.169632999998,
+  "decisions": 49,
+  "transitions": 4620,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3021~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3021,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 1,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 22,
+     "harm": 0,
+     "margin": -8
+    }
+   ],
+   "cardsPlayed": [
+    "DK-010",
+    "DK-002",
+    "DK-001",
+    "DK-008",
+    "DK-007",
+    "DK-004",
+    "DK-003",
+    "DK-005",
+    "DK-016",
+    "DK-011",
+    "DK-100",
+    "DK-015",
+    "DK-006",
+    "DK-013",
+    "DK-028",
+    "DK-023",
+    "DK-033",
+    "DK-027",
+    "DK-020",
+    "DK-029",
+    "DK-031",
+    "DK-019",
+    "DK-024",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "10f58f0c045414ed7480d5e10ad85c75b43a97d8b8b4bf2764994713b451083f",
+  "finalHash": "484a469168187d1df54dc7b2445fed71b69b8df64774868d36cd10592bfafc5e",
+  "ms": 6377.399168999997,
+  "decisions": 51,
+  "transitions": 4755,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3022~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3022,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 40,
+     "harm": 1,
+     "margin": -9
+    },
+    {
+     "faction": "pkk",
+     "score": 14,
+     "harm": 1,
+     "margin": -16
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-003",
+    "DK-011",
+    "DK-001",
+    "DK-014",
+    "DK-010",
+    "DK-006",
+    "DK-012",
+    "DK-009",
+    "DK-016",
+    "DK-004",
+    "DK-100",
+    "DK-013",
+    "DK-030",
+    "DK-017",
+    "DK-019",
+    "DK-032",
+    "DK-034",
+    "DK-025",
+    "DK-021",
+    "DK-020",
+    "DK-023",
+    "DK-033",
+    "DK-026",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "cc4b34814e0a7bfc510d88b72bbedf84f7f9c4c6746f25ba84db088dbce81cef",
+  "finalHash": "e454703ed533c9d707edd3da976d0cd9e8f86b85e988b8422949df6d78cfd905",
+  "ms": 7072.057291000005,
+  "decisions": 55,
+  "transitions": 5912,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3023~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3023,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 42,
+     "harm": 1,
+     "margin": -7
+    },
+    {
+     "faction": "pkk",
+     "score": 13,
+     "harm": 0,
+     "margin": -17
+    }
+   ],
+   "cardsPlayed": [
+    "DK-005",
+    "DK-001",
+    "DK-011",
+    "DK-004",
+    "DK-008",
+    "DK-013",
+    "DK-006",
+    "DK-003",
+    "DK-010",
+    "DK-002",
+    "DK-009",
+    "DK-014",
+    "DK-016",
+    "DK-028",
+    "DK-020",
+    "DK-033",
+    "DK-029",
+    "DK-027",
+    "DK-034",
+    "DK-024",
+    "DK-019",
+    "DK-021",
+    "DK-025",
+    "DK-023",
+    "DK-017",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "59a50e466aa8bdcca4a7ab3a6e1b6110115bda75ebf7ce6284a3137b64bcf1e3",
+  "finalHash": "eb44c1538481eb78b8ec5ccd8254a6d5897dc4ad60f5f76d14f356ff5c1637b0",
+  "ms": 4794.388713000008,
+  "decisions": 55,
+  "transitions": 4337,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3024~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3024,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 0,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 21,
+     "harm": 1,
+     "margin": -9
+    }
+   ],
+   "cardsPlayed": [
+    "DK-013",
+    "DK-005",
+    "DK-009",
+    "DK-010",
+    "DK-003",
+    "DK-007",
+    "DK-008",
+    "DK-100",
+    "DK-006",
+    "DK-004",
+    "DK-002",
+    "DK-016",
+    "DK-001",
+    "DK-033",
+    "DK-026",
+    "DK-015",
+    "DK-029",
+    "DK-031",
+    "DK-019",
+    "DK-034",
+    "DK-023",
+    "DK-020",
+    "DK-025",
+    "DK-021",
+    "DK-027",
+    "DK-017",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "610fb694642690c87bc3404862bce994deaf3ec2ebc7bc840779026b676364e4",
+  "finalHash": "e63e9da7ab523aaa417ab8933035adffe569618a71b99050b4dee6090952e465",
+  "ms": 6516.059500999996,
+  "decisions": 55,
+  "transitions": 5305,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3025~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3025,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 0,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 16,
+     "harm": 0,
+     "margin": -14
+    }
+   ],
+   "cardsPlayed": [
+    "DK-001",
+    "DK-012",
+    "DK-005",
+    "DK-003",
+    "DK-011",
+    "DK-002",
+    "DK-007",
+    "DK-004",
+    "DK-016",
+    "DK-014",
+    "DK-010",
+    "DK-100",
+    "DK-008",
+    "DK-018",
+    "DK-019",
+    "DK-032",
+    "DK-023",
+    "DK-033",
+    "DK-028",
+    "DK-020",
+    "DK-031",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "f78c9ba485aa9fd69dc3e2c6da237cfd0290ebc4f144229a7605368a25a2dd45",
+  "finalHash": "d1a987a57555302c00e3ab761b1e319d71a9e3ba169733bd4324bba09b26dfa1",
+  "ms": 6647.021145999999,
+  "decisions": 48,
+  "transitions": 4034,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3026~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3026,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 33,
+     "harm": 0,
+     "margin": -16
+    },
+    {
+     "faction": "pkk",
+     "score": 19,
+     "harm": 0,
+     "margin": -11
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-008",
+    "DK-010",
+    "DK-005",
+    "DK-003",
+    "DK-014",
+    "DK-009",
+    "DK-004",
+    "DK-001",
+    "DK-013",
+    "DK-016",
+    "DK-012",
+    "DK-007",
+    "DK-030",
+    "DK-015",
+    "DK-026",
+    "DK-023",
+    "DK-017",
+    "DK-032",
+    "DK-019",
+    "DK-034",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "8dcfa612380ff180ac9be033ffb11236ba9f1a26c6ba24d7591fb6f80de58256",
+  "finalHash": "75ce5ae19890055671734f7fd07a5b06651df603f1d75f7d4a5db3692c4678b6",
+  "ms": 5030.905813000005,
+  "decisions": 47,
+  "transitions": 4428,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3027~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3027,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 34,
+     "harm": 0,
+     "margin": -15
+    },
+    {
+     "faction": "pkk",
+     "score": 25,
+     "harm": 0,
+     "margin": -5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-004",
+    "DK-003",
+    "DK-009",
+    "DK-001",
+    "DK-005",
+    "DK-007",
+    "DK-006",
+    "DK-008",
+    "DK-016",
+    "DK-011",
+    "DK-002",
+    "DK-015",
+    "DK-100",
+    "DK-027",
+    "DK-028",
+    "DK-030",
+    "DK-022",
+    "DK-033",
+    "DK-023",
+    "DK-019",
+    "DK-020",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "3ca4b641691481332439baa32734cbcdc26fad60e9f5b513e57fb13573544ceb",
+  "finalHash": "b93ccf6efa0ecc088b709c954fda0ba8ed42912f428ebe99a271421c00dd2729",
+  "ms": 4768.978753999996,
+  "decisions": 49,
+  "transitions": 3955,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3028~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3028,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 36,
+     "harm": 0,
+     "margin": -13
+    },
+    {
+     "faction": "pkk",
+     "score": 16,
+     "harm": 0,
+     "margin": -14
+    }
+   ],
+   "cardsPlayed": [
+    "DK-007",
+    "DK-014",
+    "DK-012",
+    "DK-004",
+    "DK-003",
+    "DK-006",
+    "DK-001",
+    "DK-005",
+    "DK-013",
+    "DK-011",
+    "DK-009",
+    "DK-100",
+    "DK-016",
+    "DK-028",
+    "DK-029",
+    "DK-022",
+    "DK-030",
+    "DK-034",
+    "DK-026",
+    "DK-019",
+    "DK-020",
+    "DK-021",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "83b655734ab16a5e059816a0d700c85038341efbb4dd30c884376f7c15b6c1b9",
+  "finalHash": "1068637f3a08d09ff4815abd9242750efa5a602b25749ab67ff0dd9bb59dfb3f",
+  "ms": 5995.766774000003,
+  "decisions": 49,
+  "transitions": 4308,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3029~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3029,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 29,
+     "harm": 1,
+     "margin": -20
+    },
+    {
+     "faction": "pkk",
+     "score": 16,
+     "harm": 0,
+     "margin": -14
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-005",
+    "DK-014",
+    "DK-010",
+    "DK-012",
+    "DK-007",
+    "DK-011",
+    "DK-003",
+    "DK-016",
+    "DK-013",
+    "DK-006",
+    "DK-001",
+    "DK-004",
+    "DK-019",
+    "DK-027",
+    "DK-031",
+    "DK-033",
+    "DK-023",
+    "DK-026",
+    "DK-029",
+    "DK-020",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "abeb0218cdd290dcd5c0f68924595d9cac422cf57d06ec65927b46445f59662a",
+  "finalHash": "121235c7da349bfbe83a99c080f062bbc4e3c65e50f6f4bdbe338803752efd7d",
+  "ms": 5516.371907000008,
+  "decisions": 48,
+  "transitions": 3905,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3030~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3030,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 32,
+     "harm": 1,
+     "margin": -17
+    },
+    {
+     "faction": "pkk",
+     "score": 9,
+     "harm": 1,
+     "margin": -21
+    }
+   ],
+   "cardsPlayed": [
+    "DK-007",
+    "DK-003",
+    "DK-006",
+    "DK-001",
+    "DK-011",
+    "DK-013",
+    "DK-100",
+    "DK-005",
+    "DK-016",
+    "DK-002",
+    "DK-008",
+    "DK-004",
+    "DK-010",
+    "DK-033",
+    "DK-030",
+    "DK-025",
+    "DK-019",
+    "DK-024",
+    "DK-026",
+    "DK-022",
+    "DK-020",
+    "DK-027",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "06cd4fb3126fe0f2542d16c849cbee05bd83dd44b32d2a59d352d63328a54932",
+  "finalHash": "a2bb655840a82976de83784866801d4e1824127fa11145b26c7c57edc1f5467f",
+  "ms": 4899.123793999999,
+  "decisions": 49,
+  "transitions": 3585,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3031~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3031,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 41,
+     "harm": 0,
+     "margin": -8
+    },
+    {
+     "faction": "pkk",
+     "score": 6,
+     "harm": 0,
+     "margin": -24
+    }
+   ],
+   "cardsPlayed": [
+    "DK-004",
+    "DK-009",
+    "DK-100",
+    "DK-012",
+    "DK-003",
+    "DK-014",
+    "DK-005",
+    "DK-001",
+    "DK-011",
+    "DK-007",
+    "DK-016",
+    "DK-002",
+    "DK-008",
+    "DK-028",
+    "DK-033",
+    "DK-030",
+    "DK-023",
+    "DK-019",
+    "DK-021",
+    "DK-027",
+    "DK-020",
+    "DK-025",
+    "DK-018",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "e3b2488b8f88b3324584d2a8ebae71644f5d6112d25248b02b832e3a6fa23037",
+  "finalHash": "45a4720bc41f55802137365bf2cdeba172ef2daf592f90d3e81546e5f7401b6d",
+  "ms": 5480.183745000002,
+  "decisions": 52,
+  "transitions": 4616,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3032~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3032,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 28,
+     "harm": 0,
+     "margin": -21
+    },
+    {
+     "faction": "pkk",
+     "score": 19,
+     "harm": 0,
+     "margin": -11
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-012",
+    "DK-010",
+    "DK-008",
+    "DK-004",
+    "DK-003",
+    "DK-009",
+    "DK-005",
+    "DK-002",
+    "DK-013",
+    "DK-014",
+    "DK-006",
+    "DK-016",
+    "DK-031",
+    "DK-028",
+    "DK-024",
+    "DK-015",
+    "DK-029",
+    "DK-030",
+    "DK-021",
+    "DK-019",
+    "DK-020",
+    "DK-023",
+    "DK-025",
+    "DK-032",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "de26c81145d89264d9a3fe49ec5a856a1181e3f7070899cb70a71f88f47b4542",
+  "finalHash": "f4751c9ecea918277ac0374b3bbf95f0ac07d32e31dde1d424f4331d1cbe00fb",
+  "ms": 5395.413312000004,
+  "decisions": 53,
+  "transitions": 4557,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3033~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3033,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 30,
+     "harm": 0,
+     "margin": -19
+    },
+    {
+     "faction": "pkk",
+     "score": 19,
+     "harm": 0,
+     "margin": -11
+    }
+   ],
+   "cardsPlayed": [
+    "DK-100",
+    "DK-004",
+    "DK-009",
+    "DK-013",
+    "DK-003",
+    "DK-002",
+    "DK-007",
+    "DK-005",
+    "DK-010",
+    "DK-012",
+    "DK-001",
+    "DK-016",
+    "DK-011",
+    "DK-031",
+    "DK-027",
+    "DK-015",
+    "DK-026",
+    "DK-017",
+    "DK-032",
+    "DK-018",
+    "DK-020",
+    "DK-019",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "1bfd8482741ce0add3c2b667b37d3c39db3913c9f1949f2c4960ff095a9202c4",
+  "finalHash": "f2f89bbaf51a60688d1d6ae5e25d0cdfe563a1378ed0786255abc3de1d853a66",
+  "ms": 5588.429449000003,
+  "decisions": 49,
+  "transitions": 4253,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3034~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3034,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 33,
+     "harm": 0,
+     "margin": -16
+    },
+    {
+     "faction": "pkk",
+     "score": 8,
+     "harm": 1,
+     "margin": -22
+    }
+   ],
+   "cardsPlayed": [
+    "DK-008",
+    "DK-003",
+    "DK-013",
+    "DK-010",
+    "DK-004",
+    "DK-012",
+    "DK-002",
+    "DK-005",
+    "DK-011",
+    "DK-100",
+    "DK-014",
+    "DK-016",
+    "DK-006",
+    "DK-026",
+    "DK-034",
+    "DK-031",
+    "DK-030",
+    "DK-032",
+    "DK-027",
+    "DK-020",
+    "DK-019",
+    "DK-035"
+   ]
+  },
+  "commands": 57,
+  "startHash": "76a275084f522d833eca0f85195c2e40699d9d9e9d710064b57df9df82a71abe",
+  "finalHash": "9b0ec4047fcc67f40e6a78f7afba3970fde480c618305fd5603ffa78f623f2e6",
+  "ms": 5349.3156949999975,
+  "decisions": 47,
+  "transitions": 3974,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3035~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3035,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 32,
+     "harm": 1,
+     "margin": -17
+    },
+    {
+     "faction": "pkk",
+     "score": 11,
+     "harm": 1,
+     "margin": -19
+    }
+   ],
+   "cardsPlayed": [
+    "DK-006",
+    "DK-100",
+    "DK-008",
+    "DK-001",
+    "DK-002",
+    "DK-005",
+    "DK-014",
+    "DK-003",
+    "DK-016",
+    "DK-004",
+    "DK-013",
+    "DK-011",
+    "DK-010",
+    "DK-019",
+    "DK-017",
+    "DK-028",
+    "DK-032",
+    "DK-026",
+    "DK-030",
+    "DK-025",
+    "DK-020",
+    "DK-029",
+    "DK-031",
+    "DK-033",
+    "DK-035"
+   ]
+  },
+  "commands": 63,
+  "startHash": "017109881a04d7d723fd9bc74d0080ba72bd690083cc3156f0809046a60615b6",
+  "finalHash": "931ce2d6ca48b303d467d2e58574536c6093d34f17961afab9a385d47a9d414f",
+  "ms": 5261.712067999993,
+  "decisions": 53,
+  "transitions": 3932,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3036~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3036,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 35,
+     "harm": 0,
+     "margin": -14
+    },
+    {
+     "faction": "pkk",
+     "score": 15,
+     "harm": 0,
+     "margin": -15
+    }
+   ],
+   "cardsPlayed": [
+    "DK-011",
+    "DK-014",
+    "DK-005",
+    "DK-003",
+    "DK-012",
+    "DK-010",
+    "DK-009",
+    "DK-008",
+    "DK-002",
+    "DK-100",
+    "DK-004",
+    "DK-016",
+    "DK-007",
+    "DK-034",
+    "DK-020",
+    "DK-032",
+    "DK-033",
+    "DK-030",
+    "DK-017",
+    "DK-027",
+    "DK-019",
+    "DK-024",
+    "DK-025",
+    "DK-035"
+   ]
+  },
+  "commands": 61,
+  "startHash": "d19e62667a5fd5921f04b4c0a6b02dd25107565a1694c338d4fff34f8b904e62",
+  "finalHash": "72a87cdf30e404e418fb65e645318952a66928f30e8cc6165ea8ff0e5bf79db3",
+  "ms": 5952.871846000009,
+  "decisions": 52,
+  "transitions": 4877,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3037~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3037,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 25,
+     "harm": 0,
+     "margin": -24
+    },
+    {
+     "faction": "pkk",
+     "score": 35,
+     "harm": 0,
+     "margin": 5
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-010",
+    "DK-002",
+    "DK-003",
+    "DK-011",
+    "DK-012",
+    "DK-004",
+    "DK-005",
+    "DK-008",
+    "DK-016",
+    "DK-001",
+    "DK-013",
+    "DK-100",
+    "DK-015",
+    "DK-021",
+    "DK-019",
+    "DK-020",
+    "DK-018",
+    "DK-030",
+    "DK-026",
+    "DK-022",
+    "DK-017",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "e09cde9867cba935ea5ec862663d5b32042a204157d99fb91352a8a1153c6cba",
+  "finalHash": "bc5b01c558836193171b21124981e8ad56d6c8521afd0b1f645c636dc884f8e3",
+  "ms": 5143.7869419999915,
+  "decisions": 50,
+  "transitions": 4046,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3038~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3038,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 43,
+     "harm": 1,
+     "margin": -6
+    },
+    {
+     "faction": "pkk",
+     "score": 11,
+     "harm": 0,
+     "margin": -19
+    }
+   ],
+   "cardsPlayed": [
+    "DK-004",
+    "DK-011",
+    "DK-009",
+    "DK-013",
+    "DK-002",
+    "DK-010",
+    "DK-003",
+    "DK-005",
+    "DK-008",
+    "DK-016",
+    "DK-014",
+    "DK-006",
+    "DK-100",
+    "DK-028",
+    "DK-019",
+    "DK-033",
+    "DK-020",
+    "DK-026",
+    "DK-021",
+    "DK-025",
+    "DK-030",
+    "DK-024",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "e9a2bd4dc5f791764f4281d7cfd605f9f1ea47ab2635848b16bf4e5c63efaad3",
+  "finalHash": "9b1b8708419c50381232c0f5005e1f104234e780a6718389b2a4eb0195411e46",
+  "ms": 4698.906745,
+  "decisions": 49,
+  "transitions": 4113,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3039~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3039,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "pkk",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "clear"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 27,
+     "harm": 0,
+     "margin": -22
+    },
+    {
+     "faction": "pkk",
+     "score": 18,
+     "harm": 0,
+     "margin": -12
+    }
+   ],
+   "cardsPlayed": [
+    "DK-009",
+    "DK-013",
+    "DK-001",
+    "DK-006",
+    "DK-100",
+    "DK-007",
+    "DK-005",
+    "DK-003",
+    "DK-002",
+    "DK-004",
+    "DK-016",
+    "DK-008",
+    "DK-010",
+    "DK-033",
+    "DK-020",
+    "DK-019",
+    "DK-023",
+    "DK-025",
+    "DK-017",
+    "DK-018",
+    "DK-027",
+    "DK-022",
+    "DK-021",
+    "DK-026",
+    "DK-029",
+    "DK-035"
+   ]
+  },
+  "commands": 65,
+  "startHash": "4dccb89964627777f555c7729474adcb37b2ba952790ab51d48038dfefd1c46d",
+  "finalHash": "24c785323854474ad6f0744aa78f1e308a5d19b6d51afb05f49de10d5576bfb1",
+  "ms": 5935.919019000008,
+  "decisions": 56,
+  "transitions": 5168,
+  "liveRejected": 0
+ },
+ {
+  "gameId": "baseline~S-SPENDv3~P-POLv2~3040~r0",
+  "conditionId": "baseline",
+  "state": "S-SPEND@3",
+  "pkk": "P-POL@2",
+  "seed": 3040,
+  "repeat": 0,
+  "status": "complete",
+  "reason": "final scoring",
+  "result": {
+   "winner": "state",
+   "endReason": "final scoring",
+   "round": 2,
+   "labels": [
+    "narrow"
+   ],
+   "standings": [
+    {
+     "faction": "state",
+     "score": 37,
+     "harm": 1,
+     "margin": -12
+    },
+    {
+     "faction": "pkk",
+     "score": 15,
+     "harm": 1,
+     "margin": -15
+    }
+   ],
+   "cardsPlayed": [
+    "DK-012",
+    "DK-001",
+    "DK-005",
+    "DK-100",
+    "DK-002",
+    "DK-013",
+    "DK-009",
+    "DK-003",
+    "DK-010",
+    "DK-004",
+    "DK-011",
+    "DK-016",
+    "DK-014",
+    "DK-025",
+    "DK-027",
+    "DK-021",
+    "DK-024",
+    "DK-029",
+    "DK-019",
+    "DK-034",
+    "DK-020",
+    "DK-033",
+    "DK-035"
+   ]
+  },
+  "commands": 59,
+  "startHash": "8ab5dfa224d677e663c84fab7dde5d3259c2ff194f0dcfdff1411a0272d54b34",
+  "finalHash": "c4548e7fe34882df6fbe285ee6e929dfae94657dbd4be3ba3363f7f1c6026758",
+  "ms": 3061.8670970000094,
+  "decisions": 49,
+  "transitions": 4354,
+  "liveRejected": 0
+ }
+]

@@ -76,6 +76,10 @@ const COUNTERS: readonly Family[] = [
   { id: "S-SIEGE", version: 3, faction: "state", adaptive: false,
     weights: { ...MIL, protectedBases: 2, exposedBases: 1.5, active: 0.8 },
     description: "Counter to P-SHIELD: S-MIL priorities plus value for exposing protected Bases (Sweep or Garrison to activate their Guerrillas, then Assault)." },
+  // Attribution probe (development only): is the State's loss to P-SHIELD explained by passing and unspent Resources?
+  { id: "S-SPEND", version: 3, faction: "state", adaptive: false,
+    weights: { ...(V1.find((f) => f.id === "S-POL")?.weights ?? BASE), potentialModel: "capped", resources: -0.3 },
+    description: "Attribution probe: S-POL with the capped potential and a penalty on unspent Resources, so it converts instead of passing." },
 ];
 
 export const FAMILIES: readonly Family[] = [
