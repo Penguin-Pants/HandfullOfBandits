@@ -283,3 +283,24 @@ describe("spending frontier, review rounds 3 and 4 (cand-4)", () => {
     expect(best(s, "agitation", "pkk")).toBeGreaterThanOrEqual(margin(s, "pkk", all));
   });
 });
+
+describe("spending ties (PR #41 review, cand-5)", () => {
+  it("keeps tied Civic Action allocations that expose different spaces to the Agitation reply", () => {
+    // Four eligible spaces. Mardin-Batman x2 + Sanliurfa x1 and Sanliurfa x1 + Van-Bitlis x2 tie on cost, gain and
+    // unexposed gain, but the PKK (5 Resources) can reverse them differently; both must reach the final-round solve.
+    let s = propaganda(setTrack(setTrack(setTrack(turnOf("state"), "legitimacy", 16), "resources.state", 20), "resources.pkk", 5), "civicAction", 2);
+    const four = ["mardin-batman", "sanliurfa", "van-bitlis", "bingol-mus"];
+    for (const x of ruleset.spaces) if (!four.includes(x.id) && (s.spaces[x.id]?.pieces["police"]?.["default"] ?? 0) > 0) s = setPieces(s, x.id, "police", 0);
+    for (const id of four) s = setPieces(setPieces(s, id, "troops", 3), id, "police", 2);
+    s = setMarkers(setPieces(setLevel(s, "mardin-batman", -1), "mardin-batman", "pkkBase", 1), "mardin-batman", "coercion", 1);
+    s = setMarkers(setLevel(s, "sanliurfa", 1), "sanliurfa", "coercion", 1);
+    s = setMarkers(setPieces(setLevel(s, "van-bitlis", 0), "van-bitlis", "pkkBase", 1), "van-bitlis", "coercion", 1);
+    s = setMarkers(setPieces(setLevel(s, "bingol-mus", 0), "bingol-mus", "pkkBase", 1), "bingol-mus", "stateHarm", 1);
+    const shifts = (c: { command: Record<string, unknown> }): string => JSON.stringify(Object.fromEntries(Object.entries((c.command["choice"] as { spaces: Record<string, { shifts: number }> }).spaces).map(([k, v]) => [k, v.shifts]).sort()));
+    const set = gen(s, "civicAction", "state");
+    allLegal(s, set);
+    const offered = set.candidates.map(shifts);
+    expect(offered).toContain(JSON.stringify({ "mardin-batman": 2, sanliurfa: 1 }));
+    expect(offered).toContain(JSON.stringify({ sanliurfa: 1, "van-bitlis": 2 }));
+  });
+});

@@ -21,7 +21,7 @@ These strategies are hypotheses about scoring routes. They are not proven strong
 
 ## Candidate generation and pruning
 
-Generator version `cand-4` (revisions: `cand-2` to `cand-4` fix PR #40 review findings; see "Generator revisions and known gaps" below). Every emitted command passed engine validation. Each family has its own cap of 14 retained candidates, so one family cannot crowd out another. Single-location plans are split by option (for example `train/base`, `rally/grow`), by multi-location plans (`/multi`), by Europe Rally and by political sub-action (`/civicAction`, `/agitate`).
+Generator version `cand-5` (revisions: `cand-2` to `cand-5` fix PR #40 and #41 review findings; see "Generator revisions and known gaps" below). Every emitted command passed engine validation. Each family has its own cap of 14 retained candidates, so one family cannot crowd out another. Single-location plans are split by option (for example `train/base`, `rally/grow`), by multi-location plans (`/multi`), by Europe Rally and by political sub-action (`/civicAction`, `/agitate`).
 
 | Decision | Generated plans | Pruning |
 |---|---|---|
@@ -50,6 +50,7 @@ A wider generator (all bounds x4) is compared with the bounded one on three open
 | `cand-2` | Per-space options rotate by kind instead of a slice (Rally flip, Train Guards and Base kept); spending frontier is best first, so the cap drops the cheapest allocations | PR #40 review, round 1 |
 | `cand-3` | A shift's frontier value includes the Harm its required redress removes; Train places 1-2 Troops or 2 Police alone when supplies are low | PR #40 review, round 2 |
 | `cand-4` | Spending: one exact search replaces the greedy fallback and the redress add-on; fixes the four gaps below | PR #40 review, rounds 3 and 4 |
+| `cand-5` | Spending: up to three tied Civic Action allocations with different exposed shifts kept per search state | PR #41 review |
 
 Gaps in `cand-3`, found in review rounds 3 and 4 and fixed in `cand-4` (each has a regression test in `sim/test/candidates.test.ts`):
 
@@ -60,7 +61,7 @@ Gaps in `cand-3`, found in review rounds 3 and 4 and fixed in `cand-4` (each has
 
 All four affected only Civic Action and Agitation allocations.
 
-Known gap in `cand-4` (PR #41 review, deferred to `cand-5` with a rerun): the search keeps one allocation per cost, Harm removed and opponent Harm removed, so of two allocations with equal gain and equal unexposed gain it keeps only the first. Against a resource-limited PKK Agitation reply the other can be better, and `cand-3` could offer it. This affects only final-round Civic Action ties. The final-round solve is exact over the generated allocations; in `cand-4` those include the best allocation by margin, by Harm tie-break and by unexposed value for every cost.
+Gap in `cand-4` (PR #41 review), fixed in `cand-5`: the search kept one allocation per cost, Harm removed and opponent Harm removed, so of two allocations with equal gain and equal unexposed gain it kept only the first, although a resource-limited PKK Agitation reply can reverse them differently. `cand-5` keeps up to three per search state with different exposed shifts (regression test in `sim/test/candidates.test.ts`). An unbounded key took 27 s on a 13-space worst case; the bound of three takes 13 ms. The final-round solve is exact over the generated allocations; in `cand-4` those include the best allocation by margin, by Harm tie-break and by unexposed value for every cost.
 
 ## Shared search and evaluation
 
