@@ -21,7 +21,7 @@ These strategies are hypotheses about scoring routes. They are not proven strong
 
 ## Candidate generation and pruning
 
-Generator version `cand-1`. Every emitted command passed engine validation. Each family has its own cap of 14 retained candidates, so one family cannot crowd out another. Single-location plans are split by option (for example `train/base`, `rally/grow`), by multi-location plans (`/multi`), by Europe Rally and by political sub-action (`/civicAction`, `/agitate`).
+Generator version `cand-3` (revisions: `cand-2` and `cand-3` fix PR #40 review findings; see "Generator revisions and known gaps" below). Every emitted command passed engine validation. Each family has its own cap of 14 retained candidates, so one family cannot crowd out another. Single-location plans are split by option (for example `train/base`, `rally/grow`), by multi-location plans (`/multi`), by Europe Rally and by political sub-action (`/civicAction`, `/agitate`).
 
 | Decision | Generated plans | Pruning |
 |---|---|---|
@@ -43,12 +43,26 @@ Generator version `cand-1`. Every emitted command passed engine validation. Each
 
 A wider generator (all bounds x4) is compared with the bounded one on three opening fixtures in `sim/test/candidates.test.ts`. The bounded best one-ply value is within 1 point of the wider best. The Agitation and Civic Action frontiers match a brute-force optimum. Two earlier pruning defects were found by these checks and fixed: Rally+Agitate and Train Base plans were crowded out by one family cap, and multi-destination March plans were cut.
 
+### Generator revisions and known gaps
+
+| Version | Change | Source |
+|---|---|---|
+| `cand-2` | Per-space options rotate by kind instead of a slice (Rally flip, Train Guards and Base kept); spending frontier is best first, so the cap drops the cheapest allocations | PR #40 review, round 1 |
+| `cand-3` | A shift's frontier value includes the Harm its required redress removes; Train places 1-2 Troops or 2 Police alone when supplies are low | PR #40 review, round 2 |
+
+Known gaps in `cand-3`, found in review round 3 and not fixed in PR #40 (follow-up `cand-4` with a rerun):
+
+1. The Harm benefit is capped per space, not across the whole allocation, so several redress spaces can each count the same excess Harm. A legal allocation with a higher margin can be pruned.
+2. Removal-only spending is offered only above the Harm limit. Below it, lower Harm can still decide a tied final margin, and the generator does not offer that tie-break.
+
+Both affect only Civic Action and Agitation allocations. The final-round solve is exact over the generated allocations, not over all legal ones.
+
 ## Shared search and evaluation
 
 File: `sim/src/cli/strategies/evaluation.ts`.
 
-1. **Forced lines.** In the final Propaganda round, Civic Action is solved against the PKK's best Agitation reply and Agitation is solved exactly. Ended games score ±1000 plus the margin difference, so a sampled immediate win or loss dominates heuristics.
-2. **One-ply search.** Each candidate is applied to a determinized state and the automatic phases that follow (including an opening victory check) are run.
+1. **Forced lines.** In the final Propaganda round, Civic Action is solved against the PKK's best Agitation reply and Agitation is solved exactly over the generated allocations. Ended games score ±1000 plus the margin difference, so a sampled immediate win or loss dominates heuristics.
+2. **One-ply search (`search-2`).** Candidates are evaluated in family round-robin order until 25% of the 600-transition budget is left; each candidate is applied to a determinized state and the automatic phases that follow (including an opening victory check) are run.
 3. **Re-sampling.** The best six are evaluated on two more determinizations (new deck order and dice) and averaged.
 4. **Adaptive families.** The best four are re-valued after the opponent's best static reply on the same card, sampled over up to 40 opponent candidates with a quota per family.
 
