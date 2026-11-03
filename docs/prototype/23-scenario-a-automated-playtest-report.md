@@ -16,7 +16,7 @@ Measured results are labeled with game counts. Statements marked *hypothesis* ar
 
 PR #40 review found pruning, search-order and spending defects in four rounds. `cand-2` keeps Rally flip, Train Guards and Train Base plans and the most valuable spending allocation. `cand-3` values Harm removal in spending choices and keeps small Train placements; `search-2` evaluates action families in round-robin order so the transition budget cannot starve late families. Each change has regression tests. The whole frozen program was rerun on fresh evaluation seeds after each round, with the same players and weights. Earlier runs are retained as superseded evidence. Because each run uses different seeds, changes between runs are not paired estimates of a fix's effect.
 
-`cand-4` (PR #41) replaces the spending frontier with one exact search. It fixes the four `cand-3` gaps from review rounds 3 and 4: the Harm benefit was capped per space instead of across the allocation, removal-only spending was missing below the Harm limit, final Civic Action pruning ignored the PKK's Agitation reply, and over nine eligible spaces the greedy frontier dropped second shifts. Details in [21](21-scenario-a-strategies.md).
+`cand-4` (PR #41) replaces the spending frontier with one exact search. It fixes the four `cand-3` gaps from review rounds 3 and 4: the Harm benefit was capped per space instead of across the allocation, removal-only spending was missing below the Harm limit, final Civic Action pruning ignored the PKK's Agitation reply, and over nine eligible spaces the greedy frontier dropped second shifts. **Known `cand-4` gap** (PR #41 review, deferred to `cand-5`): of two Civic Action allocations with equal gain and exposure, only the first is kept, although the other can survive a resource-limited Agitation reply better. Details in [21](21-scenario-a-strategies.md).
 
 ## Reproduce
 
@@ -122,7 +122,7 @@ No unresolved ledger entry in any run. Natural exposure covers Operations, Speci
 | Gate | Status | Evidence |
 |---|---|---|
 | Reliability | ⚠️ Pass with one recorded failure | 31,999 of 32,000 evaluation games complete; all replay to their recorded hashes. One engine dead end (DEC-56) recorded with its valid prefix and no fallback |
-| Competence | ⚠️ Pass with limits | Eight qualified players pass every fixture with no illegal submission or fallback; full decision-family coverage. Limits: one-ply search, heavy State passing, sanctuary actions rarely chosen |
+| Competence | ⚠️ Pass with limits | Eight qualified players pass every fixture with no illegal submission or fallback; full decision-family coverage. Limits: one-ply search, heavy State passing, sanctuary actions rarely chosen, one known `cand-4` Civic Action tie gap |
 | Coverage | ✅ Pass | Every applicable mechanic covered naturally or by reviewed fixture; gaps listed above |
 | Strategic review | ✅ Pass | Every confirmed flag has a diagnosis, a tested or in-roster counter and a disposition; one unsuccessful counter recorded; one earlier flag not confirmed under `cand-3` or `cand-4`; four baseline-4 flags are exploratory |
 | Reproducibility | ✅ Pass | Frozen manifests with fingerprints; archives replay every game; analysis reruns are deterministic |

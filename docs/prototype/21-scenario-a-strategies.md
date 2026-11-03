@@ -58,7 +58,9 @@ Gaps in `cand-3`, found in review rounds 3 and 4 and fixed in `cand-4` (each has
 3. Final Civic Action allocations are pruned by immediate value per cost only. An allocation in a space the PKK cannot reverse by Agitation can be dropped in favor of an equal-gain one it can reverse, so a forced win can be missed.
 4. Over nine eligible spaces, the greedy frontier keeps one option per space. When one and two shifts have equal value per cost, the second shift is dropped, so large Resource totals cannot all be spent.
 
-All four affected only Civic Action and Agitation allocations. The final-round solve is exact over the generated allocations; in `cand-4` those include the best allocation by margin, by Harm tie-break and by unexposed value for every cost.
+All four affected only Civic Action and Agitation allocations.
+
+Known gap in `cand-4` (PR #41 review, deferred to `cand-5` with a rerun): the search keeps one allocation per cost, Harm removed and opponent Harm removed, so of two allocations with equal gain and equal unexposed gain it keeps only the first. Against a resource-limited PKK Agitation reply the other can be better, and `cand-3` could offer it. This affects only final-round Civic Action ties. The final-round solve is exact over the generated allocations; in `cand-4` those include the best allocation by margin, by Harm tie-break and by unexposed value for every cost.
 
 ## Shared search and evaluation
 
