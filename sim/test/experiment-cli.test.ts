@@ -2,7 +2,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { gunzipSync, gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import { Artifacts, fsWriter, readJournal, type ArtifactWriter } from "../src/cli/experiment-artifacts.ts";
@@ -86,7 +86,7 @@ describe("experiment runner (20 Phase 2)", () => {
     const dying = join(dir, "dying-worker.mjs");
     writeFileSync(dying, "process.exit(3);\n");
     const out = join(dir, "dead");
-    const outcome = await runExperiment(writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 51, count: 2 }] } })), out, { workerUrl: new URL(`file://${dying}`) });
+    const outcome = await runExperiment(writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 51, count: 2 }] } })), out, { workerUrl: pathToFileURL(dying) });
     expect(outcome.byStatus).toEqual({ workerError: 2 });
     const capped = await runExperiment(writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 51, count: 1 }] }, limits: { commands: 5, decisionMs: null, gameMs: 60000 } }), "capped.json"), join(dir, "capped"));
     expect(capped.byStatus).toEqual({ commandLimit: 1 });
