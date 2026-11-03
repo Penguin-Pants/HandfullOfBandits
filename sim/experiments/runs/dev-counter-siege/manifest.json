@@ -1,0 +1,96 @@
+{
+ "schemaVersion": 1,
+ "id": "dev-counter-siege",
+ "stage": "development",
+ "description": "Phase 8 counter development: S-SIEGE@3 against P-SHIELD@3 and the frozen PKK roster, paired with S-MIL@1 (the family it extends) on the dev-counter-shield seeds.",
+ "scenario": "scenario-a",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "1565e7a338b2f810ba612fbf4a297c0d0ba6c19db658b8f4703802b0730b0720"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "harmLimit": 6,
+  "engineFingerprint": null,
+  "playerFingerprint": null
+ },
+ "conditions": [
+  {
+   "id": "baseline",
+   "options": {
+    "hotPursuit": "allow",
+    "syriaMarchRestricted": "allow"
+   }
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-SIEGE@3",
+   "pkk": "P-SHIELD@3"
+  },
+  {
+   "state": "S-SIEGE@3",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-SIEGE@3",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-SIEGE@3",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-SIEGE@3",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-ADAPT@2"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 3001,
+    "count": 40
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 2000,
+  "decisionMs": null,
+  "gameMs": 120000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}
