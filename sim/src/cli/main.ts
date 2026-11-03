@@ -7,7 +7,8 @@ import { createEngine } from "../engine/index.ts";
 import { loadPackage, readPackageDir } from "../package/load.ts";
 import { exportCommand } from "./export.ts";
 import { fuzz } from "./fuzz.ts";
-import { replayFile, replaySession } from "./replay.ts";
+import { replayExperiment, replayFile, replaySession } from "./replay.ts";
+import { runExperiment } from "./experiment.ts";
 import { validateCommand } from "./validate.ts";
 
 const usage = [
@@ -16,6 +17,8 @@ const usage = [
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
   "       sim batch --games N --strategy <state>,<pkk> [--swap-seats] [--seed N] [--scenario scenario-a] [--package <dir>] [--out <csv>]",
+  "       sim experiment run <manifest.json> --out <new-dir>",
+  "       sim experiment replay <experiment-dir> [--game <gameId>]",
   "       sim export <sessionId...> [--db <file>] [--with-states] [--format json|markdown] [--out <file>]",
 ].join("\n");
 const args = process.argv.slice(2);
@@ -60,6 +63,17 @@ if (command === "validate" && target !== undefined) {
     else console.log(report.csv.trimEnd());
     print({exitCode: 0,lines: report.summary});
   } catch (e) {print({exitCode: 1,lines: [`error: ${e instanceof Error ? e.message : String(e)}`]});}
+} else if (command === "experiment") {
+  const [, action, path] = args;
+  const known = new Set(["--out", "--game"]);
+  const bad = args.slice(3).filter((a, i, all) => a.startsWith("--") ? !known.has(a) : !known.has(all[i - 1] ?? ""));
+  if (bad.length > 0 || path === undefined) print({ exitCode: 2, lines: [usage] });
+  else if (action === "run" && args.includes("--out")) {
+    runExperiment(path, flag("--out", ""), { log: (line) => { console.log(line); } })
+      .then((o) => { print({ exitCode: 0, lines: [`experiment ${o.experimentHash} in ${o.dir}: ${JSON.stringify(o.byStatus)}`] }); })
+      .catch((e: unknown) => { print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] }); });
+  } else if (action === "replay") print(replayExperiment(path, args.includes("--game") ? flag("--game", "") : null));
+  else print({ exitCode: 2, lines: [usage] });
 } else if (command === "fuzz") {
   const loaded = loadPackage(readPackageDir(flag("--package", kurdish)));
   if (!loaded.ok) {

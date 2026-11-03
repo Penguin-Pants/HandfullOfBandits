@@ -28,7 +28,7 @@ import { loadPackageContent, savePackageVersion } from "../store/repos/packages.
 import { createSession, getSession, type SessionRow } from "../store/repos/sessions.ts";
 import { loadState } from "../store/repos/states.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
-import { codeFingerprint } from "./fingerprint.ts";
+import { codeFingerprint } from "../package/fingerprint.ts";
 import { cardTitle, causeOf, type Cause } from "./cause.ts";
 import { operationState } from "../engine/coin/ops/choose-operation.ts";
 import { formsFor } from "./forms.ts";
