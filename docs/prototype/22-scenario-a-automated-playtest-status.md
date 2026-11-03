@@ -1,6 +1,6 @@
 # Scenario A automated playtest: status and evidence
 
-Status: Phases 1 to 8 implemented and run on 2026-11-03; current evidence is generator `cand-4` with search `search-2` (PR #41). Report: [23](23-scenario-a-automated-playtest-report.md). Players and generator: [21](21-scenario-a-strategies.md). Plan: [20](20-scenario-a-automated-playtest-build-plan.md). Human IC-3a remains open.
+Status: Phases 1 to 8 implemented and run on 2026-11-03; current evidence is generator `cand-5` with search `search-2` (PR #42). Report: [23](23-scenario-a-automated-playtest-report.md). Players and generator: [21](21-scenario-a-strategies.md). Plan: [20](20-scenario-a-automated-playtest-build-plan.md). Human IC-3a remains open.
 
 ## Environment
 
@@ -20,6 +20,7 @@ Status: Phases 1 to 8 implemented and run on 2026-11-03; current evidence is gen
 | 7 Frozen evaluation and statistics | ✅ | `experiment-analysis.ts`; runs `baseline-1`, `options-1`, `adversarial-2`; `sim/test/experiment-analysis.test.ts` |
 | 8 Counters and disposition | ✅ | runs `dev-counter-*`, `dev-probe-spend`, `confirmation-1`; report 23 |
 | Review rerun (cand-2) | ✅ | runs `baseline-2`, `options-2`, `adversarial-3`, `confirmation-2` supersede the `cand-1` evaluation runs |
+| Review rerun (cand-5, search-2) | ✅ | runs `baseline-5`, `options-5`, `adversarial-6`, `confirmation-5` supersede the `cand-4` runs; 8,000/8,000 complete, all replay identically; `baseline-5` resumed once after a container restart (2,580 games kept) |
 | Review rerun (cand-4, search-2) | ⚠️ | runs `baseline-4`, `options-4`, `adversarial-5`, `confirmation-4` supersede the `cand-3` runs; 7,999/8,000 complete, all replay identically; 1 recorded engine dead end (DEC-56) |
 | Review rerun (cand-3, search-2) | ✅ | runs `baseline-3`, `options-3`, `adversarial-4`, `confirmation-3` supersede the `cand-2` runs; 8,000/8,000 complete and replay identically |
 
@@ -60,7 +61,9 @@ Pass 1, correctness (confidence high for the runner and statistics; medium for p
 | Fix | PR #40 review round 2: search budget starved late families; Harm removal unvalued in spending; low-supply Train plans missing; repeats counted as independent trials; controls pooled into roster averages; no-pair comparisons shown as 0; Propaganda checkpoints per round, not per phase; abort left workers running | `cand-3`, `search-2`, analysis v2, runner fix; each with a regression test that fails before the fix; frozen program rerun on fresh seeds |
 | Fix | PR #40 review round 3: report labels dropped player versions; coverage replayed without checking hashes | Full player IDs; coverage throws on divergence; regression tests; all 19 committed runs pass |
 | Fix | PR #40 review rounds 3 and 4: Harm benefit capped per space, not per allocation; removal-only spending missing below the Harm limit; final Civic Action pruning ignores Agitation-reply exposure; large-space greedy frontier drops second shifts | Deferred from PR #40, fixed in PR #41 (`cand-4`, exact allocation search); four regression tests fail on `cand-3`; frozen program rerun on fresh seeds |
-| Propose | PR #41 review: the exact search keeps only the first of two Civic Action allocations with equal gain and exposure; the other can survive a resource-limited Agitation reply better (reproduced) | Deferred to a follow-up `cand-5` with a rerun, by owner decision; recorded in 21 and 23 |
+| Fix | PR #41 review: the exact search keeps only the first of two Civic Action allocations with equal gain and exposure; the other can survive a resource-limited Agitation reply better (reproduced) | Deferred from PR #41, fixed in PR #42 (`cand-5`: up to three tied allocations per search state); regression test fails on `cand-4`; frozen program rerun on fresh seeds |
+| Fix | A container restart stopped `baseline-5` after 2,580 of 3,520 games; the runner could only start again from nothing | `experiment run --resume` keeps sealed games and replays unfinished ones (PR #42); tests compare a resumed run with an uninterrupted one |
+| Fix | PR #42 review: a resumed run reported a new experiment hash after a runner-only commit | The recorded hash stays the run's identity; regression test |
 | Decide | `options-4` game `no-syria-march~S-MILv1~P-ADAPTv2~1001716~r0`: after Host Pressure before March, DEC-56 waits for new March destinations, but no legal, affordable March exists | Engine dead end reproduced from the journal; recorded as failed with its 58-command prefix, no fallback. Needs a designer decision on DEC-56; no rule changed (report 23, risk 6) |
 | Drop | State passing: v2 capped potential did not reduce it (37.4% vs 39.6%) | Hypothesis falsified; kept as a diagnostic and a player limitation |
 
@@ -73,4 +76,3 @@ Pass 2, simplicity: one candidate generator serves runner, search and fixtures; 
 3. Sanctuary actions beyond Restricted never chosen naturally.
 4. Human IC-3a not done.
 5. DEC-56 dead end when no legal, affordable March remains (Decide above).
-6. `cand-5`: keep tied Civic Action allocations that differ in Agitation-reply exposure (Propose above).

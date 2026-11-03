@@ -1,0 +1,10 @@
+{
+ "state": "complete",
+ "scheduled": 1600,
+ "recorded": 1600,
+ "byStatus": {
+  "complete": 1600
+ },
+ "started": "2026-11-03T22:00:55.856Z",
+ "finished": "2026-11-03T22:25:27.748Z"
+}
