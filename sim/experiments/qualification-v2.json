@@ -1,0 +1,2452 @@
+{
+ "suiteVersion": 1,
+ "suiteHash": "1072b663d930ab8eb6ca5507402b7971330724ad0f18c1adff8a4ab7efffa880",
+ "packageHash": "1565e7a338b2f810ba612fbf4a297c0d0ba6c19db658b8f4703802b0730b0720",
+ "results": [
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended victory check; winner state; independent margins state 2 pkk -29; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -13 pkk -15; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -11 pkk -8; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -17 pkk -18; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -7 pkk -8; harm 7/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 1,
+       "displacement": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -20 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "redeploy",
+    "choice": {
+     "troops": [
+      {
+       "from": "kdp-zone",
+       "to": "van-bitlis",
+       "count": 3
+      }
+     ],
+     "police": [],
+     "guerrilla": []
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "upkeep",
+    "choice": {
+     "removeGuards": {
+      "dersim": 3,
+      "agri": 1
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "S-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended victory check; winner state; independent margins state 2 pkk -29; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -13 pkk -15; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -11 pkk -8; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -17 pkk -18; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -7 pkk -8; harm 7/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 1,
+       "displacement": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -20 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "redeploy",
+    "choice": {
+     "troops": [
+      {
+       "from": "kdp-zone",
+       "to": "van-bitlis",
+       "count": 3
+      }
+     ],
+     "police": [],
+     "guerrilla": []
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "upkeep",
+    "choice": {
+     "removeGuards": {
+      "dersim": 3,
+      "agri": 1
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "S-MIL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended victory check; winner state; independent margins state 2 pkk -29; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -13 pkk -15; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -11 pkk -8; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -17 pkk -18; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -7 pkk -8; harm 7/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 1,
+       "displacement": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -20 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "redeploy",
+    "choice": {
+     "troops": [
+      {
+       "from": "kdp-zone",
+       "to": "van-bitlis",
+       "count": 3
+      }
+     ],
+     "police": [],
+     "guerrilla": []
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "upkeep",
+    "choice": {
+     "removeGuards": {
+      "dersim": 3,
+      "agri": 1
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "S-CON@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended victory check; winner state; independent margins state 2 pkk -29; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -13 pkk -15; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -11 pkk -8; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "limitedOp",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -17 pkk -18; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 0,
+       "displacement": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended final scoring; winner state; independent margins state -7 pkk -8; harm 7/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "civicAction",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 0,
+       "reception": 0,
+       "stateHarm": 1,
+       "displacement": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -20 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "state",
+    "box": "opOnly",
+    "plan": {
+     "op": "state.train",
+     "locations": [
+      "van-bitlis"
+     ],
+     "perLocation": {
+      "van-bitlis": {
+       "option": "place",
+       "troops": 1,
+       "police": 2
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "civicAction",
+       "space": "van-bitlis",
+       "params": {
+        "coercion": 0,
+        "reception": 0,
+        "stateHarm": 0,
+        "displacement": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "redeploy",
+    "choice": {
+     "troops": [
+      {
+       "from": "kdp-zone",
+       "to": "van-bitlis",
+       "count": 3
+      }
+     ],
+     "police": [],
+     "guerrilla": []
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "upkeep",
+    "choice": {
+     "removeGuards": {
+      "dersim": 3,
+      "agri": 1
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "S-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 1; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "botan"
+     ],
+     "perLocation": {
+      "botan": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "botan",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -2 pkk 1; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -4 pkk -29; harm 0/1",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.coerce",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {}
+     },
+     "sa": {
+      "action": "pkk.extort",
+      "locations": [
+       "syria-bekaa",
+       "kdp-zone"
+      ],
+      "perLocation": {},
+      "timing": "before"
+     },
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 0; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "mardin-batman"
+     ],
+     "perLocation": {
+      "mardin-batman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -8 pkk 0; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      },
+      "botan": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -32 pkk 4; harm 0/6",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "adiyaman"
+     ],
+     "perLocation": {
+      "adiyaman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "adiyaman",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -4 pkk -3; harm 0/7",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 1,
+       "pkkHarm": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -25; harm 0/0",
+   "command": {
+    "type": "PlayPivotal",
+    "faction": "pkk",
+    "card": "DK-015",
+    "placements": {
+     "botan": 2,
+     "kdp-zone": 2
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -25; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "hakkari"
+     ],
+     "perLocation": {
+      "hakkari": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "P-POL@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.march",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {
+       "moves": [
+        {
+         "from": "mardin-batman",
+         "count": 1
+        },
+        {
+         "from": "syria-bekaa",
+         "count": 2
+        }
+       ]
+      }
+     },
+     "sa": {
+      "action": "pkk.extort",
+      "locations": [
+       "syria-bekaa",
+       "kdp-zone"
+      ],
+      "perLocation": {},
+      "timing": "before"
+     },
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 1; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "botan"
+     ],
+     "perLocation": {
+      "botan": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "botan",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -2 pkk 1; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -4 pkk -29; harm 0/1",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.coerce",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {}
+     },
+     "sa": {
+      "action": "pkk.extort",
+      "locations": [
+       "syria-bekaa",
+       "kdp-zone"
+      ],
+      "perLocation": {},
+      "timing": "before"
+     },
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 0; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "mardin-batman"
+     ],
+     "perLocation": {
+      "mardin-batman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -8 pkk 0; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      },
+      "botan": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -32 pkk 4; harm 0/6",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "adiyaman"
+     ],
+     "perLocation": {
+      "adiyaman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "adiyaman",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -4 pkk -3; harm 0/7",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 1,
+       "pkkHarm": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -25; harm 0/0",
+   "command": {
+    "type": "PlayPivotal",
+    "faction": "pkk",
+    "card": "DK-015",
+    "placements": {
+     "botan": 2,
+     "hakkari": 2
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -25; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "hakkari"
+     ],
+     "perLocation": {
+      "hakkari": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "P-EXP@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.march",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {
+       "moves": [
+        {
+         "from": "mardin-batman",
+         "count": 1
+        },
+        {
+         "from": "syria-bekaa",
+         "count": 2
+        }
+       ]
+      }
+     },
+     "sa": {
+      "action": "pkk.extort",
+      "locations": [
+       "syria-bekaa",
+       "kdp-zone"
+      ],
+      "perLocation": {},
+      "timing": "before"
+     },
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 1; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "botan"
+     ],
+     "perLocation": {
+      "botan": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "botan",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -2 pkk 1; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -4 pkk -29; harm 0/1",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.coerce",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {}
+     },
+     "sa": {
+      "action": "pkk.extort",
+      "locations": [
+       "syria-bekaa",
+       "kdp-zone"
+      ],
+      "perLocation": {},
+      "timing": "before"
+     },
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 0; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "mardin-batman"
+     ],
+     "perLocation": {
+      "mardin-batman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -8 pkk 0; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      },
+      "botan": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -32 pkk 4; harm 0/6",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "adiyaman"
+     ],
+     "perLocation": {
+      "adiyaman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "adiyaman",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -4 pkk -3; harm 0/7",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 1,
+       "pkkHarm": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -25; harm 0/0",
+   "command": {
+    "type": "PlayPivotal",
+    "faction": "pkk",
+    "card": "DK-015",
+    "placements": {
+     "hakkari": 4
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "mardin-batman"
+     ],
+     "perLocation": {
+      "mardin-batman": {
+       "option": "place"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "P-SURV@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.march",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {
+       "moves": [
+        {
+         "from": "mardin-batman",
+         "count": 1,
+         "face": "underground"
+        },
+        {
+         "from": "syria-bekaa",
+         "count": 2,
+         "face": "underground"
+        }
+       ]
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "S-WIN-CHECK",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-WIN-CHECK",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 1; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "botan"
+     ],
+     "perLocation": {
+      "botan": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "botan",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 1
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-WIN-AGIT",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -2 pkk 1; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-WIN-CIVIC",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-DEFEND-CHECK",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-DEFEND-CHECK",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -4 pkk -29; harm 0/1",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.coerce",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {}
+     },
+     "sa": {
+      "action": "pkk.extort",
+      "locations": [
+       "syria-bekaa",
+       "kdp-zone"
+      ],
+      "perLocation": {},
+      "timing": "before"
+     },
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "S-SCORE-POP",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-SCORE-BASE",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -39 pkk 0; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "mardin-batman"
+     ],
+     "perLocation": {
+      "mardin-batman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-FINAL-BELOW",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -8 pkk 0; harm 0/0",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "mardin-batman": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 2
+      },
+      "botan": {
+       "coercion": 0,
+       "pkkHarm": 0,
+       "shifts": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-GATE",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended victory check; winner pkk; independent margins state -32 pkk 4; harm 0/6",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "adiyaman"
+     ],
+     "perLocation": {
+      "adiyaman": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": [
+      {
+       "action": "agitate",
+       "space": "adiyaman",
+       "params": {
+        "coercion": 0,
+        "pkkHarm": 0,
+        "shifts": 2
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "fixture": "P-HARM-FINAL",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended final scoring; winner pkk; independent margins state -4 pkk -3; harm 0/7",
+   "command": {
+    "type": "PropagandaChoice",
+    "phase": "agitation",
+    "choice": {
+     "spaces": {
+      "van-bitlis": {
+       "coercion": 1,
+       "pkkHarm": 0,
+       "shifts": 0
+      }
+     }
+    }
+   }
+  },
+  {
+   "fixture": "S-HARM-FINAL",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-EVENT",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-ARGK",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -25; harm 0/0",
+   "command": {
+    "type": "PlayPivotal",
+    "faction": "pkk",
+    "card": "DK-015",
+    "placements": {
+     "botan": 2,
+     "kdp-zone": 2
+    }
+   }
+  },
+  {
+   "fixture": "S-PROC-REDEPLOY",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "S-PROC-UPKEEP",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "not applicable (other faction)",
+   "command": null
+  },
+  {
+   "fixture": "P-PROC-RESUME",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -25; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "opSa",
+    "plan": {
+     "op": "pkk.rally",
+     "locations": [
+      "hakkari"
+     ],
+     "perLocation": {
+      "hakkari": {
+       "option": "base"
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  },
+  {
+   "fixture": "P-PROC-EVENT",
+   "player": "P-ADAPT@2",
+   "passed": true,
+   "detail": "ended no; winner none; independent margins state -28 pkk -26; harm 0/0",
+   "command": {
+    "type": "ChooseOperation",
+    "faction": "pkk",
+    "box": "limitedOp",
+    "plan": {
+     "op": "pkk.march",
+     "locations": [
+      "sanliurfa"
+     ],
+     "perLocation": {
+      "sanliurfa": {
+       "moves": [
+        {
+         "from": "mardin-batman",
+         "count": 1,
+         "face": "underground"
+        },
+        {
+         "from": "syria-bekaa",
+         "count": 2,
+         "face": "underground"
+        }
+       ]
+      }
+     },
+     "sa": null,
+     "subActions": []
+    }
+   }
+  }
+ ],
+ "players": {
+  "S-POL@2": {
+   "passed": true,
+   "applicable": 8,
+   "failures": []
+  },
+  "S-MIL@2": {
+   "passed": true,
+   "applicable": 8,
+   "failures": []
+  },
+  "S-CON@2": {
+   "passed": true,
+   "applicable": 8,
+   "failures": []
+  },
+  "S-ADAPT@2": {
+   "passed": true,
+   "applicable": 8,
+   "failures": []
+  },
+  "P-POL@2": {
+   "passed": true,
+   "applicable": 10,
+   "failures": []
+  },
+  "P-EXP@2": {
+   "passed": true,
+   "applicable": 10,
+   "failures": []
+  },
+  "P-SURV@2": {
+   "passed": true,
+   "applicable": 10,
+   "failures": []
+  },
+  "P-ADAPT@2": {
+   "passed": true,
+   "applicable": 10,
+   "failures": []
+  }
+ }
+}

@@ -19,7 +19,7 @@ export function resolvePlayer(id: string): Player {
   let player: Player | null;
   if (family.endsWith("-RANDOM")) player = randomLegal(faction);
   else if (control !== undefined && (strategyNames as readonly string[]).includes(control) && (control === "scripted" || (CONTROLS[faction] ?? []).includes(control))) player = fullStateControl(control, faction);
-  else player = scenarioAPlayer(family);
+  else player = scenarioAPlayer(family, Number(version));
   if (player?.spec.id !== id || player.spec.faction !== faction || String(player.spec.version) !== version) throw new RangeError(`Unknown player ${id}`);
   return player;
 }

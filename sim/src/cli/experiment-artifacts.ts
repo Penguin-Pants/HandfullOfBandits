@@ -79,3 +79,55 @@ export function readJournal(dir: string, gameId: string): JournalEvent[] {
   }
   return out;
 }
+
+/** One game in the compact replay archive: start hash, every command and every state hash. */
+export interface ArchivedGame {
+  readonly gameId: string;
+  readonly startHash: string;
+  readonly commands: readonly unknown[];
+  readonly hashes: readonly string[];
+  readonly end: unknown;
+}
+
+export const REPLAY_ARCHIVE = "replays.jsonl.gz";
+
+/**
+ * Write `replays.jsonl.gz` (all games, commands and hashes) and copy the full journals of
+ * `keep` games to `review/`. The bulky per-game journals can then be left out of version
+ * control: the archive replays every game, and a rerun of the frozen manifest regenerates them.
+ */
+export function archiveExperiment(dir: string, gameIds: readonly string[], keep: readonly string[]): { readonly games: number; readonly bytes: number } {
+  const lines = gameIds.map((id) => {
+    const events = readJournal(dir, id);
+    const start = events.find((e) => e.t === "start");
+    const steps = events.flatMap((e) => (e.t === "step" ? [e] : []));
+    const game: ArchivedGame = { gameId: id, startHash: start?.t === "start" ? start.startHash : "", commands: steps.map((s) => s.command), hashes: steps.map((s) => s.hash), end: events.find((e) => e.t === "end") ?? null };
+    return JSON.stringify(game);
+  });
+  const file = join(dir, REPLAY_ARCHIVE);
+  if (existsSync(file)) throw new Error(`${file} exists; archives are never overwritten`);
+  const data = gzipSync(`${lines.join("\n")}\n`, { level: 9 });
+  writeFileSync(`${file}.tmp`, data);
+  renameSync(`${file}.tmp`, file);
+  const review = join(dir, "review");
+  mkdirSync(review, { recursive: true });
+  for (const id of keep) {
+    const name = `${gameFile(id)}.jsonl.gz`;
+    const from = join(dir, "games", name);
+    if (existsSync(from)) writeFileSync(join(review, name), readFileSync(from));
+  }
+  return { games: lines.length, bytes: data.length };
+}
+
+/** Archived games by ID, or null when the directory has no archive. */
+export function readArchive(dir: string): Map<string, ArchivedGame> | null {
+  const file = join(dir, REPLAY_ARCHIVE);
+  if (!existsSync(file)) return null;
+  const out = new Map<string, ArchivedGame>();
+  for (const line of gunzipSync(readFileSync(file)).toString("utf8").split("\n")) {
+    if (line.trim() === "") continue;
+    const g = JSON.parse(line) as ArchivedGame;
+    out.set(g.gameId, g);
+  }
+  return out;
+}

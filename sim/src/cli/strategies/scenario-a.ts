@@ -16,22 +16,24 @@ import { determinize } from "../player-observation.ts";
 import { settle, type Choice, type DecisionRequest, type ObservationPlayer, type PlayerSpec, type SearchContext } from "../players.ts";
 import { evaluate, timing, WIN_VALUE, type Weights } from "./evaluation.ts";
 
-export const STRATEGY_VERSION = 1;
+/** Current version of every family; earlier versions stay registered for paired comparison (19 s7). */
+export const STRATEGY_VERSION = 2;
 /** Transitions per decision for every qualified search player (19 s7: equal budgets). */
 export const SEARCH_BUDGET = 600;
 
-const BASE: Weights = { ownPotential: 0.5, oppPotential: 0.5, qualify: 6, resources: 0.05, controlPop: 0, oppControlPop: 0, pkkBases: 0, guerrillas: 0, underground: 0, active: 0, external: 0, presencePop: 0, policedPop: 0, legitimacy: 0, convertBy: 0 };
+const BASE: Weights = { ownPotential: 0.5, oppPotential: 0.5, qualify: 6, resources: 0.05, controlPop: 0, oppControlPop: 0, pkkBases: 0, guerrillas: 0, underground: 0, active: 0, external: 0, presencePop: 0, policedPop: 0, legitimacy: 0, convertBy: 0, potentialModel: "uncapped" };
 
 interface Family {
   readonly id: string;
+  readonly version: number;
   readonly faction: FactionId;
   readonly weights: Weights;
   readonly adaptive: boolean;
   readonly description: string;
 }
 
-/** Frozen v1 parameters. Margins always count 1:1; other weights are estimates. */
-export const FAMILIES: readonly Family[] = [
+/** v1 parameters (pilot-1). Margins always count 1:1; other weights are estimates. */
+const V1: readonly Omit<Family, "version">[] = [
   { id: "S-POL", faction: "state", adaptive: false, weights: { ...BASE, ownPotential: 0.7, oppPotential: 0.4, policedPop: 0.25, legitimacy: 0.3, controlPop: 0.1 },
     description: "Support in valuable spaces through Police, Control and Civic Action; protects Legitimacy. Blocked: restores Civic Action prerequisites (Control, Police, cleared markers); interrupts credible PKK wins through the shared forced-line search." },
   { id: "S-MIL", faction: "state", adaptive: false, weights: { ...BASE, ownPotential: 0.4, pkkBases: 3, guerrillas: 0.6, active: 0.4, controlPop: 0.1 },
@@ -49,6 +51,19 @@ export const FAMILIES: readonly Family[] = [
   { id: "P-ADAPT", faction: "pkk", adaptive: true, weights: { ...BASE, ownPotential: 0.7, oppPotential: 0.6, pkkBases: 1, controlPop: 0.1, active: -0.1 },
     description: "Balanced Opposition, Bases and reduction of State Support/Legitimacy with a sampled opponent reply on the best plans. Re-evaluates threats, Harm and timing at each decision." },
 ];
+
+/**
+ * Every registered family version. v2 changes only the potential model: conversion is capped by
+ * the remaining Propaganda Civic Action caps and Train/Rally opportunities (pilot-1 finding:
+ * uncapped potential made hoarding by Pass look better than spending).
+ */
+export const FAMILIES: readonly Family[] = [
+  ...V1.map((f) => ({ ...f, version: 1 })),
+  ...V1.map((f) => ({ ...f, version: 2, weights: { ...f.weights, potentialModel: "capped" as const } })),
+];
+
+/** The current version of each family: the qualified roster. */
+export const CURRENT: readonly Family[] = FAMILIES.filter((f) => f.version === STRATEGY_VERSION);
 
 interface Scored { readonly candidate: Candidate; value: number; samples: number; components: Readonly<Record<string, number>> }
 
@@ -159,13 +174,13 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
 
 function spec(family: Family): PlayerSpec {
   return {
-    id: `${family.id}@${String(STRATEGY_VERSION)}`, family: family.id, version: STRATEGY_VERSION, faction: family.faction, role: "qualified", access: "observation",
+    id: `${family.id}@${String(family.version)}`, family: family.id, version: family.version, faction: family.faction, role: "qualified", access: "observation",
     params: { ...(family.weights as unknown as JsonObject), adaptive: family.adaptive }, generatorVersion: GENERATOR_VERSION, budget: SEARCH_BUDGET, description: family.description,
   };
 }
 
-/** Qualified-candidate players by family ID. */
-export function scenarioAPlayer(id: string): ObservationPlayer | null {
-  const family = FAMILIES.find((f) => f.id === id);
+/** Players by family ID and version. */
+export function scenarioAPlayer(id: string, version: number): ObservationPlayer | null {
+  const family = FAMILIES.find((f) => f.id === id && f.version === version);
   return family === undefined ? null : { spec: spec(family), decide: (request, ctx) => searchDecide(family, request, ctx) };
 }

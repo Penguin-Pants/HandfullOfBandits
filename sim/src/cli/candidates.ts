@@ -104,9 +104,20 @@ const avail = (s: GameState, piece: string): number => s.pools[piece]?.available
 const landLinked = (r: Ruleset, id: string): boolean => !(r.spaces.find((x) => x.id === id)?.tags.includes("noLandLinks") ?? false);
 
 interface Part { locations: string[]; perLocation: Record<string, JsonObject> }
-interface Plan extends Part { sa: (Part & { action: string; timing: "before" | "after" }) | null; subActions: JsonObject[] }
+/** `variant` names a sub-family (Civic Action, Agitate) with its own cap, so it is never crowded out. */
+interface Plan extends Part { sa: (Part & { action: string; timing: "before" | "after" }) | null; subActions: JsonObject[]; variant?: string }
 
-const plan = (locations: string[], perLocation: Record<string, JsonObject>, subActions: JsonObject[] = []): Plan => ({ locations, perLocation, sa: null, subActions });
+/** Sub-family of a plan: several locations, Europe, and the political sub-action, each capped separately. */
+function variantOf(locations: readonly string[], perLocation: Readonly<Record<string, JsonObject>>, subActions: readonly JsonObject[]): string | null {
+  const option = locations.length === 1 ? perLocation[locations[0] ?? ""]?.["option"] : undefined;
+  const kind = locations.length > 1 ? "multi" : locations[0] === "europe" ? "europe" : typeof option === "string" && option !== "place" ? option : null;
+  const parts = [kind, typeof subActions[0]?.["action"] === "string" ? subActions[0]["action"] : null].filter((x) => x !== null);
+  return parts.length === 0 ? null : parts.join("+");
+}
+const plan = (locations: string[], perLocation: Record<string, JsonObject>, subActions: JsonObject[] = []): Plan => {
+  const variant = variantOf(locations, perLocation, subActions);
+  return { locations, perLocation, sa: null, subActions, ...(variant === null ? {} : { variant }) };
+};
 
 // ---------------------------------------------------------------- Operations
 
@@ -120,6 +131,7 @@ function agitationSpend(s: GameState, loc: string, shifts: number): JsonObject {
 }
 
 /**
+ * Families split by option, multi-location plans and sub-actions, each with its own cap.
  * Train: per space, mixes of Troops/Police (place), 1-2 Guards, or a Base; optional Civic Action
  * of 1 or 2 shifts in one Train space. Multi-space plans pair the highest-Pop eligible spaces.
  */
@@ -234,7 +246,7 @@ function rallyPlans(r: Ruleset, s: GameState, limited: boolean, wide: number): P
     if (base && count(s, l, "guerrilla", "active") > 0) out.push({ option: "flip" });
     return out;
   };
-  const locs = [...domestic(r), ...HOSTS, "europe"].filter(open);
+  const locs = [...domestic(r), ...HOSTS, "europe"].filter(open).sort((a, b) => Number(count(s, b, "pkkBase") > 0) - Number(count(s, a, "pkkBase") > 0));
   const agitate = (l: string): JsonObject[] => r.spaces.find((x) => x.id === l)?.kind !== "domestic" ? [] : [1, 2].filter((n) => level(s, l) - n >= -2).map((n) => ({ action: "agitate", space: l, params: agitationSpend(s, l, n) }));
   const singles = locs.map((l) => {
     const list = atoms(l).slice(0, 3 * wide).map((a) => plan([l], { [l]: a }));
@@ -463,7 +475,46 @@ function civicChoices(r: Ruleset, s: GameState): JsonObject[] {
     const cost = Number(params["coercion"]) + Number(params["reception"]) + 3 * Number(params["stateHarm"]) + 2 * n; // literal-ok: rules 3.6.1 costs, checked by validation
     return { loc: l, cost, value: n * pop(r, l), params };
   }));
-  return frontier(options, cap).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) }));
+  return withRedress(frontier(options, cap), redressUnits(r, s, "state", 3), cap, civicSpend, s).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) })); // literal-ok: rules 3.6.1 redress cost
+}
+
+/**
+ * Removal-only units for a faction whose Harm exceeds the limit (rules 7.3: 2 margin per excess
+ * marker): one marker per unit, up to the excess, where the faction may spend.
+ */
+interface Unit { readonly loc: string; readonly key: string; readonly cost: number }
+function redressUnits(r: Ruleset, s: GameState, faction: "state" | "pkk", harmCost: number): Unit[] {
+  const keys = faction === "pkk" ? [["coercion", 1], ["pkkHarm", harmCost]] as const : [["stateHarm", harmCost]] as const;
+  const total = r.spaces.reduce((n, x) => n + keys.reduce((m, [k]) => m + markers(s, x.id, k), 0), 0);
+  let excess = total - param(r, "harm.limit", "number");
+  const out: Unit[] = [];
+  for (const [key, cost] of keys) {
+    for (const loc of domestic(r)) {
+      const allowed = faction === "pkk" ? count(s, loc, "pkkBase") > 0 || controlOf(r, s, loc) === "pkk" : controlOf(r, s, loc) === "state" && count(s, loc, "police") > 0 && count(s, loc, "troops") > 0;
+      for (let i = 0; allowed && i < markers(s, loc, key) && excess > 0; i++, excess--) out.push({ loc, key, cost });
+    }
+  }
+  return out;
+}
+
+/** Frontier allocations plus allocations that first buy back excess Harm unit by unit, then spend the rest. */
+function withRedress(base: Spend[][], units: readonly Unit[], budget: number, spend: (s: GameState, loc: string, shifts: number) => JsonObject, s: GameState): Spend[][] {
+  const out = [...base];
+  const zero = (loc: string): JsonObject => Object.fromEntries(Object.entries(spend(s, loc, 0)).map(([k]) => [k, 0]));
+  const picked = new Map<string, Record<string, number>>();
+  let cost = 0;
+  for (const u of units) {
+    if (cost + u.cost > budget) continue;
+    cost += u.cost;
+    const entry = picked.get(u.loc) ?? {};
+    entry[u.key] = (entry[u.key] ?? 0) + 1;
+    picked.set(u.loc, entry);
+    const removal: Spend[] = [...picked].map(([loc, keys]) => ({ loc, cost: 0, value: 0, params: { ...zero(loc), ...keys } }));
+    out.push(removal);
+    const rest = [...base].reverse().find((b) => b.reduce((n, x) => n + x.cost, 0) <= budget - cost && b.every((x) => !picked.has(x.loc)));
+    if (rest !== undefined && rest.length > 0) out.push([...removal, ...rest]);
+  }
+  return out;
 }
 
 /** Agitation phase: spaces with a PKK Base or PKK Control; value = Pop per level gained. */
@@ -472,7 +523,7 @@ function agitationChoices(r: Ruleset, s: GameState): JsonObject[] {
     const params = agitationSpend(s, l, n);
     return { loc: l, cost: Number(params["coercion"]) + 2 * Number(params["pkkHarm"]) + n, value: n * pop(r, l), params }; // literal-ok: rules 3.6.2 redress cost
   }));
-  return frontier(options, resources(r, s, "pkk")).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) }));
+  return withRedress(frontier(options, resources(r, s, "pkk")), redressUnits(r, s, "pkk", 2), resources(r, s, "pkk"), agitationSpend, s).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) })); // literal-ok: rules 3.6.2 redress cost
 }
 
 /** Upkeep shortfall: remove the fewest Guards, from low-Pop spaces first or from crowded spaces first. */
@@ -558,8 +609,11 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
       if (!boxes.includes(box)) continue;
       for (const op of Object.keys(OP_PLANS).filter((id) => actionHandlers[id]?.faction === faction)) {
         const plans = OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? [];
-        if (box !== BOX.opSa) { offer(`op:${op}@${box}`, plans.map((p) => opCommand(faction, box, op, p))); continue; }
-        if (!boxes.includes(BOX.opOnly)) offer(`op:${op}@${box}`, plans.map((p) => opCommand(faction, box, op, p)));
+        const byVariant = (prefix: string): void => {
+          for (const variant of new Set(plans.map((p) => p.variant))) offer(`${prefix}${variant === undefined ? "" : `/${variant}`}@${box}`, plans.filter((p) => p.variant === variant).map((p) => opCommand(faction, box, op, p)));
+        };
+        if (box !== BOX.opSa) { byVariant(`op:${op}`); continue; }
+        if (!boxes.includes(BOX.opOnly)) byVariant(`op:${op}`);
         for (const sa of Object.values(actionHandlers).filter((h) => h.kind === "sa" && h.faction === faction && (h.accompanies === "any" || h.accompanies.includes(op)))) {
           const variants = sa.id === "state.cross-border" ? crossBorderPlans(s, op) : plans.slice(0, 6 * wide).flatMap((p) => saVariants(r, s, sa.id, p));
           offer(`op:${op}+${sa.id}@${box}`, variants.map((p) => opCommand(faction, box, op, p)));

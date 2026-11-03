@@ -15,6 +15,8 @@ export interface Timing {
   readonly final: boolean;
   /** Expected Event cards before the next Propaganda card, from public pile counts only. */
   readonly cardsToPropaganda: number;
+  /** Expected Event cards before the final Propaganda card (0 during the final round). */
+  readonly cardsToFinal: number;
 }
 
 /** Public timing estimate (rules 10.3): an unseen Propaganda card lies in pile positions 9 to 13. */
@@ -34,8 +36,20 @@ export function timing(r: Ruleset, s: GameState): Timing {
     before += (first + left - 1) / 2;
     break;
   }
+  // Expected Event cards before the final Propaganda: all remaining cards of earlier piles except their
+  // unseen Propaganda card, plus the expected position of the last pile's Propaganda card.
+  let toFinal = 0;
+  const campaigns = scenario?.campaigns ?? [];
+  for (const [i, campaign] of campaigns.entries()) {
+    const left = s.deck.piles[i]?.length ?? 0;
+    const propaganda = Object.values(r.cards).find((c) => c.campaign === campaign && c.type === "propaganda");
+    const unseen = propaganda !== undefined && !seen.has(propaganda.id) && left > 0;
+    if (i < campaigns.length - 1) { toFinal += left - (unseen ? 1 : 0); continue; }
+    toFinal += unseen ? (Math.max(0, top - (pileSize - left)) + left - 1) / 2 : left;
+  }
   const round = s.turn.propagandaRound;
-  return { round, finalRound, final: round >= finalRound && s.turn.phase === "propaganda", cardsToPropaganda: before };
+  const final = round >= finalRound && s.turn.phase === "propaganda";
+  return { round, finalRound, final, cardsToPropaganda: before, cardsToFinal: final ? 0 : toFinal };
 }
 
 export interface Features {
@@ -65,7 +79,18 @@ function top(values: number[], n: number): number {
   return values.sort((a, b) => b - a).slice(0, Math.max(0, n)).reduce((a, v) => a + v, 0);
 }
 
-export function features(r: Ruleset, s: GameState): Features {
+/**
+ * Potential models (19 s3: account for remaining opportunities, caps and costs).
+ * uncapped (v1): every affordable shift counts. capped (v2): shifts are limited by the
+ * remaining conversion opportunities: Civic Action caps of the remaining Propaganda rounds
+ * (State), plus two shifts per Train or Rally sub-action on an expected share of the remaining
+ * cards; card-play shifts cost their Operation too.
+ */
+export type PotentialModel = "uncapped" | "capped";
+/** Share of remaining cards a faction is expected to spend on a political Operation (estimate). */
+const CARD_SHARE = 0.5;
+
+export function features(r: Ruleset, s: GameState, model: PotentialModel = "uncapped"): Features {
   const view = derive(r, s);
   const thresholds = r.scenarios[s.meta.scenarioId]?.thresholds ?? {};
   const limit = param(r, "harm.limit", "number");
@@ -81,10 +106,26 @@ export function features(r: Ruleset, s: GameState): Features {
   const pkkShifts = home.filter((x) => view.control[x.id] === "pkk" || count(s, x.id, "pkkBase") > 0).flatMap((x) => Array.from({ length: Math.max(0, level(x.id) + 2) }, () => x.pop - markers(s, x.id, "pkkHarm")));
   const stateBudget = res.state + incomeRounds * pay.state;
   const civicCap = t.final ? Math.floor(Number(s.tracks["legitimacy"]) / param(r, "civicAction.capDivisor", "number")) : Infinity;
-  const potential = {
+  const pkkBudget = res.pkk + incomeRounds * pay.pkk;
+  const potential = model === "uncapped" ? {
     state: top(stateShifts, Math.floor(Math.min(stateBudget, civicCap) / param(r, "civicAction.shiftCost", "number"))),
-    pkk: top(pkkShifts, Math.floor((res.pkk + incomeRounds * pay.pkk) / param(r, "agitation.shiftCost", "number"))),
-  };
+    pkk: top(pkkShifts, Math.floor(pkkBudget / param(r, "agitation.shiftCost", "number"))),
+  } : (() => {
+    const shift = { state: param(r, "civicAction.shiftCost", "number"), pkk: param(r, "agitation.shiftCost", "number") };
+    const opCost = { state: param(r, "train.costPerSpace", "number"), pkk: param(r, "rally.costPerLocation", "number") };
+    const maxShifts = param(r, "civicAction.maxShifts", "number");
+    const cardShifts = Math.floor(t.cardsToFinal * CARD_SHARE * maxShifts);
+    const rounds = Math.max(0, t.finalRound - s.turn.propagandaRound + (s.turn.phase === "propaganda" ? 1 : 0));
+    const cap = Math.floor(Number(s.tracks["legitimacy"]) / param(r, "civicAction.capDivisor", "number"));
+    // State: Propaganda shifts first (cheapest, capped per round), then Train + Civic Action shifts.
+    const propagandaShifts = Math.min(rounds * Math.floor(cap / shift.state), Math.floor(stateBudget / shift.state));
+    const stateLeft = stateBudget - propagandaShifts * shift.state;
+    const stateCard = Math.min(cardShifts, Math.floor(stateLeft / (shift.state + opCost.state / maxShifts)));
+    // PKK: Agitation in Propaganda has no Legitimacy cap; Rally + Agitate shifts also pay the Rally.
+    const pkkPropaganda = rounds > 0 ? Math.floor(pkkBudget / shift.pkk) : 0;
+    const pkkCard = Math.min(cardShifts, Math.floor(pkkBudget / (shift.pkk + opCost.pkk / maxShifts)));
+    return { state: top(stateShifts, propagandaShifts + stateCard), pkk: top(pkkShifts, Math.max(pkkPropaganda, pkkCard)) };
+  })();
   const margin: Record<FactionId, number> = {};
   const qualifies: Record<FactionId, boolean> = {};
   for (const f of ["state", "pkk"]) {
@@ -125,6 +166,7 @@ export interface Weights {
   readonly legitimacy: number;
   /** P-SURV: scale preservation terms by the expected cards left (conversion timing, 19 s4). */
   readonly convertBy: number;
+  readonly potentialModel: PotentialModel;
 }
 
 export const WIN_VALUE = 1000;
@@ -137,7 +179,7 @@ export interface Evaluation {
 /** Value of `s` for `faction`: margin difference plus weighted estimates. Ended games are exact. */
 export function evaluate(r: Ruleset, s: GameState, faction: FactionId, w: Weights): Evaluation {
   const other = faction === "state" ? "pkk" : "state";
-  const f = features(r, s);
+  const f = features(r, s, w.potentialModel);
   const earned = (f.margin[faction] ?? 0) - (f.margin[other] ?? 0);
   if (s.ended !== null) {
     const win = s.ended.winner === faction ? WIN_VALUE : -WIN_VALUE;

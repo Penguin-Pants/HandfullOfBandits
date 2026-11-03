@@ -82,38 +82,39 @@ export async function runExperiment(manifestFile: string, outDir: string, option
       records.set(job.gameId, { gameId: job.gameId, conditionId: job.conditionId, state: job.players["state"] ?? "", pkk: job.players["pkk"] ?? "", seed: job.seed, repeat: job.repeat, status: end.status, reason: end.reason, result: end.result, commands: end.commands, startHash: progress.startHash, finalHash: end.finalHash, ms: end.ms, decisions: progress.decisions, transitions: progress.transitions, liveRejected: progress.liveRejected });
       log(`${String(records.size)}/${String(frozen.jobs.length)} ${job.gameId} ${end.status}${end.result === null ? "" : ` ${end.result.winner ?? "draw"}`}`);
     };
-    const slot = (): void => {
-      if (aborted) return;
+    // One worker per slot, reused across games; replaced after a timeout or a crash.
+    const slot = (reuse: Worker | null): void => {
+      if (aborted) { void reuse?.terminate(); return; }
       const job = queue.shift();
       if (job === undefined) {
-        if (active === 0) done();
+        void reuse?.terminate();
+        if (--active === 0) done();
         return;
       }
-      active++;
-      const worker = new Worker(workerUrl, { workerData: init });
+      const worker = reuse ?? new Worker(workerUrl, { workerData: init });
       const progress: Progress = { decisions: 0, transitions: 0, liveRejected: 0, startHash: "", lastHash: "", commands: 0 };
       let settled = false;
-      const close = (end: Extract<JournalEvent, { t: "end" }> | null): void => {
+      const close = (end: Extract<JournalEvent, { t: "end" }> | null, healthy: boolean): void => {
         if (settled) return;
         settled = true;
         clearTimeout(timer);
-        worker.removeAllListeners();
-        void worker.terminate();
+        for (const name of ["message", "error", "exit"]) worker.removeAllListeners(name);
+        if (!healthy) void worker.terminate();
         try {
           if (end !== null) finish(job, progress, end);
         } catch (e) {
+          void worker.terminate();
           abort(e);
           return;
         }
-        active--;
-        slot();
+        slot(healthy ? worker : null);
       };
       const failure = (status: GameStatus, reason: string): Extract<JournalEvent, { t: "end" }> => ({ t: "end", status, reason, result: null, commands: progress.commands, finalHash: progress.lastHash, ms: manifest.limits.gameMs });
-      const timer = setTimeout(() => { close(failure("timeout", `game exceeded ${String(manifest.limits.gameMs)} ms; worker terminated`)); }, manifest.limits.gameMs);
+      const timer = setTimeout(() => { close(failure("timeout", `game exceeded ${String(manifest.limits.gameMs)} ms; worker terminated`), false); }, manifest.limits.gameMs);
       worker.on("message", (event: JournalEvent) => {
         if (settled) return;
         try {
-          if (event.t === "end") { close(event); return; }
+          if (event.t === "end") { close(event, true); return; }
           if (event.t === "start") { progress.startHash = event.startHash; progress.lastHash = event.startHash; }
           if (event.t === "step") {
             progress.commands = event.i + 1;
@@ -128,11 +129,13 @@ export async function runExperiment(manifestFile: string, outDir: string, option
           abort(e);
         }
       });
-      worker.on("error", (e: Error) => { close(failure("workerError", `worker error: ${e.message}`)); });
-      worker.on("exit", (code) => { close(failure("workerError", `worker exited with code ${String(code)} before the game ended`)); });
+      worker.on("error", (e: Error) => { close(failure("workerError", `worker error: ${e.message}`), false); });
+      worker.on("exit", (code) => { close(failure("workerError", `worker exited with code ${String(code)} before the game ended`), false); });
       worker.postMessage({ job });
     };
-    for (let i = 0; i < Math.min(manifest.concurrency, frozen.jobs.length); i++) slot();
+    active = Math.min(manifest.concurrency, frozen.jobs.length);
+    if (active === 0) done();
+    for (let i = 0; i < active; i++) slot(null);
   });
 
   const ordered = frozen.jobs.map((j) => records.get(j.gameId)).filter((r): r is GameRecord => r !== undefined);

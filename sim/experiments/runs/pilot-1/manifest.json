@@ -1,0 +1,128 @@
+{
+ "schemaVersion": 1,
+ "id": "pilot-1",
+ "stage": "pilot",
+ "description": "Phase 6 pilot (19 s7): 4 x 4 qualified cells x 20 development seeds, baseline options. Debug only; excluded from final estimates.",
+ "scenario": "scenario-a",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "1565e7a338b2f810ba612fbf4a297c0d0ba6c19db658b8f4703802b0730b0720"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "harmLimit": 6,
+  "engineFingerprint": null,
+  "playerFingerprint": null
+ },
+ "conditions": [
+  {
+   "id": "baseline",
+   "options": {
+    "hotPursuit": "allow",
+    "syriaMarchRestricted": "allow"
+   }
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-POL@1",
+   "pkk": "P-POL@1"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-EXP@1"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-SURV@1"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-ADAPT@1"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-POL@1"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-EXP@1"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-SURV@1"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-ADAPT@1"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-POL@1"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-EXP@1"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-SURV@1"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-ADAPT@1"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-POL@1"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-EXP@1"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-SURV@1"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-ADAPT@1"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 1001,
+    "count": 20
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 2000,
+  "decisionMs": null,
+  "gameMs": 120000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}
