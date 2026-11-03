@@ -31,6 +31,10 @@ Status: planning complete. Phase 1 built in `sim/`: IC-1 passes (11-build-plan.m
 
 ## Method
 
+Automated Scenario A testing is specified in
+[19-scenario-a-automated-playtest-spec.md](19-scenario-a-automated-playtest-spec.md).
+It defines the strategy portfolio, qualification, tournaments and evidence gates.
+
 1. Four bounded extraction passes (small model) read the design chapters, decisions, deck and evidence files.
 2. One integration pass checked the extractions against chapters 05, 06 and 09 and the deck CSV.
 3. One independent critical review (large model) read docs 01 to 11 and the rules chapters. Results are in 12.
