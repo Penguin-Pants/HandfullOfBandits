@@ -178,8 +178,10 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
     const streaked = new Set<string>();
     for (const e of events) {
       if (e.t !== "step") continue;
+      // Analysis derived from a different play would misreport the recorded games: every step
+      // must reproduce its recorded hash.
       const result = engine.apply(r, s, e.command);
-      if (!result.ok) break;
+      if (!result.ok || result.transition.stateHash !== e.hash) throw new Error(`${job.gameId}: replay diverges at step ${String(e.i + 1)}; run \`experiment replay\``);
       const x: Seen = { entries: result.transition.logEntries, command: e.command, before: s };
       for (const m of MECHANICS) if (!seen.has(m.id) && m.probe(x)) seen.add(m.id);
       const faction = typeof e.command["faction"] === "string" ? e.command["faction"] : null;

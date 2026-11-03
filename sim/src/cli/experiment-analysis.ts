@@ -216,7 +216,6 @@ export function analyzeExperiment(dir: string, coverage: Coverage): Analysis {
 }
 
 const pct = (x: number): string => (Number.isNaN(x) ? "n/a" : `${(100 * x).toFixed(1)}%`);
-const short = (id: string): string => id.replace(/@\d+$/, "");
 
 /** Markdown report for one analysis, with its coverage ledger. */
 export function renderReport(a: Analysis, coverage: Coverage | null): string {
@@ -225,13 +224,13 @@ export function renderReport(a: Analysis, coverage: Coverage | null): string {
     out.push(`## Condition ${c.id}`, "", "State win rate per cell, 95% Wilson interval, completed games (n). Rows: State player; columns: PKK player.", "");
     const states = [...new Set(c.cells.map((x) => x.state))];
     const pkks = [...new Set(c.cells.map((x) => x.pkk))];
-    out.push(`| State \\ PKK | ${pkks.map(short).join(" | ")} |`, `|---|${pkks.map(() => "---").join("|")}|`);
-    for (const s of states) out.push(`| ${short(s)} | ${pkks.map((p) => { const x = c.cells.find((y) => y.state === s && y.pkk === p); return x === undefined ? "" : `${pct(x.stateWinRate)} [${pct(x.ci.low)}, ${pct(x.ci.high)}] n=${String(x.primary)}${Object.keys(x.incomplete).length > 0 ? ` (+${String(x.scheduled - x.completed)} incomplete)` : ""}`; }).join(" | ")} |`);
+    out.push(`| State \\ PKK | ${pkks.join(" | ")} |`, `|---|${pkks.map(() => "---").join("|")}|`);
+    for (const s of states) out.push(`| ${s} | ${pkks.map((p) => { const x = c.cells.find((y) => y.state === s && y.pkk === p); return x === undefined ? "" : `${pct(x.stateWinRate)} [${pct(x.ci.low)}, ${pct(x.ci.high)}] n=${String(x.primary)}${Object.keys(x.incomplete).length > 0 ? ` (+${String(x.scheduled - x.completed)} incomplete)` : ""}`; }).join(" | ")} |`);
     const rep = c.cells.reduce((n, x) => ({ groups: n.groups + x.repeatSensitivity.groups, changed: n.changed + x.repeatSensitivity.winnerChanged }), { groups: 0, changed: 0 });
     if (rep.groups > 0) out.push("", `Player-seed sensitivity: the winner changed in ${String(rep.changed)} of ${String(rep.groups)} repeated seed groups.`);
     out.push("", `Equal-weight roster average (this roster only, not a human win probability): State ${pct(c.roster.mean)} [${pct(c.roster.low)}, ${pct(c.roster.high)}] over ${String(c.roster.cells)} qualified-versus-qualified cells; seed-cluster bootstrap. Cell rates and intervals use the first play per seed.`, "");
     out.push("| Cell | Margin diff mean (p10 / p50 / p90) | Early wins S/P | Threshold reached S/P | Harm > 6 S/P |", "|---|---|---|---|---|");
-    for (const x of c.cells) out.push(`| ${short(x.state)} vs ${short(x.pkk)} | ${x.marginDiff.mean.toFixed(1)} (${x.marginDiff.p10.toFixed(0)} / ${x.marginDiff.p50.toFixed(0)} / ${x.marginDiff.p90.toFixed(0)}) | ${String(x.earlyWins["state"])}/${String(x.earlyWins["pkk"])} | ${String(x.thresholdReached["state"])}/${String(x.thresholdReached["pkk"])} | ${String(x.harmPenalty["state"])}/${String(x.harmPenalty["pkk"])} |`);
+    for (const x of c.cells) out.push(`| ${x.state} vs ${x.pkk} | ${x.marginDiff.mean.toFixed(1)} (${x.marginDiff.p10.toFixed(0)} / ${x.marginDiff.p50.toFixed(0)} / ${x.marginDiff.p90.toFixed(0)}) | ${String(x.earlyWins["state"])}/${String(x.earlyWins["pkk"])} | ${String(x.thresholdReached["state"])}/${String(x.thresholdReached["pkk"])} | ${String(x.harmPenalty["state"])}/${String(x.harmPenalty["pkk"])} |`);
     const w = [...c.warnings.cell, ...c.warnings.roster, ...c.warnings.margin];
     out.push("", "Review triggers (not balance pass/fail):", "", ...(w.length === 0 ? ["- none"] : w.map((x) => `- ${x}`)), "");
   }

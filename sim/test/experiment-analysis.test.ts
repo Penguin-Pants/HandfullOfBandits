@@ -2,9 +2,10 @@
 import { join } from "node:path";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { analyzeExperiment, compareVersions, pairedDifference, renderReport, reviewSelection, reviewTriggers, rosterAverage, summarizeCells, wilson, writeAnalysis } from "../src/cli/experiment-analysis.ts";
-import { archiveExperiment, readJournal } from "../src/cli/experiment-artifacts.ts";
+import { archiveExperiment, gameFile, readJournal } from "../src/cli/experiment-artifacts.ts";
 import { replayExperiment } from "../src/cli/replay.ts";
-import { cpSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { experimentCoverage, MECHANICS } from "../src/cli/experiment-coverage.ts";
 import { runExperiment, type GameRecord } from "../src/cli/experiment.ts";
 import { snapshot } from "../src/cli/game-runner.ts";
@@ -173,6 +174,28 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
     }
     expect(checked).toBeGreaterThanOrEqual(15);
     expect(law).toBeLessThanOrEqual(1);
+  });
+
+  it("refuses coverage from a journal whose replay diverges from its recorded hashes (PR #40 review)", () => {
+    const copy = join(tempDir(), "altered");
+    cpSync(dir, copy, { recursive: true });
+    const id = "baseline~S-RANDOMv1~P-RANDOMv1~61~r0";
+    const file = join(copy, "games", `${gameFile(id)}.jsonl.gz`);
+    const lines = gunzipSync(readFileSync(file)).toString("utf8").split("\n").filter((l) => l !== "");
+    // Drop one step but keep every recorded hash: later steps no longer reproduce their hashes.
+    const at = lines.findIndex((l) => (JSON.parse(l) as { t: string; i?: number }).t === "step" && (JSON.parse(l) as { i: number }).i === 3);
+    lines.splice(at, 1);
+    writeFileSync(file, gzipSync(`${lines.join("\n")}\n`));
+    expect(() => experimentCoverage(copy)).toThrow(new RegExp(`${id}: replay diverges`));
+  });
+
+  it("keeps player versions in report labels so versions of one family stay distinct (PR #40 review)", () => {
+    const cells = summarizeCells([game(["b", "S-A@1", "P-A@1"], 1, "state"), game(["b", "S-A@2", "P-A@1"], 1, "pkk")], { state: 49, pkk: 30 }, 6);
+    const roster = rosterAverage([], 10, 1);
+    const report = renderReport({ analysisVersion: 2, experiment: "x", stage: "development", experimentHash: "h", scheduled: 2, byStatus: { complete: 2 }, conditions: [{ id: "b", cells, roster, warnings: { cell: [], roster: [], margin: [] } }], review: { closest: [], largest: [], random: [], failures: [], all: [] }, routes: { games: 0, state: { support: 0, legitimacy: 0 }, pkk: { opposition: 0, bases: 0 }, stateWinners: { games: 0, support: 0, legitimacy: 0 }, pkkWinners: { games: 0, opposition: 0, bases: 0 } } }, null);
+    expect(report).toContain("| S-A@1 |");
+    expect(report).toContain("| S-A@2 |");
+    expect(report).toContain("| S-A@2 vs P-A@1 |");
   });
 
   it("archives every game so replay and coverage work without the per-game journals", () => {
