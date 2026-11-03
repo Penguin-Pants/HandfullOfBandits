@@ -67,10 +67,15 @@ const V1: readonly Omit<Family, "version">[] = [
  * penalize Bases left beside Troops with no Underground Guerrilla.
  */
 const POL = V1.find((f) => f.id === "P-POL")?.weights ?? BASE;
+const MIL = V1.find((f) => f.id === "S-MIL")?.weights ?? BASE;
 const COUNTERS: readonly Family[] = [
   { id: "P-SHIELD", version: 3, faction: "pkk", adaptive: false,
     weights: { ...POL, potentialModel: "capped", pkkBases: 1.5, protectedBases: 1.5, exposedBases: 2, underground: 0.15 },
     description: "Counter to S-MIL: P-POL priorities plus Base protection. Keeps an Underground Guerrilla with each domestic Base (Rally flip, Underground March) and avoids Bases exposed to Sweep and Assault." },
+  // dev-counter-shield: P-SHIELD@3 won 158 of 160 development games against the State roster.
+  { id: "S-SIEGE", version: 3, faction: "state", adaptive: false,
+    weights: { ...MIL, protectedBases: 2, exposedBases: 1.5, active: 0.8 },
+    description: "Counter to P-SHIELD: S-MIL priorities plus value for exposing protected Bases (Sweep or Garrison to activate their Guerrillas, then Assault)." },
 ];
 
 export const FAMILIES: readonly Family[] = [
