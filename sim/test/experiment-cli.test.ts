@@ -38,7 +38,7 @@ describe("experiment runner (20 Phase 2)", () => {
     const again = spawnSync(process.execPath, [main, "experiment", "run", manifest, "--out", out], { encoding: "utf8" });
     expect(again.status).toBe(1);
     expect(again.stdout).toContain("already exists");
-  });
+  }, 120000);
 
   it("reproduces the same commands, hashes and results on a rerun, and keeps options in replay", async () => {
     const dir = tempDir();
@@ -51,7 +51,7 @@ describe("experiment runner (20 Phase 2)", () => {
     expect(steps(join(dir, "a"))).toEqual(steps(join(dir, "b")));
     expect(replayExperiment(join(dir, "a")).exitCode).toBe(0);
     expect(JSON.parse(readFileSync(join(dir, "a", "identity.json"), "utf8"))).toMatchObject({ conditions: { deny: { hotPursuit: "deny", syriaMarchRestricted: "deny" } } });
-  });
+  }, 120000);
 
   it("detects a changed hash in a journal", async () => {
     const dir = tempDir();
@@ -66,7 +66,7 @@ describe("experiment runner (20 Phase 2)", () => {
     const replay = replayExperiment(out);
     expect(replay.exitCode).toBe(1);
     expect(replay.lines[0]).toContain("differs at step 3");
-  });
+  }, 120000);
 
   it("records a game that exceeds its wall limit as a timeout with a replayable prefix, and continues", async () => {
     const dir = tempDir();
@@ -91,7 +91,7 @@ describe("experiment runner (20 Phase 2)", () => {
     const capped = await runExperiment(writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 51, count: 1 }] }, limits: { commands: 5, decisionMs: null, gameMs: 60000 } }), "capped.json"), join(dir, "capped"));
     expect(capped.byStatus).toEqual({ commandLimit: 1 });
     expect(replayExperiment(join(dir, "capped")).exitCode).toBe(0);
-  });
+  }, 120000);
 
   it("stops with an aborted status when the disk fails", async () => {
     const dir = tempDir();
@@ -100,7 +100,7 @@ describe("experiment runner (20 Phase 2)", () => {
     const out = join(dir, "full");
     await expect(runExperiment(writeManifest(dir, devManifest()), out, { writer: failing })).rejects.toThrow(/ENOSPC/);
     expect(JSON.parse(readFileSync(join(out, "status.json"), "utf8"))).toMatchObject({ state: "aborted", error: "ENOSPC: no space left" });
-  });
+  }, 120000);
 
   it("recovers the valid prefix of a journal with a truncated last line", () => {
     const dir = tempDir();

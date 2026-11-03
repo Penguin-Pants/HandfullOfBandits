@@ -241,3 +241,41 @@ export function writeAnalysis(dir: string, coverage: Coverage): { readonly path:
   writeFileSync(join(out, "report.md"), renderReport(analysis, coverage));
   return { path: out, analysis };
 }
+
+export interface VersionComparison {
+  readonly condition: string;
+  /** The seat whose player differs between the two cells. */
+  readonly seat: "state" | "pkk";
+  readonly opponent: string;
+  readonly newer: string;
+  readonly older: string;
+  /** Paired difference in State win indicator, newer minus older (positive: more State wins). */
+  readonly stateWinDiff: ReturnType<typeof pairedDifference>;
+}
+
+/**
+ * Paired comparisons of player versions over pooled results (19 s10: paired per-seed differences).
+ * Two cells pair when they share condition, opponent and family and differ only in version.
+ */
+export function compareVersions(results: readonly GameRecord[], samples: number, seed: number): VersionComparison[] {
+  const family = (id: string): string => id.replace(/@\d+$/, "");
+  const cells = [...new Map(results.map((g) => [cellKey(g), g])).values()];
+  const out: VersionComparison[] = [];
+  for (const a of cells) for (const b of cells) {
+    if (a.conditionId !== b.conditionId || cellKey(a) >= cellKey(b)) continue;
+    for (const seat of ["state", "pkk"] as const) {
+      const other = seat === "state" ? "pkk" : "state";
+      if (a[other] !== b[other] || a[seat] === b[seat] || family(a[seat]) !== family(b[seat])) continue;
+      const [newer, older] = a[seat] > b[seat] ? [a, b] : [b, a];
+      out.push({ condition: a.conditionId, seat, opponent: a[other], newer: newer[seat], older: older[seat], stateWinDiff: pairedDifference(results, cellKey(newer), cellKey(older), samples, seed) });
+    }
+  }
+  return out.sort((x, y) => x.seat.localeCompare(y.seat) || x.newer.localeCompare(y.newer) || x.opponent.localeCompare(y.opponent));
+}
+
+/** Markdown table of version comparisons. */
+export function renderComparisons(rows: readonly VersionComparison[]): string {
+  const lines = ["| Seat | Newer | Older | Opponent | Paired seeds | State win diff (newer - older) | 95% CI |", "|---|---|---|---|---|---|---|"];
+  for (const r of rows) lines.push(`| ${r.seat} | ${r.newer} | ${r.older} | ${r.opponent} | ${String(r.stateWinDiff.pairs)} | ${(100 * r.stateWinDiff.mean).toFixed(1)} pts | [${(100 * r.stateWinDiff.low).toFixed(1)}, ${(100 * r.stateWinDiff.high).toFixed(1)}] |`);
+  return `${lines.join("\n")}\n`;
+}

@@ -10,7 +10,8 @@ import { fuzz } from "./fuzz.ts";
 import { replayExperiment, replayFile, replaySession } from "./replay.ts";
 import { runExperiment } from "./experiment.ts";
 import { qualify } from "./qualification.ts";
-import { ANALYSIS_VERSION, writeAnalysis } from "./experiment-analysis.ts";
+import { ANALYSIS_VERSION, compareVersions, renderComparisons, writeAnalysis } from "./experiment-analysis.ts";
+import type { GameRecord } from "./experiment.ts";
 import { archiveExperiment } from "./experiment-artifacts.ts";
 import { join } from "node:path";
 import { experimentCoverage } from "./experiment-coverage.ts";
@@ -28,6 +29,7 @@ const usage = [
   "       sim experiment replay <experiment-dir> [--game <gameId>]",
   "       sim experiment analyze <experiment-dir>",
   "       sim experiment archive <experiment-dir>",
+  "       sim experiment compare <experiment-dir> <experiment-dir>... --out <file.md>",
   "       sim experiment qualify <out.json> [--players <id,id>] [--package <dir>]",
   "       sim export <sessionId...> [--db <file>] [--with-states] [--format json|markdown] [--out <file>]",
 ].join("\n");
@@ -76,7 +78,7 @@ if (command === "validate" && target !== undefined) {
 } else if (command === "experiment") {
   const [, action, path] = args;
   const known = new Set(["--out", "--game", "--players", "--package"]);
-  const bad = args.slice(3).filter((a, i, all) => a.startsWith("--") ? !known.has(a) : !known.has(all[i - 1] ?? ""));
+  const bad = action === "compare" ? args.slice(3).filter((a) => a.startsWith("--") && !known.has(a)) : args.slice(3).filter((a, i, all) => a.startsWith("--") ? !known.has(a) : !known.has(all[i - 1] ?? ""));
   if (bad.length > 0 || path === undefined) print({ exitCode: 2, lines: [usage] });
   else if (action === "run" && args.includes("--out")) {
     runExperiment(path, flag("--out", ""), { log: (line) => { console.log(line); } })
@@ -90,6 +92,12 @@ if (command === "validate" && target !== undefined) {
     } catch (e) {
       print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
     }
+  } else if (action === "compare" && args.includes("--out")) {
+    const dirs = args.slice(2).filter((a, i, all) => a !== "--out" && all[i - 1] !== "--out");
+    const results = dirs.flatMap((d) => JSON.parse(readFileSync(join(d, "results.json"), "utf8")) as GameRecord[]);
+    const rows = compareVersions(results, 2000, 1);
+    writeFileSync(flag("--out", "compare.md"), `# Paired player-version comparison\n\nSources: ${dirs.join(", ")}. Pairs share condition, opponent and game seed; bootstrap over seeds (2,000 draws, seed 1).\n\n${renderComparisons(rows)}`, "utf8");
+    print({ exitCode: 0, lines: [renderComparisons(rows)] });
   } else if (action === "archive") {
     try {
       const ids = (JSON.parse(readFileSync(join(path, "schedule.json"), "utf8")) as { gameId: string }[]).map((j) => j.gameId);

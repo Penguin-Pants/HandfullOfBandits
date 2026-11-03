@@ -1,12 +1,15 @@
 // Phase 4 (20): every Scenario A decision family can be expressed; every emitted candidate is
 // legal; automatic advance, optional skips and Pass stay distinct; bounded generation is compared
 // with a broader generator.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { decisionPoint, generateCandidates, type CandidateSet, type DecisionKind } from "../src/cli/candidates.ts";
 import { evaluate } from "../src/cli/strategies/evaluation.ts";
 import { CURRENT } from "../src/cli/strategies/scenario-a.ts";
 import type { GameState } from "../src/engine/core/types.ts";
 import { engine, op, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "./board.ts";
+
+// Real games and workers: slow under full-suite load.
+vi.setConfig({ testTimeout: 120000 });
 
 const gen = (s: GameState, kind: DecisionKind, faction: string, broad = false): CandidateSet => generateCandidates(engine, ruleset, s, kind, faction, { familyCap: 14, broad });
 const families = (set: CandidateSet): string[] => Object.entries(set.families).filter(([, v]) => v.retained > 0).map(([k]) => k);

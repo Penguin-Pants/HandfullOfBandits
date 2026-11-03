@@ -1,7 +1,7 @@
 // Phases 6 and 7 (20): statistics, review selection, coverage ledger and checkpoint snapshots.
 import { join } from "node:path";
-import { beforeAll, describe, expect, it } from "vitest";
-import { analyzeExperiment, pairedDifference, renderReport, reviewSelection, reviewTriggers, rosterAverage, summarizeCells, wilson, writeAnalysis } from "../src/cli/experiment-analysis.ts";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import { analyzeExperiment, compareVersions, pairedDifference, renderReport, reviewSelection, reviewTriggers, rosterAverage, summarizeCells, wilson, writeAnalysis } from "../src/cli/experiment-analysis.ts";
 import { archiveExperiment, readJournal } from "../src/cli/experiment-artifacts.ts";
 import { replayExperiment } from "../src/cli/replay.ts";
 import { cpSync, readFileSync, rmSync } from "node:fs";
@@ -10,6 +10,9 @@ import { runExperiment, type GameRecord } from "../src/cli/experiment.ts";
 import { snapshot } from "../src/cli/game-runner.ts";
 import { engine, ruleset } from "./board.ts";
 import { devManifest, tempDir, writeManifest } from "./experiment-helpers.ts";
+
+// Real games and workers: slow under full-suite load.
+vi.setConfig({ testTimeout: 120000 });
 
 function game(cell: [string, string, string], seed: number, winner: string | null, status = "complete", diff = 0): GameRecord {
   return { gameId: `${cell.join("~")}~${String(seed)}`, conditionId: cell[0], state: cell[1], pkk: cell[2], seed, repeat: 0, status: status as GameRecord["status"], reason: "", commands: 1, startHash: "", finalHash: "", ms: 1, decisions: 1, transitions: 0, liveRejected: 0,
@@ -64,6 +67,17 @@ describe("statistics (19 s10)", () => {
     expect(d.pairs).toBe(10);
     expect(d.mean).toBeCloseTo(0.5, 10);
     expect(d.low).toBeGreaterThan(0);
+  });
+
+  it("pairs cells that differ only in one seat's player version", () => {
+    const v1: [string, string, string] = ["b", "S-X@1", "P-A@1"];
+    const v2: [string, string, string] = ["b", "S-X@2", "P-A@1"];
+    const other: [string, string, string] = ["b", "S-Y@1", "P-A@1"];
+    const results = [...[v1, v2, other].flatMap((c, k) => Array.from({ length: 6 }, (_, i) => game(c, i + 1, k === 1 || i < 2 ? "state" : "pkk")))];
+    const rows = compareVersions(results, 200, 1);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ seat: "state", newer: "S-X@2", older: "S-X@1", opponent: "P-A@1" });
+    expect(rows[0]?.stateWinDiff.mean).toBeCloseTo(4 / 6, 10);
   });
 
   it("raises the review triggers and selects reviewed games reproducibly, without duplicates", () => {

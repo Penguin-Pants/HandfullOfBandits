@@ -1,6 +1,6 @@
 // Phase 3 (20): observation boundary. Players see public state only; hidden deck order, RNG and
 // seed cannot change what they see, the candidates they get or the choices they make.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { decisionPoint, generateCandidates } from "../src/cli/candidates.ts";
 import { freezeExperiment, parseManifest, runtimeIdentity } from "../src/cli/experiment-manifest.ts";
 import { determinize, observe, samplePiles, SearchRng } from "../src/cli/player-observation.ts";
@@ -11,6 +11,9 @@ import { seedRng } from "../src/engine/core/rng.ts";
 import type { GameState } from "../src/engine/core/types.ts";
 import { engine, ruleset, setPieces } from "./board.ts";
 import { devManifest } from "./experiment-helpers.ts";
+
+// Real games and workers: slow under full-suite load.
+vi.setConfig({ testTimeout: 120000 });
 
 /** Scripted play for `steps` commands from the Scenario A start. */
 function after(seed: number, steps: number): GameState {

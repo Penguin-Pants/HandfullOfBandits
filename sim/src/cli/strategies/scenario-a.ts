@@ -16,8 +16,11 @@ import { determinize } from "../player-observation.ts";
 import { settle, type Choice, type DecisionRequest, type ObservationPlayer, type PlayerSpec, type SearchContext } from "../players.ts";
 import { evaluate, timing, WIN_VALUE, type Weights } from "./evaluation.ts";
 
-/** Current version of every family; earlier versions stay registered for paired comparison (19 s7). */
-export const STRATEGY_VERSION = 2;
+/**
+ * Frozen roster version per faction (dev-compare-v2, paired on the pilot seeds): State families v1,
+ * PKK families v2. Other versions stay registered for paired comparison (19 s7).
+ */
+export const ROSTER_VERSION: Readonly<Record<FactionId, number>> = { state: 1, pkk: 2 };
 /** Transitions per decision for every qualified search player (19 s7: equal budgets). */
 export const SEARCH_BUDGET = 600;
 
@@ -62,8 +65,8 @@ export const FAMILIES: readonly Family[] = [
   ...V1.map((f) => ({ ...f, version: 2, weights: { ...f.weights, potentialModel: "capped" as const } })),
 ];
 
-/** The current version of each family: the qualified roster. */
-export const CURRENT: readonly Family[] = FAMILIES.filter((f) => f.version === STRATEGY_VERSION);
+/** The frozen version of each family: the qualified roster. */
+export const CURRENT: readonly Family[] = FAMILIES.filter((f) => f.version === ROSTER_VERSION[f.faction]);
 
 interface Scored { readonly candidate: Candidate; value: number; samples: number; components: Readonly<Record<string, number>> }
 

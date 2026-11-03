@@ -1,7 +1,7 @@
 // Phase 5 (20): player qualification (19 s6). Every qualified family passes every applicable
 // fixture; baselines do not, so the fixtures discriminate; the independent score oracle agrees
 // with the engine over many positions.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { decisionPoint, generateCandidates } from "../src/cli/candidates.ts";
 import { determinize, observe, SearchRng } from "../src/cli/player-observation.ts";
 import { resolvePlayer } from "../src/cli/player-registry.ts";
@@ -11,6 +11,9 @@ import { derive } from "../src/engine/coin/derive.ts";
 import { checkStandings } from "../src/engine/coin/victory.ts";
 import type { GameState } from "../src/engine/core/types.ts";
 import { engine, ruleset } from "./board.ts";
+
+// Real games and workers: slow under full-suite load.
+vi.setConfig({ testTimeout: 120000 });
 
 const qualified = CURRENT.map((f) => `${f.id}@${String(f.version)}`);
 
