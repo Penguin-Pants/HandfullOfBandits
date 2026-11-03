@@ -189,12 +189,16 @@ describe("resume an interrupted run", () => {
     writeFileSync(sealed(partial), `${lines.join("\n")}\n{"t":"st`);
     for (const f of ["results.json", "failures.json"]) rmSync(join(cut, f));
     writeFileSync(join(cut, "status.json"), JSON.stringify({ state: "running", scheduled: 4 }));
+    // The run started under another commit: its recorded experiment hash stays the run's identity.
+    const identity = JSON.parse(readFileSync(join(cut, "identity.json"), "utf8")) as Record<string, unknown>;
+    writeFileSync(join(cut, "identity.json"), JSON.stringify({ ...identity, experimentHash: "f".repeat(64) }));
     const before = readFileSync(`${sealed(kept)}.gz`);
     const log: string[] = [];
     const run = spawnSync(process.execPath, [main, "experiment", "run", manifest, "--out", cut, "--resume"], { encoding: "utf8" });
     expect(run.status, run.stderr + run.stdout).toBe(0);
     log.push(run.stdout);
     expect(log.join()).toContain("resuming: 2 of 4 games kept");
+    expect(log.join()).toContain(`experiment ${"f".repeat(64)} in`);
     expect(semantic(cut)).toEqual(semantic(full));
     expect(readFileSync(`${sealed(kept)}.gz`)).toEqual(before);
     expect(existsSync(sealed(partial))).toBe(false);

@@ -76,6 +76,7 @@ export async function runExperiment(manifestFile: string, outDir: string, option
   const records = new Map<string, GameRecord>();
   const log = options.log ?? ((): void => undefined);
   let started = new Date().toISOString();
+  let experimentHash = frozen.experimentHash;
   let resumes: Resume[] = [];
   if (options.resume === true) {
     const read = (name: string): Record<string, unknown> => JSON.parse(readFileSync(join(dir, name), "utf8")) as Record<string, unknown>;
@@ -84,10 +85,12 @@ export async function runExperiment(manifestFile: string, outDir: string, option
     if (status["state"] === "complete") throw new Error(`Output ${dir} is already complete; nothing to resume`);
     if (canonicalJson(read("manifest.json")) !== canonicalJson(manifest)) throw new Error(`Output ${dir} was started from a different manifest`);
     // The frozen code identity must match; the commit may differ (for example a runner fix).
-    const identity = read("identity.json") as { runtime: { engineFingerprint: string; playerFingerprint: string; generatorVersion: string }; packageHash: string; started: string };
+    const identity = read("identity.json") as { experimentHash: string; runtime: { engineFingerprint: string; playerFingerprint: string; generatorVersion: string }; packageHash: string; started: string };
     for (const key of ["engineFingerprint", "playerFingerprint", "generatorVersion"] as const) if (identity.runtime[key] !== frozen.runtime[key]) throw new Error(`Output ${dir}: ${key} changed since the run started; it cannot be resumed`);
     if (identity.packageHash !== frozen.packageContentHash) throw new Error(`Output ${dir}: the package changed since the run started; it cannot be resumed`);
+    // The recorded identity stays the run's identity, even after a runner-only commit.
     started = identity.started;
+    experimentHash = identity.experimentHash;
     for (const job of frozen.jobs) {
       const kept = artifacts.sealed(job.gameId) ? recordFromJournal(job, readJournal(dir, job.gameId)) : null;
       if (kept === null) artifacts.discard(job.gameId);
@@ -193,5 +196,5 @@ export async function runExperiment(manifestFile: string, outDir: string, option
   artifacts.json("results.json", ordered);
   artifacts.json("failures.json", ordered.filter((r) => r.status !== "complete").map((r) => ({ gameId: r.gameId, status: r.status, reason: r.reason, replayablePrefix: r.commands })));
   artifacts.json("status.json", { state: "complete", scheduled: frozen.jobs.length, recorded: ordered.length, byStatus, started, finished: new Date().toISOString(), ...extra });
-  return { dir, experimentHash: frozen.experimentHash, scheduled: frozen.jobs.length, byStatus };
+  return { dir, experimentHash, scheduled: frozen.jobs.length, byStatus };
 }
