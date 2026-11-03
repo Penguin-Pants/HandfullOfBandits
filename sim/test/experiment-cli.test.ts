@@ -68,6 +68,19 @@ describe("experiment runner (20 Phase 2)", () => {
     expect(replay.lines[0]).toContain("differs at step 3");
   }, 120000);
 
+  it("does not count a truncated journal of a completed game as identical", async () => {
+    const dir = tempDir();
+    const out = join(dir, "cut");
+    await runExperiment(writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 33, count: 1 }] } })), out);
+    const id = results(out)[0]?.gameId ?? "";
+    const file = join(out, "games", `${id.replaceAll(/[^A-Za-z0-9._-]/g, "_")}.jsonl.gz`);
+    const lines = gunzipSync(readFileSync(file)).toString("utf8").trim().split("\n");
+    writeFileSync(file, gzipSync(lines.slice(0, 5).join("\n")));
+    const replay = replayExperiment(out);
+    expect(replay.exitCode).toBe(1);
+    expect(replay.lines.join("\n")).toMatch(/incomplete replay/);
+  }, 120000);
+
   it("records a game that exceeds its wall limit as a timeout with a replayable prefix, and continues", async () => {
     const dir = tempDir();
     const out = join(dir, "slow");
@@ -137,6 +150,13 @@ describe("game failures are incomplete, never losses (19 s5, s7)", () => {
 
   it("refuses a player whose faction differs from its seat", () => {
     expect(() => runGame(engine, ruleset, "scenario-a", { gameId: "g", seed: 3, conditionId: "c", players: { state: "P-RANDOM@1", pkk: "P-RANDOM@1" }, playerSeeds: {}, repeat: 0 }, resolvePlayer, { commands: 10, decisionMs: null }, () => undefined)).toThrow(/plays pkk, not state/);
+  });
+
+  it("applies the decision time limit to full-state controls too", () => {
+    let now = 0;
+    const events: JournalEvent[] = [];
+    runGame(engine, ruleset, "scenario-a", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-CTRL-concentration@1", pkk: "P-CTRL-sanctuary@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, resolvePlayer, { commands: 2000, decisionMs: 5 }, (e) => events.push(e), () => (now += 10));
+    expect(events.at(-1)).toMatchObject({ t: "end", status: "decisionTimeLimit" });
   });
 
   it("ends with decisionTimeLimit when a decision is too slow", () => {

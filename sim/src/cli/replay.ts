@@ -62,6 +62,7 @@ export function replayExperiment(dir: string, only: string | null = null): { exi
   let failed = 0;
   let identical = 0;
   const archive = readArchive(dir);
+  const recorded = new Map((existsSync(join(dir, "results.json")) ? (JSON.parse(readFileSync(join(dir, "results.json"), "utf8")) as { gameId: string; commands: number; finalHash: string }[]) : []).map((r) => [r.gameId, r]));
   for (const job of schedule) {
     const events = readJournal(dir, job.gameId);
     const archived = archive?.get(job.gameId);
@@ -72,6 +73,10 @@ export function replayExperiment(dir: string, only: string | null = null): { exi
     const ruleset = withSessionOptions(loaded.ruleset, identity.scenario, identity.conditions[job.conditionId] ?? {});
     const diff = replaySteps(engine, ruleset, identity.scenario, job.seed, startHash, steps);
     if (diff !== null) { lines.push(`${job.gameId}: differs at step ${diff.id}: expected ${diff.expected}, got ${diff.actual}`); failed++; continue; }
+    // A valid prefix is not a verified game: the steps must reach the recorded end.
+    const record = recorded.get(job.gameId);
+    const last = steps.at(-1)?.hashAfter ?? startHash;
+    if (record !== undefined && (steps.length !== record.commands || last !== record.finalHash)) { lines.push(`${job.gameId}: incomplete replay: ${String(steps.length)} of ${String(record.commands)} recorded commands`); failed++; continue; }
     identical++;
   }
   lines.push(`${String(identical)}/${String(schedule.length)} games identical`);

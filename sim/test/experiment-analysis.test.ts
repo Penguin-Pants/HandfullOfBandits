@@ -56,6 +56,14 @@ describe("statistics (19 s10)", () => {
     expect(c.high - c.low).toBeCloseTo(independentHalfWidth.high - independentHalfWidth.low, 1);
   });
 
+  it("reports no roster estimate and raises no roster trigger when no game completed", () => {
+    const results = [game(A, 1, null, "timeout")];
+    const r = rosterAverage(results, 100, 1);
+    expect(Number.isNaN(r.mean)).toBe(true);
+    expect(r.cells).toBe(0);
+    expect(reviewTriggers(summarizeCells(results, { state: 49, pkk: 30 }, 6), r, { cellWinPercent: 80, rosterAveragePercent: 60, marginGap: 10 }).roster).toEqual([]);
+  });
+
   it("is deterministic for the same analysis seed", () => {
     const results = Array.from({ length: 30 }, (_, i) => game(A, i + 1, i % 3 === 0 ? "state" : "pkk"));
     expect(rosterAverage(results, 300, 7)).toEqual(rosterAverage(results, 300, 7));

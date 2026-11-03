@@ -14,7 +14,7 @@ import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
 
-export const GENERATOR_VERSION = "cand-1";
+export const GENERATOR_VERSION = "cand-2";
 
 export type DecisionKind = "card" | "pivotal" | "resume" | "upkeep" | "legitimacy" | "civicAction" | "agitation" | "redeployState" | "redeployPkk";
 
@@ -91,6 +91,18 @@ function combos<T>(items: readonly T[], k: number, cap: number): T[][] {
 }
 
 /** Round-robin merge, so a cap keeps variety across locations. */
+/** Atoms reordered so the k-th atom of every option kind precedes the (k+1)-th of any kind. */
+function byKindRank(atoms: readonly JsonObject[]): JsonObject[] {
+  const rank = new Map<string, number>();
+  return atoms.map((a, i) => { const k = JSON.stringify(a["option"] ?? null); const r = rank.get(k) ?? 0; rank.set(k, r + 1); return { a, r, i }; }).sort((x, y) => x.r - y.r || x.i - y.i).map((x) => x.a);
+}
+
+/** The first atom of each option kind, so a sub-action variant exists for every kind. */
+function firstPerOption(atoms: readonly JsonObject[]): JsonObject[] {
+  const seen = new Set<string>();
+  return atoms.filter((a) => { const k = JSON.stringify(a["option"] ?? null); if (seen.has(k)) return false; seen.add(k); return true; });
+}
+
 function interleave<T>(lists: readonly (readonly T[])[]): T[] {
   const out: T[] = [];
   for (let i = 0; lists.some((l) => i < l.length); i++) for (const l of lists) if (i < l.length) out.push(l[i] as T);
@@ -149,8 +161,9 @@ function trainPlans(r: Ruleset, s: GameState, limited: boolean, wide: number): P
   const locs = domestic(r).filter((l) => atoms(l).length > 0);
   const civic = (loc: string): JsonObject[] => level(s, loc) >= 2 ? [] : [1, 2].filter((n) => level(s, loc) + n <= 2).map((n) => ({ action: "civicAction", space: loc, params: civicSpend(s, loc, n) }));
   const singles = locs.map((loc) => {
-    const list = atoms(loc).slice(0, 3 * wide).map((a) => plan([loc], { [loc]: a }));
-    for (const a of atoms(loc).slice(0, 2 * wide)) for (const c of civic(loc)) list.push(plan([loc], { [loc]: a }, [c]));
+    // Every atom is offered; option kinds are separate capped families (cand-2: no per-space slice).
+    const list = byKindRank(atoms(loc)).map((a) => plan([loc], { [loc]: a }));
+    for (const a of firstPerOption(atoms(loc))) for (const c of civic(loc)) list.push(plan([loc], { [loc]: a }, [c]));
     return list;
   });
   const out = interleave(singles);
@@ -249,8 +262,8 @@ function rallyPlans(r: Ruleset, s: GameState, limited: boolean, wide: number): P
   const locs = [...domestic(r), ...HOSTS, "europe"].filter(open).sort((a, b) => Number(count(s, b, "pkkBase") > 0) - Number(count(s, a, "pkkBase") > 0));
   const agitate = (l: string): JsonObject[] => r.spaces.find((x) => x.id === l)?.kind !== "domestic" ? [] : [1, 2].filter((n) => level(s, l) - n >= -2).map((n) => ({ action: "agitate", space: l, params: agitationSpend(s, l, n) }));
   const singles = locs.map((l) => {
-    const list = atoms(l).slice(0, 3 * wide).map((a) => plan([l], { [l]: a }));
-    for (const a of atoms(l).slice(0, 2)) for (const g of agitate(l)) list.push(plan([l], { [l]: a }, [g]));
+    const list = byKindRank(atoms(l)).map((a) => plan([l], { [l]: a }));
+    for (const a of firstPerOption(atoms(l))) for (const g of agitate(l)) list.push(plan([l], { [l]: a }, [g]));
     return list;
   });
   const out = interleave(singles);
@@ -457,14 +470,15 @@ function frontier(options: readonly (readonly Spend[])[], budget: number): Spend
     const picks: Spend[] = [];
     for (const o of flat) if (cost + o.cost <= budget) { cost += o.cost; picks.push(o); best.set(cost, { value: picks.reduce((n, p) => n + p.value, 0), picks: [...picks] }); }
   }
-  // Keep only allocations that are better than every cheaper one.
+  // Keep only allocations that are better than every cheaper one, best first, so a family cap
+  // prunes the cheapest allocations, never the maximum (cand-2).
   const out: Spend[][] = [];
   let top = -1;
   for (const cost of [...best.keys()].sort((a, b) => a - b)) {
     const entry = best.get(cost);
     if (entry !== undefined && entry.value > top) { top = entry.value; out.push(entry.picks); }
   }
-  return out;
+  return out.reverse();
 }
 
 /** Civic Action phase: State-Controlled spaces with Troops and Police; value = Pop per level gained. */
@@ -499,7 +513,7 @@ function redressUnits(r: Ruleset, s: GameState, faction: "state" | "pkk", harmCo
 
 /** Frontier allocations plus allocations that first buy back excess Harm unit by unit, then spend the rest. */
 function withRedress(base: Spend[][], units: readonly Unit[], budget: number, spend: (s: GameState, loc: string, shifts: number) => JsonObject, s: GameState): Spend[][] {
-  const out = [...base];
+  const extra: Spend[][] = [];
   const zero = (loc: string): JsonObject => Object.fromEntries(Object.entries(spend(s, loc, 0)).map(([k]) => [k, 0]));
   const picked = new Map<string, Record<string, number>>();
   let cost = 0;
@@ -510,11 +524,12 @@ function withRedress(base: Spend[][], units: readonly Unit[], budget: number, sp
     entry[u.key] = (entry[u.key] ?? 0) + 1;
     picked.set(u.loc, entry);
     const removal: Spend[] = [...picked].map(([loc, keys]) => ({ loc, cost: 0, value: 0, params: { ...zero(loc), ...keys } }));
-    out.push(removal);
-    const rest = [...base].reverse().find((b) => b.reduce((n, x) => n + x.cost, 0) <= budget - cost && b.every((x) => !picked.has(x.loc)));
-    if (rest !== undefined && rest.length > 0) out.push([...removal, ...rest]);
+    extra.push(removal);
+    const rest = base.find((b) => b.reduce((n, x) => n + x.cost, 0) <= budget - cost && b.every((x) => !picked.has(x.loc)));
+    if (rest !== undefined && rest.length > 0) extra.push([...removal, ...rest]);
   }
-  return out;
+  // Redress allocations interleave with the best frontier allocations so the cap keeps both.
+  return interleave([base, extra]);
 }
 
 /** Agitation phase: spaces with a PKK Base or PKK Control; value = Pop per level gained. */

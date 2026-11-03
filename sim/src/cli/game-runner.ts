@@ -147,7 +147,9 @@ export function runGame(engine: Engine, ruleset: Ruleset, scenario: string, job:
     if (!isObservationPlayer(player)) {
       // Legacy control: reads the live state (labeled unqualified, 19 s4).
       const command = player.act(engine, ruleset, state);
-      return { command, record: { ...common, observationHash: null, candidates: 0, families: null, rejectedSample: [], liveRejected: 0, selected: null, family: null, value: null, components: {}, topAlternative: null, transitions: 0, ms: clock() - t, notes: ["full-state control"] } };
+      const elapsed = clock() - t;
+      if (limits.decisionMs !== null && elapsed > limits.decisionMs) throw new GameFailure("decisionTimeLimit", `decision ${id} took ${elapsed.toFixed(0)} ms`);
+      return { command, record: { ...common, observationHash: null, candidates: 0, families: null, rejectedSample: [], liveRejected: 0, selected: null, family: null, value: null, components: {}, topAlternative: null, transitions: 0, ms: elapsed, notes: ["full-state control"] } };
     }
     const observation = observe(state, faction);
     const projection = determinize(ruleset, observation, new SearchRng(0));

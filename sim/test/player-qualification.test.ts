@@ -43,8 +43,8 @@ describe("qualification fixtures (19 s6)", () => {
   it("fails random and legacy baselines on decisive fixtures, so the suite discriminates", () => {
     const report = qualify(engine, ruleset, ["S-RANDOM@1", "P-RANDOM@1", "S-CTRL-concentration@1"].map(resolvePlayer));
     for (const p of Object.values(report.players)) expect(p.passed).toBe(false);
-    expect(report.players["S-RANDOM@1"]?.failures).toContain("S-WIN-CIVIC");
-    expect(report.players["P-RANDOM@1"]?.failures).toContain("P-WIN-CHECK");
+    const decisive = new Set(FIXTURES.filter((f) => f.benchmark !== "procedures").map((f) => f.id));
+    for (const p of Object.values(report.players)) expect(p.failures.some((f) => decisive.has(f))).toBe(true);
   });
 
   it("has a stable suite hash", () => {

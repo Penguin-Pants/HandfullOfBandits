@@ -94,10 +94,11 @@ export function rosterAverage(results: readonly GameRecord[], samples: number, s
       if (g.result?.winner === "state") wins.set(cellKey(g), (wins.get(cellKey(g)) ?? 0) + 1);
     }
     const rates = cells.filter((c) => (n.get(c) ?? 0) > 0).map((c) => (wins.get(c) ?? 0) / (n.get(c) ?? 1));
-    return rates.reduce((a, b) => a + b, 0) / Math.max(1, rates.length);
+    // No completed game: no estimate (NaN), never an apparent 0% or 100%.
+    return rates.length === 0 ? Number.NaN : rates.reduce((a, b) => a + b, 0) / rates.length;
   };
   const rng = new SearchRng(seed);
-  const draws = Array.from({ length: samples }, () => average(seeds.map(() => seeds[rng.int(seeds.length)] ?? 0))).sort((a, b) => a - b);
+  const draws = Array.from({ length: samples }, () => average(seeds.map(() => seeds[rng.int(seeds.length)] ?? 0))).filter((x) => !Number.isNaN(x)).sort((a, b) => a - b);
   return { mean: average(seeds), low: quantile(draws, 0.025), high: quantile(draws, 0.975), cells: cells.length };
 }
 

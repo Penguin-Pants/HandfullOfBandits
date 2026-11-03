@@ -73,6 +73,31 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
   });
 });
 
+describe("pruning keeps every option kind reachable (PR #40 review)", () => {
+  it("offers Rally flip at a Base with Active Guerrillas in bounded generation", () => {
+    const s = setPieces(setPieces(rich(turnOf("pkk")), "botan", "guerrilla", 0), "botan", "guerrilla", 3, "active");
+    const flips = gen(s, "card", "pkk").candidates.filter((c) => JSON.stringify(c.command).includes("\"option\":\"flip\""));
+    expect(flips.length).toBeGreaterThan(0);
+    allLegal(s, gen(s, "card", "pkk"));
+  });
+
+  it("offers Train Guards and Base where a State Base also allows Troops and Police", () => {
+    // Van-Bitlis: Mountain with a State Base and Control; 2 Police allow a Base, Law 3175 allows Guards.
+    const s = setPieces(rich(turnOf("state")), "van-bitlis", "police", 2);
+    const train = gen(s, "card", "state").candidates.filter((c) => c.family.startsWith("op:state.train") && (c.command["plan"] as { locations: string[] }).locations.join() === "van-bitlis").map((c) => JSON.stringify(c.command));
+    for (const option of ["guards", "base", "place"]) expect(train.some((t) => t.includes(`"option":"${option}"`)), option).toBe(true);
+  });
+
+  it("keeps the maximum-value Agitation allocation when the frontier exceeds the family cap", () => {
+    let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 20), "agitation", 2);
+    for (const id of ["mardin-batman", "dersim", "agri", "bingol-mus", "elazig", "adiyaman", "diyarbakir-rural"]) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
+    const shifts = (c: { command: Record<string, unknown> }): number => Object.values((c.command["choice"] as { spaces: Record<string, { shifts: number }> }).spaces).reduce((n, p) => n + p.shifts, 0);
+    const narrow = Math.max(...gen(s, "agitation", "pkk").candidates.map(shifts));
+    const broad = Math.max(...gen(s, "agitation", "pkk", true).candidates.map(shifts));
+    expect(narrow).toBe(broad);
+  });
+});
+
 describe("campaign procedures (19 s5 Campaign row)", () => {
   it("offers ARGK decline and several placements", () => {
     const ready = setPieces(setPieces(engine.start(ruleset, "scenario-a", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);
