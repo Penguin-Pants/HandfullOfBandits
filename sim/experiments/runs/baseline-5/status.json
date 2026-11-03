@@ -1,0 +1,17 @@
+{
+ "state": "complete",
+ "scheduled": 3520,
+ "recorded": 3520,
+ "byStatus": {
+  "complete": 3520
+ },
+ "started": "2026-11-03T20:05:04.858Z",
+ "finished": "2026-11-03T21:16:54.057Z",
+ "resumes": [
+  {
+   "at": "2026-11-03T20:56:59.877Z",
+   "kept": 2580,
+   "gitCommit": "071870ea91f5bbc483aa61ea50821da2140e6c56"
+  }
+ ]
+}
