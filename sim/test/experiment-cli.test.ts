@@ -1,6 +1,6 @@
 // Phase 2 (20): durable runner, CLI and replay. Real worker threads and the real CLI.
 import { spawnSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { gunzipSync, gzipSync } from "node:zlib";
@@ -169,4 +169,48 @@ describe("game failures are incomplete, never losses (19 s5, s7)", () => {
     runGame(engine, ruleset, "scenario-a", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-RANDOM@1", pkk: "P-RANDOM@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, resolvePlayer, { commands: 2000, decisionMs: 5 }, (e) => events.push(e), () => (now += 10));
     expect(events.at(-1)).toMatchObject({ t: "end", status: "decisionTimeLimit" });
   });
+});
+
+describe("resume an interrupted run", () => {
+  it("keeps sealed games, replays unfinished ones and gives the same results as an uninterrupted run", async () => {
+    const dir = tempDir("hob resume ");
+    const manifest = writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 71, count: 4 }] } }));
+    const full = join(dir, "full");
+    await runExperiment(manifest, full);
+    // Simulate a restart: two games never finished (one sealed journal removed, one left as a plain partial file),
+    // no results and a running status.
+    const cut = join(dir, "cut");
+    cpSync(full, cut, { recursive: true });
+    const [kept, lost, partial] = results(full).map((r) => r.gameId);
+    const sealed = (id: string | undefined): string => join(cut, "games", `${(id ?? "").replaceAll(/[^A-Za-z0-9._-]/g, "_")}.jsonl`);
+    rmSync(`${sealed(lost)}.gz`);
+    const lines = gunzipSync(readFileSync(`${sealed(partial)}.gz`)).toString("utf8").split("\n").slice(0, 3);
+    rmSync(`${sealed(partial)}.gz`);
+    writeFileSync(sealed(partial), `${lines.join("\n")}\n{"t":"st`);
+    for (const f of ["results.json", "failures.json"]) rmSync(join(cut, f));
+    writeFileSync(join(cut, "status.json"), JSON.stringify({ state: "running", scheduled: 4 }));
+    const before = readFileSync(`${sealed(kept)}.gz`);
+    const log: string[] = [];
+    const run = spawnSync(process.execPath, [main, "experiment", "run", manifest, "--out", cut, "--resume"], { encoding: "utf8" });
+    expect(run.status, run.stderr + run.stdout).toBe(0);
+    log.push(run.stdout);
+    expect(log.join()).toContain("resuming: 2 of 4 games kept");
+    expect(semantic(cut)).toEqual(semantic(full));
+    expect(readFileSync(`${sealed(kept)}.gz`)).toEqual(before);
+    expect(existsSync(sealed(partial))).toBe(false);
+    expect(JSON.parse(readFileSync(join(cut, "status.json"), "utf8"))).toMatchObject({ state: "complete", recorded: 4, resumes: [{ kept: 2 }] });
+    expect(replayExperiment(cut).lines.at(-1)).toBe("4/4 games identical");
+  }, 120000);
+
+  it("refuses to resume a complete run, a missing directory or a different manifest", async () => {
+    const dir = tempDir();
+    const manifest = writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 75, count: 1 }] } }));
+    const out = join(dir, "run");
+    await expect(runExperiment(manifest, out, { resume: true })).rejects.toThrow(/nothing to resume/);
+    await runExperiment(manifest, out);
+    await expect(runExperiment(manifest, out, { resume: true })).rejects.toThrow(/already complete/);
+    writeFileSync(join(out, "status.json"), JSON.stringify({ state: "running" }));
+    const other = writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 76, count: 1 }] } }), "other.json");
+    await expect(runExperiment(other, out, { resume: true })).rejects.toThrow(/different manifest/);
+  }, 120000);
 });
