@@ -1,0 +1,8 @@
+[
+ {
+  "gameId": "no-syria-march~S-MILv1~P-ADAPTv2~1001716~r0",
+  "status": "failed",
+  "reason": "empty candidate set for resume (pkk); families {\"resume:pkk.march\":{\"proposed\":2,\"rejected\":2,\"pruned\":0,\"retained\":0}}",
+  "replayablePrefix": 58
+ }
+]
