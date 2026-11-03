@@ -3,9 +3,10 @@
 // with a broader generator.
 import { describe, expect, it, vi } from "vitest";
 import { decisionPoint, generateCandidates, type CandidateSet, type DecisionKind } from "../src/cli/candidates.ts";
+import { independentStandings } from "../src/cli/qualification.ts";
 import { evaluate } from "../src/cli/strategies/evaluation.ts";
 import { CURRENT } from "../src/cli/strategies/scenario-a.ts";
-import type { GameState } from "../src/engine/core/types.ts";
+import type { AnyCommand, GameState } from "../src/engine/core/types.ts";
 import { engine, op, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "./board.ts";
 
 // Real games and workers: slow under full-suite load.
@@ -230,5 +231,55 @@ describe("bounded versus broad generation (20 Phase 4)", () => {
     const broad = gen(s, "card", faction, true);
     expect(broad.candidates.length).toBeGreaterThan(narrow.candidates.length);
     expect(best(narrow)).toBeGreaterThanOrEqual(best(broad) - 1);
+  });
+});
+
+describe("spending frontier, review rounds 3 and 4 (cand-4)", () => {
+  // Independent oracle: final margin after the spending command (rules 7.3, including Harm above six).
+  const margin = (s: GameState, faction: "state" | "pkk", command: AnyCommand): number => {
+    const r = engine.apply(ruleset, s, command);
+    expect.assert(r.ok);
+    return independentStandings(ruleset, r.transition.state)[faction].finalMargin;
+  };
+  const choice = (phase: string, spaces: Record<string, Record<string, number>>): AnyCommand => ({ type: "PropagandaChoice", phase, choice: { spaces } });
+  const best = (s: GameState, kind: DecisionKind, faction: "state" | "pkk"): number => Math.max(...gen(s, kind, faction).candidates.map((c) => margin(s, faction, c.command)));
+
+  it("caps the Harm benefit over the whole allocation, not per space", () => {
+    // Harm 7 (one above the limit): Coercion in Bingol-Mus and Van-Bitlis, 5 PKK Harm in Dersim (no Base).
+    let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 5), "agitation", 2);
+    for (const id of ["agri", "bingol-mus", "van-bitlis"]) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
+    s = setMarkers(setMarkers(setMarkers(s, "bingol-mus", "coercion", 1), "van-bitlis", "coercion", 1), "dersim", "pkkHarm", 5);
+    const known = choice("agitation", { "van-bitlis": { coercion: 1, pkkHarm: 0, shifts: 2 }, agri: { coercion: 0, pkkHarm: 0, shifts: 2 } });
+    expect(engine.validate(ruleset, s, known).ok).toBe(true);
+    expect(best(s, "agitation", "pkk")).toBeGreaterThanOrEqual(margin(s, "pkk", known));
+  });
+
+  it("offers removal-only spending below the Harm limit, for tie-breaks on lower Harm", () => {
+    // Botan is the only PKK Base, at Strong Opposition, with both PKK Harm markers: no shift is possible.
+    let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 4), "agitation", 2);
+    s = setMarkers(setLevel(s, "botan", -2), "botan", "pkkHarm", 2);
+    const removal = choice("agitation", { botan: { coercion: 0, pkkHarm: 2, shifts: 0 } });
+    expect(engine.validate(ruleset, s, removal).ok).toBe(true);
+    expect(gen(s, "agitation", "pkk").candidates.some((c) => JSON.stringify(c.command) === JSON.stringify(removal))).toBe(true);
+  });
+
+  it("keeps a Civic Action allocation the PKK cannot reverse by Agitation", () => {
+    // Only Van-Bitlis (Strong Opposition, PKK Base, Pop 4) and Bingol-Mus (Neutral, Pop 3) are eligible; cap 4.
+    let s = propaganda(setTrack(setTrack(turnOf("state"), "legitimacy", 8), "resources.state", 10), "civicAction", 2);
+    for (const x of ruleset.spaces) if (!["van-bitlis", "bingol-mus"].includes(x.id) && (s.spaces[x.id]?.pieces["police"]?.["default"] ?? 0) > 0) s = setPieces(s, x.id, "police", 0);
+    s = setPieces(setLevel(s, "van-bitlis", -2), "van-bitlis", "pkkBase", 1);
+    const safe = choice("civicAction", { "bingol-mus": { coercion: 0, reception: 0, stateHarm: 0, displacement: 0, shifts: 2 } });
+    expect(engine.validate(ruleset, s, safe).ok).toBe(true);
+    expect(gen(s, "civicAction", "state").candidates.some((c) => JSON.stringify(c.command) === JSON.stringify(safe))).toBe(true);
+  });
+
+  it("keeps second shifts when more than nine spaces are eligible", () => {
+    // Ten PKK Bases at Neutral, no Harm, 20 Resources: twenty shifts are affordable.
+    let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 20), "agitation", 2);
+    const ten = ["botan", "mardin-batman", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "dersim", "bingol-mus", "van-bitlis", "agri"];
+    for (const id of ten) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
+    const all = choice("agitation", Object.fromEntries(ten.map((id) => [id, { coercion: 0, pkkHarm: 0, shifts: 2 }])));
+    expect(engine.validate(ruleset, s, all).ok).toBe(true);
+    expect(best(s, "agitation", "pkk")).toBeGreaterThanOrEqual(margin(s, "pkk", all));
   });
 });

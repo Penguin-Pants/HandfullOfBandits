@@ -21,7 +21,7 @@ These strategies are hypotheses about scoring routes. They are not proven strong
 
 ## Candidate generation and pruning
 
-Generator version `cand-3` (revisions: `cand-2` and `cand-3` fix PR #40 review findings; see "Generator revisions and known gaps" below). Every emitted command passed engine validation. Each family has its own cap of 14 retained candidates, so one family cannot crowd out another. Single-location plans are split by option (for example `train/base`, `rally/grow`), by multi-location plans (`/multi`), by Europe Rally and by political sub-action (`/civicAction`, `/agitate`).
+Generator version `cand-4` (revisions: `cand-2` to `cand-4` fix PR #40 review findings; see "Generator revisions and known gaps" below). Every emitted command passed engine validation. Each family has its own cap of 14 retained candidates, so one family cannot crowd out another. Single-location plans are split by option (for example `train/base`, `rally/grow`), by multi-location plans (`/multi`), by Europe Rally and by political sub-action (`/civicAction`, `/agitate`).
 
 | Decision | Generated plans | Pruning |
 |---|---|---|
@@ -38,7 +38,7 @@ Generator version `cand-3` (revisions: `cand-2` and `cand-3` fix PR #40 review f
 | Resume after Host Pressure | Operation generator for the saved Operation and box, no SA | Family cap |
 | Upkeep shortfall | Fewest Guards removed: low-Pop spaces first, or crowded spaces first | 2 orders |
 | Legitimacy | Keep (Advance) or each permitted Emergency Rule step | None |
-| Civic Action, Agitation | Best allocation for every total cost (exact over 9 or fewer spaces, else greedy); buy-back of excess Harm one marker at a time, alone and with the best remaining allocation | Pareto frontier |
+| Civic Action, Agitation | Exact search over every space at 0, 1 or 2 shifts (shifts clear all blocks) or a removal-only split of its Harm markers; Harm value capped over the whole allocation (rules 7.3) | Pareto set over cost, value and Harm removed, kept twice: by value and by value the PKK cannot reverse by Agitation |
 | Redeploy | State: required Iraqi exits to the 4 highest-Pop legal destinations; consolidation toward the most threatened base; Police into Controlled spaces without Police. PKK: none, all adjacent into Bases, external only, domestic only | Fixed list |
 
 A wider generator (all bounds x4) is compared with the bounded one on three opening fixtures in `sim/test/candidates.test.ts`. The bounded best one-ply value is within 1 point of the wider best. The Agitation and Civic Action frontiers match a brute-force optimum. Two earlier pruning defects were found by these checks and fixed: Rally+Agitate and Train Base plans were crowded out by one family cap, and multi-destination March plans were cut.
@@ -49,15 +49,18 @@ A wider generator (all bounds x4) is compared with the bounded one on three open
 |---|---|---|
 | `cand-2` | Per-space options rotate by kind instead of a slice (Rally flip, Train Guards and Base kept); spending frontier is best first, so the cap drops the cheapest allocations | PR #40 review, round 1 |
 | `cand-3` | A shift's frontier value includes the Harm its required redress removes; Train places 1-2 Troops or 2 Police alone when supplies are low | PR #40 review, round 2 |
+| `cand-4` | Spending: one exact search replaces the greedy fallback and the redress add-on; fixes the four gaps below | PR #40 review, rounds 3 and 4 |
 
-Known gaps in `cand-3`, found in review rounds 3 and 4 and not fixed in PR #40 (follow-up `cand-4` with a rerun):
+Gaps in `cand-3`, found in review rounds 3 and 4 and fixed in `cand-4` (each has a regression test in `sim/test/candidates.test.ts`):
 
 1. The Harm benefit is capped per space, not across the whole allocation, so several redress spaces can each count the same excess Harm. A legal allocation with a higher margin can be pruned.
 2. Removal-only spending is offered only above the Harm limit. Below it, lower Harm can still decide a tied final margin, and the generator does not offer that tie-break.
 3. Final Civic Action allocations are pruned by immediate value per cost only. An allocation in a space the PKK cannot reverse by Agitation can be dropped in favor of an equal-gain one it can reverse, so a forced win can be missed.
 4. Over nine eligible spaces, the greedy frontier keeps one option per space. When one and two shifts have equal value per cost, the second shift is dropped, so large Resource totals cannot all be spent.
 
-All four affect only Civic Action and Agitation allocations. The final-round solve is exact over the generated allocations, not over all legal ones.
+All four affected only Civic Action and Agitation allocations.
+
+Known gap in `cand-4` (PR #41 review, deferred to `cand-5` with a rerun): the search keeps one allocation per cost, Harm removed and opponent Harm removed, so of two allocations with equal gain and equal unexposed gain it keeps only the first. Against a resource-limited PKK Agitation reply the other can be better, and `cand-3` could offer it. This affects only final-round Civic Action ties. The final-round solve is exact over the generated allocations; in `cand-4` those include the best allocation by margin, by Harm tie-break and by unexposed value for every cost.
 
 ## Shared search and evaluation
 
