@@ -1,7 +1,7 @@
 // Phases 6 and 7 (20): statistics, review selection, coverage ledger and checkpoint snapshots.
 import { join } from "node:path";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { analyzeExperiment, compareVersions, pairedDifference, renderReport, reviewSelection, reviewTriggers, rosterAverage, summarizeCells, wilson, writeAnalysis } from "../src/cli/experiment-analysis.ts";
+import { analyzeExperiment, compareVersions, pairedDifference, pct, renderReport, reviewSelection, reviewTriggers, rosterAverage, summarizeCells, wilson, writeAnalysis } from "../src/cli/experiment-analysis.ts";
 import { archiveExperiment, gameFile, readJournal } from "../src/cli/experiment-artifacts.ts";
 import { replayExperiment } from "../src/cli/replay.ts";
 import { cpSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -35,6 +35,11 @@ describe("statistics (19 s10)", () => {
     // About seven points either side near 50% at 200 games (19 s10).
     const h = wilson(100, 200);
     expect(h.high - 0.5).toBeCloseTo(0.068, 2);
+  });
+
+  it("formats percentages and shows an unavailable estimate as n/a, never NaN%", () => {
+    expect(pct(0.5224)).toBe("52.2%");
+    expect(pct(Number.NaN)).toBe("n/a");
   });
 
   it("counts incomplete games separately and never as losses", () => {

@@ -10,7 +10,7 @@ import { fuzz } from "./fuzz.ts";
 import { replayExperiment, replayFile, replaySession } from "./replay.ts";
 import { runExperiment } from "./experiment.ts";
 import { qualify } from "./qualification.ts";
-import { ANALYSIS_VERSION, compareVersions, renderComparisons, writeAnalysis } from "./experiment-analysis.ts";
+import { ANALYSIS_VERSION, compareVersions, pct, renderComparisons, writeAnalysis } from "./experiment-analysis.ts";
 import type { GameRecord } from "./experiment.ts";
 import { archiveExperiment } from "./experiment-artifacts.ts";
 import { join } from "node:path";
@@ -94,7 +94,7 @@ if (command === "validate" && target !== undefined) {
   else if (action === "analyze") {
     try {
       const { path: out, analysis } = writeAnalysis(path, experimentCoverage(path));
-      print({ exitCode: 0, lines: [`wrote ${out}`, ...analysis.conditions.map((c) => `${c.id}: State roster average ${(100 * c.roster.mean).toFixed(1)}% [${(100 * c.roster.low).toFixed(1)}, ${(100 * c.roster.high).toFixed(1)}]`)] });
+      print({ exitCode: 0, lines: [`wrote ${out}`, ...analysis.conditions.map((c) => `${c.id}: State roster average ${pct(c.roster.mean)} [${pct(c.roster.low)}, ${pct(c.roster.high)}]`)] });
     } catch (e) {
       print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
     }

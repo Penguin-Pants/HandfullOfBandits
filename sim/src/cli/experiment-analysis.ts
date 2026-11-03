@@ -215,7 +215,8 @@ export function analyzeExperiment(dir: string, coverage: Coverage): Analysis {
   };
 }
 
-const pct = (x: number): string => (Number.isNaN(x) ? "n/a" : `${(100 * x).toFixed(1)}%`);
+/** Percent with one decimal; "n/a" for an unavailable (NaN) estimate. */
+export const pct = (x: number): string => (Number.isNaN(x) ? "n/a" : `${(100 * x).toFixed(1)}%`);
 
 /** Markdown report for one analysis, with its coverage ledger. */
 export function renderReport(a: Analysis, coverage: Coverage | null): string {
