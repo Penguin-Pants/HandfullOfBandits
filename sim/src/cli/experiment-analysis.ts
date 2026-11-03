@@ -266,7 +266,8 @@ export function compareVersions(results: readonly GameRecord[], samples: number,
     for (const seat of ["state", "pkk"] as const) {
       const other = seat === "state" ? "pkk" : "state";
       if (a[other] !== b[other] || a[seat] === b[seat] || family(a[seat]) !== family(b[seat])) continue;
-      const [newer, older] = a[seat] > b[seat] ? [a, b] : [b, a];
+      const version = (id: string): number => Number(/@(\d+)$/.exec(id)?.[1] ?? 0);
+      const [newer, older] = version(a[seat]) > version(b[seat]) ? [a, b] : [b, a];
       out.push({ condition: a.conditionId, seat, opponent: a[other], newer: newer[seat], older: older[seat], stateWinDiff: pairedDifference(results, cellKey(newer), cellKey(older), samples, seed) });
     }
   }
