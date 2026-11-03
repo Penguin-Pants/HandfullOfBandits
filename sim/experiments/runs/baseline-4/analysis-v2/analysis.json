@@ -1,0 +1,693 @@
+{
+ "analysisVersion": 2,
+ "experiment": "baseline-4",
+ "stage": "baseline",
+ "experimentHash": "961a740a8c1ddac46c136aaf46975945c228fd872e5585ffeb1a8b1935b7c0ac",
+ "scheduled": 3520,
+ "byStatus": {
+  "complete": 3520
+ },
+ "conditions": [
+  {
+   "id": "baseline",
+   "cells": [
+    {
+     "condition": "baseline",
+     "state": "S-POL@1",
+     "pkk": "P-POL@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 80,
+     "stateWinRate": 0.4,
+     "ci": {
+      "low": 0.3346057851761492,
+      "high": 0.46916328015764336
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 2
+     },
+     "marginDiff": {
+      "mean": -2.668181818181818,
+      "p10": -20.099999999999998,
+      "p50": -2,
+      "p90": 15
+     },
+     "earlyWins": {
+      "state": 4,
+      "pkk": 5
+     },
+     "thresholdReached": {
+      "state": 7,
+      "pkk": 14
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-POL@1",
+     "pkk": "P-EXP@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 53,
+     "stateWinRate": 0.265,
+     "ci": {
+      "low": 0.2086815410670056,
+      "high": 0.33017576246740693
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 1
+     },
+     "marginDiff": {
+      "mean": -6.918181818181818,
+      "p10": -23,
+      "p50": -7,
+      "p90": 10.099999999999994
+     },
+     "earlyWins": {
+      "state": 1,
+      "pkk": 10
+     },
+     "thresholdReached": {
+      "state": 3,
+      "pkk": 13
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-POL@1",
+     "pkk": "P-SURV@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 154,
+     "stateWinRate": 0.77,
+     "ci": {
+      "low": 0.7069169558159164,
+      "high": 0.8229065677828437
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 3
+     },
+     "marginDiff": {
+      "mean": 5.3136363636363635,
+      "p10": -7,
+      "p50": 6,
+      "p90": 15
+     },
+     "earlyWins": {
+      "state": 1,
+      "pkk": 0
+     },
+     "thresholdReached": {
+      "state": 4,
+      "pkk": 0
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-POL@1",
+     "pkk": "P-ADAPT@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 138,
+     "stateWinRate": 0.69,
+     "ci": {
+      "low": 0.6228282237882907,
+      "high": 0.7500105520775032
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 5
+     },
+     "marginDiff": {
+      "mean": 5.4818181818181815,
+      "p10": -9.099999999999998,
+      "p50": 5,
+      "p90": 20
+     },
+     "earlyWins": {
+      "state": 9,
+      "pkk": 0
+     },
+     "thresholdReached": {
+      "state": 16,
+      "pkk": 1
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-MIL@1",
+     "pkk": "P-POL@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 168,
+     "stateWinRate": 0.84,
+     "ci": {
+      "low": 0.782859297881253,
+      "high": 0.884325879983852
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 1
+     },
+     "marginDiff": {
+      "mean": 9.818181818181818,
+      "p10": -2,
+      "p50": 10,
+      "p90": 22
+     },
+     "earlyWins": {
+      "state": 8,
+      "pkk": 0
+     },
+     "thresholdReached": {
+      "state": 12,
+      "pkk": 0
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-MIL@1",
+     "pkk": "P-EXP@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 137,
+     "stateWinRate": 0.685,
+     "ci": {
+      "low": 0.6176504385930084,
+      "high": 0.7453767905394755
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 1
+     },
+     "marginDiff": {
+      "mean": 4.177272727272728,
+      "p10": -10,
+      "p50": 5,
+      "p90": 16
+     },
+     "earlyWins": {
+      "state": 0,
+      "pkk": 0
+     },
+     "thresholdReached": {
+      "state": 0,
+      "pkk": 0
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-MIL@1",
+     "pkk": "P-SURV@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 175,
+     "stateWinRate": 0.875,
+     "ci": {
+      "low": 0.8219857495007822,
+      "high": 0.9138802554974955
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 2
+     },
+     "marginDiff": {
+      "mean": 12.290909090909091,
+      "p10": -1,
+      "p50": 14,
+      "p90": 24
+     },
+     "earlyWins": {
+      "state": 3,
+      "pkk": 0
+     },
+     "thresholdReached": {
+      "state": 12,
+      "pkk": 0
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-MIL@1",
+     "pkk": "P-ADAPT@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 148,
+     "stateWinRate": 0.74,
+     "ci": {
+      "low": 0.6750925434347002,
+      "high": 0.7958616997641975
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 0
+     },
+     "marginDiff": {
+      "mean": 8.481818181818182,
+      "p10": -10,
+      "p50": 9,
+      "p90": 27
+     },
+     "earlyWins": {
+      "state": 25,
+      "pkk": 1
+     },
+     "thresholdReached": {
+      "state": 42,
+      "pkk": 1
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-CON@1",
+     "pkk": "P-POL@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 48,
+     "stateWinRate": 0.24,
+     "ci": {
+      "low": 0.1860661595414933,
+      "high": 0.3037334103263674
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 3
+     },
+     "marginDiff": {
+      "mean": -4.318181818181818,
+      "p10": -15,
+      "p50": -6,
+      "p90": 7.099999999999994
+     },
+     "earlyWins": {
+      "state": 0,
+      "pkk": 2
+     },
+     "thresholdReached": {
+      "state": 2,
+      "pkk": 2
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-CON@1",
+     "pkk": "P-EXP@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 28,
+     "stateWinRate": 0.14,
+     "ci": {
+      "low": 0.09866982605979482,
+      "high": 0.1948988091418585
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 1
+     },
+     "marginDiff": {
+      "mean": -8.063636363636364,
+      "p10": -18.099999999999998,
+      "p50": -9,
+      "p90": 3
+     },
+     "earlyWins": {
+      "state": 0,
+      "pkk": 4
+     },
+     "thresholdReached": {
+      "state": 1,
+      "pkk": 9
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-CON@1",
+     "pkk": "P-SURV@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 85,
+     "stateWinRate": 0.425,
+     "ci": {
+      "low": 0.3585361249314706,
+      "high": 0.4942906740688738
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 4
+     },
+     "marginDiff": {
+      "mean": -1.1454545454545455,
+      "p10": -12,
+      "p50": -1,
+      "p90": 10
+     },
+     "earlyWins": {
+      "state": 2,
+      "pkk": 4
+     },
+     "thresholdReached": {
+      "state": 5,
+      "pkk": 6
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-CON@1",
+     "pkk": "P-ADAPT@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 164,
+     "stateWinRate": 0.82,
+     "ci": {
+      "low": 0.7608852492032754,
+      "high": 0.8670537417285882
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 2
+     },
+     "marginDiff": {
+      "mean": 11.718181818181819,
+      "p10": -5.099999999999998,
+      "p50": 13,
+      "p90": 26
+     },
+     "earlyWins": {
+      "state": 23,
+      "pkk": 0
+     },
+     "thresholdReached": {
+      "state": 33,
+      "pkk": 0
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-ADAPT@1",
+     "pkk": "P-POL@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 78,
+     "stateWinRate": 0.39,
+     "ci": {
+      "low": 0.3250834308878392,
+      "high": 0.4590625409793326
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 2
+     },
+     "marginDiff": {
+      "mean": -3.8545454545454545,
+      "p10": -20,
+      "p50": -4,
+      "p90": 15
+     },
+     "earlyWins": {
+      "state": 2,
+      "pkk": 5
+     },
+     "thresholdReached": {
+      "state": 2,
+      "pkk": 10
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-ADAPT@1",
+     "pkk": "P-EXP@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 77,
+     "stateWinRate": 0.385,
+     "ci": {
+      "low": 0.3203330967849892,
+      "high": 0.4540013283488722
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 2
+     },
+     "marginDiff": {
+      "mean": -2.8,
+      "p10": -18,
+      "p50": -2,
+      "p90": 13.099999999999994
+     },
+     "earlyWins": {
+      "state": 2,
+      "pkk": 1
+     },
+     "thresholdReached": {
+      "state": 2,
+      "pkk": 5
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-ADAPT@1",
+     "pkk": "P-SURV@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 67,
+     "stateWinRate": 0.335,
+     "ci": {
+      "low": 0.27324086932910685,
+      "high": 0.4029780884716509
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 2
+     },
+     "marginDiff": {
+      "mean": -3.8636363636363638,
+      "p10": -18,
+      "p50": -4,
+      "p90": 9.099999999999994
+     },
+     "earlyWins": {
+      "state": 2,
+      "pkk": 5
+     },
+     "thresholdReached": {
+      "state": 3,
+      "pkk": 12
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    },
+    {
+     "condition": "baseline",
+     "state": "S-ADAPT@1",
+     "pkk": "P-ADAPT@2",
+     "scheduled": 220,
+     "completed": 220,
+     "primary": 200,
+     "incomplete": {},
+     "stateWins": 192,
+     "stateWinRate": 0.96,
+     "ci": {
+      "low": 0.9230679314255735,
+      "high": 0.9795943680389805
+     },
+     "repeatSensitivity": {
+      "groups": 10,
+      "winnerChanged": 1
+     },
+     "marginDiff": {
+      "mean": 23.35909090909091,
+      "p10": 11,
+      "p50": 26,
+      "p90": 32
+     },
+     "earlyWins": {
+      "state": 114,
+      "pkk": 2
+     },
+     "thresholdReached": {
+      "state": 146,
+      "pkk": 2
+     },
+     "harmPenalty": {
+      "state": 0,
+      "pkk": 0
+     }
+    }
+   ],
+   "roster": {
+    "mean": 0.5625,
+    "low": 0.5441484440158465,
+    "high": 0.5826708945092518,
+    "cells": 16
+   },
+   "warnings": {
+    "cell": [
+     "S-MIL@1 vs P-POL@2 (baseline): State 84.0%",
+     "S-MIL@1 vs P-SURV@2 (baseline): State 87.5%",
+     "S-CON@1 vs P-EXP@2 (baseline): State 14.0%",
+     "S-CON@1 vs P-ADAPT@2 (baseline): State 82.0%",
+     "S-ADAPT@1 vs P-ADAPT@2 (baseline): State 96.0%"
+    ],
+    "roster": [],
+    "margin": [
+     "S-MIL@1 vs P-POL@2 (baseline): median margin difference 10.0",
+     "S-MIL@1 vs P-SURV@2 (baseline): median margin difference 14.0",
+     "S-CON@1 vs P-ADAPT@2 (baseline): median margin difference 13.0",
+     "S-ADAPT@1 vs P-ADAPT@2 (baseline): median margin difference 26.0"
+    ]
+   }
+  }
+ ],
+ "review": {
+  "closest": [
+   "baseline~S-ADAPTv1~P-EXPv2~1001514~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001568~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001605~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001630~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001641~r0"
+  ],
+  "largest": [
+   "baseline~S-ADAPTv1~P-POLv2~1001680~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001574~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001620~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001636~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001561~r0"
+  ],
+  "random": [
+   "baseline~S-MILv1~P-SURVv2~1001615~r0",
+   "baseline~S-ADAPTv1~P-POLv2~1001550~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001656~r0",
+   "baseline~S-CONv1~P-SURVv2~1001556~r0",
+   "baseline~S-POLv1~P-EXPv2~1001628~r0"
+  ],
+  "failures": [],
+  "all": [
+   "baseline~S-ADAPTv1~P-EXPv2~1001514~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001568~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001605~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001630~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001641~r0",
+   "baseline~S-ADAPTv1~P-POLv2~1001680~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001574~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001620~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001636~r0",
+   "baseline~S-ADAPTv1~P-ADAPTv2~1001561~r0",
+   "baseline~S-MILv1~P-SURVv2~1001615~r0",
+   "baseline~S-ADAPTv1~P-POLv2~1001550~r0",
+   "baseline~S-ADAPTv1~P-EXPv2~1001656~r0",
+   "baseline~S-CONv1~P-SURVv2~1001556~r0",
+   "baseline~S-POLv1~P-EXPv2~1001628~r0"
+  ]
+ },
+ "routes": {
+  "games": 3520,
+  "state": {
+   "support": 24.613636363636363,
+   "legitimacy": 10.259375
+  },
+  "pkk": {
+   "opposition": 11.444318181818181,
+   "bases": 1.490625
+  },
+  "stateWinners": {
+   "support": 29.965151515151515,
+   "legitimacy": 10.255050505050505,
+   "games": 1980
+  },
+  "pkkWinners": {
+   "opposition": 16.274675324675325,
+   "bases": 2.3811688311688313,
+   "games": 1540
+  }
+ }
+}
