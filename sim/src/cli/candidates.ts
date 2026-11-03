@@ -14,7 +14,7 @@ import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
 
-export const GENERATOR_VERSION = "cand-3";
+export const GENERATOR_VERSION = "cand-4";
 
 export type DecisionKind = "card" | "pivotal" | "resume" | "upkeep" | "legitimacy" | "civicAction" | "agitation" | "redeployState" | "redeployPkk";
 
@@ -447,106 +447,90 @@ function eventCompletions(engine: Engine, r: Ruleset, s: GameState, command: Any
 
 // ---------------------------------------------------------------- Propaganda
 
-interface Spend { loc: string; cost: number; value: number; params: JsonObject }
+/**
+ * One space's spending option: `gain` is Pop per level shifted, `harm` the own Harm markers
+ * removed, `opp` the opponent's Harm markers removed, `exposed` whether the opponent can shift
+ * the space back in a later Propaganda phase.
+ */
+interface Spend { readonly loc: string; readonly cost: number; readonly gain: number; readonly harm: number; readonly opp: number; readonly exposed: boolean; readonly params: JsonObject }
+interface Allocation { readonly cost: number; readonly gain: number; readonly safe: number; readonly harm: number; readonly opp: number; readonly picks: readonly Spend[] }
 
-/** Best allocation for every total cost up to `budget` (exact over at most 3^9 options, else greedy). */
-function frontier(options: readonly (readonly Spend[])[], budget: number): Spend[][] {
-  const best = new Map<number, { value: number; picks: Spend[] }>([[0, { value: 0, picks: [] }]]);
-  if (options.length <= 9) { // literal-ok: exhaustive search bound
-    const walk = (i: number, cost: number, value: number, picks: Spend[]): void => {
-      if (cost > budget) return;
-      if (i === options.length) {
-        const old = best.get(cost);
-        if (old === undefined || value > old.value) best.set(cost, { value, picks });
-        return;
-      }
-      walk(i + 1, cost, value, picks);
-      for (const o of options[i] ?? []) walk(i + 1, cost + o.cost, value + o.value, [...picks, o]);
-    };
-    walk(0, 0, 0, []);
-  } else {
-    const flat = options.map((o) => [...o].sort((a, b) => b.value / b.cost - a.value / a.cost)[0]).filter((o): o is Spend => o !== undefined).sort((a, b) => b.value / b.cost - a.value / a.cost);
-    let cost = 0;
-    const picks: Spend[] = [];
-    for (const o of flat) if (cost + o.cost <= budget) { cost += o.cost; picks.push(o); best.set(cost, { value: picks.reduce((n, p) => n + p.value, 0), picks: [...picks] }); }
-  }
-  // Keep only allocations that are better than every cheaper one, best first, so a family cap
-  // prunes the cheapest allocations, never the maximum (cand-2).
-  const out: Spend[][] = [];
-  let top = -1;
-  for (const cost of [...best.keys()].sort((a, b) => a - b)) {
-    const entry = best.get(cost);
-    if (entry !== undefined && entry.value > top) { top = entry.value; out.push(entry.picks); }
-  }
-  return out.reverse();
-}
-
-/** Civic Action phase: State-Controlled spaces with Troops and Police; value = Pop per level gained. */
 /** Harm markers above the limit for a faction (rules 7.3: each costs 2 final margin). */
 function excessHarm(r: Ruleset, s: GameState, keys: readonly string[]): number {
   return Math.max(0, r.spaces.reduce((n, x) => n + keys.reduce((m, k) => m + markers(s, x.id, k), 0), 0) - param(r, "harm.limit", "number"));
 }
 
-function civicChoices(r: Ruleset, s: GameState): JsonObject[] {
-  const excess = excessHarm(r, s, ["stateHarm"]);
-  const cap = Math.min(Math.floor(Number(s.tracks["legitimacy"]) / param(r, "civicAction.capDivisor", "number")), resources(r, s, "state"));
-  const options = domestic(r).filter((l) => controlOf(r, s, l) === "state" && count(s, l, "troops") > 0 && count(s, l, "police") > 0 && level(s, l) < 2).map((l) => [1, 2].filter((n) => level(s, l) + n <= 2).map((n): Spend => {
-    const params = civicSpend(s, l, n);
-    const cost = Number(params["coercion"]) + Number(params["reception"]) + 3 * Number(params["stateHarm"]) + 2 * n; // literal-ok: rules 3.6.1 costs, checked by validation
-    // A shift's value includes the margin recovered by redress it requires (cand-3).
-    return { loc: l, cost, value: n * pop(r, l) + 2 * Math.min(excess, Number(params["stateHarm"])), params };
-  }));
-  return withRedress(frontier(options, cap), redressUnits(r, s, "state", 3), cap, civicSpend, s).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) })); // literal-ok: rules 3.6.1 redress cost
-}
-
 /**
- * Removal-only units for a faction whose Harm exceeds the limit (rules 7.3: 2 margin per excess
- * marker): one marker per unit, up to the excess, where the faction may spend.
+ * Exact search over every combination of at most one option per space within `budget` (cand-4).
+ * Harm value is capped over the whole allocation: 2 margin per own excess marker removed, minus 2
+ * per opponent excess marker removed (rules 7.3). Kept: allocations no other beats on cost, value
+ * and Harm removed (lower Harm breaks tied margins), and the same over value the opponent cannot
+ * reverse. Best first, so a family cap prunes the weakest allocations.
  */
-interface Unit { readonly loc: string; readonly key: string; readonly cost: number }
-function redressUnits(r: Ruleset, s: GameState, faction: "state" | "pkk", harmCost: number): Unit[] {
-  const keys = faction === "pkk" ? [["coercion", 1], ["pkkHarm", harmCost]] as const : [["stateHarm", harmCost]] as const;
-  const total = r.spaces.reduce((n, x) => n + keys.reduce((m, [k]) => m + markers(s, x.id, k), 0), 0);
-  let excess = total - param(r, "harm.limit", "number");
-  const out: Unit[] = [];
-  for (const [key, cost] of keys) {
-    for (const loc of domestic(r)) {
-      const allowed = faction === "pkk" ? count(s, loc, "pkkBase") > 0 || controlOf(r, s, loc) === "pkk" : controlOf(r, s, loc) === "state" && count(s, loc, "police") > 0 && count(s, loc, "troops") > 0;
-      for (let i = 0; allowed && i < markers(s, loc, key) && excess > 0; i++, excess--) out.push({ loc, key, cost });
+function allocations(options: readonly (readonly Spend[])[], budget: number, excess: number, oppExcess: number): Spend[][] {
+  // Per (cost, harm, opp): the best allocation by gain and the best by unexposed gain.
+  let states = new Map<string, { byGain: Allocation; bySafe: Allocation }>();
+  const empty: Allocation = { cost: 0, gain: 0, safe: 0, harm: 0, opp: 0, picks: [] };
+  states.set("0|0|0", { byGain: empty, bySafe: empty });
+  for (const space of options) {
+    const next = new Map(states);
+    for (const { byGain, bySafe } of states.values()) {
+      for (const from of byGain === bySafe ? [byGain] : [byGain, bySafe]) {
+        for (const o of space) {
+          if (from.cost + o.cost > budget) continue;
+          const a: Allocation = { cost: from.cost + o.cost, gain: from.gain + o.gain, safe: from.safe + (o.exposed ? 0 : o.gain), harm: from.harm + o.harm, opp: from.opp + o.opp, picks: [...from.picks, o] };
+          const key = `${String(a.cost)}|${String(a.harm)}|${String(a.opp)}`;
+          const old = next.get(key);
+          if (old === undefined) { next.set(key, { byGain: a, bySafe: a }); continue; }
+          next.set(key, { byGain: a.gain > old.byGain.gain ? a : old.byGain, bySafe: a.safe > old.bySafe.safe ? a : old.bySafe });
+        }
+      }
     }
+    states = next;
   }
-  return out;
+  const harmValue = (a: Allocation): number => 2 * Math.min(excess, a.harm) - 2 * Math.min(oppExcess, a.opp); // literal-ok: rules 7.3
+  const pareto = (all: readonly Allocation[], value: (a: Allocation) => number): Allocation[] => {
+    const sorted = [...all].sort((a, b) => value(b) - value(a) || b.harm - a.harm || a.cost - b.cost);
+    return sorted.filter((a) => !sorted.some((b) => b !== a && b.cost <= a.cost && value(b) >= value(a) && b.harm >= a.harm && (b.cost < a.cost || value(b) > value(a) || b.harm > a.harm)));
+  };
+  const entries = [...states.values()];
+  const byGain = pareto(entries.map((e) => e.byGain), (a) => a.gain + harmValue(a));
+  const bySafe = pareto(entries.map((e) => e.bySafe), (a) => a.safe + harmValue(a));
+  return interleave([byGain, bySafe]).map((a) => [...a.picks]);
 }
 
-/** Frontier allocations plus allocations that first buy back excess Harm unit by unit, then spend the rest. */
-function withRedress(base: Spend[][], units: readonly Unit[], budget: number, spend: (s: GameState, loc: string, shifts: number) => JsonObject, s: GameState): Spend[][] {
-  const extra: Spend[][] = [];
-  const zero = (loc: string): JsonObject => Object.fromEntries(Object.entries(spend(s, loc, 0)).map(([k]) => [k, 0]));
-  const picked = new Map<string, Record<string, number>>();
-  let cost = 0;
-  for (const u of units) {
-    if (cost + u.cost > budget) continue;
-    cost += u.cost;
-    const entry = picked.get(u.loc) ?? {};
-    entry[u.key] = (entry[u.key] ?? 0) + 1;
-    picked.set(u.loc, entry);
-    const removal: Spend[] = [...picked].map(([loc, keys]) => ({ loc, cost: 0, value: 0, params: { ...zero(loc), ...keys } }));
-    extra.push(removal);
-    const rest = base.find((b) => b.reduce((n, x) => n + x.cost, 0) <= budget - cost && b.every((x) => !picked.has(x.loc)));
-    if (rest !== undefined && rest.length > 0) extra.push([...removal, ...rest]);
-  }
-  // Redress allocations interleave with the best frontier allocations so the cap keeps both.
-  return interleave([base, extra]);
+/** Removal-only options: every split of the space's removable markers (`cost` per marker kind). */
+function removals(loc: string, base: JsonObject, kinds: readonly (readonly [string, number, number, "harm" | "opp"])[]): Spend[] {
+  let out: { cost: number; harm: number; opp: number; params: JsonObject }[] = [{ cost: 0, harm: 0, opp: 0, params: base }];
+  for (const [key, have, cost, side] of kinds) out = out.flatMap((x) => Array.from({ length: have + 1 }, (_, n) => ({ cost: x.cost + n * cost, harm: x.harm + (side === "harm" ? n : 0), opp: x.opp + (side === "opp" ? n : 0), params: { ...x.params, [key]: n } })));
+  return out.filter((x) => x.cost > 0).map((x) => ({ loc, gain: 0, exposed: false, ...x }));
 }
 
-/** Agitation phase: spaces with a PKK Base or PKK Control; value = Pop per level gained. */
+/** Civic Action phase: State-Controlled spaces with Troops and Police; shifts clear every block (rules 3.6.1). */
+function civicChoices(r: Ruleset, s: GameState): JsonObject[] {
+  const cap = Math.min(Math.floor(Number(s.tracks["legitimacy"]) / param(r, "civicAction.capDivisor", "number")), resources(r, s, "state"));
+  const options = domestic(r).filter((l) => controlOf(r, s, l) === "state" && count(s, l, "troops") > 0 && count(s, l, "police") > 0).map((l): Spend[] => [
+    ...[1, 2].filter((n) => level(s, l) + n <= 2).map((n): Spend => {
+      const params = civicSpend(s, l, n);
+      const cost = Number(params["coercion"]) + Number(params["reception"]) + 3 * Number(params["stateHarm"]) + 2 * n; // literal-ok: rules 3.6.1 costs, checked by validation
+      // A PKK Base lets the PKK shift the space back in a later Agitation phase.
+      return { loc: l, cost, gain: n * pop(r, l), harm: Number(params["stateHarm"]), opp: Number(params["coercion"]), exposed: count(s, l, "pkkBase") > 0, params };
+    }),
+    ...removals(l, { coercion: 0, reception: 0, stateHarm: 0, displacement: 0, shifts: 0 }, [["stateHarm", markers(s, l, "stateHarm"), 3, "harm"]]), // literal-ok: rules 3.6.1 redress cost
+  ]);
+  return allocations(options, cap, excessHarm(r, s, ["stateHarm"]), excessHarm(r, s, ["coercion", "pkkHarm"])).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) }));
+}
+
+/** Agitation phase: spaces with a PKK Base or PKK Control; shifts clear every block (rules 3.6.2). */
 function agitationChoices(r: Ruleset, s: GameState): JsonObject[] {
-  const excess = excessHarm(r, s, ["coercion", "pkkHarm"]);
-  const options = domestic(r).filter((l) => (count(s, l, "pkkBase") > 0 || controlOf(r, s, l) === "pkk") && level(s, l) > -2).map((l) => [1, 2].filter((n) => level(s, l) - n >= -2).map((n): Spend => {
-    const params = agitationSpend(s, l, n);
-    return { loc: l, cost: Number(params["coercion"]) + 2 * Number(params["pkkHarm"]) + n, value: n * pop(r, l) + 2 * Math.min(excess, Number(params["coercion"]) + Number(params["pkkHarm"])), params }; // literal-ok: rules 3.6.2 redress cost
-  }));
-  return withRedress(frontier(options, resources(r, s, "pkk")), redressUnits(r, s, "pkk", 2), resources(r, s, "pkk"), agitationSpend, s).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) })); // literal-ok: rules 3.6.2 redress cost
+  const options = domestic(r).filter((l) => count(s, l, "pkkBase") > 0 || controlOf(r, s, l) === "pkk").map((l): Spend[] => [
+    ...[1, 2].filter((n) => level(s, l) - n >= -2).map((n): Spend => {
+      const params = agitationSpend(s, l, n);
+      return { loc: l, cost: Number(params["coercion"]) + 2 * Number(params["pkkHarm"]) + n, gain: n * pop(r, l), harm: Number(params["coercion"]) + Number(params["pkkHarm"]), opp: 0, exposed: false, params }; // literal-ok: rules 3.6.2 redress cost
+    }),
+    ...removals(l, { coercion: 0, pkkHarm: 0, shifts: 0 }, [["coercion", markers(s, l, "coercion"), 1, "harm"], ["pkkHarm", markers(s, l, "pkkHarm"), 2, "harm"]]), // literal-ok: rules 3.6.2 redress cost
+  ]);
+  return allocations(options, resources(r, s, "pkk"), excessHarm(r, s, ["coercion", "pkkHarm"]), 0).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) }));
 }
 
 /** Upkeep shortfall: remove the fewest Guards, from low-Pop spaces first or from crowded spaces first. */

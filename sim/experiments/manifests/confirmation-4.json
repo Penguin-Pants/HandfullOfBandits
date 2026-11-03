@@ -1,0 +1,96 @@
+{
+ "schemaVersion": 1,
+ "id": "confirmation-4",
+ "stage": "confirmation",
+ "description": "Confirmation (19 s7, s10): new fixed batch of 200 fresh evaluation seeds per selected matchup: the three persistent baseline advantages, the declared counter P-SHIELD@3 against the dominant S-MIL@1 and the earlier State roster, and the unsuccessful State counter S-SIEGE@3. Rerun with generator cand-4 (exact spending search, PR #40 review rounds 3 and 4) and search-2 on fresh evaluation seeds; supersedes confirmation-3, whose results are retained.",
+ "scenario": "scenario-a",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "1565e7a338b2f810ba612fbf4a297c0d0ba6c19db658b8f4703802b0730b0720"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "harmLimit": 6,
+  "engineFingerprint": "69470914a3e062bc3edaf14869d3dc413e743ca884b03e9cfa7102abad964854",
+  "playerFingerprint": "d78289f0fd0f6ee93f6c6f60baecbc0fe7289a077c5ab9b62db2f2008676f339"
+ },
+ "conditions": [
+  {
+   "id": "baseline",
+   "options": {
+    "hotPursuit": "allow",
+    "syriaMarchRestricted": "allow"
+   }
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-SHIELD@3"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-SHIELD@3"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-SHIELD@3"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-SHIELD@3"
+  },
+  {
+   "state": "S-SIEGE@3",
+   "pkk": "P-SHIELD@3"
+  }
+ ],
+ "seeds": {
+  "registry": "evaluation",
+  "blocks": [
+   {
+    "from": 1001800,
+    "count": 200
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 2000,
+  "decisionMs": 20000,
+  "gameMs": 300000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": "confirmation-3"
+}
