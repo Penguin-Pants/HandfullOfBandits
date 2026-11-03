@@ -84,7 +84,13 @@ if (command === "validate" && target !== undefined) {
     runExperiment(path, flag("--out", ""), { log: (line) => { console.log(line); } })
       .then((o) => { print({ exitCode: 0, lines: [`experiment ${o.experimentHash} in ${o.dir}: ${JSON.stringify(o.byStatus)}`] }); })
       .catch((e: unknown) => { print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] }); });
-  } else if (action === "replay") print(replayExperiment(path, args.includes("--game") ? flag("--game", "") : null));
+  } else if (action === "replay") {
+    try {
+      print(replayExperiment(path, args.includes("--game") ? flag("--game", "") : null));
+    } catch (e) {
+      print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
+    }
+  }
   else if (action === "analyze") {
     try {
       const { path: out, analysis } = writeAnalysis(path, experimentCoverage(path));
