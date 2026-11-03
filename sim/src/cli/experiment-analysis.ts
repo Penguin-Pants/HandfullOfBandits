@@ -10,7 +10,7 @@ import type { Manifest } from "./experiment-manifest.ts";
 import type { GameRecord } from "./experiment.ts";
 import { SearchRng } from "./player-observation.ts";
 
-export const ANALYSIS_VERSION = 1;
+export const ANALYSIS_VERSION = 2;
 const Z95 = 1.959964;
 
 /** 95% Wilson score interval for k successes in n trials; n = 0 gives [0, 1]. */
@@ -42,6 +42,10 @@ export interface CellSummary {
   readonly pkk: string;
   readonly scheduled: number;
   readonly completed: number;
+  /** Completed first plays (repeat 0): the trials behind the rate and interval. */
+  readonly primary: number;
+  /** Seed groups with repeated player seeds, and those whose winner changed. */
+  readonly repeatSensitivity: { readonly groups: number; readonly winnerChanged: number };
   readonly incomplete: Readonly<Record<string, number>>;
   readonly stateWins: number;
   readonly stateWinRate: number;
@@ -60,14 +64,21 @@ export function summarizeCells(results: readonly GameRecord[], thresholds: Reado
   return [...groups.values()].map((games) => {
     const first = games[0] as GameRecord;
     const done = games.filter((g) => g.status === "complete");
-    const wins = done.filter((g) => g.result?.winner === "state").length;
+    // Win rate and Wilson interval use one play per game seed: repeated player seeds share a deck
+    // and are not independent trials (19 s7). Repeats appear only in the sensitivity count.
+    const primary = done.filter((g) => g.repeat === 0);
+    const wins = primary.filter((g) => g.result?.winner === "state").length;
+    const groups = new Map<number, Set<string | null>>();
+    for (const g of done) groups.set(g.seed, (groups.get(g.seed) ?? new Set()).add(g.result?.winner ?? null));
+    const repeated = [...groups.entries()].filter(([seedId]) => done.filter((g) => g.seed === seedId).length > 1);
     const diffs = done.map(marginDiff).sort((a, b) => a - b);
     const incomplete: Record<string, number> = {};
     for (const g of games.filter((x) => x.status !== "complete")) incomplete[g.status] = (incomplete[g.status] ?? 0) + 1;
     const per = (pred: (g: GameRecord, f: string) => boolean): Record<string, number> => Object.fromEntries(["state", "pkk"].map((f) => [f, done.filter((g) => pred(g, f)).length]));
     return {
-      condition: first.conditionId, state: first.state, pkk: first.pkk, scheduled: games.length, completed: done.length, incomplete,
-      stateWins: wins, stateWinRate: done.length === 0 ? Number.NaN : wins / done.length, ci: wilson(wins, done.length),
+      condition: first.conditionId, state: first.state, pkk: first.pkk, scheduled: games.length, completed: done.length, primary: primary.length, incomplete,
+      stateWins: wins, stateWinRate: primary.length === 0 ? Number.NaN : wins / primary.length, ci: wilson(wins, primary.length),
+      repeatSensitivity: { groups: repeated.length, winnerChanged: repeated.filter(([, w]) => w.size > 1).length },
       marginDiff: { mean: diffs.reduce((a, b) => a + b, 0) / Math.max(1, diffs.length), p10: quantile(diffs, 0.1), p50: quantile(diffs, 0.5), p90: quantile(diffs, 0.9) },
       earlyWins: per((g, f) => g.result?.endReason === "victory check" && g.result.winner === f),
       thresholdReached: per((g, f) => (g.result?.standings.find((s) => s.faction === f)?.score ?? 0) >= (thresholds[f] ?? Infinity)),
@@ -112,7 +123,8 @@ export function pairedDifference(results: readonly GameRecord[], a: string, b: s
   const va = value(a);
   const vb = value(b);
   const diffs = [...va.keys()].filter((s) => vb.has(s)).sort((x, y) => x - y).map((s) => (va.get(s) ?? 0) - (vb.get(s) ?? 0));
-  const mean = (xs: readonly number[]): number => xs.reduce((x, y) => x + y, 0) / Math.max(1, xs.length);
+  const mean = (xs: readonly number[]): number => (xs.length === 0 ? Number.NaN : xs.reduce((x, y) => x + y, 0) / xs.length);
+  if (diffs.length === 0) return { pairs: 0, mean: Number.NaN, low: Number.NaN, high: Number.NaN };
   const rng = new SearchRng(seed);
   const draws = Array.from({ length: samples }, () => mean(diffs.map(() => diffs[rng.int(diffs.length)] ?? 0))).sort((x, y) => x - y);
   return { pairs: diffs.length, mean: mean(diffs), low: quantile(draws, 0.025), high: quantile(draws, 0.975) };
@@ -187,12 +199,15 @@ export function analyzeExperiment(dir: string, coverage: Coverage): Analysis {
   for (const g of results) byStatus[g.status] = (byStatus[g.status] ?? 0) + 1;
   const { samples, seed } = manifest.analysis.bootstrap;
   const included = results.filter((g) => !manifest.analysis.exclusions.includes(g.gameId));
+  // Roster averages and their triggers use qualified-versus-qualified cells only (19 s4).
+  const roles = existsSync(join(dir, "players.json")) ? JSON.parse(readFileSync(join(dir, "players.json"), "utf8")) as Record<string, { role: string }> : {};
+  const qualified = (g: GameRecord): boolean => roles[g.state]?.role === "qualified" && roles[g.pkk]?.role === "qualified";
   return {
     analysisVersion: ANALYSIS_VERSION, experiment: manifest.id, stage: manifest.stage, experimentHash: identity.experimentHash, scheduled: results.length, byStatus,
     conditions: manifest.conditions.map((c) => {
       const mine = included.filter((g) => g.conditionId === c.id);
       const cells = summarizeCells(mine, manifest.expected.thresholds, manifest.expected.harmLimit);
-      const roster = rosterAverage(mine, samples, seed);
+      const roster = rosterAverage(mine.filter(qualified), samples, seed);
       return { id: c.id, cells, roster, warnings: reviewTriggers(cells, roster, manifest.analysis.warnings) };
     }),
     review: reviewSelection(included, seed),
@@ -211,8 +226,10 @@ export function renderReport(a: Analysis, coverage: Coverage | null): string {
     const states = [...new Set(c.cells.map((x) => x.state))];
     const pkks = [...new Set(c.cells.map((x) => x.pkk))];
     out.push(`| State \\ PKK | ${pkks.map(short).join(" | ")} |`, `|---|${pkks.map(() => "---").join("|")}|`);
-    for (const s of states) out.push(`| ${short(s)} | ${pkks.map((p) => { const x = c.cells.find((y) => y.state === s && y.pkk === p); return x === undefined ? "" : `${pct(x.stateWinRate)} [${pct(x.ci.low)}, ${pct(x.ci.high)}] n=${String(x.completed)}${Object.keys(x.incomplete).length > 0 ? ` (+${String(x.scheduled - x.completed)} incomplete)` : ""}`; }).join(" | ")} |`);
-    out.push("", `Equal-weight roster average (this roster only, not a human win probability): State ${pct(c.roster.mean)} [${pct(c.roster.low)}, ${pct(c.roster.high)}] over ${String(c.roster.cells)} cells; seed-cluster bootstrap.`, "");
+    for (const s of states) out.push(`| ${short(s)} | ${pkks.map((p) => { const x = c.cells.find((y) => y.state === s && y.pkk === p); return x === undefined ? "" : `${pct(x.stateWinRate)} [${pct(x.ci.low)}, ${pct(x.ci.high)}] n=${String(x.primary)}${Object.keys(x.incomplete).length > 0 ? ` (+${String(x.scheduled - x.completed)} incomplete)` : ""}`; }).join(" | ")} |`);
+    const rep = c.cells.reduce((n, x) => ({ groups: n.groups + x.repeatSensitivity.groups, changed: n.changed + x.repeatSensitivity.winnerChanged }), { groups: 0, changed: 0 });
+    if (rep.groups > 0) out.push("", `Player-seed sensitivity: the winner changed in ${String(rep.changed)} of ${String(rep.groups)} repeated seed groups.`);
+    out.push("", `Equal-weight roster average (this roster only, not a human win probability): State ${pct(c.roster.mean)} [${pct(c.roster.low)}, ${pct(c.roster.high)}] over ${String(c.roster.cells)} qualified-versus-qualified cells; seed-cluster bootstrap. Cell rates and intervals use the first play per seed.`, "");
     out.push("| Cell | Margin diff mean (p10 / p50 / p90) | Early wins S/P | Threshold reached S/P | Harm > 6 S/P |", "|---|---|---|---|---|");
     for (const x of c.cells) out.push(`| ${short(x.state)} vs ${short(x.pkk)} | ${x.marginDiff.mean.toFixed(1)} (${x.marginDiff.p10.toFixed(0)} / ${x.marginDiff.p50.toFixed(0)} / ${x.marginDiff.p90.toFixed(0)}) | ${String(x.earlyWins["state"])}/${String(x.earlyWins["pkk"])} | ${String(x.thresholdReached["state"])}/${String(x.thresholdReached["pkk"])} | ${String(x.harmPenalty["state"])}/${String(x.harmPenalty["pkk"])} |`);
     const w = [...c.warnings.cell, ...c.warnings.roster, ...c.warnings.margin];
@@ -278,6 +295,9 @@ export function compareVersions(results: readonly GameRecord[], samples: number,
 /** Markdown table of version comparisons. */
 export function renderComparisons(rows: readonly VersionComparison[]): string {
   const lines = ["| Seat | Newer | Older | Opponent | Paired seeds | State win diff (newer - older) | 95% CI |", "|---|---|---|---|---|---|---|"];
-  for (const r of rows) lines.push(`| ${r.seat} | ${r.newer} | ${r.older} | ${r.opponent} | ${String(r.stateWinDiff.pairs)} | ${(100 * r.stateWinDiff.mean).toFixed(1)} pts | [${(100 * r.stateWinDiff.low).toFixed(1)}, ${(100 * r.stateWinDiff.high).toFixed(1)}] |`);
+  for (const r of rows) {
+    const d = r.stateWinDiff;
+    lines.push(d.pairs === 0 ? `| ${r.seat} | ${r.newer} | ${r.older} | ${r.opponent} | 0 | n/a | n/a |` : `| ${r.seat} | ${r.newer} | ${r.older} | ${r.opponent} | ${String(d.pairs)} | ${(100 * d.mean).toFixed(1)} pts | [${(100 * d.low).toFixed(1)}, ${(100 * d.high).toFixed(1)}] |`);
+  }
   return `${lines.join("\n")}\n`;
 }

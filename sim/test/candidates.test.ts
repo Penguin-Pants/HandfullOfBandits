@@ -98,6 +98,26 @@ describe("pruning keeps every option kind reachable (PR #40 review)", () => {
   });
 });
 
+describe("second review round (PR #40)", () => {
+  it("values Harm recovered by a combined redress and shift in the Agitation frontier", () => {
+    // Harm 8; 3 Resources. Van-Bitlis (-1, 2 Coercion, Base): remove both, shift once = +4 Pop, +4 margin from Harm 8 to 6.
+    let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 3), "agitation", 2);
+    s = setMarkers(setMarkers(setPieces(setLevel(s, "van-bitlis", -1), "van-bitlis", "pkkBase", 1), "van-bitlis", "coercion", 2), "dersim", "pkkHarm", 6);
+    s = setPieces(setLevel(s, "agri", 0), "agri", "pkkBase", 1);
+    const set = gen(s, "agitation", "pkk");
+    allLegal(s, set);
+    expect(set.candidates.some((c) => JSON.stringify(c.command).includes("\"van-bitlis\":{\"coercion\":2,\"pkkHarm\":0,\"shifts\":1}"))).toBe(true);
+  });
+
+  it("keeps Train in a City when only one or two Troops and no Police are Available", () => {
+    const base = turnOf("state");
+    const s = { ...setTrack(base, "resources.state", 20), pools: { ...base.pools, troops: { available: 1, outOfPlay: 0 }, police: { available: 0, outOfPlay: 0 } } };
+    const train = gen(s, "card", "state").candidates.filter((c) => c.family.startsWith("op:state.train") && JSON.stringify(c.command).includes("diyarbakir-city"));
+    expect(train.some((c) => JSON.stringify(c.command).includes("\"troops\":1,\"police\":0"))).toBe(true);
+    expect(train.some((c) => JSON.stringify(c.command).includes("civicAction"))).toBe(true);
+  });
+});
+
 describe("campaign procedures (19 s5 Campaign row)", () => {
   it("offers ARGK decline and several placements", () => {
     const ready = setPieces(setPieces(engine.start(ruleset, "scenario-a", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);

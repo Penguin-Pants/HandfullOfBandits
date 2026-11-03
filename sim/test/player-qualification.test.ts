@@ -6,7 +6,8 @@ import { decisionPoint, generateCandidates } from "../src/cli/candidates.ts";
 import { determinize, observe, SearchRng } from "../src/cli/player-observation.ts";
 import { resolvePlayer } from "../src/cli/player-registry.ts";
 import { FIXTURES, independentStandings, qualify, runFixture, suiteHash } from "../src/cli/qualification.ts";
-import { CURRENT } from "../src/cli/strategies/scenario-a.ts";
+import { CURRENT, roundRobin } from "../src/cli/strategies/scenario-a.ts";
+import { TransitionBudget, type ObservationPlayer } from "../src/cli/players.ts";
 import { derive } from "../src/engine/coin/derive.ts";
 import { checkStandings } from "../src/engine/coin/victory.ts";
 import type { GameState } from "../src/engine/core/types.ts";
@@ -74,6 +75,30 @@ describe("qualification fixtures (19 s6)", () => {
       expect(outcomes.some(Boolean), `${f.id} has a passing candidate`).toBe(true);
       expect(outcomes.some((x) => !x), `${f.id} has a failing candidate`).toBe(true);
     }
+  });
+});
+
+describe("search order (PR #40 review)", () => {
+  it("rotates families even when every candidate fits, so a spent budget never starves late families", () => {
+    const c = (family: string, n: number) => Array.from({ length: n }, (_, i) => ({ id: `${family}#${String(i)}`, family, command: { type: "Pass" } }));
+    const order = roundRobin([...c("a", 3), ...c("b", 2), ...c("z", 1)]).map((x) => x.family);
+    expect(order).toEqual(["a", "b", "z", "a", "b", "a"]);
+  });
+
+  it("reaches every family of a large card decision within a small budget", () => {
+    const s = engine.start(ruleset, "scenario-a", 5).state;
+    const started = engine.apply(ruleset, s, { type: "Advance" });
+    expect.assert(started.ok);
+    const live = started.transition.state;
+    const point = decisionPoint(engine, ruleset, live);
+    expect.assert(point.kind === "card");
+    const observation = observe(live, point.faction);
+    const candidates = generateCandidates(engine, ruleset, determinize(ruleset, observation, new SearchRng(0)), "card", point.faction).candidates;
+    const families = new Set(candidates.map((x) => x.family)).size;
+    const player = resolvePlayer(point.faction === "state" ? "S-POL@1" : "P-POL@2") as ObservationPlayer;
+    const choice = player.decide({ decisionId: "d", kind: "card", faction: point.faction, observation, candidates }, { engine, ruleset, rng: new SearchRng(1), budget: new TransitionBudget(engine, families * 2) });
+    const evaluated = Number(/evaluated (\d+)\//.exec(choice.notes.join(" "))?.[1] ?? candidates.length);
+    expect(evaluated).toBeGreaterThanOrEqual(Math.min(families, candidates.length) - 1);
   });
 });
 

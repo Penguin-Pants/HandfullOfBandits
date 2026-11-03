@@ -55,9 +55,15 @@ export interface DecisionRecord {
   readonly notes: readonly string[];
 }
 
+/**
+ * Public snapshot at a Propaganda phase boundary (19 s9). `phase` null: the round start, after the
+ * Propaganda card's reveal. There is no after-Reset snapshot: Reset reveals the next card in the
+ * same command, so its after state includes that card's Always effects.
+ */
 export interface Checkpoint {
   readonly when: "before" | "after";
   readonly round: number;
+  readonly phase: string | null;
   readonly data: JsonObject;
 }
 
@@ -203,8 +209,12 @@ export function runGame(engine: Engine, ruleset: Ruleset, scenario: string, job:
       if (!applied.ok) throw new GameFailure("failed", `illegal submitted ${command.type}: ${applied.validation.violations.map((v) => v.code).join(",")}`);
       const next = applied.transition.state;
       const checkpoints: Checkpoint[] = [];
-      if (next.turn.propagandaRound > roundBefore) checkpoints.push({ when: "before", round: next.turn.propagandaRound, data: snapshot(ruleset, next) });
-      if (phaseBefore === "propaganda" && (next.turn.phase !== "propaganda" || next.ended !== null)) checkpoints.push({ when: "after", round: roundBefore, data: snapshot(ruleset, next) });
+      if (next.turn.propagandaRound > roundBefore) checkpoints.push({ when: "before", round: next.turn.propagandaRound, phase: null, data: snapshot(ruleset, next) });
+      if (phaseBefore === "propaganda") {
+        const phase = ruleset.sequence.propagandaPhases[state.turn.step] ?? null;
+        checkpoints.push({ when: "before", round: roundBefore, phase, data: snapshot(ruleset, state) });
+        if (next.turn.phase === "propaganda" || next.ended !== null) checkpoints.push({ when: "after", round: roundBefore, phase, data: snapshot(ruleset, next) });
+      }
       state = next;
       hash = applied.transition.stateHash;
       emit({ t: "step", i, command, hash, auto: point.kind === "auto" ? point.reason : null, decisions, checkpoints });

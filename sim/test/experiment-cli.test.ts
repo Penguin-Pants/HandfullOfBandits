@@ -111,7 +111,11 @@ describe("experiment runner (20 Phase 2)", () => {
     let appends = 0;
     const failing: ArtifactWriter = { ...fsWriter, append: (file, data) => { if (++appends > 3) throw new Error("ENOSPC: no space left"); fsWriter.append(file, data); } };
     const out = join(dir, "full");
-    await expect(runExperiment(writeManifest(dir, devManifest()), out, { writer: failing })).rejects.toThrow(/ENOSPC/);
+    await expect(runExperiment(writeManifest(dir, devManifest({ concurrency: 3 })), out, { writer: failing })).rejects.toThrow(/ENOSPC/);
+    // Every worker stops: no game writes after the rejection.
+    const after = appends;
+    await new Promise((r) => setTimeout(r, 1500));
+    expect(appends).toBe(after);
     expect(JSON.parse(readFileSync(join(out, "status.json"), "utf8"))).toMatchObject({ state: "aborted", error: "ENOSPC: no space left" });
   }, 120000);
 

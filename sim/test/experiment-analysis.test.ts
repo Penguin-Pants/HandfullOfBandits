@@ -64,6 +64,20 @@ describe("statistics (19 s10)", () => {
     expect(reviewTriggers(summarizeCells(results, { state: 49, pkk: 30 }, 6), r, { cellWinPercent: 80, rosterAveragePercent: 60, marginGap: 10 }).roster).toEqual([]);
   });
 
+  it("uses one play per seed for cell intervals and reports repeats as sensitivity", () => {
+    const repeat = (seed: number, r: number, winner: string): GameRecord => ({ ...game(A, seed, winner), gameId: `x~${String(seed)}~${String(r)}`, repeat: r });
+    const results = [...Array.from({ length: 20 }, (_, r) => repeat(1, r, "state")), ...Array.from({ length: 20 }, (_, r) => repeat(2, r, r === 0 ? "pkk" : "state"))];
+    const [cell] = summarizeCells(results, { state: 49, pkk: 30 }, 6);
+    expect(cell).toMatchObject({ primary: 2, stateWins: 1, repeatSensitivity: { groups: 2, winnerChanged: 1 } });
+    expect(cell?.ci.low).toBeCloseTo(wilson(1, 2).low, 10);
+  });
+
+  it("reports an unavailable paired difference when no seeds pair", () => {
+    const d = pairedDifference([game(A, 1, "state"), game(B, 2, "pkk")], "b|S-B@1|P-A@1", "b|S-A@1|P-A@1", 100, 1);
+    expect(d.pairs).toBe(0);
+    expect(Number.isNaN(d.mean)).toBe(true);
+  });
+
   it("is deterministic for the same analysis seed", () => {
     const results = Array.from({ length: 30 }, (_, i) => game(A, i + 1, i % 3 === 0 ? "state" : "pkk"));
     expect(rosterAverage(results, 300, 7)).toEqual(rosterAverage(results, 300, 7));
@@ -112,6 +126,12 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
     await runExperiment(writeManifest(root, devManifest({ conditions: [{ id: "baseline", options: { hotPursuit: "allow", syriaMarchRestricted: "allow" } }, { id: "deny", options: { hotPursuit: "deny", syriaMarchRestricted: "deny" } }], seeds: { registry: "development", blocks: [{ from: 61, count: 4 }] } })), dir);
   }, 120000);
 
+  it("computes roster averages from qualified-versus-qualified cells only", () => {
+    // The fixture run pairs two random baselines: no qualified cell, so no roster estimate.
+    const a = analyzeExperiment(dir, experimentCoverage(dir));
+    for (const c of a.conditions) { expect(c.roster.cells).toBe(0); expect(c.warnings.roster).toEqual([]); }
+  });
+
   it("reports each option condition separately and never pools them", () => {
     const a = analyzeExperiment(dir, experimentCoverage(dir));
     expect(a.conditions.map((c) => c.id)).toEqual(["baseline", "deny"]);
@@ -122,7 +142,7 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
 
   it("writes the report once and refuses to overwrite it", () => {
     const { path } = writeAnalysis(dir, experimentCoverage(dir));
-    expect(path).toContain("analysis-v1");
+    expect(path).toContain("analysis-v2");
     expect(() => writeAnalysis(dir, experimentCoverage(dir))).toThrow(/never overwritten/);
   });
 
@@ -145,11 +165,13 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
       if (e.t !== "step") continue;
       const r = engine.apply(ruleset, s, e.command);
       expect.assert(r.ok);
+      for (const c of e.checkpoints.filter((x) => x.when === "before" && x.phase !== null)) { expect(c.data).toEqual(snapshot(ruleset, s)); checked++; }
       s = r.transition.state;
       law += r.transition.logEntries.filter((x) => x.kind === "EffectApplied" && x.data["effect"] === "transferPool").length;
-      for (const c of e.checkpoints) { expect(c.data).toEqual(snapshot(ruleset, s)); checked++; }
+      for (const c of e.checkpoints.filter((x) => x.when === "after" || x.phase === null)) { expect(c.data).toEqual(snapshot(ruleset, s)); checked++; }
+      expect(e.checkpoints.filter((x) => x.phase === "reset" && x.when === "after")).toEqual([]);
     }
-    expect(checked).toBeGreaterThanOrEqual(3);
+    expect(checked).toBeGreaterThanOrEqual(15);
     expect(law).toBeLessThanOrEqual(1);
   });
 

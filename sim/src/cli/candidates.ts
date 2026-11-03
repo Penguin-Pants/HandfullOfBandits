@@ -14,7 +14,7 @@ import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
 
-export const GENERATOR_VERSION = "cand-2";
+export const GENERATOR_VERSION = "cand-3";
 
 export type DecisionKind = "card" | "pivotal" | "resume" | "upkeep" | "legitimacy" | "civicAction" | "agitation" | "redeployState" | "redeployPkk";
 
@@ -152,7 +152,7 @@ function trainPlans(r: Ruleset, s: GameState, limited: boolean, wide: number): P
   const atoms = (loc: string): JsonObject[] => {
     const out: JsonObject[] = [];
     if (isTerrain(r, loc, "city") || count(s, loc, "stateBase") > 0) {
-      for (const [troops, police] of [[2, 1], [1, 2], [3, 0], [0, 3], [1, 1], [0, 1]] as const) if (troops <= avail(s, "troops") && police <= avail(s, "police")) out.push({ option: "place", troops, police });
+      for (const [troops, police] of [[2, 1], [1, 2], [3, 0], [0, 3], [1, 1], [0, 1], [2, 0], [1, 0], [0, 2]] as const) if (troops <= avail(s, "troops") && police <= avail(s, "police")) out.push({ option: "place", troops, police });
     }
     if (law && !isTerrain(r, loc, "city")) out.push({ option: "guards", count: 2 }, { option: "guards", count: 1 });
     if (!isTerrain(r, loc, "city") && count(s, loc, "police") >= 2) out.push({ option: "base" });
@@ -482,12 +482,19 @@ function frontier(options: readonly (readonly Spend[])[], budget: number): Spend
 }
 
 /** Civic Action phase: State-Controlled spaces with Troops and Police; value = Pop per level gained. */
+/** Harm markers above the limit for a faction (rules 7.3: each costs 2 final margin). */
+function excessHarm(r: Ruleset, s: GameState, keys: readonly string[]): number {
+  return Math.max(0, r.spaces.reduce((n, x) => n + keys.reduce((m, k) => m + markers(s, x.id, k), 0), 0) - param(r, "harm.limit", "number"));
+}
+
 function civicChoices(r: Ruleset, s: GameState): JsonObject[] {
+  const excess = excessHarm(r, s, ["stateHarm"]);
   const cap = Math.min(Math.floor(Number(s.tracks["legitimacy"]) / param(r, "civicAction.capDivisor", "number")), resources(r, s, "state"));
   const options = domestic(r).filter((l) => controlOf(r, s, l) === "state" && count(s, l, "troops") > 0 && count(s, l, "police") > 0 && level(s, l) < 2).map((l) => [1, 2].filter((n) => level(s, l) + n <= 2).map((n): Spend => {
     const params = civicSpend(s, l, n);
     const cost = Number(params["coercion"]) + Number(params["reception"]) + 3 * Number(params["stateHarm"]) + 2 * n; // literal-ok: rules 3.6.1 costs, checked by validation
-    return { loc: l, cost, value: n * pop(r, l), params };
+    // A shift's value includes the margin recovered by redress it requires (cand-3).
+    return { loc: l, cost, value: n * pop(r, l) + 2 * Math.min(excess, Number(params["stateHarm"])), params };
   }));
   return withRedress(frontier(options, cap), redressUnits(r, s, "state", 3), cap, civicSpend, s).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) })); // literal-ok: rules 3.6.1 redress cost
 }
@@ -534,9 +541,10 @@ function withRedress(base: Spend[][], units: readonly Unit[], budget: number, sp
 
 /** Agitation phase: spaces with a PKK Base or PKK Control; value = Pop per level gained. */
 function agitationChoices(r: Ruleset, s: GameState): JsonObject[] {
+  const excess = excessHarm(r, s, ["coercion", "pkkHarm"]);
   const options = domestic(r).filter((l) => (count(s, l, "pkkBase") > 0 || controlOf(r, s, l) === "pkk") && level(s, l) > -2).map((l) => [1, 2].filter((n) => level(s, l) - n >= -2).map((n): Spend => {
     const params = agitationSpend(s, l, n);
-    return { loc: l, cost: Number(params["coercion"]) + 2 * Number(params["pkkHarm"]) + n, value: n * pop(r, l), params }; // literal-ok: rules 3.6.2 redress cost
+    return { loc: l, cost: Number(params["coercion"]) + 2 * Number(params["pkkHarm"]) + n, value: n * pop(r, l) + 2 * Math.min(excess, Number(params["coercion"]) + Number(params["pkkHarm"])), params }; // literal-ok: rules 3.6.2 redress cost
   }));
   return withRedress(frontier(options, resources(r, s, "pkk")), redressUnits(r, s, "pkk", 2), resources(r, s, "pkk"), agitationSpend, s).map((picks) => ({ spaces: Object.fromEntries(picks.map((p) => [p.loc, p.params])) })); // literal-ok: rules 3.6.2 redress cost
 }

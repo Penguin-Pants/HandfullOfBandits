@@ -136,14 +136,17 @@ function opponentReply(ctx: SearchContext, s: GameState, opponent: FactionId, li
 }
 
 /** Candidates to evaluate within `room` transitions: round-robin across families. */
-function quota(candidates: readonly Candidate[], room: number): Candidate[] {
-  if (candidates.length <= room) return [...candidates];
+/** Every candidate in family round-robin order, so a spent budget never starves later families. */
+export function roundRobin(candidates: readonly Candidate[]): Candidate[] {
   const byFamily = new Map<string, Candidate[]>();
   for (const c of candidates) byFamily.set(c.family, [...(byFamily.get(c.family) ?? []), c]);
   const out: Candidate[] = [];
-  for (let i = 0; out.length < room; i++) for (const l of byFamily.values()) if (i < l.length && out.length < room) out.push(l[i] as Candidate);
+  for (let i = 0; out.length < candidates.length; i++) for (const l of byFamily.values()) if (i < l.length) out.push(l[i] as Candidate);
   return out;
 }
+
+/** Share of the decision budget kept for re-sampling and replies after the first pass. */
+const RESERVE = 0.25;
 
 function searchDecide(family: Family, request: DecisionRequest, ctx: SearchContext): Choice {
   const notes: string[] = [];
@@ -158,14 +161,19 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
     scored = solveFinal(request, ctx, base, w);
     notes.push("final-round exact solve");
   } else {
-    const pool = quota(request.candidates, Math.floor(ctx.budget.remaining * 0.6));
-    if (pool.length < request.candidates.length) notes.push(`budget quota ${String(pool.length)}/${String(request.candidates.length)}`);
-    scored = pool.map((candidate) => {
+    // First pass in family rotation until only the reserve is left; each evaluation's cost
+    // (apply plus automatic phases) is charged as it happens (search-2).
+    const ordered = roundRobin(request.candidates);
+    const reserve = Math.floor(ctx.budget.limit * RESERVE);
+    scored = [];
+    for (const candidate of ordered) {
+      if (ctx.budget.remaining <= reserve) break;
       const after = outcome(ctx, base, candidate);
-      if (after === null) return { candidate, value: -Infinity, samples: 0, components: {} };
+      if (after === null) continue;
       const e = evaluate(ctx.ruleset, after, request.faction, w);
-      return { candidate, value: e.value, samples: 1, components: e.components };
-    });
+      scored.push({ candidate, value: e.value, samples: 1, components: e.components });
+    }
+    if (scored.length < ordered.length) notes.push(`evaluated ${String(scored.length)}/${String(ordered.length)} in family rotation`);
     scored.sort((a, b) => b.value - a.value);
     // Re-sample the leaders on new deck orders and dice (19 s5: sampled unknown futures).
     for (const s of scored.slice(0, 6)) {

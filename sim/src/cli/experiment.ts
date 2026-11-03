@@ -70,11 +70,15 @@ export async function runExperiment(manifestFile: string, outDir: string, option
   await new Promise<void>((done, fail) => {
     let active = 0;
     let aborted = false;
+    // Every running game, so an abort stops all workers and timers, not only the failing one.
+    const running = new Map<Worker, ReturnType<typeof setTimeout>>();
     const abort = (e: unknown): void => {
       if (aborted) return;
       aborted = true;
+      const stops = [...running].map(([w, t]) => { clearTimeout(t); for (const name of ["message", "error", "exit"]) w.removeAllListeners(name); return w.terminate(); });
+      running.clear();
       try { artifacts.json("status.json", { state: "aborted", scheduled: frozen.jobs.length, recorded: records.size, error: e instanceof Error ? e.message : String(e), started }); } catch { /* the disk may be the failure */ }
-      fail(e instanceof Error ? e : new Error(String(e)));
+      void Promise.allSettled(stops).then(() => { fail(e instanceof Error ? e : new Error(String(e))); });
     };
     const finish = (job: GameJob, progress: Progress, end: Extract<JournalEvent, { t: "end" }>): void => {
       artifacts.journal(job.gameId, end);
@@ -98,6 +102,7 @@ export async function runExperiment(manifestFile: string, outDir: string, option
         if (settled) return;
         settled = true;
         clearTimeout(timer);
+        running.delete(worker);
         for (const name of ["message", "error", "exit"]) worker.removeAllListeners(name);
         if (!healthy) void worker.terminate();
         try {
@@ -111,6 +116,7 @@ export async function runExperiment(manifestFile: string, outDir: string, option
       };
       const failure = (status: GameStatus, reason: string): Extract<JournalEvent, { t: "end" }> => ({ t: "end", status, reason, result: null, commands: progress.commands, finalHash: progress.lastHash, ms: manifest.limits.gameMs });
       const timer = setTimeout(() => { close(failure("timeout", `game exceeded ${String(manifest.limits.gameMs)} ms; worker terminated`), false); }, manifest.limits.gameMs);
+      running.set(worker, timer);
       worker.on("message", (event: JournalEvent) => {
         if (settled) return;
         try {
