@@ -4,10 +4,10 @@ import { param } from "../core/params.ts";
 import { SINGLE_FACE } from "../core/state.ts";
 import { CARD_REF, CEASEFIRE, declareCeasefire, endCeasefire, pkkRestraintBroken } from "./ceasefire.ts";
 import { count, markers, space } from "./ops/common.ts";
-import { FACE, MARKER, PIECE } from "./ops/ids.ts";
+import { FACE, MARKER, PIECE, TRACK } from "./ops/ids.ts";
 import { ceasefireOptions } from "./propaganda/ceasefire-step.ts";
 import { ban, officeLines, successor } from "./propaganda/legal-politics.ts";
-import { revealRandomCovert } from "./propaganda/legitimacy.ts";
+import { onMap, revealRandomCovert } from "./propaganda/legitimacy.ts";
 
 /**
  * Unattributed killings (07 s10.1 item 2; DK-053, DEC-68). No faction chooses: remove 1 Office from the
@@ -46,6 +46,23 @@ function acceptCeasefire(ctx: Exec): void {
   ctx.apply({ type: "setTrack", track: CEASEFIRE, value: "reciprocalRestraint", ifEquals: null, ruleRef: ref, assumptionRef: null });
 }
 
+/** Legitimacy change from a card procedure, under the Event rule as other card effects (05 s5); zero logs nothing. */
+function legitimacy(ctx: Exec, delta: number): void {
+  if (delta !== 0) ctx.apply({ type: "adjustTrack", track: TRACK.legitimacy, delta, ruleRef: "05 s5", assumptionRef: null });
+}
+
+/** HRW report, official denial (DK-069 unshaded): fewer than `hrw.denialBelow` Displacement markers (New and Old, DEC-69 point 8) on the map, Legitimacy up; otherwise down. */
+function hrwDenial(ctx: Exec): void {
+  const below = onMap(ctx.ruleset, ctx.state, MARKER.displacement) < param(ctx.ruleset, "hrw.denialBelow", "number");
+  legitimacy(ctx, (below ? 1 : -1) * param(ctx.ruleset, "hrw.denialLegitimacy", "number"));
+}
+
+/** HRW report (DK-069 shaded): Legitimacy -1 per `hrw.markersPerLoss` Displacement markers (New and Old), round down, at most `hrw.maxLoss`. */
+function hrwReport(ctx: Exec): void {
+  const per = Math.floor(onMap(ctx.ruleset, ctx.state, MARKER.displacement) / param(ctx.ruleset, "hrw.markersPerLoss", "number"));
+  legitimacy(ctx, -Math.min(per, param(ctx.ruleset, "hrw.maxLoss", "number")));
+}
+
 export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
   "legal.ban": ban,
   "legal.successor": (ctx) => { successor(ctx, 1); },
@@ -57,4 +74,6 @@ export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
   "ceasefire.accept": acceptCeasefire,
   "ceasefire.end": (ctx) => { endCeasefire(ctx, CARD_REF); },
   "ceasefire.pkkBroken": pkkRestraintBroken,
+  "hrw.denial": hrwDenial,
+  "hrw.report": hrwReport,
 };

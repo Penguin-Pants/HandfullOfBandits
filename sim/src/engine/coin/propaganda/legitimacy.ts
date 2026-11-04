@@ -14,8 +14,9 @@ import { violation, type PropagandaPhase } from "./phase.ts";
 
 const ruleRef = "05 s6.4";
 
-function onMap(ruleset: Ruleset, state: GameState, marker: string, side: string | null = null): number {
-  return ruleset.spaces.reduce((sum, s) => sum + (side === null ? markers(state, s.id, marker) : (state.spaces[s.id]?.markers[marker]?.[side] ?? 0)), 0);
+/** Markers of one type on the map, all sides counted. */
+export function onMap(ruleset: Ruleset, state: GameState, marker: string): number {
+  return ruleset.spaces.reduce((sum, s) => sum + markers(state, s.id, marker), 0);
 }
 
 /** Emergency Rule steps the State may move to now (07 s8.2 item 3). */

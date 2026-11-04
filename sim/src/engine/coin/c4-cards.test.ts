@@ -295,3 +295,92 @@ describe("Second Unilateral Ceasefire (DK-073)", () => {
     expect([track(state, "ceasefire"), byPkk(state), track(state, "europe"), track(state, "resources.pkk")]).toEqual(["declared", false, 1, 7]);
   });
 });
+
+// P3b-07f Europe, harm and report cards (doc 33 s2.3, B3; DEC-69 point 8). S0 Europe is 1.
+const marker = (s: GameState, id: string, m: string, side = "default"): number => s.spaces[id]?.markers[m]?.[side] ?? 0;
+
+describe("PKK Attacks on Turkish Offices in Europe (DK-061)", () => {
+  it("U: Europe -2, Legitimacy +1", () => {
+    const { state } = play(setTrack(board("state", "DK-061"), "europe", 3), event("state", "unshaded"));
+    expect([track(state, "europe"), track(state, "legitimacy")]).toEqual([1, 6]);
+  });
+
+  it("S: PKK Resources +2, Europe -1", () => {
+    const { state } = play(setTrack(board("pkk", "DK-061"), "europe", 3), event("pkk", "shaded"));
+    expect([track(state, "resources.pkk"), track(state, "europe")]).toEqual([7, 2]);
+  });
+});
+
+describe("Deputy Shot Dead in Batman (DK-062)", () => {
+  it("U: Disputed Harm in Mardin-Batman, Legitimacy +1", () => {
+    const { state } = play(board("state", "DK-062"), event("state", "unshaded"));
+    expect([marker(state, "mardin-batman", "disputedHarm"), track(state, "legitimacy"), track(state, "europe")]).toEqual([1, 6, 1]);
+  });
+
+  it("S: Disputed Harm, one Covert marker revealed at random, Europe +1", () => {
+    const covert = setMarkers(board("pkk", "DK-062"), "hakkari", "covert", 1);
+    const { state } = play(covert, event("pkk", "shaded"));
+    expect([marker(state, "mardin-batman", "disputedHarm"), marker(state, "hakkari", "covert"), marker(state, "hakkari", "stateHarm")]).toEqual([1, 0, 1]);
+    expect([track(state, "legitimacy"), track(state, "europe")]).toEqual([3, 2]);
+  });
+});
+
+describe("Destruction in Lice (DK-063)", () => {
+  it("U is block only: State Harm in Diyarbakır Rural, Reception in Diyarbakır City", () => {
+    expect(card("DK-063")?.unshaded?.blockOnly).toBe(true);
+    const { state } = play(board("state", "DK-063"), event("state", "unshaded"));
+    expect([marker(state, "diyarbakir-rural", "stateHarm"), marker(state, "diyarbakir-city", "reception")]).toEqual([1, 1]);
+    expect([track(state, "legitimacy"), level(state, "diyarbakir-city")]).toEqual([5, 0]);
+  });
+
+  it("S: the markers, Legitimacy -1, Diyarbakır City toward Opposition", () => {
+    const { state } = play(board("pkk", "DK-063"), event("pkk", "shaded"));
+    expect([marker(state, "diyarbakir-rural", "stateHarm"), marker(state, "diyarbakir-city", "reception")]).toEqual([1, 1]);
+    expect([track(state, "legitimacy"), level(state, "diyarbakir-city")]).toEqual([4, -1]);
+  });
+});
+
+describe("Germany Bans PKK and ERNK (DK-064)", () => {
+  it("follows PKK Attacks on Turkish Offices in Europe in the pile", () => {
+    expect(card("DK-064")?.chainAfter).toEqual(["DK-061"]);
+  });
+
+  it("U: the Ban marker on the Europe track, Europe above the cap set to it, PKK Resources -2", () => {
+    const { state } = play(setTrack(board("state", "DK-064"), "europe", 5), event("state", "unshaded"));
+    expect([marker(state, "europe", "ban"), track(state, "europe"), track(state, "resources.pkk")]).toEqual([1, 3, 3]);
+    expect(track(play(setTrack(board("state", "DK-064"), "europe", 2), event("state", "unshaded")).state, "europe")).toBe(2);
+  });
+
+  it("S: Europe +1, no Ban marker; with a Ban marker already placed, Europe stops at the cap", () => {
+    const { state } = play(board("pkk", "DK-064"), event("pkk", "shaded"));
+    expect([marker(state, "europe", "ban"), track(state, "europe")]).toEqual([0, 2]);
+    const capped = setMarkers(setTrack(board("pkk", "DK-064"), "europe", 3), "europe", "ban", 1);
+    expect(track(play(capped, event("pkk", "shaded")).state, "europe")).toBe(3);
+  });
+});
+
+describe("HRW Forced-Displacement Report (DK-069)", () => {
+  const displaced = (faction: "state" | "pkk", newCount: number, oldCount: number): GameState =>
+    setMarkers(setMarkers(board(faction, "DK-069"), "hakkari", "displacement", newCount, "new"), "botan", "displacement", oldCount, "old");
+  const legitimacyAfter = (faction: "state" | "pkk", side: string, newCount: number, oldCount: number): unknown =>
+    track(play(displaced(faction, newCount, oldCount), event(faction, side)).state, "legitimacy");
+
+  it("U: fewer than 2 Displacement markers, Legitimacy +1; otherwise -1", () => {
+    expect([legitimacyAfter("state", "unshaded", 0, 0), legitimacyAfter("state", "unshaded", 0, 1)]).toEqual([6, 6]);
+    expect([legitimacyAfter("state", "unshaded", 1, 1), legitimacyAfter("state", "unshaded", 0, 2)]).toEqual([4, 4]);
+  });
+
+  it("S: Legitimacy -1 per 2 markers, New and Old, round down, maximum -3 (DEC-69 point 8)", () => {
+    expect([0, 1, 2, 3, 5, 6, 8].map((n) => legitimacyAfter("pkk", "shaded", Math.ceil(n / 2), Math.floor(n / 2)))).toEqual([5, 5, 4, 4, 3, 2, 2]);
+  });
+
+  it("S: Europe +1", () => {
+    expect(track(play(displaced("pkk", 1, 1), event("pkk", "shaded")).state, "europe")).toBe(2);
+  });
+
+  it("logs the Legitimacy change under the Event rule (05 s5), as other card effects", () => {
+    const refs = (faction: "state" | "pkk", side: string): unknown[] =>
+      play(displaced(faction, 2, 2), event(faction, side)).entries.filter((e) => e.kind === "EffectApplied" && e.data["track"] === "legitimacy").map((e) => e.ruleRef);
+    expect([refs("state", "unshaded"), refs("pkk", "shaded")]).toEqual([["05 s5"], ["05 s5"]]);
+  });
+});

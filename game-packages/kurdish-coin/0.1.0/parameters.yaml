@@ -122,3 +122,7 @@
 - {id: negotiated.waiveCovertRounds, value: 2, tune: true, source: "09 s5 item 2 (two full Campaigns of Talks)"}
 - {id: argk.maxPlace, value: 4, tune: false, source: "DK-015; 08 s4"}
 - {id: argk.resources, value: 3, tune: false, source: "DK-015; 08 s4"}
+- {id: hrw.denialBelow, value: 2, tune: false, source: "DK-069 unshaded (deck CSV)"}
+- {id: hrw.denialLegitimacy, value: 1, tune: false, source: "DK-069 unshaded (deck CSV)"}
+- {id: hrw.markersPerLoss, value: 2, tune: false, source: "DK-069 shaded (deck CSV); DEC-69 point 8"}
+- {id: hrw.maxLoss, value: 3, tune: false, source: "DK-069 shaded (deck CSV); DEC-69 point 8"}

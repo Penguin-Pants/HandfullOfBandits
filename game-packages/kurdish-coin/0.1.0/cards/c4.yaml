@@ -1,5 +1,5 @@
 # C4 cards (research 08; deck CSV). Encoding docs/prototype/33, DEC-69. DK-076 Area Domination is in pivotal.yaml.
-# P3b-07d: legal parties and Propaganda. P3b-07e: ceasefire cards. The other C4 cards come in P3b-07f and P3b-07g.
+# P3b-07d: legal parties and Propaganda. P3b-07e: ceasefire cards. P3b-07f: Europe, harm and the report. The other C4 cards come in P3b-07g.
 - id: DK-056
   campaign: C4
   title: "PKK Unilateral Ceasefire (Mar 1993)"
@@ -147,6 +147,105 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0009, S-0104, S-0172, S-0299, S-0300, S-0275, S-0023, S-0024, S-0027, S-0102]
+- id: DK-061
+  campaign: C4
+  title: "PKK Attacks on Turkish Offices in Europe (Jun 1993)"
+  date: "1993-06-24"
+  type: event
+  unshaded:
+    text: "Europe -2. Legitimacy +1."
+    owner: state
+    tier: T1
+    effects:
+      - {type: adjustTrack, track: europe, delta: -2}
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+  shaded:
+    text: "Diaspora networks raise funds: PKK Resources +2. Europe -1."
+    owner: pkk
+    tier: T1
+    effects:
+      - {type: adjustTrack, track: resources.pkk, delta: 2}
+      - {type: adjustTrack, track: europe, delta: -1}
+  encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0194, S-0356, S-0274]
+- id: DK-062
+  campaign: C4
+  title: "Deputy Shot Dead in Batman (Sep 1993)"
+  date: "1993-09-04"
+  type: event
+  unshaded:
+    text: "Place a Disputed Harm marker in Mardin-Batman. A prosecution opens: Legitimacy +1."
+    owner: state
+    tier: T3
+    effects:
+      - {type: placeMarker, marker: disputedHarm, space: mardin-batman}
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+  shaded:
+    text: "Place a Disputed Harm marker in Mardin-Batman. Reveal 1 Covert marker at random. Europe +1."
+    owner: pkk
+    tier: T3
+    effects:
+      - {type: placeMarker, marker: disputedHarm, space: mardin-batman}
+      - {type: procedure, id: covert.revealRandom}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true, note: "Perpetrators disputed (C-035): Disputed Harm. Random reveal as DK-049 (procedure covert.revealRandom)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0098, S-0073, S-0259, S-0266, S-0170, S-0182, S-0092]
+- id: DK-063
+  campaign: C4
+  title: "Destruction in Lice (Oct 1993)"
+  date: "1993-10-22"
+  type: event
+  unshaded:
+    text: "Block only: place a State Harm marker in Diyarbakır Rural and 1 Reception marker in Diyarbakır City. No other effect."
+    owner: state
+    blockOnly: true
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: diyarbakir-rural}
+      - {type: placeMarker, marker: reception, space: diyarbakir-city}
+  shaded:
+    text: "Place a State Harm marker in Diyarbakır Rural and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: diyarbakir-rural}
+      - {type: placeMarker, marker: reception, space: diyarbakir-city}
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: shiftLevel, space: diyarbakir-city, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true, note: "Block-only harmer side (08 s7.2 item 3), as DK-045"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0096, S-0267, S-0034, S-0063]
+- id: DK-064
+  campaign: C4
+  title: "Germany Bans PKK and ERNK (Nov 1993)"
+  date: "1993-11-22"
+  type: event
+  chainAfter: [DK-061]
+  unshaded:
+    text: "Place the Ban marker on the Europe track (04, section 3.6). If Europe is above 3, set it to 3. PKK Resources -2."
+    owner: state
+    tier: T0
+    effects:
+      - {type: placeMarker, marker: ban, space: europe}
+      - type: conditional
+        if: {type: trackAtLeast, track: europe, value: 4}
+        then: [{type: setTrack, track: europe, value: 3}]
+      - {type: adjustTrack, track: resources.pkk, delta: -2}
+  shaded:
+    text: "Protests across Europe: Europe +1. Do not place the Ban marker."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true, note: "The German ban event of 04 s3.6: the Ban marker in the Europe space sets the cap (europeCap); 3 is europe.banCap"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0064, S-0055, S-0356, S-0053, S-0377, S-0054]
 - id: DK-065
   campaign: C4
   title: "DEP Founded (May 1993)"
@@ -267,6 +366,28 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0014, S-0173, S-0260, S-0299, S-0304, S-0023, S-0024, S-0027, S-0102, S-0441]
+- id: DK-069
+  campaign: C4
+  title: "HRW Forced-Displacement Report (Oct 1994)"
+  date: "1994-10"
+  type: event
+  unshaded:
+    text: "Official denial: if fewer than 2 Displacement markers are on the map, Legitimacy +1; otherwise Legitimacy -1."
+    owner: state
+    tier: T0
+    effects:
+      - {type: procedure, id: hrw.denial}
+  shaded:
+    text: "Legitimacy -1 per 2 Displacement markers on the map (round down, maximum -3). Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: procedure, id: hrw.report}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true, note: "New and Old Displacement markers both count (DEC-69 point 8); numbers in hrw.* parameters"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0106, S-0258, S-0081]
 - id: DK-073
   campaign: C4
   title: "Second Unilateral Ceasefire (Dec 1995)"
