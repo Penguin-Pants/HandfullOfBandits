@@ -1,16 +1,15 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 text approved (DEC-67, [31](31-pivotals-structural-draft.md)); P3b-06a done. **Next task: P3b-06b.**
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 done (DEC-67, [31](31-pivotals-structural-draft.md)): P3b-06a (PR #47) and P3b-06b. **Next task: P3b-07.**
 
-## 0. Resume here (updated 2026-11-04, P3b-06a)
+## 0. Resume here (updated 2026-11-04, P3b-06b)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next task: P3b-06b General Pivotal window and DK-054, DK-076, DK-098** (approved text [31](31-pivotals-structural-draft.md) s1 to s4, s6.1, s6.2; DEC-67).
-1. Already built: ARGK Formed and its window (`coin/pivotal.ts`, ARGK only), `atSpace` and `spaceHas.sides` conditions, `note` and `procedure` effects, the Event Europe cap (P3b-06a).
-2. Not built: Pivotal offers for every held card (earliest Campaign and precondition), a condition on a derived total (Total Opposition), free action SA timing `after` (Area Domination Village Clearance), Assault limited to the Sweep spaces, a general Pivotal panel in the UI.
-3. Migrate ARGK to the general window in the same change (Edits 6). Split again if the diff passes 400 lines.
-4. TDD, TWO-PASS REVIEW, then `make e2e`.
+**Next task: P3b-07 Encode C3, C4, C5 cards** (Phase 3b table below; research 08; deck CSV). 5 cards per PR.
+1. Already built: all four Pivotals and the three structural cards (P3b-06), the procedure effect for Legal Politics lines (DK-065, DK-067, DK-094 need the full table), Event Europe cap, PKK side restriction (`executors`).
+2. **First step, before code:** as for [27](27-village-clearance-draft.md) to [31](31-pivotals-structural-draft.md), list each batch's text, encoding gaps and open points for the designer.
+3. Each C3 to C5 pile also needs its Propaganda card (V-CARDS).
 
 **Owner decisions in force**
 - Phase 3b proceeds before IC-3a. IC-3a findings may force rework; record any in this plan.
@@ -23,8 +22,8 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 - **Repository renamed** to `Penguin-Pants/HandfullOfBandits`. Older links to `HandfulOfBandits` redirect. A session needs the new name in its GitHub scope to resolve review threads.
 
 **Carried follow-ups from P3b-02 to P3b-06a** (details in section 4). Closed in P3b-06a: the ceasefire step concern (Drop, DEC-67) and the Event Europe cap (fixed).
-1. **Before the next simulations:** batch bots never file a closure case, declare a ceasefire or answer the ceasefire step (`cli/candidates.ts` `AUTO_PHASES`).
-2. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (five call sites). The P3b-06b earliest-Campaign check adds a sixth unless the helper is approved first.
+1. **Before the next simulations:** batch bots never file a closure case, declare a ceasefire, answer the ceasefire step (`cli/candidates.ts` `AUTO_PHASES`) or play a Pivotal other than ARGK (`cli/candidates.ts` pivotal family).
+2. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (six call sites; P3b-06b added `coin/pivotal.ts` `campaignReached`).
 
 **Recent merged work**
 
@@ -564,7 +563,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-06b** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-07** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
 
 **P3b-02 (2026-11-04):** complete. The designer approved the effect order and every player-facing string in [27](27-village-clearance-draft.md) before code. `coin/ops/sa/village-clearance.ts` accompanies Sweep or Garrison, checks the four conditions and applies the seven effects in order with rule refs `06 s3.4 effect 1` to `7`. It costs Legitimacy only; four new parameters (`clearance.*`) hold every number. DEC-63: condition 2 reads flag `ohalPowers` or Campaign C3 or later; no card sets the flag yet, so Scenario A cannot use it. PA-18 (GAP-B16): an existing State Harm or Coercion marker blocks the effect-1 shift. Tests: `village-clearance.test.ts` (T-OPS, T-VAL, four T-PERV cases from 09 s7.1) and a summary check in `forms.test.ts`. Mutation checks (swap effects 3 and 4; Pop cost 0) fail the suite.
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseOperation with the SA before and after Sweep and Garrison, the re-check after the Op, the Reception shortfall, the blocked shift, the Neutral case and the Rally block that follows. No path code. Pass 2 replaced a local Legitimacy reader with the existing pattern.
@@ -611,6 +610,13 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
   - **Propose:** none new.
 - **Validation:** `make check` passes. `make test`: 80 files, 1056 tests pass. `make e2e` passes. Package validation shows only the expected full-campaign blocks (C3 to C5 cards, three Pivotals). Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes).
 
+**P3b-06b (2026-11-04):** complete. `coin/pivotal.ts` offers every held Pivotal whose earliest Campaign is reached and whose `precondition` holds; a faction with two eligible cards chooses one. Card field `precondition {text, if}` holds each approved condition and text; the new condition `totalAtLeast` reads a victory.yaml total. ARGK moved to the same check: its precondition reads the new total `domesticGuerrillas` and `domesticPkkBases`; parameters `argk.minGuerrillas` and `argk.minBases` are deleted. ARGK keeps `placements`; the other Pivotals run their card effects with `answers`, as Events do, with the ceasefire warning. Free action constraints `saOptional`, `saTiming: after` and `withinPrevious` serve Area Domination. Violations `pivotalCampaign` and `pivotalPrecondition` carry the approved text. UI: the Event panel's question flow moved to `ui/event/decision.tsx` (`useDecisionFlow`, `DecisionView`); the Pivotal panel uses it for every card except ARGK. Bots offer Pivotal play only for ARGK. Tests: `pivotals.test.ts` (window, both cards, refusals, each card, ceasefire warning), `pivotal.test.tsx` (Serhildan question flow), a loader case. Mutation checks (no Campaign gate; no Sweep-space limit; SA before the Sweep; `totalAtLeast` always true) each fail the suite.
+- **TWO-PASS REVIEW.** Pass 1 traced Advance through reveal, the window and decline; PlayPivotal check (dry run, answers, warnings) and execute for ARGK and the effect cards; a skipped free Sweep with the Assault after it (only a skip is legal); Village Clearance after the Sweep on the moved Troops; the UI from Play through validate, question, map hand-off and commit. No path code. Pass 2 moved the question flow out of the Event panel so both panels share one copy, and deleted the two ARGK parameters that lost their callers.
+  - **Fix:** the Scenario A qualification fixture kept the old ARGK prompt. It now uses the approved prompt.
+  - **Drop:** none. **Propose:** none new; the Campaign helper and the bot gaps are in section 0.
+- **Size:** about 490 changed lines in `sim/src` without tests, above the 400-line target. About 150 of them are the Event panel question flow moved to `decision.tsx` (counted as removed and added).
+- **Validation:** `make check` passes. `make test`: 81 files, 1070 tests pass. `make e2e` passes. Package validation: no V-ENCODE block remains; full campaign still needs the C3 to C5 cards (V-CARDS). Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes).
+
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
 | P3b-01 ✅ | Emergency Rule step table and Legitimacy phase step 8 | module `emergency-rule` | IC-3a | 07 s8.2 table | T-PROP | None |
@@ -619,7 +625,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P3b-04 ✅ | Legal Politics procedure and closure filing | module `legal-politics` | P3b-01 | Two runs of the table give identical Offices (research M-007) | T-PROP | Line order details |
 | P3b-05 ✅ | Ceasefire, restrictions, breach, votes, Negotiated Outcome | module `ceasefire` | P3b-04 | 07 s7 fixtures. PA-11 | T-VAL, T-PROP | Breach warnings in UI |
 | P3b-06a ✅ | Structural cards (DK-037, 040, 093), PKK side restriction, Event Europe cap ([31](31-pivotals-structural-draft.md), DEC-67) | `cards/c3.yaml`, `c5.yaml`, `coin/procedures.ts` | P3b-05 | Always lines fire once | T-EVT | None |
-| P3b-06b | General Pivotal window, Serhildan, Area Domination, Coercive Diplomacy on Syria ([31](31-pivotals-structural-draft.md) s1 to s4) | `coin/pivotal.ts`, `cards/pivotal.yaml`, `ui/pivotal/` | P3b-06a | Each Pivotal plays from its earliest Campaign when its precondition holds | T-SEQ, T-EVT | Pivotal UI form size |
+| P3b-06b ✅ | General Pivotal window, Serhildan, Area Domination, Coercive Diplomacy on Syria ([31](31-pivotals-structural-draft.md) s1 to s4) | `coin/pivotal.ts`, `cards/pivotal.yaml`, `ui/pivotal/` | P3b-06a | Each Pivotal plays from its earliest Campaign when its precondition holds | T-SEQ, T-EVT | Pivotal UI form size |
 | P3b-07 | Encode C3, C4, C5 cards | `cards/c3.yaml` to `c5.yaml` | P3b-06 | V-ENCODE passes for B and C | T-EVT | Volume. 5 cards per PR |
 | P3b-08 | Scenarios B and C | `scenarios/*.yaml` | P3b-07 | Start scores equal 09 s2.3 | T-SCORE, golden | Scenario B threshold open (DD-19.7). Package value |
 

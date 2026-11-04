@@ -11,6 +11,7 @@ import type { Engine } from "../engine/index.ts";
 import { controlOf, count, isTerrain, markers, resources } from "../engine/coin/ops/common.ts";
 import { postureOf } from "../engine/coin/ops/common-pkk.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
+import { asObject } from "../engine/coin/ops/plan.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
 
@@ -642,7 +643,9 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
     const bases = [...domestic(r), ...HOSTS].filter((l) => count(s, l, "pkkBase") > 0);
     const n = Math.min(max, avail(s, "guerrilla"));
     const spreads: Record<string, number>[] = [...bases.map((b) => ({ [b]: n })), ...combos(bases, 2, 6 * wide).map(([a, b]) => ({ [a ?? ""]: Math.ceil(n / 2), [b ?? ""]: Math.floor(n / 2) })), Object.fromEntries(bases.slice(0, n).map((b) => [b, 1]))];
-    offer("pivotal:play", spreads.map((placements) => ({ type: "PlayPivotal", faction, card: "DK-015", placements: Object.fromEntries(Object.entries(placements).filter(([, v]) => v > 0)) })));
+    // Bots play ARGK only; the other Pivotals (P3b-06b) wait for the bot review (doc 26).
+    const argk = (s.pending?.answers ?? []).some((a) => asObject(a)?.["card"] === "DK-015");
+    if (argk) offer("pivotal:play", spreads.map((placements) => ({ type: "PlayPivotal", faction, card: "DK-015", placements: Object.fromEntries(Object.entries(placements).filter(([, v]) => v > 0)) })));
   } else if (kind === "resume") {
     const resume = s.pending?.resume;
     if (resume !== undefined) offer(`resume:${resume.op}`, (OP_PLANS[resume.op]?.(r, s, resume.box === BOX.limitedOp, wide) ?? []).map((p) => opCommand(faction, resume.box, resume.op, p)));

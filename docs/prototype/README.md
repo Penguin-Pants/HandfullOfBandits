@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06a done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
+Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06 done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
 
 ## Bottom line
 
@@ -55,4 +55,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Build P3b-06b (general Pivotal window and the three remaining Pivotals) as described in [11-build-plan.md](11-build-plan.md) section 0.
+Start P3b-07 (encode C3 to C5 cards) as described in [11-build-plan.md](11-build-plan.md) section 0: draft each batch's text for designer approval before code.

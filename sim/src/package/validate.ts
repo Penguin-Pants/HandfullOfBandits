@@ -231,6 +231,9 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       case "spaceIn":
         c.spaces.forEach((s, j) => {ref(spaces, "space", s, file, `${at}.spaces.${String(j)}`, id);});
         return;
+      case "totalAtLeast":
+        if (pkg.victory.totals[c.total] === undefined) error("V-REF", file, `${at}.total`, id, `Unknown total "${c.total}". Use one of: ${Object.keys(pkg.victory.totals).join(", ") || "none"}.`);
+        return;
       case "spaceKind":
       case "terrainIn":
       case "selected":
@@ -388,6 +391,7 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
   for (const { card, file, index } of cardFiles.values()) {
     const at = String(index);
     effects(card.always, file, `${at}.always`, card.id);
+    if (card.precondition !== undefined) condition(card.precondition.if, `${at}.precondition.if`, card.id, file);
     for (const sideKey of ["unshaded", "shaded"] as const) {
       const side = card[sideKey];
       if (side === undefined) continue;

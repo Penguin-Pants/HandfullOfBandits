@@ -236,6 +236,7 @@ function compileCard(card: PackageData["cards"][string][number]): Card {
     mandatory: card.mandatory,
     deckEligible: card.deckEligible,
     always: card.always,
+    precondition: card.precondition ?? null,
     unshaded: side(card.unshaded),
     shaded: side(card.shaded),
     chainAfter: card.chainAfter,

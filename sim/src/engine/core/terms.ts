@@ -86,6 +86,11 @@ export function matches(ctx: TermContext, spaceId: SpaceId, condition: SpaceCond
       return condition.values.includes(String(ctx.state.tracks[condition.track]));
     case "flag":
       return (ctx.state.flags[condition.flag] ?? false) === condition.value;
+    case "totalAtLeast": {
+      const terms = ctx.ruleset.victory.totals[condition.total];
+      if (terms === undefined) throw new RangeError(`Unknown total "${condition.total}"`);
+      return sumTerms(ctx, terms) >= condition.value;
+    }
   }
 }
 

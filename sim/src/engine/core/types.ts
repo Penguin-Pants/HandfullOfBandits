@@ -107,7 +107,9 @@ export type SpaceCondition =
   | { readonly type: "trackAtLeast"; readonly track: TrackId; readonly value: number }
   | { readonly type: "trackAtMost"; readonly track: TrackId; readonly value: number }
   | { readonly type: "trackIn"; readonly track: TrackId; readonly values: readonly string[] }
-  | { readonly type: "flag"; readonly flag: string; readonly value: boolean };
+  | { readonly type: "flag"; readonly flag: string; readonly value: boolean }
+  /** A named total from victory.yaml is at least `value`. */
+  | { readonly type: "totalAtLeast"; readonly total: string; readonly value: number };
 
 /** A space ID, or `selected`: the current forEachSpace pick (DEC-33). */
 export type SpaceRef = SpaceId;
@@ -561,6 +563,8 @@ export interface Card {
   readonly deckEligible: boolean;
   /** Applied on reveal, whether or not anyone executes the Event (research 05 s5 item 7). */
   readonly always: readonly CardEffect[];
+  /** Pivotal board precondition with its approved text (05 s4 step 2). Null: none. */
+  readonly precondition: { readonly text: string; readonly if: SpaceCondition } | null;
   readonly unshaded: CardSide | null;
   readonly shaded: CardSide | null;
   /** Cards this card must follow in a pile (research 08 s8). */
