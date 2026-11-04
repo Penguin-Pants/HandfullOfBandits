@@ -1,6 +1,37 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a in progress; independent P3a-08 tooling complete.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45). **Next task: P3b-02.**
+
+## 0. Resume here (updated 2026-11-04, PR #45)
+
+A new session starts here. Read this section, then `AGENTS.md`, then the task row.
+
+**Next task: P3b-02 Village Clearance** (Phase 3b table below; mechanic OPS-08 in [01](01-mechanics-inventory.md); research 06 s3.4, 07 s3 for Displacement and Return).
+1. Not built yet: only the ID `state.village-clearance` exists, in `HARMFUL_ACTIONS` (`sim/src/engine/coin/ops/ids.ts`). Displacement markers, their Propaganda drain and the Civic Action Return step already exist.
+2. **First step, before code:** draft the seven ordered effects and every player-facing log and UI string, and get the designer's approval. The plan rates this the highest ethics sensitivity.
+3. Then TDD (T-OPS, T-PERV), one small PR, TWO-PASS REVIEW, as for every task.
+
+**Owner decisions in force**
+- Phase 3b proceeds before IC-3a. IC-3a findings may force rework; record any in this plan.
+- **No more automated simulations for now.** Do not start frozen runs. The bot reference [26](26-bot-reference.md) lists what to review before the next ones.
+- Deeper bot planning (three-step beam search, option A in 26) is proposed, not approved.
+
+**Open items outside the task order**
+- IC-3a: the designer's full Scenario A playthrough. Briefing: [25](25-p-shield-designer-notes.md) (P-SHIELD test).
+- Printable rulebook PDF is stale since DEC-62 (Host Pressure, rules 4.3.4). Run `make rulebook` where XeLaTeX is installed.
+
+**Recent merged work**
+
+| PR | Content |
+|---|---|
+| #40 | Scenario A automated playtest program (docs 19 to 23) |
+| #41 | Exact spending search (`cand-4`) and rerun |
+| #42 | Tied Civic Action allocations (`cand-5`), `experiment run --resume`, rerun; current evidence |
+| #43 | DEC-62: Host Pressure with no legal replacement ends the Operation; overview [24](24-scenario-a-playtest-overview.md) |
+| #44 | P-SHIELD designer notes [25](25-p-shield-designer-notes.md) and bot reference [26](26-bot-reference.md) |
+| #45 | P3b-01: Emergency Rule step table tests; Phase 3b started |
+
+**Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
 ## 1. How to use this plan
 
@@ -486,7 +517,7 @@ Split into three sub-phases. Each sub-phase ends with a scenario played to the e
 
 **IC-3a:** Designer plays Scenario A to the end in the UI. Notes export. Matches stage 0 of the research playtest plan (12 s2).
 
-Automated Scenario A playtests (2026-11-03, [report](23-scenario-a-automated-playtest-report.md)) supplement but do not close IC-3a. They flag a possible dominant PKK protected-Base line for the designer to test in the IC-3a playthrough.
+Automated Scenario A playtests (2026-11-03 and 2026-11-04, PRs #40 to #42, [report](23-scenario-a-automated-playtest-report.md), [overview](24-scenario-a-playtest-overview.md)) supplement but do not close IC-3a. They flag a possible dominant PKK protected-Base line for the designer to test in the IC-3a playthrough ([notes](25-p-shield-designer-notes.md)). They also found the DEC-56 dead end, resolved by DEC-62 (PR #43).
 
 ### Board art follow-up (DEC-59, 2026-10-31)
 
@@ -526,7 +557,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. P3b-01 is complete: the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-02** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|

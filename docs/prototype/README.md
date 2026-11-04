@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: planning complete. Phase 1 built in `sim/`: IC-1 passes (11-build-plan.md s2). Only the 3 tiny cards of P1-06 wait for P2-05.
+Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
 
 ## Bottom line
 
@@ -28,6 +28,18 @@ Status: planning complete. Phase 1 built in `sim/`: IC-1 passes (11-build-plan.m
 | [13-design-decisions.md](13-design-decisions.md) | Decisions, assumptions, open questions |
 | [14-rtt-pattern-study.md](14-rtt-pattern-study.md) | Patterns from Rally the Troops COIN modules, with proposals |
 | [15-vassal-study.md](15-vassal-study.md) | Patterns from the Vassal engine and its COIN modules, with proposals |
+| [15-phase3a-review.md](15-phase3a-review.md) | Phase 3a TWO-PASS REVIEW |
+| [16-board-art-direction.md](16-board-art-direction.md) | Board art direction (DEC-59) |
+| [17-approved-atlas-board.md](17-approved-atlas-board.md) | Interactive atlas board (DEC-60) |
+| [18-readable-atlas-layout.md](18-readable-atlas-layout.md) | Readable atlas layout (DEC-61) |
+| [19-scenario-a-automated-playtest-spec.md](19-scenario-a-automated-playtest-spec.md) | Automated playtest requirements |
+| [20-scenario-a-automated-playtest-build-plan.md](20-scenario-a-automated-playtest-build-plan.md) | Automated playtest build plan |
+| [21-scenario-a-strategies.md](21-scenario-a-strategies.md) | Bot players and candidate generation |
+| [22-scenario-a-automated-playtest-status.md](22-scenario-a-automated-playtest-status.md) | Automated playtest status ledger and review |
+| [23-scenario-a-automated-playtest-report.md](23-scenario-a-automated-playtest-report.md) | Automated playtest results (current: `cand-5`) |
+| [24-scenario-a-playtest-overview.md](24-scenario-a-playtest-overview.md) | One-page results overview |
+| [25-p-shield-designer-notes.md](25-p-shield-designer-notes.md) | P-SHIELD briefing for the IC-3a playthrough |
+| [26-bot-reference.md](26-bot-reference.md) | How the bots work, limits, review checklist |
 
 ## Method
 
@@ -41,4 +53,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Start task P1-03 in [11-build-plan.md](11-build-plan.md).
+Start task P3b-02 (Village Clearance) as described in [11-build-plan.md](11-build-plan.md) section 0: draft the effects and log text for designer approval before code.
