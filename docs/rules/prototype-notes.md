@@ -15,6 +15,7 @@ The latest explicit designer decisions take precedence over older research wordi
 - **DD-20:** no income in the final Propaganda; Propaganda Agitation uses a PKK Base or PKK Control; Ambush has no roll, one activation and one State removal, with no attrition or bonus; five revised C1 Event sides and the Strike Collaborators warning.
 - **DEC-53:** Reset flips all Guerrillas Underground, including Hostile/Aligned camps.
 - **DEC-54 and DEC-56:** Host Pressure interruptions retain the roll and paid cost while replanning the same Rally or March.
+- **DEC-62:** the replan also applies when the planned locations become unaffordable. With no legal, affordable replacement, the Operation ends; the roll, posture change and cost stand.
 - **DEC-55:** ARGK flips Guerrillas in every PKK Base space, not only spaces receiving recruits.
 - **DEC-57:** Guard Abuse applies once in every qualifying space.
 - **PA-01 to PA-10 and PA-13/14/16/17:** executing-faction choices, bounded tracks, modified die totals, Coerce order, no-roll Ambush, detection after movement, finite supply, victory ties, seeded randomness, Air Mobility's domestic-only limits and Scenario A options/Pivotal scope.

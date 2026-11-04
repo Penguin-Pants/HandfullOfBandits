@@ -64,7 +64,7 @@ Pass 1, correctness (confidence high for the runner and statistics; medium for p
 | Fix | PR #41 review: the exact search keeps only the first of two Civic Action allocations with equal gain and exposure; the other can survive a resource-limited Agitation reply better (reproduced) | Deferred from PR #41, fixed in PR #42 (`cand-5`: up to three tied allocations per search state); regression test fails on `cand-4`; frozen program rerun on fresh seeds |
 | Fix | A container restart stopped `baseline-5` after 2,580 of 3,520 games; the runner could only start again from nothing | `experiment run --resume` keeps sealed games and replays unfinished ones (PR #42); tests compare a resumed run with an uninterrupted one |
 | Fix | PR #42 review: a resumed run reported a new experiment hash after a runner-only commit | The recorded hash stays the run's identity; regression test |
-| Decide | `options-4` game `no-syria-march~S-MILv1~P-ADAPTv2~1001716~r0`: after Host Pressure before March, DEC-56 waits for new March destinations, but no legal, affordable March exists | Engine dead end reproduced from the journal; recorded as failed with its 58-command prefix, no fallback. Needs a designer decision on DEC-56; no rule changed (report 23, risk 6) |
+| Decide | `options-4` game `no-syria-march~S-MILv1~P-ADAPTv2~1001716~r0`: after Host Pressure before March, DEC-56 waits for new March destinations, but no legal, affordable March exists | Engine dead end reproduced from the journal; recorded as failed with its 58-command prefix, no fallback. Resolved by DEC-62 (designer, 2026-11-04, option A): the Operation ends when no legal, affordable replacement exists; engine fix with Rally and March regression tests |
 | Drop | State passing: v2 capped potential did not reduce it (37.4% vs 39.6%) | Hypothesis falsified; kept as a diagnostic and a player limitation |
 
 Pass 2, simplicity: one candidate generator serves runner, search and fixtures; one replay path (`replaySteps`) serves journals and archives; analysis reads archives so bulk journals are optional; no new dependency, database or service. The legacy `runExperiment` in-memory runner was replaced and its test migrated.
@@ -75,4 +75,3 @@ Pass 2, simplicity: one candidate generator serves runner, search and fixtures; 
 2. State passivity about 39% Pass share (player limitation).
 3. Sanctuary actions beyond Restricted never chosen naturally.
 4. Human IC-3a not done.
-5. DEC-56 dead end when no legal, affordable March remains (Decide above).

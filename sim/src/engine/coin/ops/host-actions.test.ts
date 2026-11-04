@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
-import { codes, op, play, setTrack, turnOf, withRoll } from "../../../../test/board.ts";
+import { codes, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withRoll } from "../../../../test/board.ts";
+import type { GameState } from "../../core/types.ts";
 const pressure = op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone"], sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}});
 it("retains the Host Pressure backfire and cost while waiting for a legal replacement Rally", () => {
   const state = withRoll(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), 1);
@@ -119,4 +120,34 @@ it("PA-02 caps a multi-step Syria posture effect at Hostile", async () => {
   expect(ctx.state.tracks["posture.syria"]).toBe("hostile");
   expect(ctx.state.spaces["syria-bekaa"]?.markers["leadership"]?.["abroad"]).toBe(1);
   expect(() => {shiftHost(ctx,"iran",1,"PA-02");}).toThrow(/No host/);
+});
+
+// DEC-56 and DEC-54 as amended 2026-11-04 (Option A): with no legal, affordable replacement, the
+// Operation ends; the roll, the posture change and the costs stand. Positions from options-4 game
+// no-syria-march~S-MILv1~P-ADAPTv2~1001716~r0, which stopped at a prompt with no legal answer.
+const noGuerrillas = (state: GameState): GameState => ruleset.spaces.reduce((s, x) => setPieces(setPieces(s, x.id, "guerrilla", 0, "underground"), x.id, "guerrilla", 0, "active"), state);
+it("ends a March when Host Pressure leaves no legal, affordable destination, keeping the roll and costs", () => {
+  // 3 Resources: March into KDP (1) plus Host Pressure (2). The roll moves KDP to Restricted, so entry costs 2 with 1 left.
+  const state = setPieces(noGuerrillas(withRoll(setTrack(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), "resources.pkk", 3), 1)), "puk-zone", "guerrilla", 3);
+  const next = play(state, op("pkk", "opSa", {op: "pkk.march", locations: ["kdp-zone"], perLocation: {"kdp-zone": {moves: [{from: "puk-zone", count: 3}]}}, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
+  expect(next.state.pending).toBeNull();
+  expect(next.state.tracks["posture.kdp"]).toBe("restricted");
+  expect(next.state.tracks["resources.pkk"]).toBe(1);
+  expect(next.state.spaces["puk-zone"]?.pieces["guerrilla"]?.["underground"]).toBe(3);
+  expect(next.state.initiative.actedThisCard).toEqual(["pkk"]);
+  expect(next.entries.some((e) => e.kind === "EffectSkipped" && e.data["reason"] === "noLegalReplacement" && e.ruleRef === "DEC-56")).toBe(true);
+});
+it("ends a Rally when Host Pressure leaves no legal, affordable location, keeping the roll and costs", () => {
+  // Only PKK presence is a Base with an Active Guerrilla in KDP; no Guerrillas Available; Europe at the Ban cap.
+  let state = noGuerrillas(withRoll(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), 1));
+  state = ruleset.spaces.reduce((s, x) => setPieces(s, x.id, "pkkBase", 0), state);
+  state = setPieces(setPieces(state, "kdp-zone", "guerrilla", 1, "active"), "kdp-zone", "pkkBase", 1);
+  state = setTrack(setMarkers({...state, pools: {...state.pools, guerrilla: {available: 0, outOfPlay: 0}}}, "europe", "ban", 1), "europe", 3);
+  const before = Number(state.tracks["resources.pkk"]);
+  const next = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone"], perLocation: {"kdp-zone": {option: "flip"}}, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
+  expect(next.state.pending).toBeNull();
+  expect(next.state.tracks["posture.kdp"]).toBe("restricted");
+  expect(next.state.tracks["resources.pkk"]).toBe(before - 2);
+  expect(next.state.initiative.actedThisCard).toEqual(["pkk"]);
+  expect(next.entries.some((e) => e.kind === "EffectSkipped" && e.data["reason"] === "noLegalReplacement" && e.ruleRef === "DEC-54")).toBe(true);
 });

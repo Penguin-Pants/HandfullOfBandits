@@ -383,7 +383,7 @@ Select one host box with a PKK piece. Syria also requires Leadership Present. Ro
 | Syria or PUK | 4–6 | 1 | 2–3 |
 | KDP | 5–6 | 1–2 | 3–4 |
 
-Move one posture step in the indicated direction. If before-Operation Host Pressure makes the planned Rally locations or March destinations illegal, keep the roll and paid SA cost. Choose new legal locations for **the same Operation**. Do not reroll or pay for Host Pressure again. In the simulator, this is a continuation of the saved action, not a second action.
+Move one posture step in the indicated direction. If before-Operation Host Pressure makes the planned Rally locations or March destinations illegal or unaffordable, keep the roll and paid SA cost. Choose new legal locations for **the same Operation**. Do not reroll or pay for Host Pressure again. In the simulator, this is a continuation of the saved action, not a second action. If no legal, affordable replacement exists, the Operation ends with no locations: the roll, the posture change and the paid cost stand.
 
 # 5.0 Events
 
