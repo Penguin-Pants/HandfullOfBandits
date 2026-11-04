@@ -597,7 +597,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
   - **Propose:** the ceasefire step runs inside Legal Politics, which 05 s6.5 skips while Legal Space is Absent. If C3 starts without the HEP card, a declared ceasefire never reaches its step. Decide with the HEP Founded card (DK-037) in P3b-06.
   - **Propose:** batch bots never declare a ceasefire or answer the step (carried with the Legal Politics note).
   - **Drop:** Negotiated Outcome removals take any face; faces do not affect final margins.
-- **Validation:** `make check` passes. `make test`: 78 files, 1030 tests pass. `make e2e` passes. Package validation shows only the expected full-campaign blocks. Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes).
+- **Validation:** `make check` passes. `make test`: 79 files, 1034 tests pass (after the PR 46 review fixes). `make e2e` passes. Package validation shows only the expected full-campaign blocks. Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes).
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
