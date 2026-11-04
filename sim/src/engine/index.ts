@@ -64,7 +64,8 @@ export function createEngine(handlers: Readonly<Record<string, CommandHandler>>)
     }
     const violations = handler.check(ruleset, state, command);
     const ok = violations.length === 0;
-    return { ok, violations, warnings: [], preview: { effects: ok ? previewEffects(ruleset, state, handler, command) : [] } };
+    const warnings = ok ? handler.warnings?.(ruleset, state, command) ?? [] : [];
+    return { ok, violations, warnings, preview: { effects: ok ? previewEffects(ruleset, state, handler, command) : [] } };
   }
 
   return {

@@ -5,6 +5,7 @@ import { BOX, placeCylinder, sequenceViolations } from "../sequence/ct.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "./action.ts";
 import { resources } from "./common.ts";
 import { HARMFUL_ACTIONS } from "./ids.ts";
+import { applyRestraint, restraintWarnings, type ActionUse } from "../ceasefire.ts";
 import { asList, asObject, asString } from "./plan.ts";
 import { flagHarmful, notePassOnly } from "../stop-rules.ts";
 import { actionHandlers } from "./registry.ts";
@@ -144,9 +145,18 @@ function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): b
   return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget);
 }
 
+/** The Op and SA of a parsed plan, for the ceasefire table (07 s7.2). */
+function uses(plan: ParsedPlan): ActionUse[] {
+  return [{ id: plan.op.id, part: plan.part }, ...(plan.sa === null ? [] : [{ id: plan.sa.handler.id, part: plan.sa.part }])];
+}
+
 export const chooseOperationHandler: CommandHandler = {
   ruleRef,
   check: (ruleset, state, command) => parse(ruleset, state, command).violations,
+  warnings(ruleset, state, command) {
+    const { plan } = parse(ruleset, state, command);
+    return plan === null ? [] : restraintWarnings(ruleset, state, plan.options.faction, uses(plan));
+  },
   execute(ctx: Exec, command) {
     const { plan } = parse(ctx.ruleset, ctx.state, command);
     if (plan === null) throw new Error("ChooseOperation executed without a legal plan");
@@ -172,6 +182,7 @@ export const chooseOperationHandler: CommandHandler = {
       if (HARMFUL_ACTIONS.includes(plan.sa.handler.id)) flagHarmful(ctx, plan.sa.handler.id, plan.options.faction, before);
     };
     notePassOnly(ctx, plan.options.faction, false);
+    applyRestraint(ctx, plan.options.faction, uses(plan));
     runSa("before");
     if (plan.sa?.handler.id === "pkk.host-pressure" && plan.sa.timing === "before" && (plan.op.check(ctx.ruleset, ctx.state, plan.part, plan.options).length > 0 || plan.op.cost(ctx.ruleset, ctx.state, plan.part, plan.options) > resources(ctx.ruleset, ctx.state, plan.options.faction))) {
       const march = plan.op.id === "pkk.march";
