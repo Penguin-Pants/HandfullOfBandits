@@ -7,7 +7,7 @@ import { param } from "../core/params.ts";
 import type { CommandHandler, Effect, FactionId, GameState, Ruleset, Violation } from "../core/types.ts";
 import type { ActionPart } from "./ops/action.ts";
 import { adjustEurope, space } from "./ops/common.ts";
-import { FACTION, TRACK } from "./ops/ids.ts";
+import { BINGOL_MUS, FACTION, TRACK } from "./ops/ids.ts";
 import { activeFaction, BOX, legalBoxes, placeCylinder, sequenceViolations } from "./sequence/ct.ts";
 
 const ruleRef = "07 s7.2";
@@ -58,9 +58,10 @@ export function restraintWarningsOf(effects: readonly Effect[]): Violation[] {
   return warning(placed.side, broke ? "breach" : "marker");
 }
 
-function placeRestraintBroken(ctx: Exec, faction: FactionId, location: string): void {
+/** Place a faction's Restraint Broken marker unless it is already on the map (one per faction). */
+function placeRestraintBroken(ctx: Exec, faction: FactionId, location: string, ref: string): void {
   if (ctx.ruleset.spaces.some((s) => (ctx.state.spaces[s.id]?.markers[MARKER_RB]?.[faction] ?? 0) > 0)) return;
-  ctx.apply({ type: "placeMarker", marker: MARKER_RB, space: location, side: faction, ruleRef, assumptionRef: null });
+  ctx.apply({ type: "placeMarker", marker: MARKER_RB, space: location, side: faction, ruleRef: ref, assumptionRef: null });
 }
 
 /** Set the ceasefire to None (breach, PKK end, leaving restraint). */
@@ -75,7 +76,7 @@ export function applyRestraint(ctx: Exec, faction: FactionId, uses: readonly Act
   const effect = restraintEffect(ctx.ruleset, ctx.state, faction, uses);
   if (effect === "none") return;
   const location = uses.find((u) => u.part.locations.length > 0)?.part.locations[0] ?? ctx.ruleset.spaces[0]?.id ?? "";
-  placeRestraintBroken(ctx, faction, location);
+  placeRestraintBroken(ctx, faction, location, ruleRef);
   if (effect === "marker") return;
   endCeasefire(ctx, ruleRef);
   if (faction === FACTION.pkk) adjustEurope(ctx, -param(ctx.ruleset, "ceasefire.pkkBreachEurope", "number"), ruleRef);
@@ -102,8 +103,32 @@ export const declareCeasefireHandler: CommandHandler = {
     const placed = placeCylinder(ctx.state, FACTION.pkk, BOX.limitedOp);
     ctx.write(() => placed.state);
     ctx.log(placed.entry.kind, { ...placed.entry.data, action: "declareCeasefire" }, placed.entry.ruleRef);
-    ctx.apply({ type: "setTrack", track: CEASEFIRE, value: "declared", ifEquals: null, ruleRef: "07 s7.1", assumptionRef: null });
-    ctx.apply({ type: "setFlag", flag: "ceasefireDeclaredByPkk", value: true, ruleRef: "07 s7.1", assumptionRef: null });
-    adjustEurope(ctx, param(ctx.ruleset, "ceasefire.declareEurope", "number"), "07 s7.1");
+    declareCeasefire(ctx);
   },
 };
+
+/**
+ * A PKK declaration (07 s7.1): Ceasefire to Declared and Europe +1. The command and the card
+ * procedure `ceasefire.declare` share it. With a ceasefire in force it does nothing (DEC-69 point 5).
+ */
+export function declareCeasefire(ctx: Exec): void {
+  const ref = "07 s7.1";
+  if (ctx.state.tracks[CEASEFIRE] !== "none") {
+    ctx.log("EffectSkipped", { effect: "procedure", procedure: "ceasefire.declare", reason: "ceasefireActive" }, ref);
+    return;
+  }
+  ctx.apply({ type: "setTrack", track: CEASEFIRE, value: "declared", ifEquals: null, ruleRef: ref, assumptionRef: null });
+  ctx.apply({ type: "setFlag", flag: "ceasefireDeclaredByPkk", value: true, ruleRef: ref, assumptionRef: null });
+  adjustEurope(ctx, param(ctx.ruleset, "ceasefire.declareEurope", "number"), ref);
+}
+
+/**
+ * Card procedures (DK-058, DK-059). Their rule ref is 04 s3.5, not 07 s7.2, so a card that ends the
+ * ceasefire does not read as a breach warning (`restraintWarningsOf`).
+ */
+export const CARD_REF = "04 s3.5";
+
+/** Place the PKK Restraint Broken marker in Bingöl-Muş unless one is on the map (DK-059, DEC-69 point 7). */
+export function pkkRestraintBroken(ctx: Exec): void {
+  placeRestraintBroken(ctx, FACTION.pkk, BINGOL_MUS, CARD_REF);
+}

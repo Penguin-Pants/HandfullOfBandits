@@ -2,8 +2,10 @@
 import type { Exec } from "../core/exec.ts";
 import { param } from "../core/params.ts";
 import { SINGLE_FACE } from "../core/state.ts";
+import { CARD_REF, CEASEFIRE, declareCeasefire, endCeasefire, pkkRestraintBroken } from "./ceasefire.ts";
 import { count, markers, space } from "./ops/common.ts";
 import { FACE, MARKER, PIECE } from "./ops/ids.ts";
+import { ceasefireOptions } from "./propaganda/ceasefire-step.ts";
 import { ban, officeLines, successor } from "./propaganda/legal-politics.ts";
 import { revealRandomCovert } from "./propaganda/legitimacy.ts";
 
@@ -31,6 +33,19 @@ function unattributedKillings(ctx: Exec): void {
   ctx.apply({ type: "placeMarker", marker: MARKER.disputedHarm, space: target, side: SINGLE_FACE, ruleRef: ref, assumptionRef: null });
 }
 
+/**
+ * The State accepts a declared ceasefire by card (DK-057): Reciprocal Restraint. As the ceasefire
+ * step (07 s7.3 step 1), not with the State Restraint Broken marker (DEC-73). The card adds its Legitimacy.
+ */
+function acceptCeasefire(ctx: Exec): void {
+  const ref = "07 s7.3 step 1";
+  if (!ceasefireOptions(ctx.ruleset, ctx.state).accept) {
+    ctx.log("EffectSkipped", { effect: "procedure", procedure: "ceasefire.accept", reason: "cannotAccept" }, ref);
+    return;
+  }
+  ctx.apply({ type: "setTrack", track: CEASEFIRE, value: "reciprocalRestraint", ifEquals: null, ruleRef: ref, assumptionRef: null });
+}
+
 export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
   "legal.ban": ban,
   "legal.successor": (ctx) => { successor(ctx, 1); },
@@ -38,4 +53,8 @@ export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
   "legal.officeLines": officeLines,
   "covert.revealRandom": (ctx) => { revealRandomCovert(ctx, "Covert reveal", "07 s10.2 item 2"); },
   "hizbullah.unattributed": unattributedKillings,
+  "ceasefire.declare": declareCeasefire,
+  "ceasefire.accept": acceptCeasefire,
+  "ceasefire.end": (ctx) => { endCeasefire(ctx, CARD_REF); },
+  "ceasefire.pkkBroken": pkkRestraintBroken,
 };
