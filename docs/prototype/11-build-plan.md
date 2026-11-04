@@ -1,16 +1,16 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 and P3b-03 done. **Next task: P3b-04.**
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-04 done. **Next task: P3b-05.**
 
-## 0. Resume here (updated 2026-11-04, P3b-03)
+## 0. Resume here (updated 2026-11-04, P3b-04)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next task: P3b-04 Legal Politics procedure and closure filing** (Phase 3b table below; research 07 s6, 05 s6.5).
-1. Already built: the `office`, `closureCase` and `successor` markers and the `legalSpace` track. Offices already cap levels (DEC-39) and cost Village Clearance Legitimacy 1.
-2. Not built: the procedure table (07 s6.4 lines 1 to 5), closure filing and the PKK event-side restriction (05 s5 item 1).
-3. **First step, before code:** list the phase guide text and any open line-order details for the designer, as for [27](27-village-clearance-draft.md) and [28](28-covert-action-draft.md).
-4. Then TDD (T-PROP: two runs of the table give identical Offices), TWO-PASS REVIEW.
+**Next task: P3b-05 Ceasefire, restrictions, breach, votes, Negotiated Outcome** (Phase 3b table below; research 07 s7, PA-11).
+1. Already built: the `ceasefire` track (none, declared, reciprocalRestraint, talks), the `restraintBroken` marker and the restraint Legitimacy gain (`propaganda/legitimacy.ts` step 7).
+2. Not built: declaration, the restrictions table, breach costs and warnings, talks votes, Negotiated Outcome and the Legal Politics ceasefire step (05 s6.5 item 3).
+3. **First step, before code:** list the player-facing text and open points for the designer, as for [27](27-village-clearance-draft.md) to [29](29-legal-politics-draft.md). PA-11 is marked "replaced"; read its replacement in [13](13-design-decisions.md) first.
+4. Then TDD (T-VAL, T-PROP; 07 s7 fixtures), TWO-PASS REVIEW.
 
 **Owner decisions in force**
 - Phase 3b proceeds before IC-3a. IC-3a findings may force rework; record any in this plan.
@@ -33,6 +33,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #45 | P3b-01: Emergency Rule step table tests; Phase 3b started |
 | P3b-02 | Village Clearance SA, PA-18, DEC-63 ([27](27-village-clearance-draft.md)) |
 | P3b-03 | Covert Action SA, DEC-64 ([28](28-covert-action-draft.md)) |
+| P3b-04 | Legal Politics phase and closure filing, DEC-65 ([29](29-legal-politics-draft.md)) |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -560,7 +561,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-04** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-05** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
 
 **P3b-02 (2026-11-04):** complete. The designer approved the effect order and every player-facing string in [27](27-village-clearance-draft.md) before code. `coin/ops/sa/village-clearance.ts` accompanies Sweep or Garrison, checks the four conditions and applies the seven effects in order with rule refs `06 s3.4 effect 1` to `7`. It costs Legitimacy only; four new parameters (`clearance.*`) hold every number. DEC-63: condition 2 reads flag `ohalPowers` or Campaign C3 or later; no card sets the flag yet, so Scenario A cannot use it. PA-18 (GAP-B16): an existing State Harm or Coercion marker blocks the effect-1 shift. Tests: `village-clearance.test.ts` (T-OPS, T-VAL, four T-PERV cases from 09 s7.1) and a summary check in `forms.test.ts`. Mutation checks (swap effects 3 and 4; Pop cost 0) fail the suite.
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseOperation with the SA before and after Sweep and Garrison, the re-check after the Op, the Reception shortfall, the blocked shift, the Neutral case and the Rally block that follows. No path code. Pass 2 replaced a local Legitimacy reader with the existing pattern.
@@ -575,12 +576,22 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
   - **Drop:** none.
 - **Validation:** `make check` passes. `make test`: 74 files, 995 tests pass. Both goldens regenerated for the new package hash; commands and end state unchanged (25 and 66 hashes).
 
+**P3b-04 (2026-11-04):** complete. The designer approved the text in [29](29-legal-politics-draft.md) (DEC-65). `coin/propaganda/legal-politics.ts` replaces the slice stub: State closure filing (choice `closureFiling`, 07 s6.3), then procedure lines 1 to 6 in order (07 s6.4). The Closure Case marker is flag `closureCase`; the Successor value is the new numeric track `successor` (0 to 8), so the sidebar shows one more track. Six new `legal.*` parameters hold the order, minimum Pop, limits and ban costs. The UI shows the approved guide text and a "File a closure case" button when the server allows it (`status.closureFiling`). Tests: `legal-politics.test.ts` (each line, the four DEC-65 points, filing violations, two identical runs) and `view.test.ts`. Mutation checks (off-list Office removed last; filing button never offered) fail the suite.
+- **TWO-PASS REVIEW.** Pass 1 traced Advance and PropagandaChoice through each line, the Absent skip, filing with a pending case and a ban with the Ban marker present. No path code. Pass 2 removed the stub and its unused `violation` import.
+  - **Fix:** the ban's Europe +1 ignored the German Ban marker cap of 3 (04 s3.6). The cap now applies; the test fails without it.
+  - **Propose:** the Legitimacy phase step 6 Europe +1 (`propaganda/legitimacy.ts`) has the same missing cap. Proposed: share one capped Europe rise with the ban and Rally (`ops/pkk/rally.ts`). Not applied (outside P3b-04).
+  - **Propose:** Scenario A bots auto-advance Legal Politics (`cli/candidates.ts` `AUTO_PHASES`), so they never file. Review before the next simulations (owner rule: none for now).
+  - **Propose:** carried, one shared Campaign comparison helper.
+  - **Fix:** the Successor row pushed the map under 600 px at 1907 × 863 (`make e2e` failed). The sidebar now hides Successor while its value is 0, as no Successor marker is then on the track; a test covers the shown case.
+  - **Propose:** `make ux` fails "no overlapping map text" (Diyarbakır Rural label) here on the base commit too, with Playwright Chromium 1243 (`HOB_CHROMIUM`). Not caused by P3b-04; check on the designer's machine.
+- **Validation:** `make check` passes. `make test`: 75 files, 1009 tests pass. `make e2e` passes. Package validation shows only the expected full-campaign blocks. Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes).
+
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
 | P3b-01 ✅ | Emergency Rule step table and Legitimacy phase step 8 | module `emergency-rule` | IC-3a | 07 s8.2 table | T-PROP | None |
 | P3b-02 ✅ | Village Clearance | module `village-clearance` | P3b-01 | 7 effects in order. T-PERV cases | T-OPS, T-PERV | Highest ethics sensitivity. Review log text |
 | P3b-03 ✅ | Covert Action and hidden markers | module `covert`, `core/hidden.ts` | P3b-01 | Check penalty and reveal | T-VIC | Solo play sees hidden markers. Logged as GAP-O01 |
-| P3b-04 | Legal Politics procedure and closure filing | module `legal-politics` | P3b-01 | Two runs of the table give identical Offices (research M-007) | T-PROP | Line order details |
+| P3b-04 ✅ | Legal Politics procedure and closure filing | module `legal-politics` | P3b-01 | Two runs of the table give identical Offices (research M-007) | T-PROP | Line order details |
 | P3b-05 | Ceasefire, restrictions, breach, votes, Negotiated Outcome | module `ceasefire` | P3b-04 | 07 s7 fixtures. PA-11 | T-VAL, T-PROP | Breach warnings in UI |
 | P3b-06 | Remaining Pivotals and structural cards (DK-037, 040, 093) | modules `pivotal-*`, `structural-*` | P3b-05 | Always lines fire once | T-EVT | None |
 | P3b-07 | Encode C3, C4, C5 cards | `cards/c3.yaml` to `c5.yaml` | P3b-06 | V-ENCODE passes for B and C | T-EVT | Volume. 5 cards per PR |

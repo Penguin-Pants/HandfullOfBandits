@@ -41,7 +41,8 @@ function Scale({ track }: { readonly track: Track }) {
 }
 
 export function TrackCard({ view }: { readonly view: BoardView }) {
-  const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined);
+  // The Successor marker is on the Legal Space track only while its value is above 0 (07 s6.4, DEC-65).
+  const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined && !(t.id === "successor" && t.value === 0));
   return <section className="track-card compact" aria-label="Resources and politics">
     <h4>Resources and politics</h4>
     {tracks.map(t => <details key={t.id} className="track-row" role="group" aria-label={t.display}>

@@ -15,3 +15,4 @@
 - {id: europe, kind: numeric, min: 0, max: 5, display: Europe, source: "04 s3.6"}
 - {id: ceasefire, kind: ordinal, steps: [none, declared, reciprocalRestraint, talks], display: Ceasefire, source: "04 s3.5"}
 - {id: legalSpace, kind: ordinal, steps: [absent, open, prosecuted, banned], display: Legal Space, source: "04 s3.7"}
+- {id: successor, kind: numeric, min: 0, max: 8, display: Successor Offices, source: "07 s6.4 line 1; Successor marker value (DEC-65)"}

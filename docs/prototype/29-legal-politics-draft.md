@@ -1,6 +1,6 @@
-# 29 Legal Politics: draft for designer approval
+# 29 Legal Politics: approved text
 
-Status: **draft, five open points** (P3b-04 step 3, [11](11-build-plan.md) section 0). No code exists yet. Source: research 07 s6, 05 s6.5, 04 s3.7.
+Status: **approved by the designer 2026-11-04 and built** (P3b-04, [11](11-build-plan.md) section 4; DEC-65). Source: research 07 s6, 05 s6.5, 04 s3.7.
 
 ## 1. Rule as it will be built
 
@@ -36,14 +36,15 @@ Acceptance (plan): two runs of the table on the same board give identical Office
 
 ### 2.3 Log lines (existing generic text, cause "Legal Politics phase")
 
-- "Closure Case marker placed in {holder}." then "Legal Space changed from Open to Prosecuted."
+- "Closure Case is now in force." then "Legal Space changed from Open to Prosecuted." (built as flag `closureCase`; the approved draft had a placeholder holder here)
+- Ban also logs "Successor Offices changed from 0 to 1." and "Closure Case is now off."
 - Ban: "Legal Space changed from Prosecuted to Banned.", "Office marker removed from Diyarbakır City (Amed).", "Legitimacy changed from 10 to 8.", "Europe changed from 1 to 2."
 - Placement: "Office marker placed in Diyarbakır City (Amed)."
 
-## 3. Open points for the designer
+## 3. Resolved points (designer, 2026-11-04)
 
-1. **Line 5, Offices outside the list.** An Event can place an Office in a space not on the line 4 list (for example Hakkari or Dersim). When line 5 removes Offices, does such an Office go first, last or never?
-2. **Line 6 in the same phase as line 4.** Lines run in order. If line 4 brings the Offices up to the limit, line 6 files a case in the same phase, and line 1 bans at the next round. Accept this, or let line 6 see only the count from the phase start?
-3. **Line 2, too few eligible spaces.** If fewer eligible spaces exist than Offices to place, place as many as possible and lose the rest?
-4. **Successor at 0.** Events can remove Offices after a filing. A ban with 0 Offices sets Successor 0; line 2 still places 1 Office (minimum 1). Accept?
-5. **PKK event restriction (05 s5 item 1)**: the PKK may not execute an Event side that places or resolves a Closure Case, bans the party, removes Offices or moves Legal Space. Build it in P3b-04, or with the cards in P3b-07?
+1. **Offices outside the list** (only Hakkari and Dersim, Pop 1, by Event): line 5 removes them first.
+2. **Line 6 in the same phase as line 4:** yes.
+3. **Too few eligible spaces in line 2:** place as many as possible; the rest are lost.
+4. **Ban with 0 Offices:** the successor still returns with 1 Office.
+5. **PKK event-side restriction:** built with the cards in P3b-07.

@@ -68,6 +68,11 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           ))}
         </div>
       )}
+      {phase === "legalPolitics" && view.status.closureFiling && (
+        <div className="row" aria-label="Closure filing">
+          <button type="button" onClick={() => { choose({ closureFiling: true }); }}>File a closure case</button>
+        </div>
+      )}
       {phase === "upkeep" && (
         <div aria-label="Upkeep">
           {selected.map((s) => (
