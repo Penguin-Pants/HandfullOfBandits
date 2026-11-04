@@ -119,11 +119,13 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
     if (cost > have) violations.push(at(null, "cannotPay", `${handler.id} costs ${String(cost)} Resources; ${faction} has ${String(have)} then (06 s1 item 4).`, "06 s1"));
     return cost <= have;
   };
+  // A ceasefire breach applies before the action (07 s7.2), so the parts meet the board after it.
+  const board = simulate(ruleset, state, (ctx) => { applyRestraint(ctx, faction, [{ id: op.id, part: opPart }, ...(sa === null ? [] : [{ id: sa.handler.id, part: sa.part }])]); });
   if (sa !== null && saOptions !== null && sa.timing === "before") {
-    if (checkPart(sa.handler, sa.part, saOptions, state)) checkPart(op, opPart, options, simulate(ruleset, state, (ctx) => { sa.handler.execute(ctx, sa.part, saOptions); }));
-  } else if (checkPart(op, opPart, options, state) && sa !== null && saOptions !== null) {
+    if (checkPart(sa.handler, sa.part, saOptions, board)) checkPart(op, opPart, options, simulate(ruleset, board, (ctx) => { sa.handler.execute(ctx, sa.part, saOptions); }));
+  } else if (checkPart(op, opPart, options, board) && sa !== null && saOptions !== null) {
     // The board after a rolling Op is known only at execution, so execute checks the SA again.
-    checkPart(sa.handler, sa.part, saOptions, simulate(ruleset, state, (ctx) => { op.execute(ctx, opPart, options); }));
+    checkPart(sa.handler, sa.part, saOptions, simulate(ruleset, board, (ctx) => { op.execute(ctx, opPart, options); }));
   }
   return violations.length > 0 ? { violations, plan: null } : { violations: [], plan: { op, part: opPart, sa, options, saOptions } };
 }

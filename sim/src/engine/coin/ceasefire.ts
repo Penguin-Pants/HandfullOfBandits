@@ -4,7 +4,7 @@
 // location; Legitimacy step 7 and Reset read it from any space.
 import type { Exec } from "../core/exec.ts";
 import { param } from "../core/params.ts";
-import type { CommandHandler, FactionId, GameState, Ruleset, Violation } from "../core/types.ts";
+import type { CommandHandler, Effect, FactionId, GameState, Ruleset, Violation } from "../core/types.ts";
 import type { ActionPart } from "./ops/action.ts";
 import { adjustEurope, space } from "./ops/common.ts";
 import { FACTION, TRACK } from "./ops/ids.ts";
@@ -36,14 +36,26 @@ export function restraintEffect(ruleset: Ruleset, state: GameState, faction: Fac
   return faction === FACTION.state && !restraint ? "marker" : "breach";
 }
 
-/** Breach warnings for validation (05 s4 item 6). */
-export function restraintWarnings(ruleset: Ruleset, state: GameState, faction: FactionId, uses: readonly ActionUse[]): Violation[] {
-  const effect = restraintEffect(ruleset, state, faction, uses);
+/** The approved warning for a ceasefire effect (docs/prototype/30 s2.2). */
+function warning(faction: FactionId, effect: "none" | "marker" | "breach"): Violation[] {
   const text = effect === "none" ? null
     : faction === FACTION.pkk ? "This breaks the ceasefire: PKK Restraint Broken, Ceasefire to None, Europe -1."
     : effect === "marker" ? "This places the State Restraint Broken marker. The State can no longer accept this ceasefire."
     : "This breaks the ceasefire: State Restraint Broken, Ceasefire to None, Legitimacy -2.";
   return text === null ? [] : [{ code: "ceasefireBreach", message: text, ruleRef, location: null }];
+}
+
+/** Breach warnings for validation (05 s4 item 6). */
+export function restraintWarnings(ruleset: Ruleset, state: GameState, faction: FactionId, uses: readonly ActionUse[]): Violation[] {
+  return warning(faction, restraintEffect(ruleset, state, faction, uses));
+}
+
+/** Breach warnings from a dry run's effects, for commands such as Events with free actions. */
+export function restraintWarningsOf(effects: readonly Effect[]): Violation[] {
+  const placed = effects.find((e) => e.type === "placeMarker" && e.marker === MARKER_RB && e.ruleRef === ruleRef);
+  if (placed?.type !== "placeMarker") return [];
+  const broke = effects.some((e) => e.type === "setTrack" && e.track === CEASEFIRE && e.value === "none" && e.ruleRef === ruleRef);
+  return warning(placed.side, broke ? "breach" : "marker");
 }
 
 function placeRestraintBroken(ctx: Exec, faction: FactionId, location: string): void {

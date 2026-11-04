@@ -2,6 +2,7 @@
 // open question inline (Decisions, 08 s3.3) until the command is legal. Every answer is a click:
 // options, counts, spaces picked on the map (UC-9), and a free action's plan built on the map (UC-5).
 import { useEffect, useState } from "react";
+import { confirmWarnings } from "../common/confirm.ts";
 import type { ActionForm, Api, AnyCommand, BoardView, Question } from "../api.ts";
 import { words } from "../common/names.ts";
 import { PlanForm } from "../faction/PlanForm.tsx";
@@ -39,6 +40,7 @@ export function EventPanel({ onTargets, api, sessionId, view, faction, eventOpen
     const command = { type: "ChooseEvent", faction, side, answers };
     const result = await api.validate(sessionId, command);
     if (result.ok) {
+      if (!confirmWarnings(result.warnings)) return;
       setPending(null);
       onFreeAction?.(false);
       onCommit(command);

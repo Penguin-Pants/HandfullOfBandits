@@ -74,6 +74,12 @@ describe("Negotiated Outcome (07 s7.4, 09 s5, DEC-66 points 3 and 4)", () => {
     expect(codes(at(turnOf("state"), "talks", 1), bad)).toEqual(["outcomeRemovals"]);
   });
 
+  it("validates removals on the board after the procedure table: a successor ends Banned first (PR 46 review)", () => {
+    const banned = setTrack(at(turnOf("state"), "talks", 1), "legalSpace", "banned");
+    const none = { type: "PropagandaChoice", phase: "legalPolitics", choice: { ceasefire: { outcome: { state: true, pkk: true } } } };
+    expect(codes(banned, none)).toEqual(["outcomeRemovals"]);
+  });
+
   it("a refusal keeps Talks; new Talks or a Banned Legal Space cannot end the game", () => {
     expect(cf(run(at(turnOf("state"), "talks", 1), { outcome: { state: true, pkk: false } }))).toBe("talks");
     expect(run(at(turnOf("state"), "talks", 0), accept).turn.phase).not.toBe(PHASE.ended);

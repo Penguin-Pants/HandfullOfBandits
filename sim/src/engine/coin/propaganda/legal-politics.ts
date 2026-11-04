@@ -2,7 +2,7 @@
 // From C3, skipped while Legal Space is Absent. Choice `{closureFiling: true}`: the State files a
 // closure case first. Then procedure table lines 1 to 6 run in order. The Closure Case marker is
 // flag `closureCase`; the Successor marker value is track `successor`.
-import type { Exec } from "../../core/exec.ts";
+import { createExec, type Exec } from "../../core/exec.ts";
 import { param } from "../../core/params.ts";
 import { SINGLE_FACE } from "../../core/state.ts";
 import type { GameState, JsonObject, Ruleset, Violation } from "../../core/types.ts";
@@ -55,7 +55,14 @@ function fileCase(ctx: Exec, ref: string): void {
 export const legalPoliticsPhase: PropagandaPhase = {
   id: "legalPolitics",
   ruleRef: "05 s6.5",
-  check: (ruleset, state, choice) => [...(choice?.["closureFiling"] === true ? closureViolations(ruleset, state) : []), ...ceasefireViolations(ruleset, state, choice)],
+  check(ruleset, state, choice) {
+    const filing = choice?.["closureFiling"] === true ? closureViolations(ruleset, state) : [];
+    if (filing.length > 0 || state.tracks[LEGAL] === "absent") return filing;
+    // The ceasefire step meets the board after the procedure table, as in `run`.
+    const ctx = createExec(ruleset, state);
+    procedure(ctx, choice);
+    return ceasefireViolations(ruleset, ctx.state, choice);
+  },
   run(ctx, choice) {
     if (ctx.state.tracks[LEGAL] === "absent") {
       ctx.log("EffectSkipped", { effect: "legalPolitics", reason: "legalSpaceAbsent" }, "05 s6.5");

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, engine, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withRoll } from "../../../test/board.ts";
+import { codes, engine, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-VAL and T-OPS for ceasefire declaration, restrictions and breach (11 P3b-05; research 07 s7.1,
@@ -72,5 +72,20 @@ describe("Ceasefire restrictions and breach (07 s7.2)", () => {
     expect(paused.pending?.resume?.op).toBe("pkk.rally");
     const s = play(paused, op("pkk", "opSa", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "base" } } })).state;
     expect([s.tracks["ceasefire"], rb(s, "pkk")]).toEqual(["none", 1]);
+  });
+
+  it("checks the plan on the board after the breach: a Covert Action the -2 Legitimacy would block is refused (PR 46 review)", () => {
+    const board = setTrack(at(turnOf("state"), "reciprocalRestraint"), "legitimacy", 5);
+    const plan = op("state", "opSa", { op: "state.sweep", locations: ["botan"], sa: { action: "state.covert-action", locations: ["hakkari"], perLocation: {}, timing: "before" } });
+    expect(codes(board, plan)).toEqual(["covertLegitimacy"]);
+    expect(codes(setTrack(board, "legitimacy", 6), plan)).toEqual([]);
+  });
+
+  it("warns before a free Event action breaks the ceasefire (PR 46 review)", () => {
+    const answer = { locations: ["botan"], perLocation: {}, sa: { locations: ["botan"], perLocation: {} } };
+    const event = { type: "ChooseEvent", faction: "pkk", side: "shaded", answers: [answer] };
+    const board = withCard(at(turnOf("pkk"), "declared"), "DK-002");
+    expect(engine.validate(ruleset, board, event).warnings.map((w) => w.message)).toEqual(["This breaks the ceasefire: PKK Restraint Broken, Ceasefire to None, Europe -1."]);
+    expect(engine.validate(ruleset, withCard(c3(turnOf("pkk")), "DK-002"), event).warnings).toEqual([]);
   });
 });

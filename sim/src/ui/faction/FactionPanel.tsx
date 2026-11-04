@@ -1,6 +1,7 @@
 // Faction panel (08 s3.2): boxes, Op list with OK or the first violation (T-UI-03), plan building
 // on the map by mouse (UC-5), live validation, preview, commit with Enter.
 import { useEffect, useRef, useState } from "react";
+import { confirmWarnings } from "../common/confirm.ts";
 import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
 import { words } from "../common/names.ts";
 import { previewLine } from "../log/plain.ts";
@@ -25,11 +26,6 @@ const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
 
 /** Approved Declare Ceasefire text (docs/prototype/30 s2.1). */
 const DECLARE_TEXT = "Declare Ceasefire. From C3, uses the Limited Op box. Ceasefire to Declared and Europe +1. While Declared the PKK may not Attack, Ambush or Strike Collaborators (07 s7.1).";
-
-/** A breach warning needs a second yes before commit (05 s4 item 6). */
-function confirmWarnings(warnings: readonly { readonly message: string }[]): boolean {
-  return warnings.length === 0 || window.confirm(`${warnings.map((w) => w.message).join("\n")}\nCommit anyway?`);
-}
 
 export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
   const resume = view.status.pending?.resume;
