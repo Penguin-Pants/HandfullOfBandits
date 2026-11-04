@@ -9,7 +9,7 @@ import { matches, resolveSpace } from "../core/terms.ts";
 import type { CardEffect, CountSpec, Effect, FactionId, JsonObject, JsonValue, Question, Violation } from "../core/types.ts";
 import { shiftHost } from "./ops/sa/host-actions.ts";
 import { HOST_OF, PIECE, FACE, TRACK } from "./ops/ids.ts";
-import { adjustEurope, count } from "./ops/common.ts";
+import { adjustEurope, count, resources } from "./ops/common.ts";
 import { procedures } from "./procedures.ts";
 import { control } from "./derive.ts";
 import type { ActionOptions, ActionPart } from "./ops/action.ts";
@@ -217,9 +217,13 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   applyRestraint(ctx, handler.faction, [{ id: action, part }, ...(saId === null || saPart === null ? [] : [{ id: saId, part: saPart }])]);
   const runSa = (): void => {
     if (sa === undefined) return;
-    const saOptions: ActionOptions = { ...options, op: action, sa: null, opLocations: part.locations, saLocations: [] };
+    // `saAtCost`: the SA is not free (Area Domination Village Clearance "at normal cost", DEC-69 point 9).
+    const saOptions: ActionOptions = { ...options, free: constraints["saAtCost"] !== true, op: action, sa: null, opLocations: part.locations, saLocations: [] };
     const found = sa.check(ctx.ruleset, ctx.state, saPart ?? { locations: [], perLocation: {} }, saOptions);
     if (found.length > 0) ask(run, found[0]?.code ?? "badAnswer", found.map((v) => v.message).join(" "));
+    const cost = sa.cost(ctx.ruleset, ctx.state, saPart ?? { locations: [], perLocation: {} }, saOptions);
+    const have = resources(ctx.ruleset, ctx.state, sa.faction);
+    if (cost > have) ask(run, "cannotPay", `${sa.id} costs ${String(cost)} Resources; ${sa.faction} has ${String(have)} (06 s1 item 4).`);
     sa.execute(ctx, saPart ?? { locations: [], perLocation: {} }, saOptions);
   };
   // `saTiming: after`: the SA meets the board after the action (Area Domination, doc 31 s3 item 2).

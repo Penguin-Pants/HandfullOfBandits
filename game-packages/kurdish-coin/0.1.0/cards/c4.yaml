@@ -1,5 +1,5 @@
 # C4 cards (research 08; deck CSV). Encoding docs/prototype/33, DEC-69. DK-076 Area Domination is in pivotal.yaml.
-# P3b-07d: legal parties and Propaganda. P3b-07e: ceasefire cards. P3b-07f: Europe, harm and the report. The other C4 cards come in P3b-07g.
+# P3b-07d: legal parties and Propaganda. P3b-07e: ceasefire cards. P3b-07f: Europe, harm and the report. P3b-07g: Northern Iraq, Momentum and Guards.
 - id: DK-056
   campaign: C4
   title: "PKK Unilateral Ceasefire (Mar 1993)"
@@ -388,6 +388,91 @@
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0106, S-0258, S-0081]
+- id: DK-070
+  campaign: C4
+  title: "KDP-PUK Civil War (May 1994)"
+  date: "1994-05"
+  type: event
+  unshaded:
+    text: "KDP seeks Turkish help: KDP posture one step toward Aligned with Turkey."
+    owner: state
+    tier: T0
+    effects:
+      - {type: stepOrdinal, track: posture.kdp, direction: next, steps: 1}
+  shaded:
+    text: "Vacuum widens: place 2 Guerrillas in the PUK Zone and 1 PKK Base in the KDP Zone or PUK Zone (posture permitting)."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: posture.puk, values: [host, tolerant]}
+        then: [{type: placePieces, piece: guerrilla, count: 2, space: puk-zone, state: underground}]
+      - type: choice
+        options:
+          - label: KDP Zone
+            effects:
+              - type: conditional
+                if: {type: any, of: [{type: trackIn, track: posture.kdp, values: [host]}, {type: all, of: [{type: trackIn, track: posture.kdp, values: [tolerant]}, {type: flag, flag: northernIraqVacuum, value: true}]}]}
+                then: [{type: placePieces, piece: pkkBase, count: 1, space: kdp-zone, state: null}]
+          - label: PUK Zone
+            effects:
+              - type: conditional
+                if: {type: any, of: [{type: trackIn, track: posture.puk, values: [host]}, {type: all, of: [{type: trackIn, track: posture.puk, values: [tolerant]}, {type: flag, flag: northernIraqVacuum, value: true}]}]}
+                then: [{type: placePieces, piece: pkkBase, count: 1, space: puk-zone, state: null}]
+  encoding: {status: encoded, encodedBy: "P3b-07g", reviewedAgainstText: true, note: "As DK-040 shaded: Rally placement rules; place what you can (doc 33 s2.4)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0103, S-0080, S-0357, S-0365]
+- id: DK-071
+  campaign: C4
+  title: "Operation Steel (Mar-May 1995)"
+  date: "1995-03-20"
+  type: event
+  unshaded:
+    text: "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border, moving up to 10 Troops from Hakkari or Botan (access and Disputed Harm rules apply)."
+    owner: state
+    tier: T1
+    effects:
+      - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border, maxLift: 10}}
+      - {type: freeAction, action: state.assault, constraints: {spaces: [kdp-zone], sa: state.cross-border, noLift: true}}
+  shaded:
+    text: "Fighters disperse and return: move up to 4 Guerrillas from the KDP Zone to Hakkari or Botan, Underground. Legitimacy -1. Europe +1."
+    owner: pkk
+    tier: T1
+    effects:
+      - type: choice
+        options:
+          - {label: Hakkari, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: hakkari}]}
+          - {label: Botan, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: botan}]}
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07g", reviewedAgainstText: true, note: "As DK-041: one lift of up to 10 Troops with the Sweep (maxLift, B5); the Assault lifts none (noLift). Shaded: one destination"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0108, S-0120, S-0211, S-0212, S-0230, S-0268, S-0063, S-0069, S-0082, S-0125, S-0126]
+- id: DK-072
+  campaign: C4
+  title: "EU-Turkey Customs Union (Mar 1995)"
+  date: "1995-03-06"
+  type: momentum
+  unshaded:
+    text: "Legitimacy +2. State Resources +3."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: 2}
+      - {type: adjustTrack, track: resources.state, delta: 3}
+  shaded:
+    text: "European conditions: Europe +1. PKK Momentum: until the next Reset, Village Clearance costs Legitimacy 1 more."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+      - {type: addModifier, id: customs-union, duration: untilReset, params: {extra: 1}}
+  encoding: {status: encoded, encodedBy: "P3b-07g", reviewedAgainstText: true, note: "Momentum on the shaded side only. The extra Legitimacy is paid with effect 2 and raises condition 4 by the same amount (DEC-74)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0208, S-0261, S-0321]
 - id: DK-073
   campaign: C4
   title: "Second Unilateral Ceasefire (Dec 1995)"
@@ -411,6 +496,62 @@
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0112, S-0078, S-0270, S-0063]
+- id: DK-074
+  campaign: C4
+  title: "US Lending Conditions (1994)"
+  date: "1994"
+  type: momentum
+  unshaded:
+    text: "Aid flows: State Resources +4."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: resources.state, delta: 4}
+  shaded:
+    text: "Conditions attached: Legitimacy -1. PKK Momentum: until the next Reset, each Village Clearance also costs 2 State Resources."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: addModifier, id: lending-conditions, duration: untilReset, params: {resources: 2}}
+  encoding: {status: encoded, encodedBy: "P3b-07g", reviewedAgainstText: true, note: "Momentum on the shaded side only. Refused when the State cannot pay; a free Village Clearance skips it, Area Domination's pays (DEC-69 point 9)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0265, S-0097]
+- id: DK-075
+  campaign: C4
+  title: "Raid on Two Guard Villages (Jan 1994)"
+  date: "1994-01-22"
+  type: event
+  unshaded:
+    text: "Place a PKK Harm marker in one space with a Village Guard (State choice). Europe -1. Place 1 Village Guard there."
+    owner: state
+    tier: T2
+    effects:
+      - type: forEachSpace
+        where: {type: spaceHas, pieces: [guards]}
+        min: 1
+        max: 1
+        effects:
+          - {type: placeMarker, marker: pkkHarm, space: selected}
+          - {type: placePieces, piece: guards, count: 1, space: selected, state: null}
+      - {type: adjustTrack, track: europe, delta: -1}
+  shaded:
+    text: "Block only: place a PKK Harm marker in one space with a Village Guard (PKK choice). No other effect."
+    owner: pkk
+    blockOnly: true
+    tier: T2
+    effects:
+      - type: forEachSpace
+        where: {type: spaceHas, pieces: [guards]}
+        min: 1
+        max: 1
+        effects:
+          - {type: placeMarker, marker: pkkHarm, space: selected}
+  encoding: {status: encoded, encodedBy: "P3b-07g", reviewedAgainstText: true, note: "The executing faction chooses, as DK-021. The Guard comes from Available; none, none placed. No Guard space: Europe -1 still applies (05 s5 item 3)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0198, S-0258, S-0260]
 - id: DK-077
   campaign: C4
   title: Propaganda
