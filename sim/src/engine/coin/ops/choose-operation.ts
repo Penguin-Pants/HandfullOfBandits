@@ -127,6 +127,23 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
   return violations.length > 0 ? { violations, plan: null } : { violations: [], plan: { op, part: opPart, sa, options, saOptions } };
 }
 
+/**
+ * Whether any legal, affordable replacement exists for an Operation paused by Host Pressure
+ * (DEC-54, DEC-56 as amended 2026-11-04). Probes one-location plans: a one-Guerrilla March from
+ * each origin into each destination, or each Rally option in each location. A larger legal plan
+ * implies one of these is legal, so no probe passing means no replacement exists.
+ */
+function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): boolean {
+  const ids = ruleset.spaces.map((x) => x.id);
+  const probes: ActionPart[] = plan.op.id === "pkk.march"
+    ? ids.flatMap((to) => ids.filter((from) => from !== to).map((from) => ({ locations: [to], perLocation: { [to]: { moves: [{ from, count: 1 }] } } })))
+    : ids.flatMap((loc) => ["place", "base", "grow", "flip"].map((option) => ({ locations: [loc], perLocation: { [loc]: { option } } })));
+  const budget = resources(ruleset, state, plan.options.faction);
+  // A replacement is a new resume command: no Special Activity and no optional sub-actions.
+  const options: ActionOptions = { ...plan.options, sa: null, saLocations: [], subActions: [] };
+  return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget);
+}
+
 export const chooseOperationHandler: CommandHandler = {
   ruleRef,
   check: (ruleset, state, command) => parse(ruleset, state, command).violations,
@@ -159,6 +176,11 @@ export const chooseOperationHandler: CommandHandler = {
     if (plan.sa?.handler.id === "pkk.host-pressure" && plan.sa.timing === "before" && (plan.op.check(ctx.ruleset, ctx.state, plan.part, plan.options).length > 0 || plan.op.cost(ctx.ruleset, ctx.state, plan.part, plan.options) > resources(ctx.ruleset, ctx.state, plan.options.faction))) {
       const march = plan.op.id === "pkk.march";
       const decisionRef = march ? "DEC-56" : "DEC-54";
+      // No legal, affordable replacement: the Operation ends; the roll, posture change and costs stand.
+      if (!hasReplacement(ctx.ruleset, ctx.state, plan)) {
+        ctx.log("EffectSkipped", { effect: "operation", action: plan.op.id, reason: "noLegalReplacement" }, decisionRef);
+        return;
+      }
       const pending = {id: `operation-${String(ctx.state.meta.stateSeq)}`, faction: plan.options.faction, prompt: `Host Pressure changed access. Choose new legal ${march ? "March destinations" : "Rally locations"}. The roll and cost remain (${decisionRef}).`, answers: [], ruleRef: decisionRef, resume: {kind: "operation" as const, op: plan.op.id, box: String(command["box"])}};
       ctx.write(s => ({...s, pending, turn: {...s.turn, phase: "decision"}}));
       ctx.log("DecisionOpened", {decisionId: pending.id, prompt: pending.prompt}, decisionRef);
