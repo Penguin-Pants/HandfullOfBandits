@@ -126,7 +126,7 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 **DK-075 Raid on Two Guard Villages (Jan 1994)**, T2
 - U: "Place a PKK Harm marker in one space with a Village Guard (State choice). Europe -1. Place 1 Village Guard there."
 - S: "Block only: place a PKK Harm marker in one space with a Village Guard (PKK choice). No other effect."
-- Encoding: `forEachSpace` exactly 1 space with Guards. The executing faction chooses; "(State choice)" and "(PKK choice)" name the normal executor, as DK-021 (designer, PR 50 review). The Guard comes from Available (Guards start Out of Play, `pieces.yaml`); none Available: none placed. No space with Guards: nothing.
+- Encoding: `forEachSpace` exactly 1 space with Guards. The executing faction chooses; "(State choice)" and "(PKK choice)" name the normal executor, as DK-021 (designer, PR 50 review). The Guard comes from Available (Guards start Out of Play, `pieces.yaml`); none Available: none placed. No space with Guards: no marker and no Guard, but unshaded Europe -1 still applies (it sits outside `forEachSpace`; do as much as you can, 05 s5 item 3).
 
 ## 3. Engine additions (no designer text)
 
