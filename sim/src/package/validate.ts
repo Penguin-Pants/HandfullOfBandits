@@ -1,10 +1,10 @@
 import { cardModifiers, cardModifierParameters } from "../engine/modules/registry.ts";
 // Cross-file package checks (04 s9): V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS, V-RANGE, V-VICTORY.
 // Input has passed V-SCHEMA. Each issue names file, path, element ID and one sentence.
-import { own } from "../engine/core/state.ts";
+import { own, SINGLE_FACE } from "../engine/core/state.ts";
 import { SELECTED } from "../engine/core/terms.ts";
 import type { CardEffect, FormulaTerm, SpaceCondition } from "../engine/core/types.ts";
-import { propagandaPhaseIds, sequenceModels } from "../engine/modules/registry.ts";
+import { cardProcedureIds, propagandaPhaseIds, sequenceModels } from "../engine/modules/registry.ts";
 import type { PackageFileData } from "./schema/index.ts";
 
 export type IssueCode =
@@ -200,6 +200,14 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       case "spaceHas":
         c.pieces.forEach((p, j) => { ref(pieces, "piece", p, file, `${at}.pieces.${String(j)}`, id); });
         c.markers.forEach((m, j) => { ref(markers, "marker", m, file, `${at}.markers.${String(j)}`, id); });
+        if (c.sides !== undefined) {
+          const faces = [...c.pieces.flatMap((p) => pieces.get(p)?.states ?? [SINGLE_FACE]), ...c.markers.flatMap((m) => markers.get(m)?.sides ?? [SINGLE_FACE])];
+          c.sides.forEach((side, j) => { face(faces, "side", side, file, `${at}.sides.${String(j)}`, id); });
+        }
+        return;
+      case "atSpace":
+        ref(spaces, "space", c.space, file, `${at}.space`, id);
+        condition(c.of, `${at}.of`, id, file);
         return;
       case "all":
       case "any":
@@ -368,8 +376,12 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
         if (keys.some(k => e.params[k] === undefined) || Object.keys(e.params).some(k => !keys.includes(k)) || Object.values(e.params).some(n => typeof n !== "number" || !Number.isSafeInteger(n) || n < 1)) error("V-EFFECT", file, `${at}.params`, id, `Modifier "${e.id}" needs positive integer parameters: ${keys.join(", ") || "none"}.`);
         return;
       }
+      case "procedure":
+        if (!cardProcedureIds.includes(e.id)) error("V-EFFECT", file, `${at}.id`, id, `Unknown procedure "${e.id}". Use one of: ${cardProcedureIds.join(", ")}.`);
+        return;
       case "setFlag":
       case "freeAction":
+      case "note":
         return;
     }
   };
@@ -380,6 +392,7 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       const side = card[sideKey];
       if (side === undefined) continue;
       if (side.owner !== null) ref(factions, "faction", side.owner, file, `${at}.${sideKey}.owner`, card.id);
+      side.executors?.forEach((f, j) => { ref(factions, "faction", f, file, `${at}.${sideKey}.executors.${String(j)}`, card.id); });
       effects(side.effects, file, `${at}.${sideKey}.effects`, card.id);
     }
     card.chainAfter.forEach((other, j) => {

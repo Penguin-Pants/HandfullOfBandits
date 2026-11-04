@@ -93,14 +93,16 @@ export type SpaceCondition =
   /** Signed levels from Neutral (DEC-36). A space with no support scale never matches. */
   | { readonly type: "spaceLevelIn"; readonly levels: readonly number[] }
   | { readonly type: "control"; readonly faction: FactionId }
-  /** At least one piece or marker of a listed type, any face. */
-  | { readonly type: "spaceHas"; readonly pieces: readonly PieceTypeId[]; readonly markers: readonly MarkerTypeId[] }
+  /** At least one piece or marker of a listed type, on a listed face (absent `sides`: any face). */
+  | { readonly type: "spaceHas"; readonly pieces: readonly PieceTypeId[]; readonly markers: readonly MarkerTypeId[]; readonly sides?: readonly string[] | undefined }
   | { readonly type: "all"; readonly of: readonly SpaceCondition[] }
   | { readonly type: "any"; readonly of: readonly SpaceCondition[] }
   | { readonly type: "not"; readonly of: SpaceCondition }
   // Card terms (P2-05, DEC-33). `selected` is the current forEachSpace pick.
   | { readonly type: "adjacentTo"; readonly space: SpaceRef }
   | { readonly type: "selected" }
+  /** The inner condition holds in the named space, whatever space is being checked. */
+  | { readonly type: "atSpace"; readonly space: SpaceId; readonly of: SpaceCondition }
   // Game terms: they ignore the space (04 s8).
   | { readonly type: "trackAtLeast"; readonly track: TrackId; readonly value: number }
   | { readonly type: "trackAtMost"; readonly track: TrackId; readonly value: number }
@@ -534,7 +536,11 @@ export type CardEffect =
   /** Pick individual on-map pieces; repeated space picks are limited by the original inventory. */
   | {readonly type: "forEachPiece"; readonly piece: PieceTypeId; readonly state: string | null; readonly where: SpaceCondition; readonly min: number; readonly max: number; readonly effects: readonly CardEffect[]}
   /** A free Operation or Special Activity (05 s5 item 4). `constraints` are read by the action handler. */
-  | { readonly type: "freeAction"; readonly action: string; readonly constraints: JsonObject };
+  | { readonly type: "freeAction"; readonly action: string; readonly constraints: JsonObject }
+  /** A named rule procedure, such as Legal Politics lines 3 and 4 (`coin/procedures.ts`). */
+  | { readonly type: "procedure"; readonly id: string }
+  /** A log line with approved player-facing text (docs/prototype/31 s6.3). */
+  | { readonly type: "note"; readonly text: string };
 
 export interface CardSide {
   readonly text: string;
@@ -542,6 +548,8 @@ export interface CardSide {
   readonly effects: readonly CardEffect[];
   /** The side only blocks the other side (research 08 s7). */
   readonly blockOnly: boolean;
+  /** Factions that may execute the side; null: both (05 s5 item 1). */
+  readonly executors: readonly FactionId[] | null;
 }
 
 export interface Card {
@@ -579,6 +587,8 @@ export type LogKind =
   | "ScoreCheck"
   | "GameEnded"
   | "StopRuleFlag"
+  /** A card `note` effect: approved player-facing text. */
+  | "CardNote"
   /** One per Propaganda round: the research 12 s4 per-round logging sheet fields (DEC-34). */
   | "RoundMetrics"
   /** Written by the store on undo (06 s6), never by the engine. */

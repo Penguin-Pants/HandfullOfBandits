@@ -227,7 +227,7 @@ function faces(counts: Readonly<Record<string, FaceCountsData>> | undefined, fac
 
 function compileCard(card: PackageData["cards"][string][number]): Card {
   const side = (s: typeof card.unshaded): CardSide | null =>
-    s === undefined ? null : { text: s.text, owner: s.owner, effects: s.effects, blockOnly: s.blockOnly };
+    s === undefined ? null : { text: s.text, owner: s.owner, effects: s.effects, blockOnly: s.blockOnly, executors: s.executors ?? null };
   return {
     id: card.id,
     campaign: card.campaign,

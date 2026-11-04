@@ -14,12 +14,13 @@ const condition: z.ZodType<SpaceCondition> = z.lazy(() =>
     z.strictObject({ type: z.literal("spaceLevelIn"), levels: uniqueList(z.int(), 1) }),
     z.strictObject({ type: z.literal("control"), faction: id }),
     z
-      .strictObject({ type: z.literal("spaceHas"), pieces: idList(0).default([]), markers: idList(0).default([]) })
+      .strictObject({ type: z.literal("spaceHas"), pieces: idList(0).default([]), markers: idList(0).default([]), sides: idList(1).optional() })
       .refine((c) => c.pieces.length + c.markers.length > 0, { message: "List at least one piece or marker", path: ["pieces"] }),
     z.strictObject({ type: z.literal("all"), of: z.array(condition).min(1) }),
     z.strictObject({ type: z.literal("any"), of: z.array(condition).min(1) }),
     z.strictObject({ type: z.literal("not"), of: condition }),
     z.strictObject({ type: z.literal("adjacentTo"), space: id }),
+    z.strictObject({ type: z.literal("atSpace"), space: id, of: condition }),
     z.strictObject({ type: z.literal("selected") }),
     z.strictObject({ type: z.literal("trackAtLeast"), track: id, value: z.int() }),
     z.strictObject({ type: z.literal("trackAtMost"), track: id, value: z.int() }),
@@ -56,6 +57,8 @@ const effect: z.ZodType<CardEffect> = z.lazy(() =>
     z.strictObject({type: z.literal("forEachPiece"), piece: id, state: nullableId, where: condition, min: count, max: count.min(1), effects: z.array(effect).min(1)}).refine(e => e.min <= e.max, {message: "min must not exceed max", path: ["max"]}),
     z.strictObject({ type: z.literal("addModifier"), id, duration: z.enum(["game", "untilReset"]), params: z.record(id, z.int()).default({}) }),
     z.strictObject({ type: z.literal("freeAction"), action: id, constraints: z.record(z.string(), z.json()).default({}) }),
+    z.strictObject({ type: z.literal("procedure"), id }),
+    z.strictObject({ type: z.literal("note"), text }),
   ]),
 );
 
@@ -65,6 +68,8 @@ const side = z.strictObject({
   owner: id.nullable(),
   effects: z.array(effect),
   blockOnly: z.boolean().default(false),
+  /** Factions that may execute the side; absent: both (05 s5 item 1). */
+  executors: idList(1).optional(),
   tier: z.enum(["T0", "T1", "T2", "T3"]).optional(),
 });
 

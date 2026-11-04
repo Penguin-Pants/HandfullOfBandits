@@ -176,7 +176,7 @@ One entry per Operation and Special Activity.
 | `type` | `event`, `capability`, `momentum`, `pivotal`, `propaganda` |
 | `mandatory` | Structural card flag |
 | `always` | Effect list applied on reveal |
-| `unshaded`, `shaded` | `{text, owner, effects, blockOnly, tier}` |
+| `unshaded`, `shaded` | `{text, owner, effects, blockOnly, tier, executors}`. `executors` (optional): the factions that may execute the side (05 s5 item 1); absent means both |
 | `chainAfter` | Card ID this card must follow |
 | `pivotal` | `{faction, earliestCampaign, precondition}` |
 | `encoding` | `{status: encoded or notEncoded, encodedBy, reviewedAgainstText}` |
@@ -229,6 +229,8 @@ Thresholds live in scenario files, because they differ per scenario.
 | `setFlag` | flag, value |
 | `freeAction` | action ID, constraints (spaces, extra rules) |
 | `addModifier` | modifier ID, duration (`game` or `untilReset`), parameters |
+| `procedure` | procedure ID from the engine registry (`coin/procedures.ts`), such as `legal.officeLines` (P3b-06a) |
+| `note` | approved player-facing log text (`CardNote` entry, P3b-06a) |
 | `revealHidden` | marker, count, selection (`random` or choice) |
 | `runProcedure` | module procedure ID, parameters |
 | `choice` | chooser (default PA-01), options, each option a nested effect list |
@@ -347,5 +349,7 @@ The loader computes a SHA-256 hash of the canonical package content (sorted keys
 5. If a module major version is gone, the session opens read-only and reports "module version unavailable".
 
 Next step: read 05-rules-engine-spec.md.
+
+Phase 3b (P3b-06a, optional fields, schema 2 kept): card condition `atSpace {space, of}` tests a condition in a named space; `spaceHas` takes optional `sides`; card effects add `procedure` and `note`; card sides add `executors`.
 
 Schema 2 (Phase 3a): `spaceIn {spaces: [...]}` tests explicit space IDs. Card effects add `addModifier` and `forEachPiece`. The loader also accepts schema 1 packages. Kurdish ruleset R2 adds Scenario A execution. R3 integrates the DD-20 designer rule and C1 Event changes.

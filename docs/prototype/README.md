@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
+Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06a done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
 
 ## Bottom line
 
@@ -40,6 +40,8 @@ Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progre
 | [24-scenario-a-playtest-overview.md](24-scenario-a-playtest-overview.md) | One-page results overview |
 | [25-p-shield-designer-notes.md](25-p-shield-designer-notes.md) | P-SHIELD briefing for the IC-3a playthrough |
 | [26-bot-reference.md](26-bot-reference.md) | How the bots work, limits, review checklist |
+| [27](27-village-clearance-draft.md) to [30](30-ceasefire-draft.md) | Approved Phase 3b texts: Village Clearance, Covert Action, Legal Politics, Ceasefire |
+| [31-pivotals-structural-draft.md](31-pivotals-structural-draft.md) | Approved P3b-06 text: remaining Pivotals and structural cards (DEC-67) |
 
 ## Method
 
@@ -53,4 +55,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Start task P3b-06 (remaining Pivotals and structural cards) as described in [11-build-plan.md](11-build-plan.md) section 0: list the card text and open points for designer approval before code.
+Build P3b-06b (general Pivotal window and the three remaining Pivotals) as described in [11-build-plan.md](11-build-plan.md) section 0.

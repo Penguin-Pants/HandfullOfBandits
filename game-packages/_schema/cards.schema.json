@@ -69,6 +69,14 @@
             "default": false,
             "type": "boolean"
           },
+          "executors": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            }
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -113,6 +121,14 @@
           "blockOnly": {
             "default": false,
             "type": "boolean"
+          },
+          "executors": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            }
           },
           "tier": {
             "type": "string",
@@ -949,6 +965,42 @@
             "action"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "procedure"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            }
+          },
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "note"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1088,6 +1140,14 @@
                 "type": "string",
                 "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
               }
+            },
+            "sides": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+              }
             }
           },
           "required": [
@@ -1169,6 +1229,28 @@
           "required": [
             "type",
             "space"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "atSpace"
+            },
+            "space": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            },
+            "of": {
+              "$ref": "#/$defs/__schema1"
+            }
+          },
+          "required": [
+            "type",
+            "space",
+            "of"
           ],
           "additionalProperties": false
         },

@@ -40,6 +40,8 @@ export const HOST_OF: Readonly<Record<string, string>> = { "syria-bekaa": TRACK.
 export const SYRIA_BOX = "syria-bekaa";
 export const EUROPE_SPACE = "europe";
 export const FLAG_VACUUM = "northernIraqVacuum";
+/** Set by the Capture Always line (DK-093; 07 s5.2 item 5). */
+export const FLAG_CAPTURED = "captured";
 export const OPTION = { syriaMarchRestricted: "syriaMarchRestricted" } as const;
 /** Actions the atrocity test checks (research 06 s8 item 1; stop rule 3). */
 export const HARMFUL_ACTIONS: readonly string[] = ["pkk.strike-collaborators", "state.village-clearance", "state.covert-action"];

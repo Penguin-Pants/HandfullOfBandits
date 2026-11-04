@@ -74,6 +74,20 @@ export const legalPoliticsPhase: PropagandaPhase = {
   },
 };
 
+/** Line 3: the Office limit for the current Legal Space. */
+function officeLimit(ctx: Exec): number {
+  return param(ctx.ruleset, ctx.state.tracks[LEGAL] === "open" ? "legal.limitOpen" : "legal.limitProsecuted", "number");
+}
+
+function officeCount(ruleset: Ruleset, state: GameState): number {
+  return officeSpaces(ruleset, state).reduce((n, id) => n + markers(state, id, MARKER.office), 0);
+}
+
+/** Lines 3 and 4: below the limit, place 1 Office. HEP Founded runs them as a card procedure (DK-037). */
+export function officeLines(ctx: Exec): void {
+  if (officeCount(ctx.ruleset, ctx.state) < officeLimit(ctx)) place(ctx, 1, `${ruleRef} line 4`);
+}
+
 /** Closure filing and procedure table lines 1 to 6 (07 s6.3, s6.4). */
 function procedure(ctx: Exec, choice: JsonObject | null): void {
     const { ruleset } = ctx;
@@ -101,19 +115,16 @@ function procedure(ctx: Exec, choice: JsonObject | null): void {
       ctx.apply({ type: "setTrack", track: SUCCESSOR, value: 0, ifEquals: null, ruleRef: ref, assumptionRef: null });
       return;
     }
-    // Line 3: limit.
-    const limit = param(ruleset, ctx.state.tracks[LEGAL] === "open" ? "legal.limitOpen" : "legal.limitProsecuted", "number");
-    const count = (): number => officeSpaces(ruleset, ctx.state).reduce((n, id) => n + markers(ctx.state, id, MARKER.office), 0);
-    // Line 4: place 1.
-    if (count() < limit) place(ctx, 1, `${ruleRef} line 4`);
+    officeLines(ctx);
+    const limit = officeLimit(ctx);
     // Line 5: remove to the limit. Offices outside the list go first (DEC-65 point 1), then latest in the list.
     const list = order(ruleset);
     const rank = (id: string): number => (list.includes(id) ? list.indexOf(id) : list.length);
-    while (count() > limit) {
+    while (officeCount(ruleset, ctx.state) > limit) {
       const id = [...officeSpaces(ruleset, ctx.state)].sort((a, b) => rank(b) - rank(a))[0];
       if (id === undefined) break;
       ctx.apply({ type: "removeMarker", marker: MARKER.office, space: id, side: SINGLE_FACE, ruleRef: `${ruleRef} line 5`, assumptionRef: null });
     }
     // Line 6: the prosecutor files at the limit (DD-19.1).
-    if (count() === limit && ctx.state.flags[CASE] !== true) fileCase(ctx, `${ruleRef} line 6`);
+    if (officeCount(ruleset, ctx.state) === limit && ctx.state.flags[CASE] !== true) fileCase(ctx, `${ruleRef} line 6`);
 }
