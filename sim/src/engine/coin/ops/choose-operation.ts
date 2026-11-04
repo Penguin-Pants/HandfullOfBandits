@@ -164,6 +164,7 @@ export const chooseOperationHandler: CommandHandler = {
       const {id, ruleRef: decisionRef} = ctx.state.pending;
       ctx.write(s => ({...s, pending: null, turn: {...s.turn, phase: "card"}}));
       ctx.log("DecisionAnswered", {decisionId: id, op: plan.op.id, locations: [...plan.part.locations]}, decisionRef);
+      applyRestraint(ctx, plan.options.faction, uses(plan));
       plan.op.execute(ctx, plan.part, plan.options);
       return;
     }

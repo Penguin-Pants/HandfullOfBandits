@@ -116,6 +116,8 @@
 - {id: ceasefire.pkkBreachEurope, value: 1, tune: false, source: "07 s7.2"}
 - {id: ceasefire.stateBreachLegitimacy, value: 2, tune: false, source: "07 s7.2"}
 - {id: ceasefire.endEurope, value: 1, tune: true, source: "07 s7.3 step 1"}
+- {id: negotiated.balancedMax, value: 2, tune: false, source: "09 s5 item 3"}
+- {id: negotiated.waiveCovertRounds, value: 2, tune: true, source: "09 s5 item 2 (two full Campaigns of Talks)"}
 - {id: argk.minGuerrillas, value: 8, tune: false, source: "DK-015; 08 s4"}
 - {id: argk.minBases, value: 2, tune: false, source: "DK-015; 08 s4"}
 - {id: argk.maxPlace, value: 4, tune: false, source: "DK-015; 08 s4"}

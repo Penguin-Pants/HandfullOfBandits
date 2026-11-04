@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { AnyCommand, BoardView, LegalChoices } from "../api.ts";
 import { words } from "../common/names.ts";
 import { Stepper } from "../common/Stepper.tsx";
+import { LegalPoliticsForm } from "./LegalPoliticsForm.tsx";
 import { RedeployForm } from "./RedeployForm.tsx";
 import { guideOf, skipQuestion, stepName } from "./phases.ts";
 
@@ -68,11 +69,7 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           ))}
         </div>
       )}
-      {phase === "legalPolitics" && view.status.closureFiling && (
-        <div className="row" aria-label="Closure filing">
-          <button type="button" onClick={() => { choose({ closureFiling: true }); }}>File a closure case</button>
-        </div>
-      )}
+      {phase === "legalPolitics" && <LegalPoliticsForm view={view} selected={selected} onChoose={choose} />}
       {phase === "upkeep" && (
         <div aria-label="Upkeep">
           {selected.map((s) => (

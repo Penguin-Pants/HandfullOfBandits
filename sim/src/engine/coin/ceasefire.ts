@@ -54,6 +54,8 @@ function placeRestraintBroken(ctx: Exec, faction: FactionId, location: string): 
 /** Set the ceasefire to None (breach, PKK end, leaving restraint). */
 export function endCeasefire(ctx: Exec, ref: string): void {
   ctx.apply({ type: "setTrack", track: CEASEFIRE, value: "none", ifEquals: null, ruleRef: ref, assumptionRef: null });
+  if (Number(ctx.state.tracks["ceasefireRounds"] ?? 0) !== 0) ctx.apply({ type: "setTrack", track: "ceasefireRounds", value: 0, ifEquals: null, ruleRef: ref, assumptionRef: null });
+  if (ctx.state.flags["ceasefireDeclaredByPkk"] === true) ctx.apply({ type: "setFlag", flag: "ceasefireDeclaredByPkk", value: false, ruleRef: ref, assumptionRef: null });
 }
 
 /** Apply the ceasefire result of a faction's actions, before they execute (07 s7.2). */

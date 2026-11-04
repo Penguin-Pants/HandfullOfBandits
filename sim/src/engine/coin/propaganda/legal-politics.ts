@@ -5,7 +5,8 @@
 import type { Exec } from "../../core/exec.ts";
 import { param } from "../../core/params.ts";
 import { SINGLE_FACE } from "../../core/state.ts";
-import type { GameState, Ruleset, Violation } from "../../core/types.ts";
+import type { GameState, JsonObject, Ruleset, Violation } from "../../core/types.ts";
+import { ceasefireStep, ceasefireViolations } from "./ceasefire-step.ts";
 import { adjustEurope, controlOf, markers, space } from "../ops/common.ts";
 import { FACTION, MARKER, TRACK } from "../ops/ids.ts";
 import { violation, type PropagandaPhase } from "./phase.ts";
@@ -54,13 +55,21 @@ function fileCase(ctx: Exec, ref: string): void {
 export const legalPoliticsPhase: PropagandaPhase = {
   id: "legalPolitics",
   ruleRef: "05 s6.5",
-  check: (ruleset, state, choice) => (choice?.["closureFiling"] === true ? closureViolations(ruleset, state) : []),
+  check: (ruleset, state, choice) => [...(choice?.["closureFiling"] === true ? closureViolations(ruleset, state) : []), ...ceasefireViolations(ruleset, state, choice)],
   run(ctx, choice) {
-    const { ruleset } = ctx;
     if (ctx.state.tracks[LEGAL] === "absent") {
       ctx.log("EffectSkipped", { effect: "legalPolitics", reason: "legalSpaceAbsent" }, "05 s6.5");
       return;
     }
+    procedure(ctx, choice);
+    // 05 s6.5 item 3: the ceasefire step follows the procedure table.
+    ceasefireStep(ctx, choice);
+  },
+};
+
+/** Closure filing and procedure table lines 1 to 6 (07 s6.3, s6.4). */
+function procedure(ctx: Exec, choice: JsonObject | null): void {
+    const { ruleset } = ctx;
     const pending = ctx.state.flags[CASE] === true;
     if (choice?.["closureFiling"] === true) {
       fileCase(ctx, "07 s6.3");
@@ -100,5 +109,4 @@ export const legalPoliticsPhase: PropagandaPhase = {
     }
     // Line 6: the prosecutor files at the limit (DD-19.1).
     if (count() === limit && ctx.state.flags[CASE] !== true) fileCase(ctx, `${ruleRef} line 6`);
-  },
-};
+}

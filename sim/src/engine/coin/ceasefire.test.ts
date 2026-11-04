@@ -65,4 +65,12 @@ describe("Ceasefire restrictions and breach (07 s7.2)", () => {
     expect(rb(play(marked, assault).state, "state")).toBe(1);
     expect(warnings(activeBotan(c3(turnOf("state"))), assault)).toEqual([]);
   });
+
+  it("a replacement Rally after a Host Pressure pause also counts (DEC-62 resume)", () => {
+    const pressure = op("pkk", "opSa", { op: "pkk.rally", locations: ["kdp-zone"], sa: { action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"] } });
+    const paused = play(withRoll(setTrack(at(turnOf("pkk"), "reciprocalRestraint"), "posture.kdp", "tolerant"), 1), pressure).state;
+    expect(paused.pending?.resume?.op).toBe("pkk.rally");
+    const s = play(paused, op("pkk", "opSa", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "base" } } })).state;
+    expect([s.tracks["ceasefire"], rb(s, "pkk")]).toEqual(["none", 1]);
+  });
 });

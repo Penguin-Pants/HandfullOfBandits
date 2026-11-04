@@ -53,4 +53,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Start task P3b-05 (Ceasefire) as described in [11-build-plan.md](11-build-plan.md) section 0: list the player-facing text and open points for designer approval before code.
+Start task P3b-06 (remaining Pivotals and structural cards) as described in [11-build-plan.md](11-build-plan.md) section 0: list the card text and open points for designer approval before code.

@@ -1,6 +1,6 @@
-# 30 Ceasefire: draft for designer approval
+# 30 Ceasefire: approved text
 
-Status: **draft, five open points** (P3b-05, [11](11-build-plan.md) section 0). No code exists yet. Source: research 07 s7, 09 s5, 05 s4 item 6.
+Status: **approved by the designer 2026-11-04 and built** (P3b-05, [11](11-build-plan.md) section 4; DEC-66). Source: research 07 s7, 09 s5, 05 s4 item 6.
 
 ## 1. Rule as it will be built
 
@@ -45,10 +45,10 @@ Status: **draft, five open points** (P3b-05, [11](11-build-plan.md) section 0). 
 
 "Then the ceasefire step: the State may accept a declared ceasefire; after a full round of restraint both factions vote on Talks; after a full round of Talks both may accept a Negotiated Outcome, which ends the game."
 
-## 3. Open points for the designer
+## 3. Resolved points (designer, 2026-11-04: all as proposed)
 
-1. **Talks vote with one no.** Research 07 s7.3 says "Two yes: Talks". PA-11 (any no ends the ceasefire) is marked "replaced" but no replacement text exists. Proposed: one no keeps Reciprocal Restraint.
-2. **Secret vote in solo play.** One person plays both sides. Proposed: each faction votes in turn on screen, State first, as GAP-O01 (solo play shows all).
-3. **"A full Campaign" of Talks.** Proposed: Talks was in force at the previous Propaganda round's ceasefire step with no breach since. This is the same test as step 3.
-4. **Refused Negotiated Outcome.** "Talks continues or ends at that faction's choice." Proposed: ending goes to Reciprocal Restraint, as for leaving Talks in step 4.
-5. **Choice order in the ceasefire step.** Proposed: State first, then PKK, at each sub-step.
+1. One no keeps Reciprocal Restraint.
+2. Each faction votes in turn on one screen, State first.
+3. "A full Campaign" of Talks: in force at the previous Propaganda round, no breach since.
+4. A refused Negotiated Outcome may end Talks to Reciprocal Restraint.
+5. State first, then PKK, at each sub-step.

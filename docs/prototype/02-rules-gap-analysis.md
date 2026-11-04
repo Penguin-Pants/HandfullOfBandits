@@ -40,7 +40,7 @@ The research contains enough detail to implement a complete playable two-player 
 | GAP-B08 | Assault removal above removable pieces | 06 s2.4 items 2 and 3 | PA-08 (accepted): Unused removals are lost. (The Base rule is already source text, 06 s2.4 item 3) |
 | GAP-B09 | Marker supply exhausted | 04 s4 (only Covert has a rule) | PA-09 (accepted): If no marker of the type is available, the placement does not happen. The log records "supply exhausted". For Harm markers the engine also raises a validation warning, because Harm gates depend on them |
 | GAP-B10 | Equal margins at a victory check | 09 s3 step 4 (no tie rule); 09 s4 item 5 (final ties) | PA-10 (accepted): Use the final-scoring tie order: lower Harm count, then PKK |
-| GAP-B11 | Talks vote with one yes and one no | 07 s7.3 step 2 | PA-11 (replaced): Any no vote ends the ceasefire. Ceasefire goes to None |
+| GAP-B11 | Talks vote with one yes and one no | 07 s7.3 step 2 | PA-11 (replaced by DEC-66): one no keeps Reciprocal Restraint |
 | GAP-B12 | Extort selection | 06 s5.2: "In each space with ..." | PA-12 (replaced): The PKK chooses any subset of qualifying spaces and boxes. Each chosen location activates one Guerrilla and gives +1 Resource. This overrides the source text "In each space" |
 | GAP-B13 | Random source for hidden and random selections | 05 s6.4 step 5; 07 s10.2 item 2 | PA-13 (accepted): All random selections use the session seeded generator (05-rules-engine-spec.md, section 8). Not a game rule change. Listed so the designer sees it |
 | GAP-B14 | Air Mobility with Troops in an external box | 06 s3.1 | PA-14 (accepted): Air Mobility never uses an external box as origin or destination. Troops leave a box only at Redeploy (05 s6.7) |
