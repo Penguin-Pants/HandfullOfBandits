@@ -26,6 +26,7 @@ const condition: z.ZodType<SpaceCondition> = z.lazy(() =>
     z.strictObject({ type: z.literal("trackAtMost"), track: id, value: z.int() }),
     z.strictObject({ type: z.literal("trackIn"), track: id, values: idList(1) }),
     z.strictObject({ type: z.literal("flag"), flag: id, value: z.boolean() }),
+    z.strictObject({ type: z.literal("totalAtLeast"), total: id, value: z.int() }),
   ]),
 );
 
@@ -83,6 +84,8 @@ export const cardsSchema = elementList(
       type: z.enum(["event", "capability", "momentum", "pivotal", "propaganda"]),
       mandatory: z.boolean().default(false),
       always: z.array(effect).default([]),
+      /** Pivotal board precondition (05 s4 step 2) and its approved text (docs/prototype/31 s6.2). */
+      precondition: z.strictObject({ text, if: condition }).optional(),
       unshaded: side.optional(),
       shaded: side.optional(),
       chainAfter: idList(0).default([]),

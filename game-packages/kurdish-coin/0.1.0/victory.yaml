@@ -9,6 +9,8 @@ totals:
     - {type: multiply, by: 2, of: {type: sumPopWhere, where: {type: spaceLevelIn, levels: [-2]}}}
   domesticPkkBases:
     - {type: countPieces, pieces: [pkkBase], where: {type: spaceKind, kind: domestic}}
+  domesticGuerrillas:
+    - {type: countPieces, pieces: [guerrilla], where: {type: spaceKind, kind: domestic}}
 scores:
   state:
     - {type: sumPopWhere, where: {type: spaceLevelIn, levels: [1]}}

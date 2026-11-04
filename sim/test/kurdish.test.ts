@@ -63,7 +63,7 @@ describe("kurdish-coin 0.1.0", () => {
     const view = derive(ruleset, setupState(ruleset, "full-campaign", 1));
     expect(view.scores).toEqual({ state: 21, pkk: 4 });
     expect(view.harm).toEqual({ state: 0, pkk: 0 });
-    expect(view.totals).toEqual({ totalSupport: 11, totalOpposition: 3, domesticPkkBases: 1 });
+    expect(view.totals).toEqual({ totalSupport: 11, totalOpposition: 3, domesticPkkBases: 1, domesticGuerrillas: 5 });
     expect(view.margins).toEqual({ state: -28, pkk: -26 });
   });
 

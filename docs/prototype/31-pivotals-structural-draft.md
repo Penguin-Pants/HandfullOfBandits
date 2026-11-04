@@ -1,6 +1,6 @@
 # 31 Remaining Pivotals and structural cards: approved text
 
-Status: **approved by the designer 2026-11-04** (DEC-67): section 7 as proposed, Area Domination Assault in the Sweep spaces, section 8 plan changes. Sections 5 and 8 items 2 and 3 built in P3b-06a; sections 1 to 4 are P3b-06b ([11](11-build-plan.md) section 4). Source: research 05 s4, s5; 07 s5, s6; 08 s2.2, s2.3, s4; 10 s6.1; deck CSV rows DK-037, DK-040, DK-054, DK-076, DK-093, DK-098.
+Status: **approved by the designer 2026-11-04** (DEC-67): section 7 as proposed, Area Domination Assault in the Sweep spaces, section 8 plan changes. Sections 5 and 8 items 2 and 3 built in P3b-06a; sections 1 to 4 built in P3b-06b ([11](11-build-plan.md) section 4). Source: research 05 s4, s5; 07 s5, s6; 08 s2.2, s2.3, s4; 10 s6.1; deck CSV rows DK-037, DK-040, DK-054, DK-076, DK-093, DK-098.
 
 Each section gives the rule as it will be built, then the open points. Section 7 lists every open point with its approved answer.
 

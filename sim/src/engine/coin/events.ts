@@ -36,6 +36,8 @@ export interface EventRun {
 interface Cursor {
   next: number;
   selected: string | null;
+  /** Locations of the last free action, for constraint `withinPrevious` (Area Domination). */
+  previous: readonly string[];
 }
 
 function ask(run: EventRun, code: string, message: string, question?: Question): never {
@@ -191,6 +193,7 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   const saId = asString(constraints["sa"]);
   const value = answer(run, cursor, { kind: "plan", prompt: `Plan the free ${action} (or null to skip)`, options: [], min: 0, max: 1, action, ...(saId === null ? {} : { sa: saId }) });
   if (value === null) {
+    cursor.previous = [];
     ctx.log("EffectSkipped", { effect: "freeAction", action, reason: "declined" }, run.ruleRef);
     return;
   }
@@ -198,27 +201,36 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   const part = plan === null ? null : readPart(plan);
   if (plan === null || part === null) ask(run, "badAnswer", `The free ${action} plan is not well formed.`);
   const saPlan = asObject(plan["sa"]);
-  const saPart = saPlan === null ? null : readPart(saPlan);
+  const planned = saPlan === null ? null : readPart(saPlan);
+  // `saOptional`: an SA with no locations is left out (Area Domination Village Clearance).
+  const saPart = constraints["saOptional"] === true && (planned === null || planned.locations.length === 0) ? null : planned;
   for (const p of [part, saPart]) {
     if (p !== null && new Set(p.locations).size !== p.locations.length) ask(run, "badAnswer", "Select each location of a free action once.");
   }
-  const allowed = asList(constraints["spaces"]);
+  const allowed = constraints["withinPrevious"] === true ? [...cursor.previous] : asList(constraints["spaces"]);
+  if (constraints["withinPrevious"] === true && allowed.length === 0) ask(run, "eventConstraint", "The free action may only use the spaces of the action before it, and that action selected none.");
   const terrain = asList(constraints["terrain"]);
   if (part.locations.length === 0 || (typeof constraints["maxLocations"] === "number" && part.locations.length > constraints["maxLocations"]) || part.locations.some(id => (allowed.length > 0 && !allowed.includes(id)) || (terrain.length > 0 && !terrain.includes(ctx.ruleset.spaces.find(s => s.id === id)?.terrain ?? "")) || (constraints["undergroundAndTroops"] === true && (count(ctx.state, id, PIECE.guerrilla, FACE.underground) === 0 || count(ctx.state, id, PIECE.troops) === 0)))) ask(run, "eventConstraint", "The free action does not meet the card’s location limits.");
-  const options: ActionOptions = { faction: handler.faction, limited: false, free: true, constraints, op: null, sa: saId, opLocations: [], saLocations: saPart?.locations ?? [], subActions: [] };
-  const sa = saId === null ? undefined : actionHandlers[saId];
+  const options: ActionOptions = { faction: handler.faction, limited: false, free: true, constraints, op: null, sa: constraints["saOptional"] === true && saPart === null ? null : saId, opLocations: [], saLocations: saPart?.locations ?? [], subActions: [] };
+  const sa = saId === null || (constraints["saOptional"] === true && saPart === null) ? undefined : actionHandlers[saId];
   // Free Event actions count for the ceasefire table (07 s7.2).
   applyRestraint(ctx, handler.faction, [{ id: action, part }, ...(saId === null || saPart === null ? [] : [{ id: saId, part: saPart }])]);
-  if (sa !== undefined) {
+  const runSa = (): void => {
+    if (sa === undefined) return;
     const saOptions: ActionOptions = { ...options, op: action, sa: null, opLocations: part.locations, saLocations: [] };
     const found = sa.check(ctx.ruleset, ctx.state, saPart ?? { locations: [], perLocation: {} }, saOptions);
     if (found.length > 0) ask(run, found[0]?.code ?? "badAnswer", found.map((v) => v.message).join(" "));
     sa.execute(ctx, saPart ?? { locations: [], perLocation: {} }, saOptions);
-  }
+  };
+  // `saTiming: after`: the SA meets the board after the action (Area Domination, doc 31 s3 item 2).
+  const after = constraints["saTiming"] === "after";
+  if (!after) runSa();
   const found = handler.check(ctx.ruleset, ctx.state, part, options);
   if (found.length > 0) ask(run, found[0]?.code ?? "badAnswer", found.map((v) => v.message).join(" "));
   ctx.log("ChoiceMade", { freeAction: action, locations: [...part.locations] }, run.ruleRef);
   handler.execute(ctx, part, options);
+  if (after) runSa();
+  cursor.previous = part.locations;
 }
 
 function readPart(o: JsonObject): ActionPart | null {
@@ -230,5 +242,5 @@ function readPart(o: JsonObject): ActionPart | null {
 
 /** Run an effect list. Throws AnswerNeeded at a missing or bad answer. */
 export function runEffects(run: EventRun, effects: readonly CardEffect[]): void {
-  runList(run, { next: 0, selected: null }, effects);
+  runList(run, { next: 0, selected: null, previous: [] }, effects);
 }

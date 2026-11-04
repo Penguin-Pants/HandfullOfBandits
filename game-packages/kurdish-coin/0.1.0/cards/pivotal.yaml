@@ -1,9 +1,13 @@
-# Pivotal Events (research 05 s4, 08 s4) from the deck CSV. Not encoded until Phase 3a.
+# Pivotal Events (research 05 s4, 08 s4) from the deck CSV. Preconditions and effects: approved text
+# docs/prototype/31 s2 to s4 (DEC-67). ARGK allocation and flips: coin/pivotal.ts (P3a-05).
 - id: DK-015
   campaign: C1
   title: "ARGK Formed"
   date: "1986-10"
   type: pivotal
+  precondition:
+    text: "8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases"
+    if: {type: all, of: [{type: totalAtLeast, total: domesticGuerrillas, value: 8}, {type: totalAtLeast, total: domesticPkkBases, value: 2}]}
   unshaded:
     text: "Earliest C1. Precondition: 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases. Effect: place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in those spaces Underground, PKK +3 Resources."
     owner: pkk
@@ -22,17 +26,31 @@
   campaign: C3
   title: "Serhildan"
   type: pivotal
+  precondition:
+    text: "Total Opposition is 14 or more, and Mardin-Batman or Botan is at Passive or Active Opposition"
+    if:
+      type: all
+      of:
+        - {type: totalAtLeast, total: totalOpposition, value: 14}
+        - {type: any, of: [{type: atSpace, space: mardin-batman, of: {type: spaceLevelIn, levels: [-1, -2]}}, {type: atSpace, space: botan, of: {type: spaceLevelIn, levels: [-1, -2]}}]}
   unshaded:
     text: "Earliest C3. Precondition: Total Opposition is 14 or more and Mardin-Batman or Botan is at Opposition. Effect: shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1."
     owner: pkk
     tier: T0
-    effects: []
+    effects:
+      - type: forEachSpace
+        where: {type: all, of: [{type: spaceKind, kind: domestic}, {type: spaceHas, pieces: [guerrilla, pkkBase]}, {type: not, of: {type: spaceHas, markers: [office]}}]}
+        min: 0
+        max: 3
+        effects:
+          - {type: shiftLevel, space: selected, direction: opposition, steps: 1}
+      - {type: adjustTrack, track: europe, delta: 1}
   shaded:
     text: "None (single-sided Pivotal Event)"
     owner: null
     tier: T0
     effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+  encoding: {status: encoded, encodedBy: "P3b-06b", reviewedAgainstText: true, note: "doc 31 s2; DEC-67"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0271, E-0272, E-0173, S-0446]
@@ -40,17 +58,22 @@
   campaign: C4
   title: "Area Domination"
   type: pivotal
+  precondition:
+    text: "Emergency Rule is OHAL Extended Powers, and Total Opposition is 12 or more"
+    if: {type: all, of: [{type: trackIn, track: emergencyRule, values: [ohalExtendedPowers]}, {type: totalAtLeast, total: totalOpposition, value: 12}]}
   unshaded:
     text: "Earliest C4. Precondition: Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more. Effect: free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost."
     owner: state
     tier: T1
-    effects: []
+    effects:
+      - {type: freeAction, action: state.sweep, constraints: {terrain: [mountain], maxLocations: 3, sa: state.village-clearance, saOptional: true, saTiming: after}}
+      - {type: freeAction, action: state.assault, constraints: {maxLocations: 3, withinPrevious: true}}
   shaded:
     text: "None (single-sided Pivotal Event)"
     owner: null
     tier: T1
     effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+  encoding: {status: encoded, encodedBy: "P3b-06b", reviewedAgainstText: true, note: "doc 31 s3; DEC-67: Assault in the Sweep spaces, Village Clearance after the Sweep"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0202, E-0204, S-0258, S-0120]
@@ -58,17 +81,24 @@
   campaign: C5
   title: "Coercive Diplomacy on Syria"
   type: pivotal
+  precondition:
+    text: "Syria posture is Tolerant or Restricted, and Legitimacy is 5 or more"
+    if: {type: all, of: [{type: trackIn, track: posture.syria, values: [tolerant, restricted]}, {type: trackAtLeast, track: legitimacy, value: 5}]}
   unshaded:
     text: "Earliest C5. Precondition: Syria posture is Tolerant or Restricted and Legitimacy is 5 or more. Effect: Syria posture to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing."
     owner: state
     tier: T0
-    effects: []
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: posture.syria, values: [tolerant]}
+        then: [{type: stepOrdinal, track: posture.syria, direction: next, steps: 2}]
+        else: [{type: stepOrdinal, track: posture.syria, direction: next, steps: 1}]
   shaded:
     text: "None (single-sided Pivotal Event)"
     owner: null
     tier: T0
     effects: []
-  encoding: {status: notEncoded, reviewedAgainstText: false}
+  encoding: {status: encoded, encodedBy: "P3b-06b", reviewedAgainstText: true, note: "doc 31 s4: posture steps run the Hostile entry (shiftHost)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0124, E-0126, E-0127, E-0018, E-0019, S-0086, S-0087, S-0091, S-0089]

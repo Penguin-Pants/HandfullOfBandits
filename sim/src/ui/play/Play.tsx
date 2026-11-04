@@ -215,7 +215,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           </section>
           {legal.faction !== null && <FactionPanel onTargets={setFactionTargets} api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
-          {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} /> : view.status.phase === "propaganda" ? (
+          {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} api={api} sessionId={sessionId} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onTargets={setEventTargets} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} /> : view.status.phase === "propaganda" ? (
             <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
           ) : (
             <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
