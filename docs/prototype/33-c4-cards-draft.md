@@ -1,6 +1,6 @@
 # 33 C4 cards: encoding draft
 
-Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). P3b-07d and P3b-07e built; point 10 added at P3b-07d (DEC-71), point 11 at P3b-07e (DEC-73). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
+Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). P3b-07d, P3b-07e and P3b-07f built; point 10 added at P3b-07d (DEC-71), point 11 at P3b-07e (DEC-73). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
 
 Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with its approved answer.
 
