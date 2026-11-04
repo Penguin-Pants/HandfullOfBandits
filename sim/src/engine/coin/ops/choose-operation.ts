@@ -139,7 +139,9 @@ function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): b
     ? ids.flatMap((to) => ids.filter((from) => from !== to).map((from) => ({ locations: [to], perLocation: { [to]: { moves: [{ from, count: 1 }] } } })))
     : ids.flatMap((loc) => ["place", "base", "grow", "flip"].map((option) => ({ locations: [loc], perLocation: { [loc]: { option } } })));
   const budget = resources(ruleset, state, plan.options.faction);
-  return probes.some((p) => plan.op.check(ruleset, state, p, plan.options).length === 0 && plan.op.cost(ruleset, state, p, plan.options) <= budget);
+  // A replacement is a new resume command: no Special Activity and no optional sub-actions.
+  const options: ActionOptions = { ...plan.options, sa: null, saLocations: [], subActions: [] };
+  return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget);
 }
 
 export const chooseOperationHandler: CommandHandler = {

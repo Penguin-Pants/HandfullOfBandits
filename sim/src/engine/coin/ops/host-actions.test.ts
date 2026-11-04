@@ -151,3 +151,13 @@ it("ends a Rally when Host Pressure leaves no legal, affordable location, keepin
   expect(next.state.initiative.actedThisCard).toEqual(["pkk"]);
   expect(next.entries.some((e) => e.kind === "EffectSkipped" && e.data["reason"] === "noLegalReplacement" && e.ruleRef === "DEC-54")).toBe(true);
 });
+it("probes replacements without the original Agitate choices, so a legal replacement Rally still pauses (PR #43 review)", () => {
+  // Two Agitate sub-actions (extra-agitate) name Botan and Hakkari; no one-location probe contains both.
+  const base = withRoll(setTrack(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), "resources.pkk", 10), 1);
+  const state: GameState = {...setPieces(base, "hakkari", "pkkBase", 1), modifiers: [{id: "extra-agitate", params: {maxSpaces: 2}, duration: "game", sourceCard: "DK-007"}]};
+  const subs = ["botan", "hakkari"].map((space) => ({action: "agitate", space, params: {shifts: 1}}));
+  const next = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone", "botan", "hakkari"], subActions: subs, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
+  expect(next.state.tracks["posture.kdp"]).toBe("restricted");
+  expect(next.state.pending?.resume?.op).toBe("pkk.rally");
+  expect(next.entries.some((e) => e.data["reason"] === "noLegalReplacement")).toBe(false);
+});
