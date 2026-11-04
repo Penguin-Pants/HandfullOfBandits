@@ -79,6 +79,42 @@ describe("T-PROP: Legitimacy (05 s6.4)", () => {
   });
 });
 
+describe("T-PROP: Emergency Rule step table (P3b-01; research 07 s8.1 and s8.2)", () => {
+  const atStep = (step: string, c = "C2"): GameState => at({ ...setTrack(s0, "emergencyRule", step), turn: { ...s0.turn, campaign: c } }, "legitimacy");
+  const legitimacy = (s: GameState): number => Number(s.tracks["legitimacy"]);
+  const after = (s: GameState, command: AnyCommand): GameState => play(s, command).state;
+
+  it("drains Legitimacy by the 07 s8.1 amount for each step", () => {
+    // Same board for every step; the difference to Normalizing (drain 0) is the step's drain.
+    const base = legitimacy(after(atStep("normalizing"), advance));
+    const drain = (step: string): number => base - legitimacy(after(atStep(step), advance));
+    expect(["martialLaw", "ohal", "ohalExtendedPowers", "normalizing"].map(drain)).toEqual([1, 1, 2, 0]);
+  });
+
+  it.each([
+    ["martialLaw", "C2", []],
+    ["ohal", "C2", ["normalizing"]],
+    ["ohal", "C3", ["normalizing", "ohalExtendedPowers"]],
+    ["ohalExtendedPowers", "C3", ["ohal"]],
+    ["normalizing", "C3", ["ohal"]],
+  ])("from %s in %s, the State may move only to %j", (from, campaign, allowed) => {
+    const s = atStep(from, campaign);
+    for (const to of ["martialLaw", "ohal", "ohalExtendedPowers", "normalizing"]) {
+      const ok = codes(s, choice("legitimacy", { emergencyStep: to })).length === 0;
+      expect(ok, `${from} -> ${to} in ${campaign}`).toBe(allowed.includes(to));
+    }
+  });
+
+  it("charges 1 Legitimacy only for Normalizing to OHAL; the other moves are free", () => {
+    const cost = (from: string, to: string): number => legitimacy(after(atStep(from, "C3"), advance)) - legitimacy(after(atStep(from, "C3"), choice("legitimacy", { emergencyStep: to })));
+    expect(cost("normalizing", "ohal")).toBe(1);
+    expect(cost("ohal", "normalizing")).toBe(0);
+    expect(cost("ohal", "ohalExtendedPowers")).toBe(0);
+    expect(cost("ohalExtendedPowers", "ohal")).toBe(0);
+    expect(t(after(atStep("normalizing", "C3"), choice("legitimacy", { emergencyStep: "ohal" })), "emergencyRule")).toBe("ohal");
+  });
+});
+
 describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
   it("caps State spending at Legitimacy / 2 and needs Troops, Police and Control", () => {
     const spend = (space: string, shifts: number): AnyCommand => choice("civicAction", { spaces: { [space]: { shifts } } });
