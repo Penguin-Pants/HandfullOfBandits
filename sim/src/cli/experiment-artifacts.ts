@@ -54,6 +54,17 @@ export class Artifacts {
     this.w.append(join(this.dir, "games", `${gameFile(gameId)}.jsonl`), `${JSON.stringify(event)}\n`);
   }
 
+  /** Whether the game's journal is sealed, so the game finished and was recorded. */
+  sealed(gameId: string): boolean {
+    return existsSync(join(this.dir, "games", `${gameFile(gameId)}.jsonl.gz`));
+  }
+
+  /** Remove an unfinished (plain) journal so a resumed run plays the game again from the start. */
+  discard(gameId: string): void {
+    const plain = join(this.dir, "games", `${gameFile(gameId)}.jsonl`);
+    if (existsSync(plain)) this.w.remove(plain);
+  }
+
   /** Compress a finished journal atomically; the plain file goes only after the archive exists. */
   seal(gameId: string): void {
     const plain = join(this.dir, "games", `${gameFile(gameId)}.jsonl`);

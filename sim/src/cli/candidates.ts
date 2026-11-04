@@ -14,7 +14,7 @@ import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
 
-export const GENERATOR_VERSION = "cand-4";
+export const GENERATOR_VERSION = "cand-5";
 
 export type DecisionKind = "card" | "pivotal" | "resume" | "upkeep" | "legitimacy" | "civicAction" | "agitation" | "redeployState" | "redeployPkk";
 
@@ -453,7 +453,7 @@ function eventCompletions(engine: Engine, r: Ruleset, s: GameState, command: Any
  * the space back in a later Propaganda phase.
  */
 interface Spend { readonly loc: string; readonly cost: number; readonly gain: number; readonly harm: number; readonly opp: number; readonly exposed: boolean; readonly params: JsonObject }
-interface Allocation { readonly cost: number; readonly gain: number; readonly safe: number; readonly harm: number; readonly opp: number; readonly picks: readonly Spend[] }
+interface Allocation { readonly cost: number; readonly gain: number; readonly safe: number; readonly harm: number; readonly opp: number; readonly exposure: string; readonly picks: readonly Spend[] }
 
 /** Harm markers above the limit for a faction (rules 7.3: each costs 2 final margin). */
 function excessHarm(r: Ruleset, s: GameState, keys: readonly string[]): number {
@@ -465,24 +465,32 @@ function excessHarm(r: Ruleset, s: GameState, keys: readonly string[]): number {
  * Harm value is capped over the whole allocation: 2 margin per own excess marker removed, minus 2
  * per opponent excess marker removed (rules 7.3). Kept: allocations no other beats on cost, value
  * and Harm removed (lower Harm breaks tied margins), and the same over value the opponent cannot
- * reverse. Best first, so a family cap prunes the weakest allocations.
+ * reverse. Up to three allocations per search state that gain in different exposed spaces are kept,
+ * because a resource-limited reply can reverse equal gains differently (cand-5). Best first, so a
+ * family cap prunes the weakest allocations.
  */
 function allocations(options: readonly (readonly Spend[])[], budget: number, excess: number, oppExcess: number): Spend[][] {
-  // Per (cost, harm, opp): the best allocation by gain and the best by unexposed gain.
-  let states = new Map<string, { byGain: Allocation; bySafe: Allocation }>();
-  const empty: Allocation = { cost: 0, gain: 0, safe: 0, harm: 0, opp: 0, picks: [] };
-  states.set("0|0|0", { byGain: empty, bySafe: empty });
+  // Per (cost, harm, opp): the best allocations by gain with distinct exposed shifts (ties kept,
+  // cand-5), and the best allocation by unexposed gain.
+  const TIES = 3; // literal-ok: bounded tie set per search state
+  let states = new Map<string, { byGain: Allocation[]; bySafe: Allocation }>();
+  const empty: Allocation = { cost: 0, gain: 0, safe: 0, harm: 0, opp: 0, exposure: "", picks: [] };
+  states.set("0|0|0", { byGain: [empty], bySafe: empty });
+  const better = (list: readonly Allocation[], a: Allocation): Allocation[] => {
+    if (list.some((x) => x.exposure === a.exposure && x.gain >= a.gain)) return [...list];
+    return [...list.filter((x) => x.exposure !== a.exposure), a].sort((x, y) => y.gain - x.gain).slice(0, TIES);
+  };
   for (const space of options) {
     const next = new Map(states);
     for (const { byGain, bySafe } of states.values()) {
-      for (const from of byGain === bySafe ? [byGain] : [byGain, bySafe]) {
+      for (const from of new Set([...byGain, bySafe])) {
         for (const o of space) {
           if (from.cost + o.cost > budget) continue;
-          const a: Allocation = { cost: from.cost + o.cost, gain: from.gain + o.gain, safe: from.safe + (o.exposed ? 0 : o.gain), harm: from.harm + o.harm, opp: from.opp + o.opp, picks: [...from.picks, o] };
+          const a: Allocation = { cost: from.cost + o.cost, gain: from.gain + o.gain, safe: from.safe + (o.exposed ? 0 : o.gain), harm: from.harm + o.harm, opp: from.opp + o.opp, exposure: o.exposed && o.gain > 0 ? `${from.exposure}${o.loc}:${String(o.gain)};` : from.exposure, picks: [...from.picks, o] };
           const key = `${String(a.cost)}|${String(a.harm)}|${String(a.opp)}`;
           const old = next.get(key);
-          if (old === undefined) { next.set(key, { byGain: a, bySafe: a }); continue; }
-          next.set(key, { byGain: a.gain > old.byGain.gain ? a : old.byGain, bySafe: a.safe > old.bySafe.safe ? a : old.bySafe });
+          if (old === undefined) { next.set(key, { byGain: [a], bySafe: a }); continue; }
+          next.set(key, { byGain: better(old.byGain, a), bySafe: a.safe > old.bySafe.safe ? a : old.bySafe });
         }
       }
     }
@@ -494,7 +502,7 @@ function allocations(options: readonly (readonly Spend[])[], budget: number, exc
     return sorted.filter((a) => !sorted.some((b) => b !== a && b.cost <= a.cost && value(b) >= value(a) && b.harm >= a.harm && (b.cost < a.cost || value(b) > value(a) || b.harm > a.harm)));
   };
   const entries = [...states.values()];
-  const byGain = pareto(entries.map((e) => e.byGain), (a) => a.gain + harmValue(a));
+  const byGain = pareto(entries.flatMap((e) => e.byGain), (a) => a.gain + harmValue(a));
   const bySafe = pareto(entries.map((e) => e.bySafe), (a) => a.safe + harmValue(a));
   return interleave([byGain, bySafe]).map((a) => [...a.picks]);
 }

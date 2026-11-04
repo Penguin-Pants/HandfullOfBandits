@@ -25,7 +25,7 @@ const usage = [
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
   "       sim batch --games N --strategy <state>,<pkk> [--swap-seats] [--seed N] [--scenario scenario-a] [--package <dir>] [--out <csv>]",
-  "       sim experiment run <manifest.json> --out <new-dir>",
+  "       sim experiment run <manifest.json> --out <new-dir> | --out <interrupted-dir> --resume",
   "       sim experiment replay <experiment-dir> [--game <gameId>]",
   "       sim experiment analyze <experiment-dir>",
   "       sim experiment archive <experiment-dir>",
@@ -78,10 +78,10 @@ if (command === "validate" && target !== undefined) {
 } else if (command === "experiment") {
   const [, action, path] = args;
   const known = new Set(["--out", "--game", "--players", "--package"]);
-  const bad = action === "compare" ? args.slice(3).filter((a) => a.startsWith("--") && !known.has(a)) : args.slice(3).filter((a, i, all) => a.startsWith("--") ? !known.has(a) : !known.has(all[i - 1] ?? ""));
+  const bad = action === "compare" ? args.slice(3).filter((a) => a.startsWith("--") && !known.has(a)) : args.slice(3).filter((a, i, all) => a.startsWith("--") ? !known.has(a) && a !== "--resume" : !known.has(all[i - 1] ?? ""));
   if (bad.length > 0 || path === undefined) print({ exitCode: 2, lines: [usage] });
   else if (action === "run" && args.includes("--out")) {
-    runExperiment(path, flag("--out", ""), { log: (line) => { console.log(line); } })
+    runExperiment(path, flag("--out", ""), { log: (line) => { console.log(line); }, resume: args.includes("--resume") })
       .then((o) => { print({ exitCode: 0, lines: [`experiment ${o.experimentHash} in ${o.dir}: ${JSON.stringify(o.byStatus)}`] }); })
       .catch((e: unknown) => { print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] }); });
   } else if (action === "replay") {
