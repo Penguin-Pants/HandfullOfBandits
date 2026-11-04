@@ -1,15 +1,15 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 done (DEC-67, [31](31-pivotals-structural-draft.md)): P3b-06a (PR #47) and P3b-06b (PR #48). P3b-07 in progress: C3 done (P3b-07a to 07c, DEC-68, [32](32-c3-cards-draft.md)); C4 and C5 wait for their draft. **Next task: P3b-07 C4 draft.**
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 done (DEC-67, [31](31-pivotals-structural-draft.md)): P3b-06a (PR #47) and P3b-06b (PR #48). P3b-07 in progress: C3 done (P3b-07a to 07c, DEC-68, [32](32-c3-cards-draft.md)); C4 draft approved (DEC-69, [33](33-c4-cards-draft.md)), P3b-07d done; C5 waits for its draft. **Next task: P3b-07e.**
 
-## 0. Resume here (updated 2026-11-04, P3b-07c)
+## 0. Resume here (updated 2026-11-04, P3b-07d)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next task: P3b-07 C4 cards** (Phase 3b table below; research 08; deck CSV). 5 cards per PR. Draft [33](33-c4-cards-draft.md) approved (DEC-69): build P3b-07d to P3b-07g in its batch order. C5 needs its own draft after that.
-1. Already built: all C3 cards and the C3 Propaganda card (P3b-07a to 07c); all four Pivotals and the three structural cards (P3b-06); procedures `legal.officeLines`, `covert.revealRandom` (DK-079 and DK-080 reveal up to 2), `hizbullah.unattributed`; Event Europe cap; PKK side restriction (`executors`).
-2. Remaining: 18 C4 Event cards, 2 C4 Momentum cards, DK-077 Propaganda; 19 C5 cards (DK-093 built), DK-091 Capability, DK-099 Propaganda. Package validation still blocks the full campaign on C4 and C5 (V-CARDS).
-3. DK-065, DK-067 and DK-094 need the full Legal Politics table as a procedure (only lines 3 and 4 are registered).
+**Next task: P3b-07e C4 ceasefire cards** DK-056, DK-057, DK-058, DK-059, DK-073 with engine addition B2 (draft [33](33-c4-cards-draft.md) s2.2, s3, points 5 to 7; research 08; deck CSV). Then P3b-07f and P3b-07g in the draft's batch order. 5 cards per PR. C5 needs its own draft after that.
+1. Already built: all C3 cards and the C3 Propaganda card (P3b-07a to 07c); C4 legal-party cards DK-060, DK-065 to DK-068 and Propaganda DK-077 (P3b-07d), with procedures `legal.ban`, `legal.successor` and `legal.successorFull` (one copy shared with the phase); all four Pivotals and the three structural cards (P3b-06); procedures `legal.officeLines`, `covert.revealRandom` (DK-079 and DK-080 reveal up to 2), `hizbullah.unattributed`; Event Europe cap; PKK side restriction (`executors`).
+2. Remaining: 13 C4 Event cards and 2 C4 Momentum cards (P3b-07e to 07g); 19 C5 cards (DK-093 built), DK-091 Capability, DK-099 Propaganda. Package validation still blocks the full campaign: C4 has 5 eligible cards for a pile of 12, C5 has no Propaganda card (V-CARDS).
+3. DK-094 shaded ("up to the Office limit plus 1") needs its own Office procedure in the C5 draft. Lines 1 to 4 are registered.
 
 **Owner decisions in force**
 - **DEC-70 project order (2026-11-04):** 1. Finalize rules, cards and mechanics (P3b-07 C4 and C5, P3b-08 scenarios, Phase 3c full campaign). 2. Finish the engine and UI for manual play and test (IC-3a to IC-3c). 3. Automated games with bot profiles, as the Scenario A program (docs 19 to 23): extend profiles to every C3 to C5 rule and card, then run and review. Stage 3 replaces "automated opponents" and "batch execution" in Phase 5. The no-simulations rule holds until stage 3.
@@ -22,10 +22,11 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 - Printable rulebook PDF is stale since DEC-62 (Host Pressure, rules 4.3.4). Run `make rulebook` where XeLaTeX is installed.
 - **Repository renamed** to `Penguin-Pants/HandfullOfBandits`. Older links to `HandfulOfBandits` redirect. A session needs the new name in its GitHub scope to resolve review threads.
 
-**Carried follow-ups from P3b-02 to P3b-06a** (details in section 4). Closed in P3b-06a: the ceasefire step concern (Drop, DEC-67) and the Event Europe cap (fixed).
+**Carried follow-ups from P3b-02 to P3b-07d** (details in section 4). Closed in P3b-06a: the ceasefire step concern (Drop, DEC-67) and the Event Europe cap (fixed).
 1. **Before the next simulations:** batch bots never file a closure case, declare a ceasefire, answer the ceasefire step (`cli/candidates.ts` `AUTO_PHASES`) or play a Pivotal other than ARGK (`cli/candidates.ts` pivotal family).
 2. **Proposed (P3b-07, doc 32 s5):** `movePieces` with `toState` moves Underground Guerrillas first, so "move ... Underground" sides (DK-005, DK-017, DK-041, DK-047) leave Active ones behind. Fix: move the other faces first. Changes C1 and C2 play; needs approval.
 3. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (six call sites; P3b-06b added `coin/pivotal.ts` `campaignReached`).
+4. **Closed (DEC-72):** DK-051 now files only while Legal Space is Open or Prosecuted (fixed in P3b-07d, PR #52).
 
 **Recent merged work**
 
@@ -566,7 +567,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. P3b-07 C3 done; **next: the C4 draft for P3b-07** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. P3b-07 C3 and P3b-07d done; **next: P3b-07e** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
 
 **P3b-02 (2026-11-04):** complete. The designer approved the effect order and every player-facing string in [27](27-village-clearance-draft.md) before code. `coin/ops/sa/village-clearance.ts` accompanies Sweep or Garrison, checks the four conditions and applies the seven effects in order with rule refs `06 s3.4 effect 1` to `7`. It costs Legitimacy only; four new parameters (`clearance.*`) hold every number. DEC-63: condition 2 reads flag `ohalPowers` or Campaign C3 or later; no card sets the flag yet, so Scenario A cannot use it. PA-18 (GAP-B16): an existing State Harm or Coercion marker blocks the effect-1 shift. Tests: `village-clearance.test.ts` (T-OPS, T-VAL, four T-PERV cases from 09 s7.1) and a summary check in `forms.test.ts`. Mutation checks (swap effects 3 and 4; Pop cost 0) fail the suite.
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseOperation with the SA before and after Sweep and Garrison, the re-check after the Op, the Reception shortfall, the blocked shift, the Neutral case and the Rally block that follows. No path code. Pass 2 replaced a local Legitimacy reader with the existing pattern.
@@ -632,6 +633,16 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 - **Validation:** `make check` passes. `make test`: 82 files, 1114 tests pass. `make e2e` passes. `make schema` regenerated `cards.schema.json`. Package validation: C3 has no block; the full campaign still needs C4 and C5 (V-CARDS). Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes). Node 24 from `/opt/node24` here. Windows execution not run.
 - **Size:** about 100 changed lines in `sim/src` without tests; card YAML is package data.
 
+**P3b-07d (2026-11-04):** complete. `cards/c4.yaml` holds DK-060, DK-065, DK-066, DK-067, DK-068 and Propaganda DK-077 ([33](33-c4-cards-draft.md) s2.1). B1: `propaganda/legal-politics.ts` exports `ban` (line 1) and `successor` (line 2, minus 1 or 0); the phase and procedures `legal.ban`, `legal.successor`, `legal.successorFull` share them. DK-065 and DK-067 shaded have no owner (either) and no `executors`; every other legal side is State-only.
+- **Decide (resolved):** DK-065 unshaded while Legal Space is Banned had no rule. Owner decision: nothing happens, as DK-068 (DEC-71, doc 33 point 10).
+- Tests: `c4-cards.test.ts` (T-EVT per side, 25 tests). Mutation checks each fail the suite: no Banned guard on DK-065; `legal.successor` without the minus 1; DK-066 open to the PKK; DK-066 `min: 1`.
+- **TWO-PASS REVIEW.** Pass 1 traced ChooseEvent check and execute for each side (dry run with the choice and space answers); the phase lines 1 and 2 through the shared functions (`legal-politics.test.ts` unchanged and passing); the scripted policy on a State-only side (`cli/play.ts` `complete` returns null, the policy falls back to an Op). No path code. Pass 2 replaced two successor wrappers with registry lambdas.
+  - **Fix:** none in code; test helpers only (unset flag reads as not filed; sorted Office lists).
+  - **Drop:** a PKK First Eligible scripted bot never takes DK-065 or DK-067 shaded (it picks unshaded when the shaded owner is not its own, then falls back to an Op). Heuristic only; simulations are paused (owner rule).
+  - **Propose, then approved (DEC-72):** DK-051 Banned guard, fixed in the same PR with a test that fails without it.
+- **Validation:** `make check` passes. `make test`: 83 files, 1140 tests pass. `make e2e` passes. Card schema unchanged (no `make schema`). Package validation: C4 has 5 eligible cards for a pile of 12; C5 blocks as before (V-CARDS). Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes). Node 24 from `/opt/node24`. Windows execution not run.
+- **Size:** about 60 changed lines in `sim/src` without tests; card YAML is package data.
+
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
 | P3b-01 ✅ | Emergency Rule step table and Legitimacy phase step 8 | module `emergency-rule` | IC-3a | 07 s8.2 table | T-PROP | None |
@@ -641,7 +652,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P3b-05 ✅ | Ceasefire, restrictions, breach, votes, Negotiated Outcome | module `ceasefire` | P3b-04 | 07 s7 fixtures. PA-11 | T-VAL, T-PROP | Breach warnings in UI |
 | P3b-06a ✅ | Structural cards (DK-037, 040, 093), PKK side restriction, Event Europe cap ([31](31-pivotals-structural-draft.md), DEC-67) | `cards/c3.yaml`, `c5.yaml`, `coin/procedures.ts` | P3b-05 | Always lines fire once | T-EVT | None |
 | P3b-06b ✅ | General Pivotal window, Serhildan, Area Domination, Coercive Diplomacy on Syria ([31](31-pivotals-structural-draft.md) s1 to s4) | `coin/pivotal.ts`, `cards/pivotal.yaml`, `ui/pivotal/` | P3b-06a | Each Pivotal plays from its earliest Campaign when its precondition holds | T-SEQ, T-EVT | Pivotal UI form size |
-| P3b-07 (C3 ✅) | Encode C3, C4, C5 cards | `cards/c3.yaml` to `c5.yaml` | P3b-06 | V-ENCODE passes for B and C | T-EVT | Volume. 5 cards per PR |
+| P3b-07 (C3 ✅, 07d ✅) | Encode C3, C4, C5 cards | `cards/c3.yaml` to `c5.yaml` | P3b-06 | V-ENCODE passes for B and C | T-EVT | Volume. 5 cards per PR |
 | P3b-08 | Scenarios B and C | `scenarios/*.yaml` | P3b-07 | Start scores equal 09 s2.3 | T-SCORE, golden | Scenario B threshold open (DD-19.7). Package value |
 
 **IC-3b:** Scenarios B and C each played to the end in the UI.
