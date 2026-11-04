@@ -40,6 +40,12 @@ export function revealCovert(ctx: Exec, space: string, ref: string): void {
   ctx.apply({ type: "adjustTrack", track: TRACK.legitimacy, delta: -param(ctx.ruleset, "covert.revealCost", "number"), ruleRef: ref, assumptionRef: null });
 }
 
+/** Reveal one face-down Covert marker picked at random (PA-13); none on the map: nothing. */
+export function revealRandomCovert(ctx: Exec, purpose: string, ref: string): void {
+  const spaces = ctx.ruleset.spaces.flatMap((s) => Array.from({ length: markers(ctx.state, s.id, MARKER.covert) }, () => s.id));
+  if (spaces.length > 0) revealCovert(ctx, ctx.pick(spaces, purpose, ref), ref);
+}
+
 export const legitimacyPhase: PropagandaPhase = {
   id: "legitimacy",
   ruleRef,
@@ -68,10 +74,7 @@ export const legitimacyPhase: PropagandaPhase = {
     if (onMap(ruleset, ctx.state, MARKER.reception) >= param(ruleset, "legitimacy.receptionThreshold", "number")) legit(ctx, -1, "step 3");
     if (onMap(ruleset, ctx.state, MARKER.disputedHarm) >= param(ruleset, "legitimacy.disputedThreshold", "number")) legit(ctx, -1, "step 4");
     // 5. Covert exposure: a random face-down marker is revealed (PA-13).
-    if (onMap(ruleset, ctx.state, MARKER.covert) >= param(ruleset, "covert.exposureThreshold", "number")) {
-      const spaces = ruleset.spaces.flatMap((s) => Array.from({ length: markers(ctx.state, s.id, MARKER.covert) }, () => s.id));
-      revealCovert(ctx, ctx.pick(spaces, "Covert exposure", `${ruleRef} step 5`), `${ruleRef} step 5`);
-    }
+    if (onMap(ruleset, ctx.state, MARKER.covert) >= param(ruleset, "covert.exposureThreshold", "number")) revealRandomCovert(ctx, "Covert exposure", `${ruleRef} step 5`);
     // 6. Europe adjustment.
     const harm = derive(ruleset, ctx.state).harm;
     const gap = param(ruleset, "europe.harmGap", "number");

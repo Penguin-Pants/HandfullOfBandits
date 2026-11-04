@@ -163,6 +163,107 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0178, S-0083, S-0180, S-0204, S-0210, S-0299, S-0103]
+- id: DK-043
+  campaign: C3
+  title: "Newroz Killings (Mar 1992)"
+  date: "1992-03-21"
+  type: event
+  unshaded:
+    text: "Block only: place a State Harm marker in Mardin-Batman and in Botan. No other effect."
+    owner: state
+    blockOnly: true
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: mardin-batman}
+      - {type: placeMarker, marker: stateHarm, space: botan}
+  shaded:
+    text: "Place a State Harm marker in Mardin-Batman and in Botan. Legitimacy -1. Europe +1. Shift Mardin-Batman one level toward Opposition."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: mardin-batman}
+      - {type: placeMarker, marker: stateHarm, space: botan}
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: adjustTrack, track: europe, delta: 1}
+      - {type: shiftLevel, space: mardin-batman, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07b", reviewedAgainstText: true, note: "Block-only harmer side (08 s7.2 item 3)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0183, S-0083, S-0123, S-0175, S-0124]
+- id: DK-045
+  campaign: C3
+  title: "Şırnak Town Battle (Aug 1992)"
+  date: "1992-08-18"
+  type: event
+  unshaded:
+    text: "Block only: place a State Harm marker in Botan and 1 Reception marker in Diyarbakır City. No other effect."
+    owner: state
+    blockOnly: true
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: botan}
+      - {type: placeMarker, marker: reception, space: diyarbakir-city}
+  shaded:
+    text: "Place a State Harm marker in Botan and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: botan}
+      - {type: placeMarker, marker: reception, space: diyarbakir-city}
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: shiftLevel, space: diyarbakir-city, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07b", reviewedAgainstText: true, note: "Block-only harmer side (08 s7.2 item 3)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0081, S-0123, S-0205, S-0067]
+- id: DK-048
+  campaign: C3
+  title: "Houses Burned at Kelekçi (Nov 1992)"
+  date: "1992-11-10"
+  type: event
+  unshaded:
+    text: "Block only: place a State Harm marker in Diyarbakır Rural. No other effect."
+    owner: state
+    blockOnly: true
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: diyarbakir-rural}
+  shaded:
+    text: "Place a State Harm marker in Diyarbakır Rural. Legitimacy -1. Europe +1."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: stateHarm, space: diyarbakir-rural}
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07b", reviewedAgainstText: true, note: "Block-only harmer side (08 s7.2 item 3)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0191, S-0202, S-0302, S-0113]
+- id: DK-049
+  campaign: C3
+  title: "Journalists and Press Staff Killed (1992)"
+  date: "1992"
+  type: event
+  unshaded:
+    text: "Block only: place a Disputed Harm marker in Diyarbakır City. No other effect."
+    owner: state
+    blockOnly: true
+    tier: T3
+    effects:
+      - {type: placeMarker, marker: disputedHarm, space: diyarbakir-city}
+  shaded:
+    text: "Place a Disputed Harm marker in Diyarbakır City. Reveal 1 Covert marker at random. Europe +1."
+    owner: pkk
+    tier: T3
+    effects:
+      - {type: placeMarker, marker: disputedHarm, space: diyarbakir-city}
+      - {type: procedure, id: covert.revealRandom}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07b", reviewedAgainstText: true, note: "Perpetrators disputed (F-019): Disputed Harm. Random reveal per 07 s10.2 item 2 (procedure covert.revealRandom)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0180, S-0073, S-0123, S-0150, S-0175, S-0203]
 - id: DK-051
   campaign: C3
   title: "Prosecutor Files to Close HEP (Jul 1992)"
@@ -212,6 +313,28 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0190, S-0202]
+- id: DK-053
+  campaign: C3
+  title: "Unattributed Killings in the Southeast (1992)"
+  date: "1992"
+  type: event
+  unshaded:
+    text: "Apply 07, section 10.1: remove 1 Office or 1 Guerrilla, in that priority, from the highest-Pop eligible space among Botan, Mardin-Batman, Diyarbakır City and Diyarbakır Rural. Place a Disputed Harm marker there."
+    owner: state
+    tier: T3
+    effects:
+      - {type: procedure, id: hizbullah.unattributed}
+  shaded:
+    text: "Apply 07, section 10.1 as unshaded. Then Europe +1 (calls for an inquiry)."
+    owner: pkk
+    tier: T3
+    effects:
+      - {type: procedure, id: hizbullah.unattributed}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07b", reviewedAgainstText: true, note: "Non-player procedure; open to both factions (05 s5 item 1 exception, DEC-68). Underground Guerrilla first; no target: nothing"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0087, S-0073]
 - id: DK-055
   campaign: C3
   title: Propaganda
