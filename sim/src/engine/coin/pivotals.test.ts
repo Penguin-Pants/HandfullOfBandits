@@ -95,6 +95,14 @@ describe("Area Domination (DK-076)", () => {
     expect(state.spaces["botan"]?.pieces["pkkBase"]).toEqual({ default: 1 });
   });
 
+  it("Village Clearance at normal cost pays US Lending Conditions; refused when the State cannot pay (DEC-69 point 9)", () => {
+    const lending = (s: GameState): GameState => ({ ...s, modifiers: [{ id: "lending-conditions", sourceCard: "DK-074", duration: "untilReset", params: { resources: 2 } }] });
+    const board = lending(open());
+    const { state } = play(board, pivotal("state", "DK-076", [sweep(clearance), { locations: ["botan"], perLocation: {} }]));
+    expect(state.tracks["resources.state"]).toBe(Number(board.tracks["resources.state"]) - 2);
+    expect(codes(setTrack(board, "resources.state", 1), pivotal("state", "DK-076", [sweep(clearance), { locations: ["botan"], perLocation: {} }]))).toEqual(["cannotPay"]);
+  });
+
   it("Village Clearance may be left out", () => {
     const { state } = play(open(), pivotal("state", "DK-076", [sweep({ locations: [], perLocation: {} }), null]));
     expect(state.spaces["botan"]?.markers["displacement"]?.["new"] ?? 0).toBe(0);

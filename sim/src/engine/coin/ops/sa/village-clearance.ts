@@ -1,11 +1,14 @@
 // Village Clearance (research 06 s3.4; 07 s3.2; approved text docs/prototype/27). With Sweep or
-// Garrison, in one Op space: four conditions, then seven effects in order. Costs Legitimacy, never
-// Resources. Per location: `reception`, the Diyarbakır City or Western Cities space for Reception.
+// Garrison, in one Op space: four conditions, then seven effects in order. Costs Legitimacy; Resources
+// only under US Lending Conditions (DK-074). Per location: `reception`, the Diyarbakır City or
+// Western Cities space for Reception.
 import { param } from "../../../core/params.ts";
 import { SINGLE_FACE } from "../../../core/state.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
+import { modifierLimit } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
 import { at, type ActionHandler } from "../action.ts";
-import { activate, controlOf, count, hasTag, isTerrain, markers, space } from "../common.ts";
+import { activate, controlOf, count, hasTag, isTerrain, markers, pay, space } from "../common.ts";
 import { EMERGENCY, FACE, FACTION, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
 import { asString } from "../plan.ts";
 
@@ -18,9 +21,10 @@ function stepName(step: string): string {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
-/** Legitimacy the clearance costs at once: per-Pop cost x Pop of the target (effect 2). */
-function popCost(ruleset: Ruleset, target: string): number {
-  return param(ruleset, "clearance.legitimacyPerPop", "number") * (space(ruleset, target)?.pop ?? 0);
+/** Legitimacy the clearance costs at once (effect 2): per-Pop cost x Pop of the target, plus the
+ * Customs Union Momentum (DK-072). Condition 4 needs this plus 1 (DEC-74). */
+function popCost(ruleset: Ruleset, state: GameState, target: string): number {
+  return param(ruleset, "clearance.legitimacyPerPop", "number") * (space(ruleset, target)?.pop ?? 0) + modifierLimit(state, MOD.customsUnion, "extra", 0);
 }
 
 /** Condition 2: Campaign C3 or later (DEC-68; OHAL Powers is itself a C3 card). */
@@ -48,22 +52,24 @@ export const villageClearance: ActionHandler = {
     if (controlOf(ruleset, state, loc) !== FACTION.state || count(state, loc, PIECE.troops) === 0 || count(state, loc, PIECE.police) === 0) return fail("clearanceWhere", "Village Clearance needs State Control, Troops and Police in the space.");
     if ((state.spaces[loc]?.level ?? 0) > 0) return fail("clearanceLevel", "Village Clearance needs a Neutral or Opposition space.");
     if (markers(state, loc, MARKER.displacement) > 0) return fail("clearanceDisplaced", "This space already has a Displacement marker.");
-    const need = popCost(ruleset, loc) + 1;
+    const need = popCost(ruleset, state, loc) + 1;
     const legitimacy = Number(state.tracks[TRACK.legitimacy]);
     if (legitimacy < need) return fail("clearanceLegitimacy", `Village Clearance needs Legitimacy ${String(need)} or more. Legitimacy is ${String(legitimacy)}.`);
     const reception = asString(part.perLocation[loc]?.["reception"]);
     if ((state.markerPools[MARKER.reception] ?? 0) > 0 && (reception === null || !hasTag(ruleset, reception, TAG.receptionTarget))) return fail("clearanceReception", "Place Reception in Diyarbakır City or Western Cities.");
     return out;
   },
-  cost: () => 0,
-  execute(ctx, part) {
+  // US Lending Conditions (DK-074). An action a card makes free skips it (DEC-69 point 9).
+  cost: (_r, state, _p, options) => options.free ? 0 : modifierLimit(state, MOD.lendingConditions, "resources", 0),
+  execute(ctx, part, options) {
     const loc = part.locations[0] ?? "";
+    pay(ctx, FACTION.state, villageClearance.cost(ctx.ruleset, ctx.state, part, options), ruleRef, loc);
     const ref = (effect: string): string => `${ruleRef} effect ${effect}`;
     const legit = (delta: number, effect: string): void => {
       ctx.apply({ type: "adjustTrack", track: TRACK.legitimacy, delta: -delta, ruleRef: ref(effect), assumptionRef: null });
     };
     if ((ctx.state.spaces[loc]?.level ?? 0) < 0) ctx.apply({ type: "shiftLevel", space: loc, direction: "neutral", steps: 1, ruleRef: ref("1"), assumptionRef: "PA-18" });
-    legit(popCost(ctx.ruleset, loc), "2");
+    legit(popCost(ctx.ruleset, ctx.state, loc), "2");
     ctx.apply({ type: "placeMarker", marker: MARKER.displacement, space: loc, side: "new", ruleRef: ref("3"), assumptionRef: null });
     ctx.apply({ type: "placeMarker", marker: MARKER.stateHarm, space: loc, side: SINGLE_FACE, ruleRef: ref("4"), assumptionRef: null });
     const reception = asString(part.perLocation[loc]?.["reception"]);

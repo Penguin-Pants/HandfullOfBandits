@@ -66,14 +66,14 @@
     owner: state
     tier: T1
     effects:
-      - {type: freeAction, action: state.sweep, constraints: {terrain: [mountain], maxLocations: 3, sa: state.village-clearance, saOptional: true, saTiming: after}}
+      - {type: freeAction, action: state.sweep, constraints: {terrain: [mountain], maxLocations: 3, sa: state.village-clearance, saOptional: true, saTiming: after, saAtCost: true}}
       - {type: freeAction, action: state.assault, constraints: {maxLocations: 3, withinPrevious: true}}
   shaded:
     text: "None (single-sided Pivotal Event)"
     owner: null
     tier: T1
     effects: []
-  encoding: {status: encoded, encodedBy: "P3b-06b", reviewedAgainstText: true, note: "doc 31 s3; DEC-67: Assault in the Sweep spaces, Village Clearance after the Sweep"}
+  encoding: {status: encoded, encodedBy: "P3b-06b", reviewedAgainstText: true, note: "doc 31 s3; DEC-67: Assault in the Sweep spaces, Village Clearance after the Sweep; saAtCost: it pays US Lending Conditions (DEC-69 point 9)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0202, E-0204, S-0258, S-0120]

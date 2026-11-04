@@ -1,6 +1,6 @@
 # 33 C4 cards: encoding draft
 
-Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). P3b-07d, P3b-07e and P3b-07f built; point 10 added at P3b-07d (DEC-71), point 11 at P3b-07e (DEC-73). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
+Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). All batches built (P3b-07d to P3b-07g); point 10 added at P3b-07d (DEC-71), point 11 at P3b-07e (DEC-73), point 12 at P3b-07g (DEC-74). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
 
 Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with its approved answer.
 
@@ -137,6 +137,7 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 | B3 | Procedures `hrw.denial` and `hrw.report`, with parameters | DK-069 |
 | B4 | Modifiers `customs-union` and `lending-conditions`, read by Village Clearance | DK-072, DK-074 |
 | B5 | Free action constraint `maxLift` for Cross-Border | DK-071 |
+| B6 | Free action constraint `saAtCost`: the SA is not free (built at P3b-07g for point 9) | DK-076 |
 
 ## 4. Resolved points (designer, 2026-11-04)
 
@@ -151,3 +152,4 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 9. **DK-074 with too few State Resources:** Village Clearance is refused when the State cannot pay the 2 Resources (as any unaffordable cost, `cannotPay`). On a free Village Clearance (Area Domination), the 2 Resources would still apply (proposed). **Approved: an action a card makes free skips it (05 s5 item 4). Area Domination's Village Clearance runs "at normal cost" (its card text), so it pays (designer, PR 50 review).**
 10. **DK-065 unshaded while Legal Space is Banned** (found at build, owner decision 2026-11-04, DEC-71): **nothing happens, as DK-068 (point 4).** The filing runs only while Legal Space is Open or Prosecuted. Not chosen: file anyway (Prosecuted with no party; the next line 1 would ban again with Successor 0).
 11. **DK-057 unshaded with the State Restraint Broken marker on the map** (found at build, owner decision 2026-11-04, DEC-73): **the State may not accept, as the ceasefire step (07 s7.3 step 1).** No effect. Not chosen: the card overrides the rule (05 s5 item 2).
+12. **DK-072 shaded and Village Clearance condition 4** (found at build, owner decision 2026-11-04, DEC-74): **the requirement rises with the cost.** While the Momentum is in force, condition 4 needs Legitimacy (2 x Pop) + 2; the extra 1 is paid with effect 2. Not chosen: cost only (Legitimacy could reach 0 from the clearance).

@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06, P3b-07 C3, P3b-07d, P3b-07e and P3b-07f done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
+Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06, P3b-07 C3 and C4 done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
 
 ## Bottom line
 
@@ -56,4 +56,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Continue P3b-07 with P3b-07g as described in [11-build-plan.md](11-build-plan.md) section 0. C5 needs its own draft for designer approval before code.
+Continue P3b-07 with the C5 encoding draft as described in [11-build-plan.md](11-build-plan.md) section 0. The draft needs designer approval before code.
