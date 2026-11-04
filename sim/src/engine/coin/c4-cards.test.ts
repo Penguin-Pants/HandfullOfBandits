@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, play, ruleset, setLevel, setMarkers, setTrack, turnOf, withCard } from "../../../test/board.ts";
+import { codes, engine, play, ruleset, setLevel, setMarkers, setTrack, turnOf, withCard } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-EVT per side for the C4 cards (11 P3b-07; encoding docs/prototype/33, DEC-69).
@@ -162,5 +162,136 @@ describe("Constitutional Court Dissolves DEP (DK-068)", () => {
 describe("C4 Propaganda (DK-077)", () => {
   it("is the C4 Propaganda card", () => {
     expect([card("DK-077")?.type, card("DK-077")?.campaign]).toEqual(["propaganda", "C4"]);
+  });
+});
+
+// P3b-07e ceasefire cards (doc 33 s2.2, B2; DEC-69 points 5 to 7; DEC-73).
+const cf = (s: GameState, value: string): GameState => setTrack(s, "ceasefire", value);
+const byPkk = (s: GameState): boolean => s.flags["ceasefireDeclaredByPkk"] === true;
+const rb = (s: GameState, side: string): Record<string, number> => Object.fromEntries(ruleset.spaces.filter((x) => (s.spaces[x.id]?.markers["restraintBroken"]?.[side] ?? 0) > 0).map((x) => [x.id, s.spaces[x.id]?.markers["restraintBroken"]?.[side] ?? 0]));
+const level = (s: GameState, id: string): number | null | undefined => s.spaces[id]?.level;
+const warns = (s: GameState, c: AnyCommand): string[] => engine.validate(ruleset, s, c).warnings.map((w) => w.code);
+
+describe("PKK Unilateral Ceasefire (DK-056)", () => {
+  const garrison = { locations: ["botan"], perLocation: { botan: { moves: [{ from: "van-bitlis", count: 1 }] } } };
+
+  it("U: State Resources +3 and a free Garrison at no cost", () => {
+    const { state } = play(board("state", "DK-056"), event("state", "unshaded", [garrison]));
+    expect([track(state, "resources.state"), state.spaces["botan"]?.pieces["police"]?.["default"]]).toEqual([15, 2]);
+  });
+
+  it("S: a PKK declaration (Declared, flag, Europe +1) and up to 2 shifts in domestic spaces with PKK pieces and no Office", () => {
+    const { state } = play(board("pkk", "DK-056"), event("pkk", "shaded", [["hakkari", "botan"]]));
+    expect([track(state, "ceasefire"), byPkk(state), track(state, "europe")]).toEqual(["declared", true, 2]);
+    expect([level(state, "hakkari"), level(state, "botan")]).toEqual([-2, -2]);
+  });
+
+  it("S: no shift in a space with an Office or without PKK pieces", () => {
+    expect(codes(withOffices(board("pkk", "DK-056"), "hakkari"), event("pkk", "shaded", [["hakkari"]]))).toEqual(["badAnswer"]);
+    expect(codes(board("pkk", "DK-056"), event("pkk", "shaded", [["dersim"]]))).toEqual(["badAnswer"]);
+  });
+
+  it("S: with a ceasefire in force the declaration does nothing; the shifts still apply (DEC-69 point 5)", () => {
+    const { state } = play(cf(board("pkk", "DK-056"), "reciprocalRestraint"), event("pkk", "shaded", [["mardin-batman"]]));
+    expect([track(state, "ceasefire"), byPkk(state), track(state, "europe"), level(state, "mardin-batman")]).toEqual(["reciprocalRestraint", false, 1, -1]);
+  });
+});
+
+describe("Ceasefire Extended at Bar Elias (DK-057)", () => {
+  it("follows PKK Unilateral Ceasefire in the pile", () => {
+    expect(card("DK-057")?.chainAfter).toEqual(["DK-056"]);
+  });
+
+  it("U: at Declared the State may accept: Reciprocal Restraint, Legitimacy +1", () => {
+    const declared = cf(board("state", "DK-057"), "declared");
+    const accepted = play(declared, event("state", "unshaded", [0])).state;
+    expect([track(accepted, "ceasefire"), track(accepted, "legitimacy")]).toEqual(["reciprocalRestraint", 6]);
+    const declined = play(declared, event("state", "unshaded", [1])).state;
+    expect([track(declined, "ceasefire"), track(declined, "legitimacy")]).toEqual(["declared", 5]);
+  });
+
+  it("U: not with the State Restraint Broken marker, as the ceasefire step (DEC-73)", () => {
+    const broken = setMarkers(cf(board("state", "DK-057"), "declared"), "botan", "restraintBroken", 1, "state");
+    const { state } = play(broken, event("state", "unshaded", [0]));
+    expect([track(state, "ceasefire"), track(state, "legitimacy")]).toEqual(["declared", 5]);
+  });
+
+  it("U: otherwise no effect", () => {
+    const { state } = play(board("state", "DK-057"), event("state", "unshaded"));
+    expect([track(state, "ceasefire"), track(state, "legitimacy")]).toEqual(["none", 5]);
+  });
+
+  it("S: at None a PKK declaration without its own Europe +1; PUK one step toward Host; Europe +1 (DEC-69 point 6)", () => {
+    const { state } = play(board("pkk", "DK-057"), event("pkk", "shaded"));
+    expect([track(state, "ceasefire"), byPkk(state), track(state, "posture.puk"), track(state, "europe")]).toEqual(["declared", true, "host", 2]);
+    const held = play(cf(board("pkk", "DK-057"), "talks"), event("pkk", "shaded")).state;
+    expect([track(held, "ceasefire"), byPkk(held), track(held, "europe")]).toEqual(["talks", false, 2]);
+  });
+});
+
+describe("President Özal Dies (DK-058)", () => {
+  it("U: spoiler at Declared or Reciprocal Restraint: None, no marker, no breach warning; State Resources +2", () => {
+    for (const value of ["declared", "reciprocalRestraint"]) {
+      const before = { ...cf(board("state", "DK-058"), value), flags: { ceasefireDeclaredByPkk: true } };
+      expect(warns(before, event("state", "unshaded"))).toEqual([]);
+      const { state } = play(before, event("state", "unshaded"));
+      expect([track(state, "ceasefire"), byPkk(state), rb(state, "state"), rb(state, "pkk"), track(state, "resources.state")]).toEqual(["none", false, {}, {}, 14]);
+    }
+  });
+
+  it("U: Talks is not listed, so Talks stays", () => {
+    const { state } = play(cf(board("state", "DK-058"), "talks"), event("state", "unshaded"));
+    expect([track(state, "ceasefire"), track(state, "resources.state")]).toEqual(["talks", 14]);
+  });
+
+  it("S: State Resources -3, PKK Resources +1", () => {
+    const { state } = play(board("pkk", "DK-058"), event("pkk", "shaded"));
+    expect([track(state, "resources.state"), track(state, "resources.pkk")]).toEqual([9, 6]);
+  });
+});
+
+describe("Bingöl Road Killings (DK-059)", () => {
+  const harm = (s: GameState): number => s.spaces["bingol-mus"]?.markers["pkkHarm"]?.["default"] ?? 0;
+
+  it("U: PKK Harm in Bingöl-Muş, Ceasefire None, PKK Restraint Broken there, Europe -1, with no breach warning", () => {
+    const before = setTrack(cf(board("state", "DK-059"), "reciprocalRestraint"), "europe", 3);
+    expect(warns(before, event("state", "unshaded"))).toEqual([]);
+    const { state } = play(before, event("state", "unshaded"));
+    expect([harm(state), track(state, "ceasefire"), rb(state, "pkk"), track(state, "europe")]).toEqual([1, "none", { "bingol-mus": 1 }, 2]);
+  });
+
+  it("U: with Ceasefire None the marker is still placed, but not a second one (DEC-69 point 7)", () => {
+    expect(rb(play(board("state", "DK-059"), event("state", "unshaded")).state, "pkk")).toEqual({ "bingol-mus": 1 });
+    const placed = setMarkers(board("state", "DK-059"), "hakkari", "restraintBroken", 1, "pkk");
+    expect(rb(play(placed, event("state", "unshaded")).state, "pkk")).toEqual({ hakkari: 1 });
+  });
+
+  it("S: block only: PKK Harm and Ceasefire None, no marker, Europe unchanged", () => {
+    expect(card("DK-059")?.shaded?.blockOnly).toBe(true);
+    const { state } = play(cf(board("pkk", "DK-059"), "declared"), event("pkk", "shaded"));
+    expect([harm(state), track(state, "ceasefire"), rb(state, "pkk"), track(state, "europe")]).toEqual([1, "none", {}, 1]);
+  });
+});
+
+describe("Second Unilateral Ceasefire (DK-073)", () => {
+  it("U: a free Sweep in one Mountain space; State Resources +2", () => {
+    const { state } = play(board("state", "DK-073"), event("state", "unshaded", [{ locations: ["hakkari"], perLocation: {} }]));
+    expect(state.spaces["hakkari"]?.pieces["guerrilla"]).toEqual({ underground: 1, active: 1 });
+    expect(track(state, "resources.state")).toBe(14);
+  });
+
+  it("U: not a non-Mountain space, not two spaces", () => {
+    expect(codes(board("state", "DK-073"), event("state", "unshaded", [{ locations: ["mardin-batman"], perLocation: {} }]))).toEqual(["eventConstraint"]);
+    expect(codes(board("state", "DK-073"), event("state", "unshaded", [{ locations: ["hakkari", "botan"], perLocation: {} }]))).toEqual(["eventConstraint"]);
+  });
+
+  it("S: a PKK declaration; PKK Resources +2", () => {
+    const { state } = play(board("pkk", "DK-073"), event("pkk", "shaded"));
+    expect([track(state, "ceasefire"), byPkk(state), track(state, "europe"), track(state, "resources.pkk")]).toEqual(["declared", true, 2, 7]);
+  });
+
+  it("S: with a ceasefire in force, no declaration and no Europe; Resources still +2 (DEC-69 point 5)", () => {
+    const { state } = play(cf(board("pkk", "DK-073"), "declared"), event("pkk", "shaded"));
+    expect([track(state, "ceasefire"), byPkk(state), track(state, "europe"), track(state, "resources.pkk")]).toEqual(["declared", false, 1, 7]);
   });
 });

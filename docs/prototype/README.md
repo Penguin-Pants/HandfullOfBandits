@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06 done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
+Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06, P3b-07 C3, P3b-07d and P3b-07e done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
 
 ## Bottom line
 
@@ -42,6 +42,7 @@ Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progre
 | [26-bot-reference.md](26-bot-reference.md) | How the bots work, limits, review checklist |
 | [27](27-village-clearance-draft.md) to [30](30-ceasefire-draft.md) | Approved Phase 3b texts: Village Clearance, Covert Action, Legal Politics, Ceasefire |
 | [31-pivotals-structural-draft.md](31-pivotals-structural-draft.md) | Approved P3b-06 text: remaining Pivotals and structural cards (DEC-67) |
+| [32-c3-cards-draft.md](32-c3-cards-draft.md), [33-c4-cards-draft.md](33-c4-cards-draft.md) | Approved P3b-07 card encoding drafts (DEC-68, DEC-69) |
 
 ## Method
 
@@ -55,4 +56,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Start P3b-07 (encode C3 to C5 cards) as described in [11-build-plan.md](11-build-plan.md) section 0: draft each batch's text for designer approval before code.
+Continue P3b-07 with P3b-07f as described in [11-build-plan.md](11-build-plan.md) section 0. C5 needs its own draft for designer approval before code.

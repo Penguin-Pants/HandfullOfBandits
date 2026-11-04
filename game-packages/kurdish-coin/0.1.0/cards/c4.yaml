@@ -1,5 +1,125 @@
 # C4 cards (research 08; deck CSV). Encoding docs/prototype/33, DEC-69. DK-076 Area Domination is in pivotal.yaml.
-# P3b-07d: legal parties and Propaganda. The other C4 cards come in P3b-07e to P3b-07g.
+# P3b-07d: legal parties and Propaganda. P3b-07e: ceasefire cards. The other C4 cards come in P3b-07f and P3b-07g.
+- id: DK-056
+  campaign: C4
+  title: "PKK Unilateral Ceasefire (Mar 1993)"
+  date: "1993-03-17"
+  type: event
+  unshaded:
+    text: "Ceasefire not recognized: State Resources +3. The State conducts a free Garrison."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: resources.state, delta: 3}
+      - {type: freeAction, action: state.garrison, constraints: {}}
+  shaded:
+    text: "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1 (07, section 7.1). Shift up to 2 spaces with PKK pieces and no Office one level toward Opposition."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: procedure, id: ceasefire.declare}
+      - type: forEachSpace
+        where: {type: all, of: [{type: spaceKind, kind: domestic}, {type: spaceHas, pieces: [guerrilla, pkkBase]}, {type: not, of: {type: spaceHas, markers: [office]}}]}
+        min: 0
+        max: 2
+        effects:
+          - {type: shiftLevel, space: selected, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "U: the free Garrison counts for the ceasefire table (DEC-66). S: a PKK declaration (procedure shared with the command); none while a ceasefire is in force (DEC-69 point 5)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0089, S-0075, S-0078, S-0184, S-0263, S-0264, S-0076, S-0077, S-0127, S-0447]
+- id: DK-057
+  campaign: C4
+  title: "Ceasefire Extended at Bar Elias (Apr 1993)"
+  date: "1993-04-16"
+  type: event
+  chainAfter: [DK-056]
+  unshaded:
+    text: "If Ceasefire is Declared, the State may accept now: Ceasefire to Reciprocal Restraint and Legitimacy +1. Otherwise no effect."
+    owner: state
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: ceasefire, values: [declared]}
+        then:
+          - type: choice
+            options:
+              - label: Accept the ceasefire
+                effects:
+                  - {type: procedure, id: ceasefire.accept}
+                  - type: conditional
+                    if: {type: trackIn, track: ceasefire, values: [reciprocalRestraint]}
+                    then: [{type: adjustTrack, track: legitimacy, delta: 1}]
+              - {label: Do not accept, effects: []}
+  shaded:
+    text: "If Ceasefire is None, set it to Declared. PUK posture one step toward Host. Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: ceasefire, values: [none]}
+        then:
+          - {type: setTrack, track: ceasefire, value: declared}
+          - {type: setFlag, flag: ceasefireDeclaredByPkk, value: true}
+      - {type: stepOrdinal, track: posture.puk, direction: previous, steps: 1}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "U: not with the State Restraint Broken marker, as the ceasefire step (DEC-73). S: a PKK declaration without the declaration's own Europe +1 (DEC-69 point 6)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0090, S-0075, S-0078, S-0180, S-0184, S-0263, S-0127]
+- id: DK-058
+  campaign: C4
+  title: "President Özal Dies (Apr 1993)"
+  date: "1993-04-17"
+  type: event
+  chainAfter: [DK-056]
+  unshaded:
+    text: "Spoiler: if Ceasefire is Declared or Reciprocal Restraint, set it to None with no Restraint Broken marker. State Resources +2."
+    owner: state
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: ceasefire, values: [declared, reciprocalRestraint]}
+        then: [{type: procedure, id: ceasefire.end}]
+      - {type: adjustTrack, track: resources.state, delta: 2}
+  shaded:
+    text: "Uncertainty in Ankara: State Resources -3. PKK Resources +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: resources.state, delta: -3}
+      - {type: adjustTrack, track: resources.pkk, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "Spoiler (07 s7.2): no breach and no marker; Talks is not listed, so Talks stays"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0091, S-0259, S-0264, S-0270, S-0333, S-0334, S-0063, S-0077, S-0078]
+- id: DK-059
+  campaign: C4
+  title: "Bingöl Road Killings (May 1993)"
+  date: "1993-05-24"
+  type: event
+  chainAfter: [DK-056]
+  unshaded:
+    text: "Place a PKK Harm marker in Bingöl-Muş. Ceasefire to None; place the PKK Restraint Broken marker. Europe -1."
+    owner: state
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: pkkHarm, space: bingol-mus}
+      - {type: procedure, id: ceasefire.end}
+      - {type: procedure, id: ceasefire.pkkBroken}
+      - {type: adjustTrack, track: europe, delta: -1}
+  shaded:
+    text: "Block only: place a PKK Harm marker in Bingöl-Muş. Ceasefire to None. No other effect."
+    owner: pkk
+    blockOnly: true
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: pkkHarm, space: bingol-mus}
+      - {type: procedure, id: ceasefire.end}
+  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "U: the PKK marker even with Ceasefire None, unless one is on the map (DEC-69 point 7). Block-only harmer side (08 s7.2 item 3)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0093, S-0076, S-0078, S-0263, S-0269, S-0075]
 - id: DK-060
   campaign: C4
   title: "Constitutional Court Dissolves HEP (Jul 1993)"
@@ -147,6 +267,29 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0014, S-0173, S-0260, S-0299, S-0304, S-0023, S-0024, S-0027, S-0102, S-0441]
+- id: DK-073
+  campaign: C4
+  title: "Second Unilateral Ceasefire (Dec 1995)"
+  date: "1995-12-15"
+  type: event
+  unshaded:
+    text: "Ceasefire not recognized: the State conducts a free Sweep in one Mountain space. State Resources +2."
+    owner: state
+    tier: T0
+    effects:
+      - {type: freeAction, action: state.sweep, constraints: {terrain: [mountain], maxLocations: 1}}
+      - {type: adjustTrack, track: resources.state, delta: 2}
+  shaded:
+    text: "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1. PKK Resources +2."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: procedure, id: ceasefire.declare}
+      - {type: adjustTrack, track: resources.pkk, delta: 2}
+  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "S: a PKK declaration; none while a ceasefire is in force (DEC-69 point 5)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0112, S-0078, S-0270, S-0063]
 - id: DK-077
   campaign: C4
   title: Propaganda

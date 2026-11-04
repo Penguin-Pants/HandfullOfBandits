@@ -1,6 +1,6 @@
 # 33 C4 cards: encoding draft
 
-Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). P3b-07d built; point 10 added at build (DEC-71). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
+Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). P3b-07d and P3b-07e built; point 10 added at P3b-07d (DEC-71), point 11 at P3b-07e (DEC-73). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
 
 Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with its approved answer.
 
@@ -56,7 +56,7 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 **DK-057 Ceasefire Extended at Bar Elias (Apr 1993)**, T0. Chain: after DK-056.
 - U: "If Ceasefire is Declared, the State may accept now: Ceasefire to Reciprocal Restraint and Legitimacy +1. Otherwise no effect."
 - S: "If Ceasefire is None, set it to Declared. PUK posture one step toward Host. Europe +1."
-- Encoding: U, `conditional` Declared, then a choice (accept or not). S, `conditional` None, then Declared with flag `ceasefireDeclaredByPkk`; `stepOrdinal` PUK posture `previous`; Europe +1. See point 6.
+- Encoding: U, `conditional` Declared, then a choice (accept or not); accept runs procedure `ceasefire.accept` (point 11). S, `conditional` None, then Declared with flag `ceasefireDeclaredByPkk`; `stepOrdinal` PUK posture `previous`; Europe +1. See point 6.
 
 **DK-058 President Özal Dies (Apr 1993)**, T0. Chain: after DK-056.
 - U: "Spoiler: if Ceasefire is Declared or Reciprocal Restraint, set it to None with no Restraint Broken marker. State Resources +2."
@@ -133,7 +133,7 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 | ID | Addition | Cards |
 |---|---|---|
 | B1 | Procedures `legal.ban` (line 1), `legal.successor` (line 2), `legal.successorFull` (line 2 without the minus 1). The Office side reuses `legal.officeLines`. The phase and the cards share one copy of each line | DK-060, DK-065, DK-067, DK-068 (later DK-094) |
-| B2 | Procedures `ceasefire.declare` (shared with the DeclareCeasefire command), `ceasefire.end` (`endCeasefire`), `ceasefire.pkkBroken` | DK-056 to DK-059, DK-073 |
+| B2 | Procedures `ceasefire.declare` (shared with the DeclareCeasefire command), `ceasefire.accept` (point 11), `ceasefire.end` (`endCeasefire`), `ceasefire.pkkBroken` | DK-056 to DK-059, DK-073 |
 | B3 | Procedures `hrw.denial` and `hrw.report`, with parameters | DK-069 |
 | B4 | Modifiers `customs-union` and `lending-conditions`, read by Village Clearance | DK-072, DK-074 |
 | B5 | Free action constraint `maxLift` for Cross-Border | DK-071 |
@@ -150,3 +150,4 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 8. **DK-069 counts:** both New and Old Displacement markers count as "on the map". Shaded: Legitimacy -1 per 2 markers, maximum -3, then Europe +1.
 9. **DK-074 with too few State Resources:** Village Clearance is refused when the State cannot pay the 2 Resources (as any unaffordable cost, `cannotPay`). On a free Village Clearance (Area Domination), the 2 Resources would still apply (proposed). **Approved: an action a card makes free skips it (05 s5 item 4). Area Domination's Village Clearance runs "at normal cost" (its card text), so it pays (designer, PR 50 review).**
 10. **DK-065 unshaded while Legal Space is Banned** (found at build, owner decision 2026-11-04, DEC-71): **nothing happens, as DK-068 (point 4).** The filing runs only while Legal Space is Open or Prosecuted. Not chosen: file anyway (Prosecuted with no party; the next line 1 would ban again with Successor 0).
+11. **DK-057 unshaded with the State Restraint Broken marker on the map** (found at build, owner decision 2026-11-04, DEC-73): **the State may not accept, as the ceasefire step (07 s7.3 step 1).** No effect. Not chosen: the card overrides the rule (05 s5 item 2).
