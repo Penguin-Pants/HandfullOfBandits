@@ -405,7 +405,7 @@
     tier: T0
     effects:
       - type: conditional
-        if: {type: flag, flag: closureCase, value: false}
+        if: {type: all, of: [{type: flag, flag: closureCase, value: false}, {type: trackIn, track: legalSpace, values: [open, prosecuted]}]}
         then:
           - {type: setFlag, flag: closureCase, value: true}
           - {type: setTrack, track: legalSpace, value: prosecuted}
@@ -415,7 +415,7 @@
     tier: T0
     effects:
       - {type: adjustTrack, track: europe, delta: 1}
-  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "As the HEP Founded filing; with a case already filed nothing happens (DEC-68)"}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "As the HEP Founded filing; with a case already filed (DEC-68) or Legal Space Banned (DEC-72) nothing happens"}
   eventConfidence: High
   deckEligible: true
   sources: [E-0186, S-0172]

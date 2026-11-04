@@ -98,6 +98,11 @@ describe("Prosecutor Files to Close HEP (DK-051)", () => {
     expect([state.flags["closureCase"], track(state, "legalSpace")]).toEqual([true, "prosecuted"]);
   });
 
+  it("U: while Legal Space is Banned, nothing happens (DEC-72)", () => {
+    const { state } = play(setTrack(board("state", "DK-051"), "legalSpace", "banned"), event("state", "unshaded"));
+    expect([state.flags["closureCase"] === true, track(state, "legalSpace")]).toEqual([false, "banned"]);
+  });
+
   it("U: the PKK may not execute the side (05 s5 item 1)", () => {
     expect(codes(board("pkk", "DK-051"), event("pkk", "unshaded"))).toEqual(["sideRestricted"]);
   });

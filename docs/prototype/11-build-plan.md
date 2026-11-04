@@ -26,7 +26,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 1. **Before the next simulations:** batch bots never file a closure case, declare a ceasefire, answer the ceasefire step (`cli/candidates.ts` `AUTO_PHASES`) or play a Pivotal other than ARGK (`cli/candidates.ts` pivotal family).
 2. **Proposed (P3b-07, doc 32 s5):** `movePieces` with `toState` moves Underground Guerrillas first, so "move ... Underground" sides (DK-005, DK-017, DK-041, DK-047) leave Active ones behind. Fix: move the other faces first. Changes C1 and C2 play; needs approval.
 3. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (six call sites; P3b-06b added `coin/pivotal.ts` `campaignReached`).
-4. **Proposed (P3b-07d):** DK-051 (C3) files a closure case while Legal Space is Banned, unlike DK-065 and DK-068 (DEC-71, DEC-69 point 4). Fix: add `{type: trackIn, track: legalSpace, values: [open, prosecuted]}` to its `conditional` in `cards/c3.yaml`, with a test. Changes C3 play; needs approval.
+4. **Closed (DEC-72):** DK-051 now files only while Legal Space is Open or Prosecuted (fixed in P3b-07d, PR #52).
 
 **Recent merged work**
 
@@ -639,8 +639,8 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseEvent check and execute for each side (dry run with the choice and space answers); the phase lines 1 and 2 through the shared functions (`legal-politics.test.ts` unchanged and passing); the scripted policy on a State-only side (`cli/play.ts` `complete` returns null, the policy falls back to an Op). No path code. Pass 2 replaced two successor wrappers with registry lambdas.
   - **Fix:** none in code; test helpers only (unset flag reads as not filed; sorted Office lists).
   - **Drop:** a PKK First Eligible scripted bot never takes DK-065 or DK-067 shaded (it picks unshaded when the shaded owner is not its own, then falls back to an Op). Heuristic only; simulations are paused (owner rule).
-  - **Propose:** DK-051 Banned guard (section 0, carried follow-up 4).
-- **Validation:** `make check` passes. `make test`: 83 files, 1139 tests pass. `make e2e` passes. Card schema unchanged (no `make schema`). Package validation: C4 has 5 eligible cards for a pile of 12; C5 blocks as before (V-CARDS). Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes). Node 24 from `/opt/node24`. Windows execution not run.
+  - **Propose, then approved (DEC-72):** DK-051 Banned guard, fixed in the same PR with a test that fails without it.
+- **Validation:** `make check` passes. `make test`: 83 files, 1140 tests pass. `make e2e` passes. Card schema unchanged (no `make schema`). Package validation: C4 has 5 eligible cards for a pile of 12; C5 blocks as before (V-CARDS). Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes). Node 24 from `/opt/node24`. Windows execution not run.
 - **Size:** about 60 changed lines in `sim/src` without tests; card YAML is package data.
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
