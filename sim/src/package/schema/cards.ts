@@ -14,7 +14,7 @@ const condition: z.ZodType<SpaceCondition> = z.lazy(() =>
     z.strictObject({ type: z.literal("spaceLevelIn"), levels: uniqueList(z.int(), 1) }),
     z.strictObject({ type: z.literal("control"), faction: id }),
     z
-      .strictObject({ type: z.literal("spaceHas"), pieces: idList(0).default([]), markers: idList(0).default([]), sides: idList(1).optional() })
+      .strictObject({ type: z.literal("spaceHas"), pieces: idList(0).default([]), markers: idList(0).default([]), sides: idList(1).optional(), min: z.int().min(1).optional() })
       .refine((c) => c.pieces.length + c.markers.length > 0, { message: "List at least one piece or marker", path: ["pieces"] }),
     z.strictObject({ type: z.literal("all"), of: z.array(condition).min(1) }),
     z.strictObject({ type: z.literal("any"), of: z.array(condition).min(1) }),

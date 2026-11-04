@@ -1165,6 +1165,11 @@
                 "type": "string",
                 "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
               }
+            },
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             }
           },
           "required": [

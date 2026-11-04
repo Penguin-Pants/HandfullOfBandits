@@ -6,7 +6,9 @@ import { param } from "../../../core/params.ts";
 import type { GameState, JsonObject, Ruleset, Violation } from "../../../core/types.ts";
 import { at } from "../action.ts";
 import { controlOf, count, markers, pay } from "../common.ts";
-import { FACTION, MARKER, PIECE } from "../ids.ts";
+import { modifierLimit } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
+import { FACTION, MARKER, PIECE, PRESS_SPACE } from "../ids.ts";
 import { asCount } from "../plan.ts";
 
 const ruleRef = "07 s1.3";
@@ -22,11 +24,13 @@ export function readAgitation(params: JsonObject): AgitationSpend | null {
   return Object.values(values).some((v) => v === null) ? null : (values as AgitationSpend);
 }
 
-export function agitationCost(ruleset: Ruleset, spend: AgitationSpend): number {
+/** Press prosecutions Momentum (DK-050, DEC-68): each shift in Diyarbakır City costs `extra` more. */
+export function agitationCost(ruleset: Ruleset, state: GameState, spaceId: string, spend: AgitationSpend): number {
+  const press = spaceId === PRESS_SPACE ? modifierLimit(state, MOD.pressProsecutions, "extra", 0) : 0;
   return (
     spend.coercion * param(ruleset, "agitation.coercionCost", "number") +
     spend.pkkHarm * param(ruleset, "agitation.redressCost", "number") +
-    spend.shifts * param(ruleset, "agitation.shiftCost", "number")
+    spend.shifts * (param(ruleset, "agitation.shiftCost", "number") + press)
   );
 }
 
@@ -50,7 +54,7 @@ export function agitationViolations(ruleset: Ruleset, state: GameState, spaceId:
 }
 
 export function agitationExecute(ctx: Exec, spaceId: string, spend: AgitationSpend): void {
-  pay(ctx, FACTION.pkk, agitationCost(ctx.ruleset, spend), ruleRef, spaceId);
+  pay(ctx, FACTION.pkk, agitationCost(ctx.ruleset, ctx.state, spaceId, spend), ruleRef, spaceId);
   const remove = (marker: string, n: number): void => {
     for (let i = 0; i < n; i++) ctx.apply({ type: "removeMarker", marker, space: spaceId, side: SINGLE_FACE, ruleRef, assumptionRef: null });
   };

@@ -94,7 +94,7 @@ export type SpaceCondition =
   | { readonly type: "spaceLevelIn"; readonly levels: readonly number[] }
   | { readonly type: "control"; readonly faction: FactionId }
   /** At least one piece or marker of a listed type, on a listed face (absent `sides`: any face). */
-  | { readonly type: "spaceHas"; readonly pieces: readonly PieceTypeId[]; readonly markers: readonly MarkerTypeId[]; readonly sides?: readonly string[] | undefined }
+  | { readonly type: "spaceHas"; readonly pieces: readonly PieceTypeId[]; readonly markers: readonly MarkerTypeId[]; readonly sides?: readonly string[] | undefined; readonly min?: number | undefined }
   | { readonly type: "all"; readonly of: readonly SpaceCondition[] }
   | { readonly type: "any"; readonly of: readonly SpaceCondition[] }
   | { readonly type: "not"; readonly of: SpaceCondition }

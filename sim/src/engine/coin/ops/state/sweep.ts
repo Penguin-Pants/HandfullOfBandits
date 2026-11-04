@@ -5,13 +5,16 @@ import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";
 import { activate, adjacent, count, hasTag, pay, space, terrainRate } from "../common.ts";
+import { hasModifier } from "../../../core/modifiers.ts";
+import { MOD } from "../../modifiers.ts";
 import { EMERGENCY, FACTION, PIECE, TAG, TRACK } from "../ids.ts";
 import { asMoves } from "../plan.ts";
 
 const ruleRef = "06 s2.3";
 
 function costPerSpace(ruleset: Ruleset, state: GameState): number {
-  return state.tracks[TRACK.emergencyRule] === EMERGENCY.ohalExtendedPowers ? param(ruleset, "sweep.costOhalExtended", "number") : param(ruleset, "sweep.costPerSpace", "number");
+  // KHK 430 Momentum (DK-038): the OHAL Extended Powers cost at any step.
+  return state.tracks[TRACK.emergencyRule] === EMERGENCY.ohalExtendedPowers || hasModifier(state, MOD.khk430) ? param(ruleset, "sweep.costOhalExtended", "number") : param(ruleset, "sweep.costPerSpace", "number");
 }
 
 export const sweep: ActionHandler = {
@@ -55,7 +58,8 @@ export const sweep: ActionHandler = {
     for (const loc of part.locations) {
       // PA-07: count pieces after the moves.
       const detectors = count(ctx.state, loc, PIECE.troops) + count(ctx.state, loc, PIECE.police) + count(ctx.state, loc, PIECE.guards);
-      activate(ctx, loc, terrainRate(ctx.ruleset, loc, detectors), ruleRef, "PA-07");
+      // Card constraint `ignoreMountain` (DK-047): one Activation per cube.
+      activate(ctx, loc, options.constraints["ignoreMountain"] === true ? detectors : terrainRate(ctx.ruleset, loc, detectors), ruleRef, "PA-07");
     }
   },
 };

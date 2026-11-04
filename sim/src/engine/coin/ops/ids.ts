@@ -30,7 +30,7 @@ export const TRACK = {
   kdp: "posture.kdp",
   puk: "posture.puk",
 } as const;
-export const FLAG = { law3175: "law3175", ohalPowers: "ohalPowers" } as const;
+export const FLAG = { law3175: "law3175" } as const;
 export const TAG = { noLandLinks: "noLandLinks", noPieces: "noPieces", eventsOnly: "eventsOnly", receptionTarget: "receptionTarget", rallyAtSupport: "rallyAtSupport" } as const;
 export const TERRAIN = { mountain: "mountain", plain: "plain", city: "city" } as const;
 export const EMERGENCY = { martialLaw: "martialLaw", ohal: "ohal", ohalExtendedPowers: "ohalExtendedPowers", normalizing: "normalizing" } as const;
@@ -38,6 +38,8 @@ export const POSTURE = { host: "host", tolerant: "tolerant", restricted: "restri
 /** External box -> its host posture track (research 07 s5). */
 export const HOST_OF: Readonly<Record<string, string>> = { "syria-bekaa": TRACK.syria, "kdp-zone": TRACK.kdp, "puk-zone": TRACK.puk };
 export const SYRIA_BOX = "syria-bekaa";
+/** Press prosecutions Momentum space (DK-050). */
+export const PRESS_SPACE = "diyarbakir-city";
 export const EUROPE_SPACE = "europe";
 export const FLAG_VACUUM = "northernIraqVacuum";
 /** Set by the Capture Always line (DK-093; 07 s5.2 item 5). */

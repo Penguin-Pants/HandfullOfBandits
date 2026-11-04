@@ -9,7 +9,7 @@ Status: **approved by the designer 2026-11-04 and built** (P3b-02, [11](11-build
 **Conditions, all required** (06 s3.4):
 
 1. Emergency Rule is OHAL or OHAL Extended Powers.
-2. The OHAL Powers event was played (flag `ohalPowers`), or the Campaign is C3 or later.
+2. The Campaign is C3 or later. (DEC-68 deleted flag `ohalPowers`: OHAL Powers is itself a C3 card.)
 3. Target: one Mountain or Plain space that the Op selected. State Control, at least 1 Troop and 1 Police. Neutral or Opposition. No Displacement marker.
 4. Legitimacy is at least (2 x target Pop) + 1.
 
@@ -39,7 +39,7 @@ The space keeps its Pop. Existing code already applies the Displacement Rally, E
 | Code | Text |
 |---|---|
 | `clearanceStep` | Village Clearance: Emergency Rule is {step}. Needs OHAL or OHAL Extended Powers (06 s3.4 condition 1). |
-| `clearancePowers` | Village Clearance needs the OHAL Powers event or Campaign C3 or later (06 s3.4 condition 2). |
+| `clearancePowers` | Village Clearance is available from Campaign C3 (06 s3.4 condition 2). (DEC-68) |
 | `clearanceSpaces` | Select exactly 1 space for Village Clearance. |
 | `clearanceOpSpace` | Village Clearance must target a space that the Sweep or Garrison selected. |
 | `clearanceTerrain` | Village Clearance targets a Mountain or Plain space only. |
@@ -61,7 +61,7 @@ The space keeps its Pop. Existing code already applies the Displacement Rally, E
 
 ## 3. Resolved points
 
-1. **OHAL Powers card:** none exists. Keep flag `ohalPowers` for a later card. Until then Village Clearance is legal only from C3 (DEC-63).
+1. **OHAL Powers card:** none exists. Keep flag `ohalPowers` for a later card. Until then Village Clearance is legal only from C3 (DEC-63). Superseded by DEC-68: the card is DK-036 (C3), so the flag was deleted.
 2. **Offices:** no placement until P3b-04. Effect 7 is built and tested now.
 3. **Tone:** keep the opening sentence of the summary.
 4. **Blocked shift:** an existing State Harm or Coercion marker blocks the effect-1 shift; the other effects apply (PA-18).

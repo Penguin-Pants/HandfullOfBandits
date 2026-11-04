@@ -11,9 +11,10 @@ import { FACE, FACTION, MARKER, PIECE, POSTURE, TERRAIN } from "../ids.ts";
 const ruleRef = "06 s2.4";
 
 /** Removals the Assault makes in a space. */
-export function assaultRemovals(ruleset: Ruleset, state: GameState, loc: string): number {
+export function assaultRemovals(ruleset: Ruleset, state: GameState, loc: string, ignoreMountain = false): number {
   const police = isTerrain(ruleset, loc, TERRAIN.city) ? count(state, loc, PIECE.police) : 0;
-  return terrainRate(ruleset, loc, count(state, loc, PIECE.troops) + police);
+  const cubes = count(state, loc, PIECE.troops) + police;
+  return ignoreMountain ? cubes : terrainRate(ruleset, loc, cubes);
 }
 
 /** Active Guerrillas, or Bases with no Guerrilla present. */
@@ -41,7 +42,7 @@ export const assault: ActionHandler = {
   execute(ctx, part, options) {
     for (const loc of part.locations) {
       if (!options.free) pay(ctx, FACTION.state, param(ctx.ruleset, "assault.costPerSpace", "number"), ruleRef, loc);
-      let left = options.sa === "state.cross-border" && options.saLocations.includes(loc) && postureOf(ctx.state, loc) === POSTURE.aligned ? count(ctx.state, loc, PIECE.troops) : assaultRemovals(ctx.ruleset, ctx.state, loc);
+      let left = options.sa === "state.cross-border" && options.saLocations.includes(loc) && postureOf(ctx.state, loc) === POSTURE.aligned ? count(ctx.state, loc, PIECE.troops) : assaultRemovals(ctx.ruleset, ctx.state, loc, options.constraints["ignoreMountain"] === true);
       const active = Math.min(left, count(ctx.state, loc, PIECE.guerrilla, FACE.active));
       if (active > 0) ctx.apply({ type: "removePieces", piece: PIECE.guerrilla, state: FACE.active, count: active, space: loc, to: "available", ruleRef, assumptionRef: null });
       left -= active;

@@ -6,7 +6,7 @@ import { SINGLE_FACE } from "../../../core/state.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";
 import { activate, controlOf, count, hasTag, isTerrain, markers, space } from "../common.ts";
-import { EMERGENCY, FACE, FACTION, FLAG, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
+import { EMERGENCY, FACE, FACTION, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
 import { asString } from "../plan.ts";
 
 const ruleRef = "06 s3.4";
@@ -23,9 +23,10 @@ function popCost(ruleset: Ruleset, target: string): number {
   return param(ruleset, "clearance.legitimacyPerPop", "number") * (space(ruleset, target)?.pop ?? 0);
 }
 
+/** Condition 2: Campaign C3 or later (DEC-68; OHAL Powers is itself a C3 card). */
 function powersReady(ruleset: Ruleset, state: GameState): boolean {
   const campaigns = param(ruleset, "campaign.order", "list").map(String);
-  return state.flags[FLAG.ohalPowers] === true || campaigns.indexOf(state.turn.campaign ?? "") >= campaigns.indexOf(param(ruleset, "clearance.from", "string"));
+  return campaigns.indexOf(state.turn.campaign ?? "") >= campaigns.indexOf(param(ruleset, "clearance.from", "string"));
 }
 
 export const villageClearance: ActionHandler = {
@@ -38,7 +39,7 @@ export const villageClearance: ActionHandler = {
     const out: Violation[] = [];
     const step = String(state.tracks[TRACK.emergencyRule]);
     if (!steps.includes(step)) out.push(at(null, "clearanceStep", `Village Clearance: Emergency Rule is ${stepName(step)}. Needs OHAL or OHAL Extended Powers (06 s3.4 condition 1).`, ruleRef));
-    if (!powersReady(ruleset, state)) out.push(at(null, "clearancePowers", "Village Clearance needs the OHAL Powers event or Campaign C3 or later (06 s3.4 condition 2).", ruleRef));
+    if (!powersReady(ruleset, state)) out.push(at(null, "clearancePowers", "Village Clearance is available from Campaign C3 (06 s3.4 condition 2).", ruleRef));
     if (part.locations.length !== 1) return [...out, at(null, "clearanceSpaces", "Select exactly 1 space for Village Clearance.", ruleRef)];
     const loc = part.locations[0] ?? "";
     const fail = (code: string, message: string): Violation[] => [...out, at(loc, code, message, ruleRef)];
