@@ -110,7 +110,7 @@ Procedure (CT 2.3.7):
 
 ## 5. Event execution
 
-1. Most cards are dual-use. The executing faction chooses either the unshaded or the shaded text, not both (CT 5.2). Either faction may choose either side unless the card restricts it. Exception (DD-10.5): the PKK may not execute an event side that places or resolves a Closure Case, bans the legal party, removes Offices or moves Legal Space. The non-player Office sides of DK-065, DK-067 and DK-094 stay open to either faction (08, section 6), because they run the procedure table and give no choice of space.
+1. Most cards are dual-use. The executing faction chooses either the unshaded or the shaded text, not both (CT 5.2). Either faction may choose either side unless the card restricts it. Exception (DD-10.5): the PKK may not execute an event side that places or resolves a Closure Case, bans the legal party, removes Offices or moves Legal Space. The non-player Office sides of DK-065, DK-067 and DK-094 stay open to either faction (08, section 6), because they run the procedure table and give no choice of space. Both sides of DK-053 also stay open to either faction: they run the 07, section 10.1 procedure and give no choice of target (DEC-68).
 2. Event text overrides rules. It cannot break stacking, place pieces that are not Available (unless it says so) or raise Resources above 50 (CT 5.1.1).
 3. Do as much of the text as you can (CT 5.1.3). The current Event wins a conflict with a lasting effect (CT 5.1.2).
 4. Free Operations and Special Activities granted by events cost no Resources and do not change eligibility. Civic Action, Agitate and Redress still cost Resources (CT 3.1.2, 5.5).
