@@ -38,6 +38,8 @@ export const POSTURE = { host: "host", tolerant: "tolerant", restricted: "restri
 /** External box -> its host posture track (research 07 s5). */
 export const HOST_OF: Readonly<Record<string, string>> = { "syria-bekaa": TRACK.syria, "kdp-zone": TRACK.kdp, "puk-zone": TRACK.puk };
 export const SYRIA_BOX = "syria-bekaa";
+/** Press prosecutions Momentum space (DK-050). */
+export const PRESS_SPACE = "diyarbakir-city";
 export const EUROPE_SPACE = "europe";
 export const FLAG_VACUUM = "northernIraqVacuum";
 /** Set by the Capture Always line (DK-093; 07 s5.2 item 5). */

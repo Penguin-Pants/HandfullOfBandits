@@ -120,7 +120,7 @@ export const rally: ActionHandler = {
   },
   cost(ruleset, state, part, options) {
     const op = options.free ? 0 : part.locations.reduce((sum, loc) => sum + costOf(ruleset, state, loc), 0);
-    return op + agitations(options).reduce((sum, a) => sum + (a.spend === null ? 0 : agitationCost(ruleset, a.spend)), 0);
+    return op + agitations(options).reduce((sum, a) => sum + (a.spend === null ? 0 : agitationCost(ruleset, state, a.space, a.spend)), 0);
   },
   execute(ctx, part, options) {
     placeAll(ctx, part, options);

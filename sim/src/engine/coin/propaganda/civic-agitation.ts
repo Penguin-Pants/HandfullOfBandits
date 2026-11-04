@@ -69,7 +69,7 @@ export const agitationPhase: PropagandaPhase = {
       }
       if (!canAgitate(ruleset, state, space)) out.push(violation("agitateWhere", "Agitation needs a PKK Base or PKK Control (07 s1.3).", "07 s1.3", space));
       out.push(...agitationViolations(ruleset, state, space, spend));
-      spent += agitationCost(ruleset, spend);
+      spent += agitationCost(ruleset, state, space, spend);
     }
     if (spent > resources(ruleset, state, FACTION.pkk)) out.push(violation("cannotPay", `Agitation costs ${String(spent)}; the PKK cannot pay.`, "05 s6.6"));
     return out;

@@ -28,6 +28,7 @@ export const crossBorder: ActionHandler = {
     if (moves === null || moves.some(m => !["hakkari", "botan"].includes(m.from) || m.to !== null || m.face !== null)) return fail("crossBorderMoves", "Move Troops from Hakkari or Botan into the selected zone.");
     const moved = moves.reduce((n, m) => n + m.count, 0);
     if (moved > param(r, "crossBorder.maxTroops", "number")) return fail("crossBorderTroops", "Too many Troops in the lift.");
+    if (o.constraints["noLift"] === true && moved > 0) return fail("crossBorderNoLift", "The card allows one Cross-Border lift, with the Sweep.");
     for (const origin of ["hakkari", "botan"]) if (moves.filter(m => m.from === origin).reduce((n, m) => n + m.count, 0) > count(s, origin, PIECE.troops)) return fail("crossBorderSupply", "The origin has too few Troops.");
     if (typeof o.constraints["maxTroops"] === "number" && count(s, box, PIECE.troops) + moved > o.constraints["maxTroops"]) return fail("crossBorderTroops", "The card limits the zone force.");
     if (crossBorderOpen(r, s, box)) return [];

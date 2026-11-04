@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { codes, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
+import { agitationCost } from "./ops/pkk/agitation.ts";
+import type { ActionOptions } from "./ops/action.ts";
+import { sweep } from "./ops/state/sweep.ts";
 
 // T-EVT per side for the C3 cards (11 P3b-07; encoding docs/prototype/32, DEC-68).
 // S0 board: Diyarbakır City and Western Cities have State Control and Police; Diyarbakır Rural
@@ -224,5 +227,102 @@ describe("Unattributed Killings in the Southeast (DK-053)", () => {
       expect(codes(board("pkk", "DK-053"), event("pkk", side))).toEqual([]);
       expect(codes(board("state", "DK-053"), event("state", side))).toEqual([]);
     }
+  });
+});
+
+const free = (s: GameState): GameState => ({ ...s, flags: { ...s.flags, northernIraqVacuum: true } });
+const lift = (n: number) => ({ locations: ["kdp-zone"], perLocation: {}, sa: { locations: ["kdp-zone"], perLocation: { "kdp-zone": { moves: [{ from: "hakkari", count: n }] } } } });
+const zoneAssault = (moves: unknown[] = []) => ({ locations: ["kdp-zone"], perLocation: {}, sa: { locations: ["kdp-zone"], perLocation: { "kdp-zone": { moves } } } });
+const guerrillas = (s: GameState, id: string): number => Object.values(pieces(s, id, "guerrilla")).reduce((a, n) => a + n, 0);
+
+describe("KHK 430 (DK-038)", () => {
+  const sweepCost = (s: GameState): number => sweep.cost(ruleset, s, { locations: ["botan"], perLocation: {} }, { free: false } as ActionOptions);
+  it("U: State Momentum, Sweep costs 1 per space at Martial Law; then a free Garrison", () => {
+    const before = board("state", "DK-038");
+    const { state } = play(before, event("state", "unshaded", [null]));
+    expect([sweepCost(before), sweepCost(state)]).toEqual([2, 1]);
+    expect(state.modifiers.map((m) => [m.id, m.duration])).toEqual([["khk-430", "untilReset"]]);
+  });
+
+  it("S: Legitimacy -2", () => {
+    expect(track(play(board("pkk", "DK-038"), event("pkk", "shaded")).state, "legitimacy")).toBe(3);
+  });
+});
+
+describe("Operation in Northern Iraq (DK-041)", () => {
+  it("follows Northern Iraq Vacuum in the pile", () => {
+    expect(card("DK-041")?.chainAfter).toEqual(["DK-040"]);
+  });
+
+  it("U: free Sweep with one lift, then free Assault with Cross-Border and Disputed Harm", () => {
+    const ready = setTrack(free(board("state", "DK-041")), "posture.kdp", "tolerant");
+    const { state } = play(ready, event("state", "unshaded", [lift(2), zoneAssault()]));
+    expect(pieces(state, "kdp-zone", "troops")).toEqual({ default: 2 });
+    expect(guerrillas(state, "kdp-zone")).toBe(2);
+    expect(marker(state, "kdp-zone", "disputedHarm")).toBe(1);
+  });
+
+  it("U: the Assault may not lift more Troops (DEC-68)", () => {
+    const ready = setTrack(free(board("state", "DK-041")), "posture.kdp", "tolerant");
+    expect(codes(ready, event("state", "unshaded", [lift(2), zoneAssault([{ from: "botan", count: 2 }])]))).toEqual(["crossBorderNoLift"]);
+  });
+
+  it("S: Legitimacy -1; up to 3 Guerrillas move to the PUK Zone, Underground", () => {
+    const ready = setPieces(board("pkk", "DK-041"), "kdp-zone", "guerrilla", 1, "active");
+    const { state } = play(ready, event("pkk", "shaded", [3]));
+    expect(pieces(state, "puk-zone", "guerrilla")).toEqual({ underground: 3, active: 0 });
+    expect(track(state, "legitimacy")).toBe(4);
+  });
+});
+
+describe("Turkey-Syria Accord (DK-044)", () => {
+  it("U: Syria one step toward Hostile; with 2 or more Bases there, remove 1", () => {
+    const two = setPieces(setTrack(board("state", "DK-044"), "posture.syria", "tolerant"), "syria-bekaa", "pkkBase", 2);
+    const { state } = play(two, event("state", "unshaded"));
+    expect([track(state, "posture.syria"), pieces(state, "syria-bekaa", "pkkBase")]).toEqual(["restricted", { default: 1 }]);
+    const one = setTrack(board("state", "DK-044"), "posture.syria", "tolerant");
+    expect(pieces(play(one, event("state", "unshaded")).state, "syria-bekaa", "pkkBase")).toEqual({ default: 1 });
+  });
+
+  it("S: up to 2 Guerrillas to one chosen space, State Resources -2", () => {
+    const before = board("pkk", "DK-044");
+    const { state } = play(before, event("pkk", "shaded", ["Şanlıurfa", 2]));
+    expect([guerrillas(state, "sanliurfa"), guerrillas(state, "syria-bekaa")]).toEqual([2, 0]);
+    expect(track(state, "resources.state")).toBe(Number(before.tracks["resources.state"]) - 2);
+  });
+});
+
+describe("Large Operation with KDP Help (DK-047)", () => {
+  const run = (posture: string) => play(setTrack(free(board("state", "DK-047")), "posture.kdp", posture), event("state", "unshaded", [lift(2), zoneAssault()])).state;
+  it("U: at Hostile or Aligned, Sweep and Assault ignore the Mountain modifier (DEC-68)", () => {
+    const hostile = run("hostile");
+    expect([guerrillas(hostile, "kdp-zone"), marker(hostile, "kdp-zone", "disputedHarm")]).toEqual([1, 1]);
+  });
+
+  it("U: at Tolerant the Mountain modifier applies", () => {
+    expect(guerrillas(run("tolerant"), "kdp-zone")).toBe(2);
+  });
+
+  it("S: up to 4 Guerrillas to the PUK Zone or Hakkari, Underground; State Resources -3", () => {
+    const before = setPieces(board("pkk", "DK-047"), "kdp-zone", "guerrilla", 1, "active");
+    const { state } = play(before, event("pkk", "shaded", ["Hakkari", 4]));
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 6, active: 0 });
+    expect(track(state, "resources.state")).toBe(Number(before.tracks["resources.state"]) - 3);
+  });
+});
+
+describe("Özgür Gündem Begins Publication (DK-050)", () => {
+  const spend = { coercion: 1, pkkHarm: 0, shifts: 2 };
+  it("U: State Momentum, Agitation in Diyarbakır City costs 1 more per shift", () => {
+    const { state } = play(board("state", "DK-050"), event("state", "unshaded"));
+    expect([agitationCost(ruleset, state, "diyarbakir-city", spend), agitationCost(ruleset, state, "botan", spend)]).toEqual([5, 3]);
+    expect(state.modifiers.map((m) => m.duration)).toEqual(["untilReset"]);
+  });
+
+  it("S: Europe +1; PKK Momentum, each revealed Covert marker costs Legitimacy 1 more", () => {
+    const { state } = play(board("pkk", "DK-050"), event("pkk", "shaded"));
+    expect(track(state, "europe")).toBe(2);
+    const reveal = setMarkers({ ...board("pkk", "DK-049"), modifiers: state.modifiers }, "hakkari", "covert", 1);
+    expect(track(play(reveal, event("pkk", "shaded")).state, "legitimacy")).toBe(2);
   });
 });

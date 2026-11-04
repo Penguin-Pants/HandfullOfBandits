@@ -63,7 +63,7 @@ export function matches(ctx: TermContext, spaceId: SpaceId, condition: SpaceCond
     case "control":
       return ctx.control[spaceId] === condition.faction;
     case "spaceHas":
-      return countIn(ctx, spaceId, "pieces", condition.pieces, condition.sides) + countIn(ctx, spaceId, "markers", condition.markers, condition.sides) > 0;
+      return countIn(ctx, spaceId, "pieces", condition.pieces, condition.sides) + countIn(ctx, spaceId, "markers", condition.markers, condition.sides) >= (condition.min ?? 1);
     case "atSpace":
       return matches(ctx, condition.space, condition.of);
     case "all":

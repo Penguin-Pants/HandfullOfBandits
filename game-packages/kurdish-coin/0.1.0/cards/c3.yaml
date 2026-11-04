@@ -64,6 +64,28 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0007, S-0024, S-0104, S-0172, S-0180, S-0210, S-0027]
+- id: DK-038
+  campaign: C3
+  title: "KHK 430 (Dec 1990)"
+  date: "1990-12-15"
+  type: momentum
+  unshaded:
+    text: "State Momentum: until the next Reset, Sweep costs 1 Resource per space at any Emergency Rule step. The State conducts a free Garrison."
+    owner: state
+    tier: T2
+    effects:
+      - {type: addModifier, id: khk-430, duration: untilReset}
+      - {type: freeAction, action: state.garrison, constraints: {}}
+  shaded:
+    text: "Near-immunity for governors draws scrutiny: Legitimacy -2."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -2}
+  encoding: {status: encoded, encodedBy: "P3b-07c", reviewedAgainstText: true, note: "Modifier khk-430: Sweep uses sweep.costOhalExtended at every step"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0058, S-0206, S-0216, S-0039]
 - id: DK-039
   campaign: C3
   title: "Law 3713 (Apr 1991)"
@@ -133,6 +155,30 @@
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0176, S-0362, S-0363, S-0367, S-0221, S-0097]
+- id: DK-041
+  campaign: C3
+  title: "Operation in Northern Iraq (Aug 1991)"
+  date: "1991-08-05"
+  type: event
+  chainAfter: [DK-040]
+  unshaded:
+    text: "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border (access and Disputed Harm rules apply)."
+    owner: state
+    tier: T1
+    effects:
+      - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border}}
+      - {type: freeAction, action: state.assault, constraints: {spaces: [kdp-zone], sa: state.cross-border, noLift: true}}
+  shaded:
+    text: "Criticism of the operation: Legitimacy -1. Move up to 3 Guerrillas from the KDP Zone to the PUK Zone, Underground."
+    owner: pkk
+    tier: T1
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: kdp-zone, to: puk-zone}
+  encoding: {status: encoded, encodedBy: "P3b-07c", reviewedAgainstText: true, note: "One Cross-Border lift, with the Sweep; the Assault's Cross-Border moves no Troops (noLift, DEC-68)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0077, S-0065, S-0208, S-0362]
 - id: DK-042
   campaign: C3
   title: "Election Brings HEP Deputies to Parliament (Oct 1991)"
@@ -190,6 +236,34 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0183, S-0083, S-0123, S-0175, S-0124]
+- id: DK-044
+  campaign: C3
+  title: "Turkey-Syria Accord (1992)"
+  date: "1992-04"
+  type: event
+  unshaded:
+    text: "Bekaa camp closed: Syria posture one step toward Hostile. Remove 1 PKK Base from Syria-Bekaa if 2 or more are there."
+    owner: state
+    tier: T0
+    effects:
+      - {type: stepOrdinal, track: posture.syria, direction: next, steps: 1}
+      - type: conditional
+        if: {type: atSpace, space: syria-bekaa, of: {type: spaceHas, pieces: [pkkBase], min: 2}}
+        then: [{type: removePieces, piece: pkkBase, state: null, count: 1, space: syria-bekaa}]
+  shaded:
+    text: "Leader stays: move up to 2 Guerrillas from Syria-Bekaa to Mardin-Batman or Şanlıurfa, free. State Resources -2."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - {label: Mardin-Batman, effects: [{type: movePieces, piece: guerrilla, count: {min: 0, max: 2}, from: syria-bekaa, to: mardin-batman}]}
+          - {label: Şanlıurfa, effects: [{type: movePieces, piece: guerrilla, count: {min: 0, max: 2}, from: syria-bekaa, to: sanliurfa}]}
+      - {type: adjustTrack, track: resources.state, delta: -2}
+  encoding: {status: encoded, encodedBy: "P3b-07c", reviewedAgainstText: true, note: "Base count read after the posture step (normal Hostile entry). Shaded: one destination as DK-005 and DK-017; moved Guerrillas keep their face"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0078, E-0062, S-0035, S-0247, S-0376, S-0089]
 - id: DK-045
   campaign: C3
   title: "Şırnak Town Battle (Aug 1992)"
@@ -216,6 +290,38 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0081, S-0123, S-0205, S-0067]
+- id: DK-047
+  campaign: C3
+  title: "Large Operation with KDP Help (Oct-Nov 1992)"
+  date: "1992-10-12"
+  type: event
+  unshaded:
+    text: "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border. If KDP is Hostile or Aligned with Turkey, ignore the Mountain modifier."
+    owner: state
+    tier: T1
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: posture.kdp, values: [hostile, aligned]}
+        then:
+          - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border, ignoreMountain: true}}
+          - {type: freeAction, action: state.assault, constraints: {spaces: [kdp-zone], sa: state.cross-border, noLift: true, ignoreMountain: true}}
+        else:
+          - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border}}
+          - {type: freeAction, action: state.assault, constraints: {spaces: [kdp-zone], sa: state.cross-border, noLift: true}}
+  shaded:
+    text: "Fighters slip away: move up to 4 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground. State Resources -3."
+    owner: pkk
+    tier: T1
+    effects:
+      - type: choice
+        options:
+          - {label: PUK Zone, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: puk-zone}]}
+          - {label: Hakkari, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: hakkari}]}
+      - {type: adjustTrack, track: resources.state, delta: -3}
+  encoding: {status: encoded, encodedBy: "P3b-07c", reviewedAgainstText: true, note: "ignoreMountain for Sweep and Assault; one lift (DEC-68). Chain partner DK-046 stays out of the package"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0083, S-0066, S-0069, S-0211, S-0212, S-0376, S-0070]
 - id: DK-048
   campaign: C3
   title: "Houses Burned at Kelekçi (Nov 1992)"
@@ -264,6 +370,28 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0180, S-0073, S-0123, S-0150, S-0175, S-0203]
+- id: DK-050
+  campaign: C3
+  title: "Özgür Gündem Begins Publication (May 1992)"
+  date: "1992-05-30"
+  type: momentum
+  unshaded:
+    text: "Press prosecutions: State Momentum: until the next Reset, Agitation in Diyarbakır City costs 1 more per step."
+    owner: state
+    tier: T0
+    effects:
+      - {type: addModifier, id: press-prosecutions, duration: untilReset, params: {extra: 1}}
+  shaded:
+    text: "Reporting raises the cost of harm: Europe +1. PKK Momentum: until the next Reset, each revealed Covert marker costs Legitimacy 1 more."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+      - {type: addModifier, id: press-reporting, duration: untilReset, params: {extra: 1}}
+  encoding: {status: encoded, encodedBy: "P3b-07c", reviewedAgainstText: true, note: "Per step = per shift level, Rally and Propaganda Agitation (DEC-68)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0185, S-0203, S-0204, S-0123]
 - id: DK-051
   campaign: C3
   title: "Prosecutor Files to Close HEP (Jul 1992)"
