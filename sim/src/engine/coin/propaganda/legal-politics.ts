@@ -6,8 +6,8 @@ import type { Exec } from "../../core/exec.ts";
 import { param } from "../../core/params.ts";
 import { SINGLE_FACE } from "../../core/state.ts";
 import type { GameState, Ruleset, Violation } from "../../core/types.ts";
-import { controlOf, markers, space } from "../ops/common.ts";
-import { EUROPE_SPACE, FACTION, MARKER, TRACK } from "../ops/ids.ts";
+import { adjustEurope, controlOf, markers, space } from "../ops/common.ts";
+import { FACTION, MARKER, TRACK } from "../ops/ids.ts";
 import { violation, type PropagandaPhase } from "./phase.ts";
 
 const ruleRef = "07 s6.4";
@@ -73,10 +73,7 @@ export const legalPoliticsPhase: PropagandaPhase = {
       ctx.apply({ type: "setTrack", track: SUCCESSOR, value: officeSpaces(ruleset, ctx.state).reduce((n, id) => n + markers(ctx.state, id, MARKER.office), 0), ifEquals: null, ruleRef: ref, assumptionRef: null });
       for (const id of officeSpaces(ruleset, ctx.state)) for (let i = markers(ctx.state, id, MARKER.office); i > 0; i--) ctx.apply({ type: "removeMarker", marker: MARKER.office, space: id, side: SINGLE_FACE, ruleRef: ref, assumptionRef: null });
       ctx.apply({ type: "adjustTrack", track: TRACK.legitimacy, delta: -param(ruleset, "legal.banLegitimacy", "number"), ruleRef: ref, assumptionRef: null });
-      // The German ban marker caps Europe (04 s3.6).
-      const cap = markers(ctx.state, EUROPE_SPACE, MARKER.ban) > 0 ? param(ruleset, "europe.banCap", "number") : Infinity;
-      const rise = Math.max(0, Math.min(param(ruleset, "legal.banEurope", "number"), cap - Number(ctx.state.tracks[TRACK.europe])));
-      if (rise > 0) ctx.apply({ type: "adjustTrack", track: TRACK.europe, delta: rise, ruleRef: ref, assumptionRef: "PA-04" });
+      adjustEurope(ctx, param(ruleset, "legal.banEurope", "number"), ref, "PA-04");
       ctx.apply({ type: "setFlag", flag: CASE, value: false, ruleRef: ref, assumptionRef: null });
       return;
     }
