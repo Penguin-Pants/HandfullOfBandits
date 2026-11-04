@@ -24,6 +24,10 @@ describe("action summaries match the engine", () => {
     expect(summary("state.village-clearance")).toMatch(/^Forced evacuation of a village area\./);
     expect(summary("state.village-clearance")).toMatch(/shift 1 level toward Neutral, Legitimacy -2 x Pop, place Displacement \(New\) and State Harm, place Reception in Diyarbakır City or Western Cities and Activate all Guerrillas\. An Office there costs Legitimacy 1 more/);
   });
+  it("Covert Action: approved text (covert-action.ts, docs/prototype/28)", () => {
+    expect(summary("state.covert-action")).toMatch(/^Covert Killings\./);
+    expect(summary("state.covert-action")).toMatch(/need not be one the Operation selected/);
+  });
   it("Assault: Police count as Troops in a City (assault.ts)", () => {
     expect(summary("state.assault")).toMatch(/City, Police count as Troops/);
   });

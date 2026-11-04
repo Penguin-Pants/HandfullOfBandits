@@ -53,4 +53,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Start task P3b-03 (Covert Action) as described in [11-build-plan.md](11-build-plan.md) section 0: draft the player-facing text for designer approval before code.
+Start task P3b-04 (Legal Politics) as described in [11-build-plan.md](11-build-plan.md) section 0: list the open procedure details for designer approval before code.
