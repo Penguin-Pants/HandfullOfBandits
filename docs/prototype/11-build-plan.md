@@ -12,6 +12,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 3. DK-065, DK-067 and DK-094 need the full Legal Politics table as a procedure (only lines 3 and 4 are registered).
 
 **Owner decisions in force**
+- **DEC-70 project order (2026-11-04):** 1. Finalize rules, cards and mechanics (P3b-07 C4 and C5, P3b-08 scenarios, Phase 3c full campaign). 2. Finish the engine and UI for manual play and test (IC-3a to IC-3c). 3. Automated games with bot profiles, as the Scenario A program (docs 19 to 23): extend profiles to every C3 to C5 rule and card, then run and review. Stage 3 replaces "automated opponents" and "batch execution" in Phase 5. The no-simulations rule holds until stage 3.
 - Phase 3b proceeds before IC-3a. IC-3a findings may force rework; record any in this plan.
 - **No more automated simulations for now.** Do not start frozen runs. The bot reference [26](26-bot-reference.md) lists what to review before the next ones.
 - Deeper bot planning (three-step beam search, option A in 26) is proposed, not approved.
