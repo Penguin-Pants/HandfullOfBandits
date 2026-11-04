@@ -20,6 +20,14 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 **Open items outside the task order**
 - IC-3a: the designer's full Scenario A playthrough. Briefing: [25](25-p-shield-designer-notes.md) (P-SHIELD test).
 - Printable rulebook PDF is stale since DEC-62 (Host Pressure, rules 4.3.4). Run `make rulebook` where XeLaTeX is installed.
+- **Open PR:** [#46](https://github.com/Penguin-Pants/HandfullOfBandits/pull/46) holds P3b-02 to P3b-05 and the review fixes. Not merged. Merge it before P3b-06 work starts on a new branch.
+- **Repository renamed** to `Penguin-Pants/HandfullOfBandits`. Older links to `HandfulOfBandits` redirect. A session needs the new name in its GitHub scope to resolve review threads.
+
+**Carried follow-ups from P3b-02 to P3b-05** (details in section 4)
+1. **Decide in P3b-06:** the ceasefire step runs inside Legal Politics, which 05 s6.5 skips while Legal Space is Absent. If C3 starts before HEP Founded (DK-037), a declared ceasefire never reaches its step.
+2. **Fix in P3b-07:** card Event `adjustTrack` on Europe (`coin/events.ts`) ignores the Ban marker cap. Route it through `adjustEurope` when the German ban card is encoded.
+3. **Before the next simulations:** batch bots never file a closure case, declare a ceasefire or answer the ceasefire step (`cli/candidates.ts` `AUTO_PHASES`).
+4. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (five call sites).
 
 **Recent merged work**
 
@@ -31,10 +39,16 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #43 | DEC-62: Host Pressure with no legal replacement ends the Operation; overview [24](24-scenario-a-playtest-overview.md) |
 | #44 | P-SHIELD designer notes [25](25-p-shield-designer-notes.md) and bot reference [26](26-bot-reference.md) |
 | #45 | P3b-01: Emergency Rule step table tests; Phase 3b started |
+
+**Open, not merged (PR #46)**
+
+| Task | Content |
+|---|---|
 | P3b-02 | Village Clearance SA, PA-18, DEC-63 ([27](27-village-clearance-draft.md)) |
 | P3b-03 | Covert Action SA, DEC-64 ([28](28-covert-action-draft.md)) |
 | P3b-04 | Legal Politics phase and closure filing, DEC-65 ([29](29-legal-politics-draft.md)) |
 | P3b-05 | Ceasefire declaration, restrictions, breach, ceasefire step and Negotiated Outcome, DEC-66 ([30](30-ceasefire-draft.md)) |
+| Review | Ban marker Europe cap shared; three Codex findings fixed (`d499a85`) |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
