@@ -45,6 +45,7 @@ The research contains enough detail to implement a complete playable two-player 
 | GAP-B13 | Random source for hidden and random selections | 05 s6.4 step 5; 07 s10.2 item 2 | PA-13 (accepted): All random selections use the session seeded generator (05-rules-engine-spec.md, section 8). Not a game rule change. Listed so the designer sees it |
 | GAP-B14 | Air Mobility with Troops in an external box | 06 s3.1 | PA-14 (accepted): Air Mobility never uses an external box as origin or destination. Troops leave a box only at Redeploy (05 s6.7) |
 | GAP-B15 | Event card with undefined target | DK-066 U (no space for "Remove 2 Offices"). DK-053 is not a gap: it applies 07 s10.1, which has a tie order | PA-15 (replaced): The executing faction chooses any 2 Offices to remove. Legitimacy -1 |
+| GAP-B16 | Blocked Village Clearance shift | 06 s3.4 effect 1: "Shift the space one level toward Neutral". 04 s4: State Harm blocks shifts toward Support. A shift from Opposition toward Neutral is a shift toward Support | PA-18 (accepted, designer 2026-11-04): the normal shift rule applies, so an existing State Harm or Coercion marker blocks the shift. The other effects apply |
 
 ## 5. Competing rules (no silent choice)
 

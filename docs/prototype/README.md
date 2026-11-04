@@ -53,4 +53,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Start task P3b-02 (Village Clearance) as described in [11-build-plan.md](11-build-plan.md) section 0: draft the effects and log text for designer approval before code.
+Start task P3b-03 (Covert Action) as described in [11-build-plan.md](11-build-plan.md) section 0: draft the player-facing text for designer approval before code.

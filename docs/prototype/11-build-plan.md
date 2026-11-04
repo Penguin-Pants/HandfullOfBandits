@@ -1,15 +1,16 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45). **Next task: P3b-02.**
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 done. **Next task: P3b-03.**
 
-## 0. Resume here (updated 2026-11-04, PR #45)
+## 0. Resume here (updated 2026-11-04, P3b-02)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next task: P3b-02 Village Clearance** (Phase 3b table below; mechanic OPS-08 in [01](01-mechanics-inventory.md); research 06 s3.4, 07 s3 for Displacement and Return).
-1. Not built yet: only the ID `state.village-clearance` exists, in `HARMFUL_ACTIONS` (`sim/src/engine/coin/ops/ids.ts`). Displacement markers, their Propaganda drain and the Civic Action Return step already exist.
-2. **First step, before code:** draft the seven ordered effects and every player-facing log and UI string, and get the designer's approval. The plan rates this the highest ethics sensitivity.
-3. Then TDD (T-OPS, T-PERV), one small PR, TWO-PASS REVIEW, as for every task.
+**Next task: P3b-03 Covert Action and hidden markers** (Phase 3b table below; research 06 s3.5, 05 s6.4 step 5, 09 s3 step 1).
+1. Already built: the `covert` marker (hidden, 6), `revealCovert` and the exposure step (`coin/propaganda/legitimacy.ts`), the victory-check penalty (`coin/victory.ts`) and the ID `state.covert-action` in `HARMFUL_ACTIONS`.
+2. Not built: the Covert Action SA and `core/hidden.ts`. Solo play sees hidden markers (GAP-O01); P4-07 adds the view toggle.
+3. **First step, before code:** draft the player-facing strings, as for P3b-02 ([27](27-village-clearance-draft.md)), and get the designer's approval. Covert Action is a harm tool (`HARMFUL_ACTIONS`).
+4. Then TDD (T-VIC, T-OPS), one small PR, TWO-PASS REVIEW.
 
 **Owner decisions in force**
 - Phase 3b proceeds before IC-3a. IC-3a findings may force rework; record any in this plan.
@@ -30,6 +31,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #43 | DEC-62: Host Pressure with no legal replacement ends the Operation; overview [24](24-scenario-a-playtest-overview.md) |
 | #44 | P-SHIELD designer notes [25](25-p-shield-designer-notes.md) and bot reference [26](26-bot-reference.md) |
 | #45 | P3b-01: Emergency Rule step table tests; Phase 3b started |
+| P3b-02 | Village Clearance SA, PA-18, DEC-63 ([27](27-village-clearance-draft.md)) |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -557,12 +559,19 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-02** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-03** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+
+**P3b-02 (2026-11-04):** complete. The designer approved the effect order and every player-facing string in [27](27-village-clearance-draft.md) before code. `coin/ops/sa/village-clearance.ts` accompanies Sweep or Garrison, checks the four conditions and applies the seven effects in order with rule refs `06 s3.4 effect 1` to `7`. It costs Legitimacy only; four new parameters (`clearance.*`) hold every number. DEC-63: condition 2 reads flag `ohalPowers` or Campaign C3 or later; no card sets the flag yet, so Scenario A cannot use it. PA-18 (GAP-B16): an existing State Harm or Coercion marker blocks the effect-1 shift. Tests: `village-clearance.test.ts` (T-OPS, T-VAL, four T-PERV cases from 09 s7.1) and a summary check in `forms.test.ts`. Mutation checks (swap effects 3 and 4; Pop cost 0) fail the suite.
+- **TWO-PASS REVIEW.** Pass 1 traced ChooseOperation with the SA before and after Sweep and Garrison, the re-check after the Op, the Reception shortfall, the blocked shift, the Neutral case and the Rally block that follows. No path code. Pass 2 replaced a local Legitimacy reader with the existing pattern.
+  - **Fix:** the first Martial Law message read "martialLaw". Display name added; the message test fails without it.
+  - **Propose:** Campaign comparisons repeat in four handlers, and `cross-border.ts` and `host-actions.ts` hold literal `"C3"` and `"C5"`. Proposed: one `fromCampaign(ruleset, state, id)` helper in `coin/ops/common.ts` with parameters for those IDs. Not applied (outside P3b-02).
+  - **Drop:** an exhausted Displacement supply skips the marker and the Rally block. PA-09 already covers every marker type.
+- **Validation:** `make check` passes. `make test`: 73 files, 985 tests pass. Both goldens were regenerated because the package hash changed; commands and end state are unchanged (S0 25, Scenario A 66 hashes). Package validation shows only the expected full-campaign blocks. UI build and `make e2e` pass. Windows execution not run here.
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
 | P3b-01 ✅ | Emergency Rule step table and Legitimacy phase step 8 | module `emergency-rule` | IC-3a | 07 s8.2 table | T-PROP | None |
-| P3b-02 | Village Clearance | module `village-clearance` | P3b-01 | 7 effects in order. T-PERV cases | T-OPS, T-PERV | Highest ethics sensitivity. Review log text |
+| P3b-02 ✅ | Village Clearance | module `village-clearance` | P3b-01 | 7 effects in order. T-PERV cases | T-OPS, T-PERV | Highest ethics sensitivity. Review log text |
 | P3b-03 | Covert Action and hidden markers | module `covert`, `core/hidden.ts` | P3b-01 | Check penalty and reveal | T-VIC | Solo play sees hidden markers. Logged as GAP-O01 |
 | P3b-04 | Legal Politics procedure and closure filing | module `legal-politics` | P3b-01 | Two runs of the table give identical Offices (research M-007) | T-PROP | Line order details |
 | P3b-05 | Ceasefire, restrictions, breach, votes, Negotiated Outcome | module `ceasefire` | P3b-04 | 07 s7 fixtures. PA-11 | T-VAL, T-PROP | Breach warnings in UI |

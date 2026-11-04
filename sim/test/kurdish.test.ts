@@ -55,8 +55,8 @@ describe("kurdish-coin 0.1.0", () => {
     expect(sorted(actual)).toEqual(sorted(printed));
   });
 
-  it("lists PA-01 to PA-17 in assumptions.yaml", () => {
-    expect(data.assumptions?.map((a) => a.id)).toEqual(Array.from({ length: 17 }, (_, i) => `PA-${String(i + 1).padStart(2, "0")}`));
+  it("lists PA-01 to PA-18 in assumptions.yaml", () => {
+    expect(data.assumptions?.map((a) => a.id)).toEqual(Array.from({ length: 18 }, (_, i) => `PA-${String(i + 1).padStart(2, "0")}`));
   });
 
   it("T-SCORE: full campaign setup scores 21 and 4 with Harm 0 and 0 (09 s2.2, 10 s2.2)", () => {

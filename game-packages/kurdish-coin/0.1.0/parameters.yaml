@@ -99,6 +99,10 @@
 - {id: crossBorder.cost, value: 2, tune: false, source: "06 s3.2"}
 - {id: crossBorder.maxTroops, value: 6, tune: false, source: "06 s3.2"}
 - {id: crossBorder.hotPursuitTroops, value: 3, tune: false, source: "06 s3.2"}
+- {id: clearance.from, value: C3, tune: false, source: "06 s3.4 condition 2; DD-07.2"}
+- {id: clearance.legitimacyPerPop, value: 2, tune: false, source: "06 s3.4 condition 4, effect 2"}
+- {id: clearance.receptionShortfallCost, value: 1, tune: false, source: "06 s3.4 effect 5"}
+- {id: clearance.officeCost, value: 1, tune: false, source: "06 s3.4 effect 7; 07 s2 DD-10.5"}
 - {id: argk.minGuerrillas, value: 8, tune: false, source: "DK-015; 08 s4"}
 - {id: argk.minBases, value: 2, tune: false, source: "DK-015; 08 s4"}
 - {id: argk.maxPlace, value: 4, tune: false, source: "DK-015; 08 s4"}
