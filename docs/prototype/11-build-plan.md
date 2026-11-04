@@ -6,7 +6,7 @@ Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next task: P3b-07 C4 cards** (Phase 3b table below; research 08; deck CSV). 5 cards per PR. **Blocked on the designer:** write draft 33 for C4 (as [32](32-c3-cards-draft.md) for C3) and get it approved before code.
+**Next task: P3b-07 C4 cards** (Phase 3b table below; research 08; deck CSV). 5 cards per PR. Draft [33](33-c4-cards-draft.md) approved (DEC-69): build P3b-07d to P3b-07g in its batch order. C5 needs its own draft after that.
 1. Already built: all C3 cards and the C3 Propaganda card (P3b-07a to 07c); all four Pivotals and the three structural cards (P3b-06); procedures `legal.officeLines`, `covert.revealRandom` (DK-079 and DK-080 reveal up to 2), `hizbullah.unattributed`; Event Europe cap; PKK side restriction (`executors`).
 2. Remaining: 18 C4 Event cards, 2 C4 Momentum cards, DK-077 Propaganda; 19 C5 cards (DK-093 built), DK-091 Capability, DK-099 Propaganda. Package validation still blocks the full campaign on C4 and C5 (V-CARDS).
 3. DK-065, DK-067 and DK-094 need the full Legal Politics table as a procedure (only lines 3 and 4 are registered).
