@@ -1,0 +1,161 @@
+# C4 cards (research 08; deck CSV). Encoding docs/prototype/33, DEC-69. DK-076 Area Domination is in pivotal.yaml.
+# P3b-07d: legal parties and Propaganda. The other C4 cards come in P3b-07e to P3b-07g.
+- id: DK-060
+  campaign: C4
+  title: "Constitutional Court Dissolves HEP (Jul 1993)"
+  date: "1993-07-14"
+  type: event
+  unshaded:
+    text: "If a Closure Case marker is on the track, resolve Legal Politics line 1 now (ban)."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: flag, flag: closureCase, value: true}
+        then: [{type: procedure, id: legal.ban}]
+  shaded:
+    text: "The ban draws protest: Europe +1. Shift Diyarbakır City one level toward Opposition if it has no Office."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+      - type: conditional
+        if: {type: atSpace, space: diyarbakir-city, of: {type: not, of: {type: spaceHas, markers: [office]}}}
+        then: [{type: shiftLevel, space: diyarbakir-city, direction: opposition, steps: 1}]
+  encoding: {status: encoded, encodedBy: "P3b-07d", reviewedAgainstText: true, note: "Line 1 shared with the phase (procedure legal.ban); bans the party, so State only (05 s5 item 1)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0009, S-0104, S-0172, S-0299, S-0300, S-0275, S-0023, S-0024, S-0027, S-0102]
+- id: DK-065
+  campaign: C4
+  title: "DEP Founded (May 1993)"
+  date: "1993-05-07"
+  type: event
+  unshaded:
+    text: "The State may place the Closure Case marker if none is on the track."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - label: File a closure case
+            effects:
+              - type: conditional
+                if: {type: all, of: [{type: flag, flag: closureCase, value: false}, {type: trackIn, track: legalSpace, values: [open, prosecuted]}]}
+                then:
+                  - {type: setFlag, flag: closureCase, value: true}
+                  - {type: setTrack, track: legalSpace, value: prosecuted}
+          - {label: Do not file, effects: []}
+  shaded:
+    text: "Non-player side: if Legal Space is Banned, resolve Legal Politics line 2 now. Otherwise place 1 Office in the line 4 order."
+    owner: null
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: legalSpace, values: [banned]}
+        then: [{type: procedure, id: legal.successor}]
+        else: [{type: procedure, id: legal.officeLines}]
+  encoding: {status: encoded, encodedBy: "P3b-07d", reviewedAgainstText: true, note: "U: a filing as HEP Founded; nothing while Banned (owner decision, P3b-07d). S: open to both factions (05 s5 item 1 exception); no Office at the line 3 limit (DEC-69)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0010, S-0173, S-0024, S-0026, S-0027]
+- id: DK-066
+  campaign: C4
+  title: "Parliament Lifts DEP Immunity (Mar 1994)"
+  date: "1994-03-02"
+  type: event
+  unshaded:
+    text: "Remove 2 Offices. Legitimacy -1."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - type: forEachSpace
+        where: {type: spaceHas, markers: [office]}
+        min: 2
+        max: 2
+        effects:
+          - {type: removeMarker, marker: office, space: selected}
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+  shaded:
+    text: "Arrests of deputies draw protest: Legitimacy -2. Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -2}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07d", reviewedAgainstText: true, note: "The executor chooses; fewer than 2 Offices: remove what there is (DEC-69). Removes Offices, so State only (05 s5 item 1)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0011, S-0173, S-0179, S-0260, S-0261, S-0024, S-0025, S-0102, S-0441]
+- id: DK-067
+  campaign: C4
+  title: "HADEP Founded (May 1994)"
+  date: "1994-05-11"
+  type: event
+  unshaded:
+    text: "Legal Space to Prosecuted if it is Open."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - {type: setTrack, track: legalSpace, value: prosecuted, ifEquals: open}
+  shaded:
+    text: "Non-player side: if Legal Space is Banned, resolve Legal Politics line 2 now without the minus 1. Otherwise place 1 Office in the line 4 order."
+    owner: null
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: legalSpace, values: [banned]}
+        then: [{type: procedure, id: legal.successorFull}]
+        else: [{type: procedure, id: legal.officeLines}]
+  encoding: {status: encoded, encodedBy: "P3b-07d", reviewedAgainstText: true, note: "U moves Legal Space, so State only. S: open to both factions (05 s5 item 1 exception); Successor number, minimum 1"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0013, S-0174, S-0181, S-0260, S-0261, S-0002, S-0023, S-0024, S-0026, S-0102, S-0442]
+- id: DK-068
+  campaign: C4
+  title: "Constitutional Court Dissolves DEP (Jun 1994)"
+  date: "1994-06-16"
+  type: event
+  chainAfter: [DK-066]
+  unshaded:
+    text: "If a Closure Case marker is on the track, resolve Legal Politics line 1 now. Otherwise place the Closure Case marker."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: flag, flag: closureCase, value: true}
+        then: [{type: procedure, id: legal.ban}]
+        else:
+          - type: conditional
+            if: {type: trackIn, track: legalSpace, values: [open, prosecuted]}
+            then:
+              - {type: setFlag, flag: closureCase, value: true}
+              - {type: setTrack, track: legalSpace, value: prosecuted}
+  shaded:
+    text: "Deputies leave for Europe: Europe +1. Legitimacy -1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+  encoding: {status: encoded, encodedBy: "P3b-07d", reviewedAgainstText: true, note: "Otherwise a filing (Legal Space to Prosecuted); nothing while Banned (DEC-69 point 4)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0014, S-0173, S-0260, S-0299, S-0304, S-0023, S-0024, S-0027, S-0102, S-0441]
+- id: DK-077
+  campaign: C4
+  title: Propaganda
+  type: propaganda
+  deckEligible: false
+  unshaded:
+    text: Conduct a Propaganda round (05, section 6).
+    owner: null
+    effects: []
+    tier: T0
+  encoding: {status: encoded, reviewedAgainstText: true}
+  sources: []

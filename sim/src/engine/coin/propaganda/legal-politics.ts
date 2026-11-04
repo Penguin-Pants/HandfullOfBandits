@@ -88,43 +88,55 @@ export function officeLines(ctx: Exec): void {
   if (officeCount(ctx.ruleset, ctx.state) < officeLimit(ctx)) place(ctx, 1, `${ruleRef} line 4`);
 }
 
+/** Line 1: ban. Successor at the Office count, all Offices removed, Legitimacy and Europe costs. Card procedure `legal.ban` (DK-060, DK-068). */
+export function ban(ctx: Exec): void {
+  const { ruleset } = ctx;
+  const ref = `${ruleRef} line 1`;
+  ctx.apply({ type: "setTrack", track: LEGAL, value: "banned", ifEquals: null, ruleRef: ref, assumptionRef: null });
+  ctx.apply({ type: "setTrack", track: SUCCESSOR, value: officeCount(ruleset, ctx.state), ifEquals: null, ruleRef: ref, assumptionRef: null });
+  for (const id of officeSpaces(ruleset, ctx.state)) for (let i = markers(ctx.state, id, MARKER.office); i > 0; i--) ctx.apply({ type: "removeMarker", marker: MARKER.office, space: id, side: SINGLE_FACE, ruleRef: ref, assumptionRef: null });
+  ctx.apply({ type: "adjustTrack", track: TRACK.legitimacy, delta: -param(ruleset, "legal.banLegitimacy", "number"), ruleRef: ref, assumptionRef: null });
+  adjustEurope(ctx, param(ruleset, "legal.banEurope", "number"), ref, "PA-04");
+  ctx.apply({ type: "setFlag", flag: CASE, value: false, ruleRef: ref, assumptionRef: null });
+}
+
+/**
+ * Line 2: the successor returns at Prosecuted with Successor - `less` Offices, minimum 1, in line 4 order.
+ * Card procedures `legal.successor` (DK-065, less 1) and `legal.successorFull` (DK-067, less 0).
+ */
+export function successor(ctx: Exec, less: number): void {
+  const ref = `${ruleRef} line 2`;
+  ctx.apply({ type: "setTrack", track: LEGAL, value: "prosecuted", ifEquals: null, ruleRef: ref, assumptionRef: null });
+  place(ctx, Math.max(1, Number(ctx.state.tracks[SUCCESSOR]) - less), ref);
+  ctx.apply({ type: "setTrack", track: SUCCESSOR, value: 0, ifEquals: null, ruleRef: ref, assumptionRef: null });
+}
+
 /** Closure filing and procedure table lines 1 to 6 (07 s6.3, s6.4). */
 function procedure(ctx: Exec, choice: JsonObject | null): void {
-    const { ruleset } = ctx;
-    const pending = ctx.state.flags[CASE] === true;
-    if (choice?.["closureFiling"] === true) {
-      fileCase(ctx, "07 s6.3");
-      ctx.apply({ type: "setTrack", track: LEGAL, value: "prosecuted", ifEquals: null, ruleRef: "07 s6.3", assumptionRef: null });
-    }
-    // Line 1: ban.
-    if (pending) {
-      const ref = `${ruleRef} line 1`;
-      ctx.apply({ type: "setTrack", track: LEGAL, value: "banned", ifEquals: null, ruleRef: ref, assumptionRef: null });
-      ctx.apply({ type: "setTrack", track: SUCCESSOR, value: officeSpaces(ruleset, ctx.state).reduce((n, id) => n + markers(ctx.state, id, MARKER.office), 0), ifEquals: null, ruleRef: ref, assumptionRef: null });
-      for (const id of officeSpaces(ruleset, ctx.state)) for (let i = markers(ctx.state, id, MARKER.office); i > 0; i--) ctx.apply({ type: "removeMarker", marker: MARKER.office, space: id, side: SINGLE_FACE, ruleRef: ref, assumptionRef: null });
-      ctx.apply({ type: "adjustTrack", track: TRACK.legitimacy, delta: -param(ruleset, "legal.banLegitimacy", "number"), ruleRef: ref, assumptionRef: null });
-      adjustEurope(ctx, param(ruleset, "legal.banEurope", "number"), ref, "PA-04");
-      ctx.apply({ type: "setFlag", flag: CASE, value: false, ruleRef: ref, assumptionRef: null });
-      return;
-    }
-    // Line 2: successor.
-    if (ctx.state.tracks[LEGAL] === "banned") {
-      const ref = `${ruleRef} line 2`;
-      ctx.apply({ type: "setTrack", track: LEGAL, value: "prosecuted", ifEquals: null, ruleRef: ref, assumptionRef: null });
-      place(ctx, Math.max(1, Number(ctx.state.tracks[SUCCESSOR]) - 1), ref);
-      ctx.apply({ type: "setTrack", track: SUCCESSOR, value: 0, ifEquals: null, ruleRef: ref, assumptionRef: null });
-      return;
-    }
-    officeLines(ctx);
-    const limit = officeLimit(ctx);
-    // Line 5: remove to the limit. Offices outside the list go first (DEC-65 point 1), then latest in the list.
-    const list = order(ruleset);
-    const rank = (id: string): number => (list.includes(id) ? list.indexOf(id) : list.length);
-    while (officeCount(ruleset, ctx.state) > limit) {
-      const id = [...officeSpaces(ruleset, ctx.state)].sort((a, b) => rank(b) - rank(a))[0];
-      if (id === undefined) break;
-      ctx.apply({ type: "removeMarker", marker: MARKER.office, space: id, side: SINGLE_FACE, ruleRef: `${ruleRef} line 5`, assumptionRef: null });
-    }
-    // Line 6: the prosecutor files at the limit (DD-19.1).
-    if (officeCount(ruleset, ctx.state) === limit && ctx.state.flags[CASE] !== true) fileCase(ctx, `${ruleRef} line 6`);
+  const { ruleset } = ctx;
+  const pending = ctx.state.flags[CASE] === true;
+  if (choice?.["closureFiling"] === true) {
+    fileCase(ctx, "07 s6.3");
+    ctx.apply({ type: "setTrack", track: LEGAL, value: "prosecuted", ifEquals: null, ruleRef: "07 s6.3", assumptionRef: null });
+  }
+  if (pending) {
+    ban(ctx);
+    return;
+  }
+  if (ctx.state.tracks[LEGAL] === "banned") {
+    successor(ctx, 1);
+    return;
+  }
+  officeLines(ctx);
+  const limit = officeLimit(ctx);
+  // Line 5: remove to the limit. Offices outside the list go first (DEC-65 point 1), then latest in the list.
+  const list = order(ruleset);
+  const rank = (id: string): number => (list.includes(id) ? list.indexOf(id) : list.length);
+  while (officeCount(ruleset, ctx.state) > limit) {
+    const id = [...officeSpaces(ruleset, ctx.state)].sort((a, b) => rank(b) - rank(a))[0];
+    if (id === undefined) break;
+    ctx.apply({ type: "removeMarker", marker: MARKER.office, space: id, side: SINGLE_FACE, ruleRef: `${ruleRef} line 5`, assumptionRef: null });
+  }
+  // Line 6: the prosecutor files at the limit (DD-19.1).
+  if (officeCount(ruleset, ctx.state) === limit && ctx.state.flags[CASE] !== true) fileCase(ctx, `${ruleRef} line 6`);
 }

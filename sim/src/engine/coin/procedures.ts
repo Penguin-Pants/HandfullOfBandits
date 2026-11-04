@@ -4,7 +4,7 @@ import { param } from "../core/params.ts";
 import { SINGLE_FACE } from "../core/state.ts";
 import { count, markers, space } from "./ops/common.ts";
 import { FACE, MARKER, PIECE } from "./ops/ids.ts";
-import { officeLines } from "./propaganda/legal-politics.ts";
+import { ban, officeLines, successor } from "./propaganda/legal-politics.ts";
 import { revealRandomCovert } from "./propaganda/legitimacy.ts";
 
 /**
@@ -32,6 +32,9 @@ function unattributedKillings(ctx: Exec): void {
 }
 
 export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
+  "legal.ban": ban,
+  "legal.successor": (ctx) => { successor(ctx, 1); },
+  "legal.successorFull": (ctx) => { successor(ctx, 0); },
   "legal.officeLines": officeLines,
   "covert.revealRandom": (ctx) => { revealRandomCovert(ctx, "Covert reveal", "07 s10.2 item 2"); },
   "hizbullah.unattributed": unattributedKillings,

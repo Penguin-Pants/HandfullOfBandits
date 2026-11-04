@@ -1,6 +1,6 @@
 # 33 C4 cards: encoding draft
 
-Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
+Status: **approved by the designer 2026-11-04** (DEC-69): section 4 as proposed except points 1 and 9 (changed answers marked). To build in P3b-07d to P3b-07g ([11](11-build-plan.md) section 4). P3b-07d built; point 10 added at build (DEC-71). Source: deck CSV rows DK-056 to DK-077; research 05 s5; 07 s6.3, s6.4, s7; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md).
 
 Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with its approved answer.
 
@@ -27,7 +27,7 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 **DK-065 DEP Founded (May 1993)**, T0
 - U: "The State may place the Closure Case marker if none is on the track."
 - S: "Non-player side: if Legal Space is Banned, resolve Legal Politics line 2 now. Otherwise place 1 Office in the line 4 order."
-- Encoding: U, as HEP Founded unshaded (choice; a filing also sets Legal Space to Prosecuted, 07 s6.3), `executors: [state]`. S, `conditional` Banned, then procedure `legal.successor`, else procedure `legal.officeLines` (lines 3 and 4: no Office at the limit, DEC-69). Open to both factions (05 s5 item 1 exception). See points 1 and 2.
+- Encoding: U, as HEP Founded unshaded (choice; a filing also sets Legal Space to Prosecuted, 07 s6.3), only while Legal Space is Open or Prosecuted (point 10), `executors: [state]`. S, `conditional` Banned, then procedure `legal.successor`, else procedure `legal.officeLines` (lines 3 and 4: no Office at the limit, DEC-69). Open to both factions (05 s5 item 1 exception). See points 1, 2 and 10.
 
 **DK-066 Parliament Lifts DEP Immunity (Mar 1994)**, T0
 - U: "Remove 2 Offices. Legitimacy -1."
@@ -149,3 +149,4 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 7. **DK-059 with Ceasefire already None:** place the PKK Restraint Broken marker anyway (the text is unconditional), unless one is already on the map. Alternative: place it only when a ceasefire was in force.
 8. **DK-069 counts:** both New and Old Displacement markers count as "on the map". Shaded: Legitimacy -1 per 2 markers, maximum -3, then Europe +1.
 9. **DK-074 with too few State Resources:** Village Clearance is refused when the State cannot pay the 2 Resources (as any unaffordable cost, `cannotPay`). On a free Village Clearance (Area Domination), the 2 Resources would still apply (proposed). **Approved: an action a card makes free skips it (05 s5 item 4). Area Domination's Village Clearance runs "at normal cost" (its card text), so it pays (designer, PR 50 review).**
+10. **DK-065 unshaded while Legal Space is Banned** (found at build, owner decision 2026-11-04, DEC-71): **nothing happens, as DK-068 (point 4).** The filing runs only while Legal Space is Open or Prosecuted. Not chosen: file anyway (Prosecuted with no party; the next line 1 would ban again with Successor 0).
