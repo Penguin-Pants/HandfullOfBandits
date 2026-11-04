@@ -5,7 +5,7 @@ import { param } from "../../core/params.ts";
 import { SINGLE_FACE } from "../../core/state.ts";
 import type { GameState, Ruleset } from "../../core/types.ts";
 import { derive } from "../derive.ts";
-import { markers } from "../ops/common.ts";
+import { adjustEurope, markers } from "../ops/common.ts";
 import { EMERGENCY, FACTION, MARKER, TRACK } from "../ops/ids.ts";
 import { asString } from "../ops/plan.ts";
 import { violation, type PropagandaPhase } from "./phase.ts";
@@ -78,7 +78,7 @@ export const legitimacyPhase: PropagandaPhase = {
     const stateHarm = harm[FACTION.state] ?? 0;
     const pkkHarm = harm[FACTION.pkk] ?? 0;
     const europeDelta = stateHarm - pkkHarm >= gap ? 1 : pkkHarm - stateHarm >= gap ? -1 : 0;
-    if (europeDelta !== 0) ctx.apply({ type: "adjustTrack", track: TRACK.europe, delta: europeDelta, ruleRef: `${ruleRef} step 6`, assumptionRef: "PA-04" });
+    adjustEurope(ctx, europeDelta, `${ruleRef} step 6`, "PA-04");
     if (Number(ctx.state.tracks[TRACK.europe]) >= param(ruleset, "europe.drainFrom", "number")) legit(ctx, -1, "step 6");
     // 7. Gains.
     const legalOpen = ctx.state.tracks["legalSpace"] === "open" && onMap(ruleset, ctx.state, MARKER.office) >= 2;

@@ -1,6 +1,7 @@
 // Faction panel (08 s3.2): boxes, Op list with OK or the first violation (T-UI-03), plan building
 // on the map by mouse (UC-5), live validation, preview, commit with Enter.
 import { useEffect, useRef, useState } from "react";
+import { confirmWarnings } from "../common/confirm.ts";
 import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
 import { words } from "../common/names.ts";
 import { previewLine } from "../log/plain.ts";
@@ -22,6 +23,9 @@ export interface FactionPanelProps {
 }
 
 const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
+
+/** Approved Declare Ceasefire text (docs/prototype/30 s2.1). */
+const DECLARE_TEXT = "Declare Ceasefire. From C3, uses the Limited Op box. Ceasefire to Declared and Europe +1. While Declared the PKK may not Attack, Ambush or Strike Collaborators (07 s7.1).";
 
 export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
   const resume = view.status.pending?.resume;
@@ -95,6 +99,7 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
       if (target !== null && target !== document.body) return;
       if (e.key === "Enter" && command !== null && result?.ok === true) {
         e.preventDefault();
+        if (!confirmWarnings(result.warnings)) return;
         onCommit(command);
         clear();
       }
@@ -131,6 +136,12 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
       </p>
       {view.status.pending?.resume !== undefined && <p role="status">{view.status.pending.prompt}</p>}
       <EligibilityTrack legal={legal} view={view} picked={box} onPick={pickBox} />
+      {box === "limitedOp" && view.status.ceasefireDeclare && (
+        <div className="row" aria-label="Ceasefire">
+          <button type="button" title={DECLARE_TEXT} onClick={() => { onCommit({ type: "DeclareCeasefire", faction }); clear(); }}>Declare Ceasefire</button>
+          <span className="muted">{DECLARE_TEXT}</span>
+        </div>
+      )}
       {box !== null && OP_BOXES.includes(box) && (
         <ul className="operation-list" aria-label="Operations">
           {actions.filter((a) => a.kind === "op").map((a) => (
@@ -188,6 +199,9 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
               {v.message} {v.ruleRef === null ? "" : `(${v.ruleRef})`}
             </p>
           ))}
+          {result.warnings.map((w, i) => (
+            <p key={`w${String(i)}`} className="warn" role="alert">{w.message} {w.ruleRef === null ? "" : `(${w.ruleRef})`}</p>
+          ))}
           {result.ok && (
             <ul aria-label="Preview">
               {result.preview.effects.map((e, i) => <li key={i}>{previewLine(e, view)}</li>)}
@@ -196,7 +210,7 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
         </div>
       )}
       <div className="row">
-        <button type="button" className="primary" disabled={command === null || result?.ok !== true} onClick={() => { if (command !== null) { onCommit(command); clear(); } }}>
+        <button type="button" className="primary" disabled={command === null || result?.ok !== true} onClick={() => { if (command !== null && confirmWarnings(result?.warnings ?? [])) { onCommit(command); clear(); } }}>
           Commit (Enter)
         </button>
         <button type="button" onClick={clear}>

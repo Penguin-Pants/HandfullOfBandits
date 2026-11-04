@@ -10,9 +10,11 @@ import { diplomacy, hostPressure } from "./sa/host-actions.ts";
 import { crossBorder } from "./sa/cross-border.ts";
 import { extort } from "./sa/extort.ts";
 import { strikeCollaborators } from "./sa/strike-collaborators.ts";
+import { covertAction } from "./sa/covert-action.ts";
+import { villageClearance } from "./sa/village-clearance.ts";
 import { assault } from "./state/assault.ts";
 import { garrison } from "./state/garrison.ts";
 import { sweep } from "./state/sweep.ts";
 import { train } from "./state/train.ts";
 
-export const actionHandlers: Readonly<Record<string, ActionHandler>> = Object.fromEntries([crossBorder, diplomacy, hostPressure, train, garrison, sweep, assault, rally, march, attack, coerce, airMobility, ambush, extort, strikeCollaborators].map((h) => [h.id, h]));
+export const actionHandlers: Readonly<Record<string, ActionHandler>> = Object.fromEntries([crossBorder, diplomacy, hostPressure, train, garrison, sweep, assault, rally, march, attack, coerce, airMobility, ambush, extort, strikeCollaborators, villageClearance, covertAction].map((h) => [h.id, h]));

@@ -94,6 +94,18 @@ function labels(ctx: Exec, ranked: readonly Standing[]): string[] {
   return out;
 }
 
+/** Negotiated Outcome (09 s5): concessions already applied; reveal Covert markers unless waived, then label by margin. */
+export function negotiatedOutcome(ctx: Exec, waiveCovert: boolean): void {
+  if (!waiveCovert) for (const s of ctx.ruleset.spaces) for (let i = markers(ctx.state, s.id, MARKER.covert); i > 0; i--) revealCovert(ctx, s.id, "09 s5 item 2");
+  const standings = checkStandings(ctx.ruleset, ctx.state, true);
+  ctx.log("ScoreCheck", { final: true, standings: standings.map((s) => ({ ...s })) }, "09 s5");
+  const [first, second] = rank(standings);
+  const diff = first !== undefined && second !== undefined ? first.margin - second.margin : 0;
+  const balanced = diff <= param(ctx.ruleset, "negotiated.balancedMax", "number");
+  const label = balanced ? "Negotiated outcome, balanced" : `Negotiated outcome favorable to ${first?.faction === FACTION.state ? "State" : "PKK"}`;
+  endGame(ctx, { winner: balanced ? null : first?.faction ?? null, reason: "negotiated outcome", labels: [label], recordSheet: recordSheet(ctx.ruleset, ctx.state) }, standings);
+}
+
 /** Final scoring (09 s4): reveal Covert markers, recompute, final margins, tie order. */
 export function finalScoring(ctx: Exec): void {
   for (const s of ctx.ruleset.spaces) for (let i = markers(ctx.state, s.id, MARKER.covert); i > 0; i--) revealCovert(ctx, s.id, "09 s4 item 1");

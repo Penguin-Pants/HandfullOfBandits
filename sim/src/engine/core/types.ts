@@ -412,6 +412,8 @@ export interface CommandHandler {
   resolve?(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Effect[];
   /** Full resolution on the resolution context (DEC-50). The preview is its effects up to the first die roll. */
   execute?(ctx: Exec, command: AnyCommand): void;
+  /** Legal but worth a note before confirm, such as a ceasefire breach (05 s4 item 6). Called only when `check` passes. */
+  warnings?(ruleset: Ruleset, state: GameState, command: AnyCommand): readonly Violation[];
 }
 
 // Effects: core primitives (04 s5; 03 s6.1 items 4 to 6). Locations and counts are

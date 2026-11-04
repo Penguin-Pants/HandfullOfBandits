@@ -47,7 +47,7 @@ describe("HTTP API (P2-11)", () => {
     expect(pkg?.ok).toBe(true);
     expect(pkg?.scenarios.find((s) => s.id === "s0")?.blockedBy).toEqual([]);
     expect(pkg?.scenarios.find((s) => s.id === "full-campaign")?.blockedBy.length).toBeGreaterThan(0);
-    expect(pkg?.assumptions).toHaveLength(17);
+    expect(pkg?.assumptions).toHaveLength(18);
   });
 
   it("refuses a blocked scenario and creates an S0 session", async () => {

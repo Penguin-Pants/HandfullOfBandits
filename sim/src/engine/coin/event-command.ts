@@ -5,6 +5,7 @@ import type { AnyCommand, CommandHandler, GameState, Ruleset, Violation } from "
 import { AnswerNeeded, runEffects } from "./events.ts";
 import { asList } from "./ops/plan.ts";
 import { notePassOnly } from "./stop-rules.ts";
+import { restraintWarningsOf } from "./ceasefire.ts";
 import { BOX, placeCylinder, sequenceViolations } from "./sequence/ct.ts";
 
 const ruleRef = "05 s5";
@@ -43,4 +44,15 @@ function check(ruleset: Ruleset, state: GameState, command: AnyCommand): Violati
   return [];
 }
 
-export const chooseEventHandler: CommandHandler = { ruleRef, check, execute: run };
+/** Ceasefire warnings for free Event actions (07 s7.2; 05 s4 item 6), from the dry run. */
+function warnings(ruleset: Ruleset, state: GameState, command: AnyCommand): Violation[] {
+  const ctx = createExec(ruleset, state, true);
+  try {
+    run(ctx, command);
+  } catch (e) {
+    if (!(e instanceof PreviewStop) && !(e instanceof AnswerNeeded)) throw e;
+  }
+  return restraintWarningsOf(ctx.effects);
+}
+
+export const chooseEventHandler: CommandHandler = { ruleRef, check, execute: run, warnings };

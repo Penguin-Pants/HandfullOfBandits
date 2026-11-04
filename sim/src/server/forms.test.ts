@@ -20,6 +20,14 @@ describe("action summaries match the engine", () => {
   it("Strike Collaborators warns that its PKK Harm blocks Agitation there (agitation.ts, playtest B1)", () => {
     expect(summary("pkk.strike-collaborators")).toMatch(/PKK Harm marker blocks Agitation shifts in that space until the PKK pays 2 to remove it/);
   });
+  it("Village Clearance: approved text with the seven effects in order (village-clearance.ts, docs/prototype/27)", () => {
+    expect(summary("state.village-clearance")).toMatch(/^Forced evacuation of a village area\./);
+    expect(summary("state.village-clearance")).toMatch(/shift 1 level toward Neutral, Legitimacy -2 x Pop, place Displacement \(New\) and State Harm, place Reception in Diyarbakır City or Western Cities and Activate all Guerrillas\. An Office there costs Legitimacy 1 more/);
+  });
+  it("Covert Action: approved text (covert-action.ts, docs/prototype/28)", () => {
+    expect(summary("state.covert-action")).toMatch(/^Covert Killings\./);
+    expect(summary("state.covert-action")).toMatch(/need not be one the Operation selected/);
+  });
   it("Assault: Police count as Troops in a City (assault.ts)", () => {
     expect(summary("state.assault")).toMatch(/City, Police count as Troops/);
   });

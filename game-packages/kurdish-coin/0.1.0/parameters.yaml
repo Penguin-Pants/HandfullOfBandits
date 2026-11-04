@@ -99,6 +99,25 @@
 - {id: crossBorder.cost, value: 2, tune: false, source: "06 s3.2"}
 - {id: crossBorder.maxTroops, value: 6, tune: false, source: "06 s3.2"}
 - {id: crossBorder.hotPursuitTroops, value: 3, tune: false, source: "06 s3.2"}
+- {id: clearance.from, value: C3, tune: false, source: "06 s3.4 condition 2; DD-07.2"}
+- {id: clearance.legitimacyPerPop, value: 2, tune: false, source: "06 s3.4 condition 4, effect 2"}
+- {id: clearance.receptionShortfallCost, value: 1, tune: false, source: "06 s3.4 effect 5"}
+- {id: clearance.officeCost, value: 1, tune: false, source: "06 s3.4 effect 7; 07 s2 DD-10.5"}
+- {id: covert.from, value: C3, tune: false, source: "06 s3.5"}
+- {id: covert.minLegitimacy, value: 4, tune: false, source: "06 s3.5"}
+- {id: legal.officeOrder, value: [diyarbakir-city, western-cities, mardin-batman, van-bitlis, sanliurfa, bingol-mus, diyarbakir-rural, botan, agri, adiyaman, elazig], tune: false, source: "07 s6.4 line 4"}
+- {id: legal.officeMinPop, value: 2, tune: false, source: "07 s6.4 line 4"}
+- {id: legal.limitOpen, value: 4, tune: true, source: "07 s6.4 line 3"}
+- {id: legal.limitProsecuted, value: 3, tune: true, source: "07 s6.4 line 3"}
+- {id: legal.banLegitimacy, value: 2, tune: false, source: "07 s6.4 line 1"}
+- {id: legal.banEurope, value: 1, tune: false, source: "07 s6.4 line 1"}
+- {id: ceasefire.from, value: C3, tune: false, source: "07 s7.1"}
+- {id: ceasefire.declareEurope, value: 1, tune: false, source: "07 s7.1"}
+- {id: ceasefire.pkkBreachEurope, value: 1, tune: false, source: "07 s7.2"}
+- {id: ceasefire.stateBreachLegitimacy, value: 2, tune: false, source: "07 s7.2"}
+- {id: ceasefire.endEurope, value: 1, tune: true, source: "07 s7.3 step 1"}
+- {id: negotiated.balancedMax, value: 2, tune: false, source: "09 s5 item 3"}
+- {id: negotiated.waiveCovertRounds, value: 2, tune: true, source: "09 s5 item 2 (two full Campaigns of Talks)"}
 - {id: argk.minGuerrillas, value: 8, tune: false, source: "DK-015; 08 s4"}
 - {id: argk.minBases, value: 2, tune: false, source: "DK-015; 08 s4"}
 - {id: argk.maxPlace, value: 4, tune: false, source: "DK-015; 08 s4"}

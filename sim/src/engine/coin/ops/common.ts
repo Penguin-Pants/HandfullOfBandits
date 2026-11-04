@@ -5,7 +5,7 @@ import { param } from "../../core/params.ts";
 import { own } from "../../core/state.ts";
 import type { FactionId, GameState, Ruleset, RulesetSpace, SpaceId } from "../../core/types.ts";
 import { control } from "../derive.ts";
-import { FACE, PIECE, TERRAIN } from "./ids.ts";
+import { EUROPE_SPACE, FACE, MARKER, PIECE, TERRAIN, TRACK } from "./ids.ts";
 
 export function space(ruleset: Ruleset, id: string): RulesetSpace | undefined {
   return ruleset.spaces.find((s) => s.id === id);
@@ -62,4 +62,16 @@ export function activate(ctx: Exec, spaceId: SpaceId, n: number, ruleRef: string
 
 export function adjacent(ruleset: Ruleset, a: SpaceId, b: SpaceId): boolean {
   return ruleset.links.some((l) => (l.a === a && l.b === b) || (l.a === b && l.b === a));
+}
+
+/** Highest Europe value now: the German Ban marker caps it at `europe.banCap` (04 s3.6). */
+export function europeCap(ruleset: Ruleset, state: GameState): number {
+  return markers(state, EUROPE_SPACE, MARKER.ban) > 0 ? param(ruleset, "europe.banCap", "number") : Infinity;
+}
+
+/** Move Europe by `delta`. A rise stops at `europeCap`; a rise with no room logs nothing (04 s3.6). */
+export function adjustEurope(ctx: Exec, delta: number, ruleRef: string, assumptionRef: string | null = null): void {
+  const room = europeCap(ctx.ruleset, ctx.state) - Number(ctx.state.tracks[TRACK.europe]);
+  const applied = delta > 0 ? Math.max(0, Math.min(delta, room)) : delta;
+  if (applied !== 0) ctx.apply({ type: "adjustTrack", track: TRACK.europe, delta: applied, ruleRef, assumptionRef });
 }

@@ -30,7 +30,7 @@ export const TRACK = {
   kdp: "posture.kdp",
   puk: "posture.puk",
 } as const;
-export const FLAG = { law3175: "law3175" } as const;
+export const FLAG = { law3175: "law3175", ohalPowers: "ohalPowers" } as const;
 export const TAG = { noLandLinks: "noLandLinks", noPieces: "noPieces", eventsOnly: "eventsOnly", receptionTarget: "receptionTarget", rallyAtSupport: "rallyAtSupport" } as const;
 export const TERRAIN = { mountain: "mountain", plain: "plain", city: "city" } as const;
 export const EMERGENCY = { martialLaw: "martialLaw", ohal: "ohal", ohalExtendedPowers: "ohalExtendedPowers", normalizing: "normalizing" } as const;

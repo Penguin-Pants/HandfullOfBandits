@@ -8,7 +8,7 @@ import { createExec, type Exec } from "../../../core/exec.ts";
 import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "../action.ts";
-import { count, hasTag, isTerrain, markers, pay, space } from "../common.ts";
+import { adjustEurope, count, europeCap, hasTag, isTerrain, markers, pay, space } from "../common.ts";
 import { rallyBaseOpen, rallyGuerrillasOpen } from "../common-pkk.ts";
 import { EUROPE_SPACE, FACE, FACTION, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
 import { asCount, asString } from "../plan.ts";
@@ -65,8 +65,8 @@ export const rally: ActionHandler = {
       const v = (code: string, message: string): void => { out.push(at(loc, code, message, ruleRef)); };
       const s = space(ruleset, loc);
       if (loc === EUROPE_SPACE) {
-        const cap = banned(state) ? param(ruleset, "europe.banCap", "number") : Infinity;
-        if (Number(state.tracks[TRACK.europe]) >= cap) v("rallyEuropeCap", "The Ban marker caps Europe at 3 (04 s3.6).");
+        const cap = europeCap(ruleset, state);
+        if (Number(state.tracks[TRACK.europe]) >= cap) v("rallyEuropeCap", `The Ban marker caps Europe at ${String(cap)} (04 s3.6).`);
         continue;
       }
       if (s === undefined || hasTag(ruleset, loc, TAG.noPieces) || hasTag(ruleset, loc, TAG.eventsOnly)) {
@@ -133,7 +133,7 @@ function placeAll(ctx: Exec, part: ActionPart, options: ActionOptions): void {
     for (const loc of part.locations) {
       if (!options.free) pay(ctx, FACTION.pkk, costOf(ctx.ruleset, ctx.state, loc), ruleRef, loc);
       if (loc === EUROPE_SPACE) {
-        ctx.apply({ type: "adjustTrack", track: TRACK.europe, delta: param(ctx.ruleset, "rally.europeGain", "number"), ruleRef, assumptionRef: null });
+        adjustEurope(ctx, param(ctx.ruleset, "rally.europeGain", "number"), ruleRef);
         continue;
       }
       const place = (n: number): void => {

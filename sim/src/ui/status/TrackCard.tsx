@@ -40,8 +40,11 @@ function Scale({ track }: { readonly track: Track }) {
   );
 }
 
+const HIDDEN_AT_ZERO = new Set(["successor", "ceasefireRounds"]);
+
 export function TrackCard({ view }: { readonly view: BoardView }) {
-  const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined);
+  // Successor and the held ceasefire rounds show only above 0 (07 s6.4, s7.3; DEC-65, DEC-66).
+  const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined && !(HIDDEN_AT_ZERO.has(t.id) && t.value === 0));
   return <section className="track-card compact" aria-label="Resources and politics">
     <h4>Resources and politics</h4>
     {tracks.map(t => <details key={t.id} className="track-row" role="group" aria-label={t.display}>

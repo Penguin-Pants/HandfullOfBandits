@@ -14,6 +14,7 @@ import { control } from "./derive.ts";
 import type { ActionOptions, ActionPart } from "./ops/action.ts";
 import { asList, asObject, asString } from "./ops/plan.ts";
 import { actionHandlers } from "./ops/registry.ts";
+import { applyRestraint } from "./ceasefire.ts";
 
 /** Stops a check run at its first missing or bad answer. */
 export class AnswerNeeded extends Error {
@@ -194,6 +195,8 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   if (part.locations.length === 0 || (typeof constraints["maxLocations"] === "number" && part.locations.length > constraints["maxLocations"]) || part.locations.some(id => (allowed.length > 0 && !allowed.includes(id)) || (terrain.length > 0 && !terrain.includes(ctx.ruleset.spaces.find(s => s.id === id)?.terrain ?? "")) || (constraints["undergroundAndTroops"] === true && (count(ctx.state, id, PIECE.guerrilla, FACE.underground) === 0 || count(ctx.state, id, PIECE.troops) === 0)))) ask(run, "eventConstraint", "The free action does not meet the card’s location limits.");
   const options: ActionOptions = { faction: handler.faction, limited: false, free: true, constraints, op: null, sa: saId, opLocations: [], saLocations: saPart?.locations ?? [], subActions: [] };
   const sa = saId === null ? undefined : actionHandlers[saId];
+  // Free Event actions count for the ceasefire table (07 s7.2).
+  applyRestraint(ctx, handler.faction, [{ id: action, part }, ...(saId === null || saPart === null ? [] : [{ id: saId, part: saPart }])]);
   if (sa !== undefined) {
     const saOptions: ActionOptions = { ...options, op: action, sa: null, opLocations: part.locations, saLocations: [] };
     const found = sa.check(ctx.ruleset, ctx.state, saPart ?? { locations: [], perLocation: {} }, saOptions);

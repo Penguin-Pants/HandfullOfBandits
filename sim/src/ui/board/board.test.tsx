@@ -306,4 +306,10 @@ describe("approved readable layout", () => {
     expect(card.querySelector("[aria-label='State Resources'] summary")?.textContent).toContain("12");
     expect(card.querySelector("[aria-label='Legitimacy'] .mini-track")?.children).toHaveLength(21);
   });
+
+  it("shows the Successor track only while a Successor value is on it (DEC-65)", () => {
+    const banned = boardView(kurdish.ruleset, kurdish.data, { ...turnOf("pkk"), tracks: { ...turnOf("pkk").tracks, successor: 2 } });
+    render(<TrackCard view={banned} />);
+    expect(screen.getByLabelText("Successor Offices").querySelector("summary")?.textContent).toContain("2");
+  });
 });

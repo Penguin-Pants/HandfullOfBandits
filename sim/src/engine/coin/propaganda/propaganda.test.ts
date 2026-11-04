@@ -73,6 +73,8 @@ describe("T-PROP: Legitimacy (05 s6.4)", () => {
   it("moves Europe +1 when State Harm leads by 3, and allows only 07 s8.2 Emergency steps", () => {
     const harmed = setMarkers(s0, "dersim", "stateHarm", 3);
     expect(t(play(at(harmed, "legitimacy"), advance).state, "europe")).toBe(2);
+    const capped = setMarkers(setTrack(harmed, "europe", 3), "europe", "ban", 1);
+    expect(t(play(at(capped, "legitimacy"), advance).state, "europe")).toBe(3);
     expect(codes(at(s0, "legitimacy"), choice("legitimacy", { emergencyStep: "ohal" }))).toEqual(["emergencyStep"]);
     const ohal = setTrack(s0, "emergencyRule", "ohal");
     expect(t(play(at(ohal, "legitimacy"), choice("legitimacy", { emergencyStep: "normalizing" })).state, "emergencyRule")).toBe("normalizing");

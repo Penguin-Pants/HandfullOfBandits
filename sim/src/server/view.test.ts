@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { kurdish } from "../../test/kurdish-package.ts";
-import { setMarkers, turnOf } from "../../test/board.ts";
+import { setMarkers, setTrack, turnOf } from "../../test/board.ts";
 import { boardView } from "./view.ts";
 
 // P2-14 view model mapping: all 18 locations with counts, levels, markers and Control.
@@ -33,5 +33,11 @@ describe("boardView", () => {
     expect(view.status.tracks.find((t) => t.id === "legitimacy")).toEqual({ id: "legitimacy", display: "Legitimacy", value: 10, min: 0, max: 20 });
     expect(view.status.tracks.find((t) => t.id === "ceasefire")?.steps).toEqual(["none", "declared", "reciprocalRestraint", "talks"]);
     expect(view.links).toHaveLength(25);
+  });
+
+  it("offers closure filing only when the State may file (07 s6.3)", () => {
+    expect(view.status.closureFiling).toBe(false);
+    const open = setMarkers(setTrack(turnOf("state"), "legalSpace", "open"), "diyarbakir-city", "office", 1);
+    expect(boardView(ruleset, data, open).status.closureFiling).toBe(true);
   });
 });

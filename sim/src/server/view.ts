@@ -1,6 +1,9 @@
 // Board and status view model (11 P2-14; 08 s3.1, s3.5). The server builds it from the package and
 // the state, so the UI draws without computing rules (DEC-04).
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
+import { closureViolations } from "../engine/coin/propaganda/legal-politics.ts";
+import { declareCeasefireHandler } from "../engine/coin/ceasefire.ts";
+import { ceasefireOptions } from "../engine/coin/propaganda/ceasefire-step.ts";
 import { derive } from "../engine/coin/derive.ts";
 import { activeFaction } from "../engine/coin/sequence/ct.ts";
 import { param } from "../engine/core/params.ts";
@@ -82,6 +85,12 @@ export interface BoardView {
     readonly propagandaStep: number;
     /** Emergency Rule steps the State may move to in the Legitimacy phase (07 s8.2). */
     readonly emergencyMoves: readonly string[];
+    /** Ceasefire step options in the Legal Politics phase (07 s7.3). */
+    readonly ceasefireStep: { readonly status: string; readonly accept: boolean; readonly declared: boolean; readonly vote: boolean; readonly outcome: boolean; readonly leave: boolean; readonly removals: number };
+    /** The PKK may Declare Ceasefire now (07 s7.1). */
+    readonly ceasefireDeclare: boolean;
+    /** The State may file a closure case in the Legal Politics phase now (07 s6.3). */
+    readonly closureFiling: boolean;
     readonly active: string | null;
     readonly firstEligible: string | null;
     readonly secondEligible: string | null;
@@ -164,6 +173,9 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
       propagandaPhases: ruleset.sequence.propagandaPhases,
       propagandaStep: state.turn.step,
       emergencyMoves: emergencyMoves(ruleset, state),
+      closureFiling: closureViolations(ruleset, state).length === 0,
+      ceasefireStep: { status: String(state.tracks["ceasefire"]), declared: state.tracks["ceasefire"] === "declared", ...ceasefireOptions(ruleset, state) },
+      ceasefireDeclare: declareCeasefireHandler.check(ruleset, state, { type: "DeclareCeasefire", faction: "pkk" }).length === 0,
       active: activeFaction(state),
       firstEligible: state.initiative.firstEligible,
       secondEligible: state.initiative.secondEligible,

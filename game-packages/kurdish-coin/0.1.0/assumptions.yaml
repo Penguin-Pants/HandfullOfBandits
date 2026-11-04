@@ -17,3 +17,4 @@
 - {id: PA-15, gap: GAP-B15, status: replaced, appliesTo: [DK-066], text: "The executing faction chooses any 2 Offices to remove. Legitimacy -1"}
 - {id: PA-16, gap: GAP-I02, status: accepted, appliesTo: [pkk.march], text: "PKK March into Syria-Bekaa is allowed at Restricted with +1 Resource; the group Activates. Package option syriaMarchRestricted"}
 - {id: PA-17, gap: GAP-I05, status: accepted, appliesTo: [scenario-a], text: "Scenario A Pivotals: PKK ARGK Formed only. The State has none"}
+- {id: PA-18, gap: GAP-B16, status: accepted, appliesTo: [state.village-clearance], text: "Village Clearance shifts toward Neutral with the normal shift rule: a State Harm or Coercion marker already in the space blocks the shift. The other effects still apply"}
