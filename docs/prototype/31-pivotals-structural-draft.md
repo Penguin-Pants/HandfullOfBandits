@@ -1,8 +1,8 @@
-# 31 Remaining Pivotals and structural cards: draft for approval
+# 31 Remaining Pivotals and structural cards: approved text
 
-Status: **draft, waiting for designer approval** (P3b-06, [11](11-build-plan.md) section 4). No code before approval. Source: research 05 s4, s5; 07 s5, s6; 08 s2.2, s2.3, s4; 10 s6.1; deck CSV rows DK-037, DK-040, DK-054, DK-076, DK-093, DK-098.
+Status: **approved by the designer 2026-11-04** (DEC-67): section 7 as proposed, Area Domination Assault in the Sweep spaces, section 8 plan changes. Sections 5 and 8 items 2 and 3 built in P3b-06a; sections 1 to 4 are P3b-06b ([11](11-build-plan.md) section 4). Source: research 05 s4, s5; 07 s5, s6; 08 s2.2, s2.3, s4; 10 s6.1; deck CSV rows DK-037, DK-040, DK-054, DK-076, DK-093, DK-098.
 
-Each section gives the rule as it will be built, then the open points. Section 7 lists every open point with a proposed answer. Approve section 7 as proposed, or change single items.
+Each section gives the rule as it will be built, then the open points. Section 7 lists every open point with its approved answer.
 
 ## 1. Pivotal window, all four cards
 
@@ -94,7 +94,7 @@ The Always line applies before either side, so after a Capture the unshaded side
 - Capture Always, Abroad: "Capture: the Leadership marker is removed. PKK income -1 at each later Propaganda round."
 - Capture Always, Present: "Capture: the Leadership is Present. The Always line does nothing."
 
-## 7. Open points with proposed answers
+## 7. Resolved points (designer, 2026-11-04: all as proposed)
 
 1. **Serhildan "at Opposition":** Passive or Active Opposition. Proposed: yes.
 2. **Area Domination spaces:** the Assault uses the spaces the Sweep selected. Alternative: any up to 3 Mountain spaces. Proposed: same spaces ("then" reads as one operation).
@@ -104,7 +104,7 @@ The Always line applies before either side, so after a Capture the unshaded side
 6. **Capture income floor:** total PKK income at a Resources phase is never below 0. Proposed: yes.
 7. **Carried from P3b-05 (ceasefire step while Legal Space is Absent):** does not reproduce. HEP Founded is mandatory in C3, so it is always in the top 8 cards, above the C3 Propaganda card (`coin/deck.ts:90-106`). No card sets Legal Space back to Absent. Proposed: no rule change; add a test that HEP Founded precedes the C3 Propaganda card.
 
-## 8. Plan changes proposed with this draft
+## 8. Plan changes (approved)
 
 1. **Split P3b-06 into two PRs** (400-line target): P3b-06a structural cards (DK-037, DK-040, DK-093), the PKK side restriction and the T-EVT "Always lines fire once" tests; P3b-06b the general Pivotal window and DK-054, DK-076, DK-098 with the UI.
 2. **Move the Event Europe cap fix from P3b-07 into P3b-06a.** Serhildan and Capture shaded add Europe by Event. Route Event Europe changes through `adjustEurope` (`coin/ops/common.ts`).

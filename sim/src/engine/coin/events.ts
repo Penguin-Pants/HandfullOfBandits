@@ -8,8 +8,9 @@ import { SINGLE_FACE } from "../core/state.ts";
 import { matches, resolveSpace } from "../core/terms.ts";
 import type { CardEffect, CountSpec, Effect, FactionId, JsonObject, JsonValue, Question, Violation } from "../core/types.ts";
 import { shiftHost } from "./ops/sa/host-actions.ts";
-import { HOST_OF, PIECE, FACE } from "./ops/ids.ts";
-import { count } from "./ops/common.ts";
+import { HOST_OF, PIECE, FACE, TRACK } from "./ops/ids.ts";
+import { adjustEurope, count } from "./ops/common.ts";
+import { procedures } from "./procedures.ts";
 import { control } from "./derive.ts";
 import type { ActionOptions, ActionPart } from "./ops/action.ts";
 import { asList, asObject, asString } from "./ops/plan.ts";
@@ -100,6 +101,8 @@ function runOne(run: EventRun, cursor: Cursor, e: CardEffect): void {
   if (primitive !== null) {
     const box = "track" in primitive ? Object.keys(HOST_OF).find(id => HOST_OF[id] === primitive.track) : undefined;
     if (box !== undefined && primitive.type === "stepOrdinal") shiftHost(ctx, box, primitive.direction === "next" ? primitive.steps : -primitive.steps, run.ruleRef);
+    // An Event rise in Europe stops at the Ban marker cap (04 s3.6).
+    else if (primitive.type === "adjustTrack" && primitive.track === TRACK.europe) adjustEurope(ctx, primitive.delta, run.ruleRef);
     else ctx.apply(primitive);
     return;
   }
@@ -166,6 +169,15 @@ function runOne(run: EventRun, cursor: Cursor, e: CardEffect): void {
     case "freeAction":
       freeAction(run, cursor, e.action, e.constraints);
       return;
+    case "note":
+      ctx.log("CardNote", { text: e.text }, run.ruleRef);
+      return;
+    case "procedure": {
+      const procedure = procedures[e.id];
+      if (procedure === undefined) throw new RangeError(`Unknown procedure "${e.id}"`);
+      procedure(ctx);
+      return;
+    }
     default:
       return;
   }

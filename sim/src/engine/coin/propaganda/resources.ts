@@ -3,7 +3,7 @@ import { param } from "../../core/params.ts";
 import type { GameState, Ruleset } from "../../core/types.ts";
 import { controlOf, count, isTerrain } from "../ops/common.ts";
 import { postureOf } from "../ops/common-pkk.ts";
-import { FACTION, HOST_OF, MARKER, PIECE, POSTURE, SYRIA_BOX, TERRAIN, TRACK } from "../ops/ids.ts";
+import { FACTION, FLAG_CAPTURED, HOST_OF, MARKER, PIECE, POSTURE, SYRIA_BOX, TERRAIN, TRACK } from "../ops/ids.ts";
 import type { PropagandaPhase } from "./phase.ts";
 
 const ruleRef = "05 s6.2";
@@ -22,8 +22,10 @@ export function income(ruleset: Ruleset, state: GameState): { state: number; pkk
   const syria = postureOf(state, SYRIA_BOX);
   const leadership = !present ? 0 : syria === POSTURE.host ? param(ruleset, "income.pkk.leadershipHost", "number") : syria === POSTURE.tolerant ? param(ruleset, "income.pkk.leadershipTolerant", "number") : 0;
   const europe = param(ruleset, "europe.income", "list")[Number(state.tracks[TRACK.europe])];
-  const pkkIncome =
-    domestic * param(ruleset, "income.pkk.domesticBase", "number") + external * param(ruleset, "income.pkk.externalBase", "number") + leadership + (typeof europe === "number" ? europe : 0);
+  // After Capture, PKK income -1 for the rest of the game, never below 0 (07 s5.2 item 5; docs/prototype/31 s7 item 6).
+  const captured = state.flags[FLAG_CAPTURED] === true ? param(ruleset, "income.pkk.captured", "number") : 0;
+  const pkkIncome = Math.max(0,
+    domestic * param(ruleset, "income.pkk.domesticBase", "number") + external * param(ruleset, "income.pkk.externalBase", "number") + leadership + (typeof europe === "number" ? europe : 0) + captured);
   return { state: stateIncome, pkk: pkkIncome };
 }
 

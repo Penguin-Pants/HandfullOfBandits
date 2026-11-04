@@ -15,6 +15,7 @@
 - {id: income.pkk.externalBase, value: 1, tune: true, source: "05 s6.2 item 2"}
 - {id: income.pkk.leadershipHost, value: 2, tune: true, source: "05 s6.2 item 2"}
 - {id: income.pkk.leadershipTolerant, value: 1, tune: true, source: "05 s6.2 item 2"}
+- {id: income.pkk.captured, value: -1, tune: true, source: "07 s5.2 item 5; DK-093"}
 - {id: upkeep.guardsPerResource, value: 2, tune: true, source: "05 s6.3 item 1"}
 - {id: emergencyRule.drain, value: [1, 1, 2, 0], tune: false, source: "05 s6.4 step 1 (by emergencyRule step)"}
 - {id: legitimacy.displacementDrain, value: 1, tune: false, source: "05 s6.4 step 2"}

@@ -1,0 +1,44 @@
+# C5 cards (research 08; deck CSV). P3b-06a: the structural card only (approved text docs/prototype/31 s5.3).
+# The rest of C5 comes with P3b-07.
+- id: DK-093
+  campaign: C5
+  title: "Capture (Feb 1999)"
+  date: "1999-02-15"
+  type: event
+  mandatory: true
+  always:
+    - type: conditional
+      if: {type: atSpace, space: syria-bekaa, of: {type: spaceHas, markers: [leadership], sides: [abroad]}}
+      then:
+        - {type: removeMarker, marker: leadership, space: syria-bekaa, side: abroad}
+        - {type: setFlag, flag: captured, value: true}
+        - {type: note, text: "Capture: the Leadership marker is removed. PKK income -1 at each later Propaganda round."}
+      else:
+        - {type: note, text: "Capture: the Leadership is Present. The Always line does nothing."}
+  unshaded:
+    text: "If the Leadership is Present: Syria posture one step toward Hostile. Otherwise Legitimacy +1 and PKK Resources -3."
+    owner: state
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: atSpace, space: syria-bekaa, of: {type: spaceHas, markers: [leadership], sides: [present]}}
+        then: [{type: stepOrdinal, track: posture.syria, direction: next, steps: 1}]
+        else:
+          - {type: adjustTrack, track: legitimacy, delta: 1}
+          - {type: adjustTrack, track: resources.pkk, delta: -3}
+  shaded:
+    text: "Protests in Europe and the southeast: Europe +1. Shift one space with a PKK Base and no Office one level toward Opposition."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+      - type: forEachSpace
+        where: {type: all, of: [{type: spaceKind, kind: domestic}, {type: spaceHas, pieces: [pkkBase]}, {type: not, of: {type: spaceHas, markers: [office]}}]}
+        min: 1
+        max: 1
+        effects:
+          - {type: shiftLevel, space: selected, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-06a", reviewedAgainstText: true, note: "Always line from 10 s6.1 and 07 s5.2 item 5; income cut in propaganda/resources.ts (doc 31 s5.3)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0020, S-0211, S-0278, S-0358, S-0375, S-0032, S-0097, S-0433]

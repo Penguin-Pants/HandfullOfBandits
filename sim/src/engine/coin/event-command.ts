@@ -31,7 +31,9 @@ function check(ruleset: Ruleset, state: GameState, command: AnyCommand): Violati
   if (card === undefined || !["event", "capability", "momentum"].includes(card.type)) return v("noEvent", "The current card has no Event to execute.");
   const side = SIDES.find((s) => s === command["side"]);
   if (side === undefined) return v("badSide", "Choose side unshaded or shaded.");
-  if (!card.encoded || card[side] === null) return v("notEncoded", `${card.id} ${side} is not encoded.`);
+  const data = card[side];
+  if (!card.encoded || data === null) return v("notEncoded", `${card.id} ${side} is not encoded.`);
+  if (data.executors !== null && !data.executors.includes(String(command["faction"]))) return v("sideRestricted", "The PKK may not execute this side: it places a Closure Case, bans the legal party, removes Offices or moves Legal Space (05 s5 item 1).");
   if (command["answers"] !== undefined && !Array.isArray(command["answers"])) return v("badAnswer", "Answers must be a list.");
   // Dry run: finds a missing or bad answer; stops quietly at the first die roll (05 s4).
   const ctx = createExec(ruleset, state, true);

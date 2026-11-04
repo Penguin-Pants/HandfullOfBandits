@@ -32,6 +32,8 @@ export function entryText(e: LogEntry): string {
       return `Phase ${v(d["phase"])} ended.${ref}`;
     case "GameEnded":
       return `Game ended: ${v(d["winner"] ?? "no winner")} (${v(d["reason"])}).`;
+    case "CardNote":
+      return `${v(d["text"])}${ref}`;
     case "StopRuleFlag":
       return `Stop rule ${v(d["rule"])} flagged for ${v(d["faction"])}.${ref}`;
     default:

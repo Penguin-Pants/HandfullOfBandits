@@ -1,0 +1,85 @@
+# C3 cards (research 08; deck CSV). P3b-06a: the structural cards only (approved text docs/prototype/31 s5).
+# The rest of C3 comes with P3b-07.
+- id: DK-037
+  campaign: C3
+  title: "HEP Founded (Jun 1990)"
+  date: "1990-06-07"
+  type: event
+  mandatory: true
+  always:
+    - {type: setTrack, track: legalSpace, value: open}
+    - {type: procedure, id: legal.officeLines}
+    - {type: procedure, id: legal.officeLines}
+    - {type: note, text: "HEP Founded: Legal Space to Open. Offices placed by procedure lines 3 and 4 (twice)."}
+  unshaded:
+    text: "The State may place the Closure Case marker now if none is on the track (07, section 6.3)."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - label: File a closure case
+            effects:
+              - type: conditional
+                if: {type: flag, flag: closureCase, value: false}
+                then:
+                  - {type: setFlag, flag: closureCase, value: true}
+                  - {type: setTrack, track: legalSpace, value: prosecuted}
+          - {label: Do not file, effects: []}
+  shaded:
+    text: "Political opening: shift one space with a PKK Base and no Office one level toward Opposition."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: forEachSpace
+        where: {type: all, of: [{type: spaceKind, kind: domestic}, {type: spaceHas, pieces: [pkkBase]}, {type: not, of: {type: spaceHas, markers: [office]}}]}
+        min: 1
+        max: 1
+        effects:
+          - {type: shiftLevel, space: selected, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-06a", reviewedAgainstText: true, note: "Always line from 10 s6.1; DEC-67 (doc 31 s5.1)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0007, S-0024, S-0104, S-0172, S-0180, S-0210, S-0027]
+- id: DK-040
+  campaign: C3
+  title: "Northern Iraq Vacuum (Apr 1991)"
+  date: "1991-04-06"
+  type: event
+  mandatory: true
+  always:
+    - {type: setFlag, flag: northernIraqVacuum, value: true}
+  unshaded:
+    text: "Coalition presence: the State conducts a free Sweep in the KDP Zone through Cross-Border (access rules apply)."
+    owner: state
+    tier: T0
+    effects:
+      - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border}}
+  shaded:
+    text: "Power vacuum: place 2 Guerrillas and 1 PKK Base in the KDP Zone or PUK Zone (posture permitting)."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - label: KDP Zone
+            effects:
+              - type: conditional
+                if: {type: trackIn, track: posture.kdp, values: [host, tolerant]}
+                then: [{type: placePieces, piece: guerrilla, count: 2, space: kdp-zone, state: underground}]
+              - type: conditional
+                if: {type: any, of: [{type: trackIn, track: posture.kdp, values: [host]}, {type: all, of: [{type: trackIn, track: posture.kdp, values: [tolerant]}, {type: flag, flag: northernIraqVacuum, value: true}]}]}
+                then: [{type: placePieces, piece: pkkBase, count: 1, space: kdp-zone, state: null}]
+          - label: PUK Zone
+            effects:
+              - type: conditional
+                if: {type: trackIn, track: posture.puk, values: [host, tolerant]}
+                then: [{type: placePieces, piece: guerrilla, count: 2, space: puk-zone, state: underground}]
+              - type: conditional
+                if: {type: any, of: [{type: trackIn, track: posture.puk, values: [host]}, {type: all, of: [{type: trackIn, track: posture.puk, values: [tolerant]}, {type: flag, flag: northernIraqVacuum, value: true}]}]}
+                then: [{type: placePieces, piece: pkkBase, count: 1, space: puk-zone, state: null}]
+  encoding: {status: encoded, encodedBy: "P3b-06a", reviewedAgainstText: true, note: "Always line from 10 s6.1; shaded uses Rally placement rules (doc 31 s5.2, s7 item 5)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0176, S-0362, S-0363, S-0367, S-0221, S-0097]

@@ -47,6 +47,10 @@ describe("buildDeck (05 s1.1)", () => {
     expect(built.filter((pile) => pile.includes(id(7))).length).toBeGreaterThan(0);
   });
 
+  it("always puts every mandatory card above the Propaganda card (docs/prototype/31 s7 item 7)", () => {
+    for (const pile of built) for (const card of [id(3), id(5)]) expect(pile.indexOf(card)).toBeLessThan(pile.indexOf("C1-P"));
+  });
+
   it("always puts the Propaganda card at position 9 to 13, and uses each position", () => {
     const positions = new Set(built.map((pile) => pile.indexOf("C1-P") + 1));
     expect([...positions].sort((a, b) => a - b)).toEqual([9, 10, 11, 12, 13]);
