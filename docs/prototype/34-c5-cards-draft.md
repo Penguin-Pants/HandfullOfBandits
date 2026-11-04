@@ -62,12 +62,12 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 **DK-090 PKK Leader Leaves Syria (Oct 1998)**, T0. Chain: before DK-092.
 - U: "If Syria is Restricted or Hostile: set Syria to Hostile and flip the Leadership to Abroad. Otherwise Syria posture one step toward Hostile."
 - S: "Dispersal from Syria: move up to 3 Guerrillas from Syria-Bekaa to Mardin-Batman, Şanlıurfa or the KDP Zone, Underground. PKK Resources +2."
-- Encoding: U, Syria `stepOrdinal next` in every case. Event posture steps run `shiftHost` (`coin/events.ts`): Restricted goes to Hostile, Hostile stays, and at Hostile the Leadership flips to Abroad if it is Present (07 s5.2 item 4). After Capture there is no marker to flip. S, one destination (choice), `movePieces` 0 to 3 `toState: underground`, as DK-071 shaded. No gap.
+- Encoding: U, Syria `stepOrdinal next` in every case. Event posture steps run `shiftHost` (`coin/events.ts`): Restricted goes to Hostile, Hostile stays, and at Hostile the Leadership flips to Abroad if it is Present (07 s5.2 item 4). After Capture there is no marker to flip. S, one destination (choice), `movePieces` 0 to 3 `toState: underground`, as DK-071 shaded, then PKK Resources +2. No gap.
 
 **DK-091 Adana Minutes (Oct 1998)**, Capability on U, T0
 - U: "State Capability (Adana): while Syria is Hostile, Host Pressure may not target Syria. Remove all PKK Bases in Syria-Bekaa to Available now."
 - S: "Slow implementation: if Syria is Hostile, move it to Restricted. PKK Resources +1."
-- Encoding: U, Capability with `removePieces pkkBase` in Syria-Bekaa, count 12 (all; absent pieces are skipped). S, `conditional` Hostile, then `stepOrdinal previous`; the Leadership stays Abroad (nothing flips it back). See point 6.
+- Encoding: U, Capability with `removePieces pkkBase` in Syria-Bekaa, count 12 (all; absent pieces are skipped). S, `conditional` Hostile, then `stepOrdinal previous` (the Leadership stays Abroad: nothing flips it back); then PKK Resources +1 in every case. See point 6.
 
 **DK-092 Arrest in Rome (Nov 1998)**, T0. Chain: after DK-090.
 - U: "If the Leadership is Abroad: the State conducts a free Diplomacy targeting the Europe track with +1."
@@ -84,7 +84,7 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 **DK-082 Operation Hammer (May-Jul 1997)**, T1
 - U: "With KDP help: the State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border. If KDP is Hostile, ignore the Mountain modifier and move KDP one step toward Aligned with Turkey."
 - S: "Fighters shift to the PUK Zone: move up to 4 Guerrillas from the KDP Zone to the PUK Zone, Underground. State Resources -2."
-- Encoding: U, as DK-047 unshaded (one lift with the Sweep, `noLift` on the Assault, access rules apply), with the condition Hostile only; in the Hostile branch `ignoreMountain` on both, then KDP `stepOrdinal next`. S, as DK-047 shaded with one destination. See point 3.
+- Encoding: U, as DK-047 unshaded (one lift with the Sweep, `noLift` on the Assault, access rules apply), with the condition Hostile only; in the Hostile branch `ignoreMountain` on both, then KDP `stepOrdinal next`. S, `movePieces` 0 to 4 from the KDP Zone to the PUK Zone, `toState: underground`, then State Resources -2. See point 3.
 
 **DK-083 US Designates the PKK (Oct 1997)**, T0
 - U: "Europe -1. PKK Resources -2."
@@ -124,7 +124,7 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 **DK-096 Repentance Law (Aug 1999)**, T0
 - U: "Surrender offer: remove up to 3 Active Guerrillas from domestic spaces to Available. Legitimacy +1."
 - S: "Few take the offer: PKK Resources +1. Flip all Guerrillas in up to 2 spaces Underground."
-- Encoding: U, `forEachPiece` 0 to 3 Active Guerrillas in domestic spaces, each `removePieces` 1. S, track, then `forEachSpace` 0 to 2 spaces with an Active Guerrilla, `setPieceState` all to Underground. See point 9.
+- Encoding: U, `forEachPiece` 0 to 3 Active Guerrillas in domestic spaces, each `removePieces` 1, then Legitimacy +1. S, PKK Resources +1, then `forEachSpace` 0 to 2 spaces with an Active Guerrilla, `setPieceState` all to Underground. See point 9.
 
 ## 3. Engine additions (no designer text)
 
