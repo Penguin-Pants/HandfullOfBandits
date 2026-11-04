@@ -1,16 +1,15 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done. **Next task: P3b-06.**
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 draft [31](31-pivotals-structural-draft.md) written; **blocked on designer approval.**
 
-## 0. Resume here (updated 2026-11-04, P3b-05)
+## 0. Resume here (updated 2026-11-04, P3b-06 draft)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next task: P3b-06 Remaining Pivotals and structural cards (DK-037, 040, 093)** (Phase 3b table below; research 08 s4, s5).
-1. Already built: the Pivotal window and ARGK Formed (P3a-05, `coin/pivotal.ts`), Always lines (P2-09).
-2. Not built: the State Pivotals and the remaining PKK Pivotals, and the structural cards DK-037, DK-040 and DK-093.
-3. **First step, before code:** list each card's text, its encoding gaps and open points for the designer, as for [27](27-village-clearance-draft.md) to [30](30-ceasefire-draft.md).
-4. Then TDD (T-EVT: Always lines fire once), TWO-PASS REVIEW.
+**Next task: P3b-06 Remaining Pivotals and structural cards (DK-037, 040, 054, 076, 093, 098)** (Phase 3b table below; research 08 s2.2, s4).
+1. Done: the draft [31](31-pivotals-structural-draft.md) lists card text, rules as built, player-facing strings, 7 open points with proposed answers and 3 plan changes.
+2. **Blocker:** designer approval of [31](31-pivotals-structural-draft.md) section 7 (open points) and section 8 (plan changes). No code before approval.
+3. After approval: P3b-06a (structural cards, PKK side restriction, Event Europe cap, T-EVT "Always lines fire once"), then P3b-06b (general Pivotal window, DK-054, DK-076, DK-098, UI). TDD and TWO-PASS REVIEW for each.
 
 **Owner decisions in force**
 - Phase 3b proceeds before IC-3a. IC-3a findings may force rework; record any in this plan.
@@ -20,14 +19,13 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 **Open items outside the task order**
 - IC-3a: the designer's full Scenario A playthrough. Briefing: [25](25-p-shield-designer-notes.md) (P-SHIELD test).
 - Printable rulebook PDF is stale since DEC-62 (Host Pressure, rules 4.3.4). Run `make rulebook` where XeLaTeX is installed.
-- **Open PR:** [#46](https://github.com/Penguin-Pants/HandfullOfBandits/pull/46) holds P3b-02 to P3b-05 and the review fixes. Not merged. Merge it before P3b-06 work starts on a new branch.
 - **Repository renamed** to `Penguin-Pants/HandfullOfBandits`. Older links to `HandfulOfBandits` redirect. A session needs the new name in its GitHub scope to resolve review threads.
 
 **Carried follow-ups from P3b-02 to P3b-05** (details in section 4)
-1. **Decide in P3b-06:** the ceasefire step runs inside Legal Politics, which 05 s6.5 skips while Legal Space is Absent. If C3 starts before HEP Founded (DK-037), a declared ceasefire never reaches its step.
-2. **Fix in P3b-07:** card Event `adjustTrack` on Europe (`coin/events.ts`) ignores the Ban marker cap. Route it through `adjustEurope` when the German ban card is encoded.
+1. **Proposed Drop, in [31](31-pivotals-structural-draft.md) s7 item 7:** the ceasefire step while Legal Space is Absent does not reproduce. HEP Founded is mandatory, so it is always above the C3 Propaganda card (`coin/deck.ts:90-106`).
+2. **Proposed move to P3b-06a ([31](31-pivotals-structural-draft.md) s8 item 2):** card Event `adjustTrack` on Europe (`coin/events.ts`) ignores the Ban marker cap. Serhildan and Capture add Europe by Event. Route Event Europe changes through `adjustEurope`.
 3. **Before the next simulations:** batch bots never file a closure case, declare a ceasefire or answer the ceasefire step (`cli/candidates.ts` `AUTO_PHASES`).
-4. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (five call sites).
+4. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (five call sites). The P3b-06b earliest-Campaign check adds a sixth unless the helper is approved first.
 
 **Recent merged work**
 
@@ -39,16 +37,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #43 | DEC-62: Host Pressure with no legal replacement ends the Operation; overview [24](24-scenario-a-playtest-overview.md) |
 | #44 | P-SHIELD designer notes [25](25-p-shield-designer-notes.md) and bot reference [26](26-bot-reference.md) |
 | #45 | P3b-01: Emergency Rule step table tests; Phase 3b started |
-
-**Open, not merged (PR #46)**
-
-| Task | Content |
-|---|---|
-| P3b-02 | Village Clearance SA, PA-18, DEC-63 ([27](27-village-clearance-draft.md)) |
-| P3b-03 | Covert Action SA, DEC-64 ([28](28-covert-action-draft.md)) |
-| P3b-04 | Legal Politics phase and closure filing, DEC-65 ([29](29-legal-politics-draft.md)) |
-| P3b-05 | Ceasefire declaration, restrictions, breach, ceasefire step and Negotiated Outcome, DEC-66 ([30](30-ceasefire-draft.md)) |
-| Review | Ban marker Europe cap shared; three Codex findings fixed (`d499a85`) |
+| #46 | P3b-02 to P3b-05: Village Clearance, Covert Action, Legal Politics, Ceasefire and review fixes |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -576,7 +565,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-06** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. **Next: P3b-06**, blocked on designer approval of the draft [31](31-pivotals-structural-draft.md) (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
 
 **P3b-02 (2026-11-04):** complete. The designer approved the effect order and every player-facing string in [27](27-village-clearance-draft.md) before code. `coin/ops/sa/village-clearance.ts` accompanies Sweep or Garrison, checks the four conditions and applies the seven effects in order with rule refs `06 s3.4 effect 1` to `7`. It costs Legitimacy only; four new parameters (`clearance.*`) hold every number. DEC-63: condition 2 reads flag `ohalPowers` or Campaign C3 or later; no card sets the flag yet, so Scenario A cannot use it. PA-18 (GAP-B16): an existing State Harm or Coercion marker blocks the effect-1 shift. Tests: `village-clearance.test.ts` (T-OPS, T-VAL, four T-PERV cases from 09 s7.1) and a summary check in `forms.test.ts`. Mutation checks (swap effects 3 and 4; Pop cost 0) fail the suite.
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseOperation with the SA before and after Sweep and Garrison, the re-check after the Op, the Reception shortfall, the blocked shift, the Neutral case and the Rally block that follows. No path code. Pass 2 replaced a local Legitimacy reader with the existing pattern.
@@ -613,6 +602,16 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
   - **Drop:** Negotiated Outcome removals take any face; faces do not affect final margins.
 - **Validation:** `make check` passes. `make test`: 79 files, 1034 tests pass (after the PR 46 review fixes). `make e2e` passes. Package validation shows only the expected full-campaign blocks. Goldens regenerated for the package hash; commands and end state unchanged (25 and 66 hashes).
 
+**P3b-06 (2026-11-04):** draft only; **blocked on designer approval.** [31](31-pivotals-structural-draft.md) covers the three remaining Pivotals (DK-054, DK-076, DK-098) and the three structural cards (DK-037, DK-040, DK-093). Findings from the code check:
+- Already built: the Vacuum flag readers (`ops/sa/cross-border.ts`, `ops/common-pkk.ts`), Event posture steps through `shiftHost` (Hostile entry flips the Leadership), Always lines on reveal before the Pivotal window (`coin/turn.ts`).
+- Not built: a general Pivotal window (`coin/pivotal.ts` accepts ARGK only), the PKK side restriction (05 s5 item 1), Capture income, a card effect that runs a procedure, conditions on a named space and on a derived total, free action timing `after`.
+- Proposed plan changes: split into P3b-06a and P3b-06b; move the Event Europe cap fix from P3b-07 into P3b-06a.
+- **TWO-PASS REVIEW (documents only).** Pass 1 checked every code citation in [31](31-pivotals-structural-draft.md) against the source.
+  - **Fix:** the first draft cited PA-04 for shift blocks; PA-04 covers track ends. Now cites `markers.yaml` `blocks` (PKK Harm and Coercion block a shift toward Opposition).
+  - **Fix:** section 0 still asked to merge PR #46; it is merged (`fbf7ed2`). The stale table and instruction are removed.
+  - **Drop:** none. **Propose:** none new; the Campaign helper note now counts the P3b-06b call site.
+- No code, tests or package data changed. Validation with Node 24: `make check` passes; `make test`: 79 files, 1034 tests pass.
+
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
 | P3b-01 ✅ | Emergency Rule step table and Legitimacy phase step 8 | module `emergency-rule` | IC-3a | 07 s8.2 table | T-PROP | None |
@@ -620,7 +619,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P3b-03 ✅ | Covert Action and hidden markers | module `covert`, `core/hidden.ts` | P3b-01 | Check penalty and reveal | T-VIC | Solo play sees hidden markers. Logged as GAP-O01 |
 | P3b-04 ✅ | Legal Politics procedure and closure filing | module `legal-politics` | P3b-01 | Two runs of the table give identical Offices (research M-007) | T-PROP | Line order details |
 | P3b-05 ✅ | Ceasefire, restrictions, breach, votes, Negotiated Outcome | module `ceasefire` | P3b-04 | 07 s7 fixtures. PA-11 | T-VAL, T-PROP | Breach warnings in UI |
-| P3b-06 | Remaining Pivotals and structural cards (DK-037, 040, 093) | modules `pivotal-*`, `structural-*` | P3b-05 | Always lines fire once | T-EVT | None |
+| P3b-06 ⚠️ | Remaining Pivotals and structural cards (DK-037, 040, 093). Draft [31](31-pivotals-structural-draft.md) waits for approval | modules `pivotal-*`, `structural-*` | P3b-05 | Always lines fire once | T-EVT | None |
 | P3b-07 | Encode C3, C4, C5 cards | `cards/c3.yaml` to `c5.yaml` | P3b-06 | V-ENCODE passes for B and C | T-EVT | Volume. 5 cards per PR |
 | P3b-08 | Scenarios B and C | `scenarios/*.yaml` | P3b-07 | Start scores equal 09 s2.3 | T-SCORE, golden | Scenario B threshold open (DD-19.7). Package value |
 
