@@ -101,7 +101,7 @@ describe("T-PROP: Emergency Rule step table (P3b-01; research 07 s8.1 and s8.2)"
     const s = atStep(from, campaign);
     for (const to of ["martialLaw", "ohal", "ohalExtendedPowers", "normalizing"]) {
       const ok = codes(s, choice("legitimacy", { emergencyStep: to })).length === 0;
-      expect(ok, `${from} -> ${to} in ${campaign}`).toBe((allowed as string[]).includes(to));
+      expect(ok, `${from} -> ${to} in ${campaign}`).toBe(allowed.includes(to));
     }
   });
 
