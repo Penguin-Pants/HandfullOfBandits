@@ -79,7 +79,7 @@ DK-054 Serhildan, DK-037 and DK-040 are built (P3b-06). DK-046 is a research lea
 **DK-038 KHK 430 (Dec 1990)**, Momentum on U, T2
 - U: "State Momentum: until the next Reset, Sweep costs 1 Resource per space at any Emergency Rule step. The State conducts a free Garrison."
 - S: "Near-immunity for governors draws scrutiny: Legitimacy -2."
-- Gap A3: modifier `khk430`. Sweep reads it and uses `sweep.costOhalExtended` (1) at every step.
+- Gap A3: modifier `khk-430`. Sweep reads it and uses `sweep.costOhalExtended` (1) at every step.
 
 **DK-041 Operation in Northern Iraq (Aug 1991)**, T1. Chain: after DK-040.
 - U: "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border (access and Disputed Harm rules apply)."
@@ -102,7 +102,7 @@ DK-054 Serhildan, DK-037 and DK-040 are built (P3b-06). DK-046 is a research lea
 **DK-050 Özgür Gündem Begins Publication (May 1992)**, Momentum on either side, T0
 - U: "Press prosecutions: State Momentum: until the next Reset, Agitation in Diyarbakır City costs 1 more per step."
 - S: "Reporting raises the cost of harm: Europe +1. PKK Momentum: until the next Reset, each revealed Covert marker costs Legitimacy 1 more."
-- Gap A3: modifiers `pressProsecutions` (read by `agitationCost`, so Rally Agitate and Propaganda Agitation both pay) and `pressReporting` (read by the Covert reveal). See point 9.
+- Gap A3: modifiers `press-prosecutions` (read by `agitationCost`, so Rally Agitate and Propaganda Agitation both pay) and `press-reporting` (read by the Covert reveal). See point 9.
 
 ## 3. Engine additions (no designer text)
 
@@ -110,7 +110,7 @@ DK-054 Serhildan, DK-037 and DK-040 are built (P3b-06). DK-046 is a research lea
 |---|---|---|
 | A1 | Procedure `covert.revealRandom` | DK-049 (later DK-079, DK-080) |
 | A2 | Procedure `hizbullah.unattributed`, parameters for its spaces and tie order | DK-053 |
-| A3 | Modifiers `khk430`, `pressProsecutions`, `pressReporting` with their hooks | DK-038, DK-050 |
+| A3 | Modifiers `khk-430`, `press-prosecutions`, `press-reporting` with their hooks | DK-038, DK-050 |
 | A4 | Free action constraint `noLift` (Cross-Border with no Troop move) | DK-041, DK-047 |
 | A5 | Condition `spaceHas` field `min` | DK-044 |
 | A6 | Free action constraint `ignoreMountain` (Sweep and Assault) | DK-047 |
