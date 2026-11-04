@@ -126,7 +126,7 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 **DK-075 Raid on Two Guard Villages (Jan 1994)**, T2
 - U: "Place a PKK Harm marker in one space with a Village Guard (State choice). Europe -1. Place 1 Village Guard there."
 - S: "Block only: place a PKK Harm marker in one space with a Village Guard (PKK choice). No other effect."
-- Encoding: `forEachSpace` exactly 1 space with Guards. The Guard comes from Available (Guards start Out of Play, `pieces.yaml`); none Available: none placed. No space with Guards: nothing.
+- Encoding: `forEachSpace` exactly 1 space with Guards. The executing faction chooses; "(State choice)" and "(PKK choice)" name the normal executor, as DK-021 (designer, PR 50 review). The Guard comes from Available (Guards start Out of Play, `pieces.yaml`); none Available: none placed. No space with Guards: nothing.
 
 ## 3. Engine additions (no designer text)
 
@@ -148,4 +148,4 @@ DK-076 Area Domination is built (P3b-06b). Chains (08 s8): DK-056 before DK-057,
 6. **DK-057 shaded "set it to Declared":** a PKK declaration (flag `ceasefireDeclaredByPkk`) without the declaration's own Europe +1. The card's own Europe +1 applies once.
 7. **DK-059 with Ceasefire already None:** place the PKK Restraint Broken marker anyway (the text is unconditional), unless one is already on the map. Alternative: place it only when a ceasefire was in force.
 8. **DK-069 counts:** both New and Old Displacement markers count as "on the map". Shaded: Legitimacy -1 per 2 markers, maximum -3, then Europe +1.
-9. **DK-074 with too few State Resources:** Village Clearance is refused when the State cannot pay the 2 Resources (as any unaffordable cost, `cannotPay`). On a free Village Clearance (Area Domination), the 2 Resources would still apply (proposed). **Approved instead: free actions skip it (05 s5 item 4).**
+9. **DK-074 with too few State Resources:** Village Clearance is refused when the State cannot pay the 2 Resources (as any unaffordable cost, `cannotPay`). On a free Village Clearance (Area Domination), the 2 Resources would still apply (proposed). **Approved: an action a card makes free skips it (05 s5 item 4). Area Domination's Village Clearance runs "at normal cost" (its card text), so it pays (designer, PR 50 review).**
