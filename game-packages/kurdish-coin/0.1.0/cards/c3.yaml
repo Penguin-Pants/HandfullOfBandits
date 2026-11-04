@@ -1,5 +1,27 @@
-# C3 cards (research 08; deck CSV). P3b-06a: the structural cards only (approved text docs/prototype/31 s5).
-# The rest of C3 comes with P3b-07.
+# C3 cards (research 08; deck CSV). Structural cards: P3b-06a (approved text docs/prototype/31 s5).
+# Other cards: P3b-07 (encoding docs/prototype/32, DEC-68). DK-046 is a research lead and stays out (DEC-68).
+- id: DK-036
+  campaign: C3
+  title: "OHAL Powers (KHK 413, Apr 1990)"
+  date: "1990-04-09"
+  type: event
+  unshaded:
+    text: "If Emergency Rule is OHAL, set it to OHAL Extended Powers. Village Clearance is now available (DD-07.2; 07, section 8.2)."
+    owner: state
+    tier: T0
+    effects:
+      - {type: setTrack, track: emergencyRule, value: ohalExtendedPowers, ifEquals: ohal}
+  shaded:
+    text: "Press curbs: Legitimacy -2. Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -2}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "Village Clearance is open from C3 (clearance.from), so the second unshaded sentence needs no effect (DEC-68)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0057, S-0206, S-0216, S-0039]
 - id: DK-037
   campaign: C3
   title: "HEP Founded (Jun 1990)"
@@ -42,6 +64,34 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0007, S-0024, S-0104, S-0172, S-0180, S-0210, S-0027]
+- id: DK-039
+  campaign: C3
+  title: "Law 3713 (Apr 1991)"
+  date: "1991-04-12"
+  type: event
+  unshaded:
+    text: "Language ban lifted: Legitimacy +2. Shift one City with State Control and Police one level toward Support."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: 2}
+      - type: forEachSpace
+        where: {type: all, of: [{type: terrainIn, terrain: [city]}, {type: control, faction: state}, {type: spaceHas, pieces: [police]}]}
+        min: 1
+        max: 1
+        effects:
+          - {type: shiftLevel, space: selected, direction: support, steps: 1}
+  shaded:
+    text: "Article 8 prosecutions: Legitimacy -1. Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0059, S-0195, S-0206, S-0207, S-0036, S-0038, S-0039, S-0040]
 - id: DK-040
   campaign: C3
   title: "Northern Iraq Vacuum (Apr 1991)"
@@ -83,3 +133,94 @@
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0176, S-0362, S-0363, S-0367, S-0221, S-0097]
+- id: DK-042
+  campaign: C3
+  title: "Election Brings HEP Deputies to Parliament (Oct 1991)"
+  date: "1991-10-20"
+  type: event
+  chainAfter: [DK-037]
+  unshaded:
+    text: "Deputies enter parliament: Legitimacy +1. If Legal Space is Open, run Legal Politics line 4 once."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+      - type: conditional
+        if: {type: trackIn, track: legalSpace, values: [open]}
+        then: [{type: procedure, id: legal.officeLines}]
+  shaded:
+    text: "Votes in the southeast: shift Mardin-Batman or Diyarbakır Rural one level toward Opposition if it has no Office."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: forEachSpace
+        where: {type: all, of: [{type: spaceIn, spaces: [mardin-batman, diyarbakir-rural]}, {type: not, of: {type: spaceHas, markers: [office]}}]}
+        min: 1
+        max: 1
+        effects:
+          - {type: shiftLevel, space: selected, direction: opposition, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "Line 4 places only below the line 3 limit (07 s6.4). Places an Office but removes none, so open to the PKK (05 s5 item 1)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0178, S-0083, S-0180, S-0204, S-0210, S-0299, S-0103]
+- id: DK-051
+  campaign: C3
+  title: "Prosecutor Files to Close HEP (Jul 1992)"
+  date: "1992-07-03"
+  type: event
+  chainAfter: [DK-037]
+  unshaded:
+    text: "Place the Closure Case marker now if none is on the track. Legal Space to Prosecuted."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: flag, flag: closureCase, value: false}
+        then:
+          - {type: setFlag, flag: closureCase, value: true}
+          - {type: setTrack, track: legalSpace, value: prosecuted}
+  shaded:
+    text: "The case draws attention abroad: Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "As the HEP Founded filing; with a case already filed nothing happens (DEC-68)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0186, S-0172]
+- id: DK-052
+  campaign: C3
+  title: "Attack on Boğazköy Gendarme Station (Nov 1992)"
+  date: "1992-11-01"
+  type: event
+  unshaded:
+    text: "Reinforcement: place 2 Police and 1 Troop in Diyarbakır Rural."
+    owner: state
+    tier: T1
+    effects:
+      - {type: placePieces, piece: police, count: 2, space: diyarbakir-rural, state: null}
+      - {type: placePieces, piece: troops, count: 1, space: diyarbakir-rural, state: null}
+  shaded:
+    text: "The PKK conducts a free Attack with Ambush in Diyarbakır Rural or an adjacent space with an Underground Guerrilla."
+    owner: pkk
+    tier: T1
+    effects:
+      - {type: freeAction, action: pkk.attack, constraints: {spaces: [diyarbakir-rural, diyarbakir-city, mardin-batman, sanliurfa, adiyaman, elazig, bingol-mus], maxLocations: 1, sa: pkk.ambush}}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "Spaces: Diyarbakır Rural and its land neighbors (map.yaml). Ambush needs the Underground Guerrilla"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0190, S-0202]
+- id: DK-055
+  campaign: C3
+  title: Propaganda
+  type: propaganda
+  deckEligible: false
+  unshaded:
+    text: Conduct a Propaganda round (05, section 6).
+    owner: null
+    effects: []
+    tier: T0
+  encoding: {status: encoded, reviewedAgainstText: true}
+  sources: []

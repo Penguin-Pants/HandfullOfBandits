@@ -1,0 +1,126 @@
+import { describe, expect, it } from "vitest";
+import { codes, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
+import type { AnyCommand, GameState } from "../core/types.ts";
+
+// T-EVT per side for the C3 cards (11 P3b-07; encoding docs/prototype/32, DEC-68).
+// S0 board: Diyarbakır City and Western Cities have State Control and Police; Diyarbakır Rural
+// has 1 Police; Legitimacy is set to 5 so no side meets the track ends.
+const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
+const c3 = (s: GameState): GameState => setTrack({ ...s, turn: { ...s.turn, campaign: "C3" } }, "legitimacy", 5);
+const board = (faction: "state" | "pkk", card: string): GameState => c3(withCard(turnOf(faction), card));
+const track = (s: GameState, id: string): unknown => s.tracks[id];
+const level = (s: GameState, id: string): number | null | undefined => s.spaces[id]?.level;
+const offices = (s: GameState): string[] => ruleset.spaces.filter((x) => (s.spaces[x.id]?.markers["office"]?.["default"] ?? 0) > 0).map((x) => x.id);
+const card = (id: string) => ruleset.cards[id];
+
+describe("OHAL Powers (DK-036)", () => {
+  it("U: OHAL becomes OHAL Extended Powers; any other step stays", () => {
+    const ohal = setTrack(board("state", "DK-036"), "emergencyRule", "ohal");
+    expect(track(play(ohal, event("state", "unshaded")).state, "emergencyRule")).toBe("ohalExtendedPowers");
+    const martial = board("state", "DK-036");
+    expect(track(play(martial, event("state", "unshaded")).state, "emergencyRule")).toBe("martialLaw");
+  });
+
+  it("S: Legitimacy -2, Europe +1", () => {
+    const { state } = play(board("pkk", "DK-036"), event("pkk", "shaded"));
+    expect([track(state, "legitimacy"), track(state, "europe")]).toEqual([3, 2]);
+  });
+});
+
+describe("Law 3713 (DK-039)", () => {
+  it("U: Legitimacy +2 and one City with State Control and Police shifts toward Support", () => {
+    const { state } = play(board("state", "DK-039"), event("state", "unshaded", [["diyarbakir-city"]]));
+    expect(track(state, "legitimacy")).toBe(7);
+    expect(level(state, "diyarbakir-city")).toBe(1);
+  });
+
+  it("U: a City without Police is not offered", () => {
+    const noPolice = setPieces(board("state", "DK-039"), "diyarbakir-city", "police", 0);
+    expect(codes(noPolice, event("state", "unshaded", [["diyarbakir-city"]]))).toEqual(["badAnswer"]);
+    expect(codes(noPolice, event("state", "unshaded", [["western-cities"]]))).toEqual([]);
+  });
+
+  it("S: Legitimacy -1, Europe +1", () => {
+    const { state } = play(board("pkk", "DK-039"), event("pkk", "shaded"));
+    expect([track(state, "legitimacy"), track(state, "europe")]).toEqual([4, 2]);
+  });
+});
+
+describe("Election Brings HEP Deputies to Parliament (DK-042)", () => {
+  it("follows HEP Founded in the pile", () => {
+    expect(card("DK-042")?.chainAfter).toEqual(["DK-037"]);
+  });
+
+  it("U: Legitimacy +1; with Legal Space Open, line 4 places 1 Office", () => {
+    const open = setTrack(board("state", "DK-042"), "legalSpace", "open");
+    const { state } = play(open, event("state", "unshaded"));
+    expect(track(state, "legitimacy")).toBe(6);
+    expect(offices(state)).toEqual(["diyarbakir-city"]);
+  });
+
+  it("U: line 4 respects the line 3 limit, and Prosecuted places nothing", () => {
+    let full = setTrack(board("state", "DK-042"), "legalSpace", "open");
+    for (const id of ["diyarbakir-city", "western-cities", "mardin-batman", "van-bitlis"]) full = setMarkers(full, id, "office", 1);
+    expect(offices(play(full, event("state", "unshaded")).state)).toHaveLength(4);
+    const prosecuted = setTrack(board("state", "DK-042"), "legalSpace", "prosecuted");
+    expect(offices(play(prosecuted, event("state", "unshaded")).state)).toEqual([]);
+  });
+
+  it("U: the PKK may execute it (it removes no Office)", () => {
+    expect(codes(setTrack(board("pkk", "DK-042"), "legalSpace", "open"), event("pkk", "unshaded"))).toEqual([]);
+  });
+
+  it("S: Mardin-Batman or Diyarbakır Rural without an Office shifts toward Opposition", () => {
+    const { state } = play(board("pkk", "DK-042"), event("pkk", "shaded", [["diyarbakir-rural"]]));
+    expect(level(state, "diyarbakir-rural")).toBe(-1);
+    const office = setMarkers(board("pkk", "DK-042"), "mardin-batman", "office", 1);
+    expect(codes(office, event("pkk", "shaded", [["mardin-batman"]]))).toEqual(["badAnswer"]);
+  });
+});
+
+describe("Prosecutor Files to Close HEP (DK-051)", () => {
+  it("follows HEP Founded in the pile", () => {
+    expect(card("DK-051")?.chainAfter).toEqual(["DK-037"]);
+  });
+
+  it("U: places the Closure Case marker and sets Legal Space to Prosecuted", () => {
+    const { state } = play(setTrack(board("state", "DK-051"), "legalSpace", "open"), event("state", "unshaded"));
+    expect(state.flags["closureCase"]).toBe(true);
+    expect(track(state, "legalSpace")).toBe("prosecuted");
+  });
+
+  it("U: with a case already filed, nothing happens (DEC-68)", () => {
+    const filed = setTrack({ ...board("state", "DK-051"), flags: { ...turnOf("state").flags, closureCase: true } }, "legalSpace", "prosecuted");
+    const { state } = play(filed, event("state", "unshaded"));
+    expect([state.flags["closureCase"], track(state, "legalSpace")]).toEqual([true, "prosecuted"]);
+  });
+
+  it("U: the PKK may not execute the side (05 s5 item 1)", () => {
+    expect(codes(board("pkk", "DK-051"), event("pkk", "unshaded"))).toEqual(["sideRestricted"]);
+  });
+
+  it("S: Europe +1", () => {
+    expect(track(play(board("pkk", "DK-051"), event("pkk", "shaded")).state, "europe")).toBe(2);
+  });
+});
+
+describe("Attack on Boğazköy Gendarme Station (DK-052)", () => {
+  it("U: places 2 Police and 1 Troop in Diyarbakır Rural", () => {
+    const { state } = play(board("state", "DK-052"), event("state", "unshaded"));
+    expect([pieces(state, "diyarbakir-rural", "police"), pieces(state, "diyarbakir-rural", "troops")]).toEqual([{ default: 3 }, { default: 1 }]);
+  });
+
+  it("S: free Attack with Ambush in Diyarbakır Rural or an adjacent space only", () => {
+    const attack = (loc: string) => event("pkk", "shaded", [{ locations: [loc], perLocation: {}, sa: { locations: [loc], perLocation: {} } }]);
+    const ready = setPieces(setPieces(board("pkk", "DK-052"), "mardin-batman", "guerrilla", 2), "hakkari", "guerrilla", 2);
+    const { state } = play(ready, attack("mardin-batman"));
+    expect(pieces(state, "mardin-batman", "troops")).toEqual({ default: 0 });
+    expect(codes(ready, attack("hakkari"))).toEqual(["eventConstraint"]);
+  });
+});
+
+describe("C3 Propaganda (DK-055)", () => {
+  it("is the C3 Propaganda card", () => {
+    expect([card("DK-055")?.type, card("DK-055")?.campaign]).toEqual(["propaganda", "C3"]);
+  });
+});

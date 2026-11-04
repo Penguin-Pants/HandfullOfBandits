@@ -34,7 +34,7 @@ Rules:
 | `pools` | Per piece type: `available`, `outOfPlay` |
 | `markerPools` | Available count per marker type |
 | `tracks` | All numeric and ordinal tracks, including Resources |
-| `flags` | Structural switches, for example `law3175`, `northernIraqVacuum`, `ohalPowersPlayed` |
+| `flags` | Structural switches, for example `law3175`, `northernIraqVacuum`, `closureCase` |
 | `modifiers` | Active Capabilities and Momentum with source card and duration |
 | `hidden` | Face-down marker records with space and the engine `stateSeq` at placement. Store action IDs never enter game state; the store maps `stateSeq` to its action ID |
 | `pending` | Open `Decision`, if any |
