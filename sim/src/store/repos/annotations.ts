@@ -52,6 +52,19 @@ export function editAnnotationText(db: Db, annotationId: string, text: string): 
   })();
 }
 
+export type NoteStatus = AnnotationRow["status"];
+export const NOTE_STATUSES: readonly NoteStatus[] = ["open", "addressed", "wontfix"];
+
+/** Bulk status (07 s7): set `status` on every listed note in one transaction. An unknown ID changes nothing. */
+export function setAnnotationStatus(db: Db, annotationIds: readonly string[], status: NoteStatus): number {
+  return db.transaction(() => {
+    const at = now();
+    const update = db.prepare("UPDATE annotations SET status = ?, updated_at = ? WHERE annotation_id = ?");
+    for (const id of annotationIds) if (update.run(status, at, id).changes === 0) throw new RangeError(`Unknown annotation "${id}"`);
+    return annotationIds.length;
+  })();
+}
+
 /** Save a note and return its ID. A second debrief replaces the first and keeps its ID (07 s10 T-ANN-08). */
 export function saveAnnotation(db: Db, input: AnnotationInput): string {
   return db.transaction((): string => {

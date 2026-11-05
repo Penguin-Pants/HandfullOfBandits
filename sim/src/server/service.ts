@@ -19,7 +19,7 @@ import { loadPackage, packageContent, readPackageDir, withSessionOptions, type L
 import type { PackageData, PackageIssue } from "../package/validate.ts";
 import type { Db } from "../store/migrate.ts";
 import { continueAction, commitAction, listActions, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
-import { listAnnotations, saveAnnotation, type Anchor, type AnnotationRow } from "../store/repos/annotations.ts";
+import { listAnnotations, saveAnnotation, setAnnotationStatus, type Anchor, type AnnotationRow, type NoteStatus } from "../store/repos/annotations.ts";
 import { listCategories, type CategoryRow } from "../store/repos/categories.ts";
 import { listCommands } from "../store/repos/commands.ts";
 import { listEntries, type LogEntryRow } from "../store/repos/log-entries.ts";
@@ -342,6 +342,16 @@ export class SessionService {
       return { ...result, state: this.head(sessionId) };
     } catch (e) {
       if (e instanceof RangeError) throw new ServiceError(409, e.message);
+      throw e;
+    }
+  }
+
+  /** Bulk status from the review screen (07 s7). */
+  setNoteStatus(annotationIds: readonly string[], status: NoteStatus): number {
+    try {
+      return setAnnotationStatus(this.db, annotationIds, status);
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(404, e.message);
       throw e;
     }
   }

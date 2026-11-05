@@ -25,6 +25,48 @@ describe("Review", () => {
   });
 });
 
+describe("Review P4-01 (07 s7)", () => {
+  afterEach(() => { localStorage.clear(); });
+
+  it("sends the ruleset version filter and shows the ruleset column", async () => {
+    const review = vi.fn(() => Promise.resolve([row]));
+    render(<Review api={mockApi({ review })} onOpenState={vi.fn()} />);
+    expect(await screen.findByRole("cell", { name: "R1" })).toBeTruthy();
+    fireEvent.change(screen.getByLabelText("rulesetVersion"), { target: { value: "R1" } });
+    await waitFor(() => { expect(review).toHaveBeenLastCalledWith({ rulesetVersion: "R1" }); });
+  });
+
+  it("sets the status of the selected notes, then reloads", async () => {
+    const second = { ...row, annotationId: "N2", text: "Second" };
+    const review = vi.fn(() => Promise.resolve([row, second]));
+    const setNoteStatus = vi.fn(() => Promise.resolve({ updated: 2 }));
+    render(<Review api={mockApi({ review, setNoteStatus })} onOpenState={vi.fn()} />);
+    const mark = await screen.findByRole<HTMLButtonElement>("button", { name: "Mark addressed" });
+    expect(mark.disabled).toBe(true);
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select all" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select Second" }));
+    fireEvent.click(mark);
+    await waitFor(() => { expect(setNoteStatus).toHaveBeenCalledWith(["N1"], "addressed"); });
+    await waitFor(() => { expect(review).toHaveBeenCalledTimes(2); });
+  });
+
+  it("saves a named filter in the browser, applies it after a reload and deletes it", async () => {
+    const review = vi.fn(() => Promise.resolve([row]));
+    const first = render(<Review api={mockApi({ review })} onOpenState={vi.fn()} />);
+    fireEvent.change(screen.getByLabelText("status"), { target: { value: "open" } });
+    fireEvent.change(screen.getByLabelText("Filter name"), { target: { value: "Open notes" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save filter" }));
+    first.unmount();
+    render(<Review api={mockApi({ review })} onOpenState={vi.fn()} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Open notes" }));
+    await waitFor(() => { expect(review).toHaveBeenLastCalledWith({ status: "open" }); });
+    expect(screen.getByLabelText<HTMLInputElement>("status").value).toBe("open");
+    fireEvent.click(screen.getByRole("button", { name: "Delete Open notes" }));
+    expect(screen.queryByRole("button", { name: "Open notes" })).toBeNull();
+    expect(localStorage.getItem("hob.review.savedFilters")).toBe("{}");
+  });
+});
+
 describe("StateViewer", () => {
   it("shows the after state, then the before state on toggle, read only", async () => {
     const before = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));

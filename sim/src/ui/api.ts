@@ -95,6 +95,7 @@ export const api = {
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
   undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
   review: (filter: Readonly<Record<string, string>>) => call<ReviewRow[]>("GET", `/review?${new URLSearchParams(filter).toString()}`),
+  setNoteStatus: (annotationIds: readonly string[], status: "open" | "addressed" | "wontfix") => call<{ updated: number }>("POST", "/review/status", { annotationIds, status }),
   endSession: (id: string, debrief: string | null) => call<{ debriefId: string | null }>("POST", `/sessions/${id}/end`, { debrief }),
 };
 
