@@ -135,8 +135,9 @@ describe("logging sheet inputs (research 12 s4 through 06 s4; DEC-82)", () => {
   const session = section("## Session: full export");
   it("items 1 and 2: scenario, rules version, seed, card order and options", () => {
     expect(md).toContain("rules R");
-    const cards = data.actions.filter((a) => a["status"] === "committed" && a["card_id"] !== null).map((a) => String(a["card_id"]));
-    expect(session).toContain(`Card order: ${[...new Set(cards)].join(", ")}`);
+    const cards = data.actions.filter((a) => a["status"] === "committed").flatMap((a) => a["entries"] as { kind: string; data: { card: string; setAside?: boolean } }[]).filter((e) => e.kind === "CardRevealed" && e.data.setAside !== true).map((e) => e.data.card);
+    expect(cards.length).toBeGreaterThan(0);
+    expect(session).toContain(`Card order: ${cards.join(", ")}.`);
     expect(session).toContain("Options: ");
   });
   it("item 3: each action line has card, faction and box; undone actions are marked", () => {
@@ -194,5 +195,50 @@ describe("CSV export, 07 s8.3", () => {
     expect(records(readFileSync(join(out, "annotations.csv"), "utf8"))).toHaveLength(data.annotations.length);
     expect(records(readFileSync(join(out, "actions.csv"), "utf8"))).toHaveLength(data.actions.length);
     expect(exportCommand([sessionId], file, false, null, "0.1.0", "csv")).toEqual({ exitCode: 1, lines: ["error: --format csv needs --out <folder>"] });
+  });
+});
+
+describe("Codex review fixes on PR #65", () => {
+  // A session exported right after its first Advance: the face-up card has no action yet.
+  const early = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 9, name: "early" });
+  const advanced = service.submit(early.sessionId, scriptedPolicy(engine, ruleset, early.head.state), early.head.actionId);
+  const onAdvance = service.annotate(early.sessionId, { anchor: "executed", actionId: advanced.actionId, text: "Note on the Advance.", categoryIds: ["ui"], focus });
+  // A session whose round-ending action is undone: its metrics row stays in the store.
+  const undoneRound = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 7, name: "undone round" });
+  let s = undoneRound.head.state;
+  let h = undoneRound.head.actionId;
+  while (s.ended === null) {
+    const r = service.submit(undoneRound.sessionId, scriptedPolicy(engine, ruleset, s), h);
+    s = r.head.state;
+    h = r.actionId;
+  }
+  service.undo(undoneRound.sessionId, h);
+  const both = exportJson(db, { sessionIds: [early.sessionId, undoneRound.sessionId], withStates: false, appVersion: "0.1.0", exportedAt: "x" });
+  const text = exportMarkdown(both);
+
+  it("card order comes from card reveals, so the face-up card is listed", () => {
+    const revealed = advanced.head.state.deck.currentCard;
+    expect(revealed).not.toBeNull();
+    expect(text).toContain(`Card order: ${String(revealed)}.`);
+  });
+
+  it("the metrics table leaves out rows of undone actions", () => {
+    expect(both.metrics.some((m) => m["session_id"] === undoneRound.sessionId)).toBe(true);
+    const table = text.slice(text.indexOf("## Round metrics"), text.indexOf("## Action use by faction"));
+    expect(table).not.toContain(undoneRound.sessionId);
+  });
+
+  it("a note on a factionless action shows Faction: none, not the faction active at note time", () => {
+    const note = both.annotations.find((n) => n["annotation_id"] === onAdvance);
+    expect((note?.["context"] as { active_faction: unknown }).active_faction).not.toBeNull();
+    const group = text.slice(text.indexOf("### User interface issue"));
+    expect(group.slice(0, group.indexOf("\n### ") > 0 ? group.indexOf("\n### ") : undefined)).toContain("Faction: none.");
+  });
+
+  it("an action the store keeps as advance counts under its command type (DeclareCeasefire)", () => {
+    const ceasefire = { action_id: `${early.sessionId}-X1`, session_id: early.sessionId, kind: "advance", faction: "pkk", status: "committed", card_id: null, box: "limited", summary: "DeclareCeasefire by pkk", entries: [], commands: [{ type: "DeclareCeasefire", payload: { type: "DeclareCeasefire", faction: "pkk" } }] };
+    const md2 = exportMarkdown({ ...both, actions: [...both.actions, ceasefire] });
+    expect(md2).toContain(`| ${early.sessionId} | pkk | DeclareCeasefire | 1 |`);
+    expect(md2).not.toContain(`| ${early.sessionId} | pkk | advance |`);
   });
 });

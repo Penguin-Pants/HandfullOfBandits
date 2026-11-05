@@ -17,7 +17,8 @@ function usesOf(action: Row): string[] {
   if (p.type === "ChooseOperation") return [p.op, p.sa].filter((x): x is string => x !== null);
   if (p.type === "ChooseEvent") return [`event.${String(p.side)}`];
   if (p.type === "Pass") return ["pass"];
-  return [String(action["kind"])];
+  // The command type, not the stored kind: the store files some faction actions as `advance`.
+  return [p.type ?? String(action["kind"])];
 }
 
 /** `state_changes` (07 s4.2) in one line. */
@@ -39,7 +40,7 @@ function categorized(n: Row, action: Row | undefined): string {
   const sources = Object.entries(obj(ctx["rule_sources"])).map(([ref, s]) => `${escaped(ref)}: ${escaped(s)}`);
   const lines = [
     `- [${[...ids, ...rules, ...list(ctx["assumption_refs"]).map(escaped)].join("; ")}] ${escaped(n["text"]).replace(/\n/g, "\n  ")}`,
-    `- Session: ${escaped(n["session_id"])}. Turn: ${escaped(at["campaign"])} round ${escaped(at["propaganda_round"])} card ${escaped(at["card_index"])}. Faction: ${or(action?.["faction"] ?? ctx["active_faction"], "none")}. Card: ${or(card, "none")}. Action: ${escaped(action?.["summary"] ?? n["anchor"])}.`,
+    `- Session: ${escaped(n["session_id"])}. Turn: ${escaped(at["campaign"])} round ${escaped(at["propaganda_round"])} card ${escaped(at["card_index"])}. Faction: ${or(action === undefined ? ctx["active_faction"] : action["faction"], "none")}. Card: ${or(card, "none")}. Action: ${escaped(action?.["summary"] ?? n["anchor"])}.`,
   ];
   if (action !== undefined) lines.push(`- State changes: ${changes(ctx["state_changes"])}.`, `- Rule refs: ${rules.length === 0 ? "none" : list(ctx["rule_refs"]).map(escaped).join(", ")}. Research sources: ${sources.length === 0 ? "none in the package rule index" : sources.join("; ")}.`);
   const [first, ...rest] = lines;
@@ -61,7 +62,9 @@ export function exportMarkdown(data: CoinSimExport): string {
     const actions = data.actions.filter((a) => a["session_id"] === s["session_id"]);
     const result = obj(s["result"]);
     const minutes = Math.round((Date.parse(String(s["updated_at"])) - Date.parse(String(s["created_at"]))) / 60000);
-    const cards = [...new Set(actions.filter((a) => a["status"] === "committed" && a["card_id"] !== null).map((a) => escaped(a["card_id"])))];
+    // From reveals: an action row holds the card before its command, so the face-up card has none yet.
+    const reveals = actions.filter((a) => a["status"] === "committed").flatMap((a) => list(a["entries"]).map(obj)).filter((e) => e["kind"] === "CardRevealed" && obj(e["data"])["setAside"] !== true);
+    const cards = reveals.map((e) => escaped(obj(e["data"])["card"]));
     lines.push(
       `## Session: ${escaped(s["name"])} [${escaped(s["session_id"])}]\n`,
       `Scenario: ${escaped(s["scenario_id"])}. Seed: ${escaped(s["seed"])}. Package ${version(s["package_hash"])}. Options: ${pairs(s["options"]) || "none"}. Status: ${escaped(s["status"])}.\n`,
@@ -74,7 +77,7 @@ export function exportMarkdown(data: CoinSimExport): string {
     for (const n of notes.filter((n) => n["anchor"] === "debrief")) lines.push(note(n));
     lines.push("### Actions\n");
     for (const a of actions) {
-      lines.push(`- [${[a["action_id"], a["card_id"], ...refsOf(a)].filter((x) => x !== null).map(escaped).join("; ")}] ${escaped(a["campaign"])} round ${escaped(a["propaganda_round"])} card ${escaped(a["card_index"])}${a["faction"] === null ? "" : `, ${[a["faction"], a["box"], ...(a["kind"] === "cardChoice" ? usesOf(a) : [])].filter((x) => x !== null).map(escaped).join(" ")}`}: ${escaped(a["summary"])} (${escaped(a["status"])}).\n`);
+      lines.push(`- [${[a["action_id"], a["card_id"], ...refsOf(a)].filter((x) => x !== null).map(escaped).join("; ")}] ${escaped(a["campaign"])} round ${escaped(a["propaganda_round"])} card ${escaped(a["card_index"])}${a["faction"] === null ? "" : `, ${[a["faction"], a["box"], ...usesOf(a)].filter((x) => x !== null).map(escaped).join(" ")}`}: ${escaped(a["summary"])} (${escaped(a["status"])}).\n`);
       for (const n of notes.filter((n) => n["action_id"] === a["action_id"])) lines.push(nested(note(n), "  "));
     }
     lines.push("### Other notes\n");
@@ -89,7 +92,9 @@ export function exportMarkdown(data: CoinSimExport): string {
     lines.push(`### ${escaped(labels.get(id) ?? "General observation")}\n`);
     for (const n of members) lines.push(categorized(n, data.actions.find((a) => a["action_id"] === n["action_id"])));
   }
-  const rounds = data.metrics.filter((m) => m["propaganda_round"] !== undefined);
+  // Undo keeps a metrics row; only rows of committed actions are results.
+  const committed = new Set(data.actions.filter((a) => a["status"] === "committed").map((a) => a["action_id"]));
+  const rounds = data.metrics.filter((m) => m["propaganda_round"] !== undefined && committed.has(m["action_id"]));
   const factions = [...new Set(rounds.flatMap((m) => Object.keys(obj(obj(m["data"])["scores"]))))];
   const per = (label: string): string[] => factions.map((f) => `${escaped(f)} ${label}`);
   lines.push("## Round metrics\n", `| Session | Round | Campaign | ${[...per("score"), ...per("margin"), ...per("Resources"), ...per("Harm")].join(" | ")} | Legitimacy | Europe | Emergency Rule |`, `|${" --- |".repeat(6 + 4 * factions.length)}`);
