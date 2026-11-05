@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-07 done. **Next: P4-08** (tester materials and rule lookup).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-07 done; P4-08 built, acceptance open (needs a new tester). **Next: the P4-08 tester run, then IC-4** (both need people).
 
-## 0. Resume here (updated 2026-11-05, P4-07)
+## 0. Resume here (updated 2026-11-05, P4-08)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P4-08** (tester materials: `docs/tester/INSTALL.md`, `docs/tester/HOW-TO-PLAY.md`, rule lookup from a log rule ref to its text in the package rule index; accept: a new tester installs and finishes S0 using only these files). The acceptance needs a person who has not used the app; record who ran it. Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: the P4-08 tester run.** P4-08 is built (see below). Its acceptance needs a person who has not used the app: give them only `docs/tester/INSTALL.md` and `docs/tester/HOW-TO-PLAY.md`, ask them to finish S0, and record who ran it and what blocked them. Then IC-4 (M5): two package versions and at least three sessions compared with recorded evidence. Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+
+**P4-08 is built (acceptance open):** `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md` (S0 walk-through). Rule lookup: a **Rule** button beside each log line that has a rule ref (Last action and History) opens the research section text; `GET /api/sessions/:id/rules?ref=`; `sim rule "<ref>" [--package <dir>]`. Notes now carry `rule_sources` and the JSON export fills `packages[].ruleIndex` (DEC-83). `make start` now builds the UI first (it served "UI not built" before).
 
 **P4-07 is done:** the Play map toolbar has **Hide Covert** (off by default, DEC-23). On, it removes every hidden marker (`hidden: true` in `markers.yaml`; Covert) from the map, hover text, Key and space detail (`ui/board/markers.tsx` `withoutHidden`). Not hidden: the log lines (designer decision, doc 28 s2.3), the changed-space outline, scores and the state viewer. The toggle is local to the screen and resets on reload.
 
@@ -266,7 +268,7 @@ Task field key: **Obj** objective, **Files** files or modules, **Deps** dependen
 - **Risks:** Field drift from spec. Test lists fields by name from 07.
 - **Out:** Context builder.
 - **Done:** `buildContext(input)` in `sim/src/annotate/context.ts`, input and context types in `types.ts` (DEC-46). `RulesetFaction.resourcesTrack` compiled from `factions.yaml`. Tests in `context.test.ts`: every 07 s4.1 and s4.2 field by name (T-ANN-03), nulls only where the source has no value yet, values for the P1-10 transition, compact diff of pieces, levels, markers and Control, costs, rolls and PA refs, proposed plan with violations, no action fields without an action, size under 8 KB, input unchanged (T-ANN-04 engine part; store part in IC-1).
-- **Open for later tasks:** `active_faction` from the sequence model (P2-03), `current_card_title` from cards (P2-05), `legal_choices_summary` from `legalChoices` (P2-03), `rule_sources` from the package rule index (P4-08). The session service fills them (P2-11).
+- **Open for later tasks:** `active_faction` from the sequence model (P2-03), `current_card_title` from cards (P2-05), `legal_choices_summary` from `legalChoices` (P2-03), `rule_sources` from the package rule index (done in P4-08, DEC-83). The session service fills them (P2-11).
 
 ### IC-1 Integration checkpoint (Phase 1 exit)
 
@@ -508,7 +510,7 @@ CLI test plays S0 to the end with a scripted command list and a fixed seed. Gold
 - **Risks:** Large files with states. States off by default.
 - **Out:** Exporters.
 - **Done:** `sim/src/export/json.ts` (`exportJson`: exportMeta, packages with manifest, parameters and assumptions, sessions with result and `debrief_annotation_id`, branches, used categories, actions with commands, entries and `undoneAfterRandom`, states with derived view and content only with `--with-states`, annotations, metrics rows plus stop rule flags, index; `validateExport` for T-EXP). `sim export <sessionId...> [--db] [--with-states] [--out]` (`cli/export.ts`), `GET /api/sessions/:id/export`, Export link on Home. Tests `sim/test/export.test.ts` (T-ANN-07, T-ANN-08, T-EXP, the S0 metrics row).
-- **Open:** the package rule index is empty until P4-08 (`rule_sources`). Markdown and CSV exports are Phase 3a and 4.
+- **Open:** the package rule index was empty until P4-08 (`rule_sources`; now filled, DEC-83). Markdown and CSV exports are Phase 3a and 4.
 
 ### IC-2 Integration checkpoint (Phase 2 exit, M2)
 
@@ -839,7 +841,25 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
-**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-07 done; **next: P4-08**.
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-07 done. P4-08 built; its acceptance (a new tester finishes S0 from the two tester files) is open and needs a person.
+
+**P4-08 (2026-11-05):** built; acceptance open. Tester materials and rule lookup (DEC-34, DEC-83).
+- **Index** (`annotate/rule-index.ts`, pure; `package/research.ts` reads the files): `buildRuleIndex` maps `NN` and a section number to heading, text up to the next heading and the titles of the sections below it. `lookupRule(index, ref)` reads every `NN sX.Y` cite in a ref (a bare `sX.Y` after a comma or semicolon keeps the document before it), drops item, step, effect and row qualifiers, lists each section once, and reports `missing` (cited, not in the files) and `other` (no research cite, for example `DD-19.4`, `debug.adjustTrack`). The index comes from `manifest.researchBase`, relative to the repository root. A base outside the root, a missing folder or no base gives an empty index.
+- **Use:** `GET /api/sessions/:id/rules?ref=` (400 without a ref, 404 for an unknown session). Annotation context `rule_sources` is filled for the refs of the linked action, so Markdown "Research sources" prints (07 s8.2). JSON export `packages[].ruleIndex` holds the source of each ref the package's sessions logged (`ExportOptions.ruleIndex`; the app and `sim export` pass it). UI: `ui/log/RuleText.tsx` and a **Rule** button per line in `LogLines` (Last action and History). Help lists it. CLI: `sim rule "<ref>" [--package <dir>]` (exit 1 when nothing resolves).
+- **Tester files:** `docs/tester/INSTALL.md` and `docs/tester/HOW-TO-PLAY.md`. Facts in them come from a run of the built app in Chromium (Home, S0 start, Pass, auto-advance of the card, Propaganda "Advance (Space)", Game complete, End session) and from a clean copy of the tracked files on Linux: `npm ci`, `npm run build`, `npm start`, page and API answered.
+- **Fix (in scope):** `make start` ran `npm start` without `npm run build`, so a fresh checkout answered "UI not built". It now builds first; the README step is updated.
+- Tests: `annotate/rule-index.test.ts` (13: text and stop at next heading, subsections, qualifiers, bare sections, duplicates, missing, other, word guard, file filter, CRLF, empty ref, source line), `test/rule-lookup.test.ts` (9: service and API, 400 and 404, absent research folder, base outside the root, note context, JSON export, CLI JSON export, `sim rule` including a relative `--package`, and every `"NN sX"` literal in `src/engine` and `game-packages` resolves: 100+ refs), `ui/log/plain.test.tsx` (open, close, failure, no button without a lookup), `ui/play/play.test.tsx` (the Last action button calls `api.rule` with the session), `ui/help/help.test.tsx`. Stubs failed on assertions first (index, service, UI), except the Help line (written with the change). Mutation checks each fail the suite: relative package path not resolved; CRLF split removed; base outside the root accepted; `onRule` left off the Last action.
+- **TWO-PASS REVIEW.** Pass 1 traced `lookupRule` from the log line button, the API, the note context, the JSON export and the CLI, with Windows paths and CRLF files.
+  - **Fix:** `sim rule` took the repository root from the raw `--package` text, so a relative path (`game-packages/kurdish-coin/0.1.0` from another folder) found no research. It now resolves the path first. Test added; it failed before.
+  - **Fix (Pass 2):** `RuleSection` was re-exported through `api-types.ts` with no user. Removed.
+  - **Drop:** a ref such as `item 12 s3` reads `12` as a document. No stored ref has that form (the all-refs test passes). Not worth a stricter parser.
+  - **Drop:** the rule text is the whole section, not the cited item. Item numbers restart per list style in the research, so a per-item cut would need a parser per style (DEC-83).
+  - **Decide:** DEC-83 (where the rule index lives) was chosen by the agent. Owner to confirm or ask for a package file.
+  - **Propose:** none.
+- **Acceptance (open):** "A new tester installs and finishes S0 using only these files" needs a person who has not used the app. This repository cannot supply one. A dry run of the install steps on Linux passed; Windows and Mac installs by a person are not run. Unverified: the `better-sqlite3` build-tool advice in INSTALL.md (no Mac run; CI runs Windows `npm ci`). Verify by one Mac and one Windows tester; record who ran it and where they stopped.
+- **Noticed (not changed):** `e2e/smoke.mjs` says "Start is enabled for S0" but Home now opens on the first unblocked scenario, which is the Full campaign (64 cards). The tester guide tells the person to pick S0. Propose a diff to the smoke label if wanted.
+- **Validation:** `make check` passes. `make test`: 98 files, 1416 tests pass. `make e2e`: 30 checks pass. Node 24.22.1 on Linux.
+- **Blocker:** the tester run (a person). Nothing else blocks.
 
 **P4-07 (2026-11-05):** complete. Hidden-information view toggle (08 s3.1 item 5; GAP-O01; DEC-23).
 - **Filter** (`ui/board/markers.tsx` `withoutHidden`, pure): the board view with every marker whose package entry has `hidden: true` removed from each space. The server view already flags them (`server/view.ts`); no server or store change.
@@ -964,7 +984,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P4-05 ✅ | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
 | P4-06 ✅ | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
 | P4-07 ✅ | Hidden-information view toggle | Covert markers hidden in view mode |
-| P4-08 | Tester materials: `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md`, rule lookup from any log rule ref to its text in the package rule index (DEC-34) | A new tester installs and finishes S0 using only these files |
+| P4-08 ⚠️ | Tester materials: `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md`, rule lookup from any log rule ref to its text in the package rule index (DEC-34) | A new tester installs and finishes S0 using only these files |
 
 **IC-4 (M5):** Two package versions and at least three sessions compared with recorded evidence.
 

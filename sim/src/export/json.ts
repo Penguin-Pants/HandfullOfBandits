@@ -1,5 +1,6 @@
 // JSON export `coin-sim-export/1` (07 s8.1; 11 P2-18). Rows come from the store; relationships use
 // IDs only and `validateExport` checks that every reference resolves inside the file (T-EXP).
+import { lookupRule, ruleSource, type RuleIndex } from "../annotate/rule-index.ts";
 import type { AnnotationRow } from "../store/repos/annotations.ts";
 import type { Db } from "../store/migrate.ts";
 import { lineage, listActions } from "../store/repos/actions.ts";
@@ -20,6 +21,8 @@ export interface ExportOptions {
   readonly appVersion: string;
   /** Export time, ISO 8601. The caller supplies it so tests are deterministic. */
   readonly exportedAt: string;
+  /** Rule index of a package from its `researchBase`. Without it `ruleIndex` stays empty (11 P4-08). */
+  readonly ruleIndex?: (researchBase: string | undefined) => RuleIndex;
 }
 
 type Row = Record<string, unknown>;
@@ -81,9 +84,24 @@ export function exportJson(db: Db, options: ExportOptions): CoinSimExport {
     }
     metrics.push(...listMetrics(db, id).map((m) => ({ ...m, data: parse(m.data) })), ...flags.map((f) => ({ session_id: id, stopRuleFlag: f })));
   }
+  // Research source of each rule ref the package's sessions logged (07 s8.1 `packages`).
+  const ruleIndexOf = (hash: string, manifest: unknown): Row => {
+    const base = (manifest as Row | null)?.["researchBase"];
+    if (options.ruleIndex === undefined) return {};
+    const index = options.ruleIndex(typeof base === "string" ? base : undefined);
+    const owned = new Set(sessions.filter((s) => s["package_hash"] === hash).map((s) => s["session_id"]));
+    const refs = actions.filter((a) => owned.has(a["session_id"])).flatMap((a) => (a["entries"] as Row[]).map((e) => e["rule_ref"]));
+    const out: Row = {};
+    for (const ref of [...new Set(refs)].sort()) {
+      const source = typeof ref === "string" ? ruleSource(lookupRule(index, ref)) : undefined;
+      if (typeof ref === "string" && source !== undefined) out[ref] = source;
+    }
+    return out;
+  };
   const packages = [...packageHashes].sort().map((hash) => {
     const content = parse(loadPackageContent(db, hash)) as Record<string, unknown> | null;
-    return { package_hash: hash, manifest: content?.["manifest.yaml"] ?? null, parameters: content?.["parameters.yaml"] ?? null, assumptions: content?.["assumptions.yaml"] ?? [], ruleIndex: {} };
+    const manifest = content?.["manifest.yaml"] ?? null;
+    return { package_hash: hash, manifest, parameters: content?.["parameters.yaml"] ?? null, assumptions: content?.["assumptions.yaml"] ?? [], ruleIndex: ruleIndexOf(hash, manifest) };
   });
   const states = [...hashes].sort().map((hash) => {
     const s = loadState(db, hash);

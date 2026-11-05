@@ -72,6 +72,11 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     if (typeof b.headActionId !== "string") throw new ServiceError(400, "headActionId is required.");
     return service.submit(request.params.id, command(b.command), b.headActionId, b.headStateHash);
   });
+  app.get<{ Params: Id; Querystring: { ref?: string } }>("/api/sessions/:id/rules", (request) => {
+    const ref = request.query.ref;
+    if (typeof ref !== "string" || ref.trim() === "") throw new ServiceError(400, "ref is required.");
+    return service.ruleLookup(request.params.id, ref);
+  });
   app.get<{ Params: Id }>("/api/sessions/:id/legal", (request) => service.legalChoices(request.params.id));
   app.get<{ Params: Id }>("/api/sessions/:id/history", (request) => service.history(request.params.id));
   app.get<{ Params: { hash: string } }>("/api/states/:hash", (request) => service.state(request.params.hash));
@@ -101,7 +106,7 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   });
   app.get<{ Params: Id; Querystring: { states?: string } }>("/api/sessions/:id/export", (request, reply) => {
     service.session(request.params.id);
-    const data = exportJson(service.db, { sessionIds: [request.params.id], withStates: request.query.states === "1", appVersion: APP_VERSION, exportedAt: new Date().toISOString() });
+    const data = exportJson(service.db, { sessionIds: [request.params.id], withStates: request.query.states === "1", appVersion: APP_VERSION, exportedAt: new Date().toISOString(), ruleIndex: service.ruleIndex });
     const broken = validateExport(data);
     if (broken.length > 0) throw new ServiceError(500, "The export has unresolved references (T-EXP).", broken);
     return reply.header("content-disposition", `attachment; filename="session-${request.params.id}.json"`).send(data);
@@ -111,7 +116,7 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     const ids = sessions === undefined || sessions === "" ? service.listSessions().map((s) => s.session_id) : sessions.split(",");
     const unknown = ids.find((id) => getSession(service.db, id) === null);
     if (unknown !== undefined) throw new ServiceError(404, `Unknown session "${unknown}".`);
-    return exportJson(service.db, { sessionIds: ids, withStates: false, appVersion: APP_VERSION, exportedAt: new Date().toISOString() });
+    return exportJson(service.db, { sessionIds: ids, withStates: false, appVersion: APP_VERSION, exportedAt: new Date().toISOString(), ruleIndex: service.ruleIndex });
   };
   app.get<{ Querystring: { sessions?: string } }>("/api/metrics", (request) => metricsTable(metricsExport(request.query.sessions)));
   app.get<{ Querystring: { sessions?: string } }>("/api/metrics.csv", (request, reply) => reply.type("text/csv; charset=utf-8").header("content-disposition", 'attachment; filename="metrics.csv"').send(metricsCsv(metricsExport(request.query.sessions))));

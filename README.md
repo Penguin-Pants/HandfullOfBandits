@@ -8,13 +8,15 @@ Needs Node.js 24 LTS or later and GNU Make. The simulator lives in `sim/`.
 1. `make install`
 2. `make check` (typecheck and lint)
 3. `make test`
-4. `make start`
+4. `make start` (builds the UI, then starts the app at http://127.0.0.1:5174)
 5. `make schema` after a change to a package schema in `sim/src/package/schema/`
 6. `make validate DIR=<package-dir>` to check a game package
 7. Export sessions from `sim/`: `npm run sim -- export <sessionId...> --format json|markdown|csv --out <file or folder>`. CSV writes `annotations.csv`, `actions.csv` and `metrics.csv` into the folder. The **Metrics review** screen (Home nav) shows the per-round metrics and downloads `metrics.csv`.
 8. Regression cases from notes (09 s7): `npm run sim -- regression create <annotationId>`, then `npm run sim -- regression run <caseId> --package <dir>` reports same, changed (per-round metric diff), incompatible or error. `regression list` shows cases; `regression compare <actionId> <actionId>` diffs the rounds of two branch paths.
 
-Windows without Make: run `npm ci`, `npm run check`, `npm test` or `npm start` inside `sim/`.
+Windows without Make: run `npm ci`, `npm run check` or `npm test` inside `sim/`. To start the app, run `npm run build` then `npm start`.
+
+Playtesters: install with [docs/tester/INSTALL.md](docs/tester/INSTALL.md) and play with [docs/tester/HOW-TO-PLAY.md](docs/tester/HOW-TO-PLAY.md). Print the text a log rule ref cites with `npm run sim -- rule "06 s3.2"` (the app shows the same text under the **Rule** button).
 
 ## Scenario A playtest
 

@@ -166,7 +166,7 @@ Relationships use IDs only. A validator checks that every reference in the file 
 
 ### 8.2 Markdown (Phase 4, minimal form in Phase 3a)
 
-Implemented: minimal in P3a-08, all six sections in P4-02 (`sim/src/export/markdown.ts`). Command: `sim export <sessionId...> --format markdown [--db <file>] [--out <file>]`. Section 3 also gives options, record sheet, play time and card order (research 12 s4 items 1, 2, 17 and 18). Research sources print once the package rule index has them (P4-08).
+Implemented: minimal in P3a-08, all six sections in P4-02 (`sim/src/export/markdown.ts`). Command: `sim export <sessionId...> --format markdown [--db <file>] [--out <file>]`. Section 3 also gives options, record sheet, play time and card order (research 12 s4 items 1, 2, 17 and 18). Research sources print from the package rule index (P4-08, DEC-83): each rule ref that cites a research section carries the file, section and heading.
 
 Structure for one or more sessions:
 

@@ -19,6 +19,13 @@ describe("Help", () => {
   });
 });
 
+describe("Help: rule text (P4-08)", () => {
+  it("says what the Rule button next to a log line shows", () => {
+    render(<Help onClose={vi.fn()} />);
+    expect(screen.getByText(/Rule button next to a log line/)).toBeTruthy();
+  });
+});
+
 describe("Help: goals and actions", () => {
   it("explains how each faction wins, with this game's thresholds and Harm limit", () => {
     const view = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));

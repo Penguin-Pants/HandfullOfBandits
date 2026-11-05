@@ -1,11 +1,11 @@
 // History drawer (07 s6; 08 s3): actions with their log entries; notes counted inline; undone
 // actions struck through. `H` or the Close button toggles it (Play). "Branch from here" starts a
 // branch at that action's state (P4-04); the head and a pending action (open Operation) have none.
-import type { BoardView, HistoryItem } from "../api.ts";
+import type { BoardView, HistoryItem, RuleLookup } from "../api.ts";
 import { LogLines } from "../log/LogLines.tsx";
 import { actionTitle } from "../log/plain.ts";
 
-export function HistoryDrawer({ items, view, limit = 10, onOpen, onClose, onBranch, headActionId }: { readonly items: readonly HistoryItem[]; readonly view: BoardView; readonly limit?: number; readonly onOpen?: (item: HistoryItem) => void; readonly onClose?: () => void; readonly onBranch?: (item: HistoryItem) => void; readonly headActionId?: string }) {
+export function HistoryDrawer({ items, view, limit = 10, onOpen, onClose, onBranch, onRule, headActionId }: { readonly items: readonly HistoryItem[]; readonly view: BoardView; readonly limit?: number; readonly onOpen?: (item: HistoryItem) => void; readonly onClose?: () => void; readonly onBranch?: (item: HistoryItem) => void; readonly onRule?: (ref: string) => Promise<RuleLookup>; readonly headActionId?: string }) {
   return (
     <section className="panel" aria-label="History">
       <div className="row" style={{ justifyContent: "space-between" }}>
@@ -35,7 +35,7 @@ export function HistoryDrawer({ items, view, limit = 10, onOpen, onClose, onBran
               </>
             )}
             <div className="muted">
-              <LogLines item={item} view={view} playerOnly={false} />
+              <LogLines item={item} view={view} playerOnly={false} {...(onRule === undefined ? {} : { onRule })} />
             </div>
           </li>
           );

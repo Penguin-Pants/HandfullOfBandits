@@ -62,6 +62,20 @@ describe("Play branch (P4-04)", () => {
   });
 });
 
+describe("Play rule text (P4-08)", () => {
+  it("looks up the research text of a Last action line for the session", async () => {
+    const h = head("S-A3", "DK-012", "state");
+    const entry = { entry_id: "E1", action_id: "S-A3", n: 1, kind: "ControlChanged", state_seq: 1, rule_ref: "06 s3.2", assumption_ref: null, data: JSON.stringify({ space: "botan", before: null, after: "pkk" }), text: "", cause: null, cardTitle: null };
+    const item = { action: { action_id: "S-A3", summary: "Pass by pkk", status: "committed", faction: "pkk", box: "pass", phase: "card" }, entries: [entry], notes: 0 } as never;
+    const rule = vi.fn(() => Promise.resolve({ ref: "06 s3.2", sections: [{ cite: "06 s3.2", file: "06.md", section: "3.2", heading: "Cross-Border", text: "Pay 2 Resources.", subsections: [] }], missing: [], other: [] }));
+    const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))), history: vi.fn(() => Promise.resolve([item])), rule });
+    render(<Play api={api} sessionId="S" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Rule text for 06 s3.2" }));
+    expect(await screen.findByText("Pay 2 Resources.")).toBeTruthy();
+    expect(rule).toHaveBeenCalledWith("S", "06 s3.2");
+  });
+});
+
 describe("Play map space (UC-4)", () => {
   const render1 = async (): Promise<void> => {
     const h = head("S-A3", "DK-012", "state");
