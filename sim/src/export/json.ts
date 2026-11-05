@@ -157,14 +157,15 @@ export const obj = (value: unknown): Row => (value !== null && typeof value === 
 /** Array value or an empty array. */
 export const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
 
-/** Exported action rows from setup to `actionId` across branches (lineage, 11 P4-04). */
-export function pathOf(data: CoinSimExport, actionId: string): Row[] {
+/** Path finder over exported rows: setup to an action, across branches (lineage, 11 P4-04). */
+export function pathsOf(data: CoinSimExport): (actionId: string) => Row[] {
   const steps = data.actions.map((a) => ({
     row: a, action_id: String(a["action_id"]), branch_id: String(a["branch_id"]), branch_seq: Number(a["branch_seq"]),
     state_hash_before: typeof a["state_hash_before"] === "string" ? a["state_hash_before"] : null, state_hash_after: String(a["state_hash_after"]),
   }));
   const branches = data.branches.map((b) => ({ branch_id: String(b["branch_id"]), forked_from_action_id: typeof b["forked_from_action_id"] === "string" ? b["forked_from_action_id"] : null }));
-  return lineage(steps, branches, actionId).map((s) => s.row);
+  const path = lineage(steps, branches);
+  return (actionId) => path(actionId).map((s) => s.row);
 }
 
 /** Op, SA and Event side of an exported action, from its first command (05 s3.1). */

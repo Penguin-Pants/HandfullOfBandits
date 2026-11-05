@@ -121,21 +121,33 @@ type PathAction = Pick<ActionRow, "action_id" | "branch_id" | "branch_seq" | "st
  * The actions that lead to `actionId`, oldest first, ending with it (11 P4-04). Each step back takes the
  * latest earlier action of the same branch whose hash after equals this hash before; at the start of a
  * fork it takes the action the branch forked from. Undone actions count, so a branch from an undone
- * action keeps its own past (06 s6 item 6). Pure, so export uses it on exported rows.
+ * action keeps its own past (06 s6 item 6). Pure, so export uses it on exported rows. Indexes the rows
+ * once; the returned function gives the path to one action.
  */
-export function lineage<T extends PathAction>(actions: readonly T[], branches: readonly BranchLink[], actionId: string): T[] {
+export function lineage<T extends PathAction>(actions: readonly T[], branches: readonly BranchLink[]): (actionId: string) => T[] {
   const fork = new Map(branches.map((b) => [b.branch_id, b.forked_from_action_id]));
-  const out: T[] = [];
-  let a = actions.find((x) => x.action_id === actionId);
-  while (a !== undefined) {
-    out.push(a);
-    const at: T = a;
-    if (at.state_hash_before === null) return out.reverse();
-    const links = (x: T): boolean => x.state_hash_after === at.state_hash_before;
-    a = actions.filter((x) => x.branch_id === at.branch_id && x.branch_seq < at.branch_seq && links(x)).sort((x, y) => y.branch_seq - x.branch_seq)[0]
-      ?? actions.find((x) => x.action_id === fork.get(at.branch_id) && links(x));
+  const byId = new Map(actions.map((a) => [a.action_id, a]));
+  // Actions by branch and hash after, latest first.
+  const byEnd = new Map<string, T[]>();
+  for (const a of [...actions].sort((x, y) => y.branch_seq - x.branch_seq)) {
+    const key = `${a.branch_id} ${a.state_hash_after}`;
+    const list = byEnd.get(key);
+    if (list === undefined) byEnd.set(key, [a]);
+    else list.push(a);
   }
-  throw new RangeError(`Action ${actionId} has no path to setup.`);
+  return (actionId: string): T[] => {
+    const out: T[] = [];
+    let a = byId.get(actionId);
+    while (a !== undefined) {
+      out.push(a);
+      const at: T = a;
+      if (at.state_hash_before === null) return out.reverse();
+      const forked = byId.get(fork.get(at.branch_id) ?? "");
+      a = byEnd.get(`${at.branch_id} ${at.state_hash_before}`)?.find((x) => x.branch_seq < at.branch_seq)
+        ?? (forked?.state_hash_after === at.state_hash_before ? forked : undefined);
+    }
+    throw new RangeError(`Action ${actionId} has no path to setup.`);
+  };
 }
 
 function sessionRows(db: Db, sessionId: string): { actions: ActionRow[]; branches: BranchLink[] } {
@@ -150,7 +162,7 @@ export function pathTo(db: Db, actionId: string): ActionRow[] {
   const action = getAction(db, actionId);
   if (action === null) throw new RangeError(`Unknown action "${actionId}".`);
   const { actions, branches } = sessionRows(db, action.session_id);
-  return lineage(actions, branches, actionId);
+  return lineage(actions, branches)(actionId);
 }
 
 /** The action a branch forked from; null for the main branch. */

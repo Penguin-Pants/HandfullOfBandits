@@ -12,7 +12,6 @@ import { buildApp } from "../src/server/app.ts";
 import { SessionService } from "../src/server/service.ts";
 import { openStore } from "../src/store/migrate.ts";
 import { lineage, listActions } from "../src/store/repos/actions.ts";
-import { createBranch } from "../src/store/repos/sessions.ts";
 import { engine, ruleset } from "./board.ts";
 import { kurdishDir } from "./kurdish-package.ts";
 
@@ -95,15 +94,6 @@ describe("branch from a past action (P4-04)", () => {
     expect(() => service.branch(other.sessionId, other.head.actionId, other.head.actionId)).toThrow(/read-only/);
   });
 
-  it("refuses a pending action: its open Operation would continue on the original branch", () => {
-    db.prepare("UPDATE actions SET status = 'pending' WHERE action_id = ?").run(a4);
-    try {
-      expect(() => createBranch(db, { sessionId, actionId: a4, result: null })).toThrow(/pending/);
-    } finally {
-      db.prepare("UPDATE actions SET status = 'committed' WHERE action_id = ?").run(a4);
-    }
-  });
-
   it("branches over HTTP and exports every branch with resolved references", async () => {
     const { head } = service.session(sessionId);
     const res = await app.inject({ method: "POST", url: `/api/sessions/${sessionId}/branches`, payload: { actionId: a2, headActionId: head.actionId, headStateHash: head.stateHash } });
@@ -135,15 +125,31 @@ describe("lineage", () => {
   it("walks back by state hash inside a branch, then into the action a branch forked from", () => {
     const actions = [action("A1", "m", 1, null, "h1"), action("A2", "m", 2, "h1", "h2"), action("A3", "m", 3, "h2", "h3"), action("A4", "m", 4, "h1", "h4"), action("B1", "b", 1, "h3", "h5")];
     const branches = [{ branch_id: "m", forked_from_action_id: null }, { branch_id: "b", forked_from_action_id: "A3" }];
-    expect(lineage(actions, branches, "B1").map((a) => a.action_id)).toEqual(["A1", "A2", "A3", "B1"]);
-    expect(lineage(actions, branches, "A4").map((a) => a.action_id)).toEqual(["A1", "A4"]);
+    expect(lineage(actions, branches)("B1").map((a) => a.action_id)).toEqual(["A1", "A2", "A3", "B1"]);
+    expect(lineage(actions, branches)("A4").map((a) => a.action_id)).toEqual(["A1", "A4"]);
   });
   it("throws when an action has no path to setup", () => {
-    expect(() => lineage([action("A2", "m", 2, "h1", "h2")], [{ branch_id: "m", forked_from_action_id: null }], "A2")).toThrow(/no path/);
+    expect(() => lineage([action("A2", "m", 2, "h1", "h2")], [{ branch_id: "m", forked_from_action_id: null }])("A2")).toThrow(/no path/);
   });
 });
 
 describe("metrics round window on a branch", () => {
+  it("indexes the paths once: 30 sessions of 501 actions in well under a second (PR #67 review)", () => {
+    const actions: Record<string, unknown>[] = [];
+    const metrics: Record<string, unknown>[] = [];
+    for (let s = 0; s < 30; s++) {
+      for (let i = 1; i <= 501; i++) {
+        actions.push({ action_id: `s${String(s)}-A${String(i)}`, session_id: `s${String(s)}`, branch_id: `b${String(s)}`, seq: i, branch_seq: i, status: "committed", faction: null, commands: [], entries: [],
+          state_hash_before: i === 1 ? null : `s${String(s)}h${String(i - 1)}`, state_hash_after: `s${String(s)}h${String(i)}` });
+        if (i % 100 === 1 && i > 1) metrics.push({ session_id: `s${String(s)}`, branch_id: `b${String(s)}`, propaganda_round: (i - 1) / 100, action_id: `s${String(s)}-A${String(i)}`, data: {} });
+      }
+    }
+    const data = { ...exportJson(db, { sessionIds: [], withStates: false, appVersion: "0", exportedAt: "" }), actions, metrics, branches: Array.from({ length: 30 }, (_, s) => ({ branch_id: `b${String(s)}`, forked_from_action_id: null })) };
+    const start = performance.now();
+    expect(metricsTable(data).rows).toHaveLength(150);
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
+
   it("counts the actions of the round played before the fork", () => {
     const run = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed: 3, name: "metrics branch" });
     const fork = [step(run.sessionId), step(run.sessionId), step(run.sessionId)].at(-1) ?? "";

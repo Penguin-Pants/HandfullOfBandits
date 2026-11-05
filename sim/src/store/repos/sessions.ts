@@ -69,13 +69,12 @@ export function getSession(db: Db, sessionId: string): SessionRow | null {
 /**
  * Fork a branch at a past action of the session (11 P4-04; 09 s7): a new branch row, then the session's
  * current branch and head move to that action's state. `result` is that state's end result, if any.
- * Earlier branches keep every row. A pending action is refused: its open Operation continues in place.
+ * Earlier branches keep every row. The caller refuses a state with an open Operation.
  */
 export function createBranch(db: Db, input: { sessionId: string; actionId: string; result: string | null }): string {
   return db.transaction((): string => {
     const action = getAction(db, input.actionId);
     if (action?.session_id !== input.sessionId) throw new RangeError(`Unknown action "${input.actionId}".`);
-    if (action.status === "pending") throw new RangeError("A pending action cannot start a branch.");
     const branchId = ulid();
     const at = now();
     const { n } = db.prepare("SELECT COUNT(*) + 1 AS n FROM branches WHERE session_id = ?").get(input.sessionId) as { n: number };

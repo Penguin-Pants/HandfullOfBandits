@@ -353,14 +353,11 @@ export class SessionService {
     this.checkHead(head, headActionId, headStateHash);
     const action = getAction(this.db, actionId);
     if (action?.session_id !== sessionId) throw new ServiceError(404, `Unknown action "${actionId}".`);
-    const { ended } = this.state(action.state_hash_after).state;
-    try {
-      const branchId = createBranch(this.db, { sessionId, actionId, result: ended === null ? null : JSON.stringify(ended) });
-      return { branchId, head: this.head(sessionId) };
-    } catch (e) {
-      if (e instanceof RangeError) throw new ServiceError(409, e.message);
-      throw e;
-    }
+    const { ended, pending } = this.state(action.state_hash_after).state;
+    // A pending action, or one undone while pending, would continue its Operation on the earlier branch.
+    if (pending?.resume?.kind === "operation") throw new ServiceError(409, "An action with an open Operation cannot start a branch.");
+    const branchId = createBranch(this.db, { sessionId, actionId, result: ended === null ? null : JSON.stringify(ended) });
+    return { branchId, head: this.head(sessionId) };
   }
 
   /** Bulk status from the review screen (07 s7). */

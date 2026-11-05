@@ -1,6 +1,6 @@
 // Markdown export (07 s8.2; minimal in P3a-08, full sections 1 to 6 in P4-02). Written for an AI
 // assistant: each note and action line carries its IDs in brackets.
-import { list, obj, pathOf, type CoinSimExport } from "./json.ts";
+import { list, obj, pathsOf, type CoinSimExport } from "./json.ts";
 import { metricsTable, usesOf } from "./metrics.ts";
 
 type Row = Record<string, unknown>;
@@ -49,6 +49,7 @@ export function exportMarkdown(data: CoinSimExport): string {
     lines.push(`Package ${version(p["package_hash"])} (${escaped(p["package_hash"])}).\n`);
     for (const a of list(p["assumptions"]).map(obj)) lines.push(`- [${escaped(a["id"])}; ${escaped(a["status"])}] ${escaped(a["text"])}\n`);
   }
+  const pathOf = pathsOf(data);
   for (const s of data.sessions) {
     const notes = data.annotations.filter((n) => n["session_id"] === s["session_id"]);
     const actions = data.actions.filter((a) => a["session_id"] === s["session_id"]);
@@ -57,7 +58,7 @@ export function exportMarkdown(data: CoinSimExport): string {
     // From reveals on the path to the head (P4-04): an action row holds the card before its command,
     // so the face-up card has none yet.
     const head = s["head_action_id"];
-    const reveals = (typeof head === "string" ? pathOf(data, head) : []).flatMap((a) => list(a["entries"]).map(obj)).filter((e) => e["kind"] === "CardRevealed" && obj(e["data"])["setAside"] !== true);
+    const reveals = (typeof head === "string" ? pathOf(head) : []).flatMap((a) => list(a["entries"]).map(obj)).filter((e) => e["kind"] === "CardRevealed" && obj(e["data"])["setAside"] !== true);
     const cards = reveals.map((e) => escaped(obj(e["data"])["card"]));
     lines.push(
       `## Session: ${escaped(s["name"])} [${escaped(s["session_id"])}]\n`,

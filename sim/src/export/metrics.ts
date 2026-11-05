@@ -4,7 +4,7 @@
 // action use) come from the actions of the round on the row's path (a fork's path starts in its
 // parent branch, P4-04): after the previous round's metrics action, up to and including this round's.
 // The screen, `metrics.csv` and Markdown section 5 use it.
-import { actionPlan, list, obj, pathOf, type CoinSimExport } from "./json.ts";
+import { actionPlan, list, obj, pathsOf, type CoinSimExport } from "./json.ts";
 
 type Row = Record<string, unknown>;
 export type Cell = string | number | boolean | null;
@@ -75,6 +75,7 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
   const rounds = data.metrics.filter((m) => m["propaganda_round"] !== undefined);
   const metrics = rounds.filter((m) => committed.has(m["action_id"]));
   const roundEnds = new Set(rounds.map((m) => m["action_id"]));
+  const pathOf = pathsOf(data);
   const factions = [...new Set(metrics.flatMap((m) => Object.keys(obj(obj(m["data"])["scores"]))))];
   const pieces = [...new Set(metrics.flatMap((m) => Object.keys(obj(obj(m["data"])["available"]))))];
   // [marker, side] pairs; a one-sided marker has side "default" (SINGLE_FACE) and no side in its key.
@@ -99,7 +100,7 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
     const has = d["markers"] !== undefined;
     const count = (id: string, side: string): Cell => (has ? Number(obj(markers[id])[side] ?? 0) : null);
     // The round: actions on the path to this metrics action, after the previous one on that path.
-    const path = pathOf(data, String(m["action_id"]));
+    const path = pathOf(String(m["action_id"]));
     const round = path.slice(path.findLastIndex((a, i) => i < path.length - 1 && roundEnds.has(a["action_id"])) + 1);
     const row: Record<string, Cell> = {
       session_id: cell(m["session_id"]), branch_id: cell(m["branch_id"]), round: cell(m["propaganda_round"]), campaign: cell(d["campaign"]),
