@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c started before IC-3b by owner decision (DEC-78): P3c-01 done. **Next: P3c-02** (full campaign scenario and a long golden replay).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c started before IC-3b by owner decision (DEC-78): P3c-01 and P3c-02 done. **Next: IC-3c** (designer; Phase 3 exit, M4).
 
-## 0. Resume here (updated 2026-11-05, P3c-01)
+## 0. Resume here (updated 2026-11-05, P3c-02)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P3c-02** (full campaign scenario and a long golden replay; accept: the full campaign replays in under 10 seconds). Phase 3c started before IC-3b by owner decision (DEC-78). IC-3a and IC-3b stay open for the designer.
+**Next: IC-3c** (designer): the selected design plays from setup to conclusion; Phase 3 exit (M4). Phase 3c tasks P3c-01 and P3c-02 are complete. IC-3a and IC-3b stay open for the designer. **Open decision:** Phase 4 depends on IC-3c (section 7); the owner decides whether Phase 4 may start first. Until then, no task is unblocked for an agent session.
+
+**P3c-02 is done:** `scenarios/full-campaign.yaml` (10 s2) now has tests for every track, level, marker, Pivotal hand and the five piles (`test/full-campaign.test.ts`), beside the existing score, Control and totals tests (`test/kurdish.test.ts`). Golden `test/golden/full-campaign-seed-7.json`: 158 commands, C1 to C5, final scoring in round 5. The CLI replay, package load included, runs in under 10 seconds (measured 185 to 286 ms; 05 s11).
 
 **P3c-01 is done:** structural switches (10 s6.2) are flags. Parameters `switch.on.<Campaign>` and `switch.off.<Campaign>` hold the table; `coin/switches.ts` sets them at setup (every Campaign up to the first) and at each Reset (the Campaign entered). Six gates now read the flag, not the Campaign: hot pursuit, Village Clearance, Covert Action, Declare Ceasefire, OHAL Extended Powers and Return by Civic Action. The five-pile deck and Campaign advance already existed (P2-04, P3a). **Old sessions (DEC-79):** a session stored before P3c-01 opens read-only; start a new session for IC-3a or IC-3b play.
 
@@ -56,6 +58,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #59 | P3b-07j: C5 operations cards (DEC-75, DEC-76) |
 | #60 | P3b-07k: C5 late politics cards; P3b-07 complete |
 | #61 | P3b-08: Scenarios B and C |
+| #62 | P3c-01: structural switches as flags (DEC-78, DEC-79) |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -771,7 +774,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3c: full campaign
 
-**Status (2026-11-05):** started before IC-3b (DEC-78). P3c-01 done; **next: P3c-02**.
+**Status (2026-11-05):** started before IC-3b (DEC-78). P3c-01 and P3c-02 done; **next: IC-3c** (designer).
 
 **P3c-01 (2026-11-05):** complete. The five-pile deck (`coin/deck.ts`, one pile per scenario Campaign) and the Campaign advance at Reset (`propaganda/reset.ts`) already existed; the scripted policy plays the full campaign to the end. New: the 10 s6.2 switches as flags.
 - **Package:** `switch.on.C1 [hotPursuit]`, `switch.on.C3 [villageClearance, covertAction, declareCeasefire, extendedPowers]`, `switch.off.C3 [hotPursuit]`, `switch.on.C5 [returnByCivicAction]`. Removed (replaced): `clearance.from`, `covert.from`, `ceasefire.from`, `emergencyRule.extendedFrom`, `civicAction.returnCampaigns`. 04 s4.5 documents the rows.
@@ -790,10 +793,21 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 - **Validation:** `make check` passes. `make test`: 88 files, 1299 tests pass. `make e2e` passes. `make validate`: no issues. Package schema unchanged (parameters only). Goldens regenerated for the package hash and start flags; commands unchanged (S0 24, A 65, B 68, C 109). Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
 - **Blocker for the next task:** none.
 
+**P3c-02 (2026-11-05):** complete. The full campaign scenario already matched 10 s2; scores, Control and piece totals were tested since P2-02. New: `test/full-campaign.test.ts`.
+- Setup tests: every 10 s2.1 track in C1; the 10 s2.2 levels; the Leadership as the only marker; five piles; the 10 s2.3 Pivotal hands; Law 3175 not yet in force.
+- Golden `test/golden/full-campaign-seed-7.json` (scripted policy, seed 7): 158 commands through C1 to C5, final scoring in round 5 (PKK win). It replays hash by hash, and `replayFile` (CLI path, package load included) reports "identical (158 commands)" in under 10 seconds. Measured: 185 to 286 ms (05 s11).
+- Mutation checks each fail the suite: Legitimacy 11; PUK Host; Şanlıurfa level 2; PKK hand without Serhildan; final round 4; time limit 1 ms; no switches at Reset.
+- **TWO-PASS REVIEW.** Pass 1 traced engine start, the scripted game to its end, the engine replay and the CLI replay from the file path (`fileURLToPath`, so Windows paths work). Pass 2: the tests reuse the golden pattern of `scenarios-bc.test.ts` and do not repeat the `kurdish.test.ts` score, Control and totals checks.
+  - **Drop:** the golden write-and-compare block now appears in four test files. Test code only; a shared helper touches three files outside this task for no behavior gain (as the P3b-08 Drop).
+  - **Drop:** 05 s11 names "about 400 commands"; the scripted game is 158. The measured rate gives 400 commands in under 1 s, so a longer fixture adds file size and no evidence.
+  - **Propose:** none new.
+- **Validation:** `make check` passes. `make test`: 89 files, 1305 tests pass. `make validate`: no issues. No source or package change, so goldens, schemas and the UI are unchanged; `make e2e` not rerun. Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
+- **Blocker for the next task:** IC-3c needs the designer. Phase 4 depends on IC-3c; starting it first needs an owner decision.
+
 | ID | Obj | Deps | Accept |
 |---|---|---|---|
 | P3c-01 ✅ | Five-pile deck, Campaign advance and structural switches (10 s6.2) | IC-3b (waived, DEC-78) | Switch flags set at each Reset |
-| P3c-02 | Full campaign scenario and a long golden replay | P3c-01 | Full campaign replays in under 10 seconds |
+| P3c-02 ✅ | Full campaign scenario and a long golden replay | P3c-01 | Full campaign replays in under 10 seconds |
 
 **IC-3c (M4):** The selected design plays from setup to conclusion. Phase 3 exit criterion met.
 
