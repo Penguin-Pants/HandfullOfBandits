@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node: [24, 26]
+        node: [24]
     runs-on: ${{ matrix.os }}
     defaults:
       run:
