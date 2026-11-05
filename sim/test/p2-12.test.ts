@@ -49,6 +49,18 @@ describe("session options (04 s10.3)", () => {
     expect(service.session(sessionId).ruleset.scenarios["s0"]?.options["syriaMarchRestricted"]).toBe("deny");
     db.close();
   });
+
+  it("apply a Scenario B threshold pick from the Home screen; refuse a value the manifest does not list (DEC-24)", () => {
+    const db = openStore(join(dir, "threshold.sqlite"));
+    const service = new SessionService(db, fileURLToPath(new URL("../../game-packages", import.meta.url)));
+    const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "scenario-b", seed: 1, name: "46", options: { "threshold.state": "46" } });
+    expect(head.view.status.thresholds).toEqual({ state: 46, pkk: 41 });
+    expect(service.session(sessionId).ruleset.scenarios["scenario-b"]?.thresholds).toEqual({ state: 46, pkk: 41 });
+    for (const options of [{ "threshold.state": "x" }, { "threshold.state": 40 }, { unknown: "allow" }]) {
+      expect(() => service.createSession({ dir: kurdishDir, scenarioId: "scenario-b", seed: 1, name: "bad", options })).toThrow(expect.objectContaining({ status: 400 }));
+    }
+    db.close();
+  });
 });
 
 describe("T-FUZZ: 50 seeds of S0 with random legal choices", () => {

@@ -207,7 +207,7 @@ Thresholds live in scenario files, because they differ per scenario.
 | `pivotals` | Per faction |
 | `flags` | For example `law3175: true`, `northernIraqVacuum: true` |
 | `thresholds` | Per faction |
-| `options` | Values for every competing option in `manifest.options` |
+| `options` | Values for every competing option in `manifest.options`. An option `threshold.<faction>` replaces that faction's threshold, only in a scenario that sets it (P3b-08, DEC-24) |
 | `excludedCards` | Optional list with reason |
 | `testOnly` | true for designer test scenarios not taken from research |
 

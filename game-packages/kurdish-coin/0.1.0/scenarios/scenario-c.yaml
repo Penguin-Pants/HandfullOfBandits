@@ -1,0 +1,46 @@
+# Research 10 s5: Jan 1993, C4 and C5. All Guerrillas start Underground (10 s1 step 3).
+# Thresholds 09 s2.3. Closure Case marker on the track: flag closureCase (P3b-04).
+id: scenario-c
+title: 'Scenario C: 1993-1999'
+campaigns: [C4, C5]
+finalRound: 2
+tracks:
+  resources.state: 20
+  resources.pkk: 10
+  legitimacy: 7
+  emergencyRule: ohalExtendedPowers
+  posture.syria: restricted
+  posture.kdp: hostile
+  posture.puk: restricted
+  europe: 3
+  ceasefire: none
+  legalSpace: prosecuted
+spaces:
+  hakkari: {level: -2, pieces: {troops: 2, police: 1, guards: 1, guerrilla: 3, pkkBase: 1}}
+  botan:
+    level: -2
+    pieces: {troops: 4, police: 1, guards: 2, stateBase: 1, guerrilla: 3, pkkBase: 1}
+    markers: {displacement: {new: 0, old: 1}, stateHarm: 1}
+  mardin-batman:
+    level: -1
+    pieces: {troops: 2, police: 2, guards: 2, stateBase: 1, guerrilla: 2, pkkBase: 1}
+    markers: {office: 1, stateHarm: 1, disputedHarm: 1}
+  diyarbakir-city: {level: -1, pieces: {troops: 3, police: 3, stateBase: 1, guerrilla: 1}, markers: {office: 1}}
+  diyarbakir-rural: {level: -1, pieces: {troops: 2, police: 1, guards: 1, guerrilla: 2, pkkBase: 1}, markers: {stateHarm: 1}}
+  sanliurfa: {level: 1, pieces: {troops: 1, police: 2, guards: 2}}
+  adiyaman: {pieces: {police: 1}}
+  elazig: {level: 1, pieces: {troops: 1, police: 1, stateBase: 1}}
+  dersim: {level: -1, pieces: {troops: 1, police: 1, guerrilla: 2}}
+  bingol-mus: {level: -1, pieces: {troops: 1, police: 1, guards: 1, guerrilla: 3, pkkBase: 1}}
+  van-bitlis: {pieces: {troops: 2, police: 1, guards: 1, stateBase: 1, guerrilla: 2}}
+  agri: {pieces: {troops: 1, police: 1, guerrilla: 1}}
+  western-cities: {level: 1, pieces: {troops: 1, police: 1, stateBase: 1}, markers: {office: 1, reception: 1}}
+  kdp-zone: {pieces: {guerrilla: 2, pkkBase: 1}}
+  puk-zone: {pieces: {guerrilla: 2}}
+  syria-bekaa: {pieces: {guerrilla: 1, pkkBase: 1}, markers: {leadership: {present: 1, abroad: 0}}}
+available: {troops: 9, police: 7, guards: 6, stateBase: 2, guerrilla: 6, pkkBase: 5}
+flags: {law3175: true, closureCase: true, northernIraqVacuum: true}
+thresholds: {state: 44, pkk: 48}
+options: {syriaMarchRestricted: allow}
+# 10 s5: Area Domination, Coercive Diplomacy on Syria; Serhildan (deck CSV IDs).
+pivotals: {state: [DK-076, DK-098], pkk: [DK-054]}

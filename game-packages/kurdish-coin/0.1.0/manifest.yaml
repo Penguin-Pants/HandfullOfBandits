@@ -13,4 +13,7 @@ options:
   syriaMarchRestricted:
     values: [allow, deny]
     description: "PA-16 (GAP-I02). allow: PKK March into Syria-Bekaa at Restricted, +1 Resource, group Activates (06 s4.2). deny: Host or Tolerant only (03 s3)"
+  threshold.state:
+    values: [48, 46]
+    description: "Scenario B State threshold (09 s2.3; DEC-24, DEC-77). Default 48. Other scenarios ignore it"
 researchBase: research/research-final/package-b-coin-design
