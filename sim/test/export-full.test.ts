@@ -249,3 +249,20 @@ describe("Codex review fixes on PR #65", () => {
     expect(md3).toContain(`| ${early.sessionId} | pkk | pkk.extort | 1 |`);
   });
 });
+
+describe("Declare Ceasefire is stored as a card choice in the Limited Op box (P4-02 review follow-up)", () => {
+  const b = service.createSession({ dir: kurdishDir, scenarioId: "scenario-b", seed: 7, name: "ceasefire" });
+  const declare = { type: "DeclareCeasefire", faction: "pkk" } as const;
+  let found: string | null = null;
+  for (let i = 0; i < 80 && found === null; i++) {
+    const { head, ruleset: r } = service.session(b.sessionId);
+    if (head.state.ended !== null) break;
+    if (service.validateCommand(b.sessionId, declare).violations.length === 0) found = service.submit(b.sessionId, declare, head.actionId).actionId;
+    else service.submit(b.sessionId, scriptedPolicy(engine, r, head.state), head.actionId);
+  }
+  it("has kind cardChoice and box limitedOp", () => {
+    expect(found).not.toBeNull();
+    const row = db.prepare("SELECT kind, box, faction FROM actions WHERE action_id = ?").get(found) as { kind: string; box: string | null; faction: string };
+    expect(row).toEqual({ kind: "cardChoice", box: "limitedOp", faction: "pkk" });
+  });
+});
