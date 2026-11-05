@@ -12,7 +12,7 @@ import { coinHandlers } from "../engine/coin/handlers.ts";
 import { activeFaction, legalBoxes, responderBoxes } from "../engine/coin/sequence/ct.ts";
 import { legalOps } from "../engine/coin/stop-rules.ts";
 import { canonicalJson } from "../engine/core/canonical.ts";
-import type { AnyCommand, GameState, JsonObject, JsonValue, LogEntry, Ruleset, ValidationResult } from "../engine/core/types.ts";
+import type { AnyCommand, GameState, JsonValue, Ruleset, ValidationResult } from "../engine/core/types.ts";
 import { createEngine } from "../engine/index.ts";
 import { replaySteps } from "../engine/replay.ts";
 import { loadPackage, packageContent, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
@@ -22,7 +22,7 @@ import { branchHistory, continueAction, commitAction, getAction, storedSteps, ty
 import { listAnnotations, saveAnnotation, setAnnotationStatus, type Anchor, type AnnotationRow, type NoteStatus } from "../store/repos/annotations.ts";
 import { listCategories, type CategoryRow } from "../store/repos/categories.ts";
 import { listCommands } from "../store/repos/commands.ts";
-import { listEntries, type LogEntryRow } from "../store/repos/log-entries.ts";
+import { listEntries, logEntriesOf, type LogEntryRow } from "../store/repos/log-entries.ts";
 import { saveMetrics } from "../store/repos/metrics.ts";
 import { loadPackageContent, savePackageVersion } from "../store/repos/packages.ts";
 import { createBranch, createSession, getSession, type SessionRow } from "../store/repos/sessions.ts";
@@ -306,7 +306,7 @@ export class SessionService {
       const after = this.state(row.state_hash_after);
       const [cmd] = listCommands(this.db, row.action_id);
       const command = cmd === undefined ? { type: "Setup" } : (JSON.parse(cmd.payload) as AnyCommand);
-      const entries = listEntries(this.db, row.action_id).map((e) => ({ kind: e.kind, stateSeq: e.state_seq, ruleRef: e.rule_ref, assumptionRef: e.assumption_ref, data: JSON.parse(e.data) as JsonObject })) as LogEntry[];
+      const entries = logEntriesOf(this.db, row.action_id);
       action = {
         actionId: row.action_id, kind: row.kind, command, entries, validation: cmd === undefined ? { ok: true, violations: [], warnings: [], preview: { effects: [] } } : (JSON.parse(cmd.validation) as ValidationResult),
         before: before === null || row.state_hash_before === null ? null : view(before.state, row.state_hash_before), after: view(after.state, row.state_hash_after),

@@ -95,3 +95,7 @@ export function saveAnnotation(db: Db, input: AnnotationInput): string {
 export function listAnnotations(db: Db, sessionId: string): AnnotationRow[] {
   return db.prepare("SELECT * FROM annotations WHERE session_id = ? ORDER BY created_at, rowid").all(sessionId) as AnnotationRow[];
 }
+
+export function getAnnotation(db: Db, annotationId: string): AnnotationRow | null {
+  return (db.prepare("SELECT * FROM annotations WHERE annotation_id = ?").get(annotationId) as AnnotationRow | undefined) ?? null;
+}

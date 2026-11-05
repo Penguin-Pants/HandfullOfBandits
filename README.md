@@ -12,6 +12,7 @@ Needs Node.js 24 LTS or later and GNU Make. The simulator lives in `sim/`.
 5. `make schema` after a change to a package schema in `sim/src/package/schema/`
 6. `make validate DIR=<package-dir>` to check a game package
 7. Export sessions from `sim/`: `npm run sim -- export <sessionId...> --format json|markdown|csv --out <file or folder>`. CSV writes `annotations.csv`, `actions.csv` and `metrics.csv` into the folder. The **Metrics review** screen (Home nav) shows the per-round metrics and downloads `metrics.csv`.
+8. Regression cases from notes (09 s7): `npm run sim -- regression create <annotationId>`, then `npm run sim -- regression run <caseId> --package <dir>` reports same, changed (per-round metric diff), incompatible or error. `regression list` shows cases; `regression compare <actionId> <actionId>` diffs the rounds of two branch paths.
 
 Windows without Make: run `npm ci`, `npm run check`, `npm test` or `npm start` inside `sim/`.
 

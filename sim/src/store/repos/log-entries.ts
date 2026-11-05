@@ -1,5 +1,5 @@
 // log_entries (06 s3.6): engine log entries of an action with their rendered text.
-import type { LogEntry } from "../../engine/core/types.ts";
+import type { JsonObject, LogEntry } from "../../engine/core/types.ts";
 import { json } from "../common.ts";
 import type { Db } from "../migrate.ts";
 
@@ -34,4 +34,9 @@ export function insertEntries(db: Db, actionId: string, entries: readonly EntryI
 
 export function listEntries(db: Db, actionId: string): LogEntryRow[] {
   return db.prepare("SELECT * FROM log_entries WHERE action_id = ? ORDER BY n").all(actionId) as LogEntryRow[];
+}
+
+/** Stored entries of an action as engine log entries. */
+export function logEntriesOf(db: Db, actionId: string): LogEntry[] {
+  return listEntries(db, actionId).map((e) => ({ kind: e.kind, stateSeq: e.state_seq, ruleRef: e.rule_ref, assumptionRef: e.assumption_ref, data: JSON.parse(e.data) as JsonObject }) as LogEntry);
 }
