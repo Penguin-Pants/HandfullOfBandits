@@ -116,11 +116,12 @@ describe("Markdown export, 07 s8.2 sections", () => {
     expect(notes.slice(notes.indexOf("### Rule ambiguity"))).toContain(question);
   });
 
-  it("section 5 has one table row per metrics row with scores and margins", () => {
+  it("section 5 has one table row per metrics row with scores, thresholds and margins", () => {
     const table = section("## Round metrics").split("\n").filter((l) => l.startsWith(`| ${sessionId}`));
     expect(table).toHaveLength(data.metrics.filter((m) => m["propaganda_round"] !== undefined).length);
-    const m = (data.metrics[0]?.["data"] ?? {}) as { scores: Record<string, number>; margins: Record<string, number> };
-    expect(table[0]).toContain(`| ${String(m.scores["state"])} | ${String(m.scores["pkk"])} | ${String(m.margins["state"])} | ${String(m.margins["pkk"])} |`);
+    const m = (data.metrics[0]?.["data"] ?? {}) as Record<string, Record<string, number>>;
+    const pair = (key: string): string => `${String(m[key]?.["state"])} | ${String(m[key]?.["pkk"])}`;
+    expect(table[0]).toContain(`| ${pair("scores")} | ${pair("thresholds")} | ${pair("margins")} |`);
   });
 
   it("section 6 counts committed actions by faction and action, without undone actions", () => {

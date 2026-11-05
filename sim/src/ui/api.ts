@@ -5,6 +5,7 @@ import type { SessionRow } from "../store/repos/sessions.ts";
 import type { Head, HistoryEntry, PackageSummary } from "../server/service.ts";
 import type { BoardView, ForceView, PieceView, SpaceView } from "../server/view.ts";
 import type { ReviewRow } from "../server/review.ts";
+import type { Cell as MetricsCell, MetricsTable } from "../export/metrics.ts";
 import type { ActionRow } from "../store/repos/actions.ts";
 import type { LogEntryRow } from "../store/repos/log-entries.ts";
 import type { AnyCommand, GameState, Question, ValidationResult, Violation } from "../server/api-types.ts";
@@ -12,7 +13,7 @@ import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
 
 export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
-export type { HistoryEntry, ReviewRow };
+export type { HistoryEntry, MetricsCell, MetricsTable, ReviewRow };
 export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
 export interface HistoryItem {
@@ -78,6 +79,9 @@ async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Pr
   return data as T;
 }
 
+/** Query for `/api/metrics` and `/api/metrics.csv`: a comma list of session IDs, empty for all. */
+export const metricsQuery = (sessionIds: readonly string[]): string => (sessionIds.length === 0 ? "" : `?${new URLSearchParams({ sessions: sessionIds.join(",") }).toString()}`);
+
 export const api = {
   packages: () => call<PackageSummary[]>("GET", "/packages"),
   sessions: () => call<SessionRow[]>("GET", "/sessions"),
@@ -96,6 +100,8 @@ export const api = {
   undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
   review: (filter: Readonly<Record<string, string>>) => call<ReviewRow[]>("GET", `/review?${new URLSearchParams(filter).toString()}`),
   setNoteStatus: (annotationIds: readonly string[], status: "open" | "addressed" | "wontfix") => call<{ updated: number }>("POST", "/review/status", { annotationIds, status }),
+  /** Metrics review (P4-03). No session IDs: every session. */
+  metrics: (sessionIds: readonly string[]) => call<MetricsTable>("GET", `/metrics${metricsQuery(sessionIds)}`),
   endSession: (id: string, debrief: string | null) => call<{ debriefId: string | null }>("POST", `/sessions/${id}/end`, { debrief }),
 };
 

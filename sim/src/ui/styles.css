@@ -53,6 +53,10 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 button:disabled, button[aria-disabled="true"] { opacity: 0.45; cursor: default; }
 input, select, textarea { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--fg); }
 .screen { padding: 16px; display: grid; gap: 12px; }
+/* Metrics review (P4-03): the wide round table scrolls inside the screen, not the page. */
+.metrics { min-width: 0; }
+.metrics a { color: var(--accent); }
+.metrics .table-scroll { overflow-x: auto; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .muted { color: var(--muted); }
