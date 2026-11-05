@@ -57,8 +57,8 @@ export interface RunReport {
 
 /** State parts a state fact covers: game facts, not bookkeeping (meta, rng, turn, deck). */
 const STATE_ROOTS = ["tracks", "flags", "spaces", "pools", "markerPools"] as const;
-/** RoundMetrics fields a metric covers: tracks, scores, margins and Harm (09 s7.2 item 3). */
-const METRIC_KEYS = ["scores", "margins", "harm", "legitimacy", "europe", "emergencyRule", "postures", "legalSpace", "successor", "closureCase", "ceasefire"] as const;
+/** RoundMetrics fields a metric covers: tracks (Resources and income included), scores, margins and Harm (09 s7.2 item 3). */
+const METRIC_KEYS = ["scores", "margins", "harm", "resources", "income", "legitimacy", "europe", "emergencyRule", "postures", "legalSpace", "successor", "closureCase", "ceasefire"] as const;
 
 type Flat = Map<string, JsonValue>;
 
@@ -119,14 +119,24 @@ export function checkMetrics(expected: readonly Expectation[], metrics: readonly
   return { mismatches, extraRounds: [...rounds.keys()].filter((r) => !named.has(r)).sort((a, b) => a - b) };
 }
 
-/** Replay a case under `ruleset` (09 s7.2). Pure apart from the engine. */
-export function runCase(engine: Engine, ruleset: Ruleset, c: CaseInputs): RunReport {
+/** Manifest option declarations (`manifest.options`): the values a session may choose. */
+export type DeclaredOptions = Readonly<Record<string, { readonly values: readonly (string | number)[] }>>;
+
+/**
+ * Replay a case under `ruleset` (09 s7.2). Pure apart from the engine. Options are checked against the
+ * target manifest's declarations, as session start checks them (`SessionService.createSession`).
+ */
+export function runCase(engine: Engine, ruleset: Ruleset, declared: DeclaredOptions, c: CaseInputs): RunReport {
   const noDiff = { deckOrderDiffers: false, mismatches: [], extraRounds: [] };
   const incompatible = (commandId: string | null, reason: string, violations: readonly Violation[] = []): RunReport => ({ outcome: "incompatible", firstFailure: { commandId, reason, violations }, diff: noDiff });
   const scenario = ruleset.scenarios[c.scenarioId];
   if (scenario === undefined) return incompatible(null, `missing scenario ${c.scenarioId}`);
-  const missing = Object.keys(c.options).find((o) => !(o in scenario.options));
-  if (missing !== undefined) return incompatible(null, `missing option ${missing} in scenario ${c.scenarioId}`);
+  for (const [key, value] of Object.entries(c.options)) {
+    const values = declared[key]?.values;
+    if (values === undefined) return incompatible(null, `missing option ${key}`);
+    // A Home screen pick is stored as text, so compare as text.
+    if (!values.map(String).includes(String(value))) return incompatible(null, `option ${key} cannot be ${String(value)}`);
+  }
   try {
     const rules = withSessionOptions(ruleset, c.scenarioId, c.options);
     const start = engine.start(rules, c.scenarioId, c.seed);
@@ -271,7 +281,7 @@ export function runCommand(caseId: string, packageDir: string, dbFile: string): 
   return withStore(dbFile, (db) => {
     const loaded = loadPackage(readPackageDir(packageDir));
     if (!loaded.ok) return { exitCode: 1, lines: [`error: ${packageDir} does not load`, ...loaded.issues.filter((i) => i.level === "error").map(formatIssue)] };
-    const report = runCase(createEngine(coinHandlers), loaded.ruleset, caseInputs(db, caseId));
+    const report = runCase(createEngine(coinHandlers), loaded.ruleset, loaded.data.manifest.options ?? {}, caseInputs(db, caseId));
     const runId = saveRun(db, { caseId, targetPackageHash: loaded.hash, outcome: report.outcome, firstFailure: report.firstFailure, diff: report.diff });
     return { exitCode: report.outcome === "same" ? 0 : 1, lines: [`run ${runId} of case ${caseId} against ${loaded.hash}`, ...reportLines(report)] };
   });

@@ -11,7 +11,7 @@ import { openStore } from "../src/store/migrate.ts";
 import { listEntries } from "../src/store/repos/log-entries.ts";
 import { getCase, listRuns } from "../src/store/repos/regression.ts";
 import { engine, ruleset } from "./board.ts";
-import { kurdishDir } from "./kurdish-package.ts";
+import { kurdish, kurdishDir } from "./kurdish-package.ts";
 
 const dir = mkdtempSync(join(tmpdir(), "hob regression "));
 const dbFile = join(dir, "store.sqlite");
@@ -139,15 +139,21 @@ describe("P4-06 run against a target version (09 s7.2)", () => {
 });
 
 describe("P4-06 runCase branches", () => {
+  const declared = kurdish.data.manifest.options ?? {};
   const stored = (): CaseInputs => ({ scenarioId: "scenario-a", seed: 3, options: {}, steps: [], expectations: [], deck: engine.start(ruleset, "scenario-a", 3).state.deck });
 
   it("is incompatible when the scenario or an option is missing", () => {
-    expect(runCase(engine, ruleset, { ...stored(), scenarioId: "scenario-z" })).toMatchObject({ outcome: "incompatible", firstFailure: { commandId: null, reason: "missing scenario scenario-z" } });
-    expect(runCase(engine, ruleset, { ...stored(), options: { nope: 1 } })).toMatchObject({ outcome: "incompatible", firstFailure: { reason: "missing option nope in scenario scenario-a" } });
+    expect(runCase(engine, ruleset, declared, { ...stored(), scenarioId: "scenario-z" })).toMatchObject({ outcome: "incompatible", firstFailure: { commandId: null, reason: "missing scenario scenario-z" } });
+    expect(runCase(engine, ruleset, declared, { ...stored(), options: { nope: 1 } })).toMatchObject({ outcome: "incompatible", firstFailure: { reason: "missing option nope" } });
+    expect(runCase(engine, ruleset, declared, { ...stored(), options: { hotPursuit: "maybe" } })).toMatchObject({ outcome: "incompatible", firstFailure: { reason: "option hotPursuit cannot be maybe" } });
+  });
+
+  it("accepts any option the manifest declares, as session start does, even one the scenario does not list", () => {
+    expect(runCase(engine, ruleset, declared, { ...stored(), options: { hotPursuit: "deny", "threshold.state": "46" } }).outcome).toBe("same");
   });
 
   it("flags a changed deck order as its own result", () => {
-    const r = runCase(engine, ruleset, { ...stored(), deck: { piles: [] } });
+    const r = runCase(engine, ruleset, declared, { ...stored(), deck: { piles: [] } });
     expect(r).toMatchObject({ outcome: "same", diff: { deckOrderDiffers: true } });
     expect(reportLines(r)).toEqual(["same", "  deck order differs"]);
   });
@@ -158,19 +164,19 @@ describe("P4-06 runCase branches", () => {
       { type: "logFact", kind: "EffectApplied", ruleRef: "x", data: {} },
       { type: "outcome", winner: "pkk", labels: [] },
     ];
-    const r = runCase(engine, ruleset, { ...stored(), expectations });
+    const r = runCase(engine, ruleset, declared, { ...stored(), expectations });
     expect(r.outcome).toBe("changed");
     expect(r.diff.mismatches.map((m) => [m.expected.type, m.actual])).toEqual([["stateFact", 10], ["logFact", null], ["outcome", null]]);
   });
 
   it("reports an engine exception as error", () => {
     const bad = { ...ruleset, scenarios: { ...ruleset.scenarios, "scenario-a": { ...ruleset.scenarios["scenario-a"], campaigns: 5 } } } as unknown as typeof ruleset;
-    expect(runCase(engine, bad, stored())).toMatchObject({ outcome: "error", firstFailure: { commandId: null } });
+    expect(runCase(engine, bad, declared, stored())).toMatchObject({ outcome: "error", firstFailure: { commandId: null } });
   });
 });
 
 describe("P4-06 per-round metric diff (09 s6 compare two branches)", () => {
-  const m = (round: number, state: number) => ({ round, scores: { state, pkk: 1 }, margins: {}, harm: {}, postures: {} });
+  const m = (round: number, state: number, resources = 12) => ({ round, scores: { state, pkk: 1 }, margins: {}, harm: {}, postures: {}, resources: { state: resources } });
 
   it("lists the differing keys per round and the rounds only the new run has", () => {
     expect(checkMetrics(metricFacts([m(1, 5)]), [m(1, 6), m(2, 7)])).toEqual({
@@ -178,6 +184,10 @@ describe("P4-06 per-round metric diff (09 s6 compare two branches)", () => {
       extraRounds: [2],
     });
     expect(checkMetrics(metricFacts([m(1, 5), m(2, 5)]), [m(1, 5)]).mismatches.map((x) => [x.expected.type === "metric" ? x.expected.key : "", x.actual])).toContainEqual(["scores.state", null]);
+  });
+
+  it("compares Resources (09 s7.2 item 3 tracks)", () => {
+    expect(checkMetrics(metricFacts([m(1, 5)]), [m(1, 5, 0)]).mismatches).toEqual([{ expected: { type: "metric", round: 1, key: "resources.state", value: 12 }, actual: 0 }]);
   });
 
   it("compares the stored rounds on two paths", () => {
