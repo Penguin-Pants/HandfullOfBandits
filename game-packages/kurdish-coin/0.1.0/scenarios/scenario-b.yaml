@@ -1,0 +1,40 @@
+# Research 10 s4: Jan 1990, C3 and C4. All Guerrillas start Underground (10 s1 step 3).
+# Thresholds 09 s2.3. State threshold default 48, 46 as session option threshold.state (DEC-24, DEC-77).
+id: scenario-b
+title: 'Scenario B: 1990-1995'
+campaigns: [C3, C4]
+finalRound: 2
+tracks:
+  resources.state: 15
+  resources.pkk: 8
+  legitimacy: 9
+  emergencyRule: ohal
+  posture.syria: tolerant
+  posture.kdp: tolerant
+  posture.puk: tolerant
+  europe: 2
+  ceasefire: none
+  legalSpace: absent
+spaces:
+  hakkari: {level: -1, pieces: {troops: 2, police: 1, guards: 1, guerrilla: 2, pkkBase: 1}}
+  botan: {level: -1, pieces: {troops: 3, police: 1, guards: 2, stateBase: 1, guerrilla: 3, pkkBase: 1}}
+  mardin-batman: {level: -1, pieces: {troops: 2, police: 2, guards: 1, stateBase: 1, guerrilla: 2}}
+  diyarbakir-city: {pieces: {troops: 4, police: 2, stateBase: 1, guerrilla: 1}}
+  diyarbakir-rural: {pieces: {troops: 1, police: 1, guards: 1, guerrilla: 1, pkkBase: 1}}
+  sanliurfa: {level: 1, pieces: {troops: 1, police: 2, guards: 2}}
+  adiyaman: {level: 1, pieces: {police: 1}}
+  elazig: {level: 1, pieces: {troops: 1, police: 1, stateBase: 1}}
+  dersim: {pieces: {troops: 1, police: 1, guerrilla: 1}}
+  bingol-mus: {level: -1, pieces: {troops: 1, police: 1, guards: 1, guerrilla: 2, pkkBase: 1}}
+  van-bitlis: {pieces: {troops: 2, police: 1, stateBase: 1, guerrilla: 1}}
+  agri: {pieces: {troops: 1, police: 1}}
+  western-cities: {level: 1, pieces: {troops: 1, police: 1, stateBase: 1}}
+  kdp-zone: {pieces: {guerrilla: 2, pkkBase: 1}}
+  puk-zone: {pieces: {guerrilla: 1}}
+  syria-bekaa: {pieces: {guerrilla: 1, pkkBase: 1}, markers: {leadership: {present: 1, abroad: 0}}}
+available: {troops: 10, police: 8, guards: 8, stateBase: 2, guerrilla: 13, pkkBase: 6}
+flags: {law3175: true}
+thresholds: {state: 48, pkk: 41}
+options: {syriaMarchRestricted: allow, threshold.state: 48}
+# 10 s4: Area Domination; Serhildan (deck CSV IDs).
+pivotals: {state: [DK-076], pkk: [DK-054]}

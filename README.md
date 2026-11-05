@@ -18,6 +18,8 @@ Windows without Make: run `npm ci`, `npm run check`, `npm test` or `npm start` i
 
 Start the app with `make start`, then select **Scenario A: 1984-1989**. It uses C1 and C2, ends at the second Propaganda round and includes ARGK Formed. The designer UI playthrough and notes export are the remaining IC-3a checkpoint.
 
+**Scenario B: 1990-1995** (C3 and C4) and **Scenario C: 1993-1999** (C4 and C5) are also on the Home screen (research 10 s4 and s5). Scenario B has the option `threshold.state`: State threshold 48 (default) or 46. Their designer playthroughs are checkpoint IC-3b.
+
 Run a paired policy screen with `cd sim` then `npm run sim -- batch --games 10 --strategy concentration,sanctuary --swap-seats --out metrics.csv`. Each adjacent pair uses the same seed with the policies assigned to opposite factions. A faction-specific policy uses the scripted legal fallback as its other faction. Use `--seed N`, `--scenario scenario-a` or `--package <dir>` when needed.
 
 These batch policies are legacy screens, not qualified players: they read the full game state and fall back to the scripted policy for decisions they do not cover.

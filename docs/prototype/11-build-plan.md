@@ -1,14 +1,16 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 done (DEC-67, [31](31-pivotals-structural-draft.md)): P3b-06a (PR #47) and P3b-06b (PR #48). P3b-07 done: C3 (P3b-07a to 07c, DEC-68, [32](32-c3-cards-draft.md)); C4 (P3b-07d to 07g, DEC-69, [33](33-c4-cards-draft.md)); C5 (P3b-07h to 07k, DEC-75, [34](34-c5-cards-draft.md)). **Next task: P3b-08.**
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 done (DEC-67, [31](31-pivotals-structural-draft.md)): P3b-06a (PR #47) and P3b-06b (PR #48). P3b-07 done: C3 (P3b-07a to 07c, DEC-68, [32](32-c3-cards-draft.md)); C4 (P3b-07d to 07g, DEC-69, [33](33-c4-cards-draft.md)); C5 (P3b-07h to 07k, DEC-75, [34](34-c5-cards-draft.md)). P3b-08 done (Scenarios B and C); Phase 3b tasks complete, IC-3b open. **Next: IC-3b** (designer plays B and C in the UI); P3c-01 depends on it.
 
-## 0. Resume here (updated 2026-11-05, P3b-07k)
+## 0. Resume here (updated 2026-11-05, P3b-08)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next task: P3b-08** Scenarios B and C (`scenarios/*.yaml`; accept: start scores equal 09 s2.3). Q-04 is closed: Scenario B State threshold default 48, 46 as a session option (DEC-24, DEC-77). No blocker. P3b-07 is complete: P3b-07k is done (DK-081, DK-094, DK-095, DK-096; procedure `legal.localWins`, condition `markersAtLeast`; the P3b-07h "reveal a second" Drop is fixed). P3b-07j is done (DK-078, DK-082, DK-083, DK-088, DK-097; free action constraint `activeGuerrillas`). P3b-07h is done (DK-079, DK-080, DK-085, DK-086, DK-087, Propaganda DK-099; procedure `strasbourg.report`). P3b-07i is done (DK-084, DK-089 to DK-092; no engine addition).
+**Next: IC-3b** (designer): play Scenarios B and C each to the end in the UI. Phase 3b tasks P3b-01 to P3b-08 are complete. **Open decision:** P3c-01 depends on IC-3b (section 4). Phase 3b started before IC-3a by owner decision; the owner decides whether Phase 3c may also start before IC-3b. Until then, no task is unblocked for an agent session.
+
+**P3b-08 is done:** `scenarios/scenario-b.yaml` and `scenario-c.yaml` from research 10 s4 and s5; start scores equal 09 s2.3 (B 20 and 14, C 16 and 23). Scenario B State threshold: manifest option `threshold.state` (48 default, 46; DEC-24, DEC-77). P3b-07 is complete: P3b-07k is done (DK-081, DK-094, DK-095, DK-096; procedure `legal.localWins`, condition `markersAtLeast`; the P3b-07h "reveal a second" Drop is fixed). P3b-07j is done (DK-078, DK-082, DK-083, DK-088, DK-097; free action constraint `activeGuerrillas`). P3b-07h is done (DK-079, DK-080, DK-085, DK-086, DK-087, Propaganda DK-099; procedure `strasbourg.report`). P3b-07i is done (DK-084, DK-089 to DK-092; no engine addition).
 1. Already built: all C3 cards and the C3 Propaganda card (P3b-07a to 07c); C4 legal-party cards DK-060, DK-065 to DK-068 and Propaganda DK-077 (P3b-07d), with procedures `legal.ban`, `legal.successor` and `legal.successorFull` (one copy shared with the phase); C4 ceasefire cards DK-056 to DK-059 and DK-073 (P3b-07e), with procedures `ceasefire.declare` (shared with the command), `ceasefire.accept`, `ceasefire.end` and `ceasefire.pkkBroken`; C4 Europe, harm and report cards DK-061 to DK-064 and DK-069 (P3b-07f), with procedures `hrw.denial` and `hrw.report`; C4 Northern Iraq, Momentum and Guards cards DK-070 to DK-072, DK-074 and DK-075 (P3b-07g), with modifiers `customs-union` and `lending-conditions` (read by Village Clearance) and free action constraints `maxLift` and `saAtCost`; all C5 cards and Propaganda DK-099 (P3b-07h to 07k), with procedures `strasbourg.report` and `legal.localWins`, free action constraint `activeGuerrillas` and condition `markersAtLeast`; all four Pivotals and the three structural cards (P3b-06); procedures `legal.officeLines`, `covert.revealRandom` (DK-079 and DK-080 reveal up to 2), `hizbullah.unattributed`; Event Europe cap; PKK side restriction (`executors`).
-2. Remaining in Phase 3b: P3b-08 (Scenarios B and C). C4 has 20 eligible cards and C5 has 19 and DK-093, each for a pile of 12. V-CARDS passes; the full campaign starts (DEC-76). Phase 3c checks its play.
+2. Remaining in Phase 3b: IC-3b only. C4 has 20 eligible cards and C5 has 19 and DK-093, each for a pile of 12. V-CARDS passes; the full campaign starts (DEC-76). Phase 3c checks its play.
 
 **Owner decisions in force**
 - **DEC-70 project order (2026-11-04):** 1. Finalize rules, cards and mechanics (P3b-07 C4 and C5, P3b-08 scenarios, Phase 3c full campaign). 2. Finish the engine and UI for manual play and test (IC-3a to IC-3c). 3. Automated games with bot profiles, as the Scenario A program (docs 19 to 23): extend profiles to every C3 to C5 rule and card, then run and review. Stage 3 replaces "automated opponents" and "batch execution" in Phase 5. The no-simulations rule holds until stage 3.
@@ -28,6 +30,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 2. **Proposed (P3b-07, doc 32 s5):** `movePieces` with `toState` moves Underground Guerrillas first, so "move ... Underground" sides (DK-005, DK-017, DK-041, DK-047, DK-071) leave Active ones behind. Fix: move the other faces first. Changes C1 and C2 play; needs approval.
 3. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (six call sites; P3b-06b added `coin/pivotal.ts` `campaignReached`).
 4. **Closed (DEC-72):** DK-051 now files only while Legal Space is Open or Prosecuted (fixed in P3b-07d, PR #52).
+5. **Proposed (P3b-08):** the Home screen lists every manifest option for every scenario, so `threshold.state` shows for Scenarios A and C (where it does nothing) and `hotPursuit` for B and C (C1 and C2 only). Fix: list only the options the chosen scenario sets (`scenarios[].options` keys in the package summary, `ui/home/Home.tsx`). Needs approval.
 
 **Recent merged work**
 
@@ -47,6 +50,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #56, #57 | C5 encoding draft (doc 34, DEC-75) and P3b-07h: C5 reports, harm and flag case cards |
 | #58 | P3b-07i: C5 Syria and northern Iraq cards |
 | #59 | P3b-07j: C5 operations cards (DEC-75, DEC-76) |
+| #60 | P3b-07k: C5 late politics cards; P3b-07 complete |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -574,7 +578,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. P3b-07 C3 and C4 (P3b-07d to P3b-07g) done; C5 draft [34](34-c5-cards-draft.md) approved (DEC-75); P3b-07h to P3b-07k done, so P3b-07 is complete; **next: P3b-08** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. P3b-07 C3 and C4 (P3b-07d to P3b-07g) done; C5 draft [34](34-c5-cards-draft.md) approved (DEC-75); P3b-07h to P3b-07k done, so P3b-07 is complete; P3b-08 done; **next: IC-3b** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
 
 **P3b-02 (2026-11-04):** complete. The designer approved the effect order and every player-facing string in [27](27-village-clearance-draft.md) before code. `coin/ops/sa/village-clearance.ts` accompanies Sweep or Garrison, checks the four conditions and applies the seven effects in order with rule refs `06 s3.4 effect 1` to `7`. It costs Legitimacy only; four new parameters (`clearance.*`) hold every number. DEC-63: condition 2 reads flag `ohalPowers` or Campaign C3 or later; no card sets the flag yet, so Scenario A cannot use it. PA-18 (GAP-B16): an existing State Harm or Coercion marker blocks the effect-1 shift. Tests: `village-clearance.test.ts` (T-OPS, T-VAL, four T-PERV cases from 09 s7.1) and a summary check in `forms.test.ts`. Mutation checks (swap effects 3 and 4; Pop cost 0) fail the suite.
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseOperation with the SA before and after Sweep and Garrison, the re-check after the Op, the Reception shortfall, the blocked shift, the Neutral case and the Rally block that follows. No path code. Pass 2 replaced a local Legitimacy reader with the existing pattern.
@@ -734,6 +738,18 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 - **Validation:** `make check` passes. `make test`: 84 files, 1273 tests pass. `make e2e` passes. `make validate`: no issues. Card schema changed (`markersAtLeast`); `make schema` regenerated `cards.schema.json`. Goldens regenerated for the package hash; commands unchanged (24 and 65). Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
 - **Blocker for the next task:** none. Q-04 closed by DEC-77 (default 48).
 
+**P3b-08 (2026-11-05):** complete. `scenarios/scenario-b.yaml` (10 s4) and `scenario-c.yaml` (10 s5) hold every track, piece, level, marker, flag, threshold and Pivotal of the research tables. Flags: B `law3175`; C `law3175`, `closureCase` (Closure Case marker on the track, P3b-04) and `northernIraqVacuum`. Pools reconcile with the 10 s4.2 and s5.2 totals.
+- **Threshold option (DEC-24, DEC-77):** manifest option `threshold.state` (values 48, 46). Scenario B sets it to 48. `withSessionOptions` (`package/load.ts`) applies a `threshold.<faction>` option to the scenario thresholds, only when the scenario lists that option; Scenarios A and C ignore it. 04 s4.10 documents the prefix.
+- Tests: `test/scenarios-bc.test.ts` (T-SCORE scores, Harm, totals, Control, pools, tracks, flags, markers and Pivotals for B and C; the threshold option; goldens `scenario-b-seed-7.json` (68 commands) and `scenario-c-seed-7.json` (109 commands), each to final scoring in round 2) and `p2-12.test.ts` (a session with 46; refused option values). Stub scenarios (copies of A) failed 10 assertions before the real files. Mutation checks each fail the suite: the option applied to unlisted scenarios; the option never applied; the head view without session options.
+- **TWO-PASS REVIEW.** Pass 1 traced Home create session (text "46"), session resume, the head view, the annotation context, the experiment and replay CLIs (`withSessionOptions`) and direct `engine.start`. Pass 2: the option reuses the existing session options path; no new schema field.
+  - **Fix:** `SessionService.head` built the derived scores and the board view from the package ruleset without the session options, so a 46 session showed threshold 48. It now applies the stored options. Test added; it failed before the fix.
+  - **Fix:** a session option outside the manifest values reached the engine (a non-integer threshold gave HTTP 500). `createSession` now refuses it with 400. Test added.
+  - **Drop:** the server option check repeats the experiment manifest check (`cli/experiment-manifest.ts`). The server compares as text (Home sends text), the manifest check by value; one shared helper costs more than it prevents.
+  - **Drop:** the new test pool helper repeats the `kurdish.test.ts` totals loop. Test code only.
+  - **Propose:** Home lists every manifest option for every scenario (carried follow-up 5 in section 0).
+- **Validation:** `make check` passes. `make test`: 85 files, 1290 tests pass. `make e2e` passes. `make validate`: no issues. Schemas unchanged. S0 and A goldens regenerated for the package hash; commands unchanged (24 and 65). Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
+- **Blocker for the next task:** IC-3b needs the designer. P3c-01 depends on IC-3b; starting it first needs an owner decision.
+
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
 | P3b-01 ✅ | Emergency Rule step table and Legitimacy phase step 8 | module `emergency-rule` | IC-3a | 07 s8.2 table | T-PROP | None |
@@ -744,7 +760,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P3b-06a ✅ | Structural cards (DK-037, 040, 093), PKK side restriction, Event Europe cap ([31](31-pivotals-structural-draft.md), DEC-67) | `cards/c3.yaml`, `c5.yaml`, `coin/procedures.ts` | P3b-05 | Always lines fire once | T-EVT | None |
 | P3b-06b ✅ | General Pivotal window, Serhildan, Area Domination, Coercive Diplomacy on Syria ([31](31-pivotals-structural-draft.md) s1 to s4) | `coin/pivotal.ts`, `cards/pivotal.yaml`, `ui/pivotal/` | P3b-06a | Each Pivotal plays from its earliest Campaign when its precondition holds | T-SEQ, T-EVT | Pivotal UI form size |
 | P3b-07 ✅ (C3, C4, C5) | Encode C3, C4, C5 cards | `cards/c3.yaml` to `c5.yaml` | P3b-06 | V-ENCODE passes for B and C | T-EVT | Volume. 5 cards per PR |
-| P3b-08 | Scenarios B and C | `scenarios/*.yaml` | P3b-07 | Start scores equal 09 s2.3 | T-SCORE, golden | Scenario B threshold default 48, option 46 (DEC-24, DEC-77). Package value |
+| P3b-08 ✅ | Scenarios B and C | `scenarios/*.yaml` | P3b-07 | Start scores equal 09 s2.3 | T-SCORE, golden | Scenario B threshold default 48, option 46 (DEC-24, DEC-77). Package value |
 
 **IC-3b:** Scenarios B and C each played to the end in the UI.
 

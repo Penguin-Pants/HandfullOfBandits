@@ -57,4 +57,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-P3b-07 is complete (C3 to C5). Next: P3b-08 Scenarios B and C (Scenario B State threshold default 48, DEC-77). See [11-build-plan.md](11-build-plan.md) section 0.
+P3b-08 is complete: Scenarios B and C start at the 09 s2.3 scores. Next: IC-3b, the designer plays B and C to the end in the UI. See [11-build-plan.md](11-build-plan.md) section 0.

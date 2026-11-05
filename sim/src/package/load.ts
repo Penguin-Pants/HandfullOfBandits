@@ -163,7 +163,30 @@ export function packageContent(data: PackageData): Record<string, unknown> {
 export function withSessionOptions(ruleset: Ruleset, scenarioId: string, options: Readonly<Record<string, string | number>>): Ruleset {
   const scenario = ruleset.scenarios[scenarioId];
   if (scenario === undefined) return ruleset;
-  return { ...ruleset, scenarios: { ...ruleset.scenarios, [scenarioId]: { ...scenario, options: { ...scenario.options, ...options } } } };
+  const merged = { ...scenario.options, ...options };
+  return { ...ruleset, scenarios: { ...ruleset.scenarios, [scenarioId]: { ...scenario, options: merged, thresholds: optionThresholds(scenario.thresholds, scenario.options, merged) } } };
+}
+
+/** Option prefix that sets a faction threshold, for example `threshold.state` (DEC-24). */
+const THRESHOLD_OPTION = "threshold.";
+
+/**
+ * Thresholds with each `threshold.<faction>` option applied. Only options the scenario lists apply,
+ * so other scenarios ignore them. A Home screen pick arrives as text.
+ */
+function optionThresholds(
+  thresholds: Readonly<Record<string, number>>,
+  listed: Readonly<Record<string, string | number>>,
+  options: Readonly<Record<string, string | number>>,
+): Record<string, number> {
+  const out = { ...thresholds };
+  for (const [key, value] of Object.entries(options)) {
+    if (!key.startsWith(THRESHOLD_OPTION) || !Object.hasOwn(listed, key)) continue;
+    const n = Number(value);
+    if (!Number.isSafeInteger(n)) throw new RangeError(`Option "${key}" needs an integer, not "${String(value)}"`);
+    out[key.slice(THRESHOLD_OPTION.length)] = n;
+  }
+  return out;
 }
 
 export function compileRuleset(data: PackageData, packageHash: string, issues: readonly PackageIssue[] = []): Ruleset {

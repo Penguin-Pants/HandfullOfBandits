@@ -135,6 +135,11 @@ export class SessionService {
     if (scenario === undefined) throw new ServiceError(404, `Unknown scenario "${input.scenarioId}".`);
     if (scenario.blockedBy.length > 0) throw new ServiceError(422, `Scenario "${input.scenarioId}" cannot start.`, scenario.blockedBy);
     if (!Number.isSafeInteger(input.seed) || input.seed < 0) throw new ServiceError(400, "The seed must be a safe integer of 0 or more.");
+    const declared = loaded.data.manifest.options ?? {};
+    for (const [key, value] of Object.entries(input.options ?? {})) {
+      // A Home screen pick arrives as text, so compare as text.
+      if (!(declared[key]?.values.map(String).includes(String(value)) ?? false)) throw new ServiceError(400, `Option "${key}" cannot be "${String(value)}".`);
+    }
     backupStore(this.db);
     const m = loaded.data.manifest;
     savePackageVersion(this.db, {
@@ -370,7 +375,9 @@ export class SessionService {
     if (row === null || actionId === null) throw new ServiceError(404, `Session "${sessionId}" has no head.`);
     const action = this.db.prepare("SELECT state_hash_after FROM actions WHERE action_id = ?").get(actionId) as { state_hash_after: string };
     const { state } = this.state(action.state_hash_after);
-    const { ruleset, data } = this.rules(row.package_hash);
+    const rules = this.rules(row.package_hash);
+    const ruleset = withSessionOptions(rules.ruleset, row.scenario_id, JSON.parse(row.options) as Record<string, string | number>);
+    const { data } = rules;
     return { actionId, stateHash: action.state_hash_after, state, derived: derive(ruleset, state), view: boardView(ruleset, data, state) };
   }
 
