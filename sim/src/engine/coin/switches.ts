@@ -47,11 +47,11 @@ export function enterCampaign(ctx: Exec, campaign: string | null): void {
   }
 }
 
-/** The first Campaign that switches `flag` on, for messages. */
-export function switchFrom(ruleset: Ruleset, flag: string): string {
+/** For a refusal message: "available from Campaign C3", from the first row that switches `flag` on.
+ * A package with no such row (stored before P3c-01, DEC-79) never opens the gate. */
+export function availableFrom(ruleset: Ruleset, flag: string): string {
   const found = order(ruleset).find((c) => row(ruleset, "on", c).includes(flag));
-  if (found === undefined) throw new RangeError(`No Campaign switches "${flag}" on`);
-  return found;
+  return found === undefined ? "not available in this package" : `available from Campaign ${found}`;
 }
 
 /** A package with Campaigns but no switch rows predates P3c-01: its switch gates never open. */

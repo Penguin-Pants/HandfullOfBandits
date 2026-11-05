@@ -9,7 +9,7 @@ import type { Violation } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";
 import { controlOf, count, markers } from "../common.ts";
 import { FACE, FACTION, MARKER, PIECE, TRACK } from "../ids.ts";
-import { SWITCH, switchFrom } from "../../switches.ts";
+import { availableFrom, SWITCH } from "../../switches.ts";
 
 const ruleRef = "06 s3.5";
 
@@ -21,7 +21,7 @@ export const covertAction: ActionHandler = {
   accompanies: ["state.garrison", "state.sweep"],
   check(ruleset, state, part) {
     const out: Violation[] = [];
-    if (state.flags[SWITCH.covertAction] !== true) out.push(at(null, "covertCampaign", `Covert Action is available from Campaign ${switchFrom(ruleset, SWITCH.covertAction)}.`, ruleRef));
+    if (state.flags[SWITCH.covertAction] !== true) out.push(at(null, "covertCampaign", `Covert Action is ${availableFrom(ruleset, SWITCH.covertAction)}.`, ruleRef));
     const legitimacy = Number(state.tracks[TRACK.legitimacy]);
     const need = param(ruleset, "covert.minLegitimacy", "number");
     if (legitimacy < need) out.push(at(null, "covertLegitimacy", `Covert Action needs Legitimacy ${String(need)} or more. Legitimacy is ${String(legitimacy)}.`, ruleRef));

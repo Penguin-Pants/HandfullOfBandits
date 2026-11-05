@@ -11,7 +11,7 @@ import { at, type ActionHandler } from "../action.ts";
 import { activate, controlOf, count, hasTag, isTerrain, markers, pay, space } from "../common.ts";
 import { EMERGENCY, FACE, FACTION, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
 import { asString } from "../plan.ts";
-import { SWITCH, switchFrom } from "../../switches.ts";
+import { availableFrom, SWITCH } from "../../switches.ts";
 
 const ruleRef = "06 s3.4";
 const steps: readonly string[] = [EMERGENCY.ohal, EMERGENCY.ohalExtendedPowers];
@@ -43,7 +43,7 @@ export const villageClearance: ActionHandler = {
     const out: Violation[] = [];
     const step = String(state.tracks[TRACK.emergencyRule]);
     if (!steps.includes(step)) out.push(at(null, "clearanceStep", `Village Clearance: Emergency Rule is ${stepName(step)}. Needs OHAL or OHAL Extended Powers (06 s3.4 condition 1).`, ruleRef));
-    if (!powersReady(state)) out.push(at(null, "clearancePowers", `Village Clearance is available from Campaign ${switchFrom(ruleset, SWITCH.villageClearance)} (06 s3.4 condition 2).`, ruleRef));
+    if (!powersReady(state)) out.push(at(null, "clearancePowers", `Village Clearance is ${availableFrom(ruleset, SWITCH.villageClearance)} (06 s3.4 condition 2).`, ruleRef));
     if (part.locations.length !== 1) return [...out, at(null, "clearanceSpaces", "Select exactly 1 space for Village Clearance.", ruleRef)];
     const loc = part.locations[0] ?? "";
     const fail = (code: string, message: string): Violation[] => [...out, at(loc, code, message, ruleRef)];

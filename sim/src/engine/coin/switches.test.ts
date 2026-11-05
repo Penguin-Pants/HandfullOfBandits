@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { engine, inCampaign, play, ruleset, turnOf } from "../../../test/board.ts";
+import { codes, engine, inCampaign, op, play, ruleset, turnOf } from "../../../test/board.ts";
 import type { GameState } from "../core/types.ts";
-import { SWITCH, switchesAt, switchFrom } from "./switches.ts";
+import { availableFrom, SWITCH, switchesAt } from "./switches.ts";
 
 // T-SEQ for the structural switches (research 10 s6.2; 11 P3c-01): flags set at setup and at each Reset.
 const C3_ON = [SWITCH.villageClearance, SWITCH.covertAction, SWITCH.declareCeasefire, SWITCH.extendedPowers];
@@ -52,9 +52,17 @@ describe("P3c-01 structural switches (10 s6.2)", () => {
     expect(state.flags[SWITCH.covertAction]).toBe(true);
   });
   it("names the Campaign that switches each flag on", () => {
-    expect(switchFrom(ruleset, SWITCH.covertAction)).toBe("C3");
-    expect(switchFrom(ruleset, SWITCH.returnByCivicAction)).toBe("C5");
+    expect(availableFrom(ruleset, SWITCH.covertAction)).toBe("available from Campaign C3");
+    expect(availableFrom(ruleset, SWITCH.returnByCivicAction)).toBe("available from Campaign C5");
     expect(switchesAt(ruleset, "C5")).toMatchObject({ [SWITCH.hotPursuit]: false, [SWITCH.returnByCivicAction]: true });
     expect(switchesAt(ruleset, null)).toEqual({});
+  });
+  it("refuses the gated actions without throwing on a package stored before the switch rows (PR 62 review)", () => {
+    const old = { ...ruleset, parameters: Object.fromEntries(Object.entries(ruleset.parameters).filter(([id]) => !id.startsWith("switch."))) };
+    const legacy = (s: GameState) => engine.validate(old, s, { type: "DeclareCeasefire", faction: "pkk" }).violations.map((v) => v.message);
+    expect(legacy(turnOf("pkk"))).toEqual(["Declare Ceasefire is not available in this package."]);
+    const covert = op("state", "opSa", { op: "state.sweep", locations: ["botan"], sa: { action: "state.covert-action", locations: ["hakkari"], perLocation: {}, timing: "before" } });
+    expect(() => engine.validate(old, turnOf("state"), covert)).not.toThrow();
+    expect(codes(turnOf("state"), covert)).toContain("covertCampaign");
   });
 });
