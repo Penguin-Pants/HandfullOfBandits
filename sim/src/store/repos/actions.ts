@@ -101,14 +101,67 @@ export function listActions(db: Db, branchId: string): ActionRow[] {
   return db.prepare("SELECT * FROM actions WHERE branch_id = ? ORDER BY branch_seq").all(branchId) as ActionRow[];
 }
 
-/** Committed actions of a branch as replay steps: setup hash, then each action's commands and hash after. */
-export function storedSteps(db: Db, branchId: string): { startHash: string; steps: { id: string; commands: AnyCommand[]; hashAfter: string }[] } {
-  const actions = listActions(db, branchId).filter((a) => a.status !== "undone");
+/** Replay steps to `headActionId` (09 s3 "Replay a session"): setup hash, then each action's commands and hash after. */
+export function storedSteps(db: Db, headActionId: string): { startHash: string; steps: { id: string; commands: AnyCommand[]; hashAfter: string }[] } {
+  const actions = pathTo(db, headActionId);
   const commands = db.prepare("SELECT payload FROM commands WHERE action_id = ? ORDER BY n");
   return {
     startHash: actions[0]?.state_hash_after ?? "",
     steps: actions.slice(1).map((a) => ({ id: a.action_id, commands: (commands.all(a.action_id) as { payload: string }[]).map((c) => JSON.parse(c.payload) as AnyCommand), hashAfter: a.state_hash_after })),
   };
+}
+
+export interface BranchLink {
+  readonly branch_id: string;
+  readonly forked_from_action_id: string | null;
+}
+type PathAction = Pick<ActionRow, "action_id" | "branch_id" | "branch_seq" | "state_hash_before" | "state_hash_after">;
+
+/**
+ * The actions that lead to `actionId`, oldest first, ending with it (11 P4-04). Each step back takes the
+ * latest earlier action of the same branch whose hash after equals this hash before; at the start of a
+ * fork it takes the action the branch forked from. Undone actions count, so a branch from an undone
+ * action keeps its own past (06 s6 item 6). Pure, so export uses it on exported rows.
+ */
+export function lineage<T extends PathAction>(actions: readonly T[], branches: readonly BranchLink[], actionId: string): T[] {
+  const fork = new Map(branches.map((b) => [b.branch_id, b.forked_from_action_id]));
+  const out: T[] = [];
+  let a = actions.find((x) => x.action_id === actionId);
+  while (a !== undefined) {
+    out.push(a);
+    const at: T = a;
+    if (at.state_hash_before === null) return out.reverse();
+    const links = (x: T): boolean => x.state_hash_after === at.state_hash_before;
+    a = actions.filter((x) => x.branch_id === at.branch_id && x.branch_seq < at.branch_seq && links(x)).sort((x, y) => y.branch_seq - x.branch_seq)[0]
+      ?? actions.find((x) => x.action_id === fork.get(at.branch_id) && links(x));
+  }
+  throw new RangeError(`Action ${actionId} has no path to setup.`);
+}
+
+function sessionRows(db: Db, sessionId: string): { actions: ActionRow[]; branches: BranchLink[] } {
+  return {
+    actions: db.prepare("SELECT * FROM actions WHERE session_id = ?").all(sessionId) as ActionRow[],
+    branches: db.prepare("SELECT branch_id, forked_from_action_id FROM branches WHERE session_id = ?").all(sessionId) as BranchLink[],
+  };
+}
+
+/** Stored actions from setup to `actionId` (lineage). */
+export function pathTo(db: Db, actionId: string): ActionRow[] {
+  const action = getAction(db, actionId);
+  if (action === null) throw new RangeError(`Unknown action "${actionId}".`);
+  const { actions, branches } = sessionRows(db, action.session_id);
+  return lineage(actions, branches, actionId);
+}
+
+/** The action a branch forked from; null for the main branch. */
+export function forkOf(db: Db, branchId: string): string | null {
+  return (db.prepare("SELECT forked_from_action_id FROM branches WHERE branch_id = ?").get(branchId) as BranchLink | undefined)?.forked_from_action_id ?? null;
+}
+
+/** History of a branch (07 s6): the path to its fork point, then its own actions, undone ones included. */
+export function branchHistory(db: Db, branchId: string): ActionRow[] {
+  const fork = forkOf(db, branchId);
+  return [...(fork === null ? [] : pathTo(db, fork)), ...listActions(db, branchId)];
 }
 
 /** Append a saved operation's reply atomically, retaining its original undo boundary. */

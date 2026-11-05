@@ -18,14 +18,14 @@ import { replaySteps } from "../engine/replay.ts";
 import { loadPackage, packageContent, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
 import type { PackageData, PackageIssue } from "../package/validate.ts";
 import type { Db } from "../store/migrate.ts";
-import { continueAction, commitAction, listActions, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
+import { branchHistory, continueAction, commitAction, getAction, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
 import { listAnnotations, saveAnnotation, setAnnotationStatus, type Anchor, type AnnotationRow, type NoteStatus } from "../store/repos/annotations.ts";
 import { listCategories, type CategoryRow } from "../store/repos/categories.ts";
 import { listCommands } from "../store/repos/commands.ts";
 import { listEntries, type LogEntryRow } from "../store/repos/log-entries.ts";
 import { saveMetrics } from "../store/repos/metrics.ts";
 import { loadPackageContent, savePackageVersion } from "../store/repos/packages.ts";
-import { createSession, getSession, type SessionRow } from "../store/repos/sessions.ts";
+import { createBranch, createSession, getSession, type SessionRow } from "../store/repos/sessions.ts";
 import { loadState } from "../store/repos/states.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { codeFingerprint } from "../package/fingerprint.ts";
@@ -188,9 +188,9 @@ export class SessionService {
     return { session: getSession(this.db, sessionId) ?? row, head: this.head(sessionId), ruleset, data };
   }
 
-  /** Replay the session's committed actions; returns the first differing action ID or null (DEC-19). */
+  /** Replay the actions on the path to the session head; returns the first differing action ID or null (DEC-19). */
   replayCheck(row: SessionRow, ruleset: Ruleset): string | null {
-    const { startHash, steps } = storedSteps(this.db, row.current_branch_id);
+    const { startHash, steps } = storedSteps(this.db, row.head_action_id ?? "");
     return replaySteps(this.engine, ruleset, row.scenario_id, row.seed, startHash, steps)?.id ?? null;
   }
 
@@ -269,7 +269,7 @@ export class SessionService {
     const { session, ruleset } = this.session(sessionId);
     const notes = listAnnotations(this.db, sessionId);
     const enrich = (e: LogEntryRow): HistoryEntry => ({ ...e, cause: causeOf(ruleset, e.rule_ref), cardTitle: cardTitle(ruleset, (JSON.parse(e.data) as Record<string, unknown>)["card"]) });
-    return listActions(this.db, session.current_branch_id).map((action) => ({ action, entries: listEntries(this.db, action.action_id).map(enrich), notes: notes.filter((n) => n.action_id === action.action_id).length }));
+    return branchHistory(this.db, session.current_branch_id).map((action) => ({ action, entries: listEntries(this.db, action.action_id).map(enrich), notes: notes.filter((n) => n.action_id === action.action_id).length }));
   }
 
   /** A state's board view in a session's rules (08 s2 state viewer). */
@@ -300,7 +300,7 @@ export class SessionService {
     const view = (state: GameState, stateHash: string) => ({ state, stateHash, derived: derive(ruleset, state) });
     let action = null;
     if (input.actionId !== null) {
-      const row = listActions(this.db, session.current_branch_id).find((a) => a.action_id === input.actionId);
+      const row = branchHistory(this.db, session.current_branch_id).find((a) => a.action_id === input.actionId);
       if (row === undefined) throw new ServiceError(404, `Unknown action "${input.actionId}".`);
       const before = row.state_hash_before === null ? null : this.state(row.state_hash_before);
       const after = this.state(row.state_hash_after);
@@ -340,6 +340,23 @@ export class SessionService {
     try {
       const result = undoLast(this.db, sessionId, session.current_branch_id);
       return { ...result, state: this.head(sessionId) };
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(409, e.message);
+      throw e;
+    }
+  }
+
+  /** Branch from a past action (11 P4-04): play goes on from that action's state. `headActionId` guards against a stale tab. */
+  branch(sessionId: string, actionId: string, headActionId: string, headStateHash?: string): { branchId: string; head: Head } {
+    const { session, head } = this.session(sessionId);
+    if (session.status === "readOnly") throw new ServiceError(409, "The session is read-only.");
+    this.checkHead(head, headActionId, headStateHash);
+    const action = getAction(this.db, actionId);
+    if (action?.session_id !== sessionId) throw new ServiceError(404, `Unknown action "${actionId}".`);
+    const { ended } = this.state(action.state_hash_after).state;
+    try {
+      const branchId = createBranch(this.db, { sessionId, actionId, result: ended === null ? null : JSON.stringify(ended) });
+      return { branchId, head: this.head(sessionId) };
     } catch (e) {
       if (e instanceof RangeError) throw new ServiceError(409, e.message);
       throw e;

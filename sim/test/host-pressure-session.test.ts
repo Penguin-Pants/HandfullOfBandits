@@ -41,7 +41,7 @@ it("saves, resumes, replays and undoes the rolling SA and replacement Rally as o
     expect(getAction(db, next.actionId)?.status).toBe("committed");
     expect(listCommands(db, next.actionId)).toHaveLength(2);
     session = service.session(id);
-    expect(storedSteps(db, session.session.current_branch_id).steps.at(-1)?.commands).toHaveLength(2);
+    expect(storedSteps(db, session.session.head_action_id ?? "").steps.at(-1)?.commands).toHaveLength(2);
     expect(service.replayCheck(session.session, session.ruleset)).toBeNull();
     expect(service.undo(id, next.actionId, next.head.stateHash)).toMatchObject({head: revealed.actionId, undoneAfterRandom: true});
     expect(service.session(id).head.stateHash).toBe(revealed.head.stateHash);

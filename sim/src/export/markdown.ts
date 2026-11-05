@@ -1,6 +1,6 @@
 // Markdown export (07 s8.2; minimal in P3a-08, full sections 1 to 6 in P4-02). Written for an AI
 // assistant: each note and action line carries its IDs in brackets.
-import { list, obj, type CoinSimExport } from "./json.ts";
+import { list, obj, pathOf, type CoinSimExport } from "./json.ts";
 import { metricsTable, usesOf } from "./metrics.ts";
 
 type Row = Record<string, unknown>;
@@ -54,8 +54,10 @@ export function exportMarkdown(data: CoinSimExport): string {
     const actions = data.actions.filter((a) => a["session_id"] === s["session_id"]);
     const result = obj(s["result"]);
     const minutes = Math.round((Date.parse(String(s["updated_at"])) - Date.parse(String(s["created_at"]))) / 60000);
-    // From reveals: an action row holds the card before its command, so the face-up card has none yet.
-    const reveals = actions.filter((a) => a["status"] === "committed").flatMap((a) => list(a["entries"]).map(obj)).filter((e) => e["kind"] === "CardRevealed" && obj(e["data"])["setAside"] !== true);
+    // From reveals on the path to the head (P4-04): an action row holds the card before its command,
+    // so the face-up card has none yet.
+    const head = s["head_action_id"];
+    const reveals = (typeof head === "string" ? pathOf(data, head) : []).flatMap((a) => list(a["entries"]).map(obj)).filter((e) => e["kind"] === "CardRevealed" && obj(e["data"])["setAside"] !== true);
     const cards = reveals.map((e) => escaped(obj(e["data"])["card"]));
     lines.push(
       `## Session: ${escaped(s["name"])} [${escaped(s["session_id"])}]\n`,
@@ -68,7 +70,13 @@ export function exportMarkdown(data: CoinSimExport): string {
     );
     for (const n of notes.filter((n) => n["anchor"] === "debrief")) lines.push(note(n));
     lines.push("### Actions\n");
+    const branches = data.branches.filter((b) => b["session_id"] === s["session_id"]);
     for (const a of actions) {
+      // Export lists each branch's actions together; a heading opens each branch when there are several.
+      const branch = branches.find((b) => b["branch_id"] === a["branch_id"]);
+      if (branches.length > 1 && branch !== undefined && actions.find((x) => x["branch_id"] === a["branch_id"]) === a) {
+        lines.push(`#### Branch ${escaped(branch["label"])}${branch["forked_from_action_id"] === null ? "" : `, from ${escaped(branch["forked_from_action_id"])}`}\n`);
+      }
       lines.push(`- [${[a["action_id"], a["card_id"], ...refsOf(a)].filter((x) => x !== null).map(escaped).join("; ")}] ${escaped(a["campaign"])} round ${escaped(a["propaganda_round"])} card ${escaped(a["card_index"])}${a["faction"] === null ? "" : `, ${[a["faction"], a["box"], ...usesOf(a)].filter((x) => x !== null).map(escaped).join(" ")}`}: ${escaped(a["summary"])} (${escaped(a["status"])}).\n`);
       for (const n of notes.filter((n) => n["action_id"] === a["action_id"])) lines.push(nested(note(n), "  "));
     }

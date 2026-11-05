@@ -98,6 +98,8 @@ export const api = {
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
   undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
+  /** Branch from a past action (P4-04). */
+  branch: (id: string, actionId: string, headActionId: string, headStateHash?: string) => call<{ branchId: string; head: Head }>("POST", `/sessions/${id}/branches`, { actionId, headActionId, headStateHash }),
   review: (filter: Readonly<Record<string, string>>) => call<ReviewRow[]>("GET", `/review?${new URLSearchParams(filter).toString()}`),
   setNoteStatus: (annotationIds: readonly string[], status: "open" | "addressed" | "wontfix") => call<{ updated: number }>("POST", "/review/status", { annotationIds, status }),
   /** Metrics review (P4-03). No session IDs: every session. */

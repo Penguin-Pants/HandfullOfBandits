@@ -150,6 +150,17 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       setError(e instanceof Error ? e.message : String(e));
     }
   };
+  const branch = async (actionId: string): Promise<void> => {
+    if (!window.confirm(`Start a new branch at ${actionId}? The current branch stays stored.`)) return;
+    setError(null);
+    try {
+      await api.branch(sessionId, actionId, data.head.actionId, data.head.stateHash);
+      last.current = { id: null, at: null };
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  };
   const end = async (debrief: string | null): Promise<void> => {
     await api.endSession(sessionId, debrief);
     setEnding(false);
@@ -254,7 +265,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       />
       {showHistory && (
         <div className="overlay">
-          <HistoryDrawer items={history} view={view} onClose={() => { setShowHistory(false); }} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />
+          <HistoryDrawer items={history} view={view} onClose={() => { setShowHistory(false); }} onBranch={(item) => void branch(item.action.action_id)} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />
         </div>
       )}
     </div>
