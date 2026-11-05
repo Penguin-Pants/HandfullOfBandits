@@ -220,4 +220,6 @@ One command applies in under 50 ms on a normal laptop. A full campaign replay (a
 
 Measured at P2-12 (`sim fuzz --seeds 50`, Node 24.22.1, Linux cloud container): 1,200 commands over 50 S0 games, apply mean 0.68 ms, max 5.50 ms. At that rate 400 commands replay in about 0.3 s. A full campaign has more pieces in play; remeasure in Phase 3c.
 
+Measured at P3c-02 (Node 24.22.1, Linux cloud container): the full campaign golden (`test/golden/full-campaign-seed-7.json`, scripted policy, seed 7, 158 commands, C1 to C5, final scoring in round 5) replays in 185 to 286 ms, about 1.2 to 1.8 ms per command. At that rate 400 commands replay in under 1 s. `test/full-campaign.test.ts` keeps the CLI replay, package load included, under 10 s.
+
 Next step: read 06-playtest-data-model.md.
