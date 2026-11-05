@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
+import { codes, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-EVT per side for the C5 cards (11 P3b-07; encoding docs/prototype/34, DEC-75).
@@ -161,6 +161,176 @@ describe("Migration Commission Report (DK-087)", () => {
     const displaced = setMarkers(setMarkers(board("pkk", "DK-087"), "hakkari", "displacement", 1, "new"), "botan", "displacement", 1, "old");
     const { state } = play(displaced, event("pkk", "shaded"));
     expect([track(state, "legitimacy"), marker(state, "western-cities", "reception")]).toEqual([4, 1]);
+  });
+});
+
+// P3b-07i: Syria and northern Iraq (doc 34 s2.2). Free action answers are plans; null skips.
+const plan = (locations: string[]) => ({ locations, perLocation: {} });
+const leader = (s: GameState, side: "present" | "abroad" | null): GameState =>
+  setMarkers(setMarkers(s, "syria-bekaa", "leadership", side === "present" ? 1 : 0, "present"), "syria-bekaa", "leadership", side === "abroad" ? 1 : 0, "abroad");
+const side = (s: GameState, face: string): number => s.spaces["syria-bekaa"]?.markers["leadership"]?.[face] ?? 0;
+const KDP = 0;
+const PUK = 1;
+
+describe("Ankara Process in Northern Iraq (DK-084)", () => {
+  it("U: KDP or PUK posture one step toward Hostile, then from Hostile to Aligned", () => {
+    const s = setTrack(setTrack(board("state", "DK-084"), "posture.kdp", "tolerant"), "posture.puk", "hostile");
+    const kdp = play(s, event("state", "unshaded", [KDP])).state;
+    expect([track(kdp, "posture.kdp"), track(kdp, "posture.puk")]).toEqual(["restricted", "hostile"]);
+    const puk = play(s, event("state", "unshaded", [PUK])).state;
+    expect([track(puk, "posture.kdp"), track(puk, "posture.puk")]).toEqual(["tolerant", "aligned"]);
+  });
+
+  it("U: Aligned stays Aligned; a step to Hostile activates Guerrillas there (07 s5.1)", () => {
+    const aligned = play(setTrack(board("state", "DK-084"), "posture.kdp", "aligned"), event("state", "unshaded", [KDP])).state;
+    expect(track(aligned, "posture.kdp")).toBe("aligned");
+    const s = setPieces(setTrack(board("state", "DK-084"), "posture.kdp", "restricted"), "kdp-zone", "guerrilla", 3);
+    const hostile = play(s, event("state", "unshaded", [KDP])).state;
+    expect([track(hostile, "posture.kdp"), pieces(hostile, "kdp-zone", "guerrilla")["active"]]).toEqual(["hostile", 3]);
+  });
+
+  it("S: up to 3 Guerrillas one way between the zones, free and with no posture limit; 1 Base, posture permitting", () => {
+    const s = setPieces(setTrack(setTrack(board("pkk", "DK-084"), "posture.kdp", "host"), "posture.puk", "hostile"), "kdp-zone", "guerrilla", 5);
+    const before = units(s, "puk-zone", "guerrilla");
+    const { state } = play(s, event("pkk", "shaded", [0, 3, KDP]));
+    expect([units(state, "kdp-zone", "guerrilla"), units(state, "puk-zone", "guerrilla") - before]).toEqual([2, 3]);
+    expect(units(state, "kdp-zone", "pkkBase") - units(s, "kdp-zone", "pkkBase")).toBe(1);
+    expect(track(state, "resources.pkk")).toBe(track(s, "resources.pkk"));
+    // PUK is Hostile: arrivals are Active (07 s5.1; the text says no "Underground") and no Base goes there.
+    expect(pieces(state, "puk-zone", "guerrilla")["underground"] ?? 0).toBe(0);
+    const shut = play(s, event("pkk", "shaded", [0, 0, PUK])).state;
+    expect(units(shut, "puk-zone", "pkkBase")).toBe(units(s, "puk-zone", "pkkBase"));
+  });
+
+  it("S: the other direction; more than 3 Guerrillas is refused", () => {
+    const s = setPieces(setTrack(board("pkk", "DK-084"), "posture.puk", "host"), "puk-zone", "guerrilla", 4);
+    const { state } = play(s, event("pkk", "shaded", [1, 2, PUK]));
+    expect([units(state, "puk-zone", "guerrilla"), units(state, "kdp-zone", "guerrilla") - units(s, "kdp-zone", "guerrilla")]).toEqual([2, 2]);
+    // KDP is Host: arrivals keep their face.
+    expect(pieces(state, "kdp-zone", "guerrilla")["underground"]).toBe((pieces(s, "kdp-zone", "guerrilla")["underground"] ?? 0) + 2);
+    expect(codes(s, event("pkk", "shaded", [1, 4, PUK]))).toEqual(["badAnswer"]);
+  });
+});
+
+describe("Washington Agreement (DK-089)", () => {
+  // Legitimacy 6: no Legitimacy modifier; PUK has no campaign modifier (06 s3.3). A roll of 4 succeeds only with +1.
+  const ready = (roll: number): GameState => setTrack(withRoll(board("state", "DK-089"), roll), "legitimacy", 6);
+
+  it("U: a free Diplomacy on KDP or PUK with +1", () => {
+    const s = ready(4);
+    const { state } = play(s, event("state", "unshaded", [plan(["puk-zone"])]));
+    expect([track(state, "posture.puk"), track(state, "resources.state")]).toEqual(["restricted", track(s, "resources.state")]);
+    expect(track(play(ready(3), event("state", "unshaded", [plan(["puk-zone"])])).state, "posture.puk")).toBe("tolerant");
+  });
+
+  it("U: Syria and Europe are not targets", () => {
+    expect(codes(ready(4), event("state", "unshaded", [plan(["europe"])]))).toContain("eventConstraint");
+    expect(codes(ready(4), event("state", "unshaded", [plan(["syria-bekaa"])]))).toContain("eventConstraint");
+  });
+
+  it("S: State Resources -2; PUK posture one step toward Host, Host stays", () => {
+    const s = setTrack(setTrack(board("pkk", "DK-089"), "posture.puk", "hostile"), "resources.state", 10);
+    const { state } = play(s, event("pkk", "shaded"));
+    expect([track(state, "resources.state"), track(state, "posture.puk")]).toEqual([8, "restricted"]);
+    expect(track(play(setTrack(s, "posture.puk", "host"), event("pkk", "shaded")).state, "posture.puk")).toBe("host");
+  });
+});
+
+describe("PKK Leader Leaves Syria (DK-090)", () => {
+  it("U: Restricted goes to Hostile and the Leadership flips to Abroad", () => {
+    const { state } = play(leader(setTrack(board("state", "DK-090"), "posture.syria", "restricted"), "present"), event("state", "unshaded"));
+    expect([track(state, "posture.syria"), side(state, "present"), side(state, "abroad")]).toEqual(["hostile", 0, 1]);
+  });
+
+  it("U: Hostile stays Hostile and the Leadership flips to Abroad", () => {
+    const { state } = play(leader(setTrack(board("state", "DK-090"), "posture.syria", "hostile"), "present"), event("state", "unshaded"));
+    expect([track(state, "posture.syria"), side(state, "present"), side(state, "abroad")]).toEqual(["hostile", 0, 1]);
+  });
+
+  it("U: otherwise one step toward Hostile; the Leadership stays Present", () => {
+    const { state } = play(leader(setTrack(board("state", "DK-090"), "posture.syria", "host"), "present"), event("state", "unshaded"));
+    expect([track(state, "posture.syria"), side(state, "present")]).toEqual(["tolerant", 1]);
+  });
+
+  it("U: after Capture (no marker), Syria still steps to Hostile", () => {
+    const { state } = play(leader(setTrack(board("state", "DK-090"), "posture.syria", "restricted"), null), event("state", "unshaded"));
+    expect([track(state, "posture.syria"), side(state, "present"), side(state, "abroad")]).toEqual(["hostile", 0, 0]);
+  });
+
+  it("S: up to 3 Guerrillas from Syria-Bekaa to one destination, Underground; PKK Resources +2", () => {
+    // S0 holds 2 Underground Guerrillas in Syria-Bekaa; the test uses 4 Active ones only.
+    const s = setPieces(setPieces(setPieces(board("pkk", "DK-090"), "syria-bekaa", "guerrilla", 0), "syria-bekaa", "guerrilla", 4, "active"), "sanliurfa", "guerrilla", 0);
+    const { state } = play(s, event("pkk", "shaded", [1, 3]));
+    expect([pieces(state, "sanliurfa", "guerrilla")["underground"], units(state, "syria-bekaa", "guerrilla")]).toEqual([3, 1]);
+    expect(track(state, "resources.pkk")).toBe(Number(track(s, "resources.pkk")) + 2);
+    const kdp = play(s, event("pkk", "shaded", [2, 2])).state;
+    expect(units(kdp, "kdp-zone", "guerrilla") - units(s, "kdp-zone", "guerrilla")).toBe(2);
+    expect(codes(s, event("pkk", "shaded", [0, 4]))).toEqual(["badAnswer"]);
+  });
+});
+
+describe("Adana Minutes (DK-091)", () => {
+  it("is a Capability card (U)", () => {
+    expect(ruleset.cards["DK-091"]?.type).toBe("capability");
+  });
+
+  it("U: all PKK Bases in Syria-Bekaa go to Available", () => {
+    const s = setPieces(board("state", "DK-091"), "syria-bekaa", "pkkBase", 3);
+    const { state } = play(s, event("state", "unshaded"));
+    expect(units(state, "syria-bekaa", "pkkBase")).toBe(0);
+    expect(state.pools["pkkBase"]?.available).toBe(Number(s.pools["pkkBase"]?.available) + 3);
+  });
+
+  it("U: with Syria Hostile, Host Pressure may not target Syria (DEC-75 point 6: no modifier needed)", () => {
+    const start = board("state", "DK-090");
+    const hostile = play(leader(setTrack(start, "posture.syria", "restricted"), "present"), event("state", "unshaded")).state;
+    const after = play(withCard({ ...hostile, turn: start.turn, initiative: start.initiative }, "DK-091"), event("state", "unshaded")).state;
+    const pkk = { ...turnOf("pkk"), spaces: after.spaces, tracks: after.tracks, pools: after.pools, modifiers: after.modifiers };
+    const pressure = op("pkk", "opSa", { op: "pkk.rally", locations: ["botan"], sa: { action: "pkk.host-pressure", timing: "after", locations: ["syria-bekaa"] } });
+    expect([track(pkk, "posture.syria"), units(pkk, "syria-bekaa", "guerrilla") > 0]).toEqual(["hostile", true]);
+    expect(codes(pkk, pressure)).toContain("leadershipAbroad");
+  });
+
+  it("S: Hostile moves to Restricted, the Leadership stays Abroad; PKK Resources +1", () => {
+    const s = leader(setTrack(board("pkk", "DK-091"), "posture.syria", "hostile"), "abroad");
+    const { state } = play(s, event("pkk", "shaded"));
+    expect([track(state, "posture.syria"), side(state, "abroad"), track(state, "resources.pkk")]).toEqual(["restricted", 1, Number(track(s, "resources.pkk")) + 1]);
+  });
+
+  it("S: if Syria is not Hostile, only PKK Resources +1", () => {
+    const s = setTrack(board("pkk", "DK-091"), "posture.syria", "tolerant");
+    const { state } = play(s, event("pkk", "shaded"));
+    expect([track(state, "posture.syria"), track(state, "resources.pkk")]).toEqual(["tolerant", Number(track(s, "resources.pkk")) + 1]);
+  });
+});
+
+describe("Arrest in Rome (DK-092)", () => {
+  const ready = (face: "present" | "abroad" | null, roll = 4): GameState => setTrack(leader(withRoll(board("state", "DK-092"), roll), face), "legitimacy", 6);
+
+  it("comes after DK-090 in the deck (08 s8)", () => {
+    expect(ruleset.cards["DK-092"]?.chainAfter).toEqual(["DK-090"]);
+  });
+
+  it("U: with the Leadership Abroad, a free Diplomacy on Europe with +1", () => {
+    const { state } = play(ready("abroad"), event("state", "unshaded", [plan(["europe"])]));
+    expect(track(state, "europe")).toBe(0);
+    expect(codes(ready("abroad"), event("state", "unshaded", [plan(["puk-zone"])]))).toContain("eventConstraint");
+  });
+
+  it("U: with the Leadership Present or captured, nothing happens", () => {
+    expect(track(play(ready("present"), event("state", "unshaded")).state, "europe")).toBe(1);
+    expect(track(play(ready(null), event("state", "unshaded")).state, "europe")).toBe(1);
+  });
+
+  it("S: Europe +1, then a free Rally on the Europe track", () => {
+    const { state } = play(board("pkk", "DK-092"), event("pkk", "shaded", [plan(["europe"])]));
+    expect(track(state, "europe")).toBe(3);
+  });
+
+  it("S: at the Ban cap the Rally is refused and may be skipped", () => {
+    const capped = setTrack(setMarkers(board("pkk", "DK-092"), "europe", "ban", 1), "europe", 2);
+    expect(codes(capped, event("pkk", "shaded", [plan(["europe"])]))).toContain("rallyEuropeCap");
+    expect(track(play(capped, event("pkk", "shaded", [null])).state, "europe")).toBe(3);
   });
 });
 

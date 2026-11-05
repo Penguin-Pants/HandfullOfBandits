@@ -1,5 +1,6 @@
 # C5 cards (research 08; deck CSV). Encoding docs/prototype/34, DEC-75. DK-093 Capture: P3b-06a (docs/prototype/31 s5.3).
 # DK-098 Coercive Diplomacy on Syria is in pivotal.yaml. P3b-07h: reports, harm and the flag case.
+# P3b-07i: Syria and northern Iraq (DK-084, DK-089 to DK-092).
 - id: DK-093
   campaign: C5
   title: "Capture (Feb 1999)"
@@ -209,6 +210,152 @@
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0122, E-0017, S-0320, S-0001, S-0353, S-0002]
+- id: DK-084
+  campaign: C5
+  title: "Ankara Process in Northern Iraq (1996-1997)"
+  date: "1996-10-23"
+  type: event
+  unshaded:
+    text: "Move KDP posture or PUK posture one step toward Hostile, or from Hostile to Aligned with Turkey."
+    owner: state
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - {label: KDP posture, effects: [{type: stepOrdinal, track: posture.kdp, direction: next, steps: 1}]}
+          - {label: PUK posture, effects: [{type: stepOrdinal, track: posture.puk, direction: next, steps: 1}]}
+  shaded:
+    text: "Calm in northern Iraq: move up to 3 Guerrillas between the KDP Zone and PUK Zone, free. Place 1 PKK Base in one of them (posture permitting)."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - label: KDP Zone to PUK Zone
+            effects:
+              - {type: movePieces, piece: guerrilla, count: {min: 0, max: 3}, from: kdp-zone, to: puk-zone}
+              - type: conditional
+                if: {type: trackIn, track: posture.puk, values: [hostile, aligned]}
+                then: [{type: setPieceState, piece: guerrilla, space: puk-zone, from: underground, to: active, count: all}]
+          - label: PUK Zone to KDP Zone
+            effects:
+              - {type: movePieces, piece: guerrilla, count: {min: 0, max: 3}, from: puk-zone, to: kdp-zone}
+              - type: conditional
+                if: {type: trackIn, track: posture.kdp, values: [hostile, aligned]}
+                then: [{type: setPieceState, piece: guerrilla, space: kdp-zone, from: underground, to: active, count: all}]
+      - type: choice
+        options:
+          - label: KDP Zone
+            effects:
+              - type: conditional
+                if: {type: any, of: [{type: trackIn, track: posture.kdp, values: [host]}, {type: all, of: [{type: trackIn, track: posture.kdp, values: [tolerant]}, {type: flag, flag: northernIraqVacuum, value: true}]}]}
+                then: [{type: placePieces, piece: pkkBase, count: 1, space: kdp-zone, state: null}]
+          - label: PUK Zone
+            effects:
+              - type: conditional
+                if: {type: any, of: [{type: trackIn, track: posture.puk, values: [host]}, {type: all, of: [{type: trackIn, track: posture.puk, values: [tolerant]}, {type: flag, flag: northernIraqVacuum, value: true}]}]}
+                then: [{type: placePieces, piece: pkkBase, count: 1, space: puk-zone, state: null}]
+  encoding: {status: encoded, encodedBy: "P3b-07i", reviewedAgainstText: true, note: "U: Host to Hostile, then Aligned; Aligned stays (tracks.yaml). S: one direction, up to 3 (DEC-75 point 4); no posture limit on the move, as DK-041 shaded; the text does not say Underground, so arrivals in a Hostile or Aligned zone are Active (07 s5.1); the Base as DK-070 shaded (Rally placement rules)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0316, E-0322, S-0477, S-0497]
+- id: DK-089
+  campaign: C5
+  title: "Washington Agreement (Sep 1998)"
+  date: "1998-09-17"
+  type: event
+  unshaded:
+    text: "The State conducts a free Diplomacy targeting KDP or PUK with +1."
+    owner: state
+    tier: T0
+    effects:
+      - {type: freeAction, action: state.diplomacy, constraints: {spaces: [kdp-zone, puk-zone], bonus: 1}}
+  shaded:
+    text: "Turkey not consulted: State Resources -2. PUK posture one step toward Host."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: resources.state, delta: -2}
+      - {type: stepOrdinal, track: posture.puk, direction: previous, steps: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07i", reviewedAgainstText: true, note: "U: as DK-009 unshaded (free Diplomacy, bonus 1)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0125, S-0088, S-0357, S-0089]
+- id: DK-090
+  campaign: C5
+  title: "PKK Leader Leaves Syria (Oct 1998)"
+  date: "1998-10-09"
+  type: event
+  unshaded:
+    text: "If Syria is Restricted or Hostile: set Syria to Hostile and flip the Leadership to Abroad. Otherwise Syria posture one step toward Hostile."
+    owner: state
+    tier: T0
+    effects:
+      - {type: stepOrdinal, track: posture.syria, direction: next, steps: 1}
+  shaded:
+    text: "Dispersal from Syria: move up to 3 Guerrillas from Syria-Bekaa to Mardin-Batman, Şanlıurfa or the KDP Zone, Underground. PKK Resources +2."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: choice
+        options:
+          - {label: Mardin-Batman, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: syria-bekaa, to: mardin-batman}]}
+          - {label: Şanlıurfa, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: syria-bekaa, to: sanliurfa}]}
+          - {label: KDP Zone, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: syria-bekaa, to: kdp-zone}]}
+      - {type: adjustTrack, track: resources.pkk, delta: 2}
+  encoding: {status: encoded, encodedBy: "P3b-07i", reviewedAgainstText: true, note: "U: one step in every case; the Syria cap at Hostile and the Leadership flip are in shiftHost (07 s5.2 item 4). S: one destination, as DK-071 shaded"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0018, S-0014, S-0017, S-0089, S-0254, S-0270]
+- id: DK-091
+  campaign: C5
+  title: "Adana Minutes (Oct 1998)"
+  date: "1998-10-20"
+  type: capability
+  unshaded:
+    text: "State Capability (Adana): while Syria is Hostile, Host Pressure may not target Syria. Remove all PKK Bases in Syria-Bekaa to Available now."
+    owner: state
+    tier: T0
+    effects:
+      - {type: removePieces, piece: pkkBase, count: 12, space: syria-bekaa}
+  shaded:
+    text: "Slow implementation: if Syria is Hostile, move it to Restricted. PKK Resources +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: posture.syria, values: [hostile]}
+        then: [{type: stepOrdinal, track: posture.syria, direction: previous, steps: 1}]
+      - {type: adjustTrack, track: resources.pkk, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07i", reviewedAgainstText: true, note: "U: no modifier; Host Pressure on Syria already needs the Leadership Present and Hostile flips it Abroad (DEC-75 point 6). S: the Leadership stays Abroad"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0019, S-0014, S-0089, S-0254, S-0371, S-0374, S-0015, S-0016, S-0097, S-0434]
+- id: DK-092
+  campaign: C5
+  title: "Arrest in Rome (Nov 1998)"
+  date: "1998-11-12"
+  type: event
+  chainAfter: [DK-090]
+  unshaded:
+    text: "If the Leadership is Abroad: the State conducts a free Diplomacy targeting the Europe track with +1."
+    owner: state
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: atSpace, space: syria-bekaa, of: {type: spaceHas, markers: [leadership], sides: [abroad]}}
+        then: [{type: freeAction, action: state.diplomacy, constraints: {spaces: [europe], bonus: 1}}]
+  shaded:
+    text: "Asylum campaign: Europe +1. The PKK conducts a free Rally on the Europe track."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: 1}
+      - {type: freeAction, action: pkk.rally, constraints: {spaces: [europe]}}
+  encoding: {status: encoded, encodedBy: "P3b-07i", reviewedAgainstText: true, note: "U: after Capture there is no marker, so no effect. S: as DK-028 shaded; at the Ban cap the Rally is refused and skipped (rallyEuropeCap)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0130, S-0017, S-0278, S-0359]
 - id: DK-099
   campaign: C5
   title: Propaganda
