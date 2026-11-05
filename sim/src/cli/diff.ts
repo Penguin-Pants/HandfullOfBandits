@@ -20,6 +20,15 @@ function section<Item, Changed>(title: string, c: Changes<Item, Changed>, item: 
 
 const label = (d: PackageData): string => `${d.manifest.packageId} ${d.manifest.version} ${d.manifest.rulesetVersion}`;
 
+/** Version rules for two packages whose content differs (04 s10.1 items 1 and 3). */
+function warnings(a: PackageData, b: PackageData): string[] {
+  const parent = b.manifest.parent;
+  return [
+    ...(a.manifest.rulesetVersion === b.manifest.rulesetVersion ? [`warning: the content changed but rulesetVersion is still ${a.manifest.rulesetVersion} (04 s10.1 item 1)`] : []),
+    ...(label(a) === label(b) || (parent?.version === a.manifest.version && parent.rulesetVersion === a.manifest.rulesetVersion) ? [] : [`warning: the new package does not name ${a.manifest.version} ${a.manifest.rulesetVersion} as its parent`]),
+  ];
+}
+
 export function diffCommand(oldDir: string, newDir: string): { readonly exitCode: number; readonly lines: readonly string[] } {
   const load = (dir: string) => ({ dir, result: loadPackage(readPackageDir(dir)) });
   const [old, next] = [load(oldDir), load(newDir)];
@@ -33,7 +42,7 @@ export function diffCommand(oldDir: string, newDir: string): { readonly exitCode
     lines: [
       `old ${label(a)} hash ${old.result.hash}`,
       `new ${label(b)} hash ${next.result.hash}${parent === undefined ? "" : ` parent ${parent.version} ${parent.rulesetVersion}`}`,
-      ...(label(a) === label(b) || (parent?.version === a.manifest.version && parent.rulesetVersion === a.manifest.rulesetVersion) ? [] : [`warning: the new package does not name ${a.manifest.version} ${a.manifest.rulesetVersion} as its parent`]),
+      ...(old.result.hash === next.result.hash ? [] : warnings(a, b)),
       ...section("Parameters", d.parameters, (p) => `${p.id} = ${value(p.value)}`, (p) => `${p.id} ${p.fields.map((f) => (f === "value" ? `value: ${value(p.from)} to ${value(p.to)}` : f)).join(", ")}`),
       ...section("Cards", d.cards, (c) => `${c.id} (${c.file})`, (c) => `${c.id}: ${c.fields.join(", ")}`),
       ...section("Handlers", d.handlers, (h) => `${h.id} (${h.where})`, (h) => `${h.id}: ${h.from} to ${h.to}`),

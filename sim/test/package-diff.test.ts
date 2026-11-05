@@ -156,6 +156,10 @@ describe("P4-05 sim diff", () => {
   edit("manifest.yaml", /^rulesetVersion: .*$/m, "rulesetVersion: R5");
   edit("parameters.yaml", /\{id: harm\.limit, value: 6,/, "{id: harm.limit, value: 5,");
   edit("cards/c1.yaml", /Martial law reinforcement: place 2 Troops/, "Martial law reinforcement: place 3 Troops");
+  const unraised = join(dir, "unraised");
+  cpSync(kurdishDir, unraised, { recursive: true });
+  const params = join(unraised, "parameters.yaml");
+  writeFileSync(params, readFileSync(params, "utf8").replace("{id: harm.limit, value: 6,", "{id: harm.limit, value: 5,"));
   const broken = join(dir, "broken");
   cpSync(kurdishDir, broken, { recursive: true });
   writeFileSync(join(broken, "parameters.yaml"), "- {id: harm.limit\n");
@@ -186,6 +190,14 @@ describe("P4-05 sim diff", () => {
   it("warns when the new parent is not the old version", () => {
     const { lines } = diffCommand(r5, kurdishDir);
     expect(lines).toContain("warning: the new package does not name 0.1.1 R5 as its parent");
+  });
+
+  it("warns when the content changed but the ruleset version did not (04 s10.1 item 1)", () => {
+    const { exitCode, lines } = diffCommand(kurdishDir, unraised);
+    expect(exitCode).toBe(0);
+    expect(lines[2]).toBe("warning: the content changed but rulesetVersion is still R4 (04 s10.1 item 1)");
+    expect(lines).toContain("  ~ harm.limit value: 6 to 5");
+    expect(diffCommand(kurdishDir, r5).lines.some((l) => l.startsWith("warning:"))).toBe(false);
   });
 
   it("exits 1 with the load issues when a package does not load", () => {
