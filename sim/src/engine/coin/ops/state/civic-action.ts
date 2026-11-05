@@ -7,6 +7,7 @@ import { at } from "../action.ts";
 import { controlOf, count, markers, pay } from "../common.ts";
 import { EMERGENCY, FACTION, MARKER, PIECE, TRACK } from "../ids.ts";
 import { asCount } from "../plan.ts";
+import { SWITCH } from "../../switches.ts";
 
 const ruleRef = "07 s1.3";
 
@@ -47,9 +48,8 @@ export function civicViolations(ruleset: Ruleset, state: GameState, spaceId: str
     if (spend[key] > markers(state, spaceId, marker)) out.push(v("civicNoMarker", `Only ${String(markers(state, spaceId, marker))} ${marker} markers are here.`));
   }
   if (spend.displacement > 0) {
-    const campaigns = param(ruleset, "civicAction.returnCampaigns", "list");
     const normalizing = state.tracks[TRACK.emergencyRule] === EMERGENCY.normalizing;
-    if (!normalizing && !campaigns.includes(state.turn.campaign ?? "")) out.push(at(spaceId, "civicNoReturn", "Return is legal only in C5, at Normalizing or by a Return event.", "07 s3.3"));
+    if (!normalizing && state.flags[SWITCH.returnByCivicAction] !== true) out.push(at(spaceId, "civicNoReturn", "Return is legal only in C5, at Normalizing or by a Return event.", "07 s3.3"));
   }
   if (spend.shifts > 0) {
     const maxShifts = param(ruleset, "civicAction.maxShifts", "number");

@@ -6,14 +6,13 @@ import { count, pay } from "../common.ts";
 import { postureOf } from "../common-pkk.ts";
 import { FACTION, FLAG_VACUUM, PIECE, POSTURE } from "../ids.ts";
 import { asMoves } from "../plan.ts";
+import { SWITCH } from "../../switches.ts";
 
 /** Normal access, including the post-Vacuum Tolerant exception. */
 export function crossBorderOpen(r: Ruleset, s: GameState, box: string): boolean {
-  const campaigns = param(r, "campaign.order", "list");
-  const later = campaigns.indexOf(s.turn.campaign ?? "") >= campaigns.indexOf("C3");
   const open = (host: string): boolean => {
     const p = postureOf(s, host);
-    return p === POSTURE.restricted || p === POSTURE.hostile || p === POSTURE.aligned || (p === POSTURE.tolerant && later && s.flags[FLAG_VACUUM] === true);
+    return p === POSTURE.restricted || p === POSTURE.hostile || p === POSTURE.aligned || (p === POSTURE.tolerant && s.flags[FLAG_VACUUM] === true);
   };
   return box === "kdp-zone" ? open(box) : box === "puk-zone" && open(box) && open("kdp-zone");
 }
@@ -34,7 +33,7 @@ export const crossBorder: ActionHandler = {
     for (const origin of ["hakkari", "botan"]) if (moves.filter(m => m.from === origin).reduce((n, m) => n + m.count, 0) > count(s, origin, PIECE.troops)) return fail("crossBorderSupply", "The origin has too few Troops.");
     if (typeof o.constraints["maxTroops"] === "number" && count(s, box, PIECE.troops) + moved > o.constraints["maxTroops"]) return fail("crossBorderTroops", "The card limits the zone force.");
     if (crossBorderOpen(r, s, box)) return [];
-    const hot = box === "kdp-zone" && ["C1", "C2"].includes(s.turn.campaign ?? "") && r.scenarios[s.meta.scenarioId]?.options["hotPursuit"] !== "deny";
+    const hot = box === "kdp-zone" && s.flags[SWITCH.hotPursuit] === true && r.scenarios[s.meta.scenarioId]?.options["hotPursuit"] !== "deny";
     return hot && count(s, box, PIECE.troops) + moved <= param(r, "crossBorder.hotPursuitTroops", "number") ? [] : fail("crossBorderAccess", "Posture denies access or the hot pursuit force exceeds its limit.");
   },
   cost: (r, s, p, o) => o.free || postureOf(s, p.locations[0] ?? "") === POSTURE.aligned ? 0 : param(r, "crossBorder.cost", "number"),

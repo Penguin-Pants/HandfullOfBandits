@@ -1,18 +1,22 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b started before IC-3a by owner decision: P3b-01 done (PR #45), P3b-02 to P3b-05 done (PR #46 merged). P3b-06 done (DEC-67, [31](31-pivotals-structural-draft.md)): P3b-06a (PR #47) and P3b-06b (PR #48). P3b-07 done: C3 (P3b-07a to 07c, DEC-68, [32](32-c3-cards-draft.md)); C4 (P3b-07d to 07g, DEC-69, [33](33-c4-cards-draft.md)); C5 (P3b-07h to 07k, DEC-75, [34](34-c5-cards-draft.md)). P3b-08 done (Scenarios B and C); Phase 3b tasks complete, IC-3b open. **Next: IC-3b** (designer plays B and C in the UI); P3c-01 depends on it.
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c started before IC-3b by owner decision (DEC-78): P3c-01 done. **Next: P3c-02** (full campaign scenario and a long golden replay).
 
-## 0. Resume here (updated 2026-11-05, P3b-08)
+## 0. Resume here (updated 2026-11-05, P3c-01)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: IC-3b** (designer): play Scenarios B and C each to the end in the UI. Phase 3b tasks P3b-01 to P3b-08 are complete. **Open decision:** P3c-01 depends on IC-3b (section 4). Phase 3b started before IC-3a by owner decision; the owner decides whether Phase 3c may also start before IC-3b. Until then, no task is unblocked for an agent session.
+**Next: P3c-02** (full campaign scenario and a long golden replay; accept: the full campaign replays in under 10 seconds). Phase 3c started before IC-3b by owner decision (DEC-78). IC-3a and IC-3b stay open for the designer.
+
+**P3c-01 is done:** structural switches (10 s6.2) are flags. Parameters `switch.on.<Campaign>` and `switch.off.<Campaign>` hold the table; `coin/switches.ts` sets them at setup (every Campaign up to the first) and at each Reset (the Campaign entered). Six gates now read the flag, not the Campaign: hot pursuit, Village Clearance, Covert Action, Declare Ceasefire, OHAL Extended Powers and Return by Civic Action. The five-pile deck and Campaign advance already existed (P2-04, P3a). **Old sessions (DEC-79):** a session stored before P3c-01 opens read-only; start a new session for IC-3a or IC-3b play.
 
 **P3b-08 is done:** `scenarios/scenario-b.yaml` and `scenario-c.yaml` from research 10 s4 and s5; start scores equal 09 s2.3 (B 20 and 14, C 16 and 23). Scenario B State threshold: manifest option `threshold.state` (48 default, 46; DEC-24, DEC-77). P3b-07 is complete: P3b-07k is done (DK-081, DK-094, DK-095, DK-096; procedure `legal.localWins`, condition `markersAtLeast`; the P3b-07h "reveal a second" Drop is fixed). P3b-07j is done (DK-078, DK-082, DK-083, DK-088, DK-097; free action constraint `activeGuerrillas`). P3b-07h is done (DK-079, DK-080, DK-085, DK-086, DK-087, Propaganda DK-099; procedure `strasbourg.report`). P3b-07i is done (DK-084, DK-089 to DK-092; no engine addition).
 1. Already built: all C3 cards and the C3 Propaganda card (P3b-07a to 07c); C4 legal-party cards DK-060, DK-065 to DK-068 and Propaganda DK-077 (P3b-07d), with procedures `legal.ban`, `legal.successor` and `legal.successorFull` (one copy shared with the phase); C4 ceasefire cards DK-056 to DK-059 and DK-073 (P3b-07e), with procedures `ceasefire.declare` (shared with the command), `ceasefire.accept`, `ceasefire.end` and `ceasefire.pkkBroken`; C4 Europe, harm and report cards DK-061 to DK-064 and DK-069 (P3b-07f), with procedures `hrw.denial` and `hrw.report`; C4 Northern Iraq, Momentum and Guards cards DK-070 to DK-072, DK-074 and DK-075 (P3b-07g), with modifiers `customs-union` and `lending-conditions` (read by Village Clearance) and free action constraints `maxLift` and `saAtCost`; all C5 cards and Propaganda DK-099 (P3b-07h to 07k), with procedures `strasbourg.report` and `legal.localWins`, free action constraint `activeGuerrillas` and condition `markersAtLeast`; all four Pivotals and the three structural cards (P3b-06); procedures `legal.officeLines`, `covert.revealRandom` (DK-079 and DK-080 reveal up to 2), `hizbullah.unattributed`; Event Europe cap; PKK side restriction (`executors`).
 2. Remaining in Phase 3b: IC-3b only. C4 has 20 eligible cards and C5 has 19 and DK-093, each for a pile of 12. V-CARDS passes; the full campaign starts (DEC-76). Phase 3c checks its play.
 
 **Owner decisions in force**
+- **DEC-78 (2026-11-05):** Phase 3c starts before IC-3b. IC-3b findings may force rework; record any in this plan.
+- **DEC-79 (2026-11-05):** sessions stored before P3c-01 open read-only.
 - **DEC-70 project order (2026-11-04):** 1. Finalize rules, cards and mechanics (P3b-07 C4 and C5, P3b-08 scenarios, Phase 3c full campaign). 2. Finish the engine and UI for manual play and test (IC-3a to IC-3c). 3. Automated games with bot profiles, as the Scenario A program (docs 19 to 23): extend profiles to every C3 to C5 rule and card, then run and review. Stage 3 replaces "automated opponents" and "batch execution" in Phase 5. The no-simulations rule holds until stage 3.
 - **DEC-77 (2026-11-05):** Scenario B State threshold default 48; 46 stays a session option (DEC-24).
 - **DEC-76 (2026-11-05):** the full campaign starts once V-CARDS passes; no extra block until Phase 3c.
@@ -51,6 +55,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #58 | P3b-07i: C5 Syria and northern Iraq cards |
 | #59 | P3b-07j: C5 operations cards (DEC-75, DEC-76) |
 | #60 | P3b-07k: C5 late politics cards; P3b-07 complete |
+| #61 | P3b-08: Scenarios B and C |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -578,7 +583,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3b: C3 to C5 systems, Scenarios B and C
 
-**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. P3b-07 C3 and C4 (P3b-07d to P3b-07g) done; C5 draft [34](34-c5-cards-draft.md) approved (DEC-75); P3b-07h to P3b-07k done, so P3b-07 is complete; P3b-08 done; **next: IC-3b** (see section 0). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
+**Status (2026-11-04):** Phase 3b started before IC-3a by owner decision; IC-3a findings may require rework. P3b-07 C3 and C4 (P3b-07d to P3b-07g) done; C5 draft [34](34-c5-cards-draft.md) approved (DEC-75); P3b-07h to P3b-07k done, so P3b-07 is complete; P3b-08 done; Phase 3b tasks complete; IC-3b open for the designer; Phase 3c started (DEC-78). P3b-01 is complete (PR #45): the Emergency Rule track, its drain (07 s8.1) and the step-8 moves (07 s8.2 items 1 to 3) were already implemented in P2-10 (`coin/propaganda/legitimacy.ts`). A table-driven T-PROP test now covers every drain, every allowed and refused move in C2 and C3, and the Normalizing-to-OHAL cost; a mutation check (cost 0, Extended Powers from C2) fails it. Step unlocks (Village Clearance, Return) belong to P3b-02.
 
 **P3b-02 (2026-11-04):** complete. The designer approved the effect order and every player-facing string in [27](27-village-clearance-draft.md) before code. `coin/ops/sa/village-clearance.ts` accompanies Sweep or Garrison, checks the four conditions and applies the seven effects in order with rule refs `06 s3.4 effect 1` to `7`. It costs Legitimacy only; four new parameters (`clearance.*`) hold every number. DEC-63: condition 2 reads flag `ohalPowers` or Campaign C3 or later; no card sets the flag yet, so Scenario A cannot use it. PA-18 (GAP-B16): an existing State Harm or Coercion marker blocks the effect-1 shift. Tests: `village-clearance.test.ts` (T-OPS, T-VAL, four T-PERV cases from 09 s7.1) and a summary check in `forms.test.ts`. Mutation checks (swap effects 3 and 4; Pop cost 0) fail the suite.
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseOperation with the SA before and after Sweep and Garrison, the re-check after the Op, the Reception shortfall, the blocked shift, the Neutral case and the Rally block that follows. No path code. Pass 2 replaced a local Legitimacy reader with the existing pattern.
@@ -766,9 +771,27 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ### Phase 3c: full campaign
 
+**Status (2026-11-05):** started before IC-3b (DEC-78). P3c-01 done; **next: P3c-02**.
+
+**P3c-01 (2026-11-05):** complete. The five-pile deck (`coin/deck.ts`, one pile per scenario Campaign) and the Campaign advance at Reset (`propaganda/reset.ts`) already existed; the scripted policy plays the full campaign to the end. New: the 10 s6.2 switches as flags.
+- **Package:** `switch.on.C1 [hotPursuit]`, `switch.on.C3 [villageClearance, covertAction, declareCeasefire, extendedPowers]`, `switch.off.C3 [hotPursuit]`, `switch.on.C5 [returnByCivicAction]`. Removed (replaced): `clearance.from`, `covert.from`, `ceasefire.from`, `emergencyRule.extendedFrom`, `civicAction.returnCampaigns`. 04 s4.5 documents the rows.
+- **Engine:** `coin/switches.ts`. Setup applies every Campaign up to the scenario's first one; scenario `flags` override. Reset applies the Campaign it enters with `setFlag` (rule ref `10 s6.2`), only for flags that change, so a flag an event set earlier stays. The six gates read the flag; refusal messages name the Campaign from the rows (`switchFrom`). Cross-Border at Tolerant reads only the Vacuum flag (its C3 check was redundant: the Vacuum card is C3).
+- **Not flags:** the Legal Politics phase opens with Legal Space (HEP Founded, C3); the three Pivotals of the table open by their card Campaign (`coin/pivotal.ts`). Both already follow the table.
+- **Server (DEC-79):** `lacksSwitches` makes a session read-only when its stored package has Campaigns but no switch rows.
+- Tests: `switches.test.ts` (setup for all five scenarios, each Reset row, logged changes, an early flag kept), `test/campaign-switches.test.ts` (full campaign, seed 7: flags on entering C1 to C5 equal the rows), `test/switch-sessions.test.ts` (old package opens read-only, refuses a command with 409). Test fixtures that set a later Campaign use `inCampaign` (`test/board.ts`). The stub failed 4 of 5 assertions. Mutation checks each fail the suite: no Reset switch; rows not cumulative; Reset overwrites every switch; unchanged flags logged; no setup switches; each of the six gates always open; read-only check never true.
+- **TWO-PASS REVIEW.** Pass 1 traced engine start for each scenario, Reset C1 to C5 from the Advance command, the scripted full campaign, session create, resume and submit with a stored old package, and every gate from its command. Pass 2 removed the redundant Cross-Border Campaign check and moved `inCampaign` out of production code.
+  - **Decide (answered, DEC-79):** an old stored package replays identically but keeps every switch gate closed. Owner: open it read-only.
+  - **Fix:** `inCampaign` had no production caller; moved to `test/board.ts`.
+  - **Fix:** the Cross-Border Tolerant exception also compared the Campaign with literal `"C3"`; the Vacuum flag alone decides.
+  - **Drop:** `emergencyMoves` no longer reads `ruleset`; the parameter stays so its four callers keep the shared `(ruleset, state)` form.
+  - **Drop:** the Return message names C5 as text. It matches `switch.on.C5`; the rule text (07 s3.3) says C5.
+  - **Propose:** none new. Carried follow-up 3 (shared Campaign comparison helper) shrinks: the gates no longer compare Campaigns; `coin/pivotal.ts` and the Diplomacy modifiers (`host-actions.ts`, 06 s3.3) still do.
+- **Validation:** `make check` passes. `make test`: 88 files, 1298 tests pass. `make e2e` passes. `make validate`: no issues. Package schema unchanged (parameters only). Goldens regenerated for the package hash and start flags; commands unchanged (S0 24, A 65, B 68, C 109). Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
+- **Blocker for the next task:** none.
+
 | ID | Obj | Deps | Accept |
 |---|---|---|---|
-| P3c-01 | Five-pile deck, Campaign advance and structural switches (10 s6.2) | IC-3b | Switch flags set at each Reset |
+| P3c-01 ✅ | Five-pile deck, Campaign advance and structural switches (10 s6.2) | IC-3b (waived, DEC-78) | Switch flags set at each Reset |
 | P3c-02 | Full campaign scenario and a long golden replay | P3c-01 | Full campaign replays in under 10 seconds |
 
 **IC-3c (M4):** The selected design plays from setup to conclusion. Phase 3 exit criterion met.

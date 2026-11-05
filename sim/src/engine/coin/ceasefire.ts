@@ -9,6 +9,7 @@ import type { ActionPart } from "./ops/action.ts";
 import { adjustEurope, space } from "./ops/common.ts";
 import { BINGOL_MUS, FACTION, TRACK } from "./ops/ids.ts";
 import { activeFaction, BOX, legalBoxes, placeCylinder, sequenceViolations } from "./sequence/ct.ts";
+import { SWITCH, switchFrom } from "./switches.ts";
 
 const ruleRef = "07 s7.2";
 export const CEASEFIRE = "ceasefire";
@@ -93,9 +94,7 @@ export const declareCeasefireHandler: CommandHandler = {
     if (active === FACTION.pkk && !legalBoxes(ruleset, state, active).includes(BOX.limitedOp)) return v("ceasefireBox", "Declare Ceasefire uses the Limited Op box.");
     const seq = sequenceViolations(ruleset, state, command["faction"], BOX.limitedOp);
     if (seq.length > 0) return seq;
-    const campaigns = param(ruleset, "campaign.order", "list").map(String);
-    const from = param(ruleset, "ceasefire.from", "string");
-    if (campaigns.indexOf(state.turn.campaign ?? "") < campaigns.indexOf(from)) return v("ceasefireCampaign", `Declare Ceasefire is available from Campaign ${from}.`);
+    if (state.flags[SWITCH.declareCeasefire] !== true) return v("ceasefireCampaign", `Declare Ceasefire is available from Campaign ${switchFrom(ruleset, SWITCH.declareCeasefire)}.`);
     if (state.tracks[CEASEFIRE] !== "none") return v("ceasefireActive", "A ceasefire is already in force.");
     return [];
   },

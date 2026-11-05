@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, engine, op, pieces, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
+import { codes, engine, inCampaign, op, pieces, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 import type { ActionOptions } from "./ops/action.ts";
 import { villageClearance } from "./ops/sa/village-clearance.ts";
@@ -9,7 +9,7 @@ import { sweep } from "./ops/state/sweep.ts";
 // S0 board in C4: Diyarbakır City and Western Cities have State Control and Police; Legitimacy is 5
 // so no side meets the track ends.
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
-const c4 = (s: GameState): GameState => setTrack({ ...s, turn: { ...s.turn, campaign: "C4" } }, "legitimacy", 5);
+const c4 = (s: GameState): GameState => setTrack(inCampaign(ruleset, s, "C4"), "legitimacy", 5);
 const board = (faction: "state" | "pkk", card: string): GameState => c4(withCard(turnOf(faction), card));
 const track = (s: GameState, id: string): unknown => s.tracks[id];
 const offices = (s: GameState): string[] => ruleset.spaces.filter((x) => (s.spaces[x.id]?.markers["office"]?.["default"] ?? 0) > 0).map((x) => x.id).sort();
@@ -450,7 +450,7 @@ const clearance = (target = "hakkari") =>
   op("state", "opSa", { op: "state.sweep", locations: [target], sa: { action: "state.village-clearance", locations: [target], perLocation: { [target]: { reception: "diyarbakir-city" } }, timing: "after" } });
 const clearable = (s: GameState, legitimacy = 10): GameState => {
   const t = setTrack(setTrack(turnOf("state"), "emergencyRule", "ohal"), "legitimacy", legitimacy);
-  return { ...t, turn: { ...t.turn, campaign: "C4" }, modifiers: s.modifiers };
+  return { ...inCampaign(ruleset, t, "C4"), modifiers: s.modifiers };
 };
 
 describe("EU-Turkey Customs Union (DK-072)", () => {

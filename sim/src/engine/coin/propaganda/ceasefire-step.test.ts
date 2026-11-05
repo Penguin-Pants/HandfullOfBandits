@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
+import { codes, inCampaign, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
 import type { GameState } from "../../core/types.ts";
 import { PHASE } from "../phases.ts";
 
@@ -8,7 +8,8 @@ import { PHASE } from "../phases.ts";
 const at = (s: GameState, ceasefire: string, rounds = 0): GameState => {
   const step = ruleset.sequence.propagandaPhases.indexOf("legalPolitics");
   const b = setTrack(setTrack(setTrack(s, "legalSpace", "open"), "ceasefire", ceasefire), "ceasefireRounds", rounds);
-  return { ...b, deck: { ...b.deck, currentCard: "DK-016" }, turn: { ...b.turn, campaign: "C3", phase: PHASE.propaganda, propagandaRound: 2, step } };
+  const c = inCampaign(ruleset, b, "C3");
+  return { ...c, deck: { ...c.deck, currentCard: "DK-016" }, turn: { ...c.turn, phase: PHASE.propaganda, propagandaRound: 2, step } };
 };
 const run = (s: GameState, ceasefire: Record<string, unknown> | null): GameState =>
   play(s, ceasefire === null ? { type: "Advance" } : ({ type: "PropagandaChoice", phase: "legalPolitics", choice: { ceasefire } })).state;
@@ -94,7 +95,7 @@ describe("Negotiated Outcome (07 s7.4, 09 s5, DEC-66 points 3 and 4)", () => {
 
 describe("A breach resets the held rounds (07 s7.2)", () => {
   it("ends the ceasefire and the count", () => {
-    const board = setPieces(setPieces(setTrack(setTrack({ ...turnOf("state"), turn: { ...turnOf("state").turn, campaign: "C3" } }, "ceasefire", "talks"), "ceasefireRounds", 2), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
+    const board = setPieces(setPieces(setTrack(setTrack(inCampaign(ruleset, turnOf("state"), "C3"), "ceasefire", "talks"), "ceasefireRounds", 2), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
     const s = play(board, { type: "ChooseOperation", faction: "state", box: "opOnly", plan: { op: "state.assault", locations: ["botan"], perLocation: {}, sa: null, subActions: [] } }).state;
     expect([cf(s), rounds(s)]).toEqual(["none", 0]);
   });

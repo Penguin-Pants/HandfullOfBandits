@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
+import { codes, inCampaign, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 import { agitationCost } from "./ops/pkk/agitation.ts";
 import type { ActionOptions } from "./ops/action.ts";
@@ -9,7 +9,7 @@ import { sweep } from "./ops/state/sweep.ts";
 // S0 board: Diyarbakır City and Western Cities have State Control and Police; Diyarbakır Rural
 // has 1 Police; Legitimacy is set to 5 so no side meets the track ends.
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
-const c3 = (s: GameState): GameState => setTrack({ ...s, turn: { ...s.turn, campaign: "C3" } }, "legitimacy", 5);
+const c3 = (s: GameState): GameState => setTrack(inCampaign(ruleset, s, "C3"), "legitimacy", 5);
 const board = (faction: "state" | "pkk", card: string): GameState => c3(withCard(turnOf(faction), card));
 const track = (s: GameState, id: string): unknown => s.tracks[id];
 const level = (s: GameState, id: string): number | null | undefined => s.spaces[id]?.level;

@@ -36,6 +36,7 @@ import { filterRows, reviewRow, type ReviewFilter, type ReviewRow } from "./revi
 import { undoLast, type UndoResult } from "./undo.ts";
 import { entryText } from "./text.ts";
 import { boardView, type BoardView } from "./view.ts";
+import { lacksSwitches } from "../engine/coin/switches.ts";
 
 export const APP_VERSION = "0.1.0";
 
@@ -179,7 +180,8 @@ export class SessionService {
     const { data } = rules;
     if (!this.checked.has(sessionId)) {
       this.checked.add(sessionId);
-      if (row.code_fingerprint !== codeFingerprint() && this.replayCheck(row, ruleset) !== null) {
+      // A package stored before the switch rows (P3c-01) would play with every switch gate closed.
+      if (lacksSwitches(ruleset) || (row.code_fingerprint !== codeFingerprint() && this.replayCheck(row, ruleset) !== null)) {
         this.db.prepare("UPDATE sessions SET status = 'readOnly' WHERE session_id = ?").run(sessionId);
       }
     }

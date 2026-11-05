@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { codes, engine, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf } from "../../../test/board.ts";
+import { codes, engine, inCampaign, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-SEQ and T-EVT for the remaining Pivotals (11 P3b-06b; approved text docs/prototype/31 s1 to s4,
 // DEC-67). S0 board, card DK-001 revealed by Advance, State First Eligible, PKK Second Eligible.
 const OPPOSED = ["botan", "hakkari", "mardin-batman", "diyarbakir-rural", "sanliurfa", "van-bitlis"];
 const reveal = (campaign: string, hands: Record<string, string[]>, prepare: (s: GameState) => GameState = (s) => s): GameState => {
-  const base = turnOf("state");
-  const s = prepare({ ...base, hands: { state: [], pkk: [], ...hands }, deck: { ...base.deck, currentCard: null, piles: [["DK-001", "DK-014"]] }, turn: { ...base.turn, phase: "setup", campaign } });
+  const base = inCampaign(ruleset, turnOf("state"), campaign);
+  const s = prepare({ ...base, hands: { state: [], pkk: [], ...hands }, deck: { ...base.deck, currentCard: null, piles: [["DK-001", "DK-014"]] }, turn: { ...base.turn, phase: "setup" } });
   return play(s, { type: "Advance" }).state;
 };
 /** Total Opposition 2 x (1 + 2 + 2 + 2 + 2 + 4) = 26. */
@@ -39,7 +39,7 @@ describe("Pivotal window (05 s4; doc 31 s1)", () => {
     expect(codes(open, pivotal("pkk", "DK-015"))).toEqual(["pivotalPriority"]);
     const state = { ...open, pending: open.pending === null ? null : { ...open.pending, faction: "state" } };
     expect(codes(state, pivotal("state", "DK-076"))).toEqual(["pivotalCampaign"]);
-    const c5 = { ...state, turn: { ...state.turn, campaign: "C5" } };
+    const c5 = inCampaign(ruleset, state, "C5");
     expect(engineMessage(c5, pivotal("state", "DK-098"))).toBe("Coercive Diplomacy on Syria needs: Syria posture is Tolerant or Restricted, and Legitimacy is 5 or more.");
   });
 });

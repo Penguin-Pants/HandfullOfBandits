@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { legalOps } from "../../stop-rules.ts";
-import { codes, engine, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../../test/board.ts";
+import { codes, engine, inCampaign, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../../test/board.ts";
 
 // T-VAL and T-OPS for State Operations (11 P2-06; research 06 s2, s7; 07 s1.3).
 const start = turnOf("state");
@@ -85,7 +85,7 @@ describe("Train (06 s2.1)", () => {
     const displaced = setTrack(setMarkers(start, "elazig", "displacement", 1, "old"), "emergencyRule", "martialLaw");
     expect(codes(displaced, civic({ displacement: 1 }))).toEqual(["civicNoReturn"]);
     expect(codes(setTrack(displaced, "emergencyRule", "normalizing"), civic({ displacement: 1 }))).toEqual([]);
-    expect(codes({ ...displaced, turn: { ...displaced.turn, campaign: "C5" } }, civic({ displacement: 1 }))).toEqual([]);
+    expect(codes(inCampaign(ruleset, displaced, "C5"), civic({ displacement: 1 }))).toEqual([]);
   });
 
   it("rejects a Civic Action shift that a marker blocks, or that needs State Control", () => {

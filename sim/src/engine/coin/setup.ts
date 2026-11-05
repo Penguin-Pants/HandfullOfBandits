@@ -1,8 +1,10 @@
-// Game start (research 10 s1 steps 1 to 6): scenario position, deck, Pivotal hands, First Eligible.
+// Game start (research 10 s1 steps 1 to 6): scenario position, switch flags (10 s6.2), deck,
+// Pivotal hands, First Eligible. Scenario flags override the switch flags.
 import { setupState } from "../core/state.ts";
 import type { GameState, Ruleset } from "../core/types.ts";
 import { buildDeck, type ChainPair } from "./deck.ts";
 import { resetEligibility } from "./sequence/ct.ts";
+import { switchesAt } from "./switches.ts";
 
 /** Start state of a scenario. A scenario with scenario-scoped errors cannot start (DEC-51). */
 export function startState(ruleset: Ruleset, scenarioId: string, seed: number): GameState {
@@ -22,5 +24,6 @@ export function startState(ruleset: Ruleset, scenarioId: string, seed: number): 
           excluded: scenario.excludedCards,
         });
   const hands = Object.fromEntries(Object.keys(state.hands).map((f) => [f, [...(scenario.pivotals?.[f] ?? [])]]));
-  return resetEligibility(ruleset, { ...state, rng: deck.rng, deck: { ...state.deck, piles: deck.piles }, hands });
+  const flags = { ...switchesAt(ruleset, state.turn.campaign), ...state.flags };
+  return resetEligibility(ruleset, { ...state, flags, rng: deck.rng, deck: { ...state.deck, piles: deck.piles }, hands });
 }

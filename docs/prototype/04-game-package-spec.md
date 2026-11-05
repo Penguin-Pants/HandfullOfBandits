@@ -136,6 +136,8 @@ All tunable values in one file. Each entry:
 
 A handler reads a value only through its parameter ID. No handler holds a game number in code. A lint test checks handlers for numeric literals other than 0, 1 and 2 used as counters (P1-08).
 
+Structural switches (research 10 s6.2; P3c-01): `switch.on.<Campaign>` and `switch.off.<Campaign>` list the flags that entering the Campaign sets true or false. Setup applies every Campaign in `campaign.order` up to the scenario's first one; scenario `flags` override the result. Each Reset applies the Campaign it enters and logs each changed flag. A flag that no row changes keeps its value, so an event may set it earlier. Handlers read the flag, not the Campaign.
+
 ### 4.6 sequence.yaml
 
 | Field | Meaning |
