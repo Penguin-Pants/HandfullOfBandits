@@ -148,3 +148,16 @@ export function validateExport(e: CoinSimExport): string[] {
   }
   return broken;
 }
+
+/** Object value or an empty object, for reading export rows. */
+export const obj = (value: unknown): Row => (value !== null && typeof value === "object" && !Array.isArray(value) ? (value as Row) : {});
+/** Array value or an empty array. */
+export const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
+
+/** Op, SA and Event side of an exported action, from its first command (05 s3.1). */
+export function actionPlan(action: Row): { op: string | null; sa: string | null; side: string | null; type: string | null } {
+  const command = obj(obj(list(action["commands"])[0])["payload"]);
+  const plan = obj(command["plan"]);
+  const text = (v: unknown): string | null => (typeof v === "string" ? v : null);
+  return { op: text(plan["op"]), sa: text(obj(plan["sa"])["action"]), side: command["type"] === "ChooseEvent" ? text(command["side"]) : null, type: text(command["type"]) };
+}

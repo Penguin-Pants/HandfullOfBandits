@@ -3,12 +3,12 @@ import type { Engine } from "../engine/index.ts";
 import type { JsonObject, JsonValue, Ruleset } from "../engine/core/types.ts";
 import { strategy, decisionFaction, resumeOperation } from "./strategies/index.ts";
 import { scriptedPolicy } from "./play.ts";
+import { csvCell } from "../export/csv.ts";
 export interface BatchOptions {readonly games: number; readonly strategies: readonly [string,string]; readonly swapSeats: boolean; readonly seed?: number; readonly scenario?: string;}
 export interface BatchGame {readonly seed: number; readonly swapped: boolean; readonly stateStrategy: string; readonly pkkStrategy: string; readonly winner: string | null; readonly rounds: number;}
 export interface BatchReport {readonly games: readonly BatchGame[]; readonly csv: string; readonly summary: readonly string[];}
 const HEADERS = "game,seed,swapped,state_strategy,pkk_strategy,round,campaign,state_score,pkk_score,state_margin,pkk_margin,state_harm,pkk_harm,state_income,pkk_income,state_resources,pkk_resources,legitimacy,europe,emergency_rule,syria,kdp,puk,winner";
 const object = (v: JsonValue | undefined): JsonObject => typeof v === "object" && v !== null && !Array.isArray(v) ? v as JsonObject : {};
-const cell = (v: JsonValue | undefined): string => {const s = v === undefined || v === null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v); return /[",\r\n]/.test(s) ? `"${s.replaceAll('"','""')}"` : s;};
 export function runBatch(engine: Engine, r: Ruleset, o: BatchOptions): BatchReport {
   if (!Number.isSafeInteger(o.games) || o.games < 1) throw new RangeError("games must be a positive safe integer");
   const initialSeed = o.seed ?? 0;
@@ -39,7 +39,7 @@ export function runBatch(engine: Engine, r: Ruleset, o: BatchOptions): BatchRepo
       const columns: (JsonValue | undefined)[] = [i+1,seed,swapped,game.stateStrategy,game.pkkStrategy,m["round"],m["campaign"]];
       for (const key of ["scores","margins","harm","income","resources"]) columns.push(object(m[key])["state"],object(m[key])["pkk"]);
       columns.push(m["legitimacy"],m["europe"],m["emergencyRule"],object(m["postures"])["syria"],object(m["postures"])["kdp"],object(m["postures"])["puk"],game.winner);
-      rows.push(columns.map(cell).join(","));
+      rows.push(columns.map(csvCell).join(","));
     }
   }
   const summary: string[] = [];

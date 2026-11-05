@@ -77,7 +77,7 @@ export interface Head {
   readonly view: BoardView;
 }
 
-const KIND: Readonly<Record<string, ActionKind>> = { ChooseEvent: "cardChoice", ChooseOperation: "cardChoice", Pass: "cardChoice", PlayPivotal: "pivotal", PropagandaChoice: "propagandaChoice", Advance: "advance" };
+const KIND: Readonly<Record<string, ActionKind>> = { ChooseEvent: "cardChoice", ChooseOperation: "cardChoice", Pass: "cardChoice", DeclareCeasefire: "cardChoice", PlayPivotal: "pivotal", PropagandaChoice: "propagandaChoice", Advance: "advance" };
 
 function summarize(data: PackageData, dir: string, result: LoadResult): PackageSummary {
   const ruleset = result.ok ? result.ruleset : null;
@@ -215,7 +215,7 @@ export class SessionService {
     const write = head.state.pending?.resume?.kind === "operation" ? (input: Parameters<typeof commitAction>[1]) => continueAction(this.db, head.actionId, input) : (input: Parameters<typeof commitAction>[1]) => commitAction(this.db, input);
     const commit = write({
       sessionId, kind: KIND[command.type] ?? "advance", faction, cardId: head.state.deck.currentCard, campaign: turn.campaign, propagandaRound: turn.propagandaRound,
-      cardIndex: turn.cardIndex, phase: turn.phase, box: typeof command["box"] === "string" ? command["box"] : command.type === "ChooseEvent" ? "event" : command.type === "Pass" ? "pass" : null,
+      cardIndex: turn.cardIndex, phase: turn.phase, box: typeof command["box"] === "string" ? command["box"] : command.type === "ChooseEvent" ? "event" : command.type === "Pass" ? "pass" : command.type === "DeclareCeasefire" ? "limitedOp" : null,
       summary: `${command.type}${faction === null ? "" : ` by ${faction}`}`, stateHashBefore: head.stateHash, stateAfter: this.stateInput(ruleset, t.state, t.stateHash),
       status: t.state.pending?.resume?.kind === "operation" ? "pending" : "committed", commands: [{ type: command.type, payload: command, validation: result.validation, rngBefore: head.state.rng }],
       entries: t.logEntries.map((e) => ({ ...e, text: entryText(e) })),
