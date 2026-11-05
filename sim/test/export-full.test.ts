@@ -233,6 +233,9 @@ describe("Codex review fixes on PR #65", () => {
     expect((note?.["context"] as { active_faction: unknown }).active_faction).not.toBeNull();
     const group = text.slice(text.indexOf("### User interface issue"));
     expect(group.slice(0, group.indexOf("\n### ") > 0 ? group.indexOf("\n### ") : undefined)).toContain("Faction: none.");
+    // Same for the card: the first Advance has no card, the context holds the card revealed later.
+    expect((note?.["context"] as { current_card_id: unknown }).current_card_id).not.toBeNull();
+    expect(group.slice(0, group.indexOf("\n### ") > 0 ? group.indexOf("\n### ") : undefined)).toContain("Card: none.");
   });
 
   it("an action the store keeps as advance counts under its command type (DeclareCeasefire)", () => {

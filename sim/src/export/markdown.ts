@@ -38,7 +38,8 @@ function changes(value: unknown): string {
 function categorized(n: Row, action: Row | undefined): string {
   const ctx = obj(n["context"]);
   const at = action ?? ctx;
-  const card = action?.["card_id"] ?? ctx["current_card_id"];
+  // A linked action keeps its own (possibly null) card; the context holds the card at note time.
+  const card = action === undefined ? ctx["current_card_id"] : action["card_id"];
   const rules = list(ctx["rule_refs"]).map((r) => `rule ${escaped(r)}`);
   const ids = [n["annotation_id"], n["action_id"], card].filter((x) => x !== null && x !== undefined).map(escaped);
   const sources = Object.entries(obj(ctx["rule_sources"])).map(([ref, s]) => `${escaped(ref)}: ${escaped(s)}`);
