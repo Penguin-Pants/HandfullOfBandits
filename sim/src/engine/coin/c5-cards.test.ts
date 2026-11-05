@@ -342,6 +342,139 @@ describe("Arrest in Rome (DK-092)", () => {
   });
 });
 
+// P3b-07j: operations (doc 34 s2.3). Cross-Border access needs the Northern Iraq Vacuum flag in these tests.
+const vacuum = (s: GameState): GameState => ({ ...s, flags: { ...s.flags, northernIraqVacuum: true } });
+const lift = (n: number) => ({ locations: ["kdp-zone"], perLocation: {}, sa: { locations: ["kdp-zone"], perLocation: { "kdp-zone": { moves: [{ from: "hakkari", count: n }] } } } });
+const zoneAssault = () => ({ locations: ["kdp-zone"], perLocation: {}, sa: { locations: ["kdp-zone"], perLocation: { "kdp-zone": { moves: [] } } } });
+const declared = (s: GameState): boolean => s.flags["ceasefireDeclaredByPkk"] === true;
+
+describe("Suicide Attacks (DK-078)", () => {
+  it("U: PKK Harm in Dersim, Europe -1, then a free Garrison", () => {
+    const s = setTrack(board("state", "DK-078"), "europe", 2);
+    // 2 Police in Mountain Hakkari activate 1 Guerrilla.
+    const garrison = { locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "van-bitlis", count: 1 }] } } };
+    const { state } = play(s, event("state", "unshaded", [garrison]));
+    expect([marker(state, "dersim", "pkkHarm"), track(state, "europe"), track(state, "resources.state")]).toEqual([1, 1, track(s, "resources.state")]);
+    expect(pieces(state, "hakkari", "guerrilla")["active"] ?? 0).toBeGreaterThan(pieces(s, "hakkari", "guerrilla")["active"] ?? 0);
+  });
+
+  it("S: block only: PKK Harm in Dersim, Europe unchanged", () => {
+    expect(ruleset.cards["DK-078"]?.shaded?.blockOnly).toBe(true);
+    const { state } = play(board("pkk", "DK-078"), event("pkk", "shaded"));
+    expect([marker(state, "dersim", "pkkHarm"), track(state, "europe")]).toEqual([1, 1]);
+  });
+});
+
+describe("Operation Hammer (DK-082)", () => {
+  const run = (posture: string) => play(setTrack(vacuum(board("state", "DK-082")), "posture.kdp", posture), event("state", "unshaded", [lift(2), zoneAssault()])).state;
+  const zone = (s: GameState): number => units(s, "kdp-zone", "guerrilla");
+
+  it("U: at Hostile, Sweep and Assault ignore the Mountain modifier; then KDP to Aligned", () => {
+    const hostile = run("hostile");
+    expect([zone(hostile), track(hostile, "posture.kdp")]).toEqual([zone(run("tolerant")) - 1, "aligned"]);
+  });
+
+  it("U: at Tolerant the Mountain modifier applies and KDP stays", () => {
+    expect(track(run("tolerant"), "posture.kdp")).toBe("tolerant");
+  });
+
+  it("U: at Aligned the Mountain modifier applies to the Sweep (Hostile only); Aligned stays", () => {
+    const aligned = run("aligned");
+    expect([zone(aligned) > zone(run("hostile")), track(aligned, "posture.kdp")]).toEqual([true, "aligned"]);
+  });
+
+  it("S: up to 4 Guerrillas from the KDP Zone to the PUK Zone, Underground; State Resources -2", () => {
+    const s = setPieces(setPieces(setPieces(board("pkk", "DK-082"), "kdp-zone", "guerrilla", 0), "kdp-zone", "guerrilla", 5, "active"), "puk-zone", "guerrilla", 0);
+    const { state } = play(s, event("pkk", "shaded", [4]));
+    expect([pieces(state, "puk-zone", "guerrilla")["underground"], units(state, "kdp-zone", "guerrilla")]).toEqual([4, 1]);
+    expect(track(state, "resources.state")).toBe(Number(track(s, "resources.state")) - 2);
+    expect(codes(s, event("pkk", "shaded", [5]))).toEqual(["badAnswer"]);
+  });
+});
+
+describe("US Designates the PKK (DK-083)", () => {
+  it("U: Europe -1, PKK Resources -2", () => {
+    const s = setTrack(board("state", "DK-083"), "europe", 3);
+    const { state } = play(s, event("state", "unshaded"));
+    expect([track(state, "europe"), track(state, "resources.pkk")]).toEqual([2, Number(track(s, "resources.pkk")) - 2]);
+  });
+
+  it("S: a free Rally on the Europe track; at the Ban cap it is refused and may be skipped", () => {
+    expect(track(play(board("pkk", "DK-083"), event("pkk", "shaded", [plan(["europe"])])).state, "europe")).toBe(2);
+    expect(codes(board("pkk", "DK-083"), event("pkk", "shaded", [plan(["botan"])]))).toContain("eventConstraint");
+    const capped = setTrack(setMarkers(board("pkk", "DK-083"), "europe", "ban", 1), "europe", 3);
+    expect(codes(capped, event("pkk", "shaded", [plan(["europe"])]))).toContain("rallyEuropeCap");
+    expect(track(play(capped, event("pkk", "shaded", [null])).state, "europe")).toBe(3);
+  });
+});
+
+describe("Third Unilateral Ceasefire (DK-088)", () => {
+  it("U: a free Sweep in up to 2 spaces", () => {
+    const s = board("state", "DK-088");
+    const { state } = play(s, event("state", "unshaded", [plan(["hakkari", "botan"])]));
+    expect(track(state, "resources.state")).toBe(track(s, "resources.state"));
+    expect(pieces(state, "hakkari", "guerrilla")["active"] ?? 0).toBeGreaterThan(pieces(s, "hakkari", "guerrilla")["active"] ?? 0);
+    expect(codes(s, event("state", "unshaded", [plan(["hakkari", "botan", "dersim"])]))).toEqual(["eventConstraint"]);
+  });
+
+  it("S: a PKK declaration (Europe +1); PKK Resources +2", () => {
+    const s = board("pkk", "DK-088");
+    const { state } = play(s, event("pkk", "shaded"));
+    expect([track(state, "ceasefire"), declared(state), track(state, "europe"), track(state, "resources.pkk")]).toEqual(["declared", true, 2, Number(track(s, "resources.pkk")) + 2]);
+  });
+
+  it("S: with a ceasefire in force, no declaration and no Europe; Resources still +2 (DEC-69 point 5)", () => {
+    const s = setTrack(board("pkk", "DK-088"), "ceasefire", "declared");
+    const { state } = play(s, event("pkk", "shaded"));
+    expect([declared(state), track(state, "europe"), track(state, "resources.pkk")]).toEqual([false, 1, Number(track(s, "resources.pkk")) + 2]);
+  });
+});
+
+describe("Leader Calls for Withdrawal (DK-097)", () => {
+  // Hakkari has Troops in S0. One Active Guerrilla there makes it a legal target.
+  const target = (): GameState => setPieces(setPieces(board("state", "DK-097"), "hakkari", "guerrilla", 0), "hakkari", "guerrilla", 1, "active");
+
+  it("U: a free Assault in one space with Active Guerrillas", () => {
+    const s = target();
+    const { state } = play(s, event("state", "unshaded", [plan(["hakkari"])]));
+    expect([units(state, "hakkari", "guerrilla"), track(state, "resources.state")]).toEqual([0, track(s, "resources.state")]);
+  });
+
+  it("U: a space with only a PKK Base is refused (activeGuerrillas, gap C3)", () => {
+    const s = setPieces(setPieces(board("state", "DK-097"), "hakkari", "guerrilla", 0), "hakkari", "pkkBase", 1);
+    expect(codes(s, event("state", "unshaded", [plan(["hakkari"])]))).toEqual(["eventConstraint"]);
+    const two = setPieces(target(), "botan", "guerrilla", 1, "active");
+    expect(codes(two, event("state", "unshaded", [plan(["hakkari", "botan"])]))).toEqual(["eventConstraint"]);
+  });
+
+  // Hakkari holds only Active Guerrillas (3) to show the flip; Botan keeps its 2 Underground ones.
+  const domestic = (posture: string): GameState => setTrack(setPieces(setPieces(setPieces(board("pkk", "DK-097"), "hakkari", "guerrilla", 0), "hakkari", "guerrilla", 3, "active"), "kdp-zone", "guerrilla", 0), "posture.kdp", posture);
+
+  it("S: a PKK declaration, then up to 4 Guerrillas from domestic spaces to one open zone, Underground", () => {
+    const s = domestic("restricted");
+    const { state } = play(s, event("pkk", "shaded", [KDP, 3, ["hakkari"], ["hakkari"], ["botan"]]));
+    expect([track(state, "ceasefire"), declared(state), track(state, "europe")]).toEqual(["declared", true, 2]);
+    expect([pieces(state, "kdp-zone", "guerrilla")["underground"], pieces(state, "kdp-zone", "guerrilla")["active"] ?? 0]).toEqual([3, 0]);
+    expect(units(state, "hakkari", "guerrilla")).toBe(units(s, "hakkari", "guerrilla") - 2);
+    expect(codes(s, event("pkk", "shaded", [KDP, 5]))).toEqual(["badAnswer"]);
+    expect(codes(s, event("pkk", "shaded", [KDP, 1, ["syria-bekaa"]]))).toEqual(["badAnswer"]);
+  });
+
+  it("S: the PUK Zone at Host is open; Guerrillas arrive Underground", () => {
+    const s = setPieces(setTrack(domestic("hostile"), "posture.puk", "host"), "puk-zone", "guerrilla", 0);
+    const { state } = play(s, event("pkk", "shaded", [PUK, 2, ["hakkari"], ["hakkari"]]));
+    expect([pieces(state, "puk-zone", "guerrilla")["underground"], units(state, "kdp-zone", "guerrilla")]).toEqual([2, 0]);
+  });
+
+  it("S: a Hostile or Aligned zone is closed (DEC-75 point 10): no Guerrilla moves; the declaration still applies", () => {
+    for (const posture of ["hostile", "aligned"]) {
+      const s = domestic(posture);
+      const { state } = play(s, event("pkk", "shaded", [KDP]));
+      expect([units(state, "kdp-zone", "guerrilla"), units(state, "hakkari", "guerrilla"), declared(state)]).toEqual([0, units(s, "hakkari", "guerrilla"), true]);
+    }
+  });
+});
+
 describe("C5 Propaganda (DK-099)", () => {
   it("is a Propaganda card, not deck-eligible", () => {
     expect([ruleset.cards["DK-099"]?.type, ruleset.cards["DK-099"]?.deckEligible]).toEqual(["propaganda", false]);

@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { appendFileSync, cpSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,6 +16,10 @@ const dir = mkdtempSync(join(tmpdir(), "hob-api-"));
 const file = join(dir, "store.sqlite");
 const packages = fileURLToPath(new URL("../../game-packages", import.meta.url));
 const kurdish = join(packages, "kurdish-coin", "0.1.0");
+// No Kurdish scenario is blocked since P3b-07j. A fixture copy with its only C1 card excluded is (V-CARDS, DEC-51).
+const blockedDir = join(dir, "blocked");
+cpSync(fileURLToPath(new URL("fixtures/packages/valid", import.meta.url)), blockedDir, { recursive: true });
+appendFileSync(join(blockedDir, "scenarios", "s0.yaml"), "excludedCards: [{card: F-001, reason: test}]\n");
 const db = openStore(file);
 const app = buildApp(new SessionService(db, packages));
 afterAll(async () => {
@@ -46,12 +50,13 @@ describe("HTTP API (P2-11)", () => {
     const pkg = body.find((p) => p.packageId === "kurdish-coin");
     expect(pkg?.ok).toBe(true);
     expect(pkg?.scenarios.find((s) => s.id === "s0")?.blockedBy).toEqual([]);
-    expect(pkg?.scenarios.find((s) => s.id === "full-campaign")?.blockedBy.length).toBeGreaterThan(0);
+    expect(pkg?.scenarios.find((s) => s.id === "full-campaign")?.blockedBy).toEqual([]);
     expect(pkg?.assumptions).toHaveLength(18);
   });
 
   it("refuses a blocked scenario and creates an S0 session", async () => {
-    expect((await call("POST", "/api/sessions", { dir: kurdish, scenarioId: "full-campaign", seed: 7, name: "x" })).status).toBe(422);
+    const refused = await call<{ error: string }>("POST", "/api/sessions", { dir: blockedDir, scenarioId: "s0", seed: 7, name: "x" });
+    expect([refused.status, refused.body.error]).toEqual([422, 'Scenario "s0" cannot start.']);
     const created = await call<{ sessionId: string; head: HeadView }>("POST", "/api/sessions", { dir: kurdish, scenarioId: "s0", seed: 7, name: "API test" });
     expect(created.status).toBe(201);
     sessionId = created.body.sessionId;
