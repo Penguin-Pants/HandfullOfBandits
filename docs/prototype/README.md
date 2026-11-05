@@ -43,6 +43,7 @@ Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progre
 | [27](27-village-clearance-draft.md) to [30](30-ceasefire-draft.md) | Approved Phase 3b texts: Village Clearance, Covert Action, Legal Politics, Ceasefire |
 | [31-pivotals-structural-draft.md](31-pivotals-structural-draft.md) | Approved P3b-06 text: remaining Pivotals and structural cards (DEC-67) |
 | [32-c3-cards-draft.md](32-c3-cards-draft.md), [33-c4-cards-draft.md](33-c4-cards-draft.md) | Approved P3b-07 card encoding drafts (DEC-68, DEC-69) |
+| [34-c5-cards-draft.md](34-c5-cards-draft.md) | Approved P3b-07 C5 card encoding draft (DEC-75) |
 
 ## Method
 
@@ -56,4 +57,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Continue P3b-07 with the C5 encoding draft as described in [11-build-plan.md](11-build-plan.md) section 0. The draft needs designer approval before code.
+Continue P3b-07 with P3b-07h from the approved C5 draft [34](34-c5-cards-draft.md) (DEC-75). See [11-build-plan.md](11-build-plan.md) section 0.
