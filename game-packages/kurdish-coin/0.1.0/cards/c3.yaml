@@ -18,7 +18,7 @@
     effects:
       - {type: adjustTrack, track: legitimacy, delta: -2}
       - {type: adjustTrack, track: europe, delta: 1}
-  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "Village Clearance is open from C3 (clearance.from), so the second unshaded sentence needs no effect (DEC-68)"}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "Village Clearance is open from C3 (switch.on.C3, 10 s6.2), so the second unshaded sentence needs no effect (DEC-68)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0057, S-0206, S-0216, S-0039]

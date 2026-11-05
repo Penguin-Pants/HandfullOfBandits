@@ -11,6 +11,7 @@ import { adjustEurope, markers } from "../ops/common.ts";
 import { EMERGENCY, FACTION, MARKER, TRACK } from "../ops/ids.ts";
 import { asString } from "../ops/plan.ts";
 import { violation, type PropagandaPhase } from "./phase.ts";
+import { SWITCH } from "../switches.ts";
 
 const ruleRef = "05 s6.4";
 
@@ -21,12 +22,10 @@ export function onMap(ruleset: Ruleset, state: GameState, marker: string): numbe
 
 /** Emergency Rule steps the State may move to now (07 s8.2 item 3). */
 export function emergencyMoves(ruleset: Ruleset, state: GameState): string[] {
-  // A package without the Emergency Rule mechanic has no moves (and none of its parameters).
-  if (!Object.hasOwn(ruleset.parameters, "campaign.order") || !Object.hasOwn(ruleset.parameters, "emergencyRule.extendedFrom")) return [];
+  // A package without the Emergency Rule track matches no step, so it has no moves.
   const from = String(state.tracks[TRACK.emergencyRule]);
-  const campaigns = param(ruleset, "campaign.order", "list").map(String);
-  const fromC3 = campaigns.indexOf(state.turn.campaign ?? "") >= campaigns.indexOf(param(ruleset, "emergencyRule.extendedFrom", "string"));
-  if (from === EMERGENCY.ohal) return [EMERGENCY.normalizing, ...(fromC3 ? [EMERGENCY.ohalExtendedPowers] : [])];
+  const extended = state.flags[SWITCH.extendedPowers] === true;
+  if (from === EMERGENCY.ohal) return [EMERGENCY.normalizing, ...(extended ? [EMERGENCY.ohalExtendedPowers] : [])];
   if (from === EMERGENCY.ohalExtendedPowers) return [EMERGENCY.ohal];
   if (from === EMERGENCY.normalizing) return [EMERGENCY.ohal];
   return [];

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
+import { codes, inCampaign, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-EVT per side for the C5 cards (11 P3b-07; encoding docs/prototype/34, DEC-75).
@@ -7,7 +7,7 @@ import type { AnyCommand, GameState } from "../core/types.ts";
 // Hakkari has State Control and Police, removed in tests that need a Control space without Police.
 // Legitimacy is 5 so no side meets the track ends.
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
-const c5 = (s: GameState): GameState => setTrack({ ...s, turn: { ...s.turn, campaign: "C5" } }, "legitimacy", 5);
+const c5 = (s: GameState): GameState => setTrack(inCampaign(ruleset, s, "C5"), "legitimacy", 5);
 const board = (faction: "state" | "pkk", card: string): GameState => c5(withCard(turnOf(faction), card));
 const track = (s: GameState, id: string): unknown => s.tracks[id];
 const marker = (s: GameState, id: string, m: string): number => Object.values(s.spaces[id]?.markers[m] ?? {}).reduce((a, n) => a + n, 0);

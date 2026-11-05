@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { codes, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withRoll } from "../../../../test/board.ts";
+import { codes, inCampaign, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withRoll } from "../../../../test/board.ts";
 import type { GameState } from "../../core/types.ts";
 const pressure = op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone"], sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}});
 it("retains the Host Pressure backfire and cost while waiting for a legal replacement Rally", () => {
@@ -35,7 +35,7 @@ it("checks every Cross-Border posture, PUK transit and the early hot pursuit exc
   for (const p of ["host","tolerant","restricted","hostile","aligned"]) {
     const base = setTrack(turnOf("state"),"posture.kdp",p);
     expect(codes(base,border("kdp-zone"))).toEqual([]);
-    const later = {...base,turn: {...base.turn,campaign: "C3"}};
+    const later = inCampaign(ruleset, base, "C3");
     expect(codes(later,border("kdp-zone")).includes("crossBorderAccess")).toBe(p === "host" || p === "tolerant");
     const vacuum = {...later,flags: {...later.flags,northernIraqVacuum: true}};
     expect(codes(vacuum,border("kdp-zone")).includes("crossBorderAccess")).toBe(p === "host");

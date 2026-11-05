@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, engine, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
+import { codes, engine, inCampaign, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 import { income } from "./propaganda/resources.ts";
 import { entryText } from "../../server/text.ts";
@@ -7,7 +7,7 @@ import { entryText } from "../../server/text.ts";
 // T-EVT for the structural cards (11 P3b-06a; approved text docs/prototype/31 s5, DEC-67).
 // S0 board: Botan is the only domestic space with a PKK Base (level -1, no Office).
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
-const c3 = (s: GameState): GameState => ({ ...s, turn: { ...s.turn, campaign: "C3" } });
+const c3 = (s: GameState): GameState => inCampaign(ruleset, s, "C3");
 const reveal = (card: string, s: GameState = engine.start(ruleset, "s0", 1).state): GameState => c3({ ...s, deck: { ...s.deck, piles: [[card, "DK-016"]] } });
 const offices = (s: GameState): string[] => ruleset.spaces.filter((x) => (s.spaces[x.id]?.markers["office"]?.["default"] ?? 0) > 0).map((x) => x.id);
 const leadership = (s: GameState): Readonly<Record<string, number>> | undefined => s.spaces["syria-bekaa"]?.markers["leadership"];

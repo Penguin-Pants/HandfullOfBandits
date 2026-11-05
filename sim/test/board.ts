@@ -4,6 +4,7 @@ import { rollDie, seedRng } from "../src/engine/core/rng.ts";
 import { coinHandlers } from "../src/engine/coin/handlers.ts";
 import { PHASE } from "../src/engine/coin/phases.ts";
 import type { AnyCommand, GameState, LogEntry } from "../src/engine/core/types.ts";
+import { switchesAt } from "../src/engine/coin/switches.ts";
 import { kurdish } from "./kurdish-package.ts";
 
 export const ruleset = kurdish.ruleset;
@@ -14,6 +15,11 @@ export function turnOf(faction: "state" | "pkk", seed = 1): GameState {
   const s = engine.start(ruleset, "s0", seed).state;
   const other = faction === "state" ? "pkk" : "state";
   return { ...s, turn: { ...s.turn, phase: PHASE.card }, initiative: { ...s.initiative, firstEligible: faction, secondEligible: other } };
+}
+
+/** `state` moved to `campaign` with its switch flags (10 s6.2), as after the Resets of a full game. */
+export function inCampaign(rules: typeof ruleset, state: GameState, campaign: string): GameState {
+  return { ...state, turn: { ...state.turn, campaign }, flags: { ...state.flags, ...switchesAt(rules, campaign) } };
 }
 
 /** Set the count of one piece face in a space; Available absorbs the difference. */

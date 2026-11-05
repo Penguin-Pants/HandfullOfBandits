@@ -47,7 +47,6 @@
 - {id: civicAction.reliefCost, value: 1, tune: false, source: "07 s1.3"}
 - {id: civicAction.redressCost, value: 3, tune: false, source: "07 s1.3"}
 - {id: civicAction.returnCost, value: 3, tune: false, source: "07 s1.3"}
-- {id: civicAction.returnCampaigns, value: [C5], tune: false, source: "07 s3.3"}
 - {id: civicAction.shiftCost, value: 2, tune: false, source: "07 s1.3"}
 - {id: civicAction.maxShifts, value: 2, tune: false, source: "07 s1.3"}
 - {id: rally.costPerLocation, value: 1, tune: false, source: "06 s4.1"}
@@ -79,7 +78,11 @@
 - {id: strike.europeLoss, value: 1, tune: false, source: "06 s5.3 item 5"}
 # 05 s6 and 07 s8 Propaganda (P2-10)
 - {id: campaign.order, value: [C1, C2, C3, C4, C5], tune: false, source: "05 s1 item 1"}
-- {id: emergencyRule.extendedFrom, value: C3, tune: false, source: "07 s8.2 item 2"}
+# 10 s6.2 structural switches (P3c-01): flags set on entering each Campaign, at setup and Reset.
+- {id: switch.on.C1, value: [hotPursuit], tune: false, source: "06 s3.2 item 3; 10 s6.2 row C3"}
+- {id: switch.on.C3, value: [villageClearance, covertAction, declareCeasefire, extendedPowers], tune: false, source: "10 s6.2 row C3; 06 s3.4, s3.5; 07 s7.1, s8.2 item 2"}
+- {id: switch.off.C3, value: [hotPursuit], tune: false, source: "10 s6.2 row C3"}
+- {id: switch.on.C5, value: [returnByCivicAction], tune: false, source: "10 s6.2 row C5; 07 s3.3"}
 - {id: emergencyRule.returnCost, value: 1, tune: false, source: "07 s8.2 item 3"}
 - {id: recordSheet.civilianGap, value: 2, tune: false, source: "09 s6"}
 - {id: recordSheet.boardGap, value: 3, tune: false, source: "09 s6"}
@@ -100,11 +103,9 @@
 - {id: crossBorder.cost, value: 2, tune: false, source: "06 s3.2"}
 - {id: crossBorder.maxTroops, value: 6, tune: false, source: "06 s3.2"}
 - {id: crossBorder.hotPursuitTroops, value: 3, tune: false, source: "06 s3.2"}
-- {id: clearance.from, value: C3, tune: false, source: "06 s3.4 condition 2; DD-07.2"}
 - {id: clearance.legitimacyPerPop, value: 2, tune: false, source: "06 s3.4 condition 4, effect 2"}
 - {id: clearance.receptionShortfallCost, value: 1, tune: false, source: "06 s3.4 effect 5"}
 - {id: clearance.officeCost, value: 1, tune: false, source: "06 s3.4 effect 7; 07 s2 DD-10.5"}
-- {id: covert.from, value: C3, tune: false, source: "06 s3.5"}
 - {id: covert.minLegitimacy, value: 4, tune: false, source: "06 s3.5"}
 - {id: hizbullah.spaces, value: [mardin-batman, diyarbakir-city, diyarbakir-rural, botan], tune: false, source: "07 s10.1 item 2 (tie order); DK-053"}
 - {id: legal.officeOrder, value: [diyarbakir-city, western-cities, mardin-batman, van-bitlis, sanliurfa, bingol-mus, diyarbakir-rural, botan, agri, adiyaman, elazig], tune: false, source: "07 s6.4 line 4"}
@@ -115,7 +116,6 @@
 - {id: legal.banEurope, value: 1, tune: false, source: "07 s6.4 line 1"}
 - {id: legal.localWinsOffices, value: 2, tune: false, source: "DK-094 shaded (deck CSV); docs/prototype/34 gap C4"}
 - {id: legal.localWinsOverLimit, value: 1, tune: false, source: "DK-094 shaded (deck CSV); docs/prototype/34 gap C4"}
-- {id: ceasefire.from, value: C3, tune: false, source: "07 s7.1"}
 - {id: ceasefire.declareEurope, value: 1, tune: false, source: "07 s7.1"}
 - {id: ceasefire.pkkBreachEurope, value: 1, tune: false, source: "07 s7.2"}
 - {id: ceasefire.stateBreachLegitimacy, value: 2, tune: false, source: "07 s7.2"}

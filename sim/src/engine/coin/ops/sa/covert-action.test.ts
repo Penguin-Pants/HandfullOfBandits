@@ -3,12 +3,12 @@ import { createExec } from "../../../core/exec.ts";
 import type { GameState } from "../../../core/types.ts";
 import { checkStandings } from "../../victory.ts";
 import { revealCovert } from "../../propaganda/legitimacy.ts";
-import { codes, engine, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../../test/board.ts";
+import { codes, engine, inCampaign, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../../test/board.ts";
 
 // T-OPS, T-VAL and T-VIC for Covert Action (11 P3b-03; research 06 s3.5, 05 s6.4 step 5, 09 s3;
 // approved text docs/prototype/28). Hakkari in S0: 2 Troops, 1 Police, 2 Underground Guerrillas,
 // State Control. Botan holds the Sweep, so the SA space need not be an Op space.
-const c3 = (s: GameState = turnOf("state")): GameState => ({ ...s, turn: { ...s.turn, campaign: "C3" } });
+const c3 = (s: GameState = turnOf("state")): GameState => inCampaign(ruleset, s, "C3");
 const covert = (target = "hakkari", opAction = "state.sweep", opSpace = "botan") =>
   op("state", "opSa", { op: opAction, locations: [opSpace], sa: { action: "state.covert-action", locations: [target], perLocation: {}, timing: "before" } });
 const marker = (s: GameState, id: string, m: string): number => Object.values(s.spaces[id]?.markers[m] ?? {}).reduce((a, b) => a + b, 0);
@@ -33,7 +33,7 @@ describe("Covert Action effects (06 s3.5)", () => {
 describe("Covert Action conditions (06 s3.5)", () => {
   it("is available from C3", () => {
     expect(codes(turnOf("state"), covert())).toEqual(["covertCampaign"]);
-    expect(codes({ ...turnOf("state"), turn: { ...turnOf("state").turn, campaign: "C4" } }, covert())).toEqual([]);
+    expect(codes(inCampaign(ruleset, turnOf("state"), "C4"), covert())).toEqual([]);
   });
 
   it("needs Legitimacy 4 or more", () => {

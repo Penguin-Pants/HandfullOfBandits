@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { GameState } from "../../../core/types.ts";
 import { netChange } from "../../stop-rules.ts";
-import { codes, engine, op, pieces, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf } from "../../../../../test/board.ts";
+import { codes, engine, inCampaign, op, pieces, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf } from "../../../../../test/board.ts";
 
 // T-OPS, T-VAL and T-PERV for Village Clearance (11 P3b-02; research 06 s3.4, 07 s3, 09 s7.1;
 // approved text docs/prototype/27; PA-18). Hakkari in S0: Mountain, Pop 1, Passive Opposition,
 // 2 Troops, 1 Police, 2 Underground Guerrillas, State Control.
-const ready = (s: GameState = turnOf("state")): GameState => { const t = setTrack(s, "emergencyRule", "ohal"); return { ...t, turn: { ...t.turn, campaign: "C3" } }; };
+const ready = (s: GameState = turnOf("state")): GameState => { const t = setTrack(s, "emergencyRule", "ohal"); return inCampaign(ruleset, t, "C3"); };
 const clear = (target = "hakkari", reception: string | null = "diyarbakir-city", opAction = "state.sweep", timing = "after") =>
   op("state", "opSa", { op: opAction, locations: [target], sa: { action: "state.village-clearance", locations: [target], perLocation: reception === null ? {} : { [target]: { reception } }, timing } });
 const legitimacy = (s: GameState): unknown => s.tracks["legitimacy"];
@@ -86,8 +86,8 @@ describe("Village Clearance conditions (06 s3.4)", () => {
     expect(engine.validate(ruleset, setTrack(ready(), "emergencyRule", "martialLaw"), clear()).violations[0]?.message).toBe("Village Clearance: Emergency Rule is Martial Law. Needs OHAL or OHAL Extended Powers (06 s3.4 condition 1).");
   });
 
-  it("needs Campaign C3 or later (DEC-68)", () => {
-    const c2 = { ...ready(), turn: { ...ready().turn, campaign: "C2" } };
+  it("needs the C3 switch (DEC-68; 10 s6.2)", () => {
+    const c2 = inCampaign(ruleset, ready(), "C2");
     expect(codes(c2, clear())).toEqual(["clearancePowers"]);
     expect(engine.validate(ruleset, c2, clear()).violations[0]?.message).toBe("Village Clearance is available from Campaign C3 (06 s3.4 condition 2).");
     expect(codes(ready(), clear())).toEqual([]);

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { codes, engine, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
+import { codes, engine, inCampaign, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-VAL and T-OPS for ceasefire declaration, restrictions and breach (11 P3b-05; research 07 s7.1,
 // s7.2; 05 s4 item 6; approved text docs/prototype/30, DEC-66).
-const c3 = (s: GameState): GameState => ({ ...s, turn: { ...s.turn, campaign: "C3" } });
+const c3 = (s: GameState): GameState => inCampaign(ruleset, s, "C3");
 const at = (s: GameState, ceasefire: string): GameState => setTrack(c3(s), "ceasefire", ceasefire);
 const declare = (faction = "pkk"): AnyCommand => ({ type: "DeclareCeasefire", faction });
 const rb = (s: GameState, side: string): number => ruleset.spaces.reduce((n, x) => n + (s.spaces[x.id]?.markers["restraintBroken"]?.[side] ?? 0), 0);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
+import { codes, inCampaign, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
 import { createExec } from "../../core/exec.ts";
 import type { AnyCommand, GameState } from "../../core/types.ts";
 import { PHASE } from "../phases.ts";
@@ -82,7 +82,7 @@ describe("T-PROP: Legitimacy (05 s6.4)", () => {
 });
 
 describe("T-PROP: Emergency Rule step table (P3b-01; research 07 s8.1 and s8.2)", () => {
-  const atStep = (step: string, c = "C2"): GameState => at({ ...setTrack(s0, "emergencyRule", step), turn: { ...s0.turn, campaign: c } }, "legitimacy");
+  const atStep = (step: string, c = "C2"): GameState => at(inCampaign(ruleset, setTrack(s0, "emergencyRule", step), c), "legitimacy");
   const legitimacy = (s: GameState): number => Number(s.tracks["legitimacy"]);
   const after = (s: GameState, command: AnyCommand): GameState => play(s, command).state;
 

@@ -1,6 +1,7 @@
 import { discardMomentum } from "../../core/modifiers.ts";
 // Reset (research 05 s6.8; DEC-53). Every Guerrilla flips, including Hostile and Aligned boxes.
 import { resetEligibility } from "../sequence/ct.ts";
+import { enterCampaign } from "../switches.ts";
 import type { PropagandaPhase } from "./phase.ts";
 import { violation } from "./phase.ts";
 const ruleRef = "05 s6.8";
@@ -21,6 +22,7 @@ export const resetPhase: PropagandaPhase = {
     const campaigns = ctx.ruleset.scenarios[ctx.state.meta.scenarioId]?.campaigns ?? [];
     const next = campaigns[campaigns.indexOf(ctx.state.turn.campaign ?? "") + 1] ?? null;
     ctx.write(s => resetEligibility(ctx.ruleset, {...s, turn: {...s.turn, campaign: next}}));
+    enterCampaign(ctx, next);
     ctx.log("EligibilityChanged", {firstEligible: ctx.state.initiative.firstEligible, secondEligible: ctx.state.initiative.secondEligible, campaign: next}, ruleRef);
   },
 };
