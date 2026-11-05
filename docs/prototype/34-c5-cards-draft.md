@@ -1,15 +1,15 @@
 # 34 C5 cards: encoding draft
 
-Status: **draft, waits for designer approval.** Code starts after approval (as DEC-68, DEC-69). To build in P3b-07h to P3b-07k ([11](11-build-plan.md) section 4). Source: deck CSV rows DK-078 to DK-099; research 05 s5; 06 s3.3, s5.4; 07 s3, s4.7, s5, s6, s7.1, s8.2, s10.2; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md) and [33](33-c4-cards-draft.md).
+Status: **approved by the designer 2026-11-05** (DEC-75): section 4 as proposed except points 1 and 11 (changed answers marked). To build in P3b-07h to P3b-07k ([11](11-build-plan.md) section 4). Source: deck CSV rows DK-078 to DK-099; research 05 s5; 06 s3.3, s5.4; 07 s3, s4.7, s5, s6, s7.1, s8.2, s10.2; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md) and [33](33-c4-cards-draft.md).
 
-Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with a proposed answer and an alternative.
+Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with its approved answer.
 
 ## 1. Batches (5 cards per PR)
 
 | Batch | Cards | Engine additions |
 |---|---|---|
 | P3b-07h | DK-079, DK-080, DK-085, DK-086, DK-087, Propaganda DK-099 | C1 |
-| P3b-07i | DK-084, DK-089, DK-090, DK-091, DK-092 | None (point 6) |
+| P3b-07i | DK-084, DK-089, DK-090, DK-091, DK-092 | None |
 | P3b-07j | DK-078, DK-082, DK-083, DK-088, DK-097 | C3 |
 | P3b-07k | DK-081, DK-094, DK-095, DK-096 | C4, C5 |
 
@@ -22,12 +22,12 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 **DK-079 Susurluk Car Crash (Nov 1996)**, T3. Chain: before DK-080.
 - U: "Contained inquiry: reveal 1 Covert marker at random. A minister resigns: Legitimacy +1."
 - S: "Reveal up to 2 Covert markers at random (07, section 10.2). Europe +1."
-- Encoding: U, procedure `covert.revealRandom` once, Legitimacy +1. S, `covert.revealRandom` twice, Europe +1. See point 1.
+- Encoding: U, procedure `covert.revealRandom` once, Legitimacy +1. S, `covert.revealRandom`, then a choice (stop or reveal a second), Europe +1. See point 1.
 
 **DK-080 Susurluk Commission Report (May 1997)**, T3. Chain: after DK-079.
 - U: "Dissent notes limit the report: reveal 1 Covert marker at random. The State may then pay 1 Resource to remove 1 State Harm marker."
 - S: "Reveal up to 2 Covert markers at random. Then apply Guard Abuse (07, section 4.7)."
-- Encoding: U, `covert.revealRandom`, then as DK-018 shaded: `conditional` State Resources at least 1, a choice, then `forEachSpace` 0 to 1 spaces with a State Harm marker (State Resources -1, remove it). S, `covert.revealRandom` twice, then the Guard Abuse block of DK-006 shaded (`forEachSpace all`, DEC-57). No gap. See points 1 and 11.
+- Encoding: U, `covert.revealRandom`, then as DK-018 shaded: `conditional` State Resources at least 1, a choice, then `forEachSpace` 0 to 1 spaces with a State Harm marker in a space with State Control (`control: state`) and a Police (`spaceHas police`) (State Resources -1, remove it). S, `covert.revealRandom`, then a choice (stop or reveal a second), then the Guard Abuse block of DK-006 shaded (`forEachSpace all`, DEC-57). No gap. See points 1 and 11.
 
 **DK-085 HADEP Congress Flag Case (1996-1997)**, T0
 - U: "Place the Closure Case marker if none is on the track. Legal Space to Prosecuted."
@@ -43,7 +43,7 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 **DK-087 Migration Commission Report (Jan 1998)**, T2
 - U: "Official count adopted: the State may pay Relief for up to 2 Reception markers at 1 Resource each."
 - S: "Legitimacy -1 per 2 Displacement markers on the map (round down, maximum -3). Place 1 Reception marker in Western Cities."
-- Encoding: U, twice: `conditional` State Resources at least 1, then `forEachSpace` 0 to 1 spaces with a Reception marker (State Resources -1, remove it). Two steps let both markers come from one space. S, procedure `hrw.report` (same count as DK-069 shaded, DEC-69 point 8), then `placeMarker reception` in Western Cities. See point 11.
+- Encoding: U, twice: `conditional` State Resources at least 1, then `forEachSpace` 0 to 1 spaces with a Reception marker in a space with State Control (`control: state`) and a Police (`spaceHas police`) (State Resources -1, remove it). Two steps let both markers come from one space. S, procedure `hrw.report` (same count as DK-069 shaded, DEC-69 point 8), then `placeMarker reception` in Western Cities. See point 11.
 
 **DK-099 Propaganda**: as DK-035.
 
@@ -118,7 +118,7 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 **DK-095 Return to Village Project (1999)**, T0
 - U: "Return event: the State may remove up to 2 Displacement markers for 3 Resources each (07, section 3.3; no Support, Harm stays). Legitimacy +1."
 - S: "Return stays small: Legitimacy -1 if 3 or more Displacement markers are on the map."
-- Encoding: U, `forEachSpace` 0 to 2 spaces with a Displacement marker (one per space: Village Clearance refuses a second); in each, `conditional` State Resources at least 3, then Resources -3 and remove the marker on its New or Old side; then Legitimacy +1. S, `conditional` `markersAtLeast` Displacement 3, then Legitimacy -1.
+- Encoding: U, `forEachSpace` 0 to 2 spaces with a Displacement marker in a space with State Control (`control: state`) and a Police (`spaceHas police`) (one per space: Village Clearance refuses a second); in each, `conditional` State Resources at least 3, then Resources -3 and remove the marker on its New or Old side; then Legitimacy +1. S, `conditional` `markersAtLeast` Displacement 3, then Legitimacy -1.
 - Gap C5: condition `markersAtLeast` (marker IDs and a value, counted on the map, all sides). See point 11.
 
 **DK-096 Repentance Law (Aug 1999)**, T0
@@ -131,23 +131,22 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 | ID | Addition | Cards |
 |---|---|---|
 | C1 | Procedure `strasbourg.report`: Legitimacy -1 per 2 State Harm markers, at most 3. One function with `hrw.report`; parameters `hrw.markersPerLoss` and `hrw.maxLoss` become `report.markersPerLoss` and `report.maxLoss` | DK-086 |
-| C2 | Only if point 6 takes the alternative: modifier `adana`, read by Host Pressure | DK-091 |
 | C3 | Free action constraint `activeGuerrillas` | DK-097 |
 | C4 | Procedure `legal.localWins`, parameters `legal.localWinsOffices` (2) and `legal.localWinsOverLimit` (1) | DK-094 |
 | C5 | Condition `markersAtLeast` (schema change, `make schema`) | DK-095 |
 
 The "move ... Underground" sides (DK-082, DK-084, DK-090, DK-097 shaded) meet carried follow-up 2 ([11](11-build-plan.md) section 0): `movePieces` moves Underground Guerrillas first. That fix is outside this draft.
 
-## 4. Open points (proposed answers)
+## 4. Resolved points (designer, 2026-11-05)
 
-1. **"Reveal up to 2 Covert markers at random" (DK-079 and DK-080 shaded):** reveal 2 if 2 or more are on the map, else what there is. The executor chooses nothing (random, 07 s10.2 item 2). Alternative: the executor may stop after 1.
+1. **"Reveal up to 2 Covert markers at random" (DK-079 and DK-080 shaded):** **approved: the executor may stop after 1.** Each reveal is random (07 s10.2 item 2); after the first, the executor chooses to stop or reveal a second. The proposed "always 2" was not chosen.
 2. **DK-081 "one step toward Normalizing":** follow the 07 s8.2 moves. OHAL Extended Powers goes to OHAL; OHAL goes to Normalizing; at Normalizing nothing happens. The move is free and is not the State's Propaganda step. Alternative: the track order, so OHAL Extended Powers goes straight to Normalizing.
 3. **DK-082 order:** read KDP posture once, before the free actions. The KDP step comes after the Assault, as printed. Alternative: step first, so the Assault meets KDP at Aligned and removes one piece per Troop (`assault.ts`).
 4. **DK-084 shaded "between":** one direction, chosen by the executor, up to 3 Guerrillas. Alternative: both directions in one Event, 3 in all.
 5. **DK-085 unshaded while Legal Space is Banned:** nothing happens, as DK-051, DK-065 and DK-068 (DEC-72, DEC-71, DEC-69 point 4). With a case already filed, only "Legal Space to Prosecuted" applies (no change). Alternative: file anyway.
-6. **DK-091 Capability, Host Pressure clause:** Host Pressure on Syria already needs the Leadership Present (06 s5.4), and Syria reaching Hostile flips it to Abroad (07 s5.2 item 4). No scenario starts Syria at Hostile (Scenario C starts Restricted with the Leadership Present, research 10 s5), and no rule flips the Leadership back. So the clause is already true in every reachable state. Proposed: no modifier; a test proves Host Pressure on Syria is refused after DK-091 with Syria Hostile. Alternative: modifier `adana` with its own Host Pressure check (gap C2), in case a later rule returns the Leadership.
+6. **DK-091 Capability, Host Pressure clause:** Host Pressure on Syria already needs the Leadership Present (06 s5.4), and Syria reaching Hostile flips it to Abroad (07 s5.2 item 4). No scenario starts Syria at Hostile (Scenario C starts Restricted with the Leadership Present, research 10 s5), and no rule flips the Leadership back. So the clause is already true in every reachable state. Approved: no modifier; a test proves Host Pressure on Syria is refused after DK-091 with Syria Hostile. Not chosen: modifier `adana` with its own Host Pressure check.
 7. **DK-094 unshaded with a Closure Case marker on the track:** the marker stays (the text does not withdraw it), so line 1 still bans at the next Legal Politics phase. Alternative: remove the marker with the move to Open.
 8. **DK-094 shaded while Legal Space is Banned:** nothing happens. Line 3 sets no limit while Banned, so "the Office limit plus 1" is undefined. At the next Legal Politics phase line 5 removes the Office over the limit. Alternative: run line 2, as DK-065 shaded.
 9. **DK-096 shaded in a Hostile or Aligned host box:** not eligible. Guerrillas there are Active by the posture rule (07 s5.1), and Reset is the only exception (DEC-53). Alternative: any space with Guerrillas.
 10. **DK-097 shaded "(posture permitting)":** a zone is open if PKK March may enter it: Host, Tolerant or Restricted (07 s5.1). The Restricted March cost and activation do not apply (free, Underground as printed). With both zones closed, no Guerrilla moves; the declaration still applies.
-11. **Civic Action conditions on event spending (DK-080, DK-087, DK-095 unshaded):** the card replaces Civic Action, so State Control and Police are not needed. The printed cost applies. Alternative: require Control and Police, as Civic Action (07 s1.3).
+11. **Civic Action conditions on event spending (DK-080, DK-087, DK-095 unshaded):** **approved: require State Control and at least 1 Police in the space, as Civic Action (07 s1.3).** The printed cost applies. No new engine code: conditions `control` and `spaceHas`. The proposed "no conditions" was not chosen.
