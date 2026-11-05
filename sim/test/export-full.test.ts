@@ -241,4 +241,11 @@ describe("Codex review fixes on PR #65", () => {
     expect(md2).toContain(`| ${early.sessionId} | pkk | DeclareCeasefire | 1 |`);
     expect(md2).not.toContain(`| ${early.sessionId} | pkk | advance |`);
   });
+
+  it("an Op or SA the engine skipped (EffectSkipped) is not counted as used", () => {
+    const skipped = (id: string, effect: string, action: string) => ({ action_id: id, session_id: early.sessionId, kind: "cardChoice", faction: "pkk", status: "committed", card_id: null, box: "opSa", summary: "ChooseOperation by pkk", entries: [{ kind: "EffectSkipped", rule_ref: null, assumption_ref: null, data: { effect, action } }], commands: [{ type: "ChooseOperation", payload: { type: "ChooseOperation", faction: "pkk", plan: { op: "pkk.attack", sa: { action: "pkk.extort" } } } }] });
+    const md3 = exportMarkdown({ ...both, actions: [...both.actions, skipped("X2", "specialActivity", "pkk.extort"), skipped("X3", "operation", "pkk.attack")] });
+    expect(md3).toContain(`| ${early.sessionId} | pkk | pkk.attack | 1 |`);
+    expect(md3).toContain(`| ${early.sessionId} | pkk | pkk.extort | 1 |`);
+  });
 });

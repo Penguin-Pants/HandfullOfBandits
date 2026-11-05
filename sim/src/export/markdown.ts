@@ -14,7 +14,11 @@ const pairs = (value: unknown): string => Object.entries(obj(value)).map(([k, v]
 /** Op, SA or Event side of a committed action, as use count keys (07 s8.2 item 6). */
 function usesOf(action: Row): string[] {
   const p = actionPlan(action);
-  if (p.type === "ChooseOperation") return [p.op, p.sa].filter((x): x is string => x !== null);
+  if (p.type === "ChooseOperation") {
+    // The engine logs EffectSkipped for an Op or SA that did not run (choose-operation.ts).
+    const skipped = new Set(list(action["entries"]).map(obj).filter((e) => e["kind"] === "EffectSkipped").map((e) => obj(e["data"])).filter((d) => d["effect"] === "operation" || d["effect"] === "specialActivity").map((d) => d["action"]));
+    return [p.op, p.sa].filter((x): x is string => x !== null && !skipped.has(x));
+  }
   if (p.type === "ChooseEvent") return [`event.${String(p.side)}`];
   if (p.type === "Pass") return ["pass"];
   // The command type, not the stored kind: the store files some faction actions as `advance`.
