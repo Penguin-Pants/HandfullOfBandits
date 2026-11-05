@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { turnOf, withCard } from "../../../test/board.ts";
+import { setMarkers, turnOf, withCard } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { mockApi } from "../../../test/ui/mock-api.ts";
 import { boardView } from "../../server/view.ts";
@@ -109,4 +109,29 @@ it("opens a compact track without using Space to advance the game", async () => 
   expect(submit).not.toHaveBeenCalled();
   fireEvent.click(summary);
   expect((track as HTMLDetailsElement).open).toBe(true);
+});
+
+describe("Play hidden markers (P4-07)", () => {
+  it("shows Covert markers by default and Hide Covert removes them from the map, legend and space detail", async () => {
+    const state = setMarkers(withCard(turnOf("state"), "DK-012"), "botan", "covert", 1);
+    const h: Head = { actionId: "S-A3", stateHash: "S-A3", state, derived: null as never, view: boardView(kurdish.ruleset, kurdish.data, state) };
+    const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))) });
+    render(<Play api={api} sessionId="S" />);
+    await screen.findByText(/DK-012/, { selector: "span" });
+    fireEvent.click(screen.getByRole("button", { name: "Key" }));
+    fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "botan" } });
+    const covert = (): number => document.querySelectorAll("[aria-label^='Covert (face down)']").length;
+    expect(covert()).toBeGreaterThan(0);
+    expect(screen.getByLabelText("Legend").textContent).toContain("Covert (face down)");
+    expect(screen.getByLabelText("Botan detail").textContent).toContain("1 Covert (face down)");
+    const toggle = screen.getByRole("button", { name: "Hide Covert" });
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(covert()).toBe(0);
+    expect(screen.getByLabelText("Legend").textContent).not.toContain("Covert");
+    expect(screen.getByLabelText("Botan detail").textContent).not.toContain("Covert");
+    fireEvent.click(toggle);
+    expect(covert()).toBeGreaterThan(0);
+  });
 });

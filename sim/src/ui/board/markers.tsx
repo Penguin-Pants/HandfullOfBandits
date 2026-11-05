@@ -1,6 +1,6 @@
 // Map markers (GMT COIN style): a square level marker for Support or Opposition, and round
 // chips for space markers. Coercion plays the role of Terror in this design (it blocks shifts).
-import type { SpaceView } from "../api.ts";
+import type { BoardView, SpaceView } from "../api.ts";
 
 /** Short code and color per marker; unknown markers fall back to their first letters. */
 const CHIP: Readonly<Record<string, { code: string; fill: string; name: string }>> = {
@@ -14,6 +14,11 @@ const CHIP: Readonly<Record<string, { code: string; fill: string; name: string }
   office: { code: "O", fill: "#6a1b9a", name: "Office" },
   leadership: { code: "L", fill: "#00695c", name: "Leadership" },
 };
+
+/** The view with every hidden (face-down) marker removed: the hide toggle (08 s3.1 item 5, GAP-O01). */
+export function withoutHidden(view: BoardView): BoardView {
+  return { ...view, spaces: view.spaces.map((s) => ({ ...s, markers: s.markers.filter((m) => !m.hidden) })) };
+}
 
 export function chipOf(marker: string): { code: string; fill: string; name: string } {
   return CHIP[marker] ?? { code: marker.slice(0, 2).toUpperCase(), fill: "#555", name: marker };

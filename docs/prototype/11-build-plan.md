@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-06 done. **Next: P4-07** (hidden-information view toggle).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-07 done. **Next: P4-08** (tester materials and rule lookup).
 
-## 0. Resume here (updated 2026-11-05, P4-06)
+## 0. Resume here (updated 2026-11-05, P4-07)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P4-07** (hidden-information view toggle; accept: Covert markers hidden in view mode). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: P4-08** (tester materials: `docs/tester/INSTALL.md`, `docs/tester/HOW-TO-PLAY.md`, rule lookup from a log rule ref to its text in the package rule index; accept: a new tester installs and finishes S0 using only these files). The acceptance needs a person who has not used the app; record who ran it. Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+
+**P4-07 is done:** the Play map toolbar has **Hide Covert** (off by default, DEC-23). On, it removes every hidden marker (`hidden: true` in `markers.yaml`; Covert) from the map, hover text, Key and space detail (`ui/board/markers.tsx` `withoutHidden`). Not hidden: the log lines (designer decision, doc 28 s2.3), the changed-space outline, scores and the state viewer. The toggle is local to the screen and resets on reload.
 
 **P4-06 is done:** `sim regression create <annotationId>` makes a case from a note's action (07 s9): package hash, scenario, seed, options, the command range from session start to that action and expectations from the stored run (state facts the action changed, its applied effects, every round's metrics, the result). `sim regression run <caseId> --package <dir>` replays it under a target package and reports `same`, `changed` (per-round metric diff, old against new), `incompatible` (missing scenario or option, or the first rejected command with its violations) or `error`, flags "deck order differs" and stores the run. `sim regression compare <actionId> <actionId>` is the per-round metric diff of two branch paths. Not built: a UI (no task row; see section 5).
 
@@ -837,7 +839,19 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
-**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-06 done; **next: P4-07**.
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-07 done; **next: P4-08**.
+
+**P4-07 (2026-11-05):** complete. Hidden-information view toggle (08 s3.1 item 5; GAP-O01; DEC-23).
+- **Filter** (`ui/board/markers.tsx` `withoutHidden`, pure): the board view with every marker whose package entry has `hidden: true` removed from each space. The server view already flags them (`server/view.ts`); no server or store change.
+- **UI** (`ui/play/Play.tsx`): **Hide Covert** in the map toolbar (`aria-pressed`), off by default (DEC-23: solo play shows face-down markers). On, the map, hover text, Key and space detail read the filtered view. The state is local to the screen, so a reload shows the markers again.
+- **Not hidden (by design or out of scope):** log and Last action lines ("Covert marker placed in ...", shown to both players by designer decision, doc 28 s2.3 and DEC-64); the changed-space outline (Covert Action also removes a Guerrilla there, so the space changes anyway); scores, which count no hidden marker; the state viewer (a designer tool).
+- Tests: `ui/board/board.test.tsx` (`withoutHidden`: only hidden markers removed, pieces kept, input unchanged) and `ui/play/play.test.tsx` (markers shown by default; the toggle removes them from the map, Key and Botan detail and shows them again). Both failed on assertions against the stub. Mutation checks: the map, the Key or the detail left on the unfiltered view each fail the Play test.
+- **TWO-PASS REVIEW.** Pass 1 traced the toggle from the Play toolbar to every consumer of the board view: `MapCanvas` to `Board` (atlas stacks, schematic chips, hover text), `Legend`, `SpaceDetail`. Other `Board` callers: the state viewer only. Chromium at 1366 x 768 against a real server: the toolbar row wraps as before, no page overflow. No file paths in this change.
+  - **Drop:** the changed-space outline still marks a space where only a hidden marker changed. Covert Action also removes an Underground Guerrilla there, and a reveal adds State Harm, so the outline shows in both cases with the toggle off or on.
+  - **Fix (Pass 2):** `withoutHidden` was generic over any view with spaces; its one caller passes `BoardView`. Narrowed.
+  - **Propose:** none.
+- **Validation:** `make check` passes. `make test`: 96 files, 1390 tests pass. `make e2e`: 30 checks pass (Playwright from `/opt/node-tools`, Chromium preinstalled). Golden replays unchanged. Schema unchanged (no migration). Node 24.22.2 on Linux.
+- **Blocker for the next task:** none for the build. P4-08 acceptance needs a new tester (a person), which this repository cannot supply.
 
 **P4-06 (2026-11-05):** complete. Regression cases from notes and runs against a target version (06 s3.10, s3.11; 07 s9; 09 s7).
 - **Case** (`cli/regression.ts` `createCase`; repo `store/repos/regression.ts`): from a note with an action (not setup). Stores the source session, action and note, package hash, seed, scenario, options, `command_range` (first and last command ID on the action's historical path, undone actions included, 09 s6) and expectations taken from stored data, so the old package need not load: `stateFact` for each leaf of tracks, flags, spaces and pools that the action changed; `logFact` for each `EffectApplied` entry of the action; `metric` for tracks, scores, margins, Harm, Resources, income, postures, Legal Space, Successor, closure case and ceasefire of every round on the path; `outcome` when the game ended there. Label: the note's first line or `--label`.
@@ -949,7 +963,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P4-04 ✅ | Branch from a past action | New branch plays. Original branch intact |
 | P4-05 ✅ | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
 | P4-06 ✅ | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
-| P4-07 | Hidden-information view toggle | Covert markers hidden in view mode |
+| P4-07 ✅ | Hidden-information view toggle | Covert markers hidden in view mode |
 | P4-08 | Tester materials: `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md`, rule lookup from any log rule ref to its text in the package rule index (DEC-34) | A new tester installs and finishes S0 using only these files |
 
 **IC-4 (M5):** Two package versions and at least three sessions compared with recorded evidence.

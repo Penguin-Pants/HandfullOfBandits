@@ -92,7 +92,7 @@ The engine can run. Results can be odd. The engine logs each case.
 
 | ID | Gap | Deferral |
 |---|---|---|
-| GAP-O01 | Hidden information for two human players | Solo play shows all. A "hide face-down" view toggle is Phase 4 |
+| GAP-O01 | Hidden information for two human players | Solo play shows all. **Hide Covert** on the Play map hides face-down markers (P4-07). Log lines still name the placement (doc 28 s2.3) |
 | GAP-O02 | MOD-3B and MOD-4A rules | Phase 5 evaluation |
 | GAP-O03 | Concept B map | Phase 5 evaluation |
 | GAP-O04 | Kurdish place names not verified | Display label only |

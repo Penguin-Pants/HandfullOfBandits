@@ -11,6 +11,7 @@ import { EndSession } from "../notes/EndSession.tsx";
 import { NoteBar } from "../notes/NoteBar.tsx";
 import { Legend, SpaceDetail } from "../board/Board.tsx";
 import { MapCanvas } from "../board/MapCanvas.tsx";
+import { withoutHidden } from "../board/markers.tsx";
 import { words } from "../common/names.ts";
 import { CardTable } from "../cards/CardTable.tsx";
 import { EventPanel } from "../event/EventPanel.tsx";
@@ -73,6 +74,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const [showKey, setShowKey] = useState(false);
   const [showTracks, setShowTracks] = useState(true);
   const [mapOnly, setMapOnly] = useState(false);
+  // Face-down markers show by default in solo play (DEC-23); the toggle hides them (P4-07).
+  const [hideCovert, setHideCovert] = useState(false);
   const [ending, setEnding] = useState(false);
   const [changed, setChanged] = useState<string[]>([]);
   /** Head on screen before a reload, to outline what the next action changed. */
@@ -166,7 +169,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     setEnding(false);
     onExit?.();
   };
-  const detail = view.spaces.find((s) => s.id === focused);
+  const board = hideCovert ? withoutHidden(view) : view;
+  const detail = board.spaces.find((s) => s.id === focused);
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
   const mapTools = (
               <div className="row">
@@ -175,6 +179,9 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
               </button>
               <button type="button" aria-pressed={showTracks} onClick={() => { setShowTracks(!showTracks); }}>
                 Tracks
+              </button>
+              <button type="button" aria-pressed={hideCovert} onClick={() => { setHideCovert(!hideCovert); }}>
+                Hide Covert
               </button>
               <button type="button" aria-pressed={mapOnly} onClick={() => { setMapOnly(!mapOnly); }}>
                 {mapOnly ? "Show panels (M)" : "Map only (M)"}
@@ -207,12 +214,12 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           <div className="panel map-panel">
             {showTracks && <TrackCard view={view} />}
             <div className="map-body">
-            <MapCanvas tools={mapTools} eligible={plans.active === "event" ? eventTargets : factionTargets} view={view} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
+            <MapCanvas tools={mapTools} eligible={plans.active === "event" ? eventTargets : factionTargets} view={board} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
             </div>
             {detail !== undefined && <div className="space-inspector" aria-live="polite"><button type="button" aria-label="Close space details" onClick={() => {setFocused(null);}}>×</button><SpaceDetail space={detail} tracks={view.status.tracks} /><p className="hint">{(legal.actions ?? []).filter(a => a.locations.includes(detail.id)).map(a => a.label).join(" · ") || "No standalone operation target listed for the acting faction."} Complete plans are checked by the rules engine.</p></div>}
             {showKey && (
               <div className="map-key">
-                <Legend view={view} />
+                <Legend view={board} />
               </div>
             )}
           </div>

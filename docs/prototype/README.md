@@ -23,7 +23,7 @@ Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progre
 | [08-ui-ux-spec.md](08-ui-ux-spec.md) | Screens, layout, shortcuts |
 | [09-testing-and-replay.md](09-testing-and-replay.md) | Test suites, golden replays, regression cases |
 | [10-mvp-scope.md](10-mvp-scope.md) | Milestones, S0 slice, deferrals, exclusions |
-| [11-build-plan.md](11-build-plan.md) | Tasks P0-01 to P4-07 with checkpoints |
+| [11-build-plan.md](11-build-plan.md) | Tasks P0-01 to P4-08 with checkpoints |
 | [12-architecture-review.md](12-architecture-review.md) | Critical review and resulting plan changes |
 | [13-design-decisions.md](13-design-decisions.md) | Decisions, assumptions, open questions |
 | [14-rtt-pattern-study.md](14-rtt-pattern-study.md) | Patterns from Rally the Troops COIN modules, with proposals |
