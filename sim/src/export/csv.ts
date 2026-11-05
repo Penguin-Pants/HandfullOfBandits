@@ -1,6 +1,8 @@
-// CSV export (07 s8.3; P4-02): `annotations.csv`, one row per note with flattened context, and
-// `actions.csv`, one row per action with costs and key changes. RFC 4180: CRLF rows, quoted cells.
+// CSV export (07 s8.3; P4-02, P4-03): `annotations.csv`, one row per note with flattened context,
+// `actions.csv`, one row per action with costs and key changes, and `metrics.csv`, one row per
+// Propaganda round (the metrics review table). RFC 4180: CRLF rows, quoted cells.
 import { actionPlan, list, obj, type CoinSimExport } from "./json.ts";
+import { metricsTable } from "./metrics.ts";
 
 type Row = Record<string, unknown>;
 
@@ -39,7 +41,7 @@ function deltas(before: unknown, after: unknown): string {
   }).join("; ");
 }
 
-export function exportCsv(data: CoinSimExport): { annotations: string; actions: string } {
+export function exportCsv(data: CoinSimExport): { annotations: string; actions: string; metrics: string } {
   const notes = data.annotations.map((n) => ({ ...n, category_ids: list(n["category_ids"]).join("; "), tags: list(n["tags"]).join("; "), ...flatten(obj(n["context"])) }));
   const contextColumns = [...new Set(notes.flatMap((n) => Object.keys(n).filter((k) => k.startsWith("context."))))].sort();
   const derived = new Map(data.states.map((s) => [s["state_hash"], obj(s["derived"])]));
@@ -68,5 +70,11 @@ export function exportCsv(data: CoinSimExport): { annotations: string; actions: 
       notes: data.annotations.filter((n) => n["action_id"] === a["action_id"]).length,
     };
   });
-  return { annotations: table([...NOTE_COLUMNS, ...contextColumns], notes), actions: table(ACTION_COLUMNS, actions) };
+  return { annotations: table([...NOTE_COLUMNS, ...contextColumns], notes), actions: table(ACTION_COLUMNS, actions), metrics: metricsCsv(data) };
+}
+
+/** `metrics.csv`: the metrics review table, column keys as the header (P4-03). */
+export function metricsCsv(data: CoinSimExport): string {
+  const metrics = metricsTable(data);
+  return table(metrics.columns.map((c) => c.key), metrics.rows);
 }

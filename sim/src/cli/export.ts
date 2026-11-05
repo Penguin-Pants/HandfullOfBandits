@@ -1,6 +1,6 @@
 // `sim export <sessionId...> [--db file] [--with-states] [--format json|markdown|csv] [--out path]`.
-// Every format checks references first (07 s8; P2-18, P3a-08, P4-02). CSV writes two files, so
-// its `--out` is a folder.
+// Every format checks references first (07 s8; P2-18, P3a-08, P4-02, P4-03). CSV writes three files,
+// so its `--out` is a folder.
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { exportCsv } from "../export/csv.ts";
@@ -22,7 +22,8 @@ export function exportCommand(sessionIds: readonly string[], dbFile: string, wit
       mkdirSync(out, { recursive: true });
       writeFileSync(join(out, "annotations.csv"), csv.annotations);
       writeFileSync(join(out, "actions.csv"), csv.actions);
-      return { exitCode: 0, lines: [`wrote ${join(out, "annotations.csv")} and ${join(out, "actions.csv")}: ${counts}`] };
+      writeFileSync(join(out, "metrics.csv"), csv.metrics);
+      return { exitCode: 0, lines: [`wrote ${join(out, "annotations.csv")}, ${join(out, "actions.csv")} and ${join(out, "metrics.csv")}: ${counts}`] };
     }
     const text = format === "markdown" ? exportMarkdown(data) : `${JSON.stringify(data, null, 1)}\n`;
     if (out === null) return { exitCode: 0, lines: [text] };

@@ -144,6 +144,23 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
     const metrics = entries.find((e) => e.kind === "RoundMetrics");
     expect(metrics?.data).toMatchObject({ round: 1, scores: { state: 21, pkk: 4 }, harm: { state: 0, pkk: 0 } });
   });
+
+  it("metrics hold the research 12 s4 items 8 to 12 and 15 board values (P4-03)", () => {
+    let board = setTrack(setTrack(setTrack(s0, "legalSpace", "prosecuted"), "successor", 3), "ceasefire", "declared");
+    board = setMarkers(setMarkers(board, "dersim", "office", 2), "agri", "office", 1);
+    board = setMarkers(setMarkers(board, "dersim", "restraintBroken", 1, "pkk"), "dersim", "displacement", 2, "old");
+    board = setMarkers(setMarkers(board, "botan", "coercion", 1), "hakkari", "covert", 1);
+    board = { ...board, flags: { ...board.flags, closureCase: true }, pools: { ...board.pools, troops: { available: 7, outOfPlay: 3 } } };
+    const metrics = play(at(board, "agitation"), advance).entries.find((e) => e.kind === "RoundMetrics")?.data;
+    expect(metrics).toMatchObject({
+      thresholds: { state: 49, pkk: 30 },
+      legalSpace: "prosecuted", successor: 3, closureCase: true, ceasefire: "declared",
+      markers: { office: { default: 3 }, restraintBroken: { state: 0, pkk: 1 }, displacement: { new: 0, old: 2 }, coercion: { default: 1 }, covert: { default: 1 }, reception: { default: 0 } },
+      available: { troops: 7 },
+    });
+    // Leadership side (item 8) is the marker side on the map.
+    expect(Object.keys((metrics?.["markers"] as Record<string, unknown>)["leadership"] as object)).toEqual(expect.arrayContaining(["present"]));
+  });
 });
 
 describe("T-VIC (09 s3, s4; PA-10)", () => {

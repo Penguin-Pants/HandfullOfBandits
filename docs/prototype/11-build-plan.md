@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 and P4-02 done. **Next: P4-03** (metrics review screen and CSV export).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-03 done. **Next: P4-04** (branch from a past action).
 
-## 0. Resume here (updated 2026-11-05, P4-02)
+## 0. Resume here (updated 2026-11-05, P4-03)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P4-03** (metrics review screen and CSV export; accept: matches research logging sheet items 6 to 15; rows exist from P2-10, DEC-34). Today the metrics rows hold scores, margins, Harm, income, Resources, Legitimacy, Europe, Emergency Rule and postures; the sheet also asks for Legal Space, Offices, closure filings, ceasefire, Coercion and other marker counts, Pass counts, action counts and pieces Available at each Reset. Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: P4-04** (branch from a past action; accept: new branch plays, original branch intact). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+
+**P4-03 is done:** Home nav **Metrics review** shows one row per session and Propaganda round with research 12 s4 items 6 to 12, 14 and 15, grouped by item; checked sessions limit the table and the `metrics.csv` download. `sim export --format csv` also writes `metrics.csv`; Markdown section 5 uses the same table. Item 13 still needs the 07 s4.4 prompt (no task). Sessions stored before P4-03 show blanks for the new board columns.
 
 **P4-02 is done:** `sim export <sessionId...> --format markdown` writes all six 07 s8.2 sections; `--format csv --out <folder>` writes `annotations.csv` and `actions.csv` (07 s8.3). Acceptance per DEC-82: the brief is not in the repository, so a test reads each research 12 s4 logging sheet input that 06 s4 maps to notes, actions or sessions from the export. No UI link yet for Markdown or CSV (Home links JSON only).
 
@@ -45,6 +47,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 4. **Closed (DEC-72):** DK-051 now files only while Legal Space is Open or Prosecuted (fixed in P3b-07d, PR #52).
 6. **Closed (owner approved, P4-02):** `server/service.ts` stores `DeclareCeasefire` as kind `cardChoice` in box `limitedOp` (it was `advance` with no box). Sessions stored before keep the old row; the export counts it by command type.
 5. **Proposed (P3b-08):** the Home screen lists every manifest option for every scenario, so `threshold.state` shows for Scenarios A and C (where it does nothing) and `hotPursuit` for B and C (C1 and C2 only). Fix: list only the options the chosen scenario sets (`scenarios[].options` keys in the package summary, `ui/home/Home.tsx`). Needs approval.
+7. **Proposed (P4-03):** global link color: `a { color: var(--accent); }` in `ui/styles.css` in place of `.metrics a`, so the Home JSON export link reads on the dark theme. Needs approval.
 
 **Recent merged work**
 
@@ -69,6 +72,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #62 | P3c-01: structural switches as flags (DEC-78, DEC-79) |
 | #63 | P3c-02: full campaign setup tests and golden replay |
 | #64 | P4-01: cross-session review (ruleset filter, bulk status, saved filters) |
+| #65 | P4-02: full Markdown and CSV export |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -823,7 +827,24 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
-**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 and P4-02 done; **next: P4-03**.
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-03 done; **next: P4-04**.
+
+**P4-03 (2026-11-05):** complete. Metrics review screen and CSV export (06 s3.12, s4; DEC-34).
+- **Engine** (`coin/propaganda/pipeline.ts` `roundMetrics`): RoundMetrics adds `thresholds`, `legalSpace`, `successor`, `closureCase`, `ceasefire`, `markers` (every marker type on the map by side) and `available` (pools). Recorded after Agitation; Redeploy only moves pieces and Reset changes no pool, so `available` is the count at Reset (item 15). Log data only: state hashes and the golden replays are unchanged. Sessions stored before P4-03 keep their old rows, so the new columns are blank for them.
+- **Table** (`export/metrics.ts` `metricsTable`): one row per committed metrics row. Board values from the row; round events from the committed actions of the round (after the previous metrics action, up to this one): State step choice (the legitimacy `PropagandaChoice`; none when Advance), closure filings (closure case flag false to true), successor returns (Legal Space Banned to Prosecuted) and action use per faction (item 14). `usesOf` moved here from `markdown.ts`. Marker types never on the map (Capability, Momentum, closure case, Successor) get no item 11 column.
+- **CSV and Markdown:** `metricsCsv` (`export/csv.ts`); `sim export --format csv` writes `metrics.csv` beside the other two files. Markdown section 5 prints the same table.
+- **API and UI:** `GET /api/metrics?sessions=<id,id>` (JSON table) and `GET /api/metrics.csv?sessions=...` (download); no `sessions`: every session; unknown session 404. `ui/metrics/Metrics.tsx` from the Home nav: session check boxes, item group headers, session names, the table scrolls inside the screen.
+- **Not covered:** item 13 needs the 07 s4.4 Propaganda prompt, which has no task (DEC-82). The acceptance "items 6 to 15" holds for 6 to 12, 14 and 15.
+- Tests: `test/metrics-review.test.ts` (10: Scenario A through the service, synthetic round events, CSV, CLI, both routes), `ui/metrics/metrics.test.tsx` (3), one engine test in `propaganda.test.ts`, the section 5 test in `export-full.test.ts` updated to the new column order. The stubs failed on assertions. Mutation checks each fail the suite: round window includes the previous metrics action; undone actions counted; a re-set closure flag counted as a filing; an Open to Prosecuted move counted as a successor return; wrong default step choice; `available` dropped.
+- **TWO-PASS REVIEW.** Pass 1 traced the screen in Chromium at 1366 x 768 from the Home nav with two scripted Scenario A sessions (4 rows, 2 after checking one session, CSV link with the same filter), the CLI folder output and both routes with a missing and an unknown session. Paths use `node:path` `join`; Windows execution not run locally (CI runs it). Pass 2: one `usesOf`, one `metricsCsv` for CLI and route; the route checks session IDs with `getSession`, not the full session load.
+  - **Fix:** the screen widened the whole page (4479 px at 1366) and the CSV link was dark blue on the dark theme; the table now scrolls in its own box and the link uses `--accent`. Checked in the browser.
+  - **Fix:** the Session column showed IDs; it now shows session names. UI test added.
+  - **Fix:** always-zero item 11 columns for Capability, Momentum, closure case and Successor markers, which contradicted the flag and track columns. Test added.
+  - **Fix (Codex review, PR #66):** a metrics response for a superseded session selection could replace the current table. The effect now ignores it. UI test added; it failed before the fix.
+  - **Drop:** a zero-fill of marker sides in `roundMetrics`. State already holds every side per space (`core/state.ts`); the mutation survived, so the code was removed.
+  - **Propose:** links outside the metrics screen (the Home JSON export link) use the browser default color, dark blue on the dark theme. Fix: move `.metrics a { color: var(--accent); }` to a global `a` rule in `ui/styles.css`. Needs approval.
+- **Validation:** `make check` passes. `make test`: 93 files, 1344 tests pass. `make e2e` passes. Package validation passes. Golden replays unchanged. Schema unchanged (no migration). Node 24 from `/opt/node24`.
+- **Blocker for the next task:** none.
 
 **P4-02 (2026-11-05):** complete. Full Markdown and CSV export (07 s8.2, s8.3; DEC-82).
 - **Markdown** (`export/markdown.ts`): 1. Scope with one line per session (package, rules, scenario, seed, winner). 2. Assumptions. 3. Per session: options, result, record sheet, play time, card order, debrief, action log (faction, box, Op, SA or Event side; undone actions marked) with notes nested. 4. Notes by category label (no category: General observation), each with IDs in brackets, session, turn position, faction, card, action, state changes and rule refs; research sources print once the rule index has them (P4-08). 5. Per-round metrics table. 6. Committed action use by session, faction and action.
@@ -858,7 +879,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 |---|---|---|
 | P4-01 ✅ | Cross-session review: version filters, saved filters, bulk status | Notes from 3 sessions filter by ruleset version |
 | P4-02 ✅ | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
-| P4-03 | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 |
+| P4-03 ✅ | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 (13 needs the 07 s4.4 prompt) |
 | P4-04 | Branch from a past action | New branch plays. Original branch intact |
 | P4-05 | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
 | P4-06 | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |

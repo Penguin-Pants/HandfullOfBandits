@@ -5,8 +5,11 @@ import { extname, join, normalize } from "node:path";
 import Fastify, { type FastifyInstance } from "fastify";
 import type { UiFocus } from "../annotate/types.ts";
 import type { AnyCommand } from "../engine/core/types.ts";
+import { getSession } from "../store/repos/sessions.ts";
 import { NOTE_STATUSES, type Anchor, type NoteStatus } from "../store/repos/annotations.ts";
+import { metricsCsv } from "../export/csv.ts";
 import { exportJson, validateExport } from "../export/json.ts";
+import { metricsTable } from "../export/metrics.ts";
 import { APP_VERSION, ServiceError, type SessionService } from "./service.ts";
 
 interface Id {
@@ -98,6 +101,15 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     if (broken.length > 0) throw new ServiceError(500, "The export has unresolved references (T-EXP).", broken);
     return reply.header("content-disposition", `attachment; filename="session-${request.params.id}.json"`).send(data);
   });
+  // Metrics review (P4-03): `sessions` is a comma list of session IDs; none means every session.
+  const metricsExport = (sessions: string | undefined) => {
+    const ids = sessions === undefined || sessions === "" ? service.listSessions().map((s) => s.session_id) : sessions.split(",");
+    const unknown = ids.find((id) => getSession(service.db, id) === null);
+    if (unknown !== undefined) throw new ServiceError(404, `Unknown session "${unknown}".`);
+    return exportJson(service.db, { sessionIds: ids, withStates: false, appVersion: APP_VERSION, exportedAt: new Date().toISOString() });
+  };
+  app.get<{ Querystring: { sessions?: string } }>("/api/metrics", (request) => metricsTable(metricsExport(request.query.sessions)));
+  app.get<{ Querystring: { sessions?: string } }>("/api/metrics.csv", (request, reply) => reply.type("text/csv; charset=utf-8").header("content-disposition", 'attachment; filename="metrics.csv"').send(metricsCsv(metricsExport(request.query.sessions))));
   app.get("/api/categories", () => service.categories());
   app.get<{ Params: Id }>("/api/sessions/:id/annotations", (request) => service.annotations(request.params.id));
   app.post<{ Params: Id }>("/api/sessions/:id/annotations", (request, reply) => {

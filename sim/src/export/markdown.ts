@@ -1,6 +1,7 @@
 // Markdown export (07 s8.2; minimal in P3a-08, full sections 1 to 6 in P4-02). Written for an AI
 // assistant: each note and action line carries its IDs in brackets.
-import { actionPlan, list, obj, type CoinSimExport } from "./json.ts";
+import { list, obj, type CoinSimExport } from "./json.ts";
+import { metricsTable, usesOf } from "./metrics.ts";
 
 type Row = Record<string, unknown>;
 
@@ -10,20 +11,6 @@ const note = (n: Row): string => `- [${escaped(n["annotation_id"])}; ${escaped(n
 const refsOf = (action: Row): string[] => [...new Set(list(action["entries"]).flatMap((e) => [obj(e)["rule_ref"], obj(e)["assumption_ref"]]).filter((x): x is string => typeof x === "string"))];
 const or = (value: unknown, fallback: string): string => (value === null || value === undefined || value === "" ? fallback : escaped(value));
 const pairs = (value: unknown): string => Object.entries(obj(value)).map(([k, v]) => `${escaped(k)}=${escaped(v)}`).join(", ");
-
-/** Op, SA or Event side of a committed action, as use count keys (07 s8.2 item 6). */
-function usesOf(action: Row): string[] {
-  const p = actionPlan(action);
-  if (p.type === "ChooseOperation") {
-    // The engine logs EffectSkipped for an Op or SA that did not run (choose-operation.ts).
-    const skipped = new Set(list(action["entries"]).map(obj).filter((e) => e["kind"] === "EffectSkipped").map((e) => obj(e["data"])).filter((d) => d["effect"] === "operation" || d["effect"] === "specialActivity").map((d) => d["action"]));
-    return [p.op, p.sa].filter((x): x is string => x !== null && !skipped.has(x));
-  }
-  if (p.type === "ChooseEvent") return [`event.${String(p.side)}`];
-  if (p.type === "Pass") return ["pass"];
-  // The command type, not the stored kind: the store files some faction actions as `advance`.
-  return [p.type ?? String(action["kind"])];
-}
 
 /** `state_changes` (07 s4.2) in one line. */
 function changes(value: unknown): string {
@@ -97,17 +84,10 @@ export function exportMarkdown(data: CoinSimExport): string {
     lines.push(`### ${escaped(labels.get(id) ?? "General observation")}\n`);
     for (const n of members) lines.push(categorized(n, data.actions.find((a) => a["action_id"] === n["action_id"])));
   }
-  // Undo keeps a metrics row; only rows of committed actions are results.
-  const committed = new Set(data.actions.filter((a) => a["status"] === "committed").map((a) => a["action_id"]));
-  const rounds = data.metrics.filter((m) => m["propaganda_round"] !== undefined && committed.has(m["action_id"]));
-  const factions = [...new Set(rounds.flatMap((m) => Object.keys(obj(obj(m["data"])["scores"]))))];
-  const per = (label: string): string[] => factions.map((f) => `${escaped(f)} ${label}`);
-  lines.push("## Round metrics\n", `| Session | Round | Campaign | ${[...per("score"), ...per("margin"), ...per("Resources"), ...per("Harm")].join(" | ")} | Legitimacy | Europe | Emergency Rule |`, `|${" --- |".repeat(6 + 4 * factions.length)}`);
-  for (const m of rounds) {
-    const d = obj(m["data"]);
-    const cells = ["scores", "margins", "resources", "harm"].flatMap((key) => factions.map((f) => escaped(obj(d[key])[f])));
-    lines.push(`| ${escaped(m["session_id"])} | ${escaped(m["propaganda_round"])} | ${escaped(d["campaign"])} | ${cells.join(" | ")} | ${escaped(d["legitimacy"])} | ${escaped(d["europe"])} | ${escaped(d["emergencyRule"])} |`);
-  }
+  // The metrics review table (P4-03): research 12 s4 items 6 to 12, 14 and 15 per round.
+  const metrics = metricsTable(data);
+  lines.push("## Round metrics\n", `| ${metrics.columns.map((c) => escaped(c.label)).join(" | ")} |`, `|${" --- |".repeat(metrics.columns.length)}`);
+  for (const row of metrics.rows) lines.push(`| ${metrics.columns.map((c) => escaped(row[c.key])).join(" | ")} |`);
   lines.push("", "## Action use by faction\n", "Committed actions only. An Operation with a Special Activity counts once for each.\n", "| Session | Faction | Action | Uses |", "| --- | --- | --- | --- |");
   const counts = new Map<string, number>();
   for (const a of data.actions.filter((x) => x["status"] === "committed" && x["faction"] !== null)) {
