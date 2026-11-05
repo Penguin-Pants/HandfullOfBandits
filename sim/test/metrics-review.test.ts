@@ -84,7 +84,11 @@ describe("P4-03 metrics table: research 12 s4 items 6 to 15", () => {
 /** Two rounds with stored round events, as the store holds them (06 s3.4 to s3.6). */
 function synthetic(): CoinSimExport {
   const entry = (data: Record<string, unknown>) => ({ kind: "EffectApplied", data });
-  const action = (id: string, seq: number, status: string, extra: Record<string, unknown> = {}) => ({ action_id: id, session_id: "s", branch_id: "b", seq, status, faction: null, kind: "advance", commands: [], entries: [], ...extra });
+  // Hashes chain each action to the one before; the undone a6 is off the path to m2.
+  const action = (id: string, seq: number, status: string, extra: Record<string, unknown> = {}) => ({
+    action_id: id, session_id: "s", branch_id: "b", seq, branch_seq: seq, state_hash_before: seq === 1 ? null : `h${String(seq - 1)}`, state_hash_after: `h${String(seq)}`,
+    status, faction: null, kind: "advance", commands: [], entries: [], ...extra,
+  });
   const choice = (phase: string, c: Record<string, unknown>) => [{ payload: { type: "PropagandaChoice", phase, choice: c } }];
   const row = (round: number, actionId: string) => ({ session_id: "s", branch_id: "b", propaganda_round: round, action_id: actionId, data: { round, scores: { state: 1, pkk: 2 }, markers: { office: { default: 2 } } } });
   return {
@@ -100,7 +104,7 @@ function synthetic(): CoinSimExport {
       // A case already pending is not a new filing.
       action("a5", 5, "committed", { entries: [entry({ effect: "setTrack", track: "legalSpace", before: "banned", after: "prosecuted" }), entry({ effect: "setFlag", flag: "closureCase", before: true, after: true })] }),
       action("a6", 6, "undone", { entries: [entry({ effect: "setFlag", flag: "closureCase", before: false, after: true })] }),
-      action("m2", 7, "committed"),
+      action("m2", 7, "committed", { state_hash_before: "h5" }),
     ],
     metrics: [row(1, "m1"), row(2, "m2")],
   };

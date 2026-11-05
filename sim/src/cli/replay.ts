@@ -34,7 +34,7 @@ export function replaySession(sessionId: string, dbFile: string): { exitCode: nu
     if (session === null || content === null) return { exitCode: 1, lines: [`error: no session ${sessionId}`] };
     const loaded = loadPackage({ files: JSON.parse(content) as Record<string, unknown>, issues: [] });
     if (!loaded.ok) return { exitCode: 1, lines: ["error: the stored package does not load"] };
-    const { startHash, steps } = storedSteps(db, session.current_branch_id);
+    const { startHash, steps } = storedSteps(db, session.head_action_id ?? "");
     const diff = replaySteps(createEngine(coinHandlers), withSessionOptions(loaded.ruleset, session.scenario_id, JSON.parse(session.options) as Record<string, string | number>), session.scenario_id, session.seed, startHash, steps);
     return diff === null ? { exitCode: 0, lines: [`identical (${String(steps.length)} actions)`] } : { exitCode: 1, lines: [`differs at action ${diff.id}: expected ${diff.expected}, got ${diff.actual}`] };
   } finally {

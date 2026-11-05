@@ -2,7 +2,7 @@
 // IDs only and `validateExport` checks that every reference resolves inside the file (T-EXP).
 import type { AnnotationRow } from "../store/repos/annotations.ts";
 import type { Db } from "../store/migrate.ts";
-import { listActions } from "../store/repos/actions.ts";
+import { lineage, listActions } from "../store/repos/actions.ts";
 import { listAnnotations } from "../store/repos/annotations.ts";
 import { listCategories } from "../store/repos/categories.ts";
 import { listCommands } from "../store/repos/commands.ts";
@@ -122,7 +122,10 @@ export function validateExport(e: CoinSimExport): string[] {
     need(actions, s["head_action_id"], "session.head_action_id");
     need(notes, s["debrief_annotation_id"], "session.debrief_annotation_id");
   }
-  for (const b of e.branches) need(sessions, b["session_id"], "branch.session_id");
+  for (const b of e.branches) {
+    need(sessions, b["session_id"], "branch.session_id");
+    need(actions, b["forked_from_action_id"], "branch.forked_from_action_id");
+  }
   for (const a of e.actions) {
     need(sessions, a["session_id"], "action.session_id");
     need(branches, a["branch_id"], "action.branch_id");
@@ -153,6 +156,17 @@ export function validateExport(e: CoinSimExport): string[] {
 export const obj = (value: unknown): Row => (value !== null && typeof value === "object" && !Array.isArray(value) ? (value as Row) : {});
 /** Array value or an empty array. */
 export const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
+
+/** Path finder over exported rows: setup to an action, across branches (lineage, 11 P4-04). */
+export function pathsOf(data: CoinSimExport): (actionId: string) => Row[] {
+  const steps = data.actions.map((a) => ({
+    row: a, action_id: String(a["action_id"]), branch_id: String(a["branch_id"]), branch_seq: Number(a["branch_seq"]),
+    state_hash_before: typeof a["state_hash_before"] === "string" ? a["state_hash_before"] : null, state_hash_after: String(a["state_hash_after"]),
+  }));
+  const branches = data.branches.map((b) => ({ branch_id: String(b["branch_id"]), forked_from_action_id: typeof b["forked_from_action_id"] === "string" ? b["forked_from_action_id"] : null }));
+  const path = lineage(steps, branches);
+  return (actionId) => path(actionId).map((s) => s.row);
+}
 
 /** Op, SA and Event side of an exported action, from its first command (05 s3.1). */
 export function actionPlan(action: Row): { op: string | null; sa: string | null; side: string | null; type: string | null } {

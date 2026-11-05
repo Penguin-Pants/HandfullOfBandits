@@ -78,7 +78,7 @@ ULIDs are generated in the store, not in the engine. They never affect rules.
 | `forked_from_action_id` | Null for main |
 | `label`, `created_at` | Display |
 
-MVP uses one branch per session plus undo (section 6). The table exists from Phase 1 so branching needs no migration later.
+MVP used one branch per session plus undo (section 6). The table exists from Phase 1 so branching needs no migration. Branching (11 P4-04): a branch starts at any committed or undone action of the session (`forked_from_action_id`); the session's current branch and head move to that action's state. A branch row holds only its own actions. The path to an action (replay, history, metrics rounds) walks back by state hash: the latest earlier action of the same branch whose `state_hash_after` equals this `state_hash_before`, then the fork action at the start of a branch. Undo on a branch stops at its fork action. Switching back to an earlier branch is not built.
 
 ### 3.4 actions
 
@@ -207,7 +207,7 @@ Per session, per Propaganda round: Resources, Legitimacy, Europe, scores, margin
 3. Head moves to `state_hash_before` of that action.
 4. Annotations on the undone action stay. Their view shows "linked action was undone".
 5. The next new action gets a new seq. Its ID never equals the undone ID.
-6. Redo is out of scope for MVP. Branching from an undone action is Phase 4.
+6. Redo is out of scope for MVP. Branching from an undone action is built (11 P4-04).
 7. If the undone action used the seeded RNG (a die roll, shuffle or random pick in its log), the undo entry sets `undoneAfterRandom: true` (DEC-33). Undo stays allowed. The flag lets analysis spot repeated rolls.
 
 ## 7. Session compatibility

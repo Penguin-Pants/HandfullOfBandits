@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-03 done. **Next: P4-04** (branch from a past action).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-04 done. **Next: P4-05** (package diff tool).
 
-## 0. Resume here (updated 2026-11-05, P4-03)
+## 0. Resume here (updated 2026-11-05, P4-04)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P4-04** (branch from a past action; accept: new branch plays, original branch intact). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: P4-05** (package diff tool; accept: lists changed parameters, cards, handlers and modules between two versions). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+
+**P4-04 is done:** History drawer **Branch from here** (any action except a pending one and the head) starts a new branch at that action's state; earlier branches keep every row. Replay, history, notes and metrics rounds follow the branch path (`lineage`, 06 s3.3). Undo stops at the fork action. Not built: switching back to an earlier branch (no task; the export holds every branch).
 
 **P4-03 is done:** Home nav **Metrics review** shows one row per session and Propaganda round with research 12 s4 items 6 to 12, 14 and 15, grouped by item; checked sessions limit the table and the `metrics.csv` download. `sim export --format csv` also writes `metrics.csv`; Markdown section 5 uses the same table. Item 13 still needs the 07 s4.4 prompt (no task). Sessions stored before P4-03 show blanks for the new board columns.
 
@@ -48,6 +50,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 6. **Closed (owner approved, P4-02):** `server/service.ts` stores `DeclareCeasefire` as kind `cardChoice` in box `limitedOp` (it was `advance` with no box). Sessions stored before keep the old row; the export counts it by command type.
 5. **Proposed (P3b-08):** the Home screen lists every manifest option for every scenario, so `threshold.state` shows for Scenarios A and C (where it does nothing) and `hotPursuit` for B and C (C1 and C2 only). Fix: list only the options the chosen scenario sets (`scenarios[].options` keys in the package summary, `ui/home/Home.tsx`). Needs approval.
 7. **Proposed (P4-03):** global link color: `a { color: var(--accent); }` in `ui/styles.css` in place of `.metrics a`, so the Home JSON export link reads on the dark theme. Needs approval.
+8. **Proposed (P4-04):** `e2e/smoke.mjs` waits for the server's exit before removing its temp folder (Windows EPERM hides the real error); check atlas label fit with Windows fonts (the label check fails on Windows 11 on `main`). Needs approval.
 
 **Recent merged work**
 
@@ -73,6 +76,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #63 | P3c-02: full campaign setup tests and golden replay |
 | #64 | P4-01: cross-session review (ruleset filter, bulk status, saved filters) |
 | #65 | P4-02: full Markdown and CSV export |
+| #66 | P4-03: metrics review screen and `metrics.csv` |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -827,7 +831,29 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
-**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-03 done; **next: P4-04**.
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-04 done; **next: P4-05**.
+
+**P4-04 (2026-11-05):** complete. Branch from a past action (06 s3.3, s6 item 6; 09 s7).
+- **Store:** `createBranch` (`store/repos/sessions.ts`) adds a branch row (`forked_from_action_id`, label `branch N`) and moves the session's current branch and head to that action in one transaction; status `active`, or `ended` with the result when that state ended. Refused: an action of another session; in the service, an action whose saved state has an open Operation (pending, or undone while pending), because the Operation would continue on the earlier branch; and the current head, which is not a past action. A branch row holds only its own actions; `branch_seq` starts at 1 per branch.
+- **Path:** `lineage` (`store/repos/actions.ts`, pure; indexes the rows once, then returns a path finder) walks back from an action: the latest earlier action of the same branch whose hash after equals this hash before, then the fork action at a branch start. Undone actions count, so a branch from an undone action keeps its own past. `storedSteps` now takes the head action ID (replay check, `sim replay`); `branchHistory` (history drawer, note lookup) is the path to the fork, then the branch's own actions. Export uses the same walk on exported rows (`pathsOf`, `export/json.ts`).
+- **Undo:** on a branch the head goes back at most to the fork action; earlier branches never change.
+- **API and UI:** `POST /api/sessions/:id/branches {actionId, headActionId, headStateHash}` (201; 400 without IDs; 404 unknown action; 409 stale head, read-only session, open Operation or the current head). History drawer: **Branch from here** on each action except a pending one and the head; Play asks to confirm, then reloads the board at that state.
+- **Export:** T-EXP checks `branch.forked_from_action_id`. Metrics round window and Markdown card order follow the path; the Markdown action log has a heading per branch when a session has several.
+- **Not built:** switching back to an earlier branch. The session row has one `status` and `result`: a branch from mid-game after the end clears the ended result from the row (the final state and every action row keep it), so Markdown "Result:" shows the current branch. Both points need a decision when branch switching gets a task. 09 s7 "compare two branches or versions" belongs to P4-05 and P4-06.
+- Tests: `test/branch.test.ts` (11: branch row and head, play on the branch with the earlier branch rows byte-equal and both paths replaying, undo to the fork point, a branch from an undone action, refusals, HTTP and export, Markdown, `lineage`, the metrics round window), `ui/play/play.test.tsx` (branch from History; no button on a pending action). The stubs failed on assertions. Mutation checks each fail the suite: undo without the fork fallback; pending action accepted. `host-pressure-session.test.ts` checks the open Operation refusal on a real pending and undone Rally. The synthetic metrics fixture in `metrics-review.test.ts` gains the stored `branch_seq` and hash columns.
+- **TWO-PASS REVIEW.** Pass 1 traced the History button in Chromium at 1366 x 768 against a real server (S0, branch from A2 while the head was A3: confirm shown, head A2, history A1 and A2, no error), `sim replay` and the replay check through `storedSteps`, undo on a branch and the export consumers. Paths unchanged (no file paths in this change). Pass 2: one `lineage` for store and export (`pathsOf` replaces the metrics mapping); `storedSteps` call sites migrated, the branch-ID form deleted.
+  - **Fix:** the metrics round window filtered by branch, so a branch's first round missed the actions played before the fork. Test added; it failed first.
+  - **Fix:** Markdown card order joined the reveals of every branch. Now the path to the head; the action log has a heading per branch. Test added; it failed first.
+  - **Fix:** `host-pressure-session.test.ts` still called `storedSteps` with a branch ID (both are strings, so `tsc` passed). Migrated.
+  - **Drop:** Markdown section 6 action use counts the committed actions of every branch. Each branch's actions are real plays; per-branch values are in the metrics table.
+  - **Drop:** `lineage` could step to an undone action with the same hash as the true one. Equal hash means equal state, so replay gives the same result.
+  - **Fix (Codex review, PR #67):** an action undone while pending keeps its saved open Operation, so a branch from it could not continue (`continueAction` refused) or undo. The service now refuses any fork state with an open Operation; the store's status check is deleted. Test added in `host-pressure-session.test.ts`; it failed first. The History button still shows on such an undone action; the server answers 409 with the reason.
+  - **Fix (Codex review, PR #67):** `lineage` scanned every exported action at each step and `pathOf` rebuilt its rows per metrics row: 30 sessions of 501 actions took 3.3 s here. Now indexed once per export (14 ms). Test added with a 1 s budget; it failed first.
+  - **Fix (Codex review, PR #67, second round):** a branch at the current head kept the head ID and hash, so a second tab on the same head passed the stale-write check and its next command joined the new branch. The service refuses the current head (playing on, then branching later, gives the same result); every other fork point changes the head ID. The History drawer hides the button on the head. Tests added (service and Play); they failed first.
+  - **Propose:** `e2e/smoke.mjs` on Windows: `finally` removes the temp folder while the server child still holds the SQLite file, so `rmSync` throws EPERM and hides the real error. Fix: wait for the server's `exit` event before `rmSync`. Needs approval.
+  - **Propose:** with Chromium 141 on Windows 11, the smoke's "atlas labels ... remain inside their areas" check fails on `main` too (Mardin-Batman, Diyarbakir labels). Font metrics differ from the Linux host. P4-08 targets Windows testers, so check the label fit with Windows fonts. Needs a decision on the fix (label size or font stack).
+- **Validation:** `npm run check` passes. `npm test`: 94 files, 1356 tests pass. Golden replays unchanged. Schema unchanged (no migration). `sim validate` passes for `kurdish-coin/0.1.0`. `make e2e` (no `make` on Windows; recipe run directly, Playwright 1.56.1, Chromium 141): the atlas label check fails, identically on `main` (see Propose); with only that check logged, the other 28 checks pass, undo and JSON export included. Node 24.22.1 on Windows 11.
+- **Blocker for the next task:** none.
 
 **P4-03 (2026-11-05):** complete. Metrics review screen and CSV export (06 s3.12, s4; DEC-34).
 - **Engine** (`coin/propaganda/pipeline.ts` `roundMetrics`): RoundMetrics adds `thresholds`, `legalSpace`, `successor`, `closureCase`, `ceasefire`, `markers` (every marker type on the map by side) and `available` (pools). Recorded after Agitation; Redeploy only moves pieces and Reset changes no pool, so `available` is the count at Reset (item 15). Log data only: state hashes and the golden replays are unchanged. Sessions stored before P4-03 keep their old rows, so the new columns are blank for them.
@@ -880,7 +906,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P4-01 ✅ | Cross-session review: version filters, saved filters, bulk status | Notes from 3 sessions filter by ruleset version |
 | P4-02 ✅ | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
 | P4-03 ✅ | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 (13 needs the 07 s4.4 prompt) |
-| P4-04 | Branch from a past action | New branch plays. Original branch intact |
+| P4-04 ✅ | Branch from a past action | New branch plays. Original branch intact |
 | P4-05 | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
 | P4-06 | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
 | P4-07 | Hidden-information view toggle | Covert markers hidden in view mode |

@@ -1,9 +1,10 @@
 // Metrics review table (11 P4-03; 06 s3.12, s4): one row per session, branch and Propaganda round
 // with the research 12 s4 logging sheet items 6 to 12, 14 and 15. Board values come from the
 // RoundMetrics row (DEC-34). Round events (State step choice, closure filings, successor returns,
-// action use) come from the committed actions of the round: after the previous round's metrics
-// action, up to and including this round's. The screen, `metrics.csv` and Markdown section 5 use it.
-import { actionPlan, list, obj, type CoinSimExport } from "./json.ts";
+// action use) come from the actions of the round on the row's path (a fork's path starts in its
+// parent branch, P4-04): after the previous round's metrics action, up to and including this round's.
+// The screen, `metrics.csv` and Markdown section 5 use it.
+import { actionPlan, list, obj, pathsOf, type CoinSimExport } from "./json.ts";
 
 type Row = Record<string, unknown>;
 export type Cell = string | number | boolean | null;
@@ -70,9 +71,11 @@ const NAMED_MARKERS = new Set(["office", "restraintBroken", "leadership", "capab
 
 export function metricsTable(data: CoinSimExport): MetricsTable {
   // Undo keeps a metrics row; only rows of committed actions are results.
-  const committed = data.actions.filter((a) => a["status"] === "committed");
-  const seqOf = new Map(committed.map((a) => [a["action_id"], Number(a["seq"])]));
-  const metrics = data.metrics.filter((m) => m["propaganda_round"] !== undefined && seqOf.has(m["action_id"]));
+  const committed = new Set(data.actions.filter((a) => a["status"] === "committed").map((a) => a["action_id"]));
+  const rounds = data.metrics.filter((m) => m["propaganda_round"] !== undefined);
+  const metrics = rounds.filter((m) => committed.has(m["action_id"]));
+  const roundEnds = new Set(rounds.map((m) => m["action_id"]));
+  const pathOf = pathsOf(data);
   const factions = [...new Set(metrics.flatMap((m) => Object.keys(obj(obj(m["data"])["scores"]))))];
   const pieces = [...new Set(metrics.flatMap((m) => Object.keys(obj(obj(m["data"])["available"]))))];
   // [marker, side] pairs; a one-sided marker has side "default" (SINGLE_FACE) and no side in its key.
@@ -96,11 +99,9 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
     const postures = obj(d["postures"]);
     const has = d["markers"] !== undefined;
     const count = (id: string, side: string): Cell => (has ? Number(obj(markers[id])[side] ?? 0) : null);
-    // The round: committed actions of this branch after the previous metrics action, up to this one.
-    const seq = seqOf.get(m["action_id"]) ?? 0;
-    const earlier = metrics.filter((x) => x["session_id"] === m["session_id"] && x["branch_id"] === m["branch_id"] && (seqOf.get(x["action_id"]) ?? 0) < seq).map((x) => seqOf.get(x["action_id"]) ?? 0);
-    const from = Math.max(-1, ...earlier);
-    const round = committed.filter((a) => a["session_id"] === m["session_id"] && a["branch_id"] === m["branch_id"] && Number(a["seq"]) > from && Number(a["seq"]) <= seq);
+    // The round: actions on the path to this metrics action, after the previous one on that path.
+    const path = pathOf(String(m["action_id"]));
+    const round = path.slice(path.findLastIndex((a, i) => i < path.length - 1 && roundEnds.has(a["action_id"])) + 1);
     const row: Record<string, Cell> = {
       session_id: cell(m["session_id"]), branch_id: cell(m["branch_id"]), round: cell(m["propaganda_round"]), campaign: cell(d["campaign"]),
       legitimacy: cell(d["legitimacy"]), europe: cell(d["europe"]), emergency_rule: cell(d["emergencyRule"]),

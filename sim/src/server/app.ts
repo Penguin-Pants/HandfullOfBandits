@@ -85,6 +85,11 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     if (typeof headActionId !== "string") throw new ServiceError(400, "headActionId is required.");
     return service.undo(request.params.id, headActionId, headStateHash);
   });
+  app.post<{ Params: Id }>("/api/sessions/:id/branches", (request, reply) => {
+    const { actionId, headActionId, headStateHash } = body<{ actionId: string; headActionId: string; headStateHash?: string }>(request.body);
+    if (typeof actionId !== "string" || typeof headActionId !== "string") throw new ServiceError(400, "actionId and headActionId are required.");
+    return reply.status(201).send(service.branch(request.params.id, actionId, headActionId, headStateHash));
+  });
   app.get<{ Querystring: Record<string, string> }>("/api/review", (request) => service.review(request.query));
   app.post("/api/review/status", (request) => {
     const b = body<{ annotationIds: unknown; status: NoteStatus }>(request.body);

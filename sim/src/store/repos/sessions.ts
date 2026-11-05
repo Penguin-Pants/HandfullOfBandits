@@ -2,7 +2,7 @@
 import { json, now } from "../common.ts";
 import type { Db } from "../migrate.ts";
 import { ulid } from "../ulid.ts";
-import { commitAction, type ActionInput, type CommitResult } from "./actions.ts";
+import { commitAction, getAction, type ActionInput, type CommitResult } from "./actions.ts";
 
 export interface SessionInput {
   readonly name: string;
@@ -64,4 +64,23 @@ export function createSession(db: Db, input: SessionInput, setup: Omit<ActionInp
 
 export function getSession(db: Db, sessionId: string): SessionRow | null {
   return (db.prepare("SELECT * FROM sessions WHERE session_id = ?").get(sessionId) as SessionRow | undefined) ?? null;
+}
+
+/**
+ * Fork a branch at a past action of the session (11 P4-04; 09 s7): a new branch row, then the session's
+ * current branch and head move to that action's state. `result` is that state's end result, if any.
+ * Earlier branches keep every row. The caller refuses a state with an open Operation.
+ */
+export function createBranch(db: Db, input: { sessionId: string; actionId: string; result: string | null }): string {
+  return db.transaction((): string => {
+    const action = getAction(db, input.actionId);
+    if (action?.session_id !== input.sessionId) throw new RangeError(`Unknown action "${input.actionId}".`);
+    const branchId = ulid();
+    const at = now();
+    const { n } = db.prepare("SELECT COUNT(*) + 1 AS n FROM branches WHERE session_id = ?").get(input.sessionId) as { n: number };
+    db.prepare("INSERT INTO branches (branch_id, session_id, forked_from_action_id, label, created_at) VALUES (?, ?, ?, ?, ?)").run(branchId, input.sessionId, input.actionId, `branch ${String(n)}`, at);
+    db.prepare("UPDATE sessions SET current_branch_id = ?, head_action_id = ?, status = ?, result = ?, updated_at = ? WHERE session_id = ?")
+      .run(branchId, input.actionId, input.result === null ? "active" : "ended", input.result, at, input.sessionId);
+    return branchId;
+  })();
 }
