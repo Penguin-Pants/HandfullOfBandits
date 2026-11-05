@@ -27,7 +27,7 @@ Status: planning document. Records simulator decisions (DEC-nn). Game design dec
 | DEC-21 | Action seq allocated per session, not per branch | Branch-local seq in the ID | Unique IDs across branches (PR review) | High |
 | DEC-20 | S0 deviations: no Pivotals, Propaganda last, result "not comparable" | Full 05 s1.1 build in S0 | Every card plays. No false win signal (review R-01) | High |
 | DEC-22 | Accept S0 as the first playable test: real map, 1984 setup, 8 C1 cards, one final Propaganda round, no Pivotals, result marked "not comparable" | Full Scenario A first. S0 with test thresholds | Fastest path to a playable game with notes and export (Q-02) | High |
-| DEC-23 | Show face-down Covert markers by default in solo play. Hide toggle later (P4-07) | Hide by default | The solo player controls both sides (Q-03) | High |
+| DEC-23 | Show face-down Covert markers by default in solo play. Hide toggle built (P4-07, Play map **Hide Covert**) | Hide by default | The solo player controls both sides (Q-03) | High |
 | DEC-24 | Scenario B State threshold is a session option: 48 or 46. Default not decided | Keep 48. Set 46 now | Lets playtests compare both values (Q-04; research DD-19.7) | Medium |
 | DEC-25 | First optional module to evaluate in Phase 5: MOD-3B Legal Movement third player | MOD-4A. Ranked initiative. None | Research names it the top alternative (Q-05) | Medium |
 | DEC-26 | Keep the responder matrix Event and Pass rows as designed | Other rows | Designer decision on research unresolved item 14 | Medium |

@@ -10,6 +10,7 @@ import { TrackCard } from "../status/TrackCard.tsx";
 import { setMarkers, setPieces } from "../../../test/board.ts";
 import { changedSpaces } from "../play/Play.tsx";
 import { Board, Legend, SpaceDetail, spaceTooltip } from "./Board.tsx";
+import { withoutHidden } from "./markers.tsx";
 import { ATLAS } from "./atlas-data.ts";
 import { isInset, regionCells, voronoi } from "./region.ts";
 
@@ -311,5 +312,16 @@ describe("approved readable layout", () => {
     const banned = boardView(kurdish.ruleset, kurdish.data, { ...turnOf("pkk"), tracks: { ...turnOf("pkk").tracks, successor: 2 } });
     render(<TrackCard view={banned} />);
     expect(screen.getByLabelText("Successor Offices").querySelector("summary")?.textContent).toContain("2");
+  });
+});
+
+describe("hidden marker toggle (P4-07)", () => {
+  it("removes hidden markers from every space and keeps the others", () => {
+    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(setMarkers(setMarkers(turnOf("pkk"), "botan", "covert", 2), "botan", "coercion", 1), "hakkari", "covert", 1));
+    const shown = withoutHidden(marked);
+    expect(shown.spaces.flatMap(s => s.markers.filter(m => m.hidden))).toEqual([]);
+    expect(shown.spaces.find(s => s.id === "botan")?.markers.map(m => m.marker)).toEqual(["coercion"]);
+    expect(shown.spaces.map(s => s.pieces)).toEqual(marked.spaces.map(s => s.pieces));
+    expect(marked.spaces.find(s => s.id === "hakkari")?.markers.map(m => m.marker)).toEqual(["covert"]);
   });
 });

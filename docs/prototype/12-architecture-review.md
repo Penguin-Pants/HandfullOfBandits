@@ -64,6 +64,6 @@ Status: complete. An independent reviewer (large model, no edit rights) read doc
 | Rule churn during build (research is untested) | Medium | All `[tune]` values are parameters. Golden replays show each change |
 | UI plan forms for 17 actions | Medium | One generic form driven by handler metadata (P2-15) |
 | `branches` table unused until Phase 4 | Low | Reviewer suggested dropping it. Kept: one table, no logic, avoids a later migration (DEC-10) |
-| Solo player sees hidden Covert markers | Low | Q-03 and P4-07 toggle |
+| Solo player sees hidden Covert markers | Low | Q-03; P4-07 toggle built |
 
 Next step: read 13-design-decisions.md.
