@@ -1,6 +1,6 @@
 # 34 C5 cards: encoding draft
 
-Status: **approved by the designer 2026-11-05** (DEC-75): section 4 as proposed except points 1 and 11 (changed answers marked). P3b-07h built; P3b-07i to P3b-07k to build ([11](11-build-plan.md) section 4). Source: deck CSV rows DK-078 to DK-099; research 05 s5; 06 s3.3, s5.4; 07 s3, s4.7, s5, s6, s7.1, s8.2, s10.2; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md) and [33](33-c4-cards-draft.md).
+Status: **approved by the designer 2026-11-05** (DEC-75): section 4 as proposed except points 1 and 11 (changed answers marked). P3b-07h and P3b-07i built; P3b-07j and P3b-07k to build ([11](11-build-plan.md) section 4). Source: deck CSV rows DK-078 to DK-099; research 05 s5; 06 s3.3, s5.4; 07 s3, s4.7, s5, s6, s7.1, s8.2, s10.2; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md) and [33](33-c4-cards-draft.md).
 
 Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with its approved answer.
 
@@ -52,7 +52,7 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 **DK-084 Ankara Process in Northern Iraq (1996-1997)**, T0
 - U: "Move KDP posture or PUK posture one step toward Hostile, or from Hostile to Aligned with Turkey."
 - S: "Calm in northern Iraq: move up to 3 Guerrillas between the KDP Zone and PUK Zone, free. Place 1 PKK Base in one of them (posture permitting)."
-- Encoding: U, a choice: KDP or PUK `stepOrdinal next` (Host to Hostile, then Aligned, `tracks.yaml`; Aligned stays). S, a choice of direction, then `movePieces` 0 to 3; the Base as DK-070 shaded (Rally placement rules). The move has no posture limit, as DK-041 and DK-047 shaded. See point 4.
+- Encoding: U, a choice: KDP or PUK `stepOrdinal next` (Host to Hostile, then Aligned, `tracks.yaml`; Aligned stays). S, a choice of direction, then `movePieces` 0 to 3; the Base as DK-070 shaded (Rally placement rules). The move has no posture limit, as DK-041 and DK-047 shaded. The text does not say Underground, so Guerrillas moved into a Hostile or Aligned zone arrive Active (07 s5.1; P3b-07i review). Guerrillas already there keep their face. See point 4.
 
 **DK-089 Washington Agreement (Sep 1998)**, T0
 - U: "The State conducts a free Diplomacy targeting KDP or PUK with +1."
@@ -135,7 +135,7 @@ DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains
 | C4 | Procedure `legal.localWins`, parameters `legal.localWinsOffices` (2) and `legal.localWinsOverLimit` (1) | DK-094 |
 | C5 | Condition `markersAtLeast` (schema change, `make schema`) | DK-095 |
 
-The "move ... Underground" sides (DK-082, DK-084, DK-090, DK-097 shaded) meet carried follow-up 2 ([11](11-build-plan.md) section 0): `movePieces` moves Underground Guerrillas first. That fix is outside this draft.
+The "move ... Underground" sides (DK-082, DK-090, DK-097 shaded) meet carried follow-up 2 ([11](11-build-plan.md) section 0): `movePieces` moves Underground Guerrillas first. That fix is outside this draft.
 
 ## 4. Resolved points (designer, 2026-11-05)
 
