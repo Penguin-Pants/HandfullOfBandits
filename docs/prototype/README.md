@@ -57,4 +57,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Continue P3b-07 with P3b-07h from the approved C5 draft [34](34-c5-cards-draft.md) (DEC-75). See [11-build-plan.md](11-build-plan.md) section 0.
+Continue P3b-07 with P3b-07i from the approved C5 draft [34](34-c5-cards-draft.md) (DEC-75). P3b-07h is done. See [11-build-plan.md](11-build-plan.md) section 0.

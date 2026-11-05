@@ -57,10 +57,10 @@ function hrwDenial(ctx: Exec): void {
   legitimacy(ctx, (below ? 1 : -1) * param(ctx.ruleset, "hrw.denialLegitimacy", "number"));
 }
 
-/** HRW report (DK-069 shaded): Legitimacy -1 per `hrw.markersPerLoss` Displacement markers (New and Old), round down, at most `hrw.maxLoss`. */
-function hrwReport(ctx: Exec): void {
-  const per = Math.floor(onMap(ctx.ruleset, ctx.state, MARKER.displacement) / param(ctx.ruleset, "hrw.markersPerLoss", "number"));
-  legitimacy(ctx, -Math.min(per, param(ctx.ruleset, "hrw.maxLoss", "number")));
+/** Report loss (DK-069, DK-087 shaded: Displacement, New and Old; DK-086 shaded: State Harm): Legitimacy -1 per `report.markersPerLoss` markers on the map, round down, at most `report.maxLoss`. */
+function reportLoss(ctx: Exec, marker: string): void {
+  const per = Math.floor(onMap(ctx.ruleset, ctx.state, marker) / param(ctx.ruleset, "report.markersPerLoss", "number"));
+  legitimacy(ctx, -Math.min(per, param(ctx.ruleset, "report.maxLoss", "number")));
 }
 
 export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
@@ -75,5 +75,6 @@ export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
   "ceasefire.end": (ctx) => { endCeasefire(ctx, CARD_REF); },
   "ceasefire.pkkBroken": pkkRestraintBroken,
   "hrw.denial": hrwDenial,
-  "hrw.report": hrwReport,
+  "hrw.report": (ctx) => { reportLoss(ctx, MARKER.displacement); },
+  "strasbourg.report": (ctx) => { reportLoss(ctx, MARKER.stateHarm); },
 };
