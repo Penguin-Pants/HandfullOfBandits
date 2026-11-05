@@ -1,14 +1,16 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 done. **Next: P4-02** (full Markdown export and CSV export).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 and P4-02 done. **Next: P4-03** (metrics review screen and CSV export).
 
-## 0. Resume here (updated 2026-11-05, P4-01)
+## 0. Resume here (updated 2026-11-05, P4-02)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P4-02** (full Markdown export and CSV export; accept: the export answers the brief's sample question inputs, 07 s8.2 sections present). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: P4-03** (metrics review screen and CSV export; accept: matches research logging sheet items 6 to 15; rows exist from P2-10, DEC-34). Today the metrics rows hold scores, margins, Harm, income, Resources, Legitimacy, Europe, Emergency Rule and postures; the sheet also asks for Legal Space, Offices, closure filings, ceasefire, Coercion and other marker counts, Pass counts, action counts and pieces Available at each Reset. Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
 
-**P4-01 is done:** the Feedback review screen filters by ruleset version (`rulesetVersion`, with a Ruleset column), sets the status of the selected notes in one request (`POST /api/review/status`) and keeps named filters in the browser (DEC-81). Remaining 07 s7 items with no task yet: the date range filter and the bulk add tag, export selection and create regression case actions (export selection and regression cases fit P4-02 and P4-06).
+**P4-02 is done:** `sim export <sessionId...> --format markdown` writes all six 07 s8.2 sections; `--format csv --out <folder>` writes `annotations.csv` and `actions.csv` (07 s8.3). Acceptance per DEC-82: the brief is not in the repository, so a test reads each research 12 s4 logging sheet input that 06 s4 maps to notes, actions or sessions from the export. No UI link yet for Markdown or CSV (Home links JSON only).
+
+**P4-01 is done:** the Feedback review screen filters by ruleset version (`rulesetVersion`, with a Ruleset column), sets the status of the selected notes in one request (`POST /api/review/status`) and keeps named filters in the browser (DEC-81). Remaining 07 s7 items with no task yet: the date range filter and the bulk add tag and export selection actions (P4-02 exports whole sessions, not a note selection). Create regression case fits P4-06.
 
 **P3c-02 is done:** `scenarios/full-campaign.yaml` (10 s2) now has tests for every track, level, marker, Pivotal hand and the five piles (`test/full-campaign.test.ts`), beside the existing score, Control and totals tests (`test/kurdish.test.ts`). Golden `test/golden/full-campaign-seed-7.json`: 158 commands, C1 to C5, final scoring in round 5. The CLI replay, package load included, runs in under 10 seconds (measured 185 to 286 ms; 05 s11).
 
@@ -19,6 +21,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 2. Remaining in Phase 3b: IC-3b only. C4 has 20 eligible cards and C5 has 19 and DK-093, each for a pile of 12. V-CARDS passes; the full campaign starts (DEC-76). Phase 3c checks its play.
 
 **Owner decisions in force**
+- **DEC-82 (2026-11-05):** P4-02 acceptance is the 07 s8.2 sections, the 07 s8.3 files and the logging sheet inputs (items 1 to 5, 14, 16 to 19) in the export.
 - **DEC-80 (2026-11-05):** Phase 4 starts before IC-3c. IC-3c findings may force rework; record any in this plan.
 - **DEC-81 (2026-11-05):** saved review filters live in the browser.
 - **DEC-78 (2026-11-05):** Phase 3c starts before IC-3b. IC-3b findings may force rework; record any in this plan.
@@ -64,6 +67,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #61 | P3b-08: Scenarios B and C |
 | #62 | P3c-01: structural switches as flags (DEC-78, DEC-79) |
 | #63 | P3c-02: full campaign setup tests and golden replay |
+| #64 | P4-01: cross-session review (ruleset filter, bulk status, saved filters) |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -818,7 +822,22 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
-**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 done; **next: P4-02**.
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 and P4-02 done; **next: P4-03**.
+
+**P4-02 (2026-11-05):** complete. Full Markdown and CSV export (07 s8.2, s8.3; DEC-82).
+- **Markdown** (`export/markdown.ts`): 1. Scope with one line per session (package, rules, scenario, seed, winner). 2. Assumptions. 3. Per session: options, result, record sheet, play time, card order, debrief, action log (faction, box, Op, SA or Event side; undone actions marked) with notes nested. 4. Notes by category label (no category: General observation), each with IDs in brackets, session, turn position, faction, card, action, state changes and rule refs; research sources print once the rule index has them (P4-08). 5. Per-round metrics table. 6. Committed action use by session, faction and action.
+- **CSV** (`export/csv.ts`): `sim export <sessionId...> --format csv --out <folder>`. RFC 4180 with CRLF. `annotations.csv`: one row per note, context flattened to two levels. `actions.csv`: one row per action with Op, SA, Event side, costs per track, score, Harm and Control changes, rule refs and note count. `batch.ts` now uses the shared `csvCell` (its old `cell` is deleted). `json.ts` gains `actionPlan`, `obj` and `list` for export rows.
+- **Logging sheet coverage (DEC-82):** items 1 to 5, 14 and 16 to 19 are tested. Items 6 to 12 and 15 are P4-03. Item 13 needs the optional 07 s4.4 Propaganda prompt, which has no task.
+- Tests: `test/export-full.test.ts` (13 tests: section order, each section, logging sheet items, both CSV files through an RFC 4180 reader, CLI folder output and the missing `--out` error). The stubs failed on assertions. Mutation checks each fail the suite: multiline note not nested; undone actions counted; uncategorized notes dropped; CSV cells not quoted; LF rows; executed note takes the turn from its context; CSV without `--out` accepted; note without session.
+- **TWO-PASS REVIEW.** Pass 1 traced `sim export` from `cli/main.ts` for two sessions into a folder with a space in its name, the missing `--out` branch and an unknown session; Python's `csv` reader reads both files with one width. Paths use `node:path` `join`; Windows execution not run locally (CI runs it). Pass 2: `csvCell` replaces the batch cell writer; export keeps its own `obj` and `list` because 03 s5 lets export import only store and annotate, not engine helpers.
+  - **Fix:** a multiline note lost its nesting under its category. Test added.
+  - **Fix:** a note with no action did not name its session in a multi-session export. Test added.
+  - **Fix:** Advance and setup lines printed an empty faction and box; state changes printed escaped `\>`. Now "card 0: Advance" and "12 to 10". Tests added.
+  - **Drop:** CSV formula prefixes (`=`, `+`, `-`, `@`) are not neutralized. The files are for the designer and an AI assistant; changing cell text would change note text.
+  - **Drop:** `actions.csv` has rule refs but no assumption refs. The Markdown action log and the note context hold them.
+  - **Propose:** none.
+- **Validation:** `make check` passes. `make test`: 91 files, 1324 tests pass. `make e2e` passes. Package validation passes. Schema unchanged (no migration). Node 24 from `/opt/node24`.
+- **Blocker for the next task:** none.
 
 **P4-01 (2026-11-05):** complete. Cross-session review (07 s7).
 - **Ruleset version filter:** `ReviewFilter.rulesetVersion` (`server/review.ts`) matches the note context `ruleset_version`; the screen has a `rulesetVersion` field and a Ruleset column.
@@ -835,7 +854,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | ID | Obj | Accept |
 |---|---|---|
 | P4-01 ✅ | Cross-session review: version filters, saved filters, bulk status | Notes from 3 sessions filter by ruleset version |
-| P4-02 | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
+| P4-02 ✅ | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
 | P4-03 | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 |
 | P4-04 | Branch from a past action | New branch plays. Original branch intact |
 | P4-05 | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |

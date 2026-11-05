@@ -166,7 +166,7 @@ Relationships use IDs only. A validator checks that every reference in the file 
 
 ### 8.2 Markdown (Phase 4, minimal form in Phase 3a)
 
-Minimal export is implemented in P3a-08: `sim export <sessionId...> --format markdown [--db <file>] [--out <file>]`. It includes the scope and versions, assumptions, session metadata and result, debrief, action log with linked notes and notes without an action. Full sections 4 to 6 below remain P4-02.
+Implemented: minimal in P3a-08, all six sections in P4-02 (`sim/src/export/markdown.ts`). Command: `sim export <sessionId...> --format markdown [--db <file>] [--out <file>]`. Section 3 also gives options, record sheet, play time and card order (research 12 s4 items 1, 2, 17 and 18). Research sources print once the package rule index has them (P4-08).
 
 Structure for one or more sessions:
 
@@ -182,6 +182,8 @@ The Markdown is written for an AI assistant. Each note line carries IDs in brack
 ### 8.3 CSV (Phase 4)
 
 Two files: `annotations.csv` (one row per note with flattened context) and `actions.csv` (one row per action with costs and key changes).
+
+Implemented in P4-02 (`sim/src/export/csv.ts`): `sim export <sessionId...> --format csv --out <folder> [--db <file>]`. RFC 4180 (CRLF rows, quoted cells). Context columns go two levels deep (`context.scores.state`); deeper values are JSON in their cell. Lists in a cell use `; `. `actions.csv` adds `op`, `sa`, `event_side`, `costs` (total per track), `score_changes`, `harm_changes`, `control_changes`, `rule_refs` and `notes` (count).
 
 ## 9. Notes as regression sources
 

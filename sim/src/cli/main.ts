@@ -31,7 +31,7 @@ const usage = [
   "       sim experiment archive <experiment-dir>",
   "       sim experiment compare <experiment-dir> <experiment-dir>... --out <file.md>",
   "       sim experiment qualify <out.json> [--players <id,id>] [--package <dir>]",
-  "       sim export <sessionId...> [--db <file>] [--with-states] [--format json|markdown] [--out <file>]",
+  "       sim export <sessionId...> [--db <file>] [--with-states] [--format json|markdown|csv] [--out <file or folder>]",
 ].join("\n");
 const args = process.argv.slice(2);
 const [command, target] = args;
@@ -54,7 +54,7 @@ if (command === "validate" && target !== undefined) {
   const ids = args.slice(1).filter((a, i, all) => !a.startsWith("--") && !["--db", "--out", "--format"].includes(all[i - 1] ?? ""));
   const db = flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)));
   const format = flag("--format", "json");
-  if (format !== "json" && format !== "markdown") print({ exitCode: 1, lines: ["error: format must be json or markdown"] });
+  if (format !== "json" && format !== "markdown" && format !== "csv") print({ exitCode: 1, lines: ["error: format must be json, markdown or csv"] });
   else print(exportCommand(ids, db, args.includes("--with-states"), args.includes("--out") ? flag("--out", "export.json") : null, "0.1.0", format));
 } else if (command === "batch") {
   try {

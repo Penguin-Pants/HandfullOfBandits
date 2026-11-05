@@ -128,7 +128,7 @@ it("the CLI parses Markdown format and rejects an unsupported format with a clea
   const invalid = spawnSync(process.execPath, [cli, "export", sessionId, "--db", db.name, "--format", "html"], {encoding: "utf8"});
   expect(invalid.error).toBeUndefined();
   expect(invalid.status).toBe(1);
-  expect(invalid.stdout).toBe("error: format must be json or markdown\n");
+  expect(invalid.stdout).toBe("error: format must be json, markdown or csv\n");
 });
 it("search preserves the review screen's session and note order", () => {
   service.annotate(sessionId, {anchor: "state", actionId: null, text: "Order sample first", categoryIds: [], focus});
