@@ -140,6 +140,14 @@ describe("P4-05 diffPackages", () => {
     Reflect.deleteProperty(next.scenarios, "scenarios/scenario-c.yaml");
     expect(diff(next).otherFiles).toEqual(["manifest.yaml", "scenarios/s0.yaml", "scenarios/scenario-c.yaml"]);
   });
+
+  it("names a card file whose card order changed, because the order seeds the deck", () => {
+    const next = copy();
+    next.cards["cards/c1.yaml"] = [...(next.cards["cards/c1.yaml"] ?? [])].reverse();
+    const d = diff(next);
+    expect(d.cards).toEqual({ added: [], removed: [], changed: [] });
+    expect(d.otherFiles).toEqual(["cards/c1.yaml"]);
+  });
 });
 
 describe("P4-05 sim diff", () => {
@@ -160,6 +168,10 @@ describe("P4-05 sim diff", () => {
   cpSync(kurdishDir, unraised, { recursive: true });
   const params = join(unraised, "parameters.yaml");
   writeFileSync(params, readFileSync(params, "utf8").replace("{id: harm.limit, value: 6,", "{id: harm.limit, value: 5,"));
+  const quoted = join(dir, "quoted");
+  cpSync(kurdishDir, quoted, { recursive: true });
+  const quotedParams = join(quoted, "parameters.yaml");
+  writeFileSync(quotedParams, readFileSync(quotedParams, "utf8").replace("{id: harm.limit, value: 6,", "{id: harm.limit, value: \"6\","));
   const broken = join(dir, "broken");
   cpSync(kurdishDir, broken, { recursive: true });
   writeFileSync(join(broken, "parameters.yaml"), "- {id: harm.limit\n");
@@ -198,6 +210,10 @@ describe("P4-05 sim diff", () => {
     expect(lines[2]).toBe("warning: the content changed but rulesetVersion is still R4 (04 s10.1 item 1)");
     expect(lines).toContain("  ~ harm.limit value: 6 to 5");
     expect(diffCommand(kurdishDir, r5).lines.some((l) => l.startsWith("warning:"))).toBe(false);
+  });
+
+  it("quotes string values, so a number that becomes a string shows", () => {
+    expect(diffCommand(kurdishDir, quoted).lines).toContain('  ~ harm.limit value: 6 to "6"');
   });
 
   it("exits 1 with the load issues when a package does not load", () => {

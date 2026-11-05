@@ -5,7 +5,8 @@ import { diffPackages, type Changes } from "../package/diff.ts";
 import type { PackageData } from "../package/validate.ts";
 import { formatIssue } from "./validate.ts";
 
-const value = (v: unknown): string => (typeof v === "string" ? v : JSON.stringify(v));
+/** JSON for every value, so the string "6" and the number 6 print differently. */
+const value = (v: unknown): string => JSON.stringify(v);
 
 function section<Item, Changed>(title: string, c: Changes<Item, Changed>, item: (i: Item) => string, change: (c: Changed) => string): string[] {
   const counts = ([["added", c.added], ["removed", c.removed], ["changed", c.changed]] as const).filter(([, list]) => list.length > 0);

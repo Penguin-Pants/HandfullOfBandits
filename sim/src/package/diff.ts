@@ -19,7 +19,8 @@ export interface PackageDiff {
   readonly cards: Changes<{ readonly id: string; readonly file: string }, { readonly id: string; readonly fields: readonly string[] }>;
   readonly handlers: Changes<HandlerUse, ValueChange>;
   readonly modules: Changes<string, ValueChange>;
-  /** Files outside parameters and cards whose content differs, for example a scenario. */
+  /** Files outside parameters and cards whose content differs, for example a scenario, and card
+   * files whose card order changed. Card order is deck order, so it changes seeded decks. */
   readonly otherFiles: readonly string[];
 }
 
@@ -98,8 +99,14 @@ export function diffPackages(old: PackageData, next: PackageData): PackageDiff {
   };
   const modules = compare(modulesOf(old), modulesOf(next), (id, major) => `${id}@${major}`, (id, from, to) => (from === to ? null : { id, from, to }));
   const [a, b] = [packageContent(old), packageContent(next)];
+  /** IDs of a card file in order, without the cards the other package does not have in that file. */
+  const shared = (from: PackageData, to: PackageData, f: string): string[] => {
+    const there = new Set((to.cards[f] ?? []).map((c) => c.id));
+    return (from.cards[f] ?? []).map((c) => c.id).filter((id) => there.has(id));
+  };
+  const reordered = (f: string): boolean => canonicalJson(shared(old, next, f)) !== canonicalJson(shared(next, old, f));
   const otherFiles = [...new Set([...Object.keys(a), ...Object.keys(b)])]
-    .filter((f) => f !== "parameters.yaml" && !f.startsWith("cards/") && !same(a[f], b[f]))
+    .filter((f) => (f.startsWith("cards/") ? reordered(f) : f !== "parameters.yaml" && !same(a[f], b[f])))
     .sort();
   return { parameters, cards, handlers, modules, otherFiles };
 }
