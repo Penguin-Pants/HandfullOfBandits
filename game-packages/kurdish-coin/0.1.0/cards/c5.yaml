@@ -74,6 +74,7 @@
   title: "Susurluk Commission Report (May 1997)"
   date: "1997-05-16"
   type: event
+  chainAfter: [DK-079]
   unshaded:
     text: "Dissent notes limit the report: reveal 1 Covert marker at random. The State may then pay 1 Resource to remove 1 State Harm marker."
     owner: state

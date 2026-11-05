@@ -57,6 +57,10 @@ describe("Susurluk Commission Report (DK-080)", () => {
     expect(codes(harmed("state"), event("state", "unshaded", [["hakkari"]]))).toEqual([]);
   });
 
+  it("comes after DK-079 in the deck (08 s8)", () => {
+    expect(ruleset.cards["DK-080"]?.chainAfter).toEqual(["DK-079"]);
+  });
+
   it("U: with 0 State Resources, no removal is offered", () => {
     const { state } = play(setTrack(harmed("state"), "resources.state", 0), event("state", "unshaded"));
     expect(marker(state, "diyarbakir-city", "stateHarm")).toBe(1);

@@ -683,12 +683,13 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 - **Validation:** documentation only; no code, package data or schema changed. `make check` passes. `make test`: 83 files, 1190 tests pass.
 
 **P3b-07h (2026-11-05):** complete. `cards/c5.yaml` holds DK-079, DK-080, DK-085, DK-086, DK-087 and Propaganda DK-099 ([34](34-c5-cards-draft.md) s2.1). DK-079 and DK-080 shaded reveal 1 Covert marker, then ask the executor to stop or reveal a second (DEC-75 point 1). DK-080 and DK-087 unshaded paid removals need State Control and a Police (DEC-75 point 11), with the existing `control` and `spaceHas` conditions; DK-087 runs two 0-to-1 Relief steps so both markers may come from one space. DK-080 shaded uses the Guard Abuse block of DK-006 (DEC-57). DK-085 files only while Legal Space is Open or Prosecuted (DEC-75 point 5). C1 in `coin/procedures.ts`: `reportLoss` serves `hrw.report` (Displacement) and the new `strasbourg.report` (State Harm only); parameters `hrw.markersPerLoss` and `hrw.maxLoss` renamed `report.markersPerLoss` and `report.maxLoss`.
-- Tests: `c5-cards.test.ts` (T-EVT per side, 21 new tests). Mutation checks each fail the suite: DK-087 Relief without the Control and Police conditions; `strasbourg.report` counting Disputed Harm.
+- Tests: `c5-cards.test.ts` (T-EVT per side, 22 new tests). Mutation checks each fail the suite: DK-087 Relief without the Control and Police conditions; `strasbourg.report` counting Disputed Harm.
 - **TWO-PASS REVIEW.** Pass 1 traced ChooseEvent for each side from the session command, including the PKK restriction on DK-085 unshaded, 0 State Resources, Resources below the printed cost and empty boards. Pass 2: one shared report function; no unused code (`hrwReport` removed with its only caller).
   - **Fix:** DK-086 unshaded with no State Harm marker had no test; added (Resources -3 still applies).
+  - **Fix (PR review):** DK-080 lacked `chainAfter: [DK-079]` (08 s8; doc 34 s1), so the deck could deal it first. Added with a test.
   - **Drop:** DK-079 and DK-080 shaded ask "reveal a second" even when no Covert marker is left; the answer then changes nothing. Guarding it needs condition `markersAtLeast` (gap C5, P3b-07k). Recheck there.
   - **Propose:** none new.
-- **Validation:** `make check` passes. `make test`: 84 files, 1211 tests pass. `make e2e` passes. Card schema unchanged. Package validation: C5 has 6 eligible cards for a pile of 12 (V-CARDS, as expected until P3b-07k). Goldens regenerated for the package hash; commands unchanged (24 and 65). Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
+- **Validation:** `make check` passes. `make test`: 84 files, 1212 tests pass. `make e2e` passes. Card schema unchanged. Package validation: C5 has 6 eligible cards for a pile of 12 (V-CARDS, as expected until P3b-07k). Goldens regenerated for the package hash; commands unchanged (24 and 65). Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
 
 | ID | Obj | Files | Deps | Accept | Tests | Risks |
 |---|---|---|---|---|---|---|
