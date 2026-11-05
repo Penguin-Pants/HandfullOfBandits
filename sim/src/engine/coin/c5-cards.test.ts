@@ -202,6 +202,14 @@ describe("Ankara Process in Northern Iraq (DK-084)", () => {
     expect(units(shut, "puk-zone", "pkkBase")).toBe(units(s, "puk-zone", "pkkBase"));
   });
 
+  it("S: Guerrillas already Underground in a Hostile zone after Reset (DEC-53) keep their face", () => {
+    const s = setPieces(setPieces(setTrack(board("pkk", "DK-084"), "posture.puk", "hostile"), "puk-zone", "guerrilla", 2), "kdp-zone", "guerrilla", 3);
+    const moved = play(s, event("pkk", "shaded", [0, 3, KDP])).state;
+    expect([pieces(moved, "puk-zone", "guerrilla")["underground"], pieces(moved, "puk-zone", "guerrilla")["active"]]).toEqual([2, 3]);
+    const none = play(s, event("pkk", "shaded", [0, 0, KDP])).state;
+    expect(pieces(none, "puk-zone", "guerrilla")["underground"]).toBe(2);
+  });
+
   it("S: the other direction; more than 3 Guerrillas is refused", () => {
     const s = setPieces(setTrack(board("pkk", "DK-084"), "posture.puk", "host"), "puk-zone", "guerrilla", 4);
     const { state } = play(s, event("pkk", "shaded", [1, 2, PUK]));

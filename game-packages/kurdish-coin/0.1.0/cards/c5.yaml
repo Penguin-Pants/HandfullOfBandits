@@ -233,16 +233,16 @@
         options:
           - label: KDP Zone to PUK Zone
             effects:
-              - {type: movePieces, piece: guerrilla, count: {min: 0, max: 3}, from: kdp-zone, to: puk-zone}
               - type: conditional
                 if: {type: trackIn, track: posture.puk, values: [hostile, aligned]}
-                then: [{type: setPieceState, piece: guerrilla, space: puk-zone, from: underground, to: active, count: all}]
+                then: [{type: movePieces, piece: guerrilla, toState: active, count: {min: 0, max: 3}, from: kdp-zone, to: puk-zone}]
+                else: [{type: movePieces, piece: guerrilla, count: {min: 0, max: 3}, from: kdp-zone, to: puk-zone}]
           - label: PUK Zone to KDP Zone
             effects:
-              - {type: movePieces, piece: guerrilla, count: {min: 0, max: 3}, from: puk-zone, to: kdp-zone}
               - type: conditional
                 if: {type: trackIn, track: posture.kdp, values: [hostile, aligned]}
-                then: [{type: setPieceState, piece: guerrilla, space: kdp-zone, from: underground, to: active, count: all}]
+                then: [{type: movePieces, piece: guerrilla, toState: active, count: {min: 0, max: 3}, from: puk-zone, to: kdp-zone}]
+                else: [{type: movePieces, piece: guerrilla, count: {min: 0, max: 3}, from: puk-zone, to: kdp-zone}]
       - type: choice
         options:
           - label: KDP Zone
@@ -255,7 +255,7 @@
               - type: conditional
                 if: {type: any, of: [{type: trackIn, track: posture.puk, values: [host]}, {type: all, of: [{type: trackIn, track: posture.puk, values: [tolerant]}, {type: flag, flag: northernIraqVacuum, value: true}]}]}
                 then: [{type: placePieces, piece: pkkBase, count: 1, space: puk-zone, state: null}]
-  encoding: {status: encoded, encodedBy: "P3b-07i", reviewedAgainstText: true, note: "U: Host to Hostile, then Aligned; Aligned stays (tracks.yaml). S: one direction, up to 3 (DEC-75 point 4); no posture limit on the move, as DK-041 shaded; the text does not say Underground, so arrivals in a Hostile or Aligned zone are Active (07 s5.1); the Base as DK-070 shaded (Rally placement rules)"}
+  encoding: {status: encoded, encodedBy: "P3b-07i", reviewedAgainstText: true, note: "U: Host to Hostile, then Aligned; Aligned stays (tracks.yaml). S: one direction, up to 3 (DEC-75 point 4); no posture limit on the move, as DK-041 shaded; the text does not say Underground, so Guerrillas moved into a Hostile or Aligned zone arrive Active (07 s5.1); pieces already there keep their face (DEC-53 Reset); the Base as DK-070 shaded (Rally placement rules)"}
   eventConfidence: High
   deckEligible: true
   sources: [E-0316, E-0322, S-0477, S-0497]
