@@ -1,5 +1,5 @@
-# C5 cards (research 08; deck CSV). P3b-06a: the structural card only (approved text docs/prototype/31 s5.3).
-# The rest of C5 comes with P3b-07.
+# C5 cards (research 08; deck CSV). Encoding docs/prototype/34, DEC-75. DK-093 Capture: P3b-06a (docs/prototype/31 s5.3).
+# DK-098 Coercive Diplomacy on Syria is in pivotal.yaml. P3b-07h: reports, harm and the flag case.
 - id: DK-093
   campaign: C5
   title: "Capture (Feb 1999)"
@@ -42,3 +42,181 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0020, S-0211, S-0278, S-0358, S-0375, S-0032, S-0097, S-0433]
+- id: DK-079
+  campaign: C5
+  title: "Susurluk Car Crash (Nov 1996)"
+  date: "1996-11-03"
+  type: event
+  unshaded:
+    text: "Contained inquiry: reveal 1 Covert marker at random. A minister resigns: Legitimacy +1."
+    owner: state
+    tier: T3
+    effects:
+      - {type: procedure, id: covert.revealRandom}
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+  shaded:
+    text: "Reveal up to 2 Covert markers at random (07, section 10.2). Europe +1."
+    owner: pkk
+    tier: T3
+    effects:
+      - {type: procedure, id: covert.revealRandom}
+      - type: choice
+        options:
+          - {label: Reveal a second Covert marker, effects: [{type: procedure, id: covert.revealRandom}]}
+          - {label: Stop after one, effects: []}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "Random reveals (07 s10.2 item 2); the executor may stop after 1 (DEC-75 point 1)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0015, S-0008, S-0146, S-0147, S-0165, S-0328, S-0010, S-0011, S-0100]
+- id: DK-080
+  campaign: C5
+  title: "Susurluk Commission Report (May 1997)"
+  date: "1997-05-16"
+  type: event
+  unshaded:
+    text: "Dissent notes limit the report: reveal 1 Covert marker at random. The State may then pay 1 Resource to remove 1 State Harm marker."
+    owner: state
+    tier: T3
+    effects:
+      - {type: procedure, id: covert.revealRandom}
+      - type: conditional
+        if: {type: trackAtLeast, track: resources.state, value: 1}
+        then:
+          - type: forEachSpace
+            where: {type: all, of: [{type: spaceHas, markers: [stateHarm]}, {type: control, faction: state}, {type: spaceHas, pieces: [police]}]}
+            min: 0
+            max: 1
+            effects:
+              - {type: adjustTrack, track: resources.state, delta: -1}
+              - {type: removeMarker, marker: stateHarm, space: selected}
+  shaded:
+    text: "Reveal up to 2 Covert markers at random. Then apply Guard Abuse (07, section 4.7)."
+    owner: pkk
+    tier: T3
+    effects:
+      - {type: procedure, id: covert.revealRandom}
+      - type: choice
+        options:
+          - {label: Reveal a second Covert marker, effects: [{type: procedure, id: covert.revealRandom}]}
+          - {label: Stop after one, effects: []}
+      - type: forEachSpace
+        all: true
+        where: {type: all, of: [{type: spaceHas, pieces: [guards]}, {type: spaceHas, markers: [stateHarm, pkkHarm, disputedHarm]}]}
+        effects:
+          - {type: adjustTrack, track: legitimacy, delta: -1}
+          - {type: removePieces, piece: guards, count: 1, space: selected}
+  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "U: the paid removal needs State Control and Police, as Civic Action (DEC-75 point 11). S: the executor may stop after 1 reveal (DEC-75 point 1); Guard Abuse as DK-006 shaded (DEC-57)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0223, E-0016, S-0147, S-0343, S-0146, S-0008, S-0010]
+- id: DK-085
+  campaign: C5
+  title: "HADEP Congress Flag Case (1996-1997)"
+  date: "1996-06"
+  type: event
+  unshaded:
+    text: "Place the Closure Case marker if none is on the track. Legal Space to Prosecuted."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: legalSpace, values: [open, prosecuted]}
+        then:
+          - type: conditional
+            if: {type: flag, flag: closureCase, value: false}
+            then: [{type: setFlag, flag: closureCase, value: true}]
+          - {type: setTrack, track: legalSpace, value: prosecuted}
+  shaded:
+    text: "Convictions draw protest: Legitimacy -1. Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "U: a filing (07 s6.3); nothing while Banned, as DK-051, DK-065, DK-068 (DEC-75 point 5); State-only (05 s5 item 1)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0215, E-0324, S-0305, S-0300, S-0299, S-0174, S-0480, S-0481]
+- id: DK-086
+  campaign: C5
+  title: "Strasbourg Judgments (1997-1998)"
+  date: "1998-04-24"
+  type: event
+  unshaded:
+    text: "Pay damages: State Resources -3. Remove 1 State Harm marker."
+    owner: state
+    tier: T2
+    effects:
+      - {type: adjustTrack, track: resources.state, delta: -3}
+      - type: forEachSpace
+        where: {type: spaceHas, markers: [stateHarm]}
+        min: 1
+        max: 1
+        effects:
+          - {type: removeMarker, marker: stateHarm, space: selected}
+  shaded:
+    text: "Legitimacy -1 per 2 State Harm markers on the map (round down, maximum -3). Europe +1."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: procedure, id: strasbourg.report}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "U: Resources stop at 0, the removal still applies (05 s5 item 3). S: procedure strasbourg.report counts State Harm only; numbers in report.* parameters"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0231, E-0325, S-0178, S-0177, S-0286, S-0472]
+- id: DK-087
+  campaign: C5
+  title: "Migration Commission Report (Jan 1998)"
+  date: "1998-01-14"
+  type: event
+  unshaded:
+    text: "Official count adopted: the State may pay Relief for up to 2 Reception markers at 1 Resource each."
+    owner: state
+    tier: T2
+    effects:
+      - type: conditional
+        if: {type: trackAtLeast, track: resources.state, value: 1}
+        then:
+          - type: forEachSpace
+            where: {type: all, of: [{type: spaceHas, markers: [reception]}, {type: control, faction: state}, {type: spaceHas, pieces: [police]}]}
+            min: 0
+            max: 1
+            effects:
+              - {type: adjustTrack, track: resources.state, delta: -1}
+              - {type: removeMarker, marker: reception, space: selected}
+      - type: conditional
+        if: {type: trackAtLeast, track: resources.state, value: 1}
+        then:
+          - type: forEachSpace
+            where: {type: all, of: [{type: spaceHas, markers: [reception]}, {type: control, faction: state}, {type: spaceHas, pieces: [police]}]}
+            min: 0
+            max: 1
+            effects:
+              - {type: adjustTrack, track: resources.state, delta: -1}
+              - {type: removeMarker, marker: reception, space: selected}
+  shaded:
+    text: "Legitimacy -1 per 2 Displacement markers on the map (round down, maximum -3). Place 1 Reception marker in Western Cities."
+    owner: pkk
+    tier: T2
+    effects:
+      - {type: procedure, id: hrw.report}
+      - {type: placeMarker, marker: reception, space: western-cities}
+  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "U: two Relief steps of 0 to 1, so both may come from one space; State Control and Police, as Civic Action (DEC-75 point 11). S: hrw.report (New and Old Displacement, DEC-69 point 8)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0122, E-0017, S-0320, S-0001, S-0353, S-0002]
+- id: DK-099
+  campaign: C5
+  title: Propaganda
+  type: propaganda
+  deckEligible: false
+  unshaded:
+    text: Conduct a Propaganda round (05, section 6).
+    owner: null
+    effects: []
+    tier: T0
+  encoding: {status: encoded, reviewedAgainstText: true}
+  sources: []

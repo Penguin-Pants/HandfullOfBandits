@@ -124,5 +124,5 @@
 - {id: argk.resources, value: 3, tune: false, source: "DK-015; 08 s4"}
 - {id: hrw.denialBelow, value: 2, tune: false, source: "DK-069 unshaded (deck CSV)"}
 - {id: hrw.denialLegitimacy, value: 1, tune: false, source: "DK-069 unshaded (deck CSV)"}
-- {id: hrw.markersPerLoss, value: 2, tune: false, source: "DK-069 shaded (deck CSV); DEC-69 point 8"}
-- {id: hrw.maxLoss, value: 3, tune: false, source: "DK-069 shaded (deck CSV); DEC-69 point 8"}
+- {id: report.markersPerLoss, value: 2, tune: false, source: "DK-069, DK-086, DK-087 shaded (deck CSV); DEC-69 point 8"}
+- {id: report.maxLoss, value: 3, tune: false, source: "DK-069, DK-086, DK-087 shaded (deck CSV); DEC-69 point 8"}
