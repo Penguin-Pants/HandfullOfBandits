@@ -5,7 +5,7 @@ import { extname, join, normalize } from "node:path";
 import Fastify, { type FastifyInstance } from "fastify";
 import type { UiFocus } from "../annotate/types.ts";
 import type { AnyCommand } from "../engine/core/types.ts";
-import type { Anchor } from "../store/repos/annotations.ts";
+import { NOTE_STATUSES, type Anchor, type NoteStatus } from "../store/repos/annotations.ts";
 import { exportJson, validateExport } from "../export/json.ts";
 import { APP_VERSION, ServiceError, type SessionService } from "./service.ts";
 
@@ -83,6 +83,14 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     return service.undo(request.params.id, headActionId, headStateHash);
   });
   app.get<{ Querystring: Record<string, string> }>("/api/review", (request) => service.review(request.query));
+  app.post("/api/review/status", (request) => {
+    const b = body<{ annotationIds: unknown; status: NoteStatus }>(request.body);
+    const ids = b.annotationIds;
+    if (!Array.isArray(ids) || ids.length === 0 || !ids.every((i) => typeof i === "string") || b.status === undefined || !NOTE_STATUSES.includes(b.status)) {
+      throw new ServiceError(400, `annotationIds (a non-empty list) and status (${NOTE_STATUSES.join(", ")}) are required.`);
+    }
+    return { updated: service.setNoteStatus(ids, b.status) };
+  });
   app.get<{ Params: Id; Querystring: { states?: string } }>("/api/sessions/:id/export", (request, reply) => {
     service.session(request.params.id);
     const data = exportJson(service.db, { sessionIds: [request.params.id], withStates: request.query.states === "1", appVersion: APP_VERSION, exportedAt: new Date().toISOString() });

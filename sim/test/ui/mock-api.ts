@@ -37,6 +37,7 @@ export function mockApi(overrides: Partial<Api> = {}): Api {
     endSession: never,
     undo: never,
     review: () => Promise.resolve([]),
+    setNoteStatus: never,
     ...overrides,
   };
 }

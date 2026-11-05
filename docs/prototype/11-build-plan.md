@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c started before IC-3b by owner decision (DEC-78): P3c-01 and P3c-02 done. **Next: IC-3c** (designer; Phase 3 exit, M4).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 done. **Next: P4-02** (full Markdown export and CSV export).
 
-## 0. Resume here (updated 2026-11-05, P3c-02)
+## 0. Resume here (updated 2026-11-05, P4-01)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: IC-3c** (designer): the selected design plays from setup to conclusion; Phase 3 exit (M4). Phase 3c tasks P3c-01 and P3c-02 are complete. IC-3a and IC-3b stay open for the designer. **Open decision:** Phase 4 depends on IC-3c (section 7); the owner decides whether Phase 4 may start first. Until then, no task is unblocked for an agent session.
+**Next: P4-02** (full Markdown export and CSV export; accept: the export answers the brief's sample question inputs, 07 s8.2 sections present). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+
+**P4-01 is done:** the Feedback review screen filters by ruleset version (`rulesetVersion`, with a Ruleset column), sets the status of the selected notes in one request (`POST /api/review/status`) and keeps named filters in the browser (DEC-81). Remaining 07 s7 items with no task yet: the date range filter and the bulk add tag, export selection and create regression case actions (export selection and regression cases fit P4-02 and P4-06).
 
 **P3c-02 is done:** `scenarios/full-campaign.yaml` (10 s2) now has tests for every track, level, marker, Pivotal hand and the five piles (`test/full-campaign.test.ts`), beside the existing score, Control and totals tests (`test/kurdish.test.ts`). Golden `test/golden/full-campaign-seed-7.json`: 158 commands, C1 to C5, final scoring in round 5. The CLI replay, package load included, runs in under 10 seconds (measured 185 to 286 ms; 05 s11).
 
@@ -17,6 +19,8 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 2. Remaining in Phase 3b: IC-3b only. C4 has 20 eligible cards and C5 has 19 and DK-093, each for a pile of 12. V-CARDS passes; the full campaign starts (DEC-76). Phase 3c checks its play.
 
 **Owner decisions in force**
+- **DEC-80 (2026-11-05):** Phase 4 starts before IC-3c. IC-3c findings may force rework; record any in this plan.
+- **DEC-81 (2026-11-05):** saved review filters live in the browser.
 - **DEC-78 (2026-11-05):** Phase 3c starts before IC-3b. IC-3b findings may force rework; record any in this plan.
 - **DEC-79 (2026-11-05):** sessions stored before P3c-01 open read-only.
 - **DEC-70 project order (2026-11-04):** 1. Finalize rules, cards and mechanics (P3b-07 C4 and C5, P3b-08 scenarios, Phase 3c full campaign). 2. Finish the engine and UI for manual play and test (IC-3a to IC-3c). 3. Automated games with bot profiles, as the Scenario A program (docs 19 to 23): extend profiles to every C3 to C5 rule and card, then run and review. Stage 3 replaces "automated opponents" and "batch execution" in Phase 5. The no-simulations rule holds until stage 3.
@@ -59,6 +63,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #60 | P3b-07k: C5 late politics cards; P3b-07 complete |
 | #61 | P3b-08: Scenarios B and C |
 | #62 | P3c-01: structural switches as flags (DEC-78, DEC-79) |
+| #63 | P3c-02: full campaign setup tests and golden replay |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -813,9 +818,23 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 done; **next: P4-02**.
+
+**P4-01 (2026-11-05):** complete. Cross-session review (07 s7).
+- **Ruleset version filter:** `ReviewFilter.rulesetVersion` (`server/review.ts`) matches the note context `ruleset_version`; the screen has a `rulesetVersion` field and a Ruleset column.
+- **Bulk status:** `setAnnotationStatus` (`store/repos/annotations.ts`) updates every listed note in one transaction, or none when one ID is unknown. `POST /api/review/status {annotationIds, status}`: 400 for an empty list or a status outside `open`, `addressed`, `wontfix`; 404 for an unknown note. The screen has row checkboxes, Select all and three Mark buttons; the table reloads after a change.
+- **Saved filters (DEC-81):** a name and Save filter store the current filter in `localStorage`; each saved name is a button that reapplies it, with a delete button.
+- Tests: `test/review-cross-session.test.ts` (3 sessions: 2 on R4 and 1 on a package copy marked R5; the filter and bulk status through HTTP) and `ui/review/review.test.tsx` (filter field, bulk selection, saved filter across a remount). The stubs failed on assertions. Mutation checks each fail the suite: no ruleset filter; unknown ID accepted; no transaction; empty list accepted; bulk status ignores the selection; saved filters not stored.
+- **TWO-PASS REVIEW.** Pass 1 traced the review screen from App (F), the filter request, Mark addressed from a real browser at 1366 x 768 (Chromium, built UI, 2 sessions), and a saved filter applied after a page reload. Pass 2: the route reuses the `body` and `ServiceError` patterns; the repo exports `NOTE_STATUSES` for the route check.
+  - **Drop:** saved filter values read from `localStorage` are not checked one by one. Only this screen writes the key; a bad entry only fills the filter fields.
+  - **Drop:** the UI status list repeats `NOTE_STATUSES` with button labels. The UI imports no store module.
+  - **Propose:** none.
+- **Validation:** `make check` passes. `make test`: 90 files, 1311 tests pass. `make e2e` passes (it does not open the review screen; the browser check above covers it). Schema unchanged (no migration). Node 24 from `/opt/node24`. Windows execution not run locally (CI runs it).
+- **Blocker for the next task:** none.
+
 | ID | Obj | Accept |
 |---|---|---|
-| P4-01 | Cross-session review: version filters, saved filters, bulk status | Notes from 3 sessions filter by ruleset version |
+| P4-01 ✅ | Cross-session review: version filters, saved filters, bulk status | Notes from 3 sessions filter by ruleset version |
 | P4-02 | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
 | P4-03 | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 |
 | P4-04 | Branch from a past action | New branch plays. Original branch intact |

@@ -27,6 +27,7 @@ export interface ReviewFilter {
   readonly space?: string;
   readonly category?: string;
   readonly version?: string;
+  readonly rulesetVersion?: string;
   readonly session?: string;
   readonly anchor?: string;
   readonly status?: string;
@@ -72,6 +73,7 @@ export function filterRows(rows: readonly ReviewRow[], f: ReviewFilter): ReviewR
       (f.space === undefined || r.spaces.includes(f.space)) &&
       (f.category === undefined || r.categories.includes(f.category) || (f.category === "general" && r.categories.length === 0)) &&
       (f.version === undefined || r.version === f.version) &&
+      (f.rulesetVersion === undefined || r.rulesetVersion === f.rulesetVersion) &&
       (f.session === undefined || r.sessionId === f.session) &&
       (f.anchor === undefined || r.anchor === f.anchor) &&
       (f.status === undefined || r.status === f.status) &&

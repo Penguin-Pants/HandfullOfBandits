@@ -139,6 +139,7 @@ A separate screen for notes across sessions.
 | Row detail | Full text, full context, linked log entries, state changes, rule refs with research sources |
 | Open state | Read-only board view at `state_hash` (before and after for executed notes) |
 | Bulk actions | Set status, add tag, export selection, create regression case |
+| Saved filters | A named set of filter values, kept in the browser (DEC-81) |
 
 No charts in MVP.
 
