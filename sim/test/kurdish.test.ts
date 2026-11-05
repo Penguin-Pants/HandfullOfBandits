@@ -31,11 +31,10 @@ const printed: Record<string, string[]> = {
 };
 
 describe("kurdish-coin 0.1.0", () => {
-  it("passes sim validate; only the full campaign is blocked, by its missing C3 to C5 cards (DEC-51)", () => {
+  it("passes sim validate; no scenario is blocked: C1 to C5 each fill a pile of 12 (V-CARDS, P3b-07j)", () => {
     expect(validateCommand(dir).exitCode).toBe(0);
-    expect(result.issues.filter((i) => i.scenario !== "full-campaign")).toEqual([]);
-    expect(ruleset.scenarios["s0"]?.blockedBy).toEqual([]);
-    expect(ruleset.scenarios["full-campaign"]?.blockedBy.length).toBeGreaterThan(0);
+    expect(result.issues).toEqual([]);
+    expect(Object.entries(ruleset.scenarios).filter(([, s]) => s.blockedBy.length > 0).map(([id]) => id)).toEqual([]);
   });
 
   it("has 13 domestic spaces with total Pop 32 and 5 external boxes (03 s1, s2)", () => {
@@ -102,8 +101,11 @@ describe("kurdish-coin cards", () => {
     expect(startState(ruleset, "s0", 4).deck.piles).not.toEqual(piles);
   });
 
-  it("refuses to start a blocked scenario", () => {
-    expect(() => startState(ruleset, "full-campaign", 1)).toThrow(/cannot start/);
+  it("refuses to start a blocked scenario (DEC-51)", () => {
+    const s0 = ruleset.scenarios["s0"];
+    if (s0 === undefined) throw new Error("s0 missing");
+    const blocked = { ...ruleset, scenarios: { ...ruleset.scenarios, s0: { ...s0, blockedBy: ["V-CARDS test"] } } };
+    expect(() => startState(blocked, "s0", 1)).toThrow(/cannot start/);
   });
 });
 

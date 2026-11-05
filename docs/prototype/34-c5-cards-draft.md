@@ -1,6 +1,6 @@
 # 34 C5 cards: encoding draft
 
-Status: **approved by the designer 2026-11-05** (DEC-75): section 4 as proposed except points 1 and 11 (changed answers marked). P3b-07h and P3b-07i built; P3b-07j and P3b-07k to build ([11](11-build-plan.md) section 4). Source: deck CSV rows DK-078 to DK-099; research 05 s5; 06 s3.3, s5.4; 07 s3, s4.7, s5, s6, s7.1, s8.2, s10.2; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md) and [33](33-c4-cards-draft.md).
+Status: **approved by the designer 2026-11-05** (DEC-75): section 4 as proposed except points 1 and 11 (changed answers marked). P3b-07h to P3b-07j built; P3b-07k to build ([11](11-build-plan.md) section 4). Source: deck CSV rows DK-078 to DK-099; research 05 s5; 06 s3.3, s5.4; 07 s3, s4.7, s5, s6, s7.1, s8.2, s10.2; 08 s5, s7, s8. Format as [32](32-c3-cards-draft.md) and [33](33-c4-cards-draft.md).
 
 Card text is the CSV prose and is not edited (04 s4.8). This draft lists how each side will be encoded, the engine additions it needs and the open points. Section 4 lists every open point with its approved answer.
 
@@ -13,7 +13,7 @@ Card text is the CSV prose and is not edited (04 s4.8). This draft lists how eac
 | P3b-07j | DK-078, DK-082, DK-083, DK-088, DK-097 | C3 |
 | P3b-07k | DK-081, DK-094, DK-095, DK-096 | C4, C5 |
 
-DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains (08 s8): DK-079 before DK-080; DK-090 before DK-092. After P3b-07k, C5 has 19 eligible cards and DK-093 for a pile of 12, and a Propaganda card. V-CARDS then no longer blocks the full campaign.
+DK-093 Capture and DK-098 Coercive Diplomacy on Syria are built (P3b-06). Chains (08 s8): DK-079 before DK-080; DK-090 before DK-092. After P3b-07k, C5 has 19 eligible cards and DK-093 for a pile of 12, and a Propaganda card. V-CARDS stopped blocking the full campaign at P3b-07j (16 eligible cards, DEC-76).
 
 ## 2. Cards
 

@@ -1,6 +1,7 @@
 # C5 cards (research 08; deck CSV). Encoding docs/prototype/34, DEC-75. DK-093 Capture: P3b-06a (docs/prototype/31 s5.3).
 # DK-098 Coercive Diplomacy on Syria is in pivotal.yaml. P3b-07h: reports, harm and the flag case.
 # P3b-07i: Syria and northern Iraq (DK-084, DK-089 to DK-092).
+# P3b-07j: operations (DK-078, DK-082, DK-083, DK-088, DK-097).
 - id: DK-093
   campaign: C5
   title: "Capture (Feb 1999)"
@@ -356,6 +357,149 @@
   eventConfidence: High
   deckEligible: true
   sources: [E-0130, S-0017, S-0278, S-0359]
+- id: DK-078
+  campaign: C5
+  title: "Suicide Attacks (Jun-Oct 1996)"
+  date: "1996-06-30"
+  type: event
+  unshaded:
+    text: "Place a PKK Harm marker in Dersim. Europe -1. The State conducts a free Garrison."
+    owner: state
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: pkkHarm, space: dersim}
+      - {type: adjustTrack, track: europe, delta: -1}
+      - {type: freeAction, action: state.garrison, constraints: {}}
+  shaded:
+    text: "Block only: place a PKK Harm marker in Dersim. No other effect."
+    owner: pkk
+    blockOnly: true
+    tier: T2
+    effects:
+      - {type: placeMarker, marker: pkkHarm, space: dersim}
+  encoding: {status: encoded, encodedBy: "P3b-07j", reviewedAgainstText: true, note: "As DK-059. Block-only harmer side (08 s7.2 item 3)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0116, E-0317, E-0318, S-0281, S-0297, S-0081, S-0444, S-0475]
+- id: DK-082
+  campaign: C5
+  title: "Operation Hammer (May-Jul 1997)"
+  date: "1997-05-12"
+  type: event
+  unshaded:
+    text: "With KDP help: the State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border. If KDP is Hostile, ignore the Mountain modifier and move KDP one step toward Aligned with Turkey."
+    owner: state
+    tier: T1
+    effects:
+      - type: conditional
+        if: {type: trackIn, track: posture.kdp, values: [hostile]}
+        then:
+          - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border, ignoreMountain: true}}
+          - {type: freeAction, action: state.assault, constraints: {spaces: [kdp-zone], sa: state.cross-border, noLift: true, ignoreMountain: true}}
+          - {type: stepOrdinal, track: posture.kdp, direction: next, steps: 1}
+        else:
+          - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border}}
+          - {type: freeAction, action: state.assault, constraints: {spaces: [kdp-zone], sa: state.cross-border, noLift: true}}
+  shaded:
+    text: "Fighters shift to the PUK Zone: move up to 4 Guerrillas from the KDP Zone to the PUK Zone, Underground. State Resources -2."
+    owner: pkk
+    tier: T1
+    effects:
+      - {type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: puk-zone}
+      - {type: adjustTrack, track: resources.state, delta: -2}
+  encoding: {status: encoded, encodedBy: "P3b-07j", reviewedAgainstText: true, note: "U: as DK-047 unshaded, Hostile only; KDP posture read once, the step after the Assault (DEC-75 point 3). One lift, with the Sweep (noLift)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0120, S-0097, S-0211, S-0283, S-0365, S-0034, S-0063, S-0126]
+- id: DK-083
+  campaign: C5
+  title: "US Designates the PKK (Oct 1997)"
+  date: "1997-10-08"
+  type: event
+  unshaded:
+    text: "Europe -1. PKK Resources -2."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: europe, delta: -1}
+      - {type: adjustTrack, track: resources.pkk, delta: -2}
+  shaded:
+    text: "Networks adapt: the PKK conducts a free Rally on the Europe track."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: freeAction, action: pkk.rally, constraints: {spaces: [europe]}}
+  encoding: {status: encoded, encodedBy: "P3b-07j", reviewedAgainstText: true, note: "S: as DK-092 shaded; at the Ban cap the Rally is refused and skipped (rallyEuropeCap)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0225, S-0279, S-0097]
+- id: DK-088
+  campaign: C5
+  title: "Third Unilateral Ceasefire (Sep 1998)"
+  date: "1998-09-01"
+  type: event
+  unshaded:
+    text: "Ceasefire not recognized: the State conducts a free Sweep in up to 2 spaces."
+    owner: state
+    tier: T0
+    effects:
+      - {type: freeAction, action: state.sweep, constraints: {maxLocations: 2}}
+  shaded:
+    text: "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1. PKK Resources +2."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: procedure, id: ceasefire.declare}
+      - {type: adjustTrack, track: resources.pkk, delta: 2}
+  encoding: {status: encoded, encodedBy: "P3b-07j", reviewedAgainstText: true, note: "U: the free Sweep counts for the ceasefire table (DEC-66). S: as DK-073 shaded; none while a ceasefire is in force (DEC-69 point 5)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0123, S-0078, S-0270]
+- id: DK-097
+  campaign: C5
+  title: "Leader Calls for Withdrawal (Aug 1999)"
+  date: "1999-08"
+  type: event
+  unshaded:
+    text: "Withdrawal under pressure: the State conducts a free Assault in one space with Active Guerrillas."
+    owner: state
+    tier: T0
+    effects:
+      - {type: freeAction, action: state.assault, constraints: {maxLocations: 1, activeGuerrillas: true}}
+  shaded:
+    text: "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1. Move up to 4 Guerrillas from domestic spaces to the KDP Zone or PUK Zone (posture permitting), Underground."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: procedure, id: ceasefire.declare}
+      - type: choice
+        options:
+          - label: KDP Zone
+            effects:
+              - type: conditional
+                if: {type: trackIn, track: posture.kdp, values: [host, tolerant, restricted]}
+                then:
+                  - type: forEachPiece
+                    piece: guerrilla
+                    where: {type: spaceKind, kind: domestic}
+                    min: 0
+                    max: 4
+                    effects: [{type: movePieces, piece: guerrilla, toState: underground, count: 1, from: selected, to: kdp-zone}]
+          - label: PUK Zone
+            effects:
+              - type: conditional
+                if: {type: trackIn, track: posture.puk, values: [host, tolerant, restricted]}
+                then:
+                  - type: forEachPiece
+                    piece: guerrilla
+                    where: {type: spaceKind, kind: domestic}
+                    min: 0
+                    max: 4
+                    effects: [{type: movePieces, piece: guerrilla, toState: underground, count: 1, from: selected, to: puk-zone}]
+  encoding: {status: encoded, encodedBy: "P3b-07j", reviewedAgainstText: true, note: "U: activeGuerrillas, each location needs an Active Guerrilla (gap C3). S: a zone is open at Host, Tolerant or Restricted, as PKK March (07 s5.1); free and Underground as printed (DEC-75 point 10); the declaration applies with both zones closed"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0239, S-0116]
 - id: DK-099
   campaign: C5
   title: Propaganda
