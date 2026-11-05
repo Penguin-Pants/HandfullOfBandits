@@ -45,7 +45,7 @@ describe("Play branch (P4-04)", () => {
     const session = vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: heads[n] as Head }));
     const legal = vi.fn(() => Promise.resolve(legalFor(n === 0 ? "state" : "pkk")));
     const action = (id: string, status: string) => ({ action: { action_id: id, summary: "Pass by pkk", status, faction: "pkk", box: "pass", phase: "card" }, entries: [], notes: 0 }) as never;
-    const history = vi.fn(() => Promise.resolve([action("S-A2", "committed"), action("S-A3", "pending")]));
+    const history = vi.fn(() => Promise.resolve([action("S-A2", "committed"), action("S-A9", "pending"), action("S-A3", "committed")]));
     const branch = vi.fn(() => {
       n = 1;
       return Promise.resolve({ branchId: "B2", head: heads[1] as Head });
@@ -54,7 +54,7 @@ describe("Play branch (P4-04)", () => {
     render(<Play api={mockApi({ session, legal, history, branch })} sessionId="S" />);
     await screen.findByText(/DK-012/, { selector: "span" });
     fireEvent.click(screen.getByRole("button", { name: "History (H)" }));
-    // A pending action's open Operation cannot start a branch.
+    // Neither a pending action (open Operation) nor the head (S-A3) offers a branch.
     expect(screen.getAllByRole("button", { name: "Branch from here" })).toHaveLength(1);
     fireEvent.click(screen.getByRole("button", { name: "Branch from here" }));
     await waitFor(() => { expect(branch).toHaveBeenCalledWith("S", "S-A2", "S-A3", "S-A3"); });

@@ -87,6 +87,8 @@ describe("branch from a past action (P4-04)", () => {
   it("refuses a stale head, an unknown action, another session's action and a read-only session", () => {
     const { head } = service.session(sessionId);
     expect(() => service.branch(sessionId, a2, a5)).toThrow(/moved on/);
+    // A branch at the head keeps the head ID, so a stale tab would write to it (PR #67 review).
+    expect(() => service.branch(sessionId, head.actionId, head.actionId, head.stateHash)).toThrow(/current head/);
     expect(() => service.branch(sessionId, "nope", head.actionId, head.stateHash)).toThrow(/Unknown action/);
     const other = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 1, name: "other" });
     expect(() => service.branch(sessionId, other.head.actionId, head.actionId, head.stateHash)).toThrow(/Unknown action/);

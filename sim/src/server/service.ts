@@ -356,6 +356,8 @@ export class SessionService {
     const { ended, pending } = this.state(action.state_hash_after).state;
     // A pending action, or one undone while pending, would continue its Operation on the earlier branch.
     if (pending?.resume?.kind === "operation") throw new ServiceError(409, "An action with an open Operation cannot start a branch.");
+    // The head is not a past action. A branch there keeps the head ID, so a stale tab's next command would join it.
+    if (actionId === head.actionId) throw new ServiceError(409, "The current head cannot start a branch; play on instead.");
     const branchId = createBranch(this.db, { sessionId, actionId, result: ended === null ? null : JSON.stringify(ended) });
     return { branchId, head: this.head(sessionId) };
   }
