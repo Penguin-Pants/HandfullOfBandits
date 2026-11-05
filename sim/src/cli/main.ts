@@ -19,6 +19,7 @@ import { resolvePlayer } from "./player-registry.ts";
 import { CURRENT } from "./strategies/scenario-a.ts";
 import { validateCommand } from "./validate.ts";
 import { diffCommand } from "./diff.ts";
+import { compareCommand, createCommand, listCommand, runCommand } from "./regression.ts";
 
 const usage = [
   "Usage: sim validate <package-dir>",
@@ -33,6 +34,10 @@ const usage = [
   "       sim experiment archive <experiment-dir>",
   "       sim experiment compare <experiment-dir> <experiment-dir>... --out <file.md>",
   "       sim experiment qualify <out.json> [--players <id,id>] [--package <dir>]",
+  "       sim regression create <annotationId> [--label <text>] [--db <file>]",
+  "       sim regression run <caseId> --package <dir> [--db <file>]",
+  "       sim regression list [--db <file>]",
+  "       sim regression compare <oldActionId> <newActionId> [--db <file>]",
   "       sim export <sessionId...> [--db <file>] [--with-states] [--format json|markdown|csv] [--out <file or folder>]",
 ].join("\n");
 const args = process.argv.slice(2);
@@ -54,6 +59,17 @@ if (command === "validate" && target !== undefined) {
   print(diffCommand(target, args[2]));
 } else if (command === "replay" && target !== undefined) {
   print(target.endsWith(".json") ? replayFile(target, flag("--package", kurdish)) : replaySession(target, flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)))));
+} else if (command === "regression") {
+  const db = flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)));
+  const [, , first, second] = args;
+  const known = new Set(["--db", "--label", "--package"]);
+  const bad = args.slice(2).some((a) => a.startsWith("--") && !known.has(a));
+  if (bad) print({ exitCode: 2, lines: [usage] });
+  else if (target === "create" && first !== undefined && !first.startsWith("--")) print(createCommand(first, db, args.includes("--label") ? flag("--label", "") : null));
+  else if (target === "run" && first !== undefined && !first.startsWith("--") && args.includes("--package")) print(runCommand(first, flag("--package", ""), db));
+  else if (target === "list") print(listCommand(db));
+  else if (target === "compare" && first !== undefined && second !== undefined && !first.startsWith("--") && !second.startsWith("--")) print(compareCommand(first, second, db));
+  else print({ exitCode: 2, lines: [usage] });
 } else if (command === "export" && target !== undefined) {
   const ids = args.slice(1).filter((a, i, all) => !a.startsWith("--") && !["--db", "--out", "--format"].includes(all[i - 1] ?? ""));
   const db = flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)));

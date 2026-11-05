@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-05 done. **Next: P4-06** (regression cases).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-06 done. **Next: P4-07** (hidden-information view toggle).
 
-## 0. Resume here (updated 2026-11-05, P4-05)
+## 0. Resume here (updated 2026-11-05, P4-06)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P4-06** (regression cases from notes, run against a target version; accept: same, changed and incompatible results reported, 09 s7). P4-06 also owns the 09 s7 per-round metric diff ("compare two branches or versions"). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: P4-07** (hidden-information view toggle; accept: Covert markers hidden in view mode). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+
+**P4-06 is done:** `sim regression create <annotationId>` makes a case from a note's action (07 s9): package hash, scenario, seed, options, the command range from session start to that action and expectations from the stored run (state facts the action changed, its applied effects, every round's metrics, the result). `sim regression run <caseId> --package <dir>` replays it under a target package and reports `same`, `changed` (per-round metric diff, old against new), `incompatible` (missing scenario or option, or the first rejected command with its violations) or `error`, flags "deck order differs" and stores the run. `sim regression compare <actionId> <actionId>` is the per-round metric diff of two branch paths. Not built: a UI (no task row; see section 5).
 
 **P4-05 is done:** `sim diff <old-package-dir> <new-package-dir>` lists added, removed and changed parameters (old and new value), cards by ID (changed fields, a move to another file), handlers and modules, then the other files whose content changed. Handlers are what the package selects: the sequence model, the Propaganda phase list and its order, and the card procedures and modifiers. Both packages must load; else exit 1 with the issues. Not built: a UI view (10 s3 lists "version compare in the UI"; the P4-05 row asks for none).
 
@@ -80,6 +82,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #65 | P4-02: full Markdown and CSV export |
 | #66 | P4-03: metrics review screen and `metrics.csv` |
 | #67 | P4-04: branch from a past action |
+| #68 | P4-05: package diff tool |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -834,7 +837,25 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
-**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-05 done; **next: P4-06**.
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-06 done; **next: P4-07**.
+
+**P4-06 (2026-11-05):** complete. Regression cases from notes and runs against a target version (06 s3.10, s3.11; 07 s9; 09 s7).
+- **Case** (`cli/regression.ts` `createCase`; repo `store/repos/regression.ts`): from a note with an action (not setup). Stores the source session, action and note, package hash, seed, scenario, options, `command_range` (first and last command ID on the action's historical path, undone actions included, 09 s6) and expectations taken from stored data, so the old package need not load: `stateFact` for each leaf of tracks, flags, spaces and pools that the action changed; `logFact` for each `EffectApplied` entry of the action; `metric` for tracks, scores, margins, Harm, Resources, income, postures, Legal Space, Successor, closure case and ceasefire of every round on the path; `outcome` when the game ended there. Label: the note's first line or `--label`.
+- **Run** (`runCase`, pure apart from the engine; `sim regression run <caseId> --package <dir>`): checks the scenario exists and each option and value is declared in the target manifest (as session start checks them), replays the commands up to the stored last command (a pending action may grow later), never forces a rejected command, then checks every expectation. Outcome `same`, `changed`, `incompatible` (first failure: command ID and violations, or the missing ID) or `error` (engine exception). "deck order differs" is its own flag (09 s7.2 item 1). The diff lists each changed expectation, old against new, and rounds only the new run has. Each run is a `regression_runs` row. Exit 0 only for `same`, so a script can gate on it.
+- **Compare** (`sim regression compare <oldActionId> <newActionId>`): the per-round metric diff of the stored paths to two actions, for example two branch heads (09 s6 "compare two branches or versions"). `sim regression list` shows each case with its latest outcome.
+- **Not built (no task row):** the note detail "Make regression case" button and the Regression screen (07 s9 item 1, 08 "Regression: Cases and runs", 10 s3 "regression runs in the UI"); moving a note to `addressed` from a run (07 s9 item 4; Feedback review bulk status does it by hand); saving T-FUZZ failures as cases (09 s2 T-FUZZ, DEC-33: fuzz failures are not in the store, and a case needs a source session).
+- Tests: `test/regression.test.ts` (17): case inputs, range and label; expectation types; refusals (no action, setup, unknown note); same under the unchanged package; changed by a threshold edit (margins only); incompatible at the first rejected command with violations (start Resources 0); stored range end; off-path range; unloadable package; list, unknown case and missing store; missing scenario, option and option value; a declared option the scenario does not list; Resources in the round diff; deck order flag; state, log and outcome checks; engine exception; per-round diff and two-path compare. Written with the code, not stubbed first; instead each mutation fails the suite: metric check off, rejected command forced, deck flag off, log fact inverted, option check off, range cut off, extra rounds off.
+- **TWO-PASS REVIEW.** Pass 1 traced `sim regression` from `cli/main.ts` (usage on unknown flags or a missing `--package`, exit 2), each `runCase` branch and `createCase` on a Scenario A session through `SessionService`. The test folder name has a space; paths use `node:path` `join`.
+  - **Fix:** the first draft cut the stored range only between actions; a cut inside an action had no test (scripted play never leaves a multi-command action). One slice over the flat command list now serves both, and the range test kills its mutation. A range end not on the path is an error; test added.
+  - **Fix (Pass 2):** stored log rows to engine entries was written twice (`server/service.ts` annotate and the new code). Now one `logEntriesOf` in `store/repos/log-entries.ts`.
+  - **Fix (Codex review, PR #69):** options were checked against the scenario defaults, so a session with a declared option the scenario does not list (`hotPursuit` on Scenario A, offered by Home) ran `incompatible` under its own package. Now checked against `manifest.options`. Tests added; they failed first.
+  - **Fix (Codex review, PR #69):** the round diff left out Resources and income, so an economic change compared `same`. Both added. Test added; it failed first.
+  - **Fix (Windows CI):** a test edit matched `\n` and missed CRLF checkouts.
+  - **Drop:** the start transition's RoundMetrics read: the engine logs none at setup, so the code was removed.
+  - **Decide:** a regression UI has no task row (see "Not built").
+  - **Propose:** none.
+- **Validation:** `npm run check` passes. `npm test`: 96 files, 1388 tests pass. `sim validate` passes for `kurdish-coin/0.1.0`. Golden replays unchanged. Schema unchanged (the tables exist since P1-11; no migration). `make e2e` not run (no UI change). Node 24.22.1 on Linux.
+- **Blocker for the next task:** none.
 
 **P4-05 (2026-11-05):** complete. Package diff tool (04 s10.1 item 3).
 - **Diff** (`package/diff.ts` `diffPackages`, pure): compares two loaded packages by element ID, never by file. Parameters: added, removed, changed fields with the old and new value (lists compare whole). Cards: added, removed, changed field paths two levels deep (`shaded.text`), and a move to another card file. Modules: by module ID, with the major version change. Handlers: the package has no `actions.yaml`; Operations and SAs and their handlers are app code (`engine/coin`). What the package selects is the sequence model, the Propaganda phase list (order is a rule, so an order change is reported) and the `procedure` and `addModifier` IDs in card effects, each with the cards that use it. Other files: every other file whose canonical content differs (scenarios, map, tracks, manifest), so no change is silent.
@@ -927,7 +948,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P4-03 ✅ | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 (13 needs the 07 s4.4 prompt) |
 | P4-04 ✅ | Branch from a past action | New branch plays. Original branch intact |
 | P4-05 ✅ | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
-| P4-06 | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
+| P4-06 ✅ | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
 | P4-07 | Hidden-information view toggle | Covert markers hidden in view mode |
 | P4-08 | Tester materials: `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md`, rule lookup from any log rule ref to its text in the package rule index (DEC-34) | A new tester installs and finishes S0 using only these files |
 
