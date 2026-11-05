@@ -1,12 +1,14 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-04 done. **Next: P4-05** (package diff tool).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-05 done. **Next: P4-06** (regression cases).
 
-## 0. Resume here (updated 2026-11-05, P4-04)
+## 0. Resume here (updated 2026-11-05, P4-05)
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: P4-05** (package diff tool; accept: lists changed parameters, cards, handlers and modules between two versions). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: P4-06** (regression cases from notes, run against a target version; accept: same, changed and incompatible results reported, 09 s7). P4-06 also owns the 09 s7 per-round metric diff ("compare two branches or versions"). Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+
+**P4-05 is done:** `sim diff <old-package-dir> <new-package-dir>` lists added, removed and changed parameters (old and new value), cards by ID (changed fields, a move to another file), handlers and modules, then the other files whose content changed. Handlers are what the package selects: the sequence model, the Propaganda phase list and its order, and the card procedures and modifiers. Both packages must load; else exit 1 with the issues. Not built: a UI view (10 s3 lists "version compare in the UI"; the P4-05 row asks for none).
 
 **P4-04 is done:** History drawer **Branch from here** (any action except a pending one and the head) starts a new branch at that action's state; earlier branches keep every row. Replay, history, notes and metrics rounds follow the branch path (`lineage`, 06 s3.3). Undo stops at the fork action. Not built: switching back to an earlier branch (no task; the export holds every branch).
 
@@ -77,6 +79,7 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 | #64 | P4-01: cross-session review (ruleset filter, bulk status, saved filters) |
 | #65 | P4-02: full Markdown and CSV export |
 | #66 | P4-03: metrics review screen and `metrics.csv` |
+| #67 | P4-04: branch from a past action |
 
 **Environment:** Node 24 is required (`sim/package.json`). Use `make check` and `make test` from the repository root. Work on the branch the session names; open each task as one PR.
 
@@ -831,7 +834,22 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 ## 5. Phase 4: playtest analysis
 
-**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-04 done; **next: P4-05**.
+**Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-05 done; **next: P4-06**.
+
+**P4-05 (2026-11-05):** complete. Package diff tool (04 s10.1 item 3).
+- **Diff** (`package/diff.ts` `diffPackages`, pure): compares two loaded packages by element ID, never by file. Parameters: added, removed, changed fields with the old and new value (lists compare whole). Cards: added, removed, changed field paths two levels deep (`shaded.text`), and a move to another card file. Modules: by module ID, with the major version change. Handlers: the package has no `actions.yaml`; Operations and SAs and their handlers are app code (`engine/coin`). What the package selects is the sequence model, the Propaganda phase list (order is a rule, so an order change is reported) and the `procedure` and `addModifier` IDs in card effects, each with the cards that use it. Other files: every other file whose canonical content differs (scenarios, map, tracks, manifest), so no change is silent.
+- **CLI** (`cli/diff.ts`, `sim diff <old-package-dir> <new-package-dir>`): both labels and hashes, then a warning when the new `parent` is not the old version, then one section per category (`+` added, `-` removed, `~` changed; "no change" when empty) and "Other files changed". Exit 0 for any diff; exit 1 with the error issues when a package does not load.
+- **Not built:** a UI view (10 s3 "version compare in the UI"; the task row asks for none). A diff of a stored session package by hash: not asked; P4-06 loads target packages from folders. An old package that no longer loads under the current app (for example a removed module major) cannot be diffed; the command names the issues.
+- **09 s7 split:** "compare two branches or versions" is a per-round metric diff (09 s7.2 item 3). It needs replay, so it belongs to P4-06, not to this static package diff.
+- Tests: `test/package-diff.test.ts` (12: equal packages; each category; a card moved between files; a phase reorder and removal; module major change; other files incl. a removed scenario; CLI output on a package copy in a folder with a space, the same folder, the parent warning, an unloadable package). The stubs failed on assertions. Mutation checks each fail the suite: card move ignored; phase order ignored; absent field compared as present; card fields one level deep; manifest left out of other files; modifiers not collected.
+- **TWO-PASS REVIEW.** Pass 1 traced `sim diff` from `cli/main.ts` on `kurdish-coin/0.1.0` against itself, against `test/packages/tiny` and with one argument (usage, exit 2). Paths use `node:path` `join`; the test folder name has a space.
+  - **Fix:** a field present in one version only (tiny parameters have no `source`) threw in `canonicalJson`. An absent field now equals only an absent field. Tests added (parameter field removed, scenario file removed); they failed first.
+  - **Drop:** two different package IDs give no own warning. The parent warning already shows, and both labels name the package.
+  - **Drop:** a procedure used by other cards in the new version is not a handler change. The card diff lists each changed card.
+  - Pass 2: reuses `canonicalJson`, `packageContent` and `formatIssue`; one `compare` helper serves all four ID maps. No duplicate found.
+  - **Propose:** none.
+- **Validation:** `npm run check` passes. `npm test`: 95 files, 1368 tests pass. `sim validate` passes for `kurdish-coin/0.1.0`. Golden replays unchanged. Schema unchanged (no migration). No UI change, so `make e2e` is not affected (known Windows atlas label failure: carried follow-up 8). Node 24.22.1 on Windows 11.
+- **Blocker for the next task:** none.
 
 **P4-04 (2026-11-05):** complete. Branch from a past action (06 s3.3, s6 item 6; 09 s7).
 - **Store:** `createBranch` (`store/repos/sessions.ts`) adds a branch row (`forked_from_action_id`, label `branch N`) and moves the session's current branch and head to that action in one transaction; status `active`, or `ended` with the result when that state ended. Refused: an action of another session; in the service, an action whose saved state has an open Operation (pending, or undone while pending), because the Operation would continue on the earlier branch; and the current head, which is not a past action. A branch row holds only its own actions; `branch_seq` starts at 1 per branch.
@@ -907,7 +925,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P4-02 ✅ | Full Markdown export and CSV export | Export answers the brief's sample question inputs (07 s8.2 sections present) |
 | P4-03 ✅ | Metrics review screen and CSV export. Rows exist from P2-10 (DEC-34) | Matches research logging sheet items 6 to 15 (13 needs the 07 s4.4 prompt) |
 | P4-04 ✅ | Branch from a past action | New branch plays. Original branch intact |
-| P4-05 | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
+| P4-05 ✅ | Package diff tool | Lists changed parameters, cards, handlers and modules between two versions |
 | P4-06 | Regression cases from notes and runs against a target version | Same, changed and incompatible results reported (09 s7) |
 | P4-07 | Hidden-information view toggle | Covert markers hidden in view mode |
 | P4-08 | Tester materials: `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md`, rule lookup from any log rule ref to its text in the package rule index (DEC-34) | A new tester installs and finishes S0 using only these files |

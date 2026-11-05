@@ -18,9 +18,11 @@ import { experimentCoverage } from "./experiment-coverage.ts";
 import { resolvePlayer } from "./player-registry.ts";
 import { CURRENT } from "./strategies/scenario-a.ts";
 import { validateCommand } from "./validate.ts";
+import { diffCommand } from "./diff.ts";
 
 const usage = [
   "Usage: sim validate <package-dir>",
+  "       sim diff <old-package-dir> <new-package-dir>",
   "       sim replay <file.json> [--package <dir>]",
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
@@ -48,6 +50,8 @@ function print(result: { exitCode: number; lines: readonly string[] }): void {
 
 if (command === "validate" && target !== undefined) {
   print(validateCommand(target));
+} else if (command === "diff" && target !== undefined && args[2] !== undefined) {
+  print(diffCommand(target, args[2]));
 } else if (command === "replay" && target !== undefined) {
   print(target.endsWith(".json") ? replayFile(target, flag("--package", kurdish)) : replaySession(target, flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)))));
 } else if (command === "export" && target !== undefined) {
