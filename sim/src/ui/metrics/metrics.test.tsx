@@ -32,6 +32,18 @@ describe("Metrics", () => {
     expect(metrics).toHaveBeenLastCalledWith([]);
   });
 
+  it("keeps the table of the current selection when an older response arrives last", async () => {
+    let releaseAll: (t: MetricsTable) => void = () => undefined;
+    const stale: MetricsTable = { ...table, rows: [{ ...table.rows[0], legal_space: "stale" }] };
+    const metrics = vi.fn((ids: readonly string[]) => (ids.length === 0 ? new Promise<MetricsTable>((r) => { releaseAll = r; }) : Promise.resolve(table)));
+    render(<Metrics api={mockApi({ metrics, sessions: () => Promise.resolve(sessions) })} />);
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Try B" }));
+    expect(await screen.findByRole("cell", { name: "open" })).toBeTruthy();
+    releaseAll(stale);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(screen.queryByRole("cell", { name: "stale" })).toBeNull();
+  });
+
   it("limits the table and the CSV to the checked sessions", async () => {
     const metrics = vi.fn(() => Promise.resolve(table));
     render(<Metrics api={mockApi({ metrics, sessions: () => Promise.resolve(sessions) })} />);

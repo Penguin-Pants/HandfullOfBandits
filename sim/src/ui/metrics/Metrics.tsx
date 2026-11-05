@@ -10,7 +10,12 @@ export function Metrics({ api }: { readonly api: Api }) {
   const [table, setTable] = useState<MetricsTable>({ columns: [], rows: [] });
   const key = checked.join(",");
   useEffect(() => { void api.sessions().then(setSessions); }, [api]);
-  useEffect(() => { void api.metrics(key === "" ? [] : key.split(",")).then(setTable); }, [api, key]);
+  useEffect(() => {
+    // A response for a superseded selection must not replace the current table.
+    let current = true;
+    void api.metrics(key === "" ? [] : key.split(",")).then((next) => { if (current) setTable(next); });
+    return () => { current = false; };
+  }, [api, key]);
   const names = new Map(sessions.map((s) => [s.session_id, s.name]));
   const shown = (key: string, value: MetricsCell | undefined): string => (value === null || value === undefined ? "" : key === "session_id" ? (names.get(String(value)) ?? String(value)) : String(value));
   const toggle = (id: string): void => { setChecked(checked.includes(id) ? checked.filter((x) => x !== id) : [...checked, id]); };
