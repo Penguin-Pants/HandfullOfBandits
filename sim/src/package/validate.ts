@@ -234,6 +234,9 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       case "totalAtLeast":
         if (pkg.victory.totals[c.total] === undefined) error("V-REF", file, `${at}.total`, id, `Unknown total "${c.total}". Use one of: ${Object.keys(pkg.victory.totals).join(", ") || "none"}.`);
         return;
+      case "markersAtLeast":
+        c.markers.forEach((m, j) => { ref(markers, "marker", m, file, `${at}.markers.${String(j)}`, id); });
+        return;
       case "spaceKind":
       case "terrainIn":
       case "selected":

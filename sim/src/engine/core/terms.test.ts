@@ -59,6 +59,15 @@ describe("terms", () => {
     expect(() => matches(ctx, "city", { type: "spaceHas", pieces: [], markers: ["coercion"] })).toThrow(new RangeError('Unknown marker "coercion"'));
   });
 
+  it("markersAtLeast counts markers on the map in every space and on every side", () => {
+    const spaces = Object.fromEntries(Object.entries(ctx.state.spaces).map(([id, space]) => [id, { ...space, markers: { harm: id === "city" ? { default: 1 } : { old: 1 } } }]));
+    const two: TermContext = { ...ctx, state: { ...ctx.state, spaces } };
+    const atLeast = (value: number): boolean => matches(two, "city", { type: "markersAtLeast", markers: ["harm"], value });
+    expect([atLeast(2), atLeast(3)]).toEqual([true, false]);
+    expect(matches(ctx, "box", { type: "markersAtLeast", markers: ["harm"], value: 1 })).toBe(false);
+    expect(() => matches(ctx, "city", { type: "markersAtLeast", markers: ["coercion"], value: 1 })).toThrow(new RangeError('Unknown marker "coercion"'));
+  });
+
   it("throws on an unknown space", () => {
     expect(() => matches(ctx, "sea", { type: "spaceKind", kind: "domestic" })).toThrow(new RangeError('Unknown space "sea"'));
   });

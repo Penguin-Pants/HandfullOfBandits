@@ -57,4 +57,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-Continue P3b-07 with P3b-07j from the approved C5 draft [34](34-c5-cards-draft.md) (DEC-75). P3b-07h and P3b-07i are done. See [11-build-plan.md](11-build-plan.md) section 0.
+P3b-07 is complete (C3 to C5). Next: P3b-08 Scenarios B and C (Scenario B State threshold default 48, DEC-77). See [11-build-plan.md](11-build-plan.md) section 0.
