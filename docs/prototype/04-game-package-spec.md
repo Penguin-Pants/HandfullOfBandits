@@ -336,7 +336,7 @@ Each message gives file, path inside the file, the ID and a plain sentence. Exam
 
 1. Any change to a value, effect, handler choice or module version raises `rulesetVersion`.
 2. A schema change raises `schemaVersion`. The loader supports the current and previous schema version.
-3. `parent` names the previous version. The package diff tool compares two versions (P4-05).
+3. `parent` names the previous version. The package diff tool compares two versions (P4-05): `sim diff <old-package-dir> <new-package-dir>` lists changed parameters, cards, handlers (sequence model, Propaganda phases, card procedures and modifiers) and modules, then other changed files.
 
 ### 10.2 Content hash
 
