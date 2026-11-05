@@ -87,7 +87,7 @@ describe("P4-06 run against a target version (09 s7.2)", () => {
   });
 
   it("reports changed with the per-round metric diff, old against new", () => {
-    const next = variant("threshold", join("scenarios", "scenario-a.yaml"), [["  state: 49\n", "  state: 47\n"]]);
+    const next = variant("threshold", join("scenarios", "scenario-a.yaml"), [["  state: 49", "  state: 47"]]);
     const { exitCode, lines } = runCommand(made.caseId, next, dbFile);
     expect(exitCode).toBe(1);
     expect(lines[1]).toBe("changed");
