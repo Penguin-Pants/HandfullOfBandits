@@ -39,10 +39,15 @@ function place(ctx: Exec, n: number, ref: string): void {
   }
 }
 
+/** Legal Space Open or Prosecuted: a closure case may be filed and line 3 sets an Office limit. */
+function legalPartyActive(state: GameState): boolean {
+  return ["open", "prosecuted"].includes(String(state.tracks[LEGAL]));
+}
+
 /** Violations for a State closure filing (07 s6.3). */
 export function closureViolations(ruleset: Ruleset, state: GameState): Violation[] {
   const ref = "07 s6.3";
-  if (!["open", "prosecuted"].includes(String(state.tracks[LEGAL]))) return [violation("closureSpace", "A closure case needs Legal Space Open or Prosecuted.", ref)];
+  if (!legalPartyActive(state)) return [violation("closureSpace", "A closure case needs Legal Space Open or Prosecuted.", ref)];
   if (officeSpaces(ruleset, state).length === 0) return [violation("closureOffice", "A closure case needs at least 1 Office on the map.", ref)];
   if (state.flags[CASE] === true) return [violation("closurePending", "A Closure Case marker is already on the track.", ref)];
   return [];
@@ -86,6 +91,20 @@ function officeCount(ruleset: Ruleset, state: GameState): number {
 /** Lines 3 and 4: below the limit, place 1 Office. HEP Founded runs them as a card procedure (DK-037). */
 export function officeLines(ctx: Exec): void {
   if (officeCount(ctx.ruleset, ctx.state) < officeLimit(ctx)) place(ctx, 1, `${ruleRef} line 4`);
+}
+
+/**
+ * HADEP local wins (DK-094 shaded; doc 34 gap C4): place up to `legal.localWinsOffices` Offices in line 4
+ * order, stopping at the line 3 limit plus `legal.localWinsOverLimit`. Line 3 sets no limit unless Legal
+ * Space is Open or Prosecuted, so then nothing happens (DEC-75 point 8); line 5 removes the extra Office later.
+ */
+export function localWins(ctx: Exec): void {
+  if (!legalPartyActive(ctx.state)) {
+    ctx.log("EffectSkipped", { effect: "procedure", procedure: "legal.localWins", reason: "noOfficeLimit" }, `${ruleRef} line 3`);
+    return;
+  }
+  const cap = officeLimit(ctx) + param(ctx.ruleset, "legal.localWinsOverLimit", "number");
+  place(ctx, Math.min(param(ctx.ruleset, "legal.localWinsOffices", "number"), cap - officeCount(ctx.ruleset, ctx.state)), `${ruleRef} line 4`);
 }
 
 /** Line 1: ban. Successor at the Office count, all Offices removed, Legitimacy and Europe costs. Card procedure `legal.ban` (DK-060, DK-068). */

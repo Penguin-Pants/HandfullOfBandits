@@ -109,7 +109,9 @@ export type SpaceCondition =
   | { readonly type: "trackIn"; readonly track: TrackId; readonly values: readonly string[] }
   | { readonly type: "flag"; readonly flag: string; readonly value: boolean }
   /** A named total from victory.yaml is at least `value`. */
-  | { readonly type: "totalAtLeast"; readonly total: string; readonly value: number };
+  | { readonly type: "totalAtLeast"; readonly total: string; readonly value: number }
+  /** Markers of the listed types on the map, all sides, are at least `value`. */
+  | { readonly type: "markersAtLeast"; readonly markers: readonly MarkerTypeId[]; readonly value: number };
 
 /** A space ID, or `selected`: the current forEachSpace pick (DEC-33). */
 export type SpaceRef = SpaceId;

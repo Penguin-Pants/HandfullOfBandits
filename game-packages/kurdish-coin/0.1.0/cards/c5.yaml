@@ -2,6 +2,7 @@
 # DK-098 Coercive Diplomacy on Syria is in pivotal.yaml. P3b-07h: reports, harm and the flag case.
 # P3b-07i: Syria and northern Iraq (DK-084, DK-089 to DK-092).
 # P3b-07j: operations (DK-078, DK-082, DK-083, DK-088, DK-097).
+# P3b-07k: late politics (DK-081, DK-094, DK-095, DK-096).
 - id: DK-093
   campaign: C5
   title: "Capture (Feb 1999)"
@@ -62,12 +63,15 @@
     tier: T3
     effects:
       - {type: procedure, id: covert.revealRandom}
-      - type: choice
-        options:
-          - {label: Reveal a second Covert marker, effects: [{type: procedure, id: covert.revealRandom}]}
-          - {label: Stop after one, effects: []}
+      - type: conditional
+        if: {type: markersAtLeast, markers: [covert], value: 1}
+        then:
+          - type: choice
+            options:
+              - {label: Reveal a second Covert marker, effects: [{type: procedure, id: covert.revealRandom}]}
+              - {label: Stop after one, effects: []}
       - {type: adjustTrack, track: europe, delta: 1}
-  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "Random reveals (07 s10.2 item 2); the executor may stop after 1 (DEC-75 point 1)"}
+  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "Random reveals (07 s10.2 item 2); the executor may stop after 1 (DEC-75 point 1); no second question with no Covert marker left (markersAtLeast, P3b-07k)"}
   eventConfidence: High
   deckEligible: true
   sources: [E-0015, S-0008, S-0146, S-0147, S-0165, S-0328, S-0010, S-0011, S-0100]
@@ -99,17 +103,20 @@
     tier: T3
     effects:
       - {type: procedure, id: covert.revealRandom}
-      - type: choice
-        options:
-          - {label: Reveal a second Covert marker, effects: [{type: procedure, id: covert.revealRandom}]}
-          - {label: Stop after one, effects: []}
+      - type: conditional
+        if: {type: markersAtLeast, markers: [covert], value: 1}
+        then:
+          - type: choice
+            options:
+              - {label: Reveal a second Covert marker, effects: [{type: procedure, id: covert.revealRandom}]}
+              - {label: Stop after one, effects: []}
       - type: forEachSpace
         all: true
         where: {type: all, of: [{type: spaceHas, pieces: [guards]}, {type: spaceHas, markers: [stateHarm, pkkHarm, disputedHarm]}]}
         effects:
           - {type: adjustTrack, track: legitimacy, delta: -1}
           - {type: removePieces, piece: guards, count: 1, space: selected}
-  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "U: the paid removal needs State Control and Police, as Civic Action (DEC-75 point 11). S: the executor may stop after 1 reveal (DEC-75 point 1); Guard Abuse as DK-006 shaded (DEC-57)"}
+  encoding: {status: encoded, encodedBy: "P3b-07h", reviewedAgainstText: true, note: "U: the paid removal needs State Control and Police, as Civic Action (DEC-75 point 11). S: the executor may stop after 1 reveal (DEC-75 point 1), asked only with a Covert marker left (P3b-07k); Guard Abuse as DK-006 shaded (DEC-57)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0223, E-0016, S-0147, S-0343, S-0146, S-0008, S-0010]
@@ -500,6 +507,143 @@
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0239, S-0116]
+- id: DK-081
+  campaign: C5
+  title: "Emergency Rule Narrowed (1996-1998)"
+  date: "1997"
+  type: event
+  unshaded:
+    text: "Province relief: Legitimacy +1. The State may move Emergency Rule one step toward Normalizing now."
+    owner: state
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+      - type: conditional
+        if: {type: trackIn, track: emergencyRule, values: [ohal, ohalExtendedPowers]}
+        then:
+          - type: choice
+            options:
+              - label: Move Emergency Rule one step toward Normalizing
+                effects:
+                  - type: conditional
+                    if: {type: trackIn, track: emergencyRule, values: [ohalExtendedPowers]}
+                    then: [{type: setTrack, track: emergencyRule, value: ohal}]
+                    else: [{type: setTrack, track: emergencyRule, value: normalizing}]
+              - {label: Do not move, effects: []}
+  shaded:
+    text: "Emergency rule renewed elsewhere: Legitimacy -1. Europe +1."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: -1}
+      - {type: adjustTrack, track: europe, delta: 1}
+  encoding: {status: encoded, encodedBy: "P3b-07k", reviewedAgainstText: true, note: "U: the 07 s8.2 moves, free and not the Propaganda step: OHAL Extended Powers to OHAL, OHAL to Normalizing; no move at Normalizing or Martial Law (DEC-75 point 2)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0219, E-0329, S-0097, S-0469, S-0482]
+- id: DK-094
+  campaign: C5
+  title: "HADEP Wins Local Offices (Apr 1999)"
+  date: "1999-04-18"
+  type: event
+  unshaded:
+    text: "Elections held on time: Legitimacy +1. If Legal Space is Prosecuted, set it to Open."
+    owner: state
+    executors: [state]
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+      - {type: setTrack, track: legalSpace, value: open, ifEquals: prosecuted}
+  shaded:
+    text: "Non-player side: place 2 Offices in the line 4 order, up to the Office limit plus 1."
+    owner: null
+    tier: T0
+    effects:
+      - {type: procedure, id: legal.localWins}
+  encoding: {status: encoded, encodedBy: "P3b-07k", reviewedAgainstText: true, note: "U: State-only, it moves Legal Space (05 s5 item 1); a Closure Case marker stays (DEC-75 point 7). S: open to both factions (05 s5 item 1 exception); procedure legal.localWins (gap C4); nothing while Banned or Absent (DEC-75 point 8)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0132, S-0083, S-0103, S-0174, S-0181, S-0231, S-0025, S-0026, S-0116, S-0442]
+- id: DK-095
+  campaign: C5
+  title: "Return to Village Project (1999)"
+  date: "1999"
+  type: event
+  unshaded:
+    text: "Return event: the State may remove up to 2 Displacement markers for 3 Resources each (07, section 3.3; no Support, Harm stays). Legitimacy +1."
+    owner: state
+    tier: T0
+    effects:
+      - type: forEachSpace
+        where: {type: all, of: [{type: spaceHas, markers: [displacement]}, {type: control, faction: state}, {type: spaceHas, pieces: [police]}]}
+        min: 0
+        max: 2
+        effects:
+          - type: conditional
+            if: {type: trackAtLeast, track: resources.state, value: 3}
+            then:
+              - {type: adjustTrack, track: resources.state, delta: -3}
+              - type: conditional
+                if: {type: spaceHas, markers: [displacement], sides: [new]}
+                then: [{type: removeMarker, marker: displacement, space: selected, side: new}]
+                else: [{type: removeMarker, marker: displacement, space: selected, side: old}]
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+  shaded:
+    text: "Return stays small: Legitimacy -1 if 3 or more Displacement markers are on the map."
+    owner: pkk
+    tier: T0
+    effects:
+      - type: conditional
+        if: {type: markersAtLeast, markers: [displacement], value: 3}
+        then: [{type: adjustTrack, track: legitimacy, delta: -1}]
+  encoding: {status: encoded, encodedBy: "P3b-07k", reviewedAgainstText: true, note: "U: one marker per space (Village Clearance refuses a second); State Control and Police, as Civic Action (DEC-75 point 11); 3 Resources each, no pay no removal. S: condition markersAtLeast, New and Old (gap C5)"}
+  eventConfidence: Moderate
+  deckEligible: true
+  sources: [E-0136, S-0002]
+- id: DK-096
+  campaign: C5
+  title: "Repentance Law (Aug 1999)"
+  date: "1999-08"
+  type: event
+  unshaded:
+    text: "Surrender offer: remove up to 3 Active Guerrillas from domestic spaces to Available. Legitimacy +1."
+    owner: state
+    tier: T0
+    effects:
+      - type: forEachPiece
+        piece: guerrilla
+        state: active
+        where: {type: spaceKind, kind: domestic}
+        min: 0
+        max: 3
+        effects: [{type: removePieces, piece: guerrilla, state: active, count: 1, space: selected}]
+      - {type: adjustTrack, track: legitimacy, delta: 1}
+  shaded:
+    text: "Few take the offer: PKK Resources +1. Flip all Guerrillas in up to 2 spaces Underground."
+    owner: pkk
+    tier: T0
+    effects:
+      - {type: adjustTrack, track: resources.pkk, delta: 1}
+      - type: forEachSpace
+        where:
+          type: all
+          of:
+            - {type: spaceHas, pieces: [guerrilla], sides: [active]}
+            - type: not
+              of:
+                type: any
+                of:
+                  - {type: all, of: [{type: spaceIn, spaces: [syria-bekaa]}, {type: trackIn, track: posture.syria, values: [hostile]}]}
+                  - {type: all, of: [{type: spaceIn, spaces: [kdp-zone]}, {type: trackIn, track: posture.kdp, values: [hostile, aligned]}]}
+                  - {type: all, of: [{type: spaceIn, spaces: [puk-zone]}, {type: trackIn, track: posture.puk, values: [hostile, aligned]}]}
+        min: 0
+        max: 2
+        effects:
+          - {type: setPieceState, piece: guerrilla, space: selected, from: active, to: underground, count: all}
+  encoding: {status: encoded, encodedBy: "P3b-07k", reviewedAgainstText: true, note: "S: a Hostile or Aligned host box is not eligible; Guerrillas there are Active by posture (07 s5.1; DEC-75 point 9)"}
+  eventConfidence: High
+  deckEligible: true
+  sources: [E-0270, S-0116]
 - id: DK-099
   campaign: C5
   title: Propaganda

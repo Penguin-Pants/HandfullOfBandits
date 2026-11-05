@@ -113,6 +113,8 @@
 - {id: legal.limitProsecuted, value: 3, tune: true, source: "07 s6.4 line 3"}
 - {id: legal.banLegitimacy, value: 2, tune: false, source: "07 s6.4 line 1"}
 - {id: legal.banEurope, value: 1, tune: false, source: "07 s6.4 line 1"}
+- {id: legal.localWinsOffices, value: 2, tune: false, source: "DK-094 shaded (deck CSV); docs/prototype/34 gap C4"}
+- {id: legal.localWinsOverLimit, value: 1, tune: false, source: "DK-094 shaded (deck CSV); docs/prototype/34 gap C4"}
 - {id: ceasefire.from, value: C3, tune: false, source: "07 s7.1"}
 - {id: ceasefire.declareEurope, value: 1, tune: false, source: "07 s7.1"}
 - {id: ceasefire.pkkBreachEurope, value: 1, tune: false, source: "07 s7.2"}

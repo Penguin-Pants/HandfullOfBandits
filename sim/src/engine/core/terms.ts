@@ -91,6 +91,8 @@ export function matches(ctx: TermContext, spaceId: SpaceId, condition: SpaceCond
       if (terms === undefined) throw new RangeError(`Unknown total "${condition.total}"`);
       return sumTerms(ctx, terms) >= condition.value;
     }
+    case "markersAtLeast":
+      return ctx.ruleset.spaces.reduce((sum, s) => sum + countIn(ctx, s.id, "markers", condition.markers), 0) >= condition.value;
   }
 }
 

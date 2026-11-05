@@ -6,7 +6,7 @@ import { CARD_REF, CEASEFIRE, declareCeasefire, endCeasefire, pkkRestraintBroken
 import { count, markers, space } from "./ops/common.ts";
 import { FACE, MARKER, PIECE, TRACK } from "./ops/ids.ts";
 import { ceasefireOptions } from "./propaganda/ceasefire-step.ts";
-import { ban, officeLines, successor } from "./propaganda/legal-politics.ts";
+import { ban, localWins, officeLines, successor } from "./propaganda/legal-politics.ts";
 import { onMap, revealRandomCovert } from "./propaganda/legitimacy.ts";
 
 /**
@@ -68,6 +68,7 @@ export const procedures: Readonly<Record<string, (ctx: Exec) => void>> = {
   "legal.successor": (ctx) => { successor(ctx, 1); },
   "legal.successorFull": (ctx) => { successor(ctx, 0); },
   "legal.officeLines": officeLines,
+  "legal.localWins": localWins,
   "covert.revealRandom": (ctx) => { revealRandomCovert(ctx, "Covert reveal", "07 s10.2 item 2"); },
   "hizbullah.unattributed": unattributedKillings,
   "ceasefire.declare": declareCeasefire,

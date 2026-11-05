@@ -27,6 +27,7 @@ const condition: z.ZodType<SpaceCondition> = z.lazy(() =>
     z.strictObject({ type: z.literal("trackIn"), track: id, values: idList(1) }),
     z.strictObject({ type: z.literal("flag"), flag: id, value: z.boolean() }),
     z.strictObject({ type: z.literal("totalAtLeast"), total: id, value: z.int() }),
+    z.strictObject({ type: z.literal("markersAtLeast"), markers: idList(1), value: z.int() }),
   ]),
 );
 
