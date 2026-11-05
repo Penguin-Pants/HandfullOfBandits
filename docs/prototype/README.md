@@ -57,4 +57,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-P3b-07 is complete (C3 to C5). Next: P3b-08 Scenarios B and C; Scenario B needs owner decision Q-04 (State threshold default). See [11-build-plan.md](11-build-plan.md) section 0.
+P3b-07 is complete (C3 to C5). Next: P3b-08 Scenarios B and C (Scenario B State threshold default 48, DEC-77). See [11-build-plan.md](11-build-plan.md) section 0.
