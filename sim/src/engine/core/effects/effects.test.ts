@@ -94,6 +94,22 @@ describe("piece primitives", () => {
     expect(state.spaces["farm"]?.pieces["rebel"]).toEqual({ hidden: 2, shown: 0 });
   });
 
+  it("movePieces with toState and no face moves the other faces first (DK-005: Active Guerrillas go Underground)", () => {
+    const hidden = run(empty, { type: "placePieces", piece: "rebel", count: 1, space: "hills", state: "hidden" }).state;
+    const placed = run(hidden, { type: "placePieces", piece: "rebel", count: 1, space: "hills", state: "shown" }).state;
+    const { state } = run(placed, { type: "movePieces", piece: "rebel", state: null, toState: "hidden", count: 1, from: "hills", to: "farm" });
+    expect(state.spaces["hills"]?.pieces["rebel"]).toEqual({ hidden: 1, shown: 0 });
+    expect(state.spaces["farm"]?.pieces["rebel"]).toEqual({ hidden: 1, shown: 0 });
+  });
+
+  it("movePieces with toState and no face keeps the first-listed face home (DK-084: Guerrillas forced Active move Active ones first)", () => {
+    const hidden = run(empty, { type: "placePieces", piece: "rebel", count: 1, space: "hills", state: "hidden" }).state;
+    const placed = run(hidden, { type: "placePieces", piece: "rebel", count: 1, space: "hills", state: "shown" }).state;
+    const { state } = run(placed, { type: "movePieces", piece: "rebel", state: null, toState: "shown", count: 1, from: "hills", to: "farm" });
+    expect(state.spaces["hills"]?.pieces["rebel"]).toEqual({ hidden: 1, shown: 0 });
+    expect(state.spaces["farm"]?.pieces["rebel"]).toEqual({ hidden: 0, shown: 1 });
+  });
+
   it("transferPool moves a count or all between Available and Out of Play", () => {
     const all = run(empty, { type: "transferPool", piece: "camp", from: "outOfPlay", to: "available", count: "all" });
     expect(all.state.pools["camp"]).toEqual({ available: 2, outOfPlay: 0 });

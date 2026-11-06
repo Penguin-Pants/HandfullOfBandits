@@ -52,4 +52,6 @@ it("saves, resumes, replays and undoes the rolling SA and replacement Rally as o
     // Undo keeps the saved state, so the undone action still holds the open Operation.
     expect(() => service.branch(id, again.actionId, revealed.actionId, revealed.head.stateHash)).toThrow(/open Operation/);
   } finally {db.close(); rmSync(dir, {recursive: true, force: true});}
-});
+// Whole-session work (package copy, seed search, save, resume, replay): 0.9 s on Linux, 5 to 8 s on the
+// Windows CI runner, so the 5 s default is too tight. Same budget as the other session-level tests.
+}, 30000);
