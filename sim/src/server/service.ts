@@ -6,7 +6,7 @@ import { backupStore } from "../store/backup.ts";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { buildContext } from "../annotate/context.ts";
-import { buildRuleIndex, lookupRule, ruleSource, type RuleIndex, type RuleLookup } from "../annotate/rule-index.ts";
+import { lookupRule, ruleIndexOf, ruleSource, type RuleLookup } from "../annotate/rule-index.ts";
 import type { UiFocus } from "../annotate/types.ts";
 import { derive } from "../engine/coin/derive.ts";
 import { coinHandlers } from "../engine/coin/handlers.ts";
@@ -17,7 +17,6 @@ import type { AnyCommand, GameState, JsonValue, Ruleset, ValidationResult } from
 import { createEngine } from "../engine/index.ts";
 import { replaySteps } from "../engine/replay.ts";
 import { loadPackage, packageContent, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
-import { readResearchDocs } from "../package/research.ts";
 import type { PackageData, PackageIssue } from "../package/validate.ts";
 import type { Db } from "../store/migrate.ts";
 import { branchHistory, continueAction, commitAction, getAction, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
@@ -101,15 +100,12 @@ export class SessionService {
   private readonly engine = createEngine(coinHandlers);
   private readonly rulesets = new Map<string, { ruleset: Ruleset; data: PackageData }>();
   private readonly checked = new Set<string>();
-  /** Rule index of a package from its `researchBase` (11 P4-08). */
-  readonly ruleIndex: (researchBase: string | undefined) => RuleIndex;
   readonly db: Db;
   readonly packagesRoot: string;
 
   constructor(db: Db, packagesRoot: string) {
     this.db = db;
     this.packagesRoot = packagesRoot;
-    this.ruleIndex = (base) => buildRuleIndex(readResearchDocs(packagesRoot, base));
   }
 
   /** Package folders `<root>/<packageId>/<version>/` with their validation result. */
@@ -300,12 +296,12 @@ export class SessionService {
 
   /** Text of the research sections a log rule ref cites, for the session's package (11 P4-08). */
   ruleLookup(sessionId: string, ref: string): RuleLookup {
-    return lookupRule(this.ruleIndex(this.session(sessionId).data.manifest.researchBase), ref);
+    return lookupRule(ruleIndexOf(this.session(sessionId).data.rules), ref);
   }
 
   /** Research source of each rule ref in `entries` that cites a research section (07 s4.2 `rule_sources`). */
   private ruleSources(data: PackageData, entries: readonly { readonly ruleRef: string | null }[]): Record<string, string> {
-    const index = this.ruleIndex(data.manifest.researchBase);
+    const index = ruleIndexOf(data.rules);
     const out: Record<string, string> = {};
     for (const e of entries) {
       const source = e.ruleRef === null ? undefined : ruleSource(lookupRule(index, e.ruleRef));

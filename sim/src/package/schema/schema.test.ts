@@ -172,6 +172,7 @@ const valid: Record<PackageFile, unknown> = {
     },
   ],
   assumptions: [{ id: "PA-01", gap: "GAP-B01", text: "Executing faction chooses", appliesTo: ["events.choice"], status: "accepted" }],
+  rules: [{ id: "06 s3.2", file: "06-operations.md", heading: "Cross-Border", text: "Pay 2 Resources.", subsections: ["3.2.1 Access"] }],
 };
 
 const DELETE = Symbol("delete");
@@ -247,6 +248,9 @@ const invalid: [PackageFile, string, string, unknown, string][] = [
   ["sequence", "model without major", "model", "ct", "model"],
   ["assumptions", "bad PA ID", "0.id", "PA-1", "0.id"],
   ["assumptions", "unknown status", "0.status", "open", "0.status"],
+  ["rules", "bad cite", "0.id", "DD-19", "0.id"],
+  ["rules", "empty heading", "0.heading", "", "0.heading"],
+  ["rules", "unknown key", "0.extra", 1, "0"],
   ["assumptions", "empty appliesTo", "0.appliesTo", [], "0.appliesTo"],
   ["scenario", "excluded card without reason", "excludedCards.0.reason", DELETE, "excludedCards.0.reason"],
 ];

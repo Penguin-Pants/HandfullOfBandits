@@ -12,7 +12,7 @@ import { validatePackage, type PackageData, type PackageIssue } from "./validate
 
 const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "tracks", "markers", "victory", "sequence"] as const;
 /** Read when present. A package without them is valid. */
-const OPTIONAL_FILES = ["assumptions"] as const;
+const OPTIONAL_FILES = ["assumptions", "rules"] as const;
 const SCENARIO_DIR = "scenarios";
 const CARD_DIR = "cards";
 /** Folders whose `*.yaml` files the loader reads, with the schema of each file. */
@@ -53,7 +53,7 @@ function entries(dir: string, path: string, issues: PackageIssue[]): string[] {
 /**
  * Read the core files and `scenarios/*.yaml`. Every other entry gets a warning, so a misnamed
  * file is never skipped in silence. Sequence, actions and cards have no schema yet (DEC-40).
- * Optional files (assumptions) are read when present.
+ * Optional files (assumptions, rules) are read when present.
  */
 export function readPackageDir(dir: string): RawPackage {
   const files: Record<string, unknown> = {};
@@ -138,6 +138,7 @@ export function loadPackage(raw: RawPackage): LoadResult {
     victory: parsed["victory.yaml"] as PackageData["victory"],
     sequence: parsed["sequence.yaml"] as PackageData["sequence"],
     ...("assumptions.yaml" in parsed ? { assumptions: parsed["assumptions.yaml"] as NonNullable<PackageData["assumptions"]> } : {}),
+    ...("rules.yaml" in parsed ? { rules: parsed["rules.yaml"] as NonNullable<PackageData["rules"]> } : {}),
     cards: Object.fromEntries(pathsIn(CARD_DIR).map((path) => [path, parsed[path] as PackageData["cards"][string]])),
     scenarios: Object.fromEntries(scenarioPaths.map((path) => [path, parsed[path] as PackageData["scenarios"][string]])),
   };

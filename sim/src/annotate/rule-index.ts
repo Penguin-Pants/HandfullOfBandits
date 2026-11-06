@@ -1,5 +1,7 @@
 // Rule index (11 P4-08; DEC-34): maps a log rule ref such as "06 s3.2 item 3" to the text of the
-// research section it cites. Pure: callers pass the research documents as text.
+// research section it cites. Pure. The index comes from the package `rules.yaml` entries
+// (`ruleIndexOf`). `buildRuleIndex` and `ruleEntries` turn the research documents into those
+// entries (`sim rules`).
 
 /** One research section a ref cites. */
 export interface RuleSection {
@@ -22,6 +24,15 @@ export interface RuleLookup {
   readonly missing: readonly string[];
   /** Parts of the ref that cite no research section, for example `DD-19.4` or `debug.adjustTrack`. */
   readonly other: readonly string[];
+}
+
+/** One `rules.yaml` entry (11 P4-08): a section keyed by its cite. */
+export interface RuleEntry {
+  readonly id: string;
+  readonly file: string;
+  readonly heading: string;
+  readonly text: string;
+  readonly subsections: readonly string[];
 }
 
 export type RuleIndex = ReadonlyMap<string, ReadonlyMap<string, RuleSection>>;
@@ -83,4 +94,24 @@ export function lookupRule(index: RuleIndex, ref: string): RuleLookup {
 /** One line naming the research sections a ref cites, or undefined when none resolve. */
 export function ruleSource(lookup: RuleLookup): string | undefined {
   return lookup.sections.length === 0 ? undefined : lookup.sections.map((s) => `${s.file} s${s.section} ${s.heading}`).join("; ");
+}
+
+/** The `rules.yaml` entries of an index, in document and section order. */
+export function ruleEntries(index: RuleIndex): RuleEntry[] {
+  return [...index.entries()].sort(([a], [b]) => a.localeCompare(b)).flatMap(([, sections]) => [...sections.values()].map((s) => ({ id: s.cite, file: s.file, heading: s.heading, text: s.text, subsections: s.subsections })));
+}
+
+/** The index of a package: its `rules.yaml` entries. No entries, no index. */
+export function ruleIndexOf(entries: readonly RuleEntry[] | undefined): RuleIndex {
+  const index = new Map<string, Map<string, RuleSection>>();
+  for (const e of entries ?? []) {
+    const m = /^(\d{2}) s(\d+(?:\.\d+)*)$/.exec(e.id);
+    const doc = m?.[1];
+    const section = m?.[2];
+    if (doc === undefined || section === undefined) continue;
+    const sections = index.get(doc) ?? new Map<string, RuleSection>();
+    sections.set(section, { cite: e.id, file: e.file, section, heading: e.heading, text: e.text, subsections: e.subsections });
+    index.set(doc, sections);
+  }
+  return index;
 }

@@ -41,6 +41,7 @@ game-packages/
         scenario-c.yaml
         test-slice.yaml
       assumptions.yaml
+      rules.yaml
       CHANGELOG.md
 ```
 
@@ -279,6 +280,20 @@ Rule: every primitive is applied by core code that enforces stacking, supply, cl
 | `text` | The provisional rule |
 | `appliesTo` | Rule or action IDs |
 | `status` | `provisional`, `accepted` or `replaced` |
+
+### 7.1 rules.yaml (optional; P4-08, DEC-83)
+
+The research text behind each rule ref, one entry per numbered section of the research documents that `manifest.researchBase` names. Generated with `make rules DIR=<package-dir>` (`sim rules`), never edited by hand. `sim rules <dir> --check` and a test fail when the file is stale. The file is part of the content hash, so a change to the research text changes the hash.
+
+| Field | Meaning |
+|---|---|
+| `id` | Research cite as logged, `06 s3.2` |
+| `file` | Research file name |
+| `heading` | Section title |
+| `text` | Text under the heading, up to the next heading (may be empty) |
+| `subsections` | Titles of the sections directly below |
+
+A package without the file has an empty rule index.
 
 Any rule element may set `status: missing`. Validation then blocks a session that can reach that element.
 
