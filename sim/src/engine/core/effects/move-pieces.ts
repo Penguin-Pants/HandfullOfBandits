@@ -12,7 +12,12 @@ export function movePieces(ruleset: Ruleset, state: GameState, effect: EffectOf<
   let left = effect.count;
   let room = stackingRoom(ruleset, state, effect.to, piece.id);
   let present = 0;
-  for (const face of sourceFaces(piece.states, effect.state, piece.id)) {
+  // With a target face and no source face, the first-listed face (Underground) moves last (follow-up 2,
+  // doc 32 s5): "move ... Underground" takes Active Guerrillas first (DK-005), and "arrive Active" keeps
+  // Underground ones at home (DK-084). With no target face, the listed order holds.
+  const faces = sourceFaces(piece.states, effect.state, piece.id);
+  const order = toState === null ? faces : [...faces].reverse();
+  for (const face of order) {
     const here = next.spaces[effect.from]?.pieces[piece.id]?.[face] ?? 0;
     present += here;
     const n = Math.min(left, here, room);

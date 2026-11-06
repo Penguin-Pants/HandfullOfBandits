@@ -1,6 +1,6 @@
 # 11 Build Plan
 
-Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-07 done; P4-08 built, acceptance open (needs a new tester). **Next: the P4-08 tester run, then IC-4** (both need people).
+Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2 done: P2-01 to P2-18, IC-2a and IC-2. Phase 3a built (P3a-01 to P3a-10); IC-3a open. Phase 3b done (P3b-01 to P3b-08, PRs #45 to #61); IC-3b open. Phase 3c done (P3c-01, P3c-02; DEC-78); IC-3c open. Phase 4 started before IC-3c by owner decision (DEC-80): P4-01 to P4-07 done; P4-08 built, acceptance open (needs a new tester). **Next: the P4-08 tester run, then IC-4** (both need people). Code work that needs no playtest is planned in section 5 "Phase 4b".
 
 ## 0. Resume here (updated 2026-11-05, P4-08)
 
@@ -52,13 +52,13 @@ A new session starts here. Read this section, then `AGENTS.md`, then the task ro
 
 **Carried follow-ups from P3b-02 to P3b-07g** (details in section 4). Closed in P3b-06a: the ceasefire step concern (Drop, DEC-67) and the Event Europe cap (fixed).
 1. **Before the next simulations:** batch bots never file a closure case, declare a ceasefire (by command; ceasefire cards are Events they may take), answer the ceasefire step (`cli/candidates.ts` `AUTO_PHASES`) or play a Pivotal other than ARGK (`cli/candidates.ts` pivotal family).
-2. **Proposed (P3b-07, doc 32 s5):** `movePieces` with `toState` moves Underground Guerrillas first, so "move ... Underground" sides (DK-005, DK-017, DK-041, DK-047, DK-071) leave Active ones behind. Fix: move the other faces first. Changes C1 and C2 play; needs approval.
-3. **Proposed, not approved:** one shared Campaign comparison helper for the repeated `campaign.order` checks (six call sites; P3b-06b added `coin/pivotal.ts` `campaignReached`).
+2. **Closed (owner approved 2026-11-06, see section 5 "movePieces face order"):** `movePieces` with `toState` moved Underground Guerrillas first, so "move ... Underground" sides (DK-005, DK-017, DK-041, DK-047, DK-071) leave Active ones behind. Fix: move the other faces first. Changes C1 and C2 play; needs approval.
+3. **Planned as CL-01 (section 5):** one shared Campaign comparison helper for the repeated `campaign.order` checks (P3c-01 moved six gates to switch flags; three call sites remain: `coin/ops/sa/host-actions.ts`, `coin/switches.ts`, `coin/pivotal.ts`. Before: P3b-06b added `coin/pivotal.ts` `campaignReached`).
 4. **Closed (DEC-72):** DK-051 now files only while Legal Space is Open or Prosecuted (fixed in P3b-07d, PR #52).
 6. **Closed (owner approved, P4-02):** `server/service.ts` stores `DeclareCeasefire` as kind `cardChoice` in box `limitedOp` (it was `advance` with no box). Sessions stored before keep the old row; the export counts it by command type.
 5. **Proposed (P3b-08):** the Home screen lists every manifest option for every scenario, so `threshold.state` shows for Scenarios A and C (where it does nothing) and `hotPursuit` for B and C (C1 and C2 only). Fix: list only the options the chosen scenario sets (`scenarios[].options` keys in the package summary, `ui/home/Home.tsx`). Needs approval.
-7. **Proposed (P4-03):** global link color: `a { color: var(--accent); }` in `ui/styles.css` in place of `.metrics a`, so the Home JSON export link reads on the dark theme. Needs approval.
-8. **Proposed (P4-04):** `e2e/smoke.mjs` waits for the server's exit before removing its temp folder (Windows EPERM hides the real error); check atlas label fit with Windows fonts (the label check fails on Windows 11 on `main`). Needs approval.
+7. **Closed (owner approved, PR #75):** global link color: `a { color: var(--accent); }` in `ui/styles.css` in place of `.metrics a`, so the Home JSON export link reads on the dark theme. Needs approval.
+8. **Closed (owner approved, PRs #75 and #77):** `e2e/smoke.mjs` waits for the server's exit before removing its temp folder (Windows EPERM hides the real error); check atlas label fit with Windows fonts (the label check fails on Windows 11 on `main`). Needs approval.
 
 **Recent merged work**
 
@@ -843,6 +843,13 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 
 **Status (2026-11-05):** started before IC-3c (DEC-80). P4-01 to P4-07 done. P4-08 built; its acceptance (a new tester finishes S0 from the two tester files) is open and needs a person.
 
+**movePieces face order (2026-11-06, owner approved carried follow-up 2):** with `toState` set and no source face, `movePieces` (`core/effects/move-pieces.ts`) now moves the piece's first-listed face last. For Guerrillas: "move ... Underground" sides (DK-005, DK-017, DK-041, DK-047, DK-071 and the other `toState: underground` cards) take Active Guerrillas first; DK-084 shaded (Guerrillas arrive Active in a hostile posture zone) takes Active ones first and keeps Underground ones at home. Moves with no `toState` keep the listed order (Underground first).
+- Tests: `core/effects/effects.test.ts`, two cases (toState hidden and toState shown with one of each face). The first failed on the old code; the second failed on the proposed "other faces first" rule.
+- **TWO-PASS REVIEW.** Pass 1: callers with `toState` and a set source face (March, Redeploy) are unchanged; Air Mobility, Sweep, Garrison and Cross-border pass no `toState`. Card callers: every `toState` line in `cards/c1.yaml` to `c5.yaml`.
+  - **Fix:** the approved wording "move the other faces first" was wrong for DK-084 shaded (`toState: active`): it would flip Underground Guerrillas to Active and leave Active ones at home, which the PKK never chooses. The rule is now "first-listed face last", which is right for both card kinds. Owner: confirm or reverse this reading.
+  - **Drop:** golden replay updates. All five golden replays (S0, A, B, C, full campaign, seed 7) pass unchanged: no `toState` move in them starts from a mixed stack.
+- **Validation:** `make check` passes. `make test`: 101 files, 1437 tests pass. Node 24.22.1 on Linux.
+
 **Label font (2026-11-06, owner chose option B of browser mockups):** map names used Georgia. Linux has no Georgia and drew a narrower fallback; Windows draws real Georgia, so Mardin-Batman and the Diyarbakir CITY name left their areas (P4-04 Propose). Map and atlas names now use `--label-font`: Crimson Pro (OFL), bundled from `@fontsource/crimson-pro` 5.2.8, weights 600 and 700, latin subset (`ui/main.tsx`; 2 woff2 files in `dist/ui/assets`). Same width on every system, still 22 px.
 - Mockups: Windows simulated in Chromium with Gelasio (metric match for Georgia) loaded as Georgia; it reproduced the two Windows failures. Rejected: Georgia 21 px (Mardin-Batman still out), Georgia 20 px (fits, but systems still differ), Source Serif 4 (3 labels out).
 - Test: `ui/label-font.test.ts` (every `.map-label` and `.atlas-label` font rule uses the bundled font; the entry imports both weights). Both failed first.
@@ -1022,6 +1029,25 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
 | P4-08 ⚠️ | Tester materials: `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md`, rule lookup from any log rule ref to its text in the package rule index (DEC-34) | A new tester installs and finishes S0 using only these files |
 
 **IC-4 (M5):** Two package versions and at least three sessions compared with recorded evidence.
+
+### Phase 4b: tools, automated play and cleanup (planned 2026-11-06)
+
+**Why:** the owner wants a state where only rules, cards and mechanics change. These tasks need no human playtest to build. Tester and designer tools (P4-09 to P4-14) and CL-01 may start now; they extend Phase 4 and do not wait for IC-4. Automated play (AP-01 to AP-03) waits for IC-3a to IC-3c (DEC-70: "no simulations until stage 3"). Each task is one PR (section 1). Not planned here: the Home scenario options fix (section 0 item 5, still proposed).
+
+| ID | Obj | Files | Deps | Accept |
+|---|---|---|---|---|
+| P4-09 | Regression UI: **Make regression case** on a note with an action, and a Regression screen (cases, run against a package folder, outcome and diff) (07 s9 item 1; 08 "Regression"; 10 s3) | `ui/regression/`, `ui/notes/`, `server/routes`, reuse `cli/regression.ts` | P4-06 | From a note, create a case and run it in the UI; `same`, `changed` and `incompatible` show with the per-round diff |
+| P4-10 | Switch to an earlier branch (06 s3.3) | `store/repos/sessions.ts`, `ui/history/` | P4-04; **Decide first:** where status and result live per branch (today one row per session) | Switch to an earlier branch, play on, switch back; each branch keeps its own result |
+| P4-11 | Feedback review: date range filter, bulk add tag, export of the selected notes (07 s7) | `ui/review/Review.tsx`, review routes, `export/` | P4-01, P4-02 | Notes filter by date; tag added to all selected notes; selection exports as JSON, Markdown and CSV |
+| P4-12 | Markdown and CSV export links in the UI (Home links JSON only) | `ui/home/Home.tsx`, export routes | P4-02 | Each session row downloads Markdown and a CSV zip or the three CSV files |
+| P4-13 | Version compare screen over `diffPackages` (10 s3 "version compare in the UI") | `ui/check/` or new `ui/diff/`, a route over `package/diff.ts` | P4-05 | Pick two package folders; the screen lists the same sections as `sim diff` |
+| P4-14 | Propaganda prompt (07 s4.4, off by default): "Did Legal Space or Offices change a decision this round? y/n", stored as a `legal-politics-signal` note; metrics item 13 | `ui/propaganda/`, session options, `export/metrics.ts` | P4-03 | With the setting on, each Propaganda round asks once; metrics review fills item 13 |
+| CL-01 | One shared Campaign comparison helper for the three `campaign.order` call sites (section 0 item 3) | `coin/campaign.ts` (new), the three sites | none | All three sites use it; tests and golden replays unchanged. Drop if it adds more lines than it removes |
+| AP-01 | Bot decisions for C3 to C5 systems: file a closure case, declare and answer a ceasefire, play every Pivotal, answer Legal Politics (section 0 item 1) | `cli/candidates.ts` (`AUTO_PHASES`), `cli/strategies/` | IC-3a to IC-3c (DEC-70) | Each decision has a candidate and a test; a bot can take each one |
+| AP-02 | Bot profiles for every C3 to C5 card and the full campaign (doc 19 method: qualified players, no hidden-state access) | `cli/strategies/`, `cli/player-*.ts` | AP-01 | Full-campaign batch runs to final scoring for every profile pair with no engine error |
+| AP-03 | Run and review the automated program for Scenarios B, C and the full campaign, as docs 19 to 23 did for Scenario A | `experiments/`, new report doc | AP-02 | Frozen run, status doc and report like docs 22 and 23 |
+
+**Order:** P4-12, P4-14 and CL-01 are small; then P4-09, P4-11, P4-13. P4-10 waits for its decision. AP-01 to AP-03 run in order after the IC-3 checks.
 
 ### PV-01 Vassal test module (DEC-47)
 

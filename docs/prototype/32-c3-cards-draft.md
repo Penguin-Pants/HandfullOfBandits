@@ -129,4 +129,4 @@ DK-054 Serhildan, DK-037 and DK-040 are built (P3b-06). DK-046 is a research lea
 
 ## 5. Carried observation (Propose, outside P3b-07)
 
-`movePieces` with no face moves Underground Guerrillas first (`core/effects/common.ts` `sourceFaces`). On "move ... Underground" sides (DK-005 and DK-017 shaded now; DK-041 and DK-047 shaded next) the PKK leaves its Active Guerrillas behind, which it would never choose. Proposed fix: when `toState` is set, move the other faces first. It changes C1 and C2 card play, so it needs approval. Not part of this draft's batches.
+**Closed 2026-11-06 (11 section 5, "movePieces face order"): with `toState` set, the Underground face now moves last.** Before: `movePieces` with no face moved Underground Guerrillas first (`core/effects/common.ts` `sourceFaces`). On "move ... Underground" sides (DK-005 and DK-017 shaded now; DK-041 and DK-047 shaded next) the PKK leaves its Active Guerrillas behind, which it would never choose. Proposed fix: when `toState` is set, move the other faces first. It changes C1 and C2 card play, so it needs approval. Not part of this draft's batches.
