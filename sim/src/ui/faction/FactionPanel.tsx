@@ -1,6 +1,7 @@
 // Faction panel (08 s3.2): boxes, Op list with OK or the first violation (T-UI-03), plan building
 // on the map by mouse (UC-5), live validation, preview, commit with Enter.
-import { useEffect, useRef, useState } from "react";
+import { Tip } from "../common/Tip.tsx";
+import { useEffect, useRef, useState, type ReactElement } from "react";
 import { confirmWarnings } from "../common/confirm.ts";
 import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
 import { words } from "../common/names.ts";
@@ -26,6 +27,18 @@ const OP_BOXES = ["limitedOp", "opOnly", "opSa"];
 
 /** Approved Declare Ceasefire text (docs/prototype/30 s2.1). */
 const DECLARE_TEXT = "Declare Ceasefire. From C3, uses the Limited Op box. Ceasefire to Declared and Europe +1. While Declared the PKK may not Attack, Ambush or Strike Collaborators (07 s7.1).";
+
+/**
+ * Rule tooltip on an action button. The enabled button is the trigger, so it carries the
+ * description for screen readers. A disabled button gets no pointer events, so it sits in a span.
+ */
+function OpTip({ action, disabled, text, children }: { readonly action: { readonly label: string }; readonly disabled: boolean; readonly text: string; readonly children: ReactElement }) {
+  return (
+    <Tip heading={action.label} text={text}>
+      {disabled ? <span className="tip-target">{children}</span> : children}
+    </Tip>
+  );
+}
 
 export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dispatch, onCommit, onDraft }: FactionPanelProps) {
   const resume = view.status.pending?.resume;
@@ -146,10 +159,12 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
         <ul className="operation-list" aria-label="Operations">
           {actions.filter((a) => a.kind === "op").map((a) => (
             <li key={a.id}>
-              <button type="button" disabled={!a.ok && box !== "opSa"} title={a.ok || box !== "opSa" ? a.summary : `${a.summary} No legal standalone plan; a preceding SA may make one.`} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>
-                {a.label}
-              </button>{" "}
-              <span className="muted">{a.cost}</span> {a.ok ? <span title={a.locations.map(spaceName).join(", ")}>OK{a.locations.length === 0 ? "" : ` in ${where(a.locations)}`}</span> : <span className="bad">{a.reason}</span>}
+              <OpTip action={a} disabled={!a.ok && box !== "opSa"} text={a.ok || box !== "opSa" ? a.summary : `${a.summary} No legal standalone plan; a preceding SA may make one.`}>
+                <button type="button" disabled={!a.ok && box !== "opSa"} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>
+                  {a.label}
+                </button>
+              </OpTip>{" "}
+              <span className="muted">{a.cost}</span> {a.ok ? <Tip text={a.locations.map(spaceName).join(", ")}><span tabIndex={0}>OK{a.locations.length === 0 ? "" : ` in ${where(a.locations)}`}</span></Tip> : <span className="bad">{a.reason}</span>}
             </li>
           ))}
         </ul>
@@ -160,9 +175,11 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
             <div className="row" role="group" aria-label="SA">
               <span className="stepper-label">SA</span>
               {actions.filter((a) => a.kind === "sa").map((a) => (
-                <button key={a.id} type="button" title={a.summary} aria-pressed={sa === a.id} onClick={() => { setSa(sa === a.id ? null : a.id); dispatch({ type: "clear", side: "sa" }); }}>
-                  {a.label}
-                </button>
+                <Tip key={a.id} heading={a.label} text={a.summary}>
+                  <button type="button" aria-pressed={sa === a.id} onClick={() => { setSa(sa === a.id ? null : a.id); dispatch({ type: "clear", side: "sa" }); }}>
+                    {a.label}
+                  </button>
+                </Tip>
               ))}
             </div>
           )}

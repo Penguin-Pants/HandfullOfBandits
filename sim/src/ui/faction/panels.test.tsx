@@ -182,7 +182,12 @@ describe("FactionPanel", () => {
     const onDraft = vi.fn();
     render(<Faction api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} legal={march} onDraft={onDraft} />);
     click("Limited Op");
-    expect(screen.getByRole("button", { name: "March" }).getAttribute("title")).toMatch(/Move Guerrillas 1 step/);
+    fireEvent.focus(screen.getByRole("button", { name: "March" }));
+    await waitFor(() => { expect(screen.getAllByText(/Move Guerrillas 1 step/).length).toBeGreaterThan(0); });
+    // The focused button itself carries the description, not a wrapper around it.
+    const describedBy = screen.getByRole("button", { name: "March" }).getAttribute("aria-describedby");
+    expect(describedBy).not.toBeNull();
+    expect(document.getElementById(describedBy ?? "")?.textContent).toMatch(/Move Guerrillas 1 step/);
     click("March");
     expect(screen.getByText(/drag on the map/)).toBeTruthy();
     expect(screen.getByLabelText("Plan").textContent).toMatch(/Move Guerrillas 1 step/);
