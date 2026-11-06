@@ -69,7 +69,16 @@ function leadership(markers: Row): Cell {
  */
 const NAMED_MARKERS = new Set(["office", "restraintBroken", "leadership", "capability", "momentum", "closureCase", "successor"]);
 
+/** Item 13: the answer of a `legal-politics-signal` note anchored in the round (07 s4.4, 11 P4-14), else null. */
+function signalOf(round: readonly Row[], notes: readonly Row[]): Cell {
+  const ids = new Set(round.map((a) => a["action_id"]));
+  const note = notes.findLast((n) => ids.has(n["action_id"]));
+  const text = typeof note?.["text"] === "string" ? note["text"].trim().toLowerCase() : "";
+  return text.startsWith("y") ? "y" : text.startsWith("n") ? "n" : null;
+}
+
 export function metricsTable(data: CoinSimExport): MetricsTable {
+  const notes = data.annotations.filter((n) => list(n["category_ids"]).includes("legal-politics-signal"));
   // Undo keeps a metrics row; only rows of committed actions are results.
   const committed = new Set(data.actions.filter((a) => a["status"] === "committed").map((a) => a["action_id"]));
   const rounds = data.metrics.filter((m) => m["propaganda_round"] !== undefined);
@@ -90,6 +99,7 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
     { key: "ceasefire", label: "Ceasefire", item: 10 }, { key: "restraint_broken.state", label: "Restraint Broken State", item: 10 }, { key: "restraint_broken.pkk", label: "Restraint Broken PKK", item: 10 },
     ...per("harm", "Harm", 11), ...markerPairs.map(([k]) => ({ key: `markers.${k}`, label: `${k} markers`, item: 11 })),
     ...per("score", "score", 12), ...per("threshold", "threshold", 12), ...per("margin", "margin", 12),
+    { key: "legal_politics_signal", label: "Legal Space or Offices changed a decision (y/n)", item: 13 },
     { key: "action_use", label: "Action use", item: 14 },
     ...pieces.map((p) => ({ key: `available.${p}`, label: `${p} Available`, item: 15 })),
   ];
@@ -109,6 +119,7 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
       legal_space: cell(d["legalSpace"]), offices: count("office", "default"), closure_case: cell(d["closureCase"]), successor: cell(d["successor"]),
       ceasefire: cell(d["ceasefire"]), "restraint_broken.state": count("restraintBroken", "state"), "restraint_broken.pkk": count("restraintBroken", "pkk"),
       ...roundEvents(round),
+      legal_politics_signal: signalOf(round, notes),
     };
     for (const f of factions) {
       row[`resources.${f}`] = cell(obj(d["resources"])[f]);

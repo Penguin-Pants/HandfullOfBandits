@@ -19,6 +19,7 @@ import { PivotalPanel } from "../pivotal/PivotalPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
 import { arrowsOf, emptyPlans, plansReducer, type PlanEvent } from "../faction/plan.ts";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
+import { SignalPrompt, signalEnabled } from "../propaganda/SignalPrompt.tsx";
 import { ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 import { TrackCard } from "../status/TrackCard.tsx";
@@ -235,7 +236,10 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           {legal.faction !== null && <FactionPanel onTargets={setFactionTargets} api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} api={api} sessionId={sessionId} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onTargets={setEventTargets} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} /> : view.status.phase === "propaganda" ? (
-            <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
+            <>
+              {signalEnabled() && <SignalPrompt api={api} sessionId={sessionId} view={view} headActionId={data.head.actionId} focus={focusStore.get()} />}
+              <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
+            </>
           ) : (
             <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
           )}

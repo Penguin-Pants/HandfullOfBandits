@@ -1,6 +1,5 @@
 // P4-03 metrics review (06 s3.12, s4; DEC-34). Accept: the table matches the research 12 s4 logging
-// sheet items 6 to 15. Item 13 needs the 07 s4.4 Propaganda prompt, which has no task (DEC-82), so
-// the table covers 6 to 12, 14 and 15.
+// sheet items 6 to 15. Item 13 is the 07 s4.4 Propaganda prompt answer (P4-14).
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -49,8 +48,8 @@ describe("P4-03 metrics table: research 12 s4 items 6 to 15", () => {
     expect(table.rows.map((r) => r["round"])).toEqual([1, 2]);
   });
 
-  it("has columns for every per-round sheet item except 13", () => {
-    expect([...new Set(table.columns.map((c) => c.item))].filter((i) => i > 0)).toEqual([6, 7, 8, 9, 10, 11, 12, 14, 15]);
+  it("has columns for every per-round sheet item", () => {
+    expect([...new Set(table.columns.map((c) => c.item))].filter((i) => i > 0)).toEqual([6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
     const named = ["resources.state", "resources.pkk", "legitimacy", "europe", "emergency_rule", "state_step_choice", "posture.syria", "posture.kdp", "posture.puk", "leadership",
       "legal_space", "offices", "closure_filings", "successor_returns", "ceasefire", "restraint_broken.state", "restraint_broken.pkk",
       "harm.state", "harm.pkk", "markers.disputedHarm", "markers.coercion", "markers.displacement.new", "markers.displacement.old", "markers.reception", "markers.covert",
@@ -122,6 +121,22 @@ describe("P4-03 round events from committed actions (items 7, 9, 14)", () => {
     const undone = synthetic();
     const actions = undone.actions.map((a) => (a["action_id"] === "m2" ? { ...a, status: "undone" } : a));
     expect(metricsTable({ ...undone, actions }).rows.map((r) => r["offices"])).toEqual([2]);
+  });
+});
+
+describe("P4-14 item 13: Propaganda prompt answers", () => {
+  const note = (id: string, actionId: string, text: string, categories = ["legal-politics-signal"]) => ({ annotation_id: id, action_id: actionId, text, category_ids: categories });
+  const column = (annotations: Record<string, unknown>[]) => metricsTable({ ...synthetic(), annotations }).rows.map((r) => r["legal_politics_signal"]);
+  it("fills each round from the signal note anchored in it, null without one", () => {
+    expect(column([note("n1", "a3", "y"), note("n2", "a5", "n")])).toEqual(["y", "n"]);
+    expect(column([note("n1", "a5", "n")])).toEqual([null, "n"]);
+    expect(column([])).toEqual([null, null]);
+  });
+  it("ignores notes of other categories and non y/n text", () => {
+    expect(column([note("n1", "a3", "y", ["balance"]), note("n2", "a5", "maybe")])).toEqual([null, null]);
+  });
+  it("the latest answer in a round wins", () => {
+    expect(column([note("n1", "a3", "y"), note("n2", "a3", "n")])).toEqual(["n", null]);
   });
 });
 
