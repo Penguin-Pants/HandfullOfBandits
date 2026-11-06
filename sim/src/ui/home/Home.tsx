@@ -1,6 +1,7 @@
 // Home screen (08 s6): package, scenario, options, seed, name, saved sessions.
 import { useEffect, useState } from "react";
 import type { Api, PackageSummary, SessionRow } from "../api.ts";
+import { SIGNAL_QUESTION, SIGNAL_SETTING, signalEnabled } from "../propaganda/SignalPrompt.tsx";
 import { startBlockers } from "./start-rule.ts";
 
 export interface HomeProps {
@@ -17,6 +18,7 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
   const [options, setOptions] = useState<Record<string, string | number>>({});
   const [seed, setSeed] = useState("1");
   const [name, setName] = useState("");
+  const [signal, setSignal] = useState(signalEnabled());
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -89,6 +91,11 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
               </select>
             </label>
           ))}
+        </div>
+        <div className="row">
+          <label>
+            <input type="checkbox" checked={signal} onChange={(e) => { setSignal(e.target.checked); localStorage.setItem(SIGNAL_SETTING, e.target.checked ? "on" : "off"); }} /> Ask each Propaganda round: {SIGNAL_QUESTION}
+          </label>
         </div>
         <div className="row">
           <label>

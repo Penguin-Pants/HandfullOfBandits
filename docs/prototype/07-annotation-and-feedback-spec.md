@@ -88,7 +88,7 @@ Context JSON stores values, not full state. The full state is reachable by `stat
 
 ### 4.4 Prompted notes (optional, off by default)
 
-The research logging sheet asks two per-round questions (12 s4 items 4 and 13). A setting adds a one-line prompt at each Propaganda round: "Did Legal Space or Offices change a decision this round? y/n" and stores the answer as an annotation with category `legal-politics-signal`.
+The research logging sheet asks two per-round questions (12 s4 items 4 and 13). A setting adds a one-line prompt at each Propaganda round: "Did Legal Space or Offices change a decision this round? y/n" and stores the answer as an annotation with category `legal-politics-signal`. Built in P4-14: the setting is a Home checkbox kept in the browser. The note text is `y` or `n`, anchored to the head action.
 
 ## 5. Categories
 
@@ -185,7 +185,7 @@ Two files: `annotations.csv` (one row per note with flattened context) and `acti
 
 Implemented in P4-02 (`sim/src/export/csv.ts`): `sim export <sessionId...> --format csv --out <folder> [--db <file>]`. RFC 4180 (CRLF rows, quoted cells). Context columns go two levels deep (`context.scores.state`); deeper values are JSON in their cell. Lists in a cell use `; `. `actions.csv` adds `op`, `sa`, `event_side`, `costs` (total per track), `score_changes`, `harm_changes`, `control_changes`, `rule_refs` and `notes` (count).
 
-P4-03 adds `metrics.csv` to the same folder: one row per session and Propaganda round with the research 12 s4 logging sheet items 6 to 12, 14 and 15 (`sim/src/export/metrics.ts`). The header is the column keys. The Metrics review screen shows the same table and downloads it from `GET /api/metrics.csv`.
+P4-03 adds `metrics.csv` to the same folder: one row per session and Propaganda round with the research 12 s4 logging sheet items 6 to 15 (item 13 from P4-14 prompt notes) (`sim/src/export/metrics.ts`). The header is the column keys. The Metrics review screen shows the same table and downloads it from `GET /api/metrics.csv`.
 
 ## 9. Notes as regression sources
 

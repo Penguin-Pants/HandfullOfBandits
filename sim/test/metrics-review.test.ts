@@ -1,6 +1,5 @@
 // P4-03 metrics review (06 s3.12, s4; DEC-34). Accept: the table matches the research 12 s4 logging
-// sheet items 6 to 15. Item 13 needs the 07 s4.4 Propaganda prompt, which has no task (DEC-82), so
-// the table covers 6 to 12, 14 and 15.
+// sheet items 6 to 15. Item 13 is the 07 s4.4 Propaganda prompt answer (P4-14).
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -49,8 +48,8 @@ describe("P4-03 metrics table: research 12 s4 items 6 to 15", () => {
     expect(table.rows.map((r) => r["round"])).toEqual([1, 2]);
   });
 
-  it("has columns for every per-round sheet item except 13", () => {
-    expect([...new Set(table.columns.map((c) => c.item))].filter((i) => i > 0)).toEqual([6, 7, 8, 9, 10, 11, 12, 14, 15]);
+  it("has columns for every per-round sheet item", () => {
+    expect([...new Set(table.columns.map((c) => c.item))].filter((i) => i > 0)).toEqual([6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
     const named = ["resources.state", "resources.pkk", "legitimacy", "europe", "emergency_rule", "state_step_choice", "posture.syria", "posture.kdp", "posture.puk", "leadership",
       "legal_space", "offices", "closure_filings", "successor_returns", "ceasefire", "restraint_broken.state", "restraint_broken.pkk",
       "harm.state", "harm.pkk", "markers.disputedHarm", "markers.coercion", "markers.displacement.new", "markers.displacement.old", "markers.reception", "markers.covert",
@@ -125,6 +124,37 @@ describe("P4-03 round events from committed actions (items 7, 9, 14)", () => {
   });
 });
 
+describe("P4-14 item 13: Propaganda prompt answers", () => {
+  // The synthetic rows have no campaign in their data, so the notes carry none either.
+  const note = (id: string, actionId: string, text: string, round: number, categories = ["legal-politics-signal"]) => ({ annotation_id: id, session_id: "s", action_id: actionId, text, category_ids: categories, context: { propaganda_round: round } });
+  const column = (annotations: Record<string, unknown>[]) => metricsTable({ ...synthetic(), annotations }).rows.map((r) => r["legal_politics_signal"]);
+  it("fills each round from the signal note of that round, null without one", () => {
+    expect(column([note("n1", "a3", "y", 1), note("n2", "a5", "n", 2)])).toEqual(["y", "n"]);
+    expect(column([note("n1", "a5", "n", 2)])).toEqual([null, "n"]);
+    expect(column([])).toEqual([null, null]);
+  });
+  it("counts an answer given after the round's metrics action (Redeploy and Reset follow Agitation)", () => {
+    expect(column([note("n1", "m1", "y", 1)])).toEqual(["y", null]);
+  });
+  it("ignores notes of other categories, other rounds and non y/n text", () => {
+    expect(column([note("n1", "a3", "y", 1, ["balance"]), note("n2", "a5", "maybe", 2), note("n3", "a3", "y", 3)])).toEqual([null, null]);
+  });
+  it("ignores an answer on another branch of the same round", () => {
+    const base = synthetic();
+    const other = { ...base, actions: [...base.actions, { action_id: "x1", session_id: "s", branch_id: "c", seq: 8, branch_seq: 1, state_hash_before: "h2", state_hash_after: "hx", status: "committed", faction: null, kind: "advance", commands: [], entries: [] }], branches: [{ branch_id: "b", forked_from_action_id: null }, { branch_id: "c", forked_from_action_id: "a2" }] };
+    expect(metricsTable({ ...other, annotations: [note("n1", "x1", "y", 1)] }).rows.map((r) => r["legal_politics_signal"])).toEqual([null, null]);
+  });
+  it("ignores a note without an action anchor and an answer on an undone action", () => {
+    const base = synthetic();
+    const undone = { ...base, actions: base.actions.map((a) => (a["action_id"] === "a3" ? { ...a, status: "undone" } : a)) };
+    expect(metricsTable({ ...undone, annotations: [note("n1", "a3", "y", 1)] }).rows.map((r) => r["legal_politics_signal"])).toEqual([null, null]);
+    expect(column([{ ...note("n2", "a3", "y", 1), action_id: null }])).toEqual([null, null]);
+  });
+  it("the latest answer in a round wins", () => {
+    expect(column([note("n1", "a3", "y", 1), note("n2", "a3", "n", 1)])).toEqual(["n", null]);
+  });
+});
+
 describe("P4-03 CSV export and API", () => {
   it("metrics.csv has a header of column keys and one row per round", () => {
     const lines = exportCsv(data).metrics.split("\r\n").filter((l) => l !== "");
@@ -155,5 +185,32 @@ describe("P4-03 CSV export and API", () => {
     expect(res.headers["content-disposition"]).toContain("metrics.csv");
     expect(res.body.split("\r\n")[0]).toBe(keys.join(","));
     expect((await app.inject({ method: "GET", url: "/api/metrics?sessions=nope" })).statusCode).toBe(404);
+  });
+});
+
+describe("P4-14 item 13 in a played session", () => {
+  it("each answer lands in its own round, before or after the metrics action", () => {
+    const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed: 5, name: "signal" });
+    const focus = { panel: "board", selectedSpace: null, selectedPieces: [], hoveredActionId: null } as const;
+    const phases = ruleset.sequence.propagandaPhases;
+    // Round 1: answered at Redeploy (after the metrics action, which follows Agitation). Round 2: at Agitation (before it).
+    const answerAt: Record<number, string> = { 1: "redeploy", 2: "agitation" };
+    const answers: Record<number, string> = { 1: "y", 2: "n" };
+    const done = new Set<number>();
+    let state = head.state;
+    let headId = head.actionId;
+    while (state.ended === null) {
+      const round = state.turn.propagandaRound;
+      if (state.turn.phase === "propaganda" && phases[state.turn.step] === answerAt[round] && !done.has(round)) {
+        done.add(round);
+        service.annotate(sessionId, { anchor: "executed", actionId: headId, text: answers[round] ?? "", categoryIds: ["legal-politics-signal"], focus });
+      }
+      const res = service.submit(sessionId, scriptedPolicy(engine, ruleset, state), headId);
+      state = res.head.state;
+      headId = res.actionId;
+    }
+    expect([...done]).toEqual([1, 2]);
+    const played = metricsTable(exportJson(db, { sessionIds: [sessionId], withStates: false, appVersion: "0.1.0", exportedAt: "2026-11-05T00:00:00Z" }));
+    expect(played.rows.map((r) => r["legal_politics_signal"])).toEqual(["y", "n"]);
   });
 });

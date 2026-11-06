@@ -62,10 +62,10 @@ describe("migrate", () => {
       "actions", "annotation_revisions", "annotations", "annotations_fts", "annotations_fts_config", "annotations_fts_data", "annotations_fts_docsize", "annotations_fts_idx", "branches", "categories", "commands", "log_entries", "metrics",
       "package_versions", "regression_cases", "regression_runs", "sessions", "states",
     ]);
-    expect(db.pragma("user_version", { simple: true })).toBe(2);
-    expect(migrate(db)).toBe(2);
+    expect(db.pragma("user_version", { simple: true })).toBe(3);
+    expect(migrate(db)).toBe(3);
     const categories = listCategories(db);
-    expect(categories).toHaveLength(15);
+    expect(categories).toHaveLength(16);
     expect(categories[0]).toEqual({ category_id: "balance", label: "Balance concern", hotkey: "Alt+1", color: null, sort: 1, active: 1 });
   });
 

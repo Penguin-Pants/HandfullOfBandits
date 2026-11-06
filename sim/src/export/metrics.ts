@@ -69,7 +69,25 @@ function leadership(markers: Row): Cell {
  */
 const NAMED_MARKERS = new Set(["office", "restraintBroken", "leadership", "capability", "momentum", "closureCase", "successor"]);
 
+/**
+ * Item 13: the answer of a `legal-politics-signal` note for the row's round (07 s4.4, 11 P4-14), else null.
+ * A note belongs to the round its context records, on the row's path: the note may come after the
+ * round's metrics action (Redeploy and Reset follow Agitation), so either action may lead to the other.
+ */
+function signalOf(row: Row, rowPath: readonly Row[], notes: readonly Row[], committed: ReadonlySet<unknown>, pathOf: (actionId: string) => Row[]): Cell {
+  const ids = new Set(rowPath.map((a) => a["action_id"]));
+  const mine = notes.filter((n) => {
+    const context = obj(n["context"]);
+    // A note on the session or a state has no action; an undone anchor means the answer was discarded (the prompt asks again).
+    return committed.has(n["action_id"]) && n["session_id"] === row["session_id"] && context["campaign"] === obj(row["data"])["campaign"] && context["propaganda_round"] === row["propaganda_round"]
+      && (ids.has(n["action_id"]) || pathOf(String(n["action_id"])).some((a) => a["action_id"] === row["action_id"]));
+  });
+  const text = typeof mine.at(-1)?.["text"] === "string" ? String(mine.at(-1)?.["text"]).trim().toLowerCase() : "";
+  return text.startsWith("y") ? "y" : text.startsWith("n") ? "n" : null;
+}
+
 export function metricsTable(data: CoinSimExport): MetricsTable {
+  const notes = data.annotations.filter((n) => list(n["category_ids"]).includes("legal-politics-signal"));
   // Undo keeps a metrics row; only rows of committed actions are results.
   const committed = new Set(data.actions.filter((a) => a["status"] === "committed").map((a) => a["action_id"]));
   const rounds = data.metrics.filter((m) => m["propaganda_round"] !== undefined);
@@ -90,6 +108,7 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
     { key: "ceasefire", label: "Ceasefire", item: 10 }, { key: "restraint_broken.state", label: "Restraint Broken State", item: 10 }, { key: "restraint_broken.pkk", label: "Restraint Broken PKK", item: 10 },
     ...per("harm", "Harm", 11), ...markerPairs.map(([k]) => ({ key: `markers.${k}`, label: `${k} markers`, item: 11 })),
     ...per("score", "score", 12), ...per("threshold", "threshold", 12), ...per("margin", "margin", 12),
+    { key: "legal_politics_signal", label: "Legal Space or Offices changed a decision (y/n)", item: 13 },
     { key: "action_use", label: "Action use", item: 14 },
     ...pieces.map((p) => ({ key: `available.${p}`, label: `${p} Available`, item: 15 })),
   ];
@@ -109,6 +128,7 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
       legal_space: cell(d["legalSpace"]), offices: count("office", "default"), closure_case: cell(d["closureCase"]), successor: cell(d["successor"]),
       ceasefire: cell(d["ceasefire"]), "restraint_broken.state": count("restraintBroken", "state"), "restraint_broken.pkk": count("restraintBroken", "pkk"),
       ...roundEvents(round),
+      legal_politics_signal: signalOf(m, path, notes, committed, pathOf),
     };
     for (const f of factions) {
       row[`resources.${f}`] = cell(obj(d["resources"])[f]);
