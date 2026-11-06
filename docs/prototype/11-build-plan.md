@@ -6,7 +6,7 @@ Status: planning document. Phase 1 done: P0-01, P1-01 to P1-12 and IC-1. Phase 2
 
 A new session starts here. Read this section, then `AGENTS.md`, then the task row.
 
-**Next: the P4-08 tester run.** P4-08 is built (see below). Its acceptance needs a person who has not used the app: give them only `docs/tester/INSTALL.md` and `docs/tester/HOW-TO-PLAY.md`, ask them to finish S0, and record who ran it and what blocked them. Then IC-4 (M5): two package versions and at least three sessions compared with recorded evidence. Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
+**Next: the P4-08 tester run.** P4-08 is built (see below). Windows install by the owner passed on 2026-11-06 (install only; no S0 run). Its acceptance needs a person who has not used the app: give them only `docs/tester/INSTALL.md` and `docs/tester/HOW-TO-PLAY.md`, ask them to finish S0, and record who ran it and what blocked them. Then IC-4 (M5): two package versions and at least three sessions compared with recorded evidence. Phase 4 started before IC-3c by owner decision (DEC-80). IC-3a, IC-3b and IC-3c stay open for the designer.
 
 **P4-08 is built (acceptance open):** `docs/tester/INSTALL.md` (Windows and Mac), `docs/tester/HOW-TO-PLAY.md` (S0 walk-through). Rule lookup: a **Rule** button beside each log line that has a rule ref (Last action and History) opens the research section text; `GET /api/sessions/:id/rules?ref=`; `sim rule "<ref>" [--package <dir>]`. Notes now carry `rule_sources` and the JSON export fills `packages[].ruleIndex`. The rule text lives in the package file `rules.yaml`, generated from the research documents (DEC-83, owner choice 2026-11-06; `make rules DIR=<package-dir>`). `make start` now builds the UI first (it served "UI not built" before).
 
@@ -865,6 +865,7 @@ All 30 paired screens were rerun with the same seeds and policies. Round CSVs ar
   - **Drop:** the rule text is the whole section, not the cited item. Item numbers restart per list style in the research, so a per-item cut would need a parser per style (DEC-83).
   - **Decide:** DEC-83 (where the rule index lives) was chosen by the agent; the owner then chose a package file (see the rework block above).
   - **Propose:** none.
+- **Install evidence (2026-11-06):** the owner followed `docs/tester/INSTALL.md` on Windows and reported that everything worked. Install only: the owner has used the app before and did not play S0. A Mac install and an S0 run are not done.
 - **Acceptance (open):** "A new tester installs and finishes S0 using only these files" needs a person who has not used the app. This repository cannot supply one. A dry run of the install steps on Linux passed; Windows and Mac installs by a person are not run. Unverified: the `better-sqlite3` build-tool advice in INSTALL.md (no Mac run; CI runs Windows `npm ci`). Verify by one Mac and one Windows tester; record who ran it and where they stopped.
 - **Noticed (not changed):** `e2e/smoke.mjs` says "Start is enabled for S0" but Home now opens on the first unblocked scenario, which is the Full campaign (64 cards). The tester guide tells the person to pick S0. Propose a diff to the smoke label if wanted.
 - **Validation:** `make check` passes. `make test`: 98 files, 1416 tests pass. `make e2e`: 30 checks pass. Node 24.22.1 on Linux.
