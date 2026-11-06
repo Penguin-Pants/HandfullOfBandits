@@ -144,6 +144,12 @@ describe("P4-14 item 13: Propaganda prompt answers", () => {
     const other = { ...base, actions: [...base.actions, { action_id: "x1", session_id: "s", branch_id: "c", seq: 8, branch_seq: 1, state_hash_before: "h2", state_hash_after: "hx", status: "committed", faction: null, kind: "advance", commands: [], entries: [] }], branches: [{ branch_id: "b", forked_from_action_id: null }, { branch_id: "c", forked_from_action_id: "a2" }] };
     expect(metricsTable({ ...other, annotations: [note("n1", "x1", "y", 1)] }).rows.map((r) => r["legal_politics_signal"])).toEqual([null, null]);
   });
+  it("ignores a note without an action anchor and an answer on an undone action", () => {
+    const base = synthetic();
+    const undone = { ...base, actions: base.actions.map((a) => (a["action_id"] === "a3" ? { ...a, status: "undone" } : a)) };
+    expect(metricsTable({ ...undone, annotations: [note("n1", "a3", "y", 1)] }).rows.map((r) => r["legal_politics_signal"])).toEqual([null, null]);
+    expect(column([{ ...note("n2", "a3", "y", 1), action_id: null }])).toEqual([null, null]);
+  });
   it("the latest answer in a round wins", () => {
     expect(column([note("n1", "a3", "y", 1), note("n2", "a3", "n", 1)])).toEqual(["n", null]);
   });

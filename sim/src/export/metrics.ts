@@ -74,11 +74,12 @@ const NAMED_MARKERS = new Set(["office", "restraintBroken", "leadership", "capab
  * A note belongs to the round its context records, on the row's path: the note may come after the
  * round's metrics action (Redeploy and Reset follow Agitation), so either action may lead to the other.
  */
-function signalOf(row: Row, rowPath: readonly Row[], notes: readonly Row[], pathOf: (actionId: string) => Row[]): Cell {
+function signalOf(row: Row, rowPath: readonly Row[], notes: readonly Row[], committed: ReadonlySet<unknown>, pathOf: (actionId: string) => Row[]): Cell {
   const ids = new Set(rowPath.map((a) => a["action_id"]));
   const mine = notes.filter((n) => {
     const context = obj(n["context"]);
-    return n["session_id"] === row["session_id"] && context["campaign"] === obj(row["data"])["campaign"] && context["propaganda_round"] === row["propaganda_round"]
+    // A note on the session or a state has no action; an undone anchor means the answer was discarded (the prompt asks again).
+    return committed.has(n["action_id"]) && n["session_id"] === row["session_id"] && context["campaign"] === obj(row["data"])["campaign"] && context["propaganda_round"] === row["propaganda_round"]
       && (ids.has(n["action_id"]) || pathOf(String(n["action_id"])).some((a) => a["action_id"] === row["action_id"]));
   });
   const text = typeof mine.at(-1)?.["text"] === "string" ? String(mine.at(-1)?.["text"]).trim().toLowerCase() : "";
@@ -127,7 +128,7 @@ export function metricsTable(data: CoinSimExport): MetricsTable {
       legal_space: cell(d["legalSpace"]), offices: count("office", "default"), closure_case: cell(d["closureCase"]), successor: cell(d["successor"]),
       ceasefire: cell(d["ceasefire"]), "restraint_broken.state": count("restraintBroken", "state"), "restraint_broken.pkk": count("restraintBroken", "pkk"),
       ...roundEvents(round),
-      legal_politics_signal: signalOf(m, path, notes, pathOf),
+      legal_politics_signal: signalOf(m, path, notes, committed, pathOf),
     };
     for (const f of factions) {
       row[`resources.${f}`] = cell(obj(d["resources"])[f]);
