@@ -119,7 +119,9 @@ describe("rules.yaml generation (P4-08; DEC-83)", () => {
     expect(rulesCommand(pkg, true).exitCode).toBe(1);
     expect(rulesCommand(pkg, false).exitCode).toBe(0);
     expect(rulesCommand(pkg, true).exitCode).toBe(0);
-    expect(readFileSync(join(pkg, "rules.yaml"), "utf8")).toBe(readFileSync(join(kurdishDir, "rules.yaml"), "utf8"));
+    // A Windows checkout holds the committed file with CRLF line endings.
+    const lf = (file: string): string => readFileSync(file, "utf8").replaceAll("\r\n", "\n");
+    expect(lf(join(pkg, "rules.yaml"))).toBe(lf(join(kurdishDir, "rules.yaml")));
     writeFileSync(join(pkg, "rules.yaml"), readFileSync(join(pkg, "rules.yaml"), "utf8").replace("Cross-Border", "Cross-Borders"));
     expect(rulesCommand(pkg, true).exitCode).toBe(1);
     writeFileSync(join(pkg, "rules.yaml"), readFileSync(join(pkg, "rules.yaml"), "utf8").replace("Cross-Borders", "Cross-Border").replaceAll("\n", "\r\n"));
