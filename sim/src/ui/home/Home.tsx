@@ -141,8 +141,22 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
                   <button type="button" onClick={() => { onOpen(s.session_id); }}>
                     Resume
                   </button>{" "}
+                  Export:{" "}
                   <a href={`/api/sessions/${s.session_id}/export`} download>
-                    Export
+                    JSON
+                  </a>{" "}
+                  <a href={`/api/sessions/${s.session_id}/export.md`} download>
+                    Markdown
+                  </a>{" "}
+                  CSV:{" "}
+                  <a href={`/api/sessions/${s.session_id}/export.csv?file=annotations`} download>
+                    Notes
+                  </a>{" "}
+                  <a href={`/api/sessions/${s.session_id}/export.csv?file=actions`} download>
+                    Actions
+                  </a>{" "}
+                  <a href={`/api/sessions/${s.session_id}/export.csv?file=metrics`} download>
+                    Metrics
                   </a>
                 </td>
               </tr>

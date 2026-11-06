@@ -7,8 +7,9 @@ import type { UiFocus } from "../annotate/types.ts";
 import type { AnyCommand } from "../engine/core/types.ts";
 import { getSession } from "../store/repos/sessions.ts";
 import { NOTE_STATUSES, type Anchor, type NoteStatus } from "../store/repos/annotations.ts";
-import { metricsCsv } from "../export/csv.ts";
+import { exportCsv, metricsCsv } from "../export/csv.ts";
 import { exportJson, validateExport } from "../export/json.ts";
+import { exportMarkdown } from "../export/markdown.ts";
 import { metricsTable } from "../export/metrics.ts";
 import { APP_VERSION, ServiceError, type SessionService } from "./service.ts";
 
@@ -104,12 +105,23 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     }
     return { updated: service.setNoteStatus(ids, b.status) };
   });
-  app.get<{ Params: Id; Querystring: { states?: string } }>("/api/sessions/:id/export", (request, reply) => {
-    service.session(request.params.id);
-    const data = exportJson(service.db, { sessionIds: [request.params.id], withStates: request.query.states === "1", appVersion: APP_VERSION, exportedAt: new Date().toISOString() });
+  // One checked export of one session; JSON, Markdown and CSV downloads share it (07 s8; P4-12).
+  const sessionExport = (id: string, withStates: boolean) => {
+    service.session(id);
+    const data = exportJson(service.db, { sessionIds: [id], withStates, appVersion: APP_VERSION, exportedAt: new Date().toISOString() });
     const broken = validateExport(data);
     if (broken.length > 0) throw new ServiceError(500, "The export has unresolved references (T-EXP).", broken);
-    return reply.header("content-disposition", `attachment; filename="session-${request.params.id}.json"`).send(data);
+    return data;
+  };
+  app.get<{ Params: Id; Querystring: { states?: string } }>("/api/sessions/:id/export", (request, reply) =>
+    reply.header("content-disposition", `attachment; filename="session-${request.params.id}.json"`).send(sessionExport(request.params.id, request.query.states === "1")));
+  app.get<{ Params: Id }>("/api/sessions/:id/export.md", (request, reply) =>
+    reply.type("text/markdown; charset=utf-8").header("content-disposition", `attachment; filename="session-${request.params.id}.md"`).send(exportMarkdown(sessionExport(request.params.id, false))));
+  app.get<{ Params: Id; Querystring: { file?: string } }>("/api/sessions/:id/export.csv", (request, reply) => {
+    const file = request.query.file;
+    if (file !== "annotations" && file !== "actions" && file !== "metrics") throw new ServiceError(400, "file must be annotations, actions or metrics.");
+    const data = sessionExport(request.params.id, false);
+    return reply.type("text/csv; charset=utf-8").header("content-disposition", `attachment; filename="session-${request.params.id}-${file}.csv"`).send(exportCsv(data)[file]);
   });
   // Metrics review (P4-03): `sessions` is a comma list of session IDs; none means every session.
   const metricsExport = (sessions: string | undefined) => {

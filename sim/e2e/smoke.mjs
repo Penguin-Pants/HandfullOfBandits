@@ -223,6 +223,11 @@ try {
   await page.getByLabel("Scenario", {exact: true}).selectOption("scenario-a");
   await page.getByLabel("Seed", {exact: true}).fill("7");
   check(await page.getByRole("button", {name: "Start",exact: true}).isEnabled(), "Home: Scenario A starts without exclusions");
+  // P4-12: the Home row links to every export format; each link downloads a file.
+  const row = page.getByRole("row").filter({hasText: sessions[0].name});
+  const links = await Promise.all(["JSON", "Markdown", "Notes", "Actions", "Metrics"].map((name) => row.getByRole("link", {name, exact: true}).getAttribute("href")));
+  const bodies = await Promise.all(links.map(async (href) => (await fetch(`${base}${href}`)).text()));
+  check(links.every((h) => h !== null) && bodies[1].includes("# Playtest export") && bodies[2].startsWith("annotation_id") && bodies[3].startsWith("action_id") && bodies[4].length > 0, "Home row links download JSON, Markdown and the three CSV files");
   const creation = page.waitForResponse(r => r.url().endsWith("/api/sessions") && r.request().method() === "POST");
   await page.getByRole("button", {name: "Start",exact: true}).click();
   const created = await (await creation).json();
