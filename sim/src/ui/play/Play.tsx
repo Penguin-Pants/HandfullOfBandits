@@ -133,6 +133,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     return () => { window.removeEventListener("keydown", onKey); };
   });
 
+  const pathIds = useMemo(() => history.filter((h) => h.action.status !== "undone").map((h) => h.action.action_id), [history]);
   if (data === null || legal === null) return <p className="screen">Loading…</p>;
   const view = data.head.view;
   const select = (id: string, add: boolean): void => {
@@ -237,7 +238,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
           {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} api={api} sessionId={sessionId} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onTargets={setEventTargets} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} /> : view.status.phase === "propaganda" ? (
             <>
-              {signalEnabled() && <SignalPrompt api={api} sessionId={sessionId} view={view} headActionId={data.head.actionId} focus={focusStore.get()} />}
+              {signalEnabled() && <SignalPrompt api={api} sessionId={sessionId} view={view} headActionId={data.head.actionId} pathIds={pathIds} focus={focusStore.get()} />}
               <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
             </>
           ) : (

@@ -15,20 +15,22 @@ export interface SignalPromptProps {
   readonly sessionId: string;
   readonly view: BoardView;
   readonly headActionId: string;
+  /** Actions on the current branch path, fork parent included: an answer on another branch does not count. */
+  readonly pathIds: readonly string[];
   readonly focus: UiFocus;
 }
 
-export function SignalPrompt({ api, sessionId, view, headActionId, focus }: SignalPromptProps) {
+export function SignalPrompt({ api, sessionId, view, headActionId, pathIds, focus }: SignalPromptProps) {
   const [answered, setAnswered] = useState<boolean | null>(null);
   const { campaign, propagandaRound } = view.status;
   useEffect(() => {
     void api.annotations(sessionId).then((notes) => {
       setAnswered(notes.some((n) => {
         const context = JSON.parse(n.context) as Record<string, unknown>;
-        return (JSON.parse(n.category_ids) as string[]).includes(SIGNAL_CATEGORY) && context["campaign"] === campaign && context["propaganda_round"] === propagandaRound;
+        return n.action_id !== null && pathIds.includes(n.action_id) && (JSON.parse(n.category_ids) as string[]).includes(SIGNAL_CATEGORY) && context["campaign"] === campaign && context["propaganda_round"] === propagandaRound;
       }));
     });
-  }, [api, sessionId, campaign, propagandaRound]);
+  }, [api, sessionId, campaign, propagandaRound, headActionId, pathIds]);
   if (answered !== false) return null;
   const answer = (yes: boolean): void => {
     void api.annotate(sessionId, { anchor: "executed", actionId: headActionId, text: yes ? "y" : "n", categoryIds: [SIGNAL_CATEGORY], focus }).then(() => { setAnswered(true); });
