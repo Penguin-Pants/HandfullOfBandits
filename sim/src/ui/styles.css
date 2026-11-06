@@ -235,7 +235,7 @@ nav { height: 50px; box-sizing: border-box; }
   --token-line: #463b2855; --panel: #fbf7ef; --line: #b5a78f; --accent: #315e73;
 }
 .map { border: 1px solid #b6a589; border-radius: 3px; box-shadow: inset 0 0 0 3px #f6efdf; isolation: isolate; }
-.map-label { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: .1px; stroke-width: 4px; stroke: #f5eedce6; }
+.map-label { font-family: var(--label-font); font-weight: 600; letter-spacing: .1px; stroke-width: 4px; stroke: #f5eedce6; }
 .map-relief { mix-blend-mode: multiply; opacity: .4; }
 .map-relief.mountain { opacity: .2; }
 .map-lake { fill: var(--lake); stroke: var(--water); stroke-width: 1; }
@@ -291,7 +291,7 @@ nav { height: 50px; box-sizing: border-box; }
 .country-name { fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; font: 20px Georgia, "Times New Roman", serif; }
 
 /* Atlas UX system: readable fixed-size information and a dedicated map workspace. */
-:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --link:#7ebacb; --bad:#ff9a9a; --good:#a4cda5; --state:#a82d31; --pkk:#376c3b; font-size:15px; }
+:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --link:#7ebacb; --label-font:"Crimson Pro", Georgia, "Times New Roman", serif; --bad:#ff9a9a; --good:#a4cda5; --state:#a82d31; --pkk:#376c3b; font-size:15px; }
 a { color:var(--link); }
 button { min-height:36px; border-radius:4px; }
 button:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline:3px solid #7ebacb; outline-offset:3px; }
@@ -350,7 +350,7 @@ h3 {font-size:16px;}
 .forces-group {font-size:14px;}
 .forces-group strong {background:#f8f2e5; padding:2px 5px; border-radius:3px;}
 .map-key {left:12px!important; bottom:34px!important; background:#fbf5e9; color:#403b30; max-width:80%; max-height:40%; overflow:auto;}
-.atlas-label {font:600 16px Georgia,"Times New Roman",serif; fill:#342f25; stroke:#f5eedc; stroke-width:4px; paint-order:stroke;}
+.atlas-label {font:600 16px var(--label-font); fill:#342f25; stroke:#f5eedc; stroke-width:4px; paint-order:stroke;}
 .atlas-counter text {font:600 11px system-ui,sans-serif;}
 .atlas-population text {font:700 13px system-ui,sans-serif;}
 .atlas-political .level-marker {font:600 11.5px system-ui,sans-serif; stroke:#f5eedc; stroke-width:3px; paint-order:stroke;}
