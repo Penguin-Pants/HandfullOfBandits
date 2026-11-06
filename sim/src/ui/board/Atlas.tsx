@@ -11,6 +11,9 @@ export function atlasLayout(space: SpaceView): AtlasSpace | undefined {
   return ATLAS.spaces[space.id] ?? ATLAS.insets[space.id];
 }
 
+/** Name line pitch in SVG units: above the 22 px Georgia line box (about 25.3), so two-line names do not touch. */
+const LABEL_LINE = 30;
+
 export function AtlasInfo({ space, view, layout }: {readonly space: SpaceView; readonly view: BoardView; readonly layout: AtlasSpace}) {
   const p = presentation(space);
   const faction = view.factions.find(f => f.id === space.control);
@@ -19,7 +22,7 @@ export function AtlasInfo({ space, view, layout }: {readonly space: SpaceView; r
   const [control, political, population] = statusLayout(space);
   const alignment = level ?? (space.level === null ? null : "Neutral");
   return <g data-callout={p.callout ? "true" : undefined} data-info={space.id} pointerEvents="none">
-    {names.map((text,i) => <text key={text} x={p.x+p.width/2} y={p.y+(space.id === "elazig" ? 26 : 20)+i*24} textAnchor="middle" className={text === "CITY" ? "atlas-subtitle" : "map-label atlas-label"}>{text}</text>)}
+    {names.map((text,i) => <text key={text} x={p.x+p.width/2} y={p.y+(space.id === "elazig" ? 26 : 20)+i*LABEL_LINE} textAnchor="middle" className={text === "CITY" ? "atlas-subtitle" : "map-label atlas-label"}>{text}</text>)}
     {control !== undefined && political !== undefined && population !== undefined && <>
       <g className="atlas-counter" aria-label={faction === undefined ? "No Control" : `${faction.name} Control`}>
         <rect x={control.x} y={control.y} width={control.width} height={control.height} rx={3} fill={faction?.color ?? "#ede5d1"} />

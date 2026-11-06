@@ -254,6 +254,14 @@ describe("approved atlas board", () => {
     expect(rural?.querySelector("[aria-label='Neutral']")).not.toBeNull();
   });
 
+  it("spaces two-line names wider than the 22 px label line box (about 25.3 units)", () => {
+    const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    for (const id of ["diyarbakir-rural", "western-cities"]) {
+      const [first, second] = [...container.querySelectorAll(`[data-info='${id}'] .atlas-label`)].map(t => Number(t.getAttribute("y")));
+      expect((second ?? 0) - (first ?? 0)).toBeGreaterThanOrEqual(28);
+    }
+  });
+
   it("renders the same atlas for a saved view while keeping all legal links unchanged", () => {
     const before = JSON.stringify(view);
     const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
