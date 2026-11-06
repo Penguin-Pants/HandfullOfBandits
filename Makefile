@@ -10,7 +10,7 @@ check:
 	cd sim && npm run check
 
 start:
-	cd sim && npm start
+	cd sim && npm run build && npm start
 
 schema:
 	cd sim && npm run schema

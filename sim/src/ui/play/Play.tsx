@@ -1,6 +1,6 @@
 // Play screen (08 s3): status bar, board, event or Propaganda panel, faction panel.
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalChoices, SessionRow } from "../api.ts";
+import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalChoices, RuleLookup, SessionRow } from "../api.ts";
 import { createFocusStore } from "../focus-store.ts";
 import { Help } from "../help/Help.tsx";
 import { HistoryDrawer } from "../history/HistoryDrawer.tsx";
@@ -40,12 +40,12 @@ export function changedSpaces(before: BoardView, after: BoardView): string[] {
 }
 
 /** What the last committed action did, from its log entries. */
-function LastAction({ item, view }: { readonly item: HistoryItem | undefined; readonly view: BoardView }) {
+function LastAction({ item, view, onRule }: { readonly item: HistoryItem | undefined; readonly view: BoardView; readonly onRule: (ref: string) => Promise<RuleLookup> }) {
   if (item === undefined) return null;
   return (
     <section className="panel last-action" aria-label="Last action">
       <h3>Last action: {actionTitle(item.action, view)}</h3>
-      <LogLines item={item} view={view} playerOnly limit={12} />
+      <LogLines item={item} view={view} playerOnly limit={12} onRule={onRule} />
     </section>
   );
 }
@@ -57,6 +57,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   // clicks and drags build the active one.
   const [plans, dispatch] = useReducer(plansReducer, emptyPlans);
   const plan = plans[plans.active];
+  const onRule = useCallback((ref: string) => api.rule(sessionId, ref), [api, sessionId]);
   const toFaction = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "faction" }); }, []);
   const toEvent = useCallback((e: PlanEvent): void => { dispatch({ ...e, owner: "event" }); }, []);
   /** The space last clicked, shown in the space detail. */
@@ -238,7 +239,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           ) : (
             <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
           )}
-          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} />
+          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} onRule={onRule} />
           <div className="row">
             <button type="button" onClick={() => { setShowHelp(!showHelp); }}>
               Help (?)
@@ -272,7 +273,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       />
       {showHistory && (
         <div className="overlay">
-          <HistoryDrawer items={history} view={view} onClose={() => { setShowHistory(false); }} onBranch={(item) => void branch(item.action.action_id)} headActionId={data.head.actionId} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />
+          <HistoryDrawer items={history} view={view} onRule={onRule} onClose={() => { setShowHistory(false); }} onBranch={(item) => void branch(item.action.action_id)} headActionId={data.head.actionId} onOpen={(item) => onOpenState?.(item.action.state_hash_before, item.action.state_hash_after)} />
         </div>
       )}
     </div>

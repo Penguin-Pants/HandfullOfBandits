@@ -11,6 +11,8 @@ export interface PlainLine {
   readonly text: string;
   /** Rule and assumption references for the tooltip, or null. */
   readonly ref: string | null;
+  /** The entry's rule ref alone, for the rule text lookup (P4-08), or null. */
+  readonly rule: string | null;
 }
 
 /** Bookkeeping kinds: History shows them, the Last action box does not (R1.7). */
@@ -223,7 +225,7 @@ export function plainLines(entries: readonly HistoryEntry[], view: BoardView, ac
     } else if (e.kind === "CostPaid") {
       text = `${text}.`;
     }
-    out.push({ id: e.entry_id, text, ref });
+    out.push({ id: e.entry_id, text, ref, rule: e.rule_ref });
   }
   return out;
 }

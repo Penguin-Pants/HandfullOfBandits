@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { turnOf } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { causeOf } from "../../server/cause.ts";
@@ -129,6 +129,35 @@ describe("Tip and LogLines (R7)", () => {
     const item = { action: { faction: "pkk" }, entries: [entry("ControlChanged", { space: "botan", before: null, after: "pkk" })], notes: 0 } as unknown as HistoryItem;
     render(<LogLines item={item} view={view} playerOnly />);
     expect(screen.getByText("Botan: Control passed from no one to PKK.").getAttribute("tabindex")).toBeNull();
+  });
+});
+
+describe("Rule text in a log line (P4-08)", () => {
+  const item = { action: { faction: "pkk" }, entries: [entry("ControlChanged", { space: "botan", before: null, after: "pkk" }, { rule_ref: "06 s3.2" }), entry("CardRevealed", { card: "DK-001", type: "event" })], notes: 0 } as unknown as HistoryItem;
+  const found = { ref: "06 s3.2", sections: [{ cite: "06 s3.2", file: "06-operations.md", section: "3.2", heading: "Cross-Border", text: "Pay 2 Resources.", subsections: ["3.2.1 Access"] }], missing: ["06 s9.9"], other: ["DD-19.4"] };
+
+  it("opens the research text of the line's rule ref on request and closes it again", async () => {
+    const lookup = vi.fn(() => Promise.resolve(found));
+    render(<LogLines item={item} view={view} playerOnly onRule={lookup} />);
+    expect(screen.getAllByRole("button", { name: /Rule text/ })).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: "Rule text for 06 s3.2" }));
+    await waitFor(() => { expect(screen.getByText("Pay 2 Resources.")).toBeTruthy(); });
+    expect(lookup).toHaveBeenCalledWith("06 s3.2");
+    expect(screen.getByText("06 s3.2 Cross-Border (06-operations.md)")).toBeTruthy();
+    expect(screen.getByText("Subsections: 3.2.1 Access")).toBeTruthy();
+    expect(screen.getByText("Not in the research files: 06 s9.9")).toBeTruthy();
+    expect(screen.getByText("No research section cited: DD-19.4")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Rule text for 06 s3.2" }));
+    expect(screen.queryByText("Pay 2 Resources.")).toBeNull();
+  });
+
+  it("shows the failure when the lookup fails and offers no button without a lookup", async () => {
+    render(<LogLines item={item} view={view} playerOnly onRule={() => Promise.reject(new Error("offline"))} />);
+    fireEvent.click(screen.getByRole("button", { name: "Rule text for 06 s3.2" }));
+    await waitFor(() => { expect(screen.getByRole("alert").textContent).toContain("offline"); });
+    cleanup();
+    render(<LogLines item={item} view={view} playerOnly />);
+    expect(screen.queryByRole("button", { name: /Rule text/ })).toBeNull();
   });
 });
 

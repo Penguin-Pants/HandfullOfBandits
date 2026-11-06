@@ -8,12 +8,12 @@ import type { ReviewRow } from "../server/review.ts";
 import type { Cell as MetricsCell, MetricsTable } from "../export/metrics.ts";
 import type { ActionRow } from "../store/repos/actions.ts";
 import type { LogEntryRow } from "../store/repos/log-entries.ts";
-import type { AnyCommand, GameState, Question, ValidationResult, Violation } from "../server/api-types.ts";
+import type { AnyCommand, GameState, Question, RuleLookup, ValidationResult, Violation } from "../server/api-types.ts";
 import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
 
 export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
-export type { HistoryEntry, MetricsCell, MetricsTable, ReviewRow };
+export type { HistoryEntry, MetricsCell, MetricsTable, ReviewRow, RuleLookup };
 export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
 export interface HistoryItem {
@@ -104,6 +104,8 @@ export const api = {
   setNoteStatus: (annotationIds: readonly string[], status: "open" | "addressed" | "wontfix") => call<{ updated: number }>("POST", "/review/status", { annotationIds, status }),
   /** Metrics review (P4-03). No session IDs: every session. */
   metrics: (sessionIds: readonly string[]) => call<MetricsTable>("GET", `/metrics${metricsQuery(sessionIds)}`),
+  /** Research text a log rule ref cites (P4-08). */
+  rule: (id: string, ref: string) => call<RuleLookup>("GET", `/sessions/${id}/rules?${new URLSearchParams({ ref }).toString()}`),
   endSession: (id: string, debrief: string | null) => call<{ debriefId: string | null }>("POST", `/sessions/${id}/end`, { debrief }),
 };
 
