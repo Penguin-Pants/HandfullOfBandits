@@ -184,7 +184,10 @@ describe("FactionPanel", () => {
     click("Limited Op");
     fireEvent.focus(screen.getByRole("button", { name: "March" }));
     await waitFor(() => { expect(screen.getAllByText(/Move Guerrillas 1 step/).length).toBeGreaterThan(0); });
-    expect(screen.getByRole("button", { name: "March" }).getAttribute("title")).toBeNull();
+    // The focused button itself carries the description, not a wrapper around it.
+    const describedBy = screen.getByRole("button", { name: "March" }).getAttribute("aria-describedby");
+    expect(describedBy).not.toBeNull();
+    expect(document.getElementById(describedBy ?? "")?.textContent).toMatch(/Move Guerrillas 1 step/);
     click("March");
     expect(screen.getByText(/drag on the map/)).toBeTruthy();
     expect(screen.getByLabelText("Plan").textContent).toMatch(/Move Guerrillas 1 step/);
