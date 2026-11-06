@@ -1,5 +1,6 @@
 // Faction panel (08 s3.2): boxes, Op list with OK or the first violation (T-UI-03), plan building
 // on the map by mouse (UC-5), live validation, preview, commit with Enter.
+import { Tip } from "../common/Tip.tsx";
 import { useEffect, useRef, useState } from "react";
 import { confirmWarnings } from "../common/confirm.ts";
 import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
@@ -146,10 +147,14 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
         <ul className="operation-list" aria-label="Operations">
           {actions.filter((a) => a.kind === "op").map((a) => (
             <li key={a.id}>
-              <button type="button" disabled={!a.ok && box !== "opSa"} title={a.ok || box !== "opSa" ? a.summary : `${a.summary} No legal standalone plan; a preceding SA may make one.`} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>
-                {a.label}
-              </button>{" "}
-              <span className="muted">{a.cost}</span> {a.ok ? <span title={a.locations.map(spaceName).join(", ")}>OK{a.locations.length === 0 ? "" : ` in ${where(a.locations)}`}</span> : <span className="bad">{a.reason}</span>}
+              <Tip heading={a.label} text={a.ok || box !== "opSa" ? a.summary : `${a.summary} No legal standalone plan; a preceding SA may make one.`}>
+                <span className="tip-target">
+                  <button type="button" disabled={!a.ok && box !== "opSa"} aria-pressed={op === a.id} onClick={() => { setOp(a.id); }}>
+                    {a.label}
+                  </button>
+                </span>
+              </Tip>{" "}
+              <span className="muted">{a.cost}</span> {a.ok ? <Tip text={a.locations.map(spaceName).join(", ")}><span tabIndex={0}>OK{a.locations.length === 0 ? "" : ` in ${where(a.locations)}`}</span></Tip> : <span className="bad">{a.reason}</span>}
             </li>
           ))}
         </ul>
@@ -160,9 +165,11 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
             <div className="row" role="group" aria-label="SA">
               <span className="stepper-label">SA</span>
               {actions.filter((a) => a.kind === "sa").map((a) => (
-                <button key={a.id} type="button" title={a.summary} aria-pressed={sa === a.id} onClick={() => { setSa(sa === a.id ? null : a.id); dispatch({ type: "clear", side: "sa" }); }}>
-                  {a.label}
-                </button>
+                <Tip key={a.id} heading={a.label} text={a.summary}>
+                  <button type="button" aria-pressed={sa === a.id} onClick={() => { setSa(sa === a.id ? null : a.id); dispatch({ type: "clear", side: "sa" }); }}>
+                    {a.label}
+                  </button>
+                </Tip>
               ))}
             </div>
           )}
