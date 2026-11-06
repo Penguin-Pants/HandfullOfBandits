@@ -55,7 +55,6 @@ input, select, textarea { font: inherit; padding: 4px 6px; border: 1px solid var
 .screen { padding: 16px; display: grid; gap: 12px; }
 /* Metrics review (P4-03): the wide round table scrolls inside the screen, not the page. */
 .metrics { min-width: 0; }
-.metrics a { color: var(--accent); }
 .metrics .table-scroll { overflow-x: auto; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -292,7 +291,8 @@ nav { height: 50px; box-sizing: border-box; }
 .country-name { fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; font: 20px Georgia, "Times New Roman", serif; }
 
 /* Atlas UX system: readable fixed-size information and a dedicated map workspace. */
-:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --bad:#ff9a9a; --good:#a4cda5; --state:#a82d31; --pkk:#376c3b; font-size:15px; }
+:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --link:#7ebacb; --bad:#ff9a9a; --good:#a4cda5; --state:#a82d31; --pkk:#376c3b; font-size:15px; }
+a { color:var(--link); }
 button { min-height:36px; border-radius:4px; }
 button:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline:3px solid #7ebacb; outline-offset:3px; }
 button:disabled, button[aria-disabled="true"] { opacity:.65; }
