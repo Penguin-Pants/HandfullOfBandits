@@ -47,6 +47,8 @@ export interface PackageData {
   readonly sequence: PackageFileData<"sequence">;
   /** Absent when the package has no assumptions.yaml. */
   readonly assumptions?: PackageFileData<"assumptions">;
+  /** Absent when the package has no rules.yaml (the rule index is then empty). */
+  readonly rules?: PackageFileData<"rules">;
   /** By file path, for example `cards/c1.yaml`. */
   readonly cards: Readonly<Record<string, PackageFileData<"cards">>>;
   /** By file path, for example `scenarios/s0.yaml`. */

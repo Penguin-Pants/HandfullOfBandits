@@ -4,14 +4,15 @@ import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
-import { buildRuleIndex, lookupRule } from "../src/annotate/rule-index.ts";
-import { readResearchDocs } from "../src/package/research.ts";
+import { lookupRule, ruleIndexOf } from "../src/annotate/rule-index.ts";
+import { loadPackage, readPackageDir } from "../src/package/load.ts";
 import { buildApp } from "../src/server/app.ts";
 import { SessionService } from "../src/server/service.ts";
 import { openStore } from "../src/store/migrate.ts";
 import { logEntriesOf } from "../src/store/repos/log-entries.ts";
 import { exportCommand } from "../src/cli/export.ts";
 import { ruleCommand } from "../src/cli/rule.ts";
+import { rulesCommand } from "../src/cli/rules.ts";
 import { exportJson } from "../src/export/json.ts";
 import { scriptedPolicy } from "../src/cli/play.ts";
 import { engine, ruleset } from "./board.ts";
@@ -47,22 +48,14 @@ describe("rule lookup (P4-08)", () => {
     expect((await app.inject({ method: "GET", url: "/api/sessions/nope/rules?ref=06%20s3.2" })).statusCode).toBe(404);
   });
 
-  it("reports every cite as missing when the research folder is absent", () => {
-    const bare = join(dir, "bare");
-    cpSync(join(repo, "game-packages"), join(bare, "game-packages"), { recursive: true });
-    const lone = new SessionService(db, join(bare, "game-packages"));
-    const { sessionId: id } = lone.createSession({ dir: join(bare, "game-packages", "kurdish-coin", "0.1.0"), scenarioId: "s0", seed: 2, name: "bare" });
+  it("gives no rule text for a package without rules.yaml, and an empty ruleIndex in its export", () => {
+    const bare = join(dir, "bare", "game-packages");
+    cpSync(kurdishDir, join(bare, "kurdish-coin", "0.1.0"), { recursive: true });
+    rmSync(join(bare, "kurdish-coin", "0.1.0", "rules.yaml"));
+    const lone = new SessionService(db, bare);
+    const { sessionId: id } = lone.createSession({ dir: join(bare, "kurdish-coin", "0.1.0"), scenarioId: "s0", seed: 2, name: "bare" });
     expect(lone.ruleLookup(id, "06 s3.2")).toMatchObject({ sections: [], missing: ["06 s3.2"] });
-  });
-
-  it("gives no index for a research base outside the repository root", () => {
-    const outside = join(dir, "outside");
-    cpSync(kurdishDir, join(outside, "game-packages", "kurdish-coin", "0.1.0"), { recursive: true });
-    const manifest = join(outside, "game-packages", "kurdish-coin", "0.1.0", "manifest.yaml");
-    writeFileSync(manifest, readFileSync(manifest, "utf8").replace(/^researchBase: .*$/m, `researchBase: ${join("..", "..", "..", "..", "..", "..", "..", "..", "..", repo.slice(1), "research", "research-final", "package-b-coin-design").replaceAll("\\", "/")}`));
-    const far = new SessionService(db, join(outside, "game-packages"));
-    const { sessionId: id } = far.createSession({ dir: join(outside, "game-packages", "kurdish-coin", "0.1.0"), scenarioId: "s0", seed: 3, name: "far" });
-    expect(far.ruleLookup(id, "06 s3.2")).toMatchObject({ sections: [], missing: ["06 s3.2"] });
+    expect(exportJson(db, { sessionIds: [id], withStates: false, appVersion: "t", exportedAt: "x" }).packages[0]?.["ruleIndex"]).toEqual({});
   });
 
   it("fills the research source of the rule refs in a note's context", () => {
@@ -86,11 +79,10 @@ describe("rule lookup (P4-08)", () => {
 describe("rule index in exports and the CLI (P4-08)", () => {
   const options = { sessionIds: [sessionId], withStates: false, appVersion: "t", exportedAt: "2026-11-05T00:00:00Z" };
   it("puts the research source of each logged rule ref in the JSON export, once the session has logged some", () => {
-    const withIndex = exportJson(db, { ...options, ruleIndex: service.ruleIndex }).packages[0]?.["ruleIndex"] as Record<string, string>;
+    const withIndex = exportJson(db, options).packages[0]?.["ruleIndex"] as Record<string, string>;
     const refs = Object.keys(withIndex);
     expect(refs.length).toBeGreaterThan(0);
     for (const ref of refs) expect(withIndex[ref]).toMatch(/^\d{2}-.+\.md s\d/);
-    expect(exportJson(db, options).packages[0]?.["ruleIndex"]).toEqual({});
   });
 
   it("writes the rule index into a CLI JSON export", () => {
@@ -105,7 +97,7 @@ describe("rule index in exports and the CLI (P4-08)", () => {
     expect(ok.exitCode).toBe(0);
     expect(ok.lines.join("\n")).toContain("06 s3.2 Cross-Border (06-operations-and-special-activities.md)");
     expect(ok.lines.join("\n")).toContain("Pay 2 Resources in addition to the Op cost");
-    expect(ok.lines).toContain("Not found in the research files: 06 s9.9");
+    expect(ok.lines).toContain("Not found in the package rules.yaml: 06 s9.9");
     expect(ok.lines).toContain("No research section cited: DD-19.4");
     expect(ruleCommand("debug.adjustTrack", kurdishDir).exitCode).toBe(1);
     expect(ruleCommand("06 s3.2", `${relative(process.cwd(), kurdishDir)}/../0.1.0`).exitCode).toBe(0);
@@ -113,12 +105,61 @@ describe("rule index in exports and the CLI (P4-08)", () => {
   });
 });
 
+describe("rules.yaml generation (P4-08; DEC-83)", () => {
+  it("is current: the committed file equals what the research documents give", () => {
+    expect(rulesCommand(kurdishDir, true)).toMatchObject({ exitCode: 0 });
+  });
+
+  it("writes the file, then reports it stale after an edit and missing when absent", () => {
+    const root = join(dir, "gen");
+    cpSync(join(repo, "research"), join(root, "research"), { recursive: true });
+    const pkg = join(root, "game-packages", "kurdish-coin", "0.1.0");
+    cpSync(kurdishDir, pkg, { recursive: true });
+    rmSync(join(pkg, "rules.yaml"));
+    expect(rulesCommand(pkg, true).exitCode).toBe(1);
+    expect(rulesCommand(pkg, false).exitCode).toBe(0);
+    expect(rulesCommand(pkg, true).exitCode).toBe(0);
+    expect(readFileSync(join(pkg, "rules.yaml"), "utf8")).toBe(readFileSync(join(kurdishDir, "rules.yaml"), "utf8"));
+    writeFileSync(join(pkg, "rules.yaml"), readFileSync(join(pkg, "rules.yaml"), "utf8").replace("Cross-Border", "Cross-Borders"));
+    expect(rulesCommand(pkg, true).exitCode).toBe(1);
+    writeFileSync(join(pkg, "rules.yaml"), readFileSync(join(pkg, "rules.yaml"), "utf8").replace("Cross-Borders", "Cross-Border").replaceAll("\n", "\r\n"));
+    expect(rulesCommand(pkg, true).exitCode).toBe(0);
+  });
+
+  it("rewrites a rules.yaml that no longer passes the schema", () => {
+    const pkg = join(dir, "broken", "game-packages", "kurdish-coin", "0.1.0");
+    cpSync(kurdishDir, pkg, { recursive: true });
+    writeFileSync(join(pkg, "rules.yaml"), "- id: nonsense\n");
+    cpSync(join(repo, "research"), join(dir, "broken", "research"), { recursive: true });
+    expect(rulesCommand(pkg, true).exitCode).toBe(1);
+    expect(rulesCommand(pkg, false).exitCode).toBe(0);
+    expect(rulesCommand(pkg, true).exitCode).toBe(0);
+  });
+
+  it("reads no documents from a research base outside the repository root", () => {
+    const pkg = join(dir, "outside", "game-packages", "kurdish-coin", "0.1.0");
+    cpSync(kurdishDir, pkg, { recursive: true });
+    const manifest = join(pkg, "manifest.yaml");
+    const real = join(repo, "research", "research-final", "package-b-coin-design").replaceAll("\\", "/");
+    writeFileSync(manifest, readFileSync(manifest, "utf8").replace(/^researchBase: .*$/m, `researchBase: ${relative(join(dir, "outside"), real).replaceAll("\\", "/")}`));
+    expect(rulesCommand(pkg, false).exitCode).toBe(1);
+  });
+
+  it("refuses a package with no research documents", () => {
+    const pkg = join(dir, "norsch", "game-packages", "kurdish-coin", "0.1.0");
+    cpSync(kurdishDir, pkg, { recursive: true });
+    expect(rulesCommand(pkg, false)).toEqual({ exitCode: 1, lines: ["error: no research documents found; check manifest researchBase"] });
+  });
+});
+
 describe("every rule ref in the engine and the package resolves (P4-08)", () => {
   const files = (root: string, ext: string): string[] =>
     readdirSync(root, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(root, e.name), ext) : e.name.endsWith(ext) && !e.name.endsWith(`.test${ext}`) ? [join(root, e.name)] : []));
-  it("finds the cited research section for each literal in src/engine and game-packages", () => {
-    const index = buildRuleIndex(readResearchDocs(join(repo, "game-packages"), "research/research-final/package-b-coin-design"));
-    const sources = [...files(join(repo, "sim", "src", "engine"), ".ts"), ...files(join(repo, "game-packages"), ".yaml")].filter((f) => statSync(f).isFile());
+  it("finds the cited section in rules.yaml for each literal in src/engine and game-packages", () => {
+    const loaded = loadPackage(readPackageDir(kurdishDir));
+    if (!loaded.ok) throw new Error("the package does not load");
+    const index = ruleIndexOf(loaded.data.rules);
+    const sources = [...files(join(repo, "sim", "src", "engine"), ".ts"), ...files(join(repo, "game-packages"), ".yaml")].filter((f) => statSync(f).isFile() && !f.endsWith("rules.yaml"));
     const bad: string[] = [];
     let seen = 0;
     for (const f of sources) {

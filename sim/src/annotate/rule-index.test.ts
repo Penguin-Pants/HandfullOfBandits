@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildRuleIndex, lookupRule, ruleSource } from "./rule-index.ts";
+import { buildRuleIndex, lookupRule, ruleEntries, ruleIndexOf, ruleSource } from "./rule-index.ts";
 
 const docs = {
   "06-operations.md": [
@@ -103,5 +103,19 @@ describe("ruleSource", () => {
   it("is undefined when nothing resolves", () => {
     expect(ruleSource(lookupRule(index, "DD-19.4"))).toBeUndefined();
     expect(ruleSource(lookupRule(index, "06 s9.9"))).toBeUndefined();
+  });
+});
+
+describe("rules.yaml entries", () => {
+  it("round-trips: the entries of an index give back the same lookups", () => {
+    const entries = ruleEntries(index);
+    expect(entries.map((e) => e.id)).toEqual(["05 s6", "05 s6.1", "06 s3", "06 s3.2", "06 s3.3", "06 s3.4"]);
+    expect(entries.find((e) => e.id === "06 s3.2")).toEqual({ id: "06 s3.2", file: "06-operations.md", heading: "Cross-Border", text: "Accompanies: Sweep or Assault.\n\n1. Pay 2 Resources.\n2. Move up to 6 Troops.", subsections: [] });
+    expect(lookupRule(ruleIndexOf(entries), "06 s3; 05 s6.1")).toEqual(lookupRule(index, "06 s3; 05 s6.1"));
+  });
+
+  it("gives an empty index without entries and skips an entry with a malformed id", () => {
+    expect(ruleIndexOf(undefined).size).toBe(0);
+    expect(ruleIndexOf([{ id: "DD-19", file: "x.md", heading: "H", text: "", subsections: [] }]).size).toBe(0);
   });
 });

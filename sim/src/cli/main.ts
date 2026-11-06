@@ -20,12 +20,14 @@ import { CURRENT } from "./strategies/scenario-a.ts";
 import { validateCommand } from "./validate.ts";
 import { diffCommand } from "./diff.ts";
 import { ruleCommand } from "./rule.ts";
+import { rulesCommand } from "./rules.ts";
 import { compareCommand, createCommand, listCommand, runCommand } from "./regression.ts";
 
 const usage = [
   "Usage: sim validate <package-dir>",
   "       sim diff <old-package-dir> <new-package-dir>",
   "       sim rule \"<rule ref>\" [--package <dir>]",
+  "       sim rules <package-dir> [--check]",
   "       sim replay <file.json> [--package <dir>]",
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
@@ -61,6 +63,8 @@ if (command === "validate" && target !== undefined) {
   print(diffCommand(target, args[2]));
 } else if (command === "replay" && target !== undefined) {
   print(target.endsWith(".json") ? replayFile(target, flag("--package", kurdish)) : replaySession(target, flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)))));
+} else if (command === "rules" && target !== undefined && !target.startsWith("--")) {
+  print(rulesCommand(target, args.includes("--check")));
 } else if (command === "rule" && target !== undefined && !target.startsWith("--")) {
   print(ruleCommand(target, flag("--package", kurdish)));
 } else if (command === "regression") {
