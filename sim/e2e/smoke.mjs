@@ -1,5 +1,5 @@
 /* global process, console, fetch, setTimeout, document, innerHeight, innerWidth, Image, DOMPoint, getComputedStyle */
-// IC-2 item 1: Playwright smoke (11 IC-2). Home, start S0, one action, one note, undo, JSON export.
+// IC-2 item 1: Playwright smoke (11 IC-2). Home, start the first unblocked scenario, one action, one note, undo, JSON export.
 // Needs a built UI (`npm run build`) and Playwright with Chromium (not a project dependency).
 // Run: make e2e
 import { createEngine } from "../src/engine/index.ts";
@@ -46,7 +46,7 @@ try {
   const start = page.getByRole("button", { name: "Start" });
   await start.waitFor();
   for (let i = 0; i < 50 && !(await start.isEnabled()); i++) await page.waitForTimeout(100);
-  check(await start.isEnabled(), "Home: Start is enabled for S0");
+  check(await start.isEnabled(), "Home: Start is enabled for the first unblocked scenario");
   await start.click();
   await page.getByRole("button", { name: /Reveal first card/ }).click();
   await page.getByText(/^Card 1$/).waitFor();
@@ -253,6 +253,9 @@ try {
   check(aExport.sessions[0].scenario_id === "scenario-a" && aExport.annotations.length === 1 && aExport.metrics.filter(m => m.propaganda_round !== undefined).length === 2, "Scenario A export contains the session, both round metrics and UI note");
 } finally {
   await browser?.close();
+  // Windows holds the SQLite file open until the server exits; rmSync before that throws EPERM.
+  const exited = server.exitCode === null && server.signalCode === null ? new Promise((r) => server.once("exit", r)) : undefined;
   server.kill();
+  await exited;
   rmSync(dir, { recursive: true, force: true });
 }

@@ -122,4 +122,4 @@ try {
  await page.getByLabel('Find space').selectOption('europe');
  check((await page.getByLabel('Europe detail').textContent()).includes('0 to 5'),'external scale is fully inspectable');
  check(errors.length===0,'no browser runtime errors',errors);
-}finally{writeFileSync(join(shots,'validation.json'),JSON.stringify(report,null,2));await browser?.close();server.kill();rmSync(temp,{recursive:true,force:true});}
+}finally{writeFileSync(join(shots,'validation.json'),JSON.stringify(report,null,2));await browser?.close();const exited=server.exitCode===null&&server.signalCode===null?new Promise(r=>server.once('exit',r)):undefined;server.kill();await exited;rmSync(temp,{recursive:true,force:true});}
