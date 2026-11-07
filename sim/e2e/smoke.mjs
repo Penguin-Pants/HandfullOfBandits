@@ -51,6 +51,15 @@ try {
   await page.getByRole("button", { name: /Reveal first card/ }).click();
   await page.getByText(/^Card 1$/).waitFor();
   check(true, "Play: first card revealed");
+  const sidebarWidth = await page.locator('aside.side').evaluate(el => el.getBoundingClientRect().width);
+  check(await page.getByLabel('Status', {exact: true}).evaluate(el => el.closest('aside') !== null), "game status stays in the sidebar");
+  check(await page.getByLabel('Scores', {exact: true}).count() === 0, "repeated score summaries are removed");
+  await page.locator('.score-details summary').click();
+  const victoryFits = await page.locator('.status-victory-scroll').evaluate((el, before) =>
+    el.scrollWidth > el.clientWidth && Math.abs(el.closest('aside').getBoundingClientRect().width - before) < 1 && document.documentElement.scrollWidth <= innerWidth,
+  sidebarWidth);
+  check(victoryFits, "expanded victory track scrolls without widening the sidebar");
+  await page.locator('.score-details summary').click();
   const artwork = await page.evaluate(async () => {
     const image = new Image();
     image.src = document.querySelector("#atlas-artwork image")?.getAttribute("href") ?? "";

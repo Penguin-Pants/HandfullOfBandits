@@ -139,10 +139,6 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4p
 .log-line { cursor: default; }
 .log-line[tabindex] { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
 
-/* Status pills (UC-2) */
-.pills { display: flex; flex-wrap: wrap; gap: 6px; }
-.pill { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 3px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 13px; }
-.pill-label { color: var(--muted); }
 .mini-track { display: inline-flex; flex-wrap: wrap; gap: 1px; }
 .mini-box, .mini-step { border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 10px; line-height: 14px; }
 .mini-box { min-width: 14px; text-align: center; }
@@ -164,7 +160,6 @@ nav { height: 50px; box-sizing: border-box; }
 @media (max-width: 1000px) { .play-screen { height: auto; overflow: visible; } .forces-row { grid-template-columns: 1fr; } }
 /* One-view compaction (UC-3) */
 .play-screen .status-grid { padding: 8px 12px; gap: 4px; }
-.play-screen .pill { padding: 2px 8px; font-size: 12px; }
 .play-screen .play { grid-template-columns: minmax(0, 1fr) 460px; }
 .play-screen .side { gap: 8px; }
 .play-screen .side .panel { padding: 8px 10px; }
@@ -184,7 +179,6 @@ nav { height: 50px; box-sizing: border-box; }
 /* Bigger map (UC-4): no nav on play, compact status row, map tools and key overlay, forces bar,
    map focus mode (M), larger labels. */
 .play-screen { height: 100vh; }
-.play-screen .status-grid > .pills { flex-wrap: nowrap; }
 .map-panel { position: relative; }
 .play-screen .map-key { bottom: 12px; left: 140px; }
 .map-key { position: absolute; left: 12px; bottom: 12px; max-width: 60%; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px 8px; z-index: 2; }
@@ -199,14 +193,11 @@ nav { height: 50px; box-sizing: border-box; }
 .chip-code { font-size: 12px; }
 .chip-count { font-size: 13px; }
 .note-closed { position: fixed; right: 16px; bottom: 8px; display: flex; gap: 8px; align-items: center; z-index: 4; }
-.play-screen { grid-template-rows: auto minmax(0, 1fr); }
-.play-screen:has(footer.panel) { grid-template-rows: auto minmax(0, 1fr) auto; }
-.play-screen.map-only { grid-template-rows: minmax(0, 1fr); }
-.play-screen.map-only:has(footer.panel) { grid-template-rows: minmax(0, 1fr) auto; }
+.play-screen { grid-template-rows: minmax(0, 1fr); }
+.play-screen:has(footer.panel) { grid-template-rows: minmax(0, 1fr) auto; }
 .play-screen .side { padding-bottom: 44px; box-sizing: border-box; }
 @media (max-width: 1000px) {
   .play-screen { height: auto; }
-  .play-screen .status-grid > .pills { flex-wrap: wrap; }
 }
 /* Mouse-only plans (UC-5): steppers, choice buttons, move arrows on the map. */
 .stepper, .choice { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
@@ -299,10 +290,9 @@ button:disabled, button[aria-disabled="true"] { opacity:.65; }
 h3 {font-size:16px;}
 .play-screen { padding:10px 12px; gap:10px; }
 .play-screen .play { grid-template-columns:minmax(0,1fr) 390px; gap:12px; }
-.play-screen .side {height:calc(100% - 44px); padding-bottom:0; gap:12px; scrollbar-gutter:stable;}
-.play-screen .side .panel {padding:14px;}
+.play-screen .side {height:calc(100% - 44px); padding-bottom:0; gap:8px; scrollbar-gutter:stable;}
+.play-screen .side .panel {padding:8px 10px;}
 .play-screen .status-grid {padding:8px 12px;}
-.play-screen .pill {font-size:14px; padding:3px 8px;}
 .play-screen .status-grid > .row {gap:6px 10px;}
 .status-grid .chip {font-size:14px;}
 .victory-track {margin:21px 0;}
@@ -377,7 +367,6 @@ h3 {font-size:16px;}
  .map-window {min-height:580px;}
  .map-window .map {min-height:580px;}
  .track-card {grid-template-columns:repeat(3,minmax(0,1fr));}
- .play-screen .status-grid > .pills {flex-wrap:wrap;}
  .space-inspector {max-height:240px;}
  .map-key {position:absolute;}
 }
@@ -388,7 +377,6 @@ h3 {font-size:16px;}
 .score-details[open] {padding-top:4px;}
 .score-details .victory-track {color:var(--fg);}
 .vt-cell.five {background:#3c4443; color:#fff;}
-[aria-label="Scores"] strong {background:#f6efdf; padding:1px 4px; border-radius:3px;}
 .vt-flag-label span {background:#f6efdf; padding:1px 4px; border-radius:3px;}
 .play-screen .status-grid {gap:4px;}
 .map-navigation {padding:5px 10px;}
@@ -448,12 +436,12 @@ h3 {font-size:16px;}
 .map-space.neighbor:not(.selected) .atlas-outline {stroke:#2b6b77;stroke-width:3;stroke-dasharray:7 4;}
 .map-space.selected .atlas-outline {stroke:#9a6a20;stroke-width:4;}
 
-.track-card.expanded {display:flex; flex-direction:column; gap:8px; max-height:none; padding:8px 10px;}
+.track-card.expanded {display:flex; flex-direction:column; gap:4px; max-height:none; padding:3px 10px;}
 .track-summaries {display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px;}
 .track-card.expanded .track-row {padding:0; min-width:0; flex:1 1 150px;}
-.track-card.expanded .track-summary {display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:4px; min-height:64px; box-sizing:border-box; padding:6px 8px; border:1px solid #c7b99e; border-radius:4px; background:#fff7e7; color:#332e24; font-size:14px; line-height:1.25;}
+.track-card.expanded .track-summary {display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:1px; min-height:44px; box-sizing:border-box; padding:2px 8px; border:1px solid #c7b99e; border-radius:4px; background:#fff7e7; color:#332e24; font-size:14px; line-height:1.25;}
 .track-card.expanded summary {cursor:pointer;}
-.track-summary b {font-size:20px; font-variant-numeric:tabular-nums;}
+.track-summary b {font-size:20px; line-height:1; font-variant-numeric:tabular-nums;}
 .track-summary > span:not(.resource-faction) {overflow-wrap:normal;}
 .track-card.expanded .resource-badge {flex:0 0 auto;}
 .track-card.expanded .resource-badge summary {flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; white-space:nowrap;}
@@ -462,13 +450,26 @@ h3 {font-size:16px;}
 .track-card.expanded .mini-box {font-size:12px; line-height:20px; border-color:#c7b99e; color:#403b30; background:#fff7e7;}
 .track-card.expanded .mini-box.on {background:#315e73; color:#fff; border-color:#315e73;}
 .track-card.expanded .track-bar {margin-top:6px;}
-.political-tracks {display:flex; flex-wrap:wrap; gap:8px; padding:8px; border:1px solid #c7b99e; border-radius:4px; background:#fff7e7;}
-.political-track {flex:1 1 270px; min-width:0; display:grid; align-content:start; gap:6px; padding:0 4px;}
+.political-tracks {display:flex; flex-wrap:wrap; gap:8px; padding:4px; border:1px solid #c7b99e; border-radius:4px; background:#fff7e7;}
+.political-track {flex:1 1 270px; min-width:0; display:grid; align-content:start; gap:4px; padding:0 4px;}
 .political-track > strong {font-size:14px; color:#332e24;}
 .track-card.expanded .political-track .mini-track {display:flex; flex-wrap:wrap; gap:5px;}
-.political-track .mini-step {display:flex; align-items:center; justify-content:center; gap:5px; flex:1 1 60px; padding:5px 7px; min-height:30px; box-sizing:border-box; border:1px solid #c7b99e; border-radius:4px; background:#fffbf2; color:#403b30; font-size:13px; line-height:1.25; text-align:center;}
+.political-track .mini-step {display:flex; align-items:center; justify-content:center; gap:5px; flex:1 1 auto; padding:4px 7px; min-height:28px; box-sizing:border-box; border:1px solid #c7b99e; border-radius:4px; background:#fffbf2; color:#403b30; font-size:13px; line-height:1.25; text-align:center;}
 .political-track .mini-step.on {background:#315e73; border-color:#315e73; color:#fff;}
 .political-track .mini-step.on::before {content:"\2713";}
+
+/* Session information shares the sidebar so the map starts at the top of the screen. */
+.play-screen .status-grid {gap:6px; min-width:0;}
+.status-heading {justify-content:space-between; gap:4px 8px;}
+.status-heading h3 {margin:0; font-size:14px;}
+.status-heading .row {gap:5px;}
+.status-heading button {min-height:28px; padding:3px 7px; font-size:13px;}
+.status-meta, .status-eligibility {gap:4px 6px;}
+.status-grid .chip {padding:1px 6px; font-size:12px;}
+.status-card-title {font-size:13px; font-weight:600; line-height:1.3; overflow-wrap:anywhere;}
+.status-grid .score-details {min-width:0;}
+.status-victory-scroll {overflow-x:auto; width:100%; min-width:0;}
+.status-victory-scroll .victory-track {min-width:720px;}
 
 .atlas-stack .map-count {font-size:18px;}
 

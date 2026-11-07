@@ -191,21 +191,11 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
               </button>
               </div>
   );
-  // One view (UC-3, UC-4): status on top, map with the forces bar below it on the left, a right
-  // column that scrolls inside itself, note bar at the bottom. Help, History and End session
+  // One view (UC-3, UC-4): map with the forces bar below it on the left, status at the top of
+  // the scrolling right column, note bar at the bottom. Help, History and End session
   // overlay. Map focus mode (M) hides the status bar and the right column.
   return (
     <div className={mapOnly ? "screen play-screen map-only" : "screen play-screen"}>
-      {!mapOnly && (
-        <StatusBar view={view}>
-          <button type="button" onClick={onExit}>
-            Home
-          </button>
-          <button type="button" onClick={onReview}>
-            Feedback review
-          </button>
-        </StatusBar>
-      )}
       {showHelp && (
         <div className="overlay">
           <Help onClose={() => { setShowHelp(false); }} view={view} forms={legal.forms ?? []} />
@@ -229,6 +219,10 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           {!mapOnly && <ForcesBar view={view} />}
         </div>
         <aside className="side" aria-label="Side panel" hidden={mapOnly}>
+          {!mapOnly && <StatusBar view={view}>
+            <button type="button" onClick={onExit}>Home</button>
+            <button type="button" onClick={onReview}>Feedback review</button>
+          </StatusBar>}
           <section className="panel next-task" aria-label="Next action">
             <span className="eyebrow">{legal.faction === null ? words(view.status.phase) : `${words(legal.faction)} · ${legal.first === true ? "First" : "Second"} Eligible`}</span>
             <h2>{view.status.pending?.prompt ?? (view.status.ended !== null ? "Game complete" : view.status.phase === "setup" ? "Reveal the first card" : legal.advance === true ? "Advance the sequence" : "Choose your action")}</h2>
