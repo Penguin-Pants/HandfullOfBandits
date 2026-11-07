@@ -1,6 +1,6 @@
 # Digital COIN Prototype: Architecture and Build Plan
 
-Status: Phases 1 and 2 built; Phase 3a built with IC-3a open; Phase 3b in progress (P3b-01 to P3b-06, P3b-07 C3 and C4 done). Current position and next task: [11-build-plan.md](11-build-plan.md) section 0.
+Status: Phases 1 and 2 complete. Phases 3a to 3c built; their designer checkpoints stay open. Phase 4 is in progress. P4-15 is complete and CL-01 is dropped under its size rule. Next code task: P4-09. P4-08 acceptance needs a new tester; IC-4 needs recorded comparison evidence. See [11-build-plan.md](11-build-plan.md) section 0.
 
 ## Bottom line
 
@@ -57,4 +57,4 @@ It defines the strategy portfolio, qualification, tournaments and evidence gates
 
 ## Next step
 
-P3b-08 is complete: Scenarios B and C start at the 09 s2.3 scores. Next: IC-3b, the designer plays B and C to the end in the UI. See [11-build-plan.md](11-build-plan.md) section 0.
+Next code task: P4-09, the regression UI. Human work remains: IC-3a to IC-3c, the P4-08 tester run and IC-4. See [11-build-plan.md](11-build-plan.md) sections 0 and 5 for requirements and dependencies.

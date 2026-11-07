@@ -3,6 +3,7 @@
 // command's `answers`, consumed in execution order (PA-01, DEC-51). A missing or bad answer stops
 // a check run with a violation that carries the question.
 import { addModifier } from "../core/modifiers.ts";
+import { stackingRoom } from "../core/effects/common.ts";
 import type { Exec } from "../core/exec.ts";
 import { SINGLE_FACE } from "../core/state.ts";
 import { matches, resolveSpace } from "../core/terms.ts";
@@ -31,6 +32,8 @@ export interface EventRun {
   readonly faction: FactionId;
   readonly answers: readonly JsonValue[];
   readonly ruleRef: string;
+  /** P4-15: interactive commands opt in; saved commands and bots retain their answer order. */
+  readonly chooseMoveFaces?: boolean;
 }
 
 interface Cursor {
@@ -51,9 +54,9 @@ function answer(run: EventRun, cursor: Cursor, question: Question): JsonValue {
   return value;
 }
 
-function countOf(run: EventRun, cursor: Cursor, spec: CountSpec, what: string): number {
+function countOf(run: EventRun, cursor: Cursor, spec: CountSpec, what: string, at = cursor.selected): number {
   if (typeof spec === "number") return spec;
-  const value = answer(run, cursor, { kind: "count", prompt: `How many ${what}? (${String(spec.min)} to ${String(spec.max)})`, options: [], min: spec.min, max: spec.max, ...(cursor.selected === null ? {} : { space: cursor.selected }) });
+  const value = answer(run, cursor, { kind: "count", prompt: `How many ${what}? (${String(spec.min)} to ${String(spec.max)})`, options: [], min: spec.min, max: spec.max, ...(at === null ? {} : { space: at }) });
   if (typeof value !== "number" || !Number.isSafeInteger(value) || value < spec.min || value > spec.max) ask(run, "badAnswer", `Answer ${String(spec.min)} to ${String(spec.max)} for ${what}.`);
   return value;
 }
@@ -97,6 +100,29 @@ function runList(run: EventRun, cursor: Cursor, effects: readonly CardEffect[]):
   for (const e of effects) runOne(run, cursor, e);
 }
 
+/** Split a card move by chosen source faces. Core primitives still own movement and arrival faces. */
+function moveWithFaces(run: EventRun, cursor: Cursor, effect: Extract<Effect, { type: "movePieces" }>): void {
+  const { ctx } = run;
+  const faces = (ctx.ruleset.pieces.find(p => p.id === effect.piece)?.states ?? []).filter(face => count(ctx.state, effect.from, effect.piece, face) > 0);
+  if (!run.chooseMoveFaces || effect.state !== null || faces.length < 2 || effect.count === 0) {
+    ctx.apply(effect);
+    return;
+  }
+  let available = count(ctx.state, effect.from, effect.piece);
+  let left = Math.min(effect.count, available, stackingRoom(ctx.ruleset, ctx.state, effect.to, effect.piece));
+  const skipped = effect.count - left;
+  for (const face of faces) {
+    const have = count(ctx.state, effect.from, effect.piece, face);
+    available -= have;
+    const min = Math.max(0, left - available);
+    const max = Math.min(left, have);
+    const n = min === max ? min : countOf(run, cursor, { min, max }, `${face} ${effect.piece} pieces to move`, effect.from);
+    if (n > 0) ctx.apply({ ...effect, state: face, count: n });
+    left -= n;
+  }
+  if (skipped > 0) ctx.apply({ ...effect, count: skipped });
+}
+
 function runOne(run: EventRun, cursor: Cursor, e: CardEffect): void {
   const { ctx } = run;
   const primitive = core(run, cursor, e);
@@ -105,6 +131,7 @@ function runOne(run: EventRun, cursor: Cursor, e: CardEffect): void {
     if (box !== undefined && primitive.type === "stepOrdinal") shiftHost(ctx, box, primitive.direction === "next" ? primitive.steps : -primitive.steps, run.ruleRef);
     // An Event rise in Europe stops at the Ban marker cap (04 s3.6).
     else if (primitive.type === "adjustTrack" && primitive.track === TRACK.europe) adjustEurope(ctx, primitive.delta, run.ruleRef);
+    else if (primitive.type === "movePieces") moveWithFaces(run, cursor, primitive);
     else ctx.apply(primitive);
     return;
   }

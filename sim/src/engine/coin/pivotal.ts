@@ -72,7 +72,7 @@ function execute(ctx: Exec, c: AnyCommand): void {
   ctx.log("ChoiceMade", {faction, card, replaced: original, box: BOX.event}, ruleRef);
   notePassOnly(ctx, faction, false);
   if (card === ARGK) argk(ctx, c);
-  else runEffects({ ctx, faction, answers: asList(c["answers"]), ruleRef: `${card} Pivotal` }, ctx.ruleset.cards[card]?.unshaded?.effects ?? []);
+  else runEffects({ ctx, faction, answers: asList(c["answers"]), ruleRef: `${card} Pivotal`, chooseMoveFaces: c["chooseMoveFaces"] === true }, ctx.ruleset.cards[card]?.unshaded?.effects ?? []);
 }
 
 /** Dry run on a preview: the first missing or bad answer, and the ceasefire effects. */
