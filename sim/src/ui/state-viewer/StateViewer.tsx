@@ -16,11 +16,21 @@ export interface StateViewerProps {
 export function StateViewer({ api, sessionId, before, after, onBack }: StateViewerProps) {
   const [showBefore, setShowBefore] = useState(false);
   const [view, setView] = useState<BoardView | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [reload, setReload] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const hash = showBefore && before !== null ? before : after;
   useEffect(() => {
-    void api.stateView(sessionId, hash).then(setView);
-  }, [api, sessionId, hash]);
+    let current = true;
+    setView(null);
+    setError(null);
+    void api.stateView(sessionId, hash).then((next) => {
+      if (current) setView(next);
+    }, (e: unknown) => {
+      if (current) setError(e instanceof Error ? e.message : String(e));
+    });
+    return () => { current = false; };
+  }, [api, sessionId, hash, reload]);
   const detail = view?.spaces.find((s) => s.id === selected);
   return (
     <div className="screen" aria-label="State viewer">
@@ -41,6 +51,8 @@ export function StateViewer({ api, sessionId, before, after, onBack }: StateView
           </div>
         )}
       </div>
+      {error !== null && <div><p role="alert">Could not load state: {error}</p><button type="button" onClick={() => { setReload((n) => n + 1); }}>Retry</button></div>}
+      {view === null && error === null && <p role="status">Loading state…</p>}
       {view !== null && (
         <>
           <StatusBar view={view} />

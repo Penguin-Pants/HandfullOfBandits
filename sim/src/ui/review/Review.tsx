@@ -33,15 +33,28 @@ export function Review({ api, onOpenState }: ReviewProps) {
   const [rows, setRows] = useState<ReviewRow[]>([]);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
   const [reload, setReload] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<Record<string, Filter>>(loadSaved);
   const [name, setName] = useState("");
   const query = Object.fromEntries(Object.entries(filter).filter(([, v]) => v !== ""));
   const key = JSON.stringify(query);
   useEffect(() => {
+    let current = true;
+    setLoading(true);
+    setError(null);
+    setRows([]);
+    setSelected(new Set());
     void api.review(JSON.parse(key) as Filter).then((next) => {
+      if (!current) return;
       setRows(next);
-      setSelected(new Set());
+      setLoading(false);
+    }, (e: unknown) => {
+      if (!current) return;
+      setError(e instanceof Error ? e.message : String(e));
+      setLoading(false);
     });
+    return () => { current = false; };
   }, [api, key, reload]);
 
   const updateSaved = (next: Record<string, Filter>): void => {
@@ -79,9 +92,11 @@ export function Review({ api, onOpenState }: ReviewProps) {
           </span>
         ))}
       </div>
+      {error !== null && <div><p role="alert">Could not load notes: {error}</p><button type="button" onClick={() => { setReload((n) => n + 1); }}>Retry</button></div>}
+      {loading && <p role="status">Loading notes…</p>}
       <div className="row" aria-label="Bulk status">
         {STATUSES.map(([status, label]) => (
-          <button key={status} type="button" disabled={selected.size === 0} onClick={() => { void api.setNoteStatus([...selected], status).then(() => { setReload(reload + 1); }); }}>
+          <button key={status} type="button" disabled={loading || selected.size === 0} onClick={() => { void api.setNoteStatus([...selected], status).then(() => { setReload(reload + 1); }); }}>
             {label}
           </button>
         ))}
@@ -137,7 +152,7 @@ export function Review({ api, onOpenState }: ReviewProps) {
           ))}
         </tbody>
       </table>
-      {rows.length === 0 && <p className="muted">No notes match.</p>}
+      {!loading && error === null && rows.length === 0 && <p className="muted">No notes match.</p>}
     </div>
   );
 }

@@ -92,20 +92,28 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   /** Head on screen before a reload, to outline what the next action changed. */
   const shown = useRef<Head | null>(null);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const loadVersion = useRef(0);
   const load = useCallback(async () => {
-    const [s, l, h] = await Promise.all([api.session(sessionId), api.legal(sessionId), api.history(sessionId)]);
-    const prev = shown.current;
-    if (prev === null || prev.actionId !== s.head.actionId) setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
-    shown.current = s.head;
-    setData(s);
-    setLegal(l);
-    setHistory(h);
+    const version = ++loadVersion.current;
+    setLoadError(null);
+    try {
+      const [s, l, h, c] = await Promise.all([api.session(sessionId), api.legal(sessionId), api.history(sessionId), api.categories()]);
+      if (version !== loadVersion.current) return;
+      const prev = shown.current;
+      if (prev === null || prev.actionId !== s.head.actionId) setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
+      shown.current = s.head;
+      setData(s);
+      setLegal(l);
+      setHistory(h);
+      setCategories(c);
+    } catch (e) {
+      if (version === loadVersion.current) setLoadError(e instanceof Error ? e.message : String(e));
+    }
   }, [api, sessionId]);
   useEffect(() => {
-    void api.categories().then(setCategories);
-  }, [api]);
-  useEffect(() => {
     void load();
+    return () => { loadVersion.current++; };
   }, [load]);
 
   const commit = async (command: AnyCommand): Promise<void> => {
@@ -124,16 +132,17 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
+      if (data === null || legal === null) return;
       const target = e.target as HTMLElement | null;
       if (target !== null && (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)) return;
       if (e.key === "h" || e.key === "H") setShowHistory((v) => !v);
       if (e.key === "?") setShowHelp((v) => !v);
       if (e.key === "m" || e.key === "M") toggleMapOnly();
       if (e.key === "z" && (e.ctrlKey || e.metaKey)) {e.preventDefault(); void undo();}
-      if (e.key === " " && (target === null || target === document.body) && legal?.advance === true) {
+      if (e.key === " " && (target === null || target === document.body) && legal.advance === true) {
         e.preventDefault();
-        const status = data?.head.view.status;
-        const skip = status?.phase === "propaganda" ? skipQuestion(status.propagandaPhases[status.propagandaStep] ?? "", status.emergencyMoves) : null;
+        const status = data.head.view.status;
+        const skip = status.phase === "propaganda" ? skipQuestion(status.propagandaPhases[status.propagandaStep] ?? "", status.emergencyMoves) : null;
         if (skip !== null && !window.confirm(skip)) return;
         void commit({ type: "Advance" });
       }
@@ -143,7 +152,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   });
 
   const pathIds = useMemo(() => history.filter((h) => h.action.status !== "undone").map((h) => h.action.action_id), [history]);
-  if (data === null || legal === null) return <p className="screen">Loading…</p>;
+  const loadFailure = loadError === null ? null : <div><p role="alert">Could not load session: {loadError}</p><button type="button" onClick={() => void load()}>Retry</button><button type="button" onClick={onExit}>Home</button></div>;
+  if (data === null || legal === null) return <div className="screen">{loadFailure ?? <p>Loading…</p>}</div>;
   const view = data.head.view;
   const select = (id: string, add: boolean): void => {
     dispatch({ type: "click", id, add });
@@ -218,6 +228,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       )}
       <div className="play">
         <div className="play-main">
+          {loadFailure}
           {error !== null && <p className="bad">{error}</p>}
           <div className="panel map-panel">
             {showTracks && <TrackCard view={view} />}
