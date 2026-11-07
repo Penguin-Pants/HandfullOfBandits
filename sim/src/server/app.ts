@@ -1,7 +1,7 @@
 // HTTP API (11 P2-11; 03 s4, s7). Bound to 127.0.0.1 only (03 s9 item 1). Every route returns
 // JSON; a ServiceError maps to its status with `{error, detail}`.
-import { existsSync, readFileSync, statSync } from "node:fs";
-import { extname, join, normalize } from "node:path";
+import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import Fastify, { type FastifyInstance } from "fastify";
 import type { UiFocus } from "../annotate/types.ts";
 import type { AnyCommand } from "../engine/core/types.ts";
@@ -34,9 +34,26 @@ const TYPES: Readonly<Record<string, string>> = { ".html": "text/html", ".js": "
 /** Serve the built UI (`npm run build`) from `uiDir`; unknown paths get index.html. */
 function serveUi(app: FastifyInstance, uiDir: string): void {
   app.get("/*", (request, reply) => {
-    const path = normalize(join(uiDir, decodeURIComponent(request.url.split("?")[0] ?? "/")));
-    const file = path.startsWith(uiDir) && existsSync(path) && statSync(path).isFile() ? path : join(uiDir, "index.html");
-    if (!existsSync(file)) return reply.status(404).send({ error: "UI not built. Run npm run build.", detail: null });
+    const missing = () => reply.status(404).send({ error: "UI file not found.", detail: null });
+    if (!existsSync(uiDir)) return reply.status(404).send({ error: "UI not built. Run npm run build.", detail: null });
+    const root = realpathSync(uiDir);
+    const inside = (file: string): boolean => {
+      const path = relative(root, file);
+      return path !== ".." && !path.startsWith(`..${sep}`) && !isAbsolute(path);
+    };
+    // Treat both URL separator forms alike on Windows and Linux.
+    const url = decodeURIComponent(request.url.split("?")[0] ?? "/").replaceAll("\\", "/");
+    const path = resolve(root, `.${url}`);
+    if (!inside(path)) return missing();
+    let file = join(root, "index.html");
+    if (existsSync(path)) {
+      const target = realpathSync(path);
+      if (!inside(target)) return missing();
+      if (statSync(target).isFile()) file = target;
+    }
+    if (!existsSync(file)) return missing();
+    file = realpathSync(file);
+    if (!inside(file)) return missing();
     return reply.type(TYPES[extname(file)] ?? "application/octet-stream").send(readFileSync(file));
   });
 }
