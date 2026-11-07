@@ -1,5 +1,5 @@
 // Flat SVG piece icons (08 s3.1 item 2; DEC-29, DEC-30): shape from pieces.yaml, faction color,
-// lighter shade for `colorVariant: light`, emblem only on its face.
+// lighter shade for `colorVariant: light`, star disc only on an Active Guerrilla.
 import type { PieceView } from "../api.ts";
 
 const SIZE = 16;
@@ -8,7 +8,8 @@ const SIZE = 16;
 export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean }) {
   const code: Readonly<Record<string,string>> = {troops:"T",police:"P",guards:"G"};
   const letter=code[piece.piece];
-  const fill = piece.colorVariant === "light" ? `color-mix(in srgb, ${color} 55%, white)` : color;
+  const factionColor = piece.faction === "state" ? "#bd1f2c" : piece.faction === "pkk" ? "#26734e" : color;
+  const fill = piece.colorVariant === "light" ? `color-mix(in srgb, ${factionColor} 55%, white)` : factionColor;
   const stroke = piece.isBase ? "black" : "var(--token-line)";
   const h = SIZE / 2;
   let shape;
@@ -32,7 +33,14 @@ export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece
     <g aria-label={bare ? undefined : `${piece.piece} ${piece.face} ${String(piece.count)}`}>
       {shape}
       {letter !== undefined && <text x={x} y={y+3} textAnchor="middle" className="piece-code" fill={piece.colorVariant === "light" ? "#332c20" : "#fff"}>{letter}</text>}
-      {piece.emblem !== null && <circle cx={x} cy={y} r={h / 2} fill="none" stroke="white" strokeWidth={1.5} />}
+      {piece.emblem === "starCircle" && <>
+        <circle cx={x} cy={y} r={h * 0.7} fill="#e5be52" />
+        <polygon points={Array.from({ length: 10 }, (_, i) => {
+          const angle = -Math.PI / 2 + i * Math.PI / 5;
+          const radius = h * (i % 2 === 0 ? 0.52 : 0.23);
+          return `${String(x + radius * Math.cos(angle))},${String(y + radius * Math.sin(angle))}`;
+        }).join(" ")} fill="#bd1f2c" />
+      </>}
       {!bare && (
         <text x={x + h + 2} y={y + 5} className="map-count">
           {piece.count}

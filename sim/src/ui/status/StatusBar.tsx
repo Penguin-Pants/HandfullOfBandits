@@ -4,6 +4,7 @@
 import type { ReactNode } from "react";
 import type { BoardView } from "../api.ts";
 import { words } from "../common/names.ts";
+import { FactionMark } from "../common/FactionMark.tsx";
 import { ScoreTrack } from "./ScoreTrack.tsx";
 
 /** `children`: screen buttons (Home, Feedback review) at the start of the first row. */
@@ -26,7 +27,7 @@ export function StatusBar({ view, children }: { readonly view: BoardView; readon
       <div className="row status-eligibility">
         <span className="chip">1st: {name(s.firstEligible)}{box(s.firstEligible)}</span>
         <span className="chip">2nd: {name(s.secondEligible)}{box(s.secondEligible)}</span>
-        {s.active !== null && <strong className="chip acting">Acting: {name(s.active)}</strong>}
+        {s.active !== null && <strong className="chip acting">Acting: <FactionMark faction={s.active} />{name(s.active)}</strong>}
       </div>
       <details className="score-details"><summary>Victory track</summary><div className="status-victory-scroll" role="region" aria-label="Victory track scale" tabIndex={0}><ScoreTrack view={view} /></div></details>
       {s.ended !== null && (

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactElement } from "react";
 import { confirmWarnings } from "../common/confirm.ts";
 import type { Api, AnyCommand, BoardView, LegalChoices, ValidationResult } from "../api.ts";
 import { words } from "../common/names.ts";
+import { FactionMark } from "../common/FactionMark.tsx";
 import { previewLine } from "../log/plain.ts";
 import { EligibilityTrack } from "./EligibilityTrack.tsx";
 import { Fields, PlanForm } from "./PlanForm.tsx";
@@ -136,7 +137,7 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
   return (
     <section className="panel" aria-label="Faction panel">
       <h3>
-        {words(faction)} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
+        <FactionMark faction={faction} />{words(faction)} <span className="muted">{legal.first === true ? "First Eligible" : "Second Eligible"}</span>
       </h3>
       <p className="hint" aria-live="polite">
         {box === null
