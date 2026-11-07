@@ -68,6 +68,20 @@ try {
 
  }
  await page.setViewportSize({width:1920,height:1080});await page.getByRole('button',{name:'Fit map'}).click();
+ const europe=page.getByRole('meter',{name:'Europe track',exact:true});
+ check((await europe.locator('[data-track-value]').allTextContents()).join(',')==='5,4,3,2,1,0','Europe has six descending track nodes');
+ check(await europe.locator('[aria-current="true"]').getAttribute('data-track-value')===await europe.getAttribute('aria-valuenow'),'Europe marker matches the current value');
+ await page.screenshot({path:join(shots,'europe-vertical-overview.png')});
+ await page.getByRole('button',{name:'Zoom in'}).click();await page.getByRole('button',{name:'Zoom in'}).click();
+ await europe.focus();
+ const europeFits=await europe.evaluate(el=>{
+  const board=el.ownerSVGElement.getBoundingClientRect();
+  return [...el.querySelectorAll('circle')].every(node=>{const b=node.getBoundingClientRect();return b.left>=board.left&&b.right<=board.right&&b.top>=board.top&&b.bottom<=board.bottom;});
+ });
+ check(europeFits,'keyboard focus brings the entire Europe scale into view');
+ check(await page.locator('[data-space="europe"]').count()===0,'Europe has no playable hit area');
+ await page.screenshot({path:join(shots,'europe-vertical-focused.png')});
+ await page.getByRole('button',{name:'Fit map'}).click();
  await page.getByLabel('Find space').selectOption('botan');await page.getByLabel('Botan detail',{exact:true}).waitFor();
  check(await page.getByLabel('Botan detail').getByText(/Underground Guerrilla/).count()===1,'inspection exposes full forces');
  await page.screenshot({path:join(shots,'selected-space.png')});await page.getByRole('button',{name:'Close space details'}).click();
@@ -123,7 +137,7 @@ try {
  await page.getByRole('button',{name:'Full',exact:true}).click();
  check(await page.locator('.force-layer').first().isVisible(),'legacy Full restores forces');
  await page.getByLabel('Find space').selectOption('europe');
- check((await page.getByLabel('Europe detail').textContent()).includes('0 to 5'),'external scale is fully inspectable');
+ check(await page.getByRole('meter',{name:'Europe track'}).getAttribute('aria-valuemin')==='0'&&await page.getByRole('meter',{name:'Europe track'}).getAttribute('aria-valuemax')==='5','Europe scale remains readable in legacy layouts');
  await nativeChecks({chromium,base,shots,check});
  check(errors.length===0,'no browser runtime errors',errors);
 }finally{writeFileSync(join(shots,'validation.json'),JSON.stringify(report,null,2));await browser?.close();const exited=server.exitCode===null&&server.signalCode===null?new Promise(r=>server.once('exit',r)):undefined;server.kill();await exited;rmSync(temp,{recursive:true,force:true});}

@@ -1,6 +1,7 @@
 // Presentation bounds only. No rules, links or stored coordinates are modified.
 import type { SpaceView } from "../api.ts";
 import { ATLAS } from "./atlas-data.ts";
+import { isEuropeTrack } from "../status/tracks.ts";
 
 export interface SpaceLayout {
   readonly x: number;
@@ -9,8 +10,9 @@ export interface SpaceLayout {
   readonly height: number;
   readonly callout: boolean;
 }
-/** Approved on-map information anchors; only Europe and Western Cities use panels. */
+/** Information anchors for geographic spaces, Western Cities and the Europe track. */
 export function presentation(space: SpaceView): SpaceLayout {
+  if (isEuropeTrack(space)) return {x:10,y:315,width:108,height:280,callout:true};
   const area = ATLAS.spaces[space.id] ?? ATLAS.insets[space.id];
   if (area === undefined) return {x:space.x-55,y:space.y-40,width:110,height:22,callout:false};
   const [x,y,width] = area.info;

@@ -38,7 +38,6 @@ export function AtlasInfo({ space, view, layout }: {readonly space: SpaceView; r
       </g>
     </>}
     {space.id === "iran" && <text x={p.x+p.width/2} y={p.y+44} textAnchor="middle" className="atlas-special">EVENTS ONLY</text>}
-    {space.id === "europe" && <text x={p.x+p.width/2} y={p.y+44} textAnchor="middle" className="atlas-special">TRACK ONLY</text>}
     <Stack space={space} view={view} layout={layout} />
   </g>;
 }

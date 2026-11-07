@@ -9,7 +9,7 @@ import type { BoardView, SpaceView } from "../api.ts";
 import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
 import { counted, words } from "../common/names.ts";
-import { spaceOfTrack } from "../status/tracks.ts";
+import { isEuropeTrack, spaceOfTrack } from "../status/tracks.ts";
 import { isInset, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, type Point } from "./region.ts";
 
 const INSET_W = 116;
@@ -165,7 +165,7 @@ function BoxTrack({ track, space, geographic }: {readonly geographic: boolean; r
   const layout = geographic ? atlasLayout(space) : undefined;
   const groups = space.pieces.length + space.markers.length;
   const columns = groups === 4 ? 2 : Math.min(3,Math.max(1,groups));
-  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*29+9 : space.id === "europe" ? 22 : 5)};
+  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*29+9 : 5)};
   const width = layout === undefined ? 116 : layout.info[2]-6;
   const label = numeric ? `${track.display}: ${String(track.value)}` : `${track.display.replace(" posture", "")}: ${words(String(track.value))}`;
   return <g role="group" aria-label={`${track.display} track`} data-track-space={space.id} className="box-track" pointerEvents="none">
@@ -175,8 +175,31 @@ function BoxTrack({ track, space, geographic }: {readonly geographic: boolean; r
   </g>;
 }
 
+/** A read-only scale in the left margin. It has no space hit area or move handlers. */
+function EuropeTrack({ track, onReveal }: { readonly track: BoardView["status"]["tracks"][number]; readonly onReveal: BoardProps["onReveal"] }) {
+  const { min, max, value } = track;
+  if (min === undefined || max === undefined || typeof value !== "number") return null;
+  const x = 44;
+  const at = (n: number): number => 390 + (max - n) * 36;
+  return <g className="europe-track" role="meter" tabIndex={0} aria-label={`${track.display} track`} aria-valuemin={min} aria-valuemax={max} aria-valuenow={value} aria-valuetext={`${String(value)} of ${String(max)}`} onFocus={() => onReveal?.(track.id)}>
+    <title>{`${track.display}: ${String(value)}. Range ${String(min)} to ${String(max)}.`}</title>
+    <g aria-hidden="true">
+      <text x={64} y={330} textAnchor="middle" className="map-label atlas-label">{track.display}</text>
+      <text x={64} y={354} textAnchor="middle" className="europe-track-label">TRACK</text>
+      <line x1={x} x2={x} y1={at(max)} y2={at(min)} />
+      {Array.from({length:max-min+1}, (_,i) => max-i).map(n => <g key={n} data-track-value={n} aria-current={n === value ? "true" : undefined}>
+        <circle cx={x} cy={at(n)} r={n === value ? 18 : 16} />
+        <text x={x} y={at(n)+7} textAnchor="middle" className="europe-track-number">{n}</text>
+      </g>)}
+      <text x={70} y={at(value)+5} className="europe-track-current">Current</text>
+    </g>
+  </g>;
+}
+
 export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [], mode = "full", eligible = null, camera = {zoom:1,x:0,y:0}, onPan, onReveal }: BoardProps) {
   const cells = regionCells(view.spaces);
+  const spaces = view.spaces.filter(s => !isEuropeTrack(s));
+  const europe = view.spaces.find(isEuropeTrack);
   const pointerActive = useRef(false);
   const skipClick = useRef(false);
   const [panning, setPanning] = useState(false);
@@ -231,12 +254,9 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         </marker>
       </defs>
       <rect x={0} y={0} width={MAP_X0 - 1} height={cells.geographic ? ATLAS.height : MAP_H} fill="var(--inset)" />
-      <text x={(MAP_X0 - 1) / 2} y={cells.geographic ? 44 : 20} textAnchor="middle" className="map-marker">
-        {cells.geographic ? "Off-map spaces" : "Off map"}
-      </text>
       <Terrain view={view} cells={cells} />
       {cells.geographic && <AtlasContext />}
-      {view.spaces.map((s) => (
+      {spaces.map((s) => (
         <Space
           key={s.id}
           space={s}
@@ -251,13 +271,14 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         />
       ))}
       {cells.geographic && <AtlasGeography />}
-      {view.spaces.map((s) => {
+      {spaces.map((s) => {
         const layout = cells.geographic ? atlasLayout(s) : undefined;
-        return layout === undefined ? <Tokens key={s.id} space={s} view={view} x={s.id === "europe" && cells.geographic ? -65 : s.x} y={s.id === "europe" && cells.geographic ? 265 : s.y + 6} /> : <AtlasInfo key={s.id} space={s} view={view} layout={layout} />;
+        return layout === undefined ? <Tokens key={s.id} space={s} view={view} x={s.x} y={s.y + 6} /> : <AtlasInfo key={s.id} space={s} view={view} layout={layout} />;
       })}
+      {europe !== undefined && view.status.tracks.filter(t => t.id === europe.id).map(t => <EuropeTrack key={t.id} track={t} onReveal={onReveal} />)}
       {mode !== "terrain" && view.status.tracks.map((t) => {
         const at = spaceOfTrack(t.id, view.spaces);
-        return at === undefined ? null : <BoxTrack geographic={cells.geographic} key={t.id} track={t} space={at} />;
+        return at === undefined || isEuropeTrack(at) ? null : <BoxTrack geographic={cells.geographic} key={t.id} track={t} space={at} />;
       })}
       <g pointerEvents="none" aria-label="Planned moves">
         {arrows.map((m, i) => {

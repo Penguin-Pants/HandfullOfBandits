@@ -117,9 +117,15 @@ try {
   await page.keyboard.press('Space');
   check(await legitimacy.evaluate(el => el.open), 'compact tracks expand with the keyboard');
   await page.keyboard.press('Space');
-  await page.getByRole('button', {name:'Europe',exact:true}).click();
-  await page.getByRole('button', {name:'Western Cities',exact:true}).click({modifiers:['Shift']});
-  check(await page.getByRole('button', {name:'Europe',exact:true}).getAttribute('aria-pressed') === 'true' && await page.getByRole('button', {name:'Western Cities',exact:true}).getAttribute('aria-pressed') === 'true', 'off-map spaces remain selectable with Shift');
+  await page.getByLabel('Find space').selectOption('europe');
+  const europe = page.getByRole('meter', {name:'Europe track',exact:true});
+  check(await europe.getAttribute('aria-valuemin') === '0' && await europe.getAttribute('aria-valuemax') === '5' && await page.getByRole('button', {name:'Europe',exact:true}).count() === 0, 'Europe is a read-only 0 to 5 track');
+  const europeSteps = await europe.locator('[data-track-value]').allTextContents();
+  check(europeSteps.join(',') === '5,4,3,2,1,0', 'Europe shows all six values in descending order');
+  await page.getByRole('button', {name:'Fit map',exact:true}).click();
+  await page.getByRole('button', {name:'Western Cities',exact:true}).click();
+  await page.getByRole('button', {name:'Hakkari',exact:true}).click({modifiers:['Shift']});
+  check(await page.getByRole('button', {name:'Western Cities',exact:true}).getAttribute('aria-pressed') === 'true' && await page.getByRole('button', {name:'Hakkari',exact:true}).getAttribute('aria-pressed') === 'true', 'Western Cities remains selectable with Shift');
   await page.getByRole('button', {name:'Clear (Esc)',exact:true}).click();
   await page.getByRole('button', {name:'Close space details',exact:true}).click();
   await page.emulateMedia({ colorScheme: "dark" });
