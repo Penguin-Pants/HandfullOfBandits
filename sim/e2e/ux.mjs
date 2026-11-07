@@ -1,10 +1,11 @@
-/* global process, console, fetch, setTimeout, document, innerWidth, innerHeight, DOMPoint, getComputedStyle, devicePixelRatio */
+/* global process, console, fetch, setTimeout, document, innerWidth, innerHeight, DOMPoint, getComputedStyle */
 // Real browser checks. Build first; optional Playwright must be available in NODE_PATH.
 import {createRequire} from 'node:module';
 import {spawn} from 'node:child_process';
 import {mkdtempSync,mkdirSync,rmSync,writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {nativeChecks} from './native.mjs';
 const {chromium}=createRequire(import.meta.url)('playwright');
 const temp=mkdtempSync(join(tmpdir(),'hob-ux-'));
 const shots=process.env.HOB_SCREENSHOTS ?? '../docs/ux-overhaul/screenshots';
@@ -47,22 +48,24 @@ try {
  check(geometry.collisions.length===0,'no overlapping map text',geometry);
  check(geometry.outside.length===0,'interior contents remain in their regions',geometry);
  check(await page.locator('.atlas-overflow').count()===0,'normal setup shows every force and marker group');
- for(const [width,height,label] of [[1920,1080,'1920'],[1536,864,'1920-at-125'],[2560,1440,'2560'],[1366,768,'1366']]) {
+ for(const [width,height,label] of [[1920,1080,'1920'],[1536,864,'1536'],[2560,1440,'2560'],[1366,768,'1366']]) {
   await page.setViewportSize({width,height});await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
   await page.getByRole('heading',{name:'Choose your action'}).waitFor();
   const metrics=await page.evaluate(()=>{
    const svg=document.querySelector('[aria-label="Board"]'),texts=[...svg.querySelectorAll('.atlas-label:not(.city-name)')],scale=svg.getScreenCTM().a;
    return {fits:document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight,labelMin:Math.min(...texts.map(t=>parseFloat(getComputedStyle(t).fontSize)*scale)),mapHeight:svg.getBoundingClientRect().height,task:document.querySelector('[aria-label="Next action"]').getBoundingClientRect().bottom<=innerHeight};
   });
-  check(metrics.fits&&metrics.task,'viewport '+label,metrics);check(metrics.labelMin*(label==='1920-at-125'?1.25:1)>=17.5,'readable names '+label,metrics);
+  check(metrics.fits&&metrics.task,'viewport '+label,metrics);check(metrics.labelMin>=18,'readable names '+label,metrics);
+  const readable=await page.evaluate(()=>({text:parseFloat(getComputedStyle(document.querySelector('.play-screen')).fontSize),instructions:parseFloat(getComputedStyle(document.querySelector('.next-task p')).fontSize),controls:[...document.querySelectorAll('.map-navigation button')].every(b=>parseFloat(getComputedStyle(b).fontSize)>=16&&b.scrollWidth<=b.clientWidth+1)}));
+  check(readable.text>=16&&readable.instructions>=18&&readable.controls,'readable windowed UI '+label,readable);
   await page.screenshot({path:join(shots,`after-${label}.png`)});
-  if(label==='1920-at-125') {
-    const zoomContext=await browser.newContext({viewport:{width:1536,height:864},deviceScaleFactor:1.25});
-    const zoomPage=await zoomContext.newPage();await zoomPage.goto(base);await zoomPage.getByRole('button',{name:'Resume',exact:true}).first().click();
-    await zoomPage.getByRole('heading',{name:'Choose your action'}).waitFor();
-    check(await zoomPage.evaluate(()=>devicePixelRatio)===1.25,'125% device-pixel emulation');
-    await zoomPage.screenshot({path:join(shots,`after-${label}.png`)});await zoomContext.close();
-  }
+  const camera=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox');
+  await page.getByRole('button',{name:'Hide actions',exact:true}).click();
+  check(await page.getByLabel('Status',{exact:true}).isVisible()&&await page.getByLabel('Forces',{exact:true}).isVisible(),'collapsed status and forces '+label);
+  check(await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')===camera,'camera retained '+label);
+  await page.screenshot({path:join(shots,`after-${label}-collapsed.png`)});
+  await page.getByRole('button',{name:'Show actions',exact:true}).click();
+
  }
  await page.setViewportSize({width:1920,height:1080});await page.getByRole('button',{name:'Fit map'}).click();
  await page.getByLabel('Find space').selectOption('botan');await page.getByLabel('Botan detail',{exact:true}).waitFor();
@@ -121,5 +124,6 @@ try {
  check(await page.locator('.force-layer').first().isVisible(),'legacy Full restores forces');
  await page.getByLabel('Find space').selectOption('europe');
  check((await page.getByLabel('Europe detail').textContent()).includes('0 to 5'),'external scale is fully inspectable');
+ await nativeChecks({chromium,base,shots,check});
  check(errors.length===0,'no browser runtime errors',errors);
 }finally{writeFileSync(join(shots,'validation.json'),JSON.stringify(report,null,2));await browser?.close();const exited=server.exitCode===null&&server.signalCode===null?new Promise(r=>server.once('exit',r)):undefined;server.kill();await exited;rmSync(temp,{recursive:true,force:true});}

@@ -24,6 +24,7 @@ import { ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 import { TrackCard } from "../status/TrackCard.tsx";
 import { skipQuestion } from "../propaganda/phases.ts";
+import { FullscreenButton } from "./FullscreenButton.tsx";
 
 export interface PlayProps {
   readonly api: Api;
@@ -44,10 +45,10 @@ export function changedSpaces(before: BoardView, after: BoardView): string[] {
 function LastAction({ item, view, onRule }: { readonly item: HistoryItem | undefined; readonly view: BoardView; readonly onRule: (ref: string) => Promise<RuleLookup> }) {
   if (item === undefined) return null;
   return (
-    <section className="panel last-action" aria-label="Last action">
-      <h3>Last action: {actionTitle(item.action, view)}</h3>
+    <details className="panel last-action supporting-details" aria-label="Last action">
+      <summary>Last action: {actionTitle(item.action, view)}</summary>
       <LogLines item={item} view={view} playerOnly limit={12} onRule={onRule} />
-    </section>
+    </details>
   );
 }
 
@@ -76,6 +77,14 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const [showKey, setShowKey] = useState(false);
   const [showTracks, setShowTracks] = useState(true);
   const [mapOnly, setMapOnly] = useState(false);
+  const [actionsHidden, setActionsHidden] = useState(false);
+  const actionToggle = useRef<HTMLButtonElement>(null);
+  const panelsToggle = useRef<HTMLButtonElement>(null);
+  const sidebar = useRef<HTMLElement>(null);
+  const toggleMapOnly = (): void => {
+    if (!mapOnly && sidebar.current?.contains(document.activeElement)) panelsToggle.current?.focus();
+    setMapOnly(!mapOnly);
+  };
   // Face-down markers show by default in solo play (DEC-23); the toggle hides them (P4-07).
   const [hideCovert, setHideCovert] = useState(false);
   const [ending, setEnding] = useState(false);
@@ -119,7 +128,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       if (target !== null && (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)) return;
       if (e.key === "h" || e.key === "H") setShowHistory((v) => !v);
       if (e.key === "?") setShowHelp((v) => !v);
-      if (e.key === "m" || e.key === "M") setMapOnly((v) => !v);
+      if (e.key === "m" || e.key === "M") toggleMapOnly();
       if (e.key === "z" && (e.ctrlKey || e.metaKey)) {e.preventDefault(); void undo();}
       if (e.key === " " && (target === null || target === document.body) && legal?.advance === true) {
         e.preventDefault();
@@ -186,7 +195,13 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
               <button type="button" aria-pressed={hideCovert} onClick={() => { setHideCovert(!hideCovert); }}>
                 Hide Covert
               </button>
-              <button type="button" aria-pressed={mapOnly} onClick={() => { setMapOnly(!mapOnly); }}>
+              <button ref={actionToggle} type="button" aria-controls="action-panels" aria-expanded={!actionsHidden && !mapOnly} onClick={() => {
+                actionToggle.current?.focus();
+                setActionsHidden(!actionsHidden && !mapOnly);
+                if (mapOnly) setMapOnly(false);
+              }}>{actionsHidden || mapOnly ? "Show actions" : "Hide actions"}</button>
+              <FullscreenButton />
+              <button ref={panelsToggle} type="button" aria-pressed={mapOnly} onClick={toggleMapOnly}>
                 {mapOnly ? "Show panels (M)" : "Map only (M)"}
               </button>
               </div>
@@ -195,7 +210,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   // the scrolling right column, note bar at the bottom. Help, History and End session
   // overlay. Map focus mode (M) hides the status bar and the right column.
   return (
-    <div className={mapOnly ? "screen play-screen map-only" : "screen play-screen"}>
+    <div className={`screen play-screen${mapOnly ? " map-only" : ""}${actionsHidden ? " actions-hidden" : ""}`}>
       {showHelp && (
         <div className="overlay">
           <Help onClose={() => { setShowHelp(false); }} view={view} forms={legal.forms ?? []} />
@@ -218,11 +233,12 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           </div>
           {!mapOnly && <ForcesBar view={view} />}
         </div>
-        <aside className="side" aria-label="Side panel" hidden={mapOnly}>
+        <aside ref={sidebar} className="side" aria-label="Side panel" hidden={mapOnly}>
           {!mapOnly && <StatusBar view={view}>
             <button type="button" onClick={onExit}>Home</button>
             <button type="button" onClick={onReview}>Feedback review</button>
           </StatusBar>}
+          <div id="action-panels" className="action-panels" hidden={actionsHidden}>
           <section className="panel next-task" aria-label="Next action">
             <span className="eyebrow">{legal.faction === null ? words(view.status.phase) : `${words(legal.faction)} · ${legal.first === true ? "First" : "Second"} Eligible`}</span>
             <h2>{view.status.pending?.prompt ?? (view.status.ended !== null ? "Game complete" : view.status.phase === "setup" ? "Reveal the first card" : legal.advance === true ? "Advance the sequence" : "Choose your action")}</h2>
@@ -252,6 +268,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
             <button type="button" onClick={() => { setEnding(true); }}>
               End session
             </button>
+          </div>
           </div>
         </aside>
       </div>

@@ -70,10 +70,36 @@ describe("Play rule text (P4-08)", () => {
     const rule = vi.fn(() => Promise.resolve({ ref: "06 s3.2", sections: [{ cite: "06 s3.2", file: "06.md", section: "3.2", heading: "Cross-Border", text: "Pay 2 Resources.", subsections: [] }], missing: [], other: [] }));
     const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))), history: vi.fn(() => Promise.resolve([item])), rule });
     render(<Play api={api} sessionId="S" />);
+    const last = await screen.findByLabelText<HTMLDetailsElement>("Last action");
+    expect(last.open).toBe(false);
+    const summary = last.querySelector("summary");
+    if (summary === null) throw new Error("Last action summary missing");
+    fireEvent.click(summary);
+    expect(last.open).toBe(true);
     fireEvent.click(await screen.findByRole("button", { name: "Rule text for 06 s3.2" }));
     expect(await screen.findByText("Pay 2 Resources.")).toBeTruthy();
     expect(rule).toHaveBeenCalledWith("S", "06 s3.2");
   });
+});
+
+it("activating fullscreen does not advance the turn", async () => {
+  const h = head("S-A3", "DK-012", "state");
+  const submit = vi.fn();
+  const request = vi.fn(() => Promise.resolve());
+  Object.defineProperty(document.documentElement, "requestFullscreen", { configurable: true, value: request });
+  Object.defineProperty(document, "fullscreenEnabled", { configurable: true, value: true });
+  try {
+    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h }), legal: () => Promise.resolve({ ...legalFor("state"), advance: true }), submit })} sessionId="S" />);
+    const button = await screen.findByRole("button", { name: "Fullscreen" });
+    button.focus();
+    fireEvent.keyDown(button, { key: " " });
+    fireEvent.click(button);
+    await waitFor(() => { expect(request).toHaveBeenCalledOnce(); });
+    expect(submit).not.toHaveBeenCalled();
+  } finally {
+    Reflect.deleteProperty(document.documentElement, "requestFullscreen");
+    Reflect.deleteProperty(document, "fullscreenEnabled");
+  }
 });
 
 describe("Play map space (UC-4)", () => {
@@ -115,6 +141,33 @@ describe("Play map space (UC-4)", () => {
     expect(screen.queryByRole("complementary", { name: "Side panel" })).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Show panels (M)" }));
     expect(screen.getByLabelText("Status")).toBeTruthy();
+  });
+
+  it("hides actions without losing status, resources, forces, selection or the camera", async () => {
+    await render1();
+    fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "botan" } });
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    fireEvent.click(screen.getByRole("button", { name: "Political" }));
+    const camera = screen.getByRole("img", { name: "Board" }).getAttribute("viewBox");
+    const action = screen.getByRole("button", { name: "Clear (Esc)" });
+    action.focus();
+    fireEvent.click(screen.getByRole("button", { name: "Hide actions" }));
+    const restore = screen.getByRole("button", { name: "Show actions" });
+    expect(document.activeElement).toBe(restore);
+    expect(restore.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("button", { name: "Clear (Esc)" })).toBeNull();
+    for (const label of ["Status", "Resources and politics", "Forces", "Botan detail"]) expect(screen.getByLabelText(label)).toBeTruthy();
+    expect(screen.getByRole("img", { name: "Board" }).getAttribute("viewBox")).toBe(camera);
+    fireEvent.click(restore);
+    expect(screen.getByRole("button", { name: "Hide actions" }).getAttribute("aria-expanded")).toBe("true");
+    expect(screen.getByRole("button", { name: "Clear (Esc)" })).toBe(action);
+    fireEvent.click(screen.getByRole("button", { name: "Hide actions" }));
+    fireEvent.keyDown(window, { key: "m" });
+    expect(screen.getByRole("button", { name: "Fullscreen" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Show panels (M)" }));
+    expect(screen.getByRole("button", { name: "Show actions" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Show actions" }));
+    expect(screen.getByRole("button", { name: "Clear (Esc)" })).toBe(action);
   });
 
   it("forces bar shows counts and opens the full tables", async () => {

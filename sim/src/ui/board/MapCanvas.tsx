@@ -9,7 +9,7 @@ export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: Reac
   const centreX = geographic ? 640 : 500;
   const centreY = geographic ? 480 : 350;
   const anchor = (space: BoardProps["view"]["spaces"][number]) => geographic ? presentation(space) : {x:space.x,y:space.y,width:0,height:0};
-  const [camera, setCamera] = useState({zoom:typeof window === "undefined" ? 1 : window.innerWidth < 1450 ? 2 : window.innerWidth < 1600 || window.innerHeight < 1000 ? 1.5 : 1,x:0,y:0});
+  const [camera, setCamera] = useState({zoom:typeof window === "undefined" ? 1 : window.innerWidth < 1450 ? 2.5 : window.innerWidth < 1600 || window.innerHeight < 900 ? 2 : window.innerWidth < 2000 || window.innerHeight < 1200 ? 1.5 : 1,x:0,y:0});
   const [mode, setMode] = useState<"full" | "forces" | "political" | "terrain">("full");
   const zoom = (by: number): void => {setCamera(c => ({...c,zoom:Math.max(1,Math.min(3,c.zoom+by))}));};
   return <>

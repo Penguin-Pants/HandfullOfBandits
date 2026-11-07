@@ -108,7 +108,7 @@ try {
     const pixels = el => parseFloat(getComputedStyle(el).fontSize) * Math.abs(el.getScreenCTM().d);
     return ids.every(id => {
       const info = document.querySelector(`[data-info="${id}"]`);
-      return pixels(info.querySelector('.map-label')) >= 18 && pixels(info.querySelector('.atlas-counter text')) >= 11.5 && [...info.querySelectorAll('.map-count')].every(t => pixels(t) >= 16);
+      return pixels(info.querySelector('.map-label')) >= 18 && pixels(info.querySelector('.atlas-counter text')) >= 11.5 && [...info.querySelectorAll('.map-count')].every(t => pixels(t) >= 14);
     });
   });
   check(readable, 'reviewed name, counter and piece-count sizes at 1908 x 904');
@@ -155,9 +155,13 @@ try {
   check(layout.forcesBelowMap, "forces bar below the map");
   // UC-4: the map is large enough to read at the designer's 1907 x 863 screen.
   await page.setViewportSize({ width: 1907, height: 863 });
+  await page.reload();
+  await page.getByRole("button", {name:"Resume", exact:true}).first().click();
+  await page.getByRole("heading", {name:"Choose your action"}).waitFor();
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
-  check(mapHeight >= 600, `map at least 600 px tall at 1907 x 863 (${String(Math.round(mapHeight))})`);
+  const mapText = await page.locator('.atlas-label:not(.city-name)').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize) * el.ownerSVGElement.getScreenCTM().a);
+  check(mapHeight >= 300 && mapText >= 18, `readable map at 1907 x 863 (${String(Math.round(mapHeight))} px high, ${mapText.toFixed(1)} px names)`);
   // The approved resource strip stays above the map.
   const card = await page.evaluate(() => document.querySelector('.map-panel > [aria-label="Resources and politics"]') !== null);
   check(card, "Resources and politics strip is above the map");

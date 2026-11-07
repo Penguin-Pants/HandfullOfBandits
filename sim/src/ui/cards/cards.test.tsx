@@ -24,6 +24,15 @@ describe("CardTable", () => {
     const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("pkk"), "DK-001"));
     render(<CardTable view={view} onReveal={null} />);
     expect(screen.getByLabelText("Current card DK-001").textContent).toContain("Eruh");
+    const presentation = screen.getByLabelText<HTMLDetailsElement>("Cards");
+    expect(presentation.tagName).toBe("DETAILS");
+    expect(presentation.open).toBe(false);
+    fireEvent.click(screen.getByText(/Card presentation/));
+    expect(presentation.open).toBe(true);
+    const face = screen.getByLabelText("Current card DK-001");
+    fireEvent.click(screen.getByText(/Card presentation/));
+    expect(presentation.open).toBe(false);
+    expect(screen.getByLabelText("Current card DK-001")).toBe(face);
     expect(screen.queryByRole("button")).toBeNull();
   });
 });

@@ -34,13 +34,16 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
     Object.fromEntries(selected.map((s) => [s, Object.fromEntries(Object.entries(spend[s] ?? {}).filter(([, v]) => v !== "").map(([k, v]) => [k, Number(v)]))]));
   return (
     <section className="panel" aria-label="Propaganda">
-      <ol>
-        {propagandaPhases.map((p, i) => (
-          <li key={p} style={{ fontWeight: i === propagandaStep ? 700 : 400 }} aria-current={i === propagandaStep ? "step" : undefined}>
-            {guideOf(p).title}
-          </li>
-        ))}
-      </ol>
+      <details className="supporting-details" aria-label="Propaganda sequence">
+        <summary>Propaganda sequence: {guideOf(phase).title} ({propagandaStep + 1} of {propagandaPhases.length})</summary>
+        <ol>
+          {propagandaPhases.map((p, i) => (
+            <li key={p} style={{ fontWeight: i === propagandaStep ? 700 : 400 }} aria-current={i === propagandaStep ? "step" : undefined}>
+              {guideOf(p).title}
+            </li>
+          ))}
+        </ol>
+      </details>
       <div className="phase-guide" aria-label="Phase guide">
         <h3>{guideOf(phase).title}</h3>
         <p>{guideOf(phase).what}</p>

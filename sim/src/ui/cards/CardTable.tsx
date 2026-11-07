@@ -9,8 +9,7 @@ export function CardTable({ view, onReveal }: { readonly view: BoardView; readon
       <span>Deck</span>
     </div>
   );
-  return (<>
-    <section className="panel card-table" aria-label="Cards">
+  const presentation = <div className="card-table">
       <div className="card-slot">
         {deckCount === 0 ? (
           <div className="card card-empty">Empty</div>
@@ -39,7 +38,12 @@ export function CardTable({ view, onReveal }: { readonly view: BoardView; readon
         <div className="muted">{playedCount} played</div>
       </div>
       {card !== null && <div className="card-summary">{card.title}</div>}
-    </section>
+    </div>;
+  return (<>
+    {onReveal !== null ? <section className="panel" aria-label="Cards">{presentation}</section> : <details className="panel supporting-details" aria-label="Cards">
+      <summary>Card presentation: {card === null ? "No card yet" : `${card.id} ${card.title}`}</summary>
+      {presentation}
+    </details>}
     {(view.status.modifiers?.length ?? 0) > 0 && <section className="panel" aria-label="Active cards"><h3>Active cards</h3><ul>{view.status.modifiers?.map(m => <li key={m.id}>{m.title}: {m.duration === "untilReset" ? "until Reset" : "for the rest of the game"}</li>)}</ul></section>}
   </>);
 }

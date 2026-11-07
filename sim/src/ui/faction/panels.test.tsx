@@ -208,6 +208,14 @@ describe("FactionPanel", () => {
       await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
     };
     await build();
+    Object.defineProperty(document, "fullscreenElement", { configurable: true, value: document.documentElement });
+    try {
+      fireEvent.keyDown(window, { key: "Escape" });
+      expect(screen.getByLabelText("Preview")).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Rally" })).toBeTruthy();
+    } finally {
+      Reflect.deleteProperty(document, "fullscreenElement");
+    }
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
     await build();
@@ -402,6 +410,9 @@ describe("PropagandaPanel", () => {
     const ohal = { ...base, tracks: { ...base.tracks, emergencyRule: "ohal" }, turn: { ...base.turn, phase: "propaganda", step: probe, propagandaRound: 1 } };
     const onCommit = vi.fn();
     render(<PropagandaPanel view={boardView(kurdish.ruleset, kurdish.data, ohal)} legal={{ faction: null, phase: "propaganda", advance: true }} selected={[]} onCommit={onCommit} />);
+    expect(screen.getByLabelText<HTMLDetailsElement>("Propaganda sequence").open).toBe(false);
+    expect(screen.getByLabelText("Emergency Rule step").closest("details")).toBeNull();
+    expect(screen.getByLabelText("Phase guide").closest("details")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Normalizing" }));
     expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "legitimacy", choice: { emergencyStep: "normalizing" } });
     expect(screen.queryByRole("button", { name: "Martial Law" })).toBeNull();
