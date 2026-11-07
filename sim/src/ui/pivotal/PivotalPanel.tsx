@@ -29,7 +29,7 @@ export interface PivotalPanelProps {
 export function PivotalPanel({ view, onCommit, api, sessionId, forms, plan, dispatch, onTargets, onFreeAction }: PivotalPanelProps) {
   const [placements, setPlacements] = useState<Readonly<Record<string, number>>>({});
   const pending = view.status.pending ?? null;
-  const flow = useDecisionFlow({ api, sessionId, onCommit, onTargets, onFreeAction, forms, dispatch, build: (card, answers) => (pending === null ? null : { type: "PlayPivotal", faction: pending.faction, card, answers }) });
+  const flow = useDecisionFlow({ api, sessionId, onCommit, onTargets, onFreeAction, forms, dispatch, build: (card, answers) => (pending === null ? null : { type: "PlayPivotal", faction: pending.faction, card, answers, chooseMoveFaces: true }) });
   if (pending === null || view.status.phase !== "pivotal") return null;
   const offers = pending.answers.flatMap((a) => (typeof a === "object" && a !== null && !Array.isArray(a) && "card" in a && typeof a.card === "string" ? [{ card: a.card, maxPlace: "maxPlace" in a && typeof a.maxPlace === "number" ? a.maxPlace : 0 }] : []));
   const total = Object.values(placements).reduce((a, n) => a + n, 0);

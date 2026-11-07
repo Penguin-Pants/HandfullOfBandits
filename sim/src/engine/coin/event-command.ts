@@ -20,7 +20,7 @@ function run(ctx: Exec, command: AnyCommand): void {
   ctx.write(() => placed.state);
   ctx.log(placed.entry.kind, { ...placed.entry.data, card, side }, placed.entry.ruleRef);
   const effects = ctx.ruleset.cards[card]?.[side]?.effects ?? [];
-  runEffects({ ctx, faction, answers: asList(command["answers"]), ruleRef: `${card} ${side}` }, effects);
+  runEffects({ ctx, faction, answers: asList(command["answers"]), ruleRef: `${card} ${side}`, chooseMoveFaces: command["chooseMoveFaces"] === true }, effects);
 }
 
 function check(ruleset: Ruleset, state: GameState, command: AnyCommand): Violation[] {

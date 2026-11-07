@@ -39,6 +39,6 @@ it("plays Serhildan through its space question, then commits the answered comman
   fireEvent.click(screen.getByRole("button",{name: "Play Serhildan"}));
   await waitFor(() => { expect(screen.getByRole("button",{name: "Pick 0"})).toBeTruthy(); });
   fireEvent.click(screen.getByRole("button",{name: "Pick 0"}));
-  await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({type: "PlayPivotal",faction: "pkk",card: "DK-054",answers: [[]]}); });
-  expect(validate).toHaveBeenNthCalledWith(1,"s1",{type: "PlayPivotal",faction: "pkk",card: "DK-054",answers: []});
+  await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({type: "PlayPivotal",faction: "pkk",card: "DK-054",answers: [[]],chooseMoveFaces: true}); });
+  expect(validate).toHaveBeenNthCalledWith(1,"s1",{type: "PlayPivotal",faction: "pkk",card: "DK-054",answers: [],chooseMoveFaces: true});
 });

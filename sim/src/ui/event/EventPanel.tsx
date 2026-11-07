@@ -23,7 +23,7 @@ export interface EventPanelProps {
 
 export function EventPanel({ onTargets, api, sessionId, view, faction, eventOpen, onCommit, forms, plan, dispatch, onFreeAction }: EventPanelProps) {
   const card = view.status.card;
-  const { pending, run, answer } = useDecisionFlow({ api, sessionId, onCommit, onTargets, onFreeAction, forms, dispatch, build: (side, answers) => (faction === null ? null : { type: "ChooseEvent", faction, side, answers }) });
+  const { pending, run, answer } = useDecisionFlow({ api, sessionId, onCommit, onTargets, onFreeAction, forms, dispatch, build: (side, answers) => (faction === null ? null : { type: "ChooseEvent", faction, side, answers, chooseMoveFaces: true }) });
   if (card === null) return null;
 
   return (

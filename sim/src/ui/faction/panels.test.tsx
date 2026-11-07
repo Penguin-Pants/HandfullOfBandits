@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useReducer } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { turnOf, withCard } from "../../../test/board.ts";
+import { engine, setPieces, setTrack, turnOf, withCard } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { mockApi } from "../../../test/ui/mock-api.ts";
 import { boardView } from "../../server/view.ts";
@@ -233,6 +233,21 @@ describe("FactionPanel", () => {
 });
 
 describe("EventPanel", () => {
+  it("chooses source faces through real engine questions for DK-084", async () => {
+    const state = setPieces(setTrack(withCard(turnOf("pkk"), "DK-084"), "posture.puk", "hostile"), "kdp-zone", "guerrilla", 2, "active");
+    const view = boardView(kurdish.ruleset, kurdish.data, state);
+    const validate = vi.fn((_id: string, command: AnyCommand) => Promise.resolve(engine.validate(kurdish.ruleset, state, command)));
+    const onCommit = vi.fn();
+    render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="pkk" eventOpen onCommit={onCommit} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
+    click("Execute shaded (S)");
+    fireEvent.click(await screen.findByRole("button", { name: "1. KDP Zone to PUK Zone" }));
+    fireEvent.click(await screen.findByRole("button", { name: "2" }));
+    expect(await screen.findByText(/underground.*guerrilla/)).toBeTruthy();
+    click("1");
+    fireEvent.click(await screen.findByRole("button", { name: "1. KDP Zone" }));
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "pkk", side: "shaded", chooseMoveFaces: true, answers: ["KDP Zone to PUK Zone", 2, 1, "KDP Zone"] }); });
+  });
+
   it("asks each question inline, then commits the completed event", async () => {
     const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-001"));
     const validate = vi.fn((_id: string, command: AnyCommand): Promise<ValidationResult> =>
@@ -246,7 +261,7 @@ describe("EventPanel", () => {
     render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
     fireEvent.click(screen.getByRole("button", { name: "Execute unshaded (U)" }));
     fireEvent.click(await screen.findByRole("button", { name: "2. Botan" }));
-    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", answers: ["Botan"] }); });
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", chooseMoveFaces: true, answers: ["Botan"] }); });
   });
 
   it("answers a free-action plan question with a plan built by clicks (UC-5)", async () => {
@@ -273,7 +288,7 @@ describe("EventPanel", () => {
     click("map botan");
     click("Place");
     click("Submit plan");
-    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "pkk", side: "unshaded", answers: [{ op: "pkk.rally", locations: ["botan"], perLocation: { botan: { option: "place" } }, sa: null }] }); });
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "pkk", side: "unshaded", chooseMoveFaces: true, answers: [{ op: "pkk.rally", locations: ["botan"], perLocation: { botan: { option: "place" } }, sa: null }] }); });
     expect(document.querySelectorAll("textarea")).toHaveLength(0);
   });
 
@@ -301,7 +316,7 @@ describe("EventPanel", () => {
     expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
     click("Hakkari");
     click("Pick 2");
-    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", answers: [["botan", "hakkari"]] }); });
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", chooseMoveFaces: true, answers: [["botan", "hakkari"]] }); });
   });
 
   it("names the space a count question is for (UC-9)", async () => {
