@@ -6,11 +6,11 @@ Time to install: one download and 4 commands. You need no other files.
 
 1. A Windows 10 or later PC, or a Mac.
 2. Node.js 24 or later. Get it from https://nodejs.org (choose the **LTS** download).
-3. The project folder `HandfullOfBandits`. The designer sends it as a ZIP file. Unzip it to a folder you can find, for example your Documents folder.
+3. The project ZIP file from the designer. Unzip it to a folder you can find, for example your Documents folder. Name the extracted folder `HandfulOfBandits`.
 
 ## Install
 
-1. Open a terminal in the `sim` folder inside `HandfullOfBandits`.
+1. Open a terminal in the `sim` folder inside `HandfulOfBandits`.
    - **Windows:** open the `sim` folder in File Explorer. Click the address bar, type `powershell` and press Enter.
    - **Mac:** open Terminal. Type `cd ` (with a space), drag the `sim` folder into the window and press Enter.
 2. Check the Node.js version. The answer must start with `v24` or a higher number.

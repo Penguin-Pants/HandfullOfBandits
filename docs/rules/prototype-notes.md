@@ -34,7 +34,7 @@ No general COIN-series rule should be imported to fill either difference without
 
 ## B.4 Primary Rule Sources
 
-The source files below are in the *HandfullOfBandits* repository. Numbers in original card text refer to these research chapters, not necessarily to the section numbers of this consolidated book.
+The source files below are in the *HandfulOfBandits* project. Numbers in original card text refer to these research chapters, not necessarily to the section numbers of this consolidated book.
 
 - **03 Map and Spaces:** space names, terrain, Pop, stacking and adjacency. The actual movement graph is `game-packages/kurdish-coin/0.1.0/map.yaml`; Iran has no gameplay movement links.
 - **04 Pieces, Tracks and Markers:** inventory, Resources, Legitimacy, marker meanings and political levels.
