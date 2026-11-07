@@ -44,7 +44,10 @@ describe("Board", () => {
     );
     expect(screen.getByText("Level: Passive Opposition · Control: none")).toBeTruthy();
     expect(screen.getByText(/Underground Guerrilla/)).toBeTruthy();
-    expect(screen.getByLabelText("State score").textContent).toBe("StateScore 21 of 49Margin -28Harm 0 of 6");
+    expect(screen.queryByLabelText("Scores")).toBeNull();
+    expect(screen.queryByLabelText("State score")).toBeNull();
+    expect(screen.queryByLabelText("PKK score")).toBeNull();
+    expect(screen.getByLabelText("State score 21").textContent).toBe("State 21");
   });
 });
 

@@ -37,7 +37,7 @@ function HowToWin({ view }: { readonly view: BoardView }) {
         const goal = GOALS[f.id];
         return (
           <p key={f.id}>
-            <strong style={{ color: f.color }}>{f.name}</strong>: score = {goal?.score ?? "see the score pill."} Win at a score of at least {s.thresholds[f.id] ?? "-"}. {goal?.how}
+            <strong style={{ color: f.color }}>{f.name}</strong>: score = {goal?.score ?? "see the victory track."} Win at a score of at least {s.thresholds[f.id] ?? "-"}. {goal?.how}
           </p>
         );
       })}

@@ -91,6 +91,21 @@ describe("Play map space (UC-4)", () => {
     expect(screen.getByLabelText("Legend")).toBeTruthy();
   });
 
+  it("places game status in the sidebar and keeps navigation available", async () => {
+    const onExit = vi.fn();
+    const onReview = vi.fn();
+    const h = head("S-A3", "DK-012", "state");
+    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h }), legal: () => Promise.resolve(legalFor("state")) })} sessionId="S" onExit={onExit} onReview={onReview} />);
+    const status = await screen.findByLabelText("Status");
+    expect(status.closest("aside")).toBe(screen.getByRole("complementary", { name: "Side panel" }));
+    expect(screen.getByRole("heading", { name: "Game status" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Home" }));
+    fireEvent.click(screen.getByRole("button", { name: "Feedback review" }));
+    expect(onExit).toHaveBeenCalledOnce();
+    expect(onReview).toHaveBeenCalledOnce();
+    expect(screen.queryByLabelText("Scores")).toBeNull();
+  });
+
   it("M hides the status bar, side panel and forces bar, and shows them again", async () => {
     await render1();
     expect(screen.getByLabelText("Forces")).toBeTruthy();
