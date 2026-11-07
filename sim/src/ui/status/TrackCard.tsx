@@ -1,4 +1,4 @@
-// Readable resource summary; expand a value to inspect its existing full scale.
+// Resource-style summaries with political states always visible below them.
 import type { BoardView } from "../api.ts";
 import { words } from "../common/names.ts";
 import { spaceOfTrack } from "./tracks.ts";
@@ -45,18 +45,33 @@ const HIDDEN_AT_ZERO = new Set(["successor", "ceasefireRounds"]);
 export function TrackCard({ view }: { readonly view: BoardView }) {
   // Successor and the held ceasefire rounds show only above 0 (07 s6.4, s7.3; DEC-65, DEC-66).
   const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined && !(HIDDEN_AT_ZERO.has(t.id) && t.value === 0));
-  return <section className="track-card compact" aria-label="Resources and politics">
+  const stepTracks = tracks.filter(t => t.steps !== undefined);
+  return <section className="track-card expanded" aria-label="Resources and politics">
     <h4>Resources and politics</h4>
+    <div className="track-summaries">
     {tracks.map(t => {
       const faction = view.factions.find(f => t.id === `resources.${f.id}`);
-      return <details key={t.id} className={faction ? "track-row resource-badge" : "track-row"} role="group" aria-label={t.display}>
-        <summary onKeyDown={e => { if (e.key === " ") e.stopPropagation(); }}>
+      const content = <>
           <span className={faction ? "resource-faction" : undefined} style={faction ? { backgroundColor: faction.color } : undefined}>{faction?.name ?? t.display}</span>
           <b>{typeof t.value === "number" ? t.value : words(t.value)}</b>
           {faction && <span>Resources</span>}
+      </>;
+      if (t.steps !== undefined) return <div key={t.id} className="track-row" role="group" aria-label={t.display}>
+        <div className="track-summary">{content}</div>
+      </div>;
+      return <details key={t.id} className={faction ? "track-row resource-badge" : "track-row"} role="group" aria-label={t.display}>
+        <summary className="track-summary" onKeyDown={e => { if (e.key === " ") e.stopPropagation(); }}>
+          {content}
         </summary>
         <Scale track={t} />
       </details>;
     })}
+    </div>
+    {stepTracks.length > 0 && <div className="political-tracks">
+      {stepTracks.map(t => <div key={t.id} className="political-track" role="group" aria-label={`${t.display} states`}>
+        <strong>{t.display}</strong>
+        <Scale track={t} />
+      </div>)}
+    </div>}
   </section>;
 }
