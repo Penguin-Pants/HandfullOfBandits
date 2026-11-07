@@ -1,0 +1,422 @@
+[
+  {
+    "name": "no overlapping map text",
+    "ok": true,
+    "detail": {
+      "outside": [],
+      "collisions": []
+    }
+  },
+  {
+    "name": "interior contents remain in their regions",
+    "ok": true,
+    "detail": {
+      "outside": [],
+      "collisions": []
+    }
+  },
+  {
+    "name": "normal setup shows every force and marker group",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "viewport 1920",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 25.163037109374997,
+      "mapHeight": 732.015625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 1920",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 25.163037109374997,
+      "mapHeight": 732.015625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable windowed UI 1920",
+    "ok": true,
+    "detail": {
+      "text": 16,
+      "instructions": 18,
+      "controls": true
+    }
+  },
+  {
+    "name": "collapsed status and forces 1920",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "camera retained 1920",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "viewport 1536",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 21.341145833333336,
+      "mapHeight": 465.625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 1536",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 21.341145833333336,
+      "mapHeight": 465.625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable windowed UI 1536",
+    "ok": true,
+    "detail": {
+      "text": 16,
+      "instructions": 18,
+      "controls": true
+    }
+  },
+  {
+    "name": "collapsed status and forces 1536",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "camera retained 1536",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "viewport 2560",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 26.78994140625,
+      "mapHeight": 1169.015625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 2560",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 26.78994140625,
+      "mapHeight": 1169.015625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable windowed UI 2560",
+    "ok": true,
+    "detail": {
+      "text": 16,
+      "instructions": 18,
+      "controls": true
+    }
+  },
+  {
+    "name": "collapsed status and forces 2560",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "camera retained 2560",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "viewport 1366",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 21.176432291666664,
+      "mapHeight": 369.625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable names 1366",
+    "ok": true,
+    "detail": {
+      "fits": true,
+      "labelMin": 21.176432291666664,
+      "mapHeight": 369.625,
+      "task": true
+    }
+  },
+  {
+    "name": "readable windowed UI 1366",
+    "ok": true,
+    "detail": {
+      "text": 16,
+      "instructions": 18,
+      "controls": true
+    }
+  },
+  {
+    "name": "collapsed status and forces 1366",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "camera retained 1366",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection exposes full forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "zoom and keyboard pan",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "fit restores camera",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "mouse selection at zoom",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "mouse focus preserves camera",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Political",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Political",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Political",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Terrain",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Terrain",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Terrain",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "force layer Full",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "political layer Full",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "inspection in Full",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "server candidate highlighting",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "dense overflow is explicit",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "dense inspection retains all groups",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "empty spaces retain labels without phantom forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "older coordinate snapshots use schematic fallback",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "legacy Terrain hides forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "legacy Terrain hides alignment",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "legacy Full restores forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "external scale is fully inspectable",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "native browser zoom 100%",
+    "ok": true,
+    "detail": {
+      "innerWidth": 1919,
+      "innerHeight": 936,
+      "outerWidth": 1919,
+      "devicePixelRatio": 1,
+      "fits": true
+    }
+  },
+  {
+    "name": "native browser zoom 125%",
+    "ok": true,
+    "detail": {
+      "innerWidth": 1535,
+      "innerHeight": 749,
+      "outerWidth": 1919,
+      "devicePixelRatio": 1.25,
+      "fits": true
+    }
+  },
+  {
+    "name": "native browser zoom 150%",
+    "ok": true,
+    "detail": {
+      "innerWidth": 1279,
+      "innerHeight": 624,
+      "outerWidth": 1919,
+      "devicePixelRatio": 1.5,
+      "fits": true
+    }
+  },
+  {
+    "name": "collapsed actions preserve status, resources and forces",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "collapsed actions release map width",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "native fullscreen entry and button state",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "Help in fullscreen",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "History and rule lookup in fullscreen",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "notes in fullscreen",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "native Escape updates fullscreen state",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "draft and camera survive native fullscreen and sidebar changes",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "selection and display layer survive fullscreen",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "supporting disclosure stays open through layout changes",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "tooltip portal in fullscreen",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "native button exit",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "required Propaganda choice is directly available",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "real Propaganda decision submits in fullscreen",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "Propaganda choice updates the real Emergency Rule track",
+    "ok": true,
+    "detail": null
+  },
+  {
+    "name": "no browser runtime errors",
+    "ok": true,
+    "detail": []
+  }
+]

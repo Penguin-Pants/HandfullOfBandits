@@ -107,6 +107,8 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
       const target = e.target instanceof Element ? e.target : null;
       if (target instanceof HTMLElement && (["INPUT","TEXTAREA","SELECT"].includes(target.tagName) || target.isContentEditable)) return;
       const { command, result, onCommit, clear } = latest.current;
+      // The browser owns Escape while fullscreen is active; keep the unfinished plan.
+      if (e.key === "Escape" && document.fullscreenElement) return;
       if (e.key === "Escape") clear();
       // Enter commits only from the page itself. Buttons and map spaces keep Enter for their own action.
       if (target !== null && target !== document.body) return;

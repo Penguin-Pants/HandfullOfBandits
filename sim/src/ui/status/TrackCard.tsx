@@ -56,7 +56,7 @@ export function TrackCard({ view }: { readonly view: BoardView }) {
           <b>{typeof t.value === "number" ? t.value : words(t.value)}</b>
           {faction && <span>Resources</span>}
       </>;
-      if (t.steps !== undefined) return <div key={t.id} className="track-row" role="group" aria-label={t.display}>
+      if (t.steps !== undefined) return <div key={t.id} className="track-row" data-track={t.id} role="group" aria-label={t.display}>
         <div className="track-summary">{content}</div>
       </div>;
       return <details key={t.id} className={faction ? "track-row resource-badge" : "track-row"} role="group" aria-label={t.display}>
