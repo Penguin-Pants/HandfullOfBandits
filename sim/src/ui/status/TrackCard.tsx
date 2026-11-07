@@ -1,6 +1,7 @@
 // Resource-style summaries with political states always visible below them.
 import type { BoardView } from "../api.ts";
 import { words } from "../common/names.ts";
+import { FactionMark } from "../common/FactionMark.tsx";
 import { spaceOfTrack } from "./tracks.ts";
 
 /** Numeric tracks with at most this many steps get numbered boxes; longer ones a bar. */
@@ -52,7 +53,7 @@ export function TrackCard({ view }: { readonly view: BoardView }) {
     {tracks.map(t => {
       const faction = view.factions.find(f => t.id === `resources.${f.id}`);
       const content = <>
-          <span className={faction ? "resource-faction" : undefined} style={faction ? { backgroundColor: faction.color } : undefined}>{faction?.name ?? t.display}</span>
+          <span className={faction ? "resource-faction" : undefined} style={faction ? { backgroundColor: faction.color } : undefined}>{faction && <FactionMark faction={faction.id} />}{faction?.name ?? t.display}</span>
           <b>{typeof t.value === "number" ? t.value : words(t.value)}</b>
           {faction && <span>Resources</span>}
       </>;

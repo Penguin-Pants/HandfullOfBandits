@@ -8,8 +8,8 @@
   --accent: #1f5fbf;
   --bad: #b00020;
   --good: #2e7d32;
-  --state: #c62828;
-  --pkk: #2e7d32;
+  --state: #bd1f2c;
+  --pkk: #26734e;
   --cell: #f5f1e6;
   --cell-line: #b3ab9d;
   --abroad: #e9e6de;
@@ -139,6 +139,7 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4p
 .log-line { cursor: default; }
 .log-line[tabindex] { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
 
+.faction-mark { width: 1.35em; height: 1.35em; vertical-align: -0.28em; margin-right: 0.3em; flex: none; }
 .mini-track { display: inline-flex; flex-wrap: wrap; gap: 1px; }
 .mini-box, .mini-step { border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 10px; line-height: 14px; }
 .mini-box { min-width: 14px; text-align: center; }
@@ -263,7 +264,7 @@ nav { height: 50px; box-sizing: border-box; }
 .country-name { fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; font: 20px Georgia, "Times New Roman", serif; }
 
 /* Atlas UX system: readable fixed-size information and a dedicated map workspace. */
-:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --link:#7ebacb; --label-font:"Crimson Pro", Georgia, "Times New Roman", serif; --bad:#ff9a9a; --good:#a4cda5; --state:#a82d31; --pkk:#376c3b; font-size:15px; }
+:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --link:#7ebacb; --label-font:"Crimson Pro", Georgia, "Times New Roman", serif; --bad:#ff9a9a; --good:#a4cda5; --state:#bd1f2c; --pkk:#26734e; font-size:15px; }
 a { color:var(--link); }
 button { min-height:36px; border-radius:4px; }
 button:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline:3px solid #7ebacb; outline-offset:3px; }
