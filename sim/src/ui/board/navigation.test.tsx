@@ -29,6 +29,7 @@ describe("map navigation and layers", () => {
     for (const mode of ["Full","Forces","Political","Terrain"]) {
       fireEvent.click(screen.getByRole("button",{name:mode}));
       expect(screen.getByRole("img",{name:"Board"}).classList.contains(`mode-${mode.toLowerCase()}`)).toBe(true);
+      expect(screen.getByRole("meter", {name:"Europe track"})).toBeTruthy();
       fireEvent.keyDown(screen.getByRole("button",{name:"Hakkari"}),{key:" "});
     }
     expect(select).toHaveBeenCalledTimes(4);
@@ -80,4 +81,14 @@ it("keeps the Western Cities hit area and selection outline outside the country 
   const area=screen.getByRole("button",{name:"Western Cities"});
   expect(area.querySelector(".atlas-area")?.getAttribute("clip-path")).toBeNull();
   expect(area.querySelector('[stroke-width="4"]')?.getAttribute("clip-path")).toBeNull();
+});
+
+it("finds the Europe track without adding it to an operation plan", () => {
+  const select = vi.fn();
+  render(<MapCanvas view={view} selected={[]} onSelect={select} />);
+  expect(screen.getByRole("option", { name: "Europe track" })).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "europe" } });
+  expect(select).not.toHaveBeenCalled();
+  fireEvent.focus(screen.getByRole("meter", { name: "Europe track" }));
+  expect(select).not.toHaveBeenCalled();
 });

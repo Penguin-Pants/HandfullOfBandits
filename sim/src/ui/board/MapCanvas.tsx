@@ -2,13 +2,14 @@ import { useState, type ReactNode } from "react";
 import { presentation } from "./layout.ts";
 import { usesAtlas } from "./region.ts";
 import { Board, type BoardProps } from "./Board.tsx";
+import { isEuropeTrack } from "../status/tracks.ts";
 
 /** Local camera and layer controls never alter game state or operation plans. */
 export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: ReactNode}) {
   const geographic = usesAtlas(props.view.spaces);
   const centreX = geographic ? 640 : 500;
   const centreY = geographic ? 480 : 350;
-  const anchor = (space: BoardProps["view"]["spaces"][number]) => geographic ? presentation(space) : {x:space.x,y:space.y,width:0,height:0};
+  const anchor = (space: BoardProps["view"]["spaces"][number]) => geographic || isEuropeTrack(space) ? presentation(space) : {x:space.x,y:space.y,width:0,height:0};
   const [camera, setCamera] = useState({zoom:typeof window === "undefined" ? 1 : window.innerWidth < 1450 ? 2.5 : window.innerWidth < 1600 || window.innerHeight < 900 ? 2 : window.innerWidth < 2000 || window.innerHeight < 1200 ? 1.5 : 1,x:0,y:0});
   const [mode, setMode] = useState<"full" | "forces" | "political" | "terrain">("full");
   const zoom = (by: number): void => {setCamera(c => ({...c,zoom:Math.max(1,Math.min(3,c.zoom+by))}));};
@@ -22,9 +23,9 @@ export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: Reac
         <label className="find-space">Find space <select aria-label="Find space" value="" onChange={e => {
           const space = props.view.spaces.find(s => s.id === e.target.value);
           if (space === undefined) return;
-          props.onSelect(space.id,false);
+          if (!isEuropeTrack(space)) props.onSelect(space.id,false);
           setCamera(c => c.zoom <= 1 ? c : {...c,x:anchor(space).x+anchor(space).width/2-centreX,y:anchor(space).y+anchor(space).height/2-centreY});
-        }}><option value="">Select a space…</option>{props.view.spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+        }}><option value="">Select a space…</option><optgroup label="Spaces">{props.view.spaces.filter(s => !isEuropeTrack(s)).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</optgroup><optgroup label="Tracks">{props.view.spaces.filter(isEuropeTrack).map(s => <option key={s.id} value={s.id}>{s.name} track</option>)}</optgroup></select></label>
         <button type="button" aria-label="Zoom out" disabled={camera.zoom <= 1} onClick={() => {zoom(-.25);}}>−</button>
         <output aria-label="Map zoom">{Math.round(camera.zoom*100)}%</output>
         <button type="button" aria-label="Zoom in" disabled={camera.zoom >= 3} onClick={() => {zoom(.25);}}>+</button>

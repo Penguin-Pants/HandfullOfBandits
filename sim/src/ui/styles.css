@@ -382,6 +382,15 @@ h3 {font-size:16px;}
 .map-space.neighbor:not(.selected) .atlas-outline {stroke:#2b6b77;stroke-width:3;stroke-dasharray:7 4;}
 .map-space.selected .atlas-outline {stroke:#9a6a20;stroke-width:4;}
 
+/* Europe is a numeric track, separate from playable space frames and counters. */
+.europe-track line {stroke:#887456; stroke-width:2;}
+.europe-track circle {fill:#fff7e7; stroke:#887456; stroke-width:2;}
+.europe-track-number {fill:#403b30; font:600 22px system-ui,sans-serif;}
+.europe-track [aria-current="true"] circle {fill:#315e73; stroke:#315e73;}
+.europe-track [aria-current="true"] .europe-track-number {fill:#fff; font-weight:700;}
+.europe-track-label {fill:#615640; font:600 13px system-ui,sans-serif; letter-spacing:2px;}
+.europe-track-current {fill:#315e73; font:italic 13px Georgia,serif;}
+
 .track-card.expanded {display:flex; flex-direction:column; gap:4px; max-height:none; padding:3px 10px;}
 .track-summaries {display:flex; flex-wrap:wrap; align-items:flex-start; gap:8px;}
 .track-card.expanded .track-row {padding:0; min-width:0; flex:1 1 110px;}

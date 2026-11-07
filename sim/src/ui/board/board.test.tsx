@@ -19,9 +19,9 @@ afterEach(cleanup);
 const view = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));
 
 describe("Board", () => {
-  it("draws all 18 locations with their pieces", () => {
+  it("draws 17 selectable locations and the Europe track", () => {
     render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    expect(screen.getAllByRole("button")).toHaveLength(18);
+    expect(screen.getAllByRole("button")).toHaveLength(17);
     expect(screen.getByLabelText("guerrilla underground 3")).toBeTruthy();
   });
 
@@ -83,7 +83,7 @@ describe("map geometry", () => {
     expect(regionCells(view.spaces).geographic).toBe(true);
     render(<Board view={old} selected={[]} onSelect={vi.fn()} />);
     expect(screen.getByRole("button", { name: "Hakkari" }).querySelector("path")?.getAttribute("clip-path")).toBeNull();
-    expect(Number(screen.getByRole("button",{name:"Europe"}).querySelector("rect")?.getAttribute("x"))).toBeGreaterThanOrEqual(0);
+    expect(screen.getByRole("meter", {name:"Europe track"}).querySelectorAll("circle")).toHaveLength(6);
   });
 
   it("splits the plane on the bisector of two sites", () => {
@@ -203,15 +203,16 @@ describe("Resources and politics card (UC-7)", () => {
 });
 
 describe("map boxes and terrain (UC-7)", () => {
-  it("shows each host posture on its box and the Europe track in the Europe box", () => {
+  it("shows host postures on their boxes and Europe as a vertical track", () => {
     render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
     const kdp = screen.getByLabelText("KDP posture track");
     expect(kdp.querySelector("[aria-current]")?.textContent).toBe("KDP: Host");
     expect(screen.getByLabelText("Syria posture track")).toBeTruthy();
     expect(screen.getByLabelText("PUK posture track")).toBeTruthy();
     const europe = screen.getByLabelText("Europe track");
-    expect(europe.querySelectorAll("text")).toHaveLength(1);
-    expect(europe.querySelector("[aria-current]")?.textContent).toBe(`Europe: ${String(view.status.tracks.find((t) => t.id === "europe")?.value)}`);
+    expect([...europe.querySelectorAll("[data-track-value]")].map(el => el.textContent)).toEqual(["5", "4", "3", "2", "1", "0"]);
+    expect(europe.getAttribute("aria-valuenow")).toBe(String(view.status.tracks.find(t => t.id === "europe")?.value));
+    expect(europe.querySelector("rect")).toBeNull();
   });
 
   it("shades every Mountain space, draws the sourced lake without rivers and no links between spaces", () => {
@@ -222,7 +223,8 @@ describe("map boxes and terrain (UC-7)", () => {
     expect(container.querySelector(".map-relief.mountain")?.getAttribute("clip-path")).toBe("url(#clip-mountains)");
     expect(container.querySelectorAll(".map-river")).toHaveLength(0);
     expect(container.querySelectorAll(".map-lake")).toHaveLength(1);
-    expect(container.querySelectorAll("line:not(.map-arrow line)")).toHaveLength(0);
+    expect(container.querySelectorAll(".europe-track line")).toHaveLength(1);
+    expect(container.querySelectorAll("line:not(.map-arrow line):not(.europe-track line)")).toHaveLength(0);
   });
 });
 
@@ -281,7 +283,7 @@ describe("approved atlas board", () => {
   it("renders the same atlas for a saved view while keeping all legal links unchanged", () => {
     const before = JSON.stringify(view);
     const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    expect(container.querySelectorAll("[data-info]")).toHaveLength(18);
+    expect(container.querySelectorAll("[data-info]")).toHaveLength(17);
     expect(JSON.stringify(view)).toBe(before);
     expect(view.links.some(l => [l.a, l.b].includes("mardin-batman") && [l.a, l.b].includes("kdp-zone"))).toBe(false);
   });
@@ -308,11 +310,11 @@ it("keeps the city and hinterland independently keyboard-selectable", () => {
 });
 
 describe("approved readable layout", () => {
-  it("keeps only Europe and Western Cities in the off-map column", () => {
+  it("keeps Western Cities in a space box and Europe in a separate track", () => {
     const {container} = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    expect([...container.querySelectorAll("[data-callout]")].map(e=>e.getAttribute("data-info")).sort()).toEqual(["europe","western-cities"]);
+    expect([...container.querySelectorAll("[data-callout]")].map(e=>e.getAttribute("data-info")).sort()).toEqual(["western-cities"]);
     expect(container.querySelector("[data-geography='outside-play']")?.textContent).toContain("Malatya");
-    expect(screen.getAllByRole("button")).toHaveLength(18);
+    expect(screen.getAllByRole("button")).toHaveLength(17);
   });
 
   it("highlights the exact rules neighbors without implying a city connection", () => {
@@ -354,4 +356,22 @@ describe("hidden marker toggle (P4-07)", () => {
     expect(shown.spaces.map(s => s.pieces)).toEqual(marked.spaces.map(s => s.pieces));
     expect(marked.spaces.find(s => s.id === "hakkari")?.markers.map(m => m.marker)).toEqual(["covert"]);
   });
+});
+
+it.each([0, 3, 5])("shows Europe value %s without a playable hit area", value => {
+  const select = vi.fn();
+  const updated = { ...view, status: { ...view.status, tracks: view.status.tracks.map(t => t.id === "europe" ? { ...t, value } : t) } };
+  const { container } = render(<Board view={updated} selected={[]} onSelect={select} />);
+  const europe = screen.getByRole("meter", { name: "Europe track" });
+  expect(europe.getAttribute("aria-valuemin")).toBe("0");
+  expect(europe.getAttribute("aria-valuemax")).toBe("5");
+  expect(europe.getAttribute("aria-valuenow")).toBe(String(value));
+  expect(europe.querySelectorAll("[aria-current]")).toHaveLength(1);
+  expect(europe.querySelector("[aria-current]")?.getAttribute("data-track-value")).toBe(String(value));
+  expect(container.querySelector('[data-space="europe"]')).toBeNull();
+  fireEvent.click(europe);
+  fireEvent.keyDown(europe, { key: "Enter" });
+  expect(select).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Western Cities" }));
+  expect(select).toHaveBeenCalledWith("western-cities", false);
 });
