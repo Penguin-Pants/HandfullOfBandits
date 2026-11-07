@@ -181,7 +181,7 @@ describe("Resources and politics card (UC-7)", () => {
     const legit = screen.getByLabelText("Legitimacy");
     expect(legit.querySelectorAll(".mini-box")).toHaveLength(21);
     expect(legit.querySelector("[aria-current]")?.textContent).toBe("10");
-    const er = screen.getByLabelText("Emergency Rule");
+    const er = screen.getByLabelText("Emergency Rule states");
     expect([...er.querySelectorAll(".mini-step")].map((e) => e.textContent)).toEqual(["Martial Law", "OHAL", "OHAL Extended Powers", "Normalizing"]);
     expect(er.querySelector("[aria-current]")?.textContent).toBe("Martial Law");
   });
@@ -189,7 +189,7 @@ describe("Resources and politics card (UC-7)", () => {
   it("falls back to words for a value with no readable name", () => {
     const odd = { ...view, status: { ...view.status, tracks: [{ id: "mood", display: "Mood", value: "veryTense", steps: ["calm", "veryTense"] }] } };
     render(<TrackCard view={odd} />);
-    expect(screen.getByLabelText("Mood").querySelector("[aria-current]")?.textContent).toBe("Very Tense");
+    expect(screen.getByLabelText("Mood states").querySelector("[aria-current]")?.textContent).toBe("Very Tense");
   });
 
   it("the status bar no longer repeats the tracks", () => {
@@ -320,11 +320,17 @@ describe("approved readable layout", () => {
     expect(city?.getAttribute("opacity")).toBe("0.3");
   });
 
-  it("shows compact resources with the full track available on expansion", () => {
+  it("keeps political states expanded and numeric scales available on expansion", () => {
     render(<TrackCard view={view} />);
     const card = screen.getByLabelText("Resources and politics");
-    expect(card.querySelectorAll("details")).toHaveLength(6);
-    expect(card.querySelector("[aria-label='Emergency Rule'] summary")?.textContent).toContain("Martial Law");
+    expect(card.querySelectorAll("details")).toHaveLength(3);
+    expect(screen.getByLabelText("Emergency Rule").textContent).toContain("Martial Law");
+    for (const name of ["Emergency Rule", "Ceasefire", "Legal Space"]) {
+      const states = screen.getByRole("group", { name: `${name} states` });
+      expect(states.closest("details")).toBeNull();
+      expect(states.querySelectorAll(".mini-step")).toHaveLength(4);
+      expect(states.querySelectorAll("[aria-current='true']")).toHaveLength(1);
+    }
     expect(card.querySelector("[aria-label='State Resources'] summary")?.textContent).toContain("12");
     expect(card.querySelector("[aria-label='Legitimacy'] .mini-track")?.children).toHaveLength(21);
   });
