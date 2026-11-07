@@ -448,8 +448,13 @@ h3 {font-size:16px;}
 .map-space.neighbor:not(.selected) .atlas-outline {stroke:#2b6b77;stroke-width:3;stroke-dasharray:7 4;}
 .map-space.selected .atlas-outline {stroke:#9a6a20;stroke-width:4;}
 
-.track-card.compact .track-row {padding:0; min-width:0;}
+.track-card.compact {display:flex; flex-wrap:wrap; align-items:flex-start; max-height:none;}
+.track-card.compact .track-row {padding:0; min-width:0; flex:1 1 140px;}
 .track-card.compact summary {display:flex; justify-content:space-between; gap:6px; cursor:pointer; font-size:12px;}
+.track-card.compact .resource-badge {flex:0 0 auto;}
+.track-card.compact .resource-badge summary {align-items:center; justify-content:flex-start; gap:8px; padding:3px 6px; border:1px solid #c7b99e; border-radius:4px; background:#fff7e7; color:#332e24; white-space:nowrap;}
+.resource-faction {padding:2px 8px; border-radius:3px; color:#fff; font-size:13px; font-weight:700;}
+.resource-badge summary b {font-size:20px; line-height:1; font-variant-numeric:tabular-nums;}
 .track-card.compact details[open] .mini-track {display:flex;}
 
 .atlas-stack .map-count {font-size:18px;}

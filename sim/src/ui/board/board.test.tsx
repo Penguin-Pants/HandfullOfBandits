@@ -154,6 +154,19 @@ describe("map tooltip", () => {
 });
 
 describe("Resources and politics card (UC-7)", () => {
+  it("groups each faction name, resource count and label, including zero and updated totals", () => {
+    const resourceView = (state: number, pkk: number) => ({ ...view, status: { ...view.status, tracks: view.status.tracks.map(t => ({ ...t, value: t.id === "resources.state" ? state : t.id === "resources.pkk" ? pkk : t.value })) } });
+    const { rerender } = render(<TrackCard view={resourceView(3, 0)} />);
+    for (const [name, count] of [["State", "3"], ["PKK", "0"]] as const) {
+      const summary = screen.getByRole("group", { name: `${name} Resources` }).querySelector("summary");
+      expect([...(summary?.children ?? [])].map(el => el.textContent)).toEqual([name, count, "Resources"]);
+    }
+    rerender(<TrackCard view={resourceView(0, 50)} />);
+    expect(screen.getByLabelText("State Resources").querySelector("summary b")?.textContent).toBe("0");
+    expect(screen.getByLabelText("PKK Resources").querySelector("summary b")?.textContent).toBe("50");
+    expect(screen.getByLabelText("Legitimacy").querySelector("summary")?.textContent).toBe("Legitimacy10");
+  });
+
   it("lists the tracks that have no place on the map, none of the ones drawn on a map box", () => {
     render(<TrackCard view={view} />);
     const card = screen.getByLabelText("Resources and politics");

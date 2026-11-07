@@ -47,9 +47,16 @@ export function TrackCard({ view }: { readonly view: BoardView }) {
   const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined && !(HIDDEN_AT_ZERO.has(t.id) && t.value === 0));
   return <section className="track-card compact" aria-label="Resources and politics">
     <h4>Resources and politics</h4>
-    {tracks.map(t => <details key={t.id} className="track-row" role="group" aria-label={t.display}>
-      <summary onKeyDown={e => { if (e.key === " ") e.stopPropagation(); }}><span>{t.display}</span><b>{typeof t.value === "number" ? t.value : words(t.value)}</b></summary>
-      <Scale track={t} />
-    </details>)}
+    {tracks.map(t => {
+      const faction = view.factions.find(f => t.id === `resources.${f.id}`);
+      return <details key={t.id} className={faction ? "track-row resource-badge" : "track-row"} role="group" aria-label={t.display}>
+        <summary onKeyDown={e => { if (e.key === " ") e.stopPropagation(); }}>
+          <span className={faction ? "resource-faction" : undefined} style={faction ? { backgroundColor: faction.color } : undefined}>{faction?.name ?? t.display}</span>
+          <b>{typeof t.value === "number" ? t.value : words(t.value)}</b>
+          {faction && <span>Resources</span>}
+        </summary>
+        <Scale track={t} />
+      </details>;
+    })}
   </section>;
 }
