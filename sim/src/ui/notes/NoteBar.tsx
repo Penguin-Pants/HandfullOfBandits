@@ -20,10 +20,16 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
   const [open, setOpen] = useState<{ anchor: ReturnType<typeof defaultAnchor>; focus: NoteInput["focus"]; executedId: string | null } | null>(null);
   const [text, setText] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
+  const revision = useRef(0);
+  const pending = useRef(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
 
   /** Open at the current anchor; keep its action ID so Tab can return to it. */
   const start = (): void => {
+    revision.current++;
+    setError(null);
     const at = anchor();
     setOpen({ anchor: at, focus: focus(), executedId: at.actionId });
   };
@@ -49,19 +55,36 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
   }, [isOpen]);
 
   const close = (): void => {
+    revision.current++;
+    setError(null);
     setOpen(null);
     setText("");
     setPicked([]);
   };
   const save = async (): Promise<void> => {
-    if (open === null || text.trim() === "") return;
+    if (open === null || text.trim() === "" || pending.current) return;
+    pending.current = true;
+    setSaving(true);
+    setError(null);
+    const submitted = revision.current;
     const ids = categories.map((c) => c.category_id);
     const categoryIds = [...new Set([...picked, ...hashCategories(text, ids)])];
     const { proposed, ...where } = open.anchor;
-    await onSave({ ...where, ...(proposed === undefined ? {} : { proposed }), text, categoryIds, focus: open.focus });
-    setSaved(open.anchor.actionId === null ? `Saved (${open.anchor.anchor})` : `Saved, linked to ${open.anchor.actionId}`);
-    setTimeout(() => { setSaved(null); }, 2000);
-    close();
+    try {
+      await onSave({ ...where, ...(proposed === undefined ? {} : { proposed }), text, categoryIds, focus: open.focus });
+      if (submitted === revision.current) {
+        setSaved(open.anchor.actionId === null ? `Saved (${open.anchor.anchor})` : `Saved, linked to ${open.anchor.actionId}`);
+        close();
+      } else {
+        setSaved("Previous draft saved. Current edits are not saved.");
+      }
+      setTimeout(() => { setSaved(null); }, 2000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      pending.current = false;
+      setSaving(false);
+    }
   };
   const onKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -72,11 +95,15 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
     } else if (e.key === "Tab" && open !== null) {
       e.preventDefault();
       const next = ANCHORS[(ANCHORS.indexOf(open.anchor.anchor) + 1) % ANCHORS.length] ?? "session";
+      revision.current++;
       setOpen({ ...open, anchor: { ...open.anchor, anchor: next, actionId: next === "executed" ? open.executedId : null } });
     } else if (e.altKey && /^[1-9]$/.test(e.key)) {
       e.preventDefault();
       const cat = categories.find((c) => c.hotkey === `Alt+${e.key}`)?.category_id;
-      if (cat !== undefined) setPicked(picked.includes(cat) ? picked.filter((c) => c !== cat) : [...picked, cat]);
+      if (cat !== undefined) {
+        revision.current++;
+        setPicked(picked.includes(cat) ? picked.filter((c) => c !== cat) : [...picked, cat]);
+      }
     }
   };
 
@@ -84,6 +111,8 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
     return (
       <footer className="note-closed" aria-label="Note bar">
         {saved !== null && <strong role="status">{saved}</strong>}
+        {saving && <p role="status">Saving note…</p>}
+        {error !== null && <p role="alert">Note not saved: {error}</p>}
         <button type="button" onClick={start}>
           Note (N)
         </button>
@@ -91,7 +120,10 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
     );
   }
   return (
-    <footer className="panel" aria-label="Note bar">
+    <footer className="panel" aria-label="Note bar" aria-busy={saving}>
+      {saving && <p role="status">Saving note…</p>}
+      {saved !== null && <strong role="status">{saved}</strong>}
+      {error !== null && <p role="alert">Note not saved: {error}. Press Enter to retry.</p>}
       <div className="row">
         <span className="muted">{`Note on: ${open.anchor.anchor}${open.anchor.actionId === null ? "" : ` (${open.anchor.actionId})`}`}</span>
         {picked.map((c) => (
@@ -104,7 +136,7 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
         rows={2}
         style={{ width: "100%" }}
         value={text}
-        onChange={(e) => { setText(e.target.value); }}
+        onChange={(e) => { revision.current++; setText(e.target.value); }}
         onKeyDown={onKeyDown}
       />
     </footer>
