@@ -1,17 +1,19 @@
 ---
 title: A Handful of Bandits
-subtitle: Kurdish COIN · Turkey, 1984–1989
-edition: Scenario A · Playable prototype · R4
-date: 1 November 2026
+subtitle: Kurdish COIN · Turkey, 1984–1999
+edition: Full game · Playable prototype · R4
+date: 8 November 2026
 ---
 
 # 1.0 Introduction
 
 *A Handful of Bandits* is a two-player research prototype about the conflict in southeastern Turkey. One player directs the **State** and the other the **PKK**. The State seeks Support and Legitimacy. The PKK seeks Opposition and domestic Bases. Military Control, political attitudes and national Legitimacy are separate measures.
 
-This edition covers **Scenario A, 1984–1989**, the current playable prototype. It uses Campaigns C1 and C2 and ends no later than the second Propaganda round. It includes the designer decisions implemented in ruleset R4. It is not a balanced or final published game.
+This edition covers the **full game, 1984–1999**: five Campaigns (C1 to C5) and four ways to start it. The **full campaign** plays all five Campaigns. **Scenario A** (1984–1989) plays C1 and C2. **Scenario B** (1990–1995) plays C3 and C4. **Scenario C** (1993–1999) plays C4 and C5. Section 10 gives every setup. The edition includes the designer decisions implemented in ruleset R4. It is not a balanced or final published game.
 
-**Reading the rules.** Numbered rules give the procedures. Italic examples explain them. Card text can modify a procedure (5.1). Section 10 gives the complete setup. Appendix A reproduces the current C1/C2 Event text. Appendix B identifies implementation differences and systems outside this edition.
+**Reading the rules.** Numbered rules give the procedures. Italic examples explain them. Card text can modify a procedure (5.1). Section 10 gives the complete setups. Appendix A reproduces the Event text for Campaigns C1 and C2 only. The text of the C3 to C5 cards is not yet reproduced; read it in the simulator or in the card package. Appendix B identifies implementation differences and systems outside this edition.
+
+**Campaign gates.** Some systems start in a later Campaign: Village Clearance, Covert Action, Declare Ceasefire and Legal Politics from C3, and Return by Civic Action in C5 (10.8). A rule that names a Campaign applies only from that Campaign.
 
 > **DESIGN NOTE:** Pieces, Population (Pop), Resources and scores are design weights. They are not counts of people, measures of ethnic preference or historical estimates of force size. No rule awards points for casualties or displacement.
 
@@ -23,7 +25,7 @@ There is **no next-card preview**. A faction may remain First Eligible for sever
 
 ## 1.2 Components
 
-Use a board with 13 domestic spaces and five external boxes, the C1/C2 cards, one six-sided die, two initiative cylinders, track markers and these pieces:
+Use a board with 13 domestic spaces and five external boxes, the cards of the chosen Campaigns, four Pivotal cards, one six-sided die, two initiative cylinders, track markers and these pieces:
 
 | State pieces | Supply |
 |:---|---:|
@@ -38,7 +40,24 @@ Use a board with 13 domestic spaces and five external boxes, the C1/C2 cards, on
 | PKK Bases | 12 |
 | Leadership marker | 1 |
 
-Guerrillas have **Underground** and **Active** states. The Leadership marker has **Present** and **Abroad** sides. Keep Available pieces separate from Guards that are Out of Play. The prototype also uses Support/Opposition, Harm, Coercion, Reception, Capability and Momentum markers. Other markers may appear through Events (8.0).
+Guerrillas have **Underground** and **Active** states. The Leadership marker has **Present** and **Abroad** sides. Keep Available pieces separate from Guards that are Out of Play. The game also uses these markers (the number in brackets is the supply):
+
+| Marker | Supply |
+|:---|---:|
+| State Harm | 12 |
+| PKK Harm | 12 |
+| Disputed Harm | 6 |
+| Coercion | 8 |
+| Displacement (New and Old sides) | 10 |
+| Reception | 8 |
+| Covert (face down) | 6 |
+| Office | 8 |
+| Capability | 12 |
+| Momentum | 8 |
+| Restraint Broken (State and PKK sides) | 2 |
+| Closure Case, Successor, Ban | 1 each |
+
+Support and Opposition are levels on the space, not markers (1.6). Events and later systems place the other markers (8.0).
 
 ## 1.3 The Map
 
@@ -92,7 +111,7 @@ Each domestic space is at one of five levels, in this order:
 
 A shift moves one level. A shift toward Support from Passive Opposition first reaches Neutral. Neutral has no marker. Passive Support contributes Pop to Total Support; Active Support contributes twice Pop. Opposition scores the same way for Total Opposition.
 
-Coercion blocks shifts in either direction. State Harm blocks shifts toward Support. PKK Harm blocks shifts toward Opposition. Reception also blocks Support shifts until relieved. Remove the relevant blocks before paying for a shift (3.6).
+Coercion blocks shifts in either direction. State Harm blocks shifts toward Support. PKK Harm blocks shifts toward Opposition. Reception also blocks Support shifts until relieved. Remove the relevant blocks before paying for a shift (3.6). An Office caps its space at Passive Support and Passive Opposition: no shift takes the space past those levels (8.4).
 
 ## 1.7 Resources, Legitimacy and Europe
 
@@ -100,11 +119,11 @@ Coercion blocks shifts in either direction. State Harm blocks shifts toward Supp
 
 **Legitimacy** ranges from 0 to 20 and represents acceptance of State conduct. It affects the State score, income and Propaganda Civic Action cap. If a Legitimacy loss would go below zero, lose two State Resources per unpaid Legitimacy point. Any remaining unpaid loss is ignored.
 
-**Europe** ranges from 0 to 5. It represents diaspora resources and international pressure. At Propaganda it gives PKK income of 0 at Europe 0–1, 1 at Europe 2–3 and 2 at Europe 4–5. At 4–5 it also costs one Legitimacy in the political adjustment step.
+**Europe** ranges from 0 to 5. It represents diaspora resources and international pressure. At Propaganda it gives PKK income of 0 at Europe 0–1, 1 at Europe 2–3 and 2 at Europe 4–5. At 4–5 it also costs one Legitimacy in the political adjustment step. While the Ban marker is on the map, Europe cannot exceed 3.
 
 ## 1.8 Harm
 
-**State Harm count** equals State Harm markers on the map. **PKK Harm count** equals PKK Harm markers plus Coercion markers on the map. Count qualifying markers in external boxes too. Disputed Harm belongs to neither faction. Harm affects victory eligibility and final margins (7.0).
+**State Harm count** equals State Harm markers on the map. **PKK Harm count** equals PKK Harm markers plus Coercion markers on the map. Count qualifying markers in external boxes too. Disputed Harm belongs to neither faction. Face-down Covert markers count as State Harm at each victory check (7.2) and become State Harm when revealed (8.4). Harm affects victory eligibility and final margins (7.0).
 
 Harm is not removed automatically. Civic Action can redress State Harm; Agitation can redress PKK Harm. Reset removes one Coercion per space. Events may remove or alter markers as printed.
 
@@ -112,7 +131,7 @@ Harm is not removed automatically. Civic Action can redress State Harm; Agitatio
 
 ## 2.1 Prepare the Game
 
-Choose Scenario A and follow 10.0. Set PKK First Eligible and State Second Eligible. Build the C1 and C2 piles separately, then stack C1 above C2. Keep the PKK ARGK Formed Pivotal in hand; it is not shuffled into the deck.
+Choose a scenario and follow 10.0. Set PKK First Eligible and State Second Eligible. Build the piles of the scenario's Campaigns separately (10.3), then stack them in Campaign order. Give each faction the Pivotals that the scenario lists (5.3); they are held in hand and are not shuffled into the deck.
 
 ## 2.2 Reveal a Card
 
@@ -129,6 +148,8 @@ First Eligible selects one box and resolves its choice completely:
 - **Op Only:** one Operation without a Special Activity. The simulator permits one or more locations; Appendix B records the research wording difference.
 - **Op + SA:** one Operation with one permitted Special Activity.
 - **Pass:** take no Operation or Event; gain Pass Resources (2.5).
+
+From C3, the PKK may use the Limited Op box to **Declare Ceasefire** (8.6). It takes the place of the Operation and is legal wherever a Limited Op is legal.
 
 Place that faction's cylinder in the selected box. Second Eligible then chooses from this matrix:
 
@@ -165,7 +186,7 @@ A Limited Op selects one location, which may be a domestic space, a permitted ex
 
 ## 2.7 Timing and Randomness
 
-In this playable prototype, a Special Activity resolves **before or after** the Operation, not interleaved during it. Cross-Border and Ambush use before timing; Strike Collaborators uses before timing. Conditions and payment are checked on the board each part meets. An after-Operation SA that no longer meets its conditions is skipped.
+In this playable prototype, a Special Activity resolves **before or after** the Operation, not interleaved during it. Cross-Border, Ambush and Strike Collaborators use before timing. Village Clearance and Covert Action may go before or after the Operation, but each needs its conditions to hold on the board at that moment. Conditions and payment are checked on the board each part meets. An after-Operation SA that no longer meets its conditions is skipped.
 
 Use a six-sided die for rolls. Apply printed modifiers without treating natural 1 or 6 as an automatic failure or success. Track changes stop at their endpoints, except Legitimacy overflow (1.7).
 
@@ -325,9 +346,9 @@ Move up to four Troops among up to three domestic spaces. Count **origins and de
 
 Choose one zone, also selected for the Operation:
 
-- **KDP:** normally requires KDP Restricted, Hostile or Aligned.
-- **PUK:** requires both PUK and KDP Restricted, Hostile or Aligned.
-- **Early hot pursuit:** in C1/C2, with the option allowed, KDP may be entered at any posture, but the total Troops there after the move may not exceed three. No such exception opens PUK.
+- **KDP:** requires KDP Restricted, Hostile or Aligned. After the Northern Iraq Vacuum card (5.4), KDP Tolerant also qualifies.
+- **PUK:** requires both PUK and KDP to qualify in the same way.
+- **Early hot pursuit:** in C1 and C2, with the option allowed, KDP may be entered at any posture, but the total Troops there after the move may not exceed three. No such exception opens PUK. The exception ends when C3 begins (10.8).
 
 Move up to six Troops from Hakkari and/or Botan into the target zone. PUK movement may pass through KDP as part of this lift. Conduct the accompanying Sweep or Assault in the zone as one selected location. It is Mountain terrain. If its host is Aligned, ignore the Mountain divisor for Assault.
 
@@ -340,13 +361,46 @@ If Cross-Border Assault removes any PKK piece and the zone has no Disputed Harm,
 Target one of Syria, KDP, PUK or Europe. Roll one die, adding or subtracting:
 
 - +1 at Legitimacy 12 or more; −1 at Legitimacy 5 or less.
-- −1 for Syria before C5. This applies throughout Scenario A.
-- +1 for KDP from C3; this does not apply in Scenario A.
+- −1 for Syria in C1 to C4. The penalty ends in C5.
+- +1 for KDP from C3.
 - Any bonus printed by the granting Event.
 
 A modified result of 5 or more moves the host one step toward Hostile, or lowers Europe by one. Moving a host from Hostile to Aligned requires 6 or more. Syria has no Aligned step; a further move at Hostile has no posture effect. A posture change may activate Guerrillas and flip the Leadership Abroad (8.1).
 
 > **EXAMPLE:** At Legitimacy 12, Diplomacy against Syria in C2 has +1 for Legitimacy and −1 for early Syria: net zero. A die roll of 5 moves Syria one step toward Hostile. A natural 6 does not bypass the modified-total requirement for another target.
+
+### 4.2.4 Village Clearance
+
+**Accompanies:** Sweep or Garrison. **Cost:** Legitimacy (see below). **Available:** from C3.
+
+Village Clearance is a forced evacuation of a village area. All of these conditions must hold:
+
+1. Emergency Rule is OHAL or OHAL Extended Powers.
+2. The Campaign is C3 or later.
+3. The target is one Mountain or Plain space that the Operation selected. It has State Control, at least one Troop and at least one Police, is at Neutral or Opposition and has no Displacement marker.
+4. Legitimacy is at least (2 × the target's Pop) + 1.
+
+Apply these effects in this order:
+
+1. Shift the space one level toward Neutral. An existing State Harm or Coercion marker blocks this shift; the other effects still apply.
+2. Lose Legitimacy equal to 2 × the target's Pop.
+3. Place a Displacement marker on its New side.
+4. Place a State Harm marker.
+5. Place a Reception marker in Diyarbakır City or Western Cities (State choice). If no Reception marker is available, lose one Legitimacy instead.
+6. Activate all Guerrillas in the space.
+7. If the space holds an Office, lose one more Legitimacy.
+
+The space keeps its Pop. A New Displacement marker costs one Legitimacy at the next Propaganda round (6.4) and blocks PKK Rally, Extort and Coerce there until Return (3.6.1). The EU-Turkey Customs Union Momentum can raise the cost: Village Clearance then costs one more Legitimacy in effect 2, and condition 4 needs (2 × Pop) + 2.
+
+### 4.2.5 Covert Action
+
+**Accompanies:** Garrison or Sweep. **Cost:** none now; Legitimacy later. **Available:** from C3, at Legitimacy 4 or more.
+
+Covert Action is the covert killing of insurgents. Choose one space with State Control, at least one Police and at least one Underground Guerrilla. The Operation need not have selected this space. The space must have no Office, and a Covert marker must be available.
+
+Remove one Underground Guerrilla without Activation. Place one **face-down Covert marker** in the space. Both players see the placement.
+
+When a Covert marker is revealed, by an Event, by Propaganda exposure (6.4) or by final scoring (6.7), it becomes a State Harm marker and the State loses two Legitimacy. Each Covert marker still face down costs the State two points at every victory check (7.2).
 
 ## 4.3 PKK Special Activities
 
@@ -389,7 +443,9 @@ Move one posture step in the indicated direction. If before-Operation Host Press
 
 ## 5.1 Executing Events
 
-The executing faction chooses the unshaded or shaded side, not both. Either faction may choose either side unless the card expressly restricts it. The executing faction makes choices that the card does not assign to someone else.
+The executing faction chooses the unshaded or shaded side, not both. Either faction may choose either side unless the card expressly restricts it. The executing faction makes choices that the card does not assign to someone else. A named chooser in card text, such as "State choice", names the normal executor of that side; the executing faction makes the choice.
+
+**PKK restriction.** The PKK may not execute an Event side that places or resolves a Closure Case, bans the legal party, removes Offices or moves Legal Space. The non-player Office sides of DK-065, DK-067 and DK-094, and both sides of DK-053, stay open to either faction. They run a fixed procedure and give no choice of target.
 
 Card text overrides an ordinary rule when it says to do so. It does not waive stacking, finite piece supply or track endpoints unless explicitly permitted. Do as much as possible. If a piece or marker is unavailable, skip that placement and record it. Marker exhaustion does not create a substitute marker; Harm exhaustion is a playtest warning.
 
@@ -399,7 +455,7 @@ An Event may grant a free Operation or SA. Its ordinary Resource cost is waived,
 
 ## 5.2 Capabilities and Momentum
 
-A Capability lasts for the game. Momentum lasts until the next Reset. Keep the selected side visible. The current Event takes precedence over a conflicting lasting effect. The C1/C2 lasting effects are:
+A Capability lasts for the game. Momentum lasts until the next Reset. Keep the selected side visible. The current Event takes precedence over a conflicting lasting effect. Cards from C3 to C5 print their own lasting effects: Capability DK-091 in C5 and Momentum DK-038, DK-050, DK-072 and DK-074 in C3 and C4. The C1 and C2 lasting effects are:
 
 - **ERNK (DK-004 shaded, Capability):** Rally Agitate may select a City with a PKK Guerrilla even without a PKK Base or PKK Control. It does not change Propaganda Agitation eligibility.
 - **Tribal Allies (DK-006 unshaded, Capability):** Train may recruit Guards in a State-Controlled Mountain or Plain without Police. Law 3175 and all other limits still apply.
@@ -411,19 +467,34 @@ A Capability lasts for the game. Momentum lasts until the next Reset. Keep the s
 
 A Capability card's other side may be a one-time Event. Taking that other side does not install the lasting effect printed on its opposite side.
 
-## 5.3 Pivotal: ARGK Formed
+## 5.3 Pivotal Events
 
-In Scenario A, only the PKK holds a Pivotal: **DK-015 ARGK Formed**. It requires at least eight Guerrillas and at least two PKK Bases in domestic spaces. External pieces do not meet these conditions.
+Each faction may hold Pivotal Event cards. The scenario lists which (10.0). There are four:
 
-After an Event card is revealed and its Always line is applied, but before First Eligible chooses, the PKK may play ARGK if eligible. Pivotal priority belongs to Second Eligible if both factions could play one; Scenario A has no State Pivotal. Declining preserves the card for a later eligible window.
+| Faction | Pivotal | From | Board condition |
+|:---|:---|:---|:---|
+| PKK | DK-015 ARGK Formed | C1 | At least eight Guerrillas and two PKK Bases in domestic spaces |
+| PKK | DK-054 Serhildan | C3 | Total Opposition 14 or more, and Mardin-Batman or Botan at Passive or Active Opposition |
+| State | DK-076 Area Domination | C4 | Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more |
+| State | DK-098 Coercive Diplomacy on Syria | C5 | Syria is Tolerant or Restricted and Legitimacy is 5 or more |
 
-Place ARGK over the revealed Event. The underlying Event cannot be executed. Place up to four Available Guerrillas among spaces with PKK Bases. Then flip all Guerrillas Underground in **every space with a PKK Base**, including spaces receiving no placement. Gain three PKK Resources.
+External pieces do not count for the ARGK condition.
 
-The PKK becomes First Eligible and occupies the Event box. The State may take Op + SA or Pass. The PKK stays First Eligible next card. ARGK is used once and leaves the hand permanently.
+**Window.** After an Event card is revealed and its Always line is applied, but before First Eligible chooses, a faction may play one Pivotal whose Campaign has been reached and whose condition holds. Second Eligible has priority if both factions could play one. A faction that holds two eligible Pivotals chooses one; only one Pivotal may be played on a card. Declining keeps the card for a later window. The Pivotal replaces the revealed Event, which cannot then be executed.
+
+**After play.** The Pivotal player becomes or stays First Eligible and occupies the Event box. The other faction may take Op + SA or Pass. The Pivotal player stays First Eligible next card. A played Pivotal leaves the hand permanently.
+
+**ARGK Formed.** Place up to four Available Guerrillas among spaces with PKK Bases. Then flip all Guerrillas Underground in **every space with a PKK Base**, including spaces receiving no placement. Gain three PKK Resources.
+
+**Serhildan.** Shift up to three domestic spaces that hold a PKK piece and no Office one level toward Opposition. Diyarbakır City may be one. Europe +1 (the Ban cap applies). The normal shift rule applies: a PKK Harm or Coercion marker blocks a shift toward Opposition.
+
+**Area Domination.** Make a free Sweep in up to three Mountain spaces. Village Clearance may follow the Sweep in one of those spaces, at normal cost and with all four of its conditions (4.2.4). Then make a free Assault in the spaces that the Sweep selected. Under a ceasefire (8.6) the Assault and Village Clearance count as State actions, with the breach warning.
+
+**Coercive Diplomacy on Syria.** Move Syria to Hostile with the normal Hostile entry: Guerrillas in Syria-Bekaa Activate and the Leadership goes Abroad (8.1). PKK pieces there stay but earn no income.
 
 ## 5.4 Mandatory Structural Cards
 
-These cards must be in their Campaign pile and in its top eight Event positions. Their Always lines apply on reveal:
+These cards must be in their Campaign pile and in its top eight Event positions. C4 has none. Their Always lines apply on reveal:
 
 | Campaign / card | Always instruction |
 |:---|:---|
@@ -431,20 +502,33 @@ These cards must be in their Campaign pile and in its top eight Event positions.
 | C1: DK-005 KDP Orders PKK Out | If KDP is Host, set it to Tolerant. |
 | C2: DK-019 Syria Security Protocol | If Syria is Host, set it to Tolerant. |
 | C2: DK-020 OHAL | If Emergency Rule is Martial Law, set it to OHAL. |
+| C3: DK-037 HEP Founded | Set Legal Space to Open. Then run Legal Politics lines 3 and 4 twice (8.5). Lines 5 and 6 do not run. |
+| C3: DK-040 Northern Iraq Vacuum | Set the Vacuum in effect for the rest of the game. A Tolerant KDP or PUK then allows Cross-Border (4.2.2) and PKK Bases in its box (8.1.2). |
+| C5: DK-093 Capture | If the Leadership is Abroad, apply Capture (8.1.5). If it is Present, nothing happens. |
+
+HEP Founded is always in the top eight cards of C3, so it comes before the C3 Propaganda card. No card sets Legal Space back to Absent. Legal Politics (6.5) therefore runs in every Propaganda round from the end of C3.
+
+The unshaded side of HEP Founded files a closure case if no Closure Case marker is on the map: place the marker and set Legal Space to Prosecuted. It follows the card text and needs no Office. Only the State may execute it (5.1).
 
 ## 5.5 Guard Abuse and Attribution
 
 When Guard Abuse is executed, in **every qualifying space** with a Guard and any Harm marker, lose one Legitimacy and remove one Guard. Apply once per qualifying space. Coercion alone is not a Harm marker for this instruction, although it counts toward PKK Harm for victory.
 
-Use the Harm attribution printed on the card. Disputed Harm remains Disputed unless a specific rule changes it. Do not assign it to a faction by inference from a card title or historical assumption.
+Use the Harm attribution printed on the card. Disputed Harm remains Disputed unless a specific rule changes it. Do not assign it to a faction by inference from a card title or historical assumption. A later Event may turn a Disputed marker into State Harm only if the card rests on a High or Moderate court or commission finding.
+
+## 5.6 Kurdish Hizbullah and Covert Violence
+
+Event cards, not players, represent Kurdish Hizbullah and unattributed killings. No player owns or orders them, and card titles stay neutral. When the card DK-053 runs its procedure: if any of Botan, Mardin-Batman, Diyarbakır City and Diyarbakır Rural holds an Office, remove one Office from the highest-Pop such space. Otherwise remove one Guerrilla, Underground first, from the highest-Pop such space that holds a Guerrilla. Break ties in this order: Mardin-Batman, Diyarbakır City, Diyarbakır Rural, Botan. The executing faction does not choose the target. Place a Disputed Harm marker there. The Event does nothing if there is no target.
+
+Cards that reveal Covert markers reveal them as 4.2.5 describes. A card that says "reveal up to two" lets the executor stop after one.
 
 # 6.0 Propaganda Rounds
 
-Conduct these steps in order when Propaganda is revealed. Skip an immediately consecutive Propaganda card without conducting another round. The **first** Propaganda round skips the victory check. The **final** round gives no income and ends after Agitation unless a faction already wins at the opening check.
+Conduct these steps in order when Propaganda is revealed. Skip an immediately consecutive Propaganda card without conducting another round. The **first** Propaganda round of a game skips the victory check. The **final** round is the scenario's last (round 2 in Scenarios A to C, round 5 in the full campaign). It gives no income and ends after Agitation unless a faction already wins at the opening check. A Negotiated Outcome (8.6) can end the game in any round before the final one.
 
 ## 6.1 Victory Phase
 
-Skip in round one. In round two, check both scores and Harm gates as in 7.2. If a winner qualifies, end the game immediately. Do not then pay income, upkeep or conduct political spending.
+Skip in round one. In every later round, check both scores and Harm gates as in 7.2. If a winner qualifies, end the game immediately. Do not then pay income, upkeep or conduct political spending.
 
 ## 6.2 Resources Phase
 
@@ -452,9 +536,9 @@ Skip in round one. In round two, check both scores and Harm gates as in 7.2. If 
 
 **State income:** 8 + half Legitimacy, rounded down + the Pop of each State-Controlled Mountain or Plain that contains a State Base. Count the space's Pop once, regardless of its Base count. Cities do not add this income term.
 
-**PKK income:** one per domestic PKK Base + one per PKK Base in a Host or Tolerant camp + Leadership income + Europe income. Leadership Present gives 2 if Syria is Host, 1 if Tolerant and 0 otherwise. Abroad gives none. Europe gives 0/1/2 as in 1.7. Each faction stops at 50 Resources.
+**PKK income:** one per domestic PKK Base + one per PKK Base in a Host or Tolerant camp + Leadership income + Europe income. Leadership Present gives 2 if Syria is Host, 1 if Tolerant and 0 otherwise. Abroad gives none. After Capture (8.1.5) subtract one more. Europe gives 0/1/2 as in 1.7. The PKK total is never below 0. Each faction stops at 50 Resources.
 
-> **EXAMPLE:** On the starting board the State's income is 19 and PKK income is 5. Starting Resources of 12 and 5 would become 31 and 10 in a non-final round before upkeep. No such addition occurs in Scenario A's final round.
+> **EXAMPLE:** On the Scenario A starting board the State's income is 19 and PKK income is 5. Starting Resources of 12 and 5 would become 31 and 10 in a non-final round before upkeep. No such addition occurs in a final round.
 
 ## 6.3 Guard Upkeep
 
@@ -468,14 +552,18 @@ Apply the following in order, with the normal Legitimacy bounds and overflow rul
 2. **Displacement:** lose one Legitimacy per New Displacement and flip each New marker to Old.
 3. **Reception:** lose one Legitimacy if three or more Reception markers are on the map.
 4. **Disputed Harm:** lose one Legitimacy if three or more Disputed Harm markers are on the map.
-5. **Covert exposure:** if at least three face-down Covert markers are on the map, randomly reveal one. It becomes State Harm and costs two Legitimacy. Covert Action itself is outside Scenario A's implemented action set.
+5. **Covert exposure:** if at least three face-down Covert markers are on the map, randomly reveal one. It becomes State Harm and costs two Legitimacy.
 6. **Europe:** raise Europe by one if State Harm is at least three greater than PKK Harm; lower it by one if PKK Harm is at least three greater than State Harm. Then lose one Legitimacy if Europe is 4 or 5.
-7. **Gains:** gain one Legitimacy if no New Displacement was flipped. Later-design gains for Open Legal Space with two Offices or for maintained Reciprocal Restraint/Talks do not normally arise in Scenario A.
+7. **Gains:** gain one Legitimacy for each that applies: (a) Legal Space is Open and two or more Offices are on the map; (b) Ceasefire is Reciprocal Restraint or Talks and no State Restraint Broken marker is on the map; (c) no New Displacement was flipped in step 2.
 8. **Emergency choice:** the State may make one permitted move (8.2), or keep the current step. Apply any return-to-OHAL cost.
 
 ## 6.5 Legal Politics
 
-Skip while Legal Space is Absent in C1/C2. Legal Politics, party closure and negotiations belong to later Campaigns and are not enabled as playable systems in this prototype edition.
+Skip while Legal Space is Absent. This phase can first run after HEP Founded sets Legal Space to Open (5.4). In order:
+
+1. **Closure filing.** The State may file a closure case (8.5).
+2. **Procedure table.** Run the Legal Politics procedure table, lines 1 to 6 in order (8.5).
+3. **Ceasefire step.** Resolve the ceasefire step (8.6). A Negotiated Outcome ends the game here, before Civic Action.
 
 ## 6.6 State Civic Action
 
@@ -503,7 +591,7 @@ Optional movements may be omitted. Required Iraqi Troop departures may not be sk
 2. Flip **all Guerrillas Underground**, including those in Hostile or Aligned boxes. This is an explicit Reset exception to their posture activation.
 3. Discard all Momentum. Capabilities remain.
 4. Remove Restraint Broken markers, if present.
-5. Advance the Campaign. In Scenario A, the first Reset enters C2; its structural cards still apply only when revealed.
+5. Advance the Campaign and apply that Campaign's switches (10.8). Its structural cards still apply only when revealed. Cards left below the Propaganda card are played in the new Campaign.
 6. Set PKK First Eligible, clear initiative boxes and reveal the next card.
 
 # 7.0 Victory
@@ -516,13 +604,21 @@ Optional movements may be omitted. Required Iraqi Troop departures may not be sk
 
 Passive levels contribute Pop; Active levels contribute twice Pop. Neutral contributes none. Count only domestic Support/Opposition and domestic PKK Bases. Control, external Bases and removed enemy pieces add no points.
 
-Scenario A thresholds are **49 State** and **30 PKK**. Each faction's Harm limit is **6**. These are playtest values, not historical measures.
+Each scenario sets its own thresholds:
+
+| Scenario | State | PKK |
+|:---|---:|---:|
+| Full campaign and Scenario A | 49 | 30 |
+| Scenario B | 48 | 41 |
+| Scenario C | 44 | 48 |
+
+Scenario B may instead use a State threshold of 46, chosen before play (10.1). Each faction's Harm limit is **6**. These are playtest values, not historical measures.
 
 ## 7.2 Victory Check
 
 Check at the start of each Propaganda round except the first. A faction qualifies if its score reaches or exceeds its threshold **and** its Harm count is at most six. If only one qualifies, it wins immediately. If both qualify, compare score minus threshold. The higher margin wins. Equal margins go to lower Harm, then to PKK.
 
-For this check only, count each face-down Covert marker as two fewer State score and one additional State Harm, without physically revealing it. This prevents an immediate victory from ignoring the hidden cost. There is no ordinary Covert Action in Scenario A.
+For this check only, count each face-down Covert marker as two fewer State score and one additional State Harm, without physically revealing it. This prevents an immediate victory from ignoring the hidden cost.
 
 If neither qualifies, continue the round. Being above the Harm limit prevents victory at this check, not all possible victory at final scoring.
 
@@ -544,6 +640,12 @@ Record the winner, ending round, both scores, thresholds, final margins and Harm
 
 For playtests, note repeated initiative streaks, forced Pass sequences, ambiguous rules and any harm-causing action that improves its user's relative margin. These are review flags, not extra automatic game endings.
 
+Also record the Emergency Rule step, the Leadership side (Present, Abroad or Captured), the Ceasefire step, any Negotiated Outcome, closure bans and successor returns, the Covert markers revealed and the first round in which a faction qualified.
+
+## 7.5 Negotiated Outcome Scoring
+
+A Negotiated Outcome (8.6) is not an instant win. Apply its concessions first. Then compute final margins as in 7.3. Reveal all face-down Covert markers first, except when Talks have held through two full Campaigns: then no Covert penalty applies. The higher margin names the label: "Negotiated outcome favorable to State" or "favorable to PKK". If the margins differ by two or less, the label is "Negotiated outcome, balanced" and the game has no winner.
+
 # 8.0 Political and Sanctuary Systems
 
 ## 8.1 Host Postures
@@ -556,21 +658,30 @@ Syria stops at Hostile. Postures never reset automatically and one host's change
 
 **8.1.1 Host.** Rally may recruit Guerrillas or build Bases. March entry is normal. Each Base earns one PKK income at non-final Propaganda. Normal State Cross-Border access is closed, subject to the early KDP exception.
 
-**8.1.2 Tolerant.** Rally may recruit Guerrillas but may not build a Base in this C1/C2 edition. March entry and Base income remain normal. A Northern Iraq Vacuum exception belongs to C3 and is outside Scenario A.
+**8.1.2 Tolerant.** Rally may recruit Guerrillas but may not build a Base. March entry and Base income remain normal. After the Northern Iraq Vacuum card (5.4), a Tolerant KDP or PUK also allows Rally to build a PKK Base there, and allows State Cross-Border access (4.2.2).
 
 **8.1.3 Restricted.** No Rally and no Base income. March entry costs one extra Resource and activates the group. The prototype default allows this entry into Syria-Bekaa too; the alternative option closes Syria at Restricted. Select the option before play and keep it for the session.
 
 **8.1.4 Hostile or Aligned.** No Rally, March entry or Base income. A posture shift reaching either state activates Guerrillas in that box. Reset later flips them Underground (6.9); the exception does not reopen the box. Normal Cross-Border access to KDP/PUK is permitted. Aligned removes the extra Cross-Border cost and the Assault Mountain divisor.
 
-**8.1.5 Leadership.** The marker starts Present in Syria-Bekaa. Present gives income only while Syria is Host or Tolerant. When Syria reaches Hostile, flip it Abroad. Abroad gives no income and prevents Host Pressure against Syria. Returning Syria to a more open posture does not by itself flip Leadership back. Capture is a later C5 Event, not an automatic result in Scenario A.
+**8.1.5 Leadership.** The marker starts Present in Syria-Bekaa. Present gives income only while Syria is Host or Tolerant. When Syria reaches Hostile, flip it Abroad. Abroad gives no income and prevents Host Pressure against Syria. Returning Syria to a more open posture does not by itself flip Leadership back.
+
+**Capture.** Capture happens only through the C5 card DK-093 and only if the Leadership is Abroad. Remove the Leadership marker. From then on the PKK income is one lower at each Resources phase (never below 0). The PKK keeps its pieces and the game does not end.
 
 ## 8.2 Emergency Rule
 
 The track is Martial Law, OHAL, OHAL Extended Powers and Normalizing. Its Propaganda drains are 1, 1, 2 and 0 respectively. OHAL Extended Powers reduces Sweep cost to one per space.
 
-Martial Law becomes OHAL only through the OHAL card. It never returns to Martial Law. At Propaganda, OHAL may move to Normalizing; Normalizing may return to OHAL at a cost of one Legitimacy; OHAL Extended Powers may move to OHAL. A voluntary move from OHAL to Extended Powers is unavailable before C3. An Event may specify its own change.
+Martial Law becomes OHAL only through the OHAL card. It never returns to Martial Law. At Propaganda (6.4 step 8) the State may make one move: OHAL to Normalizing; Normalizing to OHAL at a cost of one Legitimacy; OHAL Extended Powers to OHAL; or, from C3, OHAL to OHAL Extended Powers. Every other step is free. An Event may specify its own change.
 
-Village Clearance and Covert Action are not implemented Scenario A actions. Do not add them merely because a wider research table lists an unlock at an Emergency Rule step.
+| Step | Drain | Effect |
+|:---|---:|:---|
+| Martial Law | 1 | None. |
+| OHAL | 1 | Village Clearance is allowed (4.2.4). |
+| OHAL Extended Powers | 2 | Village Clearance is allowed. Sweep costs one per space. |
+| Normalizing | 0 | No Village Clearance. Return by Civic Action is allowed (3.6.1). |
+
+Changes for single provinces are Event effects only.
 
 ## 8.3 Village Guards
 
@@ -590,9 +701,60 @@ Guards removed by Attack, Strike Collaborators, upkeep or Events return to State
 
 **Reception:** a receiving-city obligation. Remove for one Resource by Civic Action before shifting that space toward Support. Three or more cost one Legitimacy at Propaganda.
 
-**Displacement:** blocks Rally, Extort and Coerce. It never changes Pop. New costs one Legitimacy at Propaganda, then becomes Old. Return removes it under 3.6.1. Ordinary Village Clearance placement is outside this playable edition.
+**Displacement:** blocks Rally, Extort and Coerce. It never changes Pop. New costs one Legitimacy at Propaganda, then becomes Old. Village Clearance places it (4.2.4). Return removes it under 3.6.1.
 
-**Office:** if introduced by a relevant later rule, caps the space at Passive Support and Passive Opposition; it contributes no Control or victory points. The Legal Politics system that normally places it is not active in Scenario A.
+**Covert:** a face-down marker from Covert Action (4.2.5). It becomes State Harm when revealed. While face down it costs the State two points at each victory check (7.2).
+
+**Office:** a legal-party presence in a domestic space. It gives no Control, is not a PKK piece and adds to neither victory score. It caps its space at Passive Support and Passive Opposition. Village Clearance in an Office space costs one more Legitimacy. The Legal Politics procedure places and removes Offices (8.5). Neither player chooses where.
+
+**Closure Case, Successor and Ban:** Legal Politics markers (8.5). The Closure Case marker is on the track, not in a space. The Successor marker records the number of Offices that return after a ban. The Ban marker caps Europe at 3 (1.7).
+
+**Restraint Broken:** a State or PKK marker placed when a faction breaks a ceasefire (8.6). Reset removes both.
+
+## 8.5 Legal Politics
+
+Legal Politics is a non-player system. It starts when HEP Founded sets Legal Space to Open (5.4) and runs in the Legal Politics phase (6.5). The PKK cannot move Legal Space or Offices (5.1). Legal Space has four steps: **Absent → Open → Prosecuted → Banned.**
+
+**Closure filing.** The State may file a closure case if Legal Space is Open or Prosecuted, at least one Office is on the map and no Closure Case marker is on the track. Place the Closure Case marker and set Legal Space to Prosecuted. Filing costs nothing. An Event that places the Closure Case marker also sets Legal Space to Prosecuted. The case resolves at the next Legal Politics phase, at line 1.
+
+**Procedure table.** Run lines 1 to 6 in order in each Legal Politics phase.
+
+| Line | Condition | Action |
+|:--:|:---|:---|
+| 1 | A Closure Case marker was on the track at the start of this phase. | **Ban.** Legal Space to Banned. Set the Successor marker to the number of Offices on the map. Remove all Offices. Legitimacy −2. Europe +1. Remove the Closure Case marker. Stop. |
+| 2 | Legal Space is Banned. | **Successor.** Legal Space to Prosecuted. Place Offices equal to the Successor number minus 1 (at least 1) in the line 4 order. Remove the Successor marker. Stop. |
+| 3 | Legal Space is Open or Prosecuted. | **Office limit:** 4 if Open, 3 if Prosecuted. |
+| 4 | Offices on the map are fewer than the limit. | Place one Office in the first eligible space in this order: Diyarbakır City, Western Cities, Mardin-Batman, Van-Bitlis, Şanlıurfa, Bingöl-Muş, Diyarbakır Rural, Botan, Ağrı, Adıyaman, Elazığ. Eligible: Pop 2 or more, no Office, no PKK Control and not at Active Support or Active Opposition. |
+| 5 | Offices on the map are more than the limit. | Remove Offices until at the limit. Remove an Office outside the line 4 order first (only Hakkari or Dersim can hold one, by Event). Then remove the latest in the line 4 order. |
+| 6 | Offices equal the limit and no Closure Case marker is on the track. | The prosecutor files: place the Closure Case marker. Line 1 bans at the next phase. |
+
+Line 6 sees the Office count after lines 4 and 5 of the same phase. Line 2 places as many Offices as the eligible spaces allow and the rest are lost. A ban with no Offices still returns a Successor with one Office.
+
+## 8.6 Ceasefire and Talks
+
+The Ceasefire track has four steps: **None → Declared → Reciprocal Restraint → Talks.**
+
+**Declaration.** From C3, the PKK may Declare Ceasefire as its card action, using the Limited Op box (2.3). Ceasefire must be None. Set it to Declared and raise Europe by one. Only the PKK declares, but an Event may declare for it.
+
+**Restrictions.**
+
+| Ceasefire | The PKK may not | The State may not |
+|:---|:---|:---|
+| Declared | Attack, Ambush, Strike Collaborators | Nothing. Each State Assault, Village Clearance, Cross-Border or Covert Action places the State Restraint Broken marker. |
+| Reciprocal Restraint or Talks | Attack, Ambush, Strike Collaborators, Coerce, place a domestic Base | Assault, Village Clearance, Cross-Border, Covert Action |
+
+**Breach.** A forbidden action stays legal, but the game shows a warning before you confirm it. The acting faction places its Restraint Broken marker in the first location of the action and Ceasefire goes to None. Free actions from Events count. A PKK breach lowers Europe by one. A State breach during Reciprocal Restraint or Talks costs two Legitimacy. A State action during Declared only places the marker; the State can then no longer accept that ceasefire.
+
+**Ceasefire step** (in the Legal Politics phase, after the procedure table). Resolve in this order. At each sub-step the State acts first, then the PKK.
+
+1. **Declared**, with no State Restraint Broken marker: the State may accept. Ceasefire goes to Reciprocal Restraint. If the State does not accept, the PKK keeps Declared or ends it (Ceasefire to None). If the PKK ends a ceasefire that it declared, Europe −1.
+2. **Reciprocal Restraint** that was already in force at the previous Propaganda round, with no breach since: each faction votes yes or no to Talks. Two yes votes set Ceasefire to Talks. One no keeps Reciprocal Restraint.
+3. **Talks** that were already in force at the previous Propaganda round, with no breach since: resolve the Negotiated Outcome.
+4. Either faction may leave Talks (to Reciprocal Restraint) or leave Reciprocal Restraint (to None). The State pays no cost. The PKK loses one Europe if it leaves Reciprocal Restraint.
+
+**Negotiated Outcome.** It needs all of these: Talks held through a full Campaign with no breach; Legal Space not Banned; and acceptance by both factions. The concessions are: Emergency Rule to Normalizing; Legal Space to Open; the PKK removes half of its domestic Guerrillas, rounded up, to Available. If both accept, apply the concessions and the game ends. Score it under 7.5. If either refuses, Talks continue, or that faction may leave Talks at sub-step 4.
+
+A "full Campaign" of Talks means that Talks were in force at the previous Propaganda round with no breach since. Two full Campaigns are needed to waive the Covert penalty (7.5).
 
 # 9.0 Key Terms
 
@@ -620,6 +782,14 @@ Guards removed by Attack, Strike Collaborators, upkeep or Events return to State
 
 **Location:** a selected map space, permitted box or Europe for Rally. For movement Operations, limits usually concern destinations.
 
+**Covert marker:** a face-down State marker from Covert Action. It is State Harm once revealed (4.2.5).
+
+**Negotiated Outcome:** a game end by agreement after a full Campaign of Talks (8.6, 7.5).
+
+**Office:** a legal-party marker in a domestic space. It caps the space at Passive levels (8.4).
+
+**Pivotal Event:** a card held in hand and played instead of the revealed Event (5.3).
+
 **Margin:** score minus threshold; at final scoring, also subtract excess Harm penalties.
 
 **Momentum:** a lasting effect discarded at Reset.
@@ -634,17 +804,37 @@ Guards removed by Attack, Strike Collaborators, upkeep or Events return to State
 
 **Underground:** a Guerrilla state protected from ordinary Assault, not an absence from Control counts.
 
-# 10.0 Scenario A: 1984–1989
+# 10.0 Scenarios and Setup
 
-## 10.1 Scope and Options
+## 10.1 Scenarios and Options
 
-Start: 15 August 1984. Use piles C1 and C2. Round two is final. State threshold 49; PKK threshold 30. Harm limit six each. State holds no Pivotal; PKK holds ARGK Formed.
+| Scenario | Start | Piles | Final round | State / PKK thresholds |
+|:---|:---|:---|:---:|:---:|
+| Full campaign | 15 August 1984 | C1 to C5 | 5 | 49 / 30 |
+| A: 1984–1989 | 15 August 1984 | C1, C2 | 2 | 49 / 30 |
+| B: 1990–1995 | January 1990 | C3, C4 | 2 | 48 / 41 |
+| C: 1993–1999 | January 1993 | C4, C5 | 2 | 44 / 48 |
 
-Before play, record whether **early KDP hot pursuit** is allowed and whether **Restricted Syria March** is allowed. The prototype defaults allow both. The hot-pursuit exception is a low-evidence design assumption; the options make its effect testable.
+In every scenario the Harm limit is six each and the PKK is First Eligible. The Pivotals held are:
 
-## 10.2 Starting Position
+| Scenario | State | PKK |
+|:---|:---|:---|
+| Full campaign | Area Domination, Coercive Diplomacy on Syria | ARGK Formed, Serhildan |
+| A | none | ARGK Formed |
+| B | Area Domination | Serhildan |
+| C | Area Domination, Coercive Diplomacy on Syria | Serhildan |
 
-Set State Resources 12, PKK Resources 5, Legitimacy 10, Europe 1 and Campaign C1. Emergency Rule is Martial Law. Syria is Host, KDP Host and PUK Tolerant. Legal Space is Absent and Ceasefire None. There are no Harm, Coercion, Reception, Displacement, Covert or Office markers.
+Before play, record these options. They stay fixed for the session.
+
+1. **Early KDP hot pursuit** (allowed or denied). It matters only in C1 and C2.
+2. **Restricted Syria March** (allowed or denied; 8.1.3).
+3. **Scenario B State threshold** (48 or 46). The default is 48. Other scenarios ignore it.
+
+The prototype defaults allow hot pursuit and Restricted Syria March. The hot-pursuit exception is a low-evidence design assumption; the options make its effect testable.
+
+## 10.2 Starting Position: Full Campaign and Scenario A
+
+Both start from the same board. Set State Resources 12, PKK Resources 5, Legitimacy 10, Europe 1 and Campaign C1. Emergency Rule is Martial Law. Syria is Host, KDP Host and PUK Tolerant. Legal Space is Absent and Ceasefire None. There are no Harm, Coercion, Reception, Displacement, Covert or Office markers.
 
 All Guerrillas below start Underground. Unlisted spaces or piece types are empty. State abbreviations: T = Troops, P = Police, B = State Base. PKK: G = Guerrillas, B = PKK Base.
 
@@ -675,15 +865,29 @@ Available: 14 Troops, 8 Police, 4 State Bases, 20 Guerrillas and 9 PKK Bases. Al
 
 For each Campaign separately:
 
-1. Take its mandatory structural cards (5.4). Randomly draw from that Campaign's other eligible Event, Capability and Momentum cards until there are 12 cards in the pile. Do not include ARGK or the Propaganda card in these 12.
+1. Take its mandatory structural cards (5.4). Randomly draw from that Campaign's other eligible Event, Capability and Momentum cards until there are 12 cards in the pile. Do not include a Pivotal or the Propaganda card in these 12.
 2. Shuffle the 12. Separate the top eight from the bottom four.
-3. If a mandatory card is in the bottom four, exchange it with the lowest non-mandatory card in the top eight. A required earlier chain card also receives this protection.
-4. Apply chain order: if both cards of a listed pair are present, put the earlier card above the later card by swapping them if necessary. The Scenario A pair is **DK-028 Paris Kurdish Conference before DK-029 SHP Expels Kurdish Deputies**, when both are dealt. There is no additional C1 chain in the current package.
+3. If a mandatory card is in the bottom four, exchange it with the lowest non-mandatory card in the top eight. If a chain pair ends in a mandatory card, the earlier card of that pair also receives this protection.
+4. Apply chain order: if both cards of a pair below are present, put the earlier card above the later card by swapping them if necessary.
 5. Shuffle the Campaign's Propaganda card into the bottom four, making five cards, and put the top eight above them. Propaganda is now in position 9–13.
 
-Stack C1 above C2. Set unused pool cards aside unseen. Keep ARGK in the PKK hand. Set PKK First Eligible and reveal the first card.
+Chain pairs, earlier card first:
 
-**S0 test exception:** S0 uses a smaller eight-card C1 selection, excludes the later slice's Capabilities, Momentum and Pivotals and puts Propaganda last. It ends after one round and is marked not comparable. It is not Scenario A.
+| Campaign | Earlier card | Later cards |
+|:---|:---|:---|
+| C1 | none | none |
+| C2 | DK-028 Paris Kurdish Conference | DK-029 SHP Expels Kurdish Deputies |
+| C3 | DK-040 Northern Iraq Vacuum | DK-041 Operation in Northern Iraq |
+| C3 | DK-037 HEP Founded | DK-042 Election Brings HEP Deputies to Parliament; DK-051 Prosecutor Files to Close HEP |
+| C4 | DK-056 PKK Unilateral Ceasefire | DK-057 Ceasefire Extended at Bar Elias; DK-058 President Özal Dies; DK-059 Bingöl Road Killings |
+| C4 | DK-061 PKK Attacks on Turkish Offices in Europe | DK-064 Germany Bans PKK and ERNK |
+| C4 | DK-066 Parliament Lifts DEP Immunity | DK-068 Constitutional Court Dissolves DEP |
+| C5 | DK-079 Susurluk Car Crash | DK-080 Susurluk Commission Report |
+| C5 | DK-090 PKK Leader Leaves Syria | DK-092 Arrest in Rome |
+
+Stack the piles in Campaign order. Set unused pool cards aside unseen. Keep each faction's Pivotals in its hand. Set PKK First Eligible and reveal the first card.
+
+**S0 test exception:** S0 uses a smaller eight-card C1 selection, excludes the later slice's Capabilities, Momentum and Pivotals and puts Propaganda last. It ends after one round and is marked not comparable. It is not one of the scenarios above.
 
 ## 10.4 Movement Links
 
@@ -702,6 +906,72 @@ External movement links are Hakkari–KDP, Botan–KDP, KDP–PUK, Mardin-Batman
 
 ## 10.5 End and Debrief
 
-At the second Propaganda, check victory first. If nobody wins, skip income, resolve the other steps through Agitation and compare final margins. Do not Redeploy or Reset after final scoring.
+At the final Propaganda round, check victory first. If nobody wins, skip income, resolve the other steps through Agitation, reveal all Covert markers and compare final margins. Do not Redeploy or Reset after final scoring.
 
-In the simulator, save a debrief note and export it with the session. For a physical test, write the same details on paper: scenario, options, winner, final margins, Harm counts, unclear rules and any rule changes tested. Designer completion of this playthrough and notes export remains the IC-3a checkpoint.
+In the simulator, save a debrief note and export it with the session. For a physical test, write the same details on paper: scenario, options, winner, final margins, Harm counts, unclear rules and any rule changes tested.
+
+## 10.6 Scenario B: 1990–1995
+
+Start January 1990. Use piles C3 and C4. Law 3175 is in effect and all 16 Guards are Available or on the map. Set State Resources 15, PKK Resources 8, Legitimacy 9, Europe 2 and Campaign C3. Emergency Rule is OHAL. Syria, KDP and PUK are all Tolerant. Legal Space is Absent and Ceasefire None. There are no markers on the map. All Guerrillas start Underground. Apply the C3 switches (10.8).
+
+Abbreviations as in 10.2, with Gd = Village Guards.
+
+| Space | State | PKK | Level |
+|:---|:---|:---|:---|
+| Hakkari | 2T, 1P, 1Gd | 2G, 1B | Passive Opposition |
+| Botan | 3T, 1P, 2Gd, 1B | 3G, 1B | Passive Opposition |
+| Mardin-Batman | 2T, 2P, 1Gd, 1B | 2G | Passive Opposition |
+| Diyarbakır City | 4T, 2P, 1B | 1G | Neutral |
+| Diyarbakır Rural | 1T, 1P, 1Gd | 1G, 1B | Neutral |
+| Şanlıurfa | 1T, 2P, 2Gd | — | Passive Support |
+| Adıyaman | 1P | — | Passive Support |
+| Elazığ | 1T, 1P, 1B | — | Passive Support |
+| Dersim | 1T, 1P | 1G | Neutral |
+| Bingöl-Muş | 1T, 1P, 1Gd | 2G, 1B | Passive Opposition |
+| Van-Bitlis | 2T, 1P, 1B | 1G | Neutral |
+| Ağrı | 1T, 1P | — | Neutral |
+| Western Cities | 1T, 1P, 1B | — | Passive Support |
+| KDP Zone | — | 2G, 1B | — |
+| PUK Zone | — | 1G | — |
+| Syria-Bekaa | — | 1G, 1B, Leadership Present | — |
+
+Available: 10 Troops, 8 Police, 8 Guards, 2 State Bases, 13 Guerrillas and 6 PKK Bases. Starting scores: State 20 (Total Support 11 plus Legitimacy 9); PKK 14 (Total Opposition 10 plus 4 domestic Bases). Pivotals: State Area Domination; PKK Serhildan. Thresholds 48 (or 46) and 41.
+
+## 10.7 Scenario C: 1993–1999
+
+Start January 1993. Use piles C4 and C5. Law 3175 is in effect and the Northern Iraq Vacuum is in force. Set State Resources 20, PKK Resources 10, Legitimacy 7, Europe 3 and Campaign C4. Emergency Rule is OHAL Extended Powers. Syria is Restricted, KDP Hostile and PUK Restricted. Legal Space is Prosecuted and a Closure Case marker is on the track. Ceasefire is None. All Guerrillas start Underground. Apply the C3 switches (10.8).
+
+| Space | State | PKK | Level | Markers |
+|:---|:---|:---|:---|:---|
+| Hakkari | 2T, 1P, 1Gd | 3G, 1B | Active Opposition | — |
+| Botan | 4T, 1P, 2Gd, 1B | 3G, 1B | Active Opposition | Displacement (Old), State Harm |
+| Mardin-Batman | 2T, 2P, 2Gd, 1B | 2G, 1B | Passive Opposition | Office, State Harm, Disputed Harm |
+| Diyarbakır City | 3T, 3P, 1B | 1G | Passive Opposition | Office |
+| Diyarbakır Rural | 2T, 1P, 1Gd | 2G, 1B | Passive Opposition | State Harm |
+| Şanlıurfa | 1T, 2P, 2Gd | — | Passive Support | — |
+| Adıyaman | 1P | — | Neutral | — |
+| Elazığ | 1T, 1P, 1B | — | Passive Support | — |
+| Dersim | 1T, 1P | 2G | Passive Opposition | — |
+| Bingöl-Muş | 1T, 1P, 1Gd | 3G, 1B | Passive Opposition | — |
+| Van-Bitlis | 2T, 1P, 1Gd, 1B | 2G | Neutral | — |
+| Ağrı | 1T, 1P | 1G | Neutral | — |
+| Western Cities | 1T, 1P, 1B | — | Passive Support | Office, Reception |
+| KDP Zone | — | 2G, 1B | — | — |
+| PUK Zone | — | 2G | — | — |
+| Syria-Bekaa | — | 1G, 1B, Leadership Present | — | — |
+
+Available: 9 Troops, 7 Police, 6 Guards, 2 State Bases, 6 Guerrillas and 5 PKK Bases. Starting scores: State 16 (Total Support 9 plus Legitimacy 7); PKK 23 (Total Opposition 18 plus 5 domestic Bases). Harm counts: State 3 and PKK 0. Pivotals: State Area Domination and Coercive Diplomacy on Syria; PKK Serhildan. Thresholds 44 and 48.
+
+## 10.8 Campaign Switches
+
+A switch turns a system on or off. Set the switches of every Campaign up to the starting Campaign at setup, then set those of each new Campaign at Reset (6.9).
+
+| Entering | Switches on | Switches off |
+|:---|:---|:---|
+| C1 | Early KDP hot pursuit | none |
+| C2 | none beyond the mandatory cards | none |
+| C3 | Village Clearance; Covert Action; Declare Ceasefire; State step from OHAL to OHAL Extended Powers | Early KDP hot pursuit |
+| C4 | none | none |
+| C5 | Return by Civic Action | none |
+
+The Legal Politics phase has no effect until Legal Space leaves Absent. Pivotals are not switches: each Pivotal card names its own earliest Campaign (5.3).

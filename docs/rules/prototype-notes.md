@@ -2,9 +2,9 @@
 
 ## B.1 Edition Boundary
 
-This is the playable **Scenario A, C1/C2** ruleset R4, dated 1 November 2026. The source baseline is main commit **d9a6453**. This revision includes the approved DD-21 Attack rule in the simulator and printed text. Event encodings and numerical package parameters are unchanged.
+This is the **full game** ruleset R4, dated 8 November 2026: the full five-Campaign game and Scenarios A, B and C. The source baseline is main commit **f0e6415**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire and Talks, the four Pivotals, the structural cards and the Campaign switches. The earlier Scenario A edition was based on commit **d9a6453**.
 
-Scenarios B and C, the five-Campaign game, Legal Politics procedure, party closure, Village Clearance, Covert Action, ceasefire negotiations, later Pivotals and optional third-player modules are **not implemented as complete playable systems in this edition**. References to their tracks or markers explain existing components and generic adjustments; they do not authorize those actions in Scenario A. IC-3a still requires the designer to finish Scenario A and export notes.
+**Not covered in this edition:** the optional modules of research chapter 13 (including the third-player module) and the card appendix for Campaigns C3 to C5. Appendix A still reproduces C1 and C2 only. The C3 to C5 card text is in `game-packages/kurdish-coin/0.1.0/cards/`. The designer checkpoints IC-3a to IC-3c are still open, so the full-game systems are implemented but not yet playtested by the designer.
 
 ## B.2 Rule Precedence and Consolidation
 
@@ -18,7 +18,10 @@ The latest explicit designer decisions take precedence over older research wordi
 - **DEC-62:** the replan also applies when the planned locations become unaffordable. With no legal, affordable replacement, the Operation ends; the roll, posture change and cost stand.
 - **DEC-55:** ARGK flips Guerrillas in every PKK Base space, not only spaces receiving recruits.
 - **DEC-57:** Guard Abuse applies once in every qualifying space.
-- **PA-01 to PA-10 and PA-13/14/16/17:** executing-faction choices, bounded tracks, modified die totals, Coerce order, no-roll Ambush, detection after movement, finite supply, victory ties, seeded randomness, Air Mobility's domestic-only limits and Scenario A options/Pivotal scope.
+- **DEC-63 to DEC-66 and DEC-74:** Village Clearance, Covert Action, Legal Politics and the ceasefire step, in the approved texts of `docs/prototype/27` to `30`. DEC-68 deleted the separate OHAL Powers flag, so Village Clearance depends on Campaign C3 and Emergency Rule only.
+- **DEC-67 and DEC-69 to DEC-73, DEC-75:** the Pivotals, the structural cards and the C3 to C5 card encodings, including the PKK Event restriction.
+- **DEC-77:** the Scenario B State threshold defaults to 48; 46 stays a session option.
+- **PA-01 to PA-10 and PA-13/14/16 to 18:** executing-faction choices, bounded tracks, modified die totals, Coerce order, no-roll Ambush, detection after movement, finite supply, victory ties, seeded randomness, Air Mobility's domestic-only limits, the Syria March option and the Village Clearance shift block.
 
 The passing and eligibility procedure is the recorded DD-04 model. Passing does not automatically promote Second Eligible to First Eligible. The fixed default simulator seed of 1 is a reproducibility choice; select Random for a new game seed.
 
@@ -30,7 +33,9 @@ These differences are made explicit rather than silently resolved. For **current
 
 **Reclaiming on-map pieces.** Research 04 §2.1 permits some owner-chosen removals to replenish an exhausted Available supply, excluding Guards and external pieces. Current Operation handlers require Available supply and do not offer this withdrawal mechanism. This edition does not invent a simulator withdrawal action.
 
-No general COIN-series rule should be imported to fill either difference without recording the change. These are implementation/research differences, not additional printed-game advantages.
+**Talks vote.** Research 07 §7.3 step 2 has each faction choose yes or no to Talks in secret. The simulator takes both answers on one screen, State first (DEC-66). The printed rule in 8.6 says only that each faction votes. A future decision must say whether a physical game uses a secret vote.
+
+No general COIN-series rule should be imported to fill any of these differences without recording the change. These are implementation/research differences, not additional printed-game advantages.
 
 ## B.4 Primary Rule Sources
 
@@ -43,7 +48,9 @@ The source files below are in the *HandfulOfBandits* project. Numbers in origina
 - **07 Political, Civilian and Sanctuary Systems:** Civic Action, Agitation, Harm, Guards, Emergency Rule and hosts.
 - **08 Event Deck:** pools, lasting effects, chain constraints and attribution.
 - **09 Victory and Scoring:** thresholds, Harm gate, final margins and ties.
-- **10 Scenarios and Setup:** Scenario A position and starting checks.
+- **10 Scenarios and Setup:** the four setups, the structural cards and the Campaign switches.
+
+The Phase 3b texts (`docs/prototype/27` to `31`) and the scenario files in `game-packages/kurdish-coin/0.1.0/scenarios/` give the current wording and values for Village Clearance, Covert Action, Legal Politics, ceasefire, the Pivotals and the setups.
 
 All eight chapters are under `research/research-final/package-b-coin-design/`. The decision register is `research/research-final/project-management/design-decisions.md`; prototype decisions are in `docs/prototype/13-design-decisions.md`. Package parameters, assumptions, scenario files and current card YAML supplied the implemented values.
 
