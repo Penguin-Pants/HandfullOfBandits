@@ -94,6 +94,33 @@ describe("experiment runner (20 Phase 2)", () => {
     expect(replayExperiment(out).exitCode).toBe(0);
   }, 30000);
 
+  it("persists replayable setup before a worker can stall or exit during startup", async () => {
+    const dir = tempDir();
+    for (const [name, code, status] of [["stall", "setInterval(() => {}, 1000);", "timeout"], ["exit", "process.exit(3);", "workerError"]] as const) {
+      const worker = join(dir, `${name}.mjs`);
+      writeFileSync(worker, code);
+      const out = join(dir, name);
+      const manifest = writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 41, count: 1 }] }, limits: { commands: 5, decisionMs: null, gameMs: 1000 } }));
+      const outcome = await runExperiment(manifest, out, { workerUrl: pathToFileURL(worker) });
+      expect(outcome.byStatus).toEqual({ [status]: 1 });
+      const game = results(out)[0];
+      expect(game?.startHash).toMatch(/^[0-9a-f]{64}$/);
+      expect(game?.finalHash).toBe(game?.startHash);
+      expect(readJournal(out, game?.gameId ?? "").map((e) => e.t)).toEqual(["start", "end"]);
+      expect(replayExperiment(out).exitCode).toBe(0);
+    }
+  }, 30000);
+
+  it("aborts if the worker reports a different setup", async () => {
+    const dir = tempDir();
+    const worker = join(dir, "wrong-setup.mjs");
+    writeFileSync(worker, 'import { parentPort } from "node:worker_threads"; parentPort.on("message", () => parentPort.postMessage({ t: "start", startHash: "wrong" }));');
+    const out = join(dir, "wrong");
+    const manifest = writeManifest(dir, devManifest({ seeds: { registry: "development", blocks: [{ from: 41, count: 1 }] } }));
+    await expect(runExperiment(manifest, out, { workerUrl: pathToFileURL(worker) })).rejects.toThrow("Worker setup differs");
+    expect(JSON.parse(readFileSync(join(out, "status.json"), "utf8"))).toMatchObject({ state: "aborted" });
+  }, 30000);
+
   it("records a worker that dies as workerError and a command cap as commandLimit", async () => {
     const dir = tempDir();
     const dying = join(dir, "dying-worker.mjs");

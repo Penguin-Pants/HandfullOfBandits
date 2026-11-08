@@ -5,7 +5,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { Worker } from "node:worker_threads";
 import { canonicalJson } from "../engine/core/canonical.ts";
-import { packageContent } from "../package/load.ts";
+import { coinHandlers } from "../engine/coin/handlers.ts";
+import { createEngine } from "../engine/index.ts";
+import { packageContent, withSessionOptions } from "../package/load.ts";
 import { Artifacts, fsWriter, readJournal, type ArtifactWriter } from "./experiment-artifacts.ts";
 import { freezeExperiment, parseManifest } from "./experiment-manifest.ts";
 import type { GameJob, GameResultRecord, GameStatus, JournalEvent } from "./game-runner.ts";
@@ -110,6 +112,7 @@ export async function runExperiment(manifestFile: string, outDir: string, option
   artifacts.json("status.json", { state: "running", scheduled: frozen.jobs.length, started, ...extra });
 
   const init: WorkerInit = { packageFiles: packageContent(frozen.data), packageHash: frozen.packageContentHash, scenario: manifest.scenario, conditions, limits: { commands: manifest.limits.commands, decisionMs: manifest.limits.decisionMs } };
+  const engine = createEngine(coinHandlers);
   const queue = frozen.jobs.filter((j) => !records.has(j.gameId));
   const workerUrl = options.workerUrl ?? new URL("./experiment-worker.ts", import.meta.url);
 
@@ -141,8 +144,21 @@ export async function runExperiment(manifestFile: string, outDir: string, option
         if (--active === 0) done();
         return;
       }
-      const worker = reuse ?? new Worker(workerUrl, { workerData: init });
-      const progress: Progress = { decisions: 0, transitions: 0, liveRejected: 0, startHash: "", lastHash: "", commands: 0 };
+      let worker: Worker;
+      let start: Extract<JournalEvent, { t: "start" }>;
+      try {
+        const ruleset = withSessionOptions(frozen.ruleset, manifest.scenario, conditions[job.conditionId] ?? {});
+        const setup = engine.start(ruleset, manifest.scenario, job.seed);
+        start = { t: "start", gameId: job.gameId, seed: job.seed, startHash: setup.stateHash, job, deck: setup.state.deck.piles };
+        // Persist the zero-command prefix before worker startup can fail or time out.
+        artifacts.journal(job.gameId, start);
+        worker = reuse ?? new Worker(workerUrl, { workerData: init });
+      } catch (e) {
+        void reuse?.terminate();
+        abort(e);
+        return;
+      }
+      const progress: Progress = { decisions: 0, transitions: 0, liveRejected: 0, startHash: start.startHash, lastHash: start.startHash, commands: 0 };
       let settled = false;
       const close = (end: Extract<JournalEvent, { t: "end" }> | null, healthy: boolean): void => {
         if (settled) return;
@@ -167,12 +183,13 @@ export async function runExperiment(manifestFile: string, outDir: string, option
         if (settled) return;
         try {
           if (event.t === "end") { close(event, true); return; }
-          if (event.t === "start") { progress.startHash = event.startHash; progress.lastHash = event.startHash; }
-          if (event.t === "step") {
-            progress.commands = event.i + 1;
-            progress.lastHash = event.hash;
-            for (const d of event.decisions) { progress.decisions++; progress.transitions += d.transitions; progress.liveRejected += d.liveRejected; }
+          if (event.t === "start") {
+            if (canonicalJson(event) !== canonicalJson(start)) throw new Error(`Worker setup differs for ${job.gameId}`);
+            return; // The parent already persisted this event.
           }
+          progress.commands = event.i + 1;
+          progress.lastHash = event.hash;
+          for (const d of event.decisions) { progress.decisions++; progress.transitions += d.transitions; progress.liveRejected += d.liveRejected; }
           artifacts.journal(job.gameId, event);
         } catch (e) {
           settled = true;
