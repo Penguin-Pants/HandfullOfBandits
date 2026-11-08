@@ -180,11 +180,20 @@ export class SessionService {
     const ruleset = withSessionOptions(rules.ruleset, row.scenario_id, JSON.parse(row.options) as Record<string, string | number>);
     const { data } = rules;
     if (!this.checked.has(sessionId)) {
-      this.checked.add(sessionId);
       // A package stored before the switch rows (P3c-01) would play with every switch gate closed.
-      if (lacksSwitches(ruleset) || (row.code_fingerprint !== codeFingerprint() && this.replayCheck(row, ruleset) !== null)) {
+      let incompatible = lacksSwitches(ruleset);
+      if (!incompatible && row.code_fingerprint !== codeFingerprint()) {
+        try {
+          incompatible = this.replayCheck(row, ruleset) !== null;
+        } catch {
+          // An unreadable history cannot establish that the current engine is compatible.
+          incompatible = true;
+        }
+      }
+      if (incompatible) {
         this.db.prepare("UPDATE sessions SET status = 'readOnly' WHERE session_id = ?").run(sessionId);
       }
+      this.checked.add(sessionId);
     }
     return { session: getSession(this.db, sessionId) ?? row, head: this.head(sessionId), ruleset, data };
   }
