@@ -39,3 +39,27 @@ Print A4 portrait at 100% / Actual size. Duplex uses long-edge binding. Grayscal
 ## R4 revision: 1 November 2026
 
 The approved DD-21 change is now reflected in rule 3.3.3, the example, source notes and PDF. The current build uses the manifest ruleset identifier and the source date for the cover, running header/footer and PDF metadata. The abbreviated format note keeps the same 12-page A4 layout and font size. Original R3 review findings above remain historical. Current implementation and full-change review: `../prototype/attack-attrition-review.md`. Validation: 819 tests pass; rebuilt PDF checked for A4 dimensions, matching contents/bookmarks, current rule text and no text-area overflow.
+
+## Full-game revision: 8 November 2026
+
+Scope: rules source `prototype-rules.md` extended from Scenario A to the full game (five Campaigns, Scenarios A to C, full campaign). Source precedence: engine code, then DEC entries, then `docs/prototype/27` to `34`, then research chapters 05, 07, 09 and 10. Baseline commit `f0e6415`. The card appendix is unchanged (C1 and C2 only), by designer choice ("rules first").
+
+## Pass 1: correctness
+
+Traced each new rule to a handler or package file: Village Clearance and Covert Action (`ops/sa/*.ts`, timing unset so before or after), Diplomacy modifiers (`ops/sa/host-actions.ts:33-34`), Cross-Border and Vacuum (`ops/sa/cross-border.ts`, `ops/common-pkk.ts:21`), Legitimacy phase gains (`propaganda/legitimacy.ts`), ceasefire step and Negotiated Outcome (`propaganda/ceasefire-step.ts`, `victory.ts:98-107`), switches (`switches.ts`), and the three scenario files. Starting scores recomputed from the scenario YAML: A 21/4, B 20/14, C 16/23 (State Harm 3), matching research 10.
+
+- **Fix:** the old text said Diplomacy KDP +1 "does not apply in Scenario A" and Syria -1 applies "throughout Scenario A". Rewritten to C3 and C1 to C4, as the engine reads them.
+- **Fix:** the old Tolerant rule said no Bases. Now Tolerant KDP or PUK allows a Base after Northern Iraq Vacuum (Syria excluded, `common-pkk.ts:21`).
+- **Fix:** research 10 s6.2 lists "Legal Politics phase" and "Pivotal" rows as switches. The engine has no such switches (`parameters.yaml` `switch.*`). The book lists only the engine's switches.
+- **Fix:** a balanced Negotiated Outcome has no winner in the engine (`victory.ts:106`). Stated in 7.5.
+- **Decide, documented:** research 07 s7.3 has a secret Talks vote; the engine takes both answers on one screen, State first (DEC-66). Appendix B records it. The printed rule says only that each faction votes.
+- **Decide, open for the designer:** the Negotiated Outcome concession removes half the domestic PKK Guerrillas, but no source says who chooses which. The engine accepts any split that sums to the right total.
+- **Drop:** `docs/prototype/31` s7 point 7 concern about the ceasefire step with Legal Space Absent. HEP Founded always precedes the C3 Propaganda card and no card resets Legal Space (DEC-67). 5.4 states this.
+
+## Pass 2: simplicity
+
+One rules file edited in place. Existing section numbers kept, so `build-rulebook.py` references (5.3) and handout references stay valid. New material sits in new subsections (4.2.4, 4.2.5, 5.6, 7.5, 8.5, 8.6, 10.6 to 10.8). No new script, target or dependency. Cover text in `rulebook-layout.tex` now says "Full game".
+
+## Validation
+
+Not run: `make rulebook`. This machine has no Pandoc or XeLaTeX, so the PDF was not rebuilt and the committed PDF is stale. Rebuild it where the toolchain exists, then check page count, overfull boxes and contents links.
