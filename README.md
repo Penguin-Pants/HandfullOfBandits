@@ -34,7 +34,7 @@ Run an automated playtest experiment with `cd sim` then `npm run sim -- experime
 
 Policies from research 12 section 7: State `concentration` (no Civic Action), `civic-action` (least security first) and `emergency-rule`; PKK `sanctuary`, `concealment` and `coerce-only`. `scripted` is also available. Village Clearance, talks cycling and Legal Politics policies wait for their later-phase rules. CSV holds round scores, margins, Harm, income, Resources and political tracks. The report flags an 80% faction win rate across at least ten games. These runs screen for exploits; they do not establish balance.
 
-The draft physical map is [draft-map.svg](game-packages/kurdish-coin/0.1.0/map/draft-map.svg). The simulator uses the illustrated atlas with live counted pieces, linked panels for narrow regions and map navigation. Older saved layouts retain the schematic fallback. See [UX design and validation](docs/ux-overhaul.md).
+The draft physical map is [draft-map.svg](game-packages/kurdish-coin/0.1.0/map/draft-map.svg). The simulator uses the illustrated atlas with live counted pieces, linked panels for narrow regions and map navigation. Older saved layouts retain the schematic fallback. See [UX design and validation](docs/ux-overhaul.md). The printed-board look, wooden piece sprites and board-first layout are described in [the implemented visual system](docs/coin-visual-redesign-design.md).
 
 ## Printed rules
 
