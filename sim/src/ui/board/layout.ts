@@ -67,6 +67,9 @@ export function spreadPlan(space: SpaceView, area: Pick<AtlasSpace, "stack" | "r
   const within = (px: number, py: number): boolean => area.rings.length === 0 || area.rings.filter(r => inside([px, py], r)).length % 2 === 1;
   // An inset box has no border ring. It holds one row.
   if (area.rings.length === 0 && rows.length > 1) return null;
+  // A host area prints its posture counter below the pieces. More rows than the piles need would push it over the border.
+  const piles = Math.min(units.length, 6);
+  if (space.kind !== "domestic" && rows.length > Math.ceil(piles / (piles === 4 ? 2 : Math.min(3, piles)))) return null;
   const groups: SpreadGroup[] = [];
   for (const [r, row] of rows.entries()) {
     const total = row.reduce((sum, u) => sum + u.body + u.number, 0) + GAP * (row.length - 1);

@@ -77,6 +77,16 @@ describe("individual pieces (spread plan)", () => {
     }
   });
 
+  it("never uses more rows than the piles in a host area, so the posture counter below stays inside the border", () => {
+    const syria = view.spaces.find(s => s.id === "syria-bekaa");
+    const host = ATLAS.spaces["syria-bekaa"];
+    const guerrilla = syria?.pieces.find(p => p.piece === "guerrilla");
+    if (syria === undefined || host === undefined || guerrilla === undefined) throw new Error("syria");
+    const crowded = { ...syria, markers: [], pieces: [{ ...guerrilla, face: "active", count: 6 }, { ...guerrilla, face: "underground", count: 6 }] };
+    expect(spreadPlan(crowded, host)?.rows ?? 1).toBe(1);
+    expect(spreadPlan(syria, host)?.rows).toBe(1);
+  });
+
   it("returns null when the individual pieces do not fit, so the area falls back to piles", () => {
     expect(spreadPlan(withCounts(12), area)).toBeNull();
   });
