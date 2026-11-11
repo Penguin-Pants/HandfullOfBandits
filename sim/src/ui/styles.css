@@ -589,3 +589,28 @@ body:has(.play-screen) .tip {font-size:16px;}
   .track-card.expanded [data-track="emergencyRule"] {flex-basis:150px;}
   .track-scales > summary {padding:2px 6px;}
 }
+.atlas-selected .casing {stroke:#2e2114; stroke-opacity:.8; stroke-width:8;}
+.atlas-selected .ring {stroke:#f0c54a; stroke-width:4;}
+
+/* Narrow desktop (1101 to 1500 px): the side panel takes no layout column. It lies over the right
+   part of the map window, below the track card and the toolbar. Those rows and the forces bar get the
+   full width and stay on one row. The board keeps clear of the open panel, so no area is under it. */
+@media (min-width:1101px) and (max-width:1500px) {
+  .play-screen:not(.actions-hidden) {--sidebar-width:320px;}
+  .play-screen {--overlay-top:104px;}
+  .play-screen:not(:has(.track-card)) {--overlay-top:50px;}
+  .play-screen .play {grid-template-columns:minmax(0,1fr); position:relative;}
+  .play-screen:not(.map-only) .side {position:absolute; z-index:4; right:0; top:var(--overlay-top); bottom:50px; width:var(--sidebar-width); height:auto; box-sizing:border-box;}
+  .play-screen:not(.map-only) .map-window {margin-right:var(--sidebar-width);}
+  .play-screen .map-navigation .board-title {display:none;}
+  /* The caption shows only while it reports candidate targets. Its fixed hints are in each area tooltip. */
+  .play-screen .map-caption:not(:has(strong)) {display:none;}
+  .play-main {gap:4px;}
+  /* The Note button is at the lower right corner. The forces bar keeps clear of it. */
+  .play-screen .forces-bar {margin-right:108px; gap:4px 8px; padding:4px 6px;}
+  .play-screen .forces-group {gap:7px; flex-wrap:nowrap; white-space:nowrap;}
+  .play-screen .forces-bar > button {padding:4px 6px;}
+  .play-screen .action-panels .elig-box button {padding:4px 0; letter-spacing:-.2px;}
+  .play-screen .elig-row {gap:2px;}
+  .play-screen .elig-box {padding:2px 1px;}
+}

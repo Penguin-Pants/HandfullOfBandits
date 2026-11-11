@@ -74,13 +74,13 @@ try {
   await page.getByRole('heading',{name:'Choose your action'}).waitFor();await page.waitForTimeout(300);
   const measure=()=>page.evaluate(()=>{
    const rect=sel=>document.querySelector(sel)?.getBoundingClientRect(),board=rect('[aria-label="Board"]'),root=document.documentElement;
-   return {ratio:board.width*board.height/(innerWidth*innerHeight),noScroll:root.scrollWidth<=innerWidth&&root.scrollHeight<=innerHeight&&scrollX===0&&scrollY===0,toolbar:rect('.map-navigation').height,track:rect('.track-card')?.height??0,side:rect('aside.side')?.width??0};
+   return {ratio:board.width*board.height/(innerWidth*innerHeight),noScroll:root.scrollWidth<=innerWidth&&root.scrollHeight<=innerHeight&&scrollX===0&&scrollY===0,toolbar:rect('.map-navigation').height,track:rect('.track-card')?.height??0,side:rect('aside.side')?.width??0,navWidth:rect('.map-navigation').width,uncovered:(board.width*board.height-['aside.side','.track-card','.map-caption','.forces-bar','.space-inspector'].reduce((sum,sel)=>{const r=rect(sel);return r===undefined?sum:sum+Math.max(0,Math.min(r.right,board.right)-Math.max(r.left,board.left))*Math.max(0,Math.min(r.bottom,board.bottom)-Math.max(r.top,board.top));},0))/(innerWidth*innerHeight)};
   });
   const open=await measure();
   check(open.noScroll,'no page scroll, panels open '+label,open);
   check(open.toolbar<=(width>=1900?48:96),'compact toolbar (one row at 1920, two at 1366) '+label,open);
   if(width>=1900){check(open.ratio>=.6,'board covers 60% of the window with panels open '+label,open);check(open.side<=420&&open.track<=60,'side panel and track card compact '+label,open);}
-  else check(open.side<=360,'side panel width '+label,open);
+  else {check(open.side<=360,'side panel width '+label,open);check(open.uncovered>=.6,'uncovered board is 60% of the window with the overlay side panel open '+label,open);check(open.navWidth>=width-12,'side panel takes no layout column: the toolbar has the full width '+label,open);}
   await page.screenshot({path:join(shots,`board-first-${label}-panels.png`)});
   await page.getByRole('button',{name:'Map only (M)',exact:true}).click();await page.waitForTimeout(200);
   const only=await measure();
@@ -95,7 +95,8 @@ try {
   check(await zoom.textContent()!==zoomWas&&await page.evaluate(()=>scrollY)===0,'wheel over the board zooms and the page does not scroll '+label,{zoomWas,now:await zoom.textContent()});
   const now=await under();
   check(Math.hypot(now[0]-was[0],now[1]-was[1])<3,'wheel zoom keeps the point under the pointer '+label,{was,now});
-  for(let i=0;i<3;i++){await page.mouse.wheel(0,-100);}await page.waitForTimeout(150);
+  // A small centered zoom keeps the board margin in view, so a background start point exists at every window size.
+  await page.getByRole('button',{name:'Fit map'}).click();await page.getByRole('button',{name:'Zoom in'}).click();await page.getByRole('button',{name:'Zoom in'}).click();await page.waitForTimeout(150);
   const before=await board.getAttribute('viewBox');
   const start=await page.evaluate(()=>{const b=document.querySelector('[aria-label="Board"]').getBoundingClientRect();for(let x=b.left+20;x<b.right-20;x+=9)for(let y=b.top+20;y<b.bottom-20;y+=9){const el=document.elementFromPoint(x,y);if(el&&el.closest('[data-space]')===null&&!el.closest('[role="meter"]'))return [x,y];}return null;});
   check(start!==null,'board background point found '+label);

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { boardView } from "../../server/view.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { turnOf } from "../../../test/board.ts";
-import { presentation, statusLayout } from "./layout.ts";
+import { presentation, SPREAD_CAP, spreadPlan, statusLayout } from "./layout.ts";
 import { inside } from "./region.ts";
 import { ATLAS } from "./atlas-data.ts";
 const view = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));
@@ -45,3 +45,39 @@ it.each(view.spaces.filter(s => s.kind === "domestic" && !s.tags.includes("noLan
     }
   }
 },30000);
+
+describe("individual pieces (spread plan)", () => {
+  const botan = view.spaces.find(s => s.id === "botan");
+  const area = ATLAS.spaces.botan;
+  if (botan === undefined || area === undefined) throw new Error("botan");
+  const withCounts = (count: number, groups = botan.pieces.length) => ({ ...botan, markers: [], pieces: botan.pieces.slice(0, groups).map(p => ({ ...p, count })) });
+
+  it("places one sprite per piece and no count while every group is at the cap or below", () => {
+    const plan = spreadPlan(botan, area);
+    if (plan === null) throw new Error("the start setup must fit");
+    expect(plan.groups.map(g => g.at.length)).toEqual(botan.pieces.map(p => p.count));
+    expect(plan.groups.every(g => g.count === null)).toBe(true);
+    expect(spreadPlan(botan, area)).toEqual(plan);
+  });
+
+  it("draws 6 sprites and prints the exact total for a group above the cap", () => {
+    const plan = spreadPlan(withCounts(9, 1), area);
+    if (plan === null) throw new Error("one group of 9 must fit");
+    expect(plan.groups[0]?.at).toHaveLength(SPREAD_CAP);
+    expect(plan.groups[0]?.count?.text).toBe("9");
+  });
+
+  it("keeps every sprite inside the area border", () => {
+    for (const s of view.spaces) {
+      const layout = ATLAS.spaces[s.id];
+      const plan = layout === undefined ? null : spreadPlan(s, layout);
+      if (plan === null || layout === undefined) continue;
+      for (const g of plan.groups) for (const p of g.at) for (const point of [[p.x - 12, p.y - 15], [p.x + 12, p.y + 13]] as const)
+        expect(layout.rings.filter(r => inside(point, r)).length % 2, s.id).toBe(1);
+    }
+  });
+
+  it("returns null when the individual pieces do not fit, so the area falls back to piles", () => {
+    expect(spreadPlan(withCounts(12), area)).toBeNull();
+  });
+});

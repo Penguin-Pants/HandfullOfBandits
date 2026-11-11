@@ -23,8 +23,8 @@ export function spriteOf(piece: PieceView): string | null {
   return name === "guerrilla-underground" && piece.emblem === "starCircle" ? "guerrilla-active" : name;
 }
 
-/** `bare`: the shape only, with no count (legend). `size`: sprite canvas edge; the atlas passes SPRITE. */
-export function PieceIcon({ piece, color, x, y, bare = false, size: canvas = COMPACT }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean; readonly size?: number }) {
+/** `bare`: one shape with no count and no label (legend, single atlas pieces). `size`: sprite canvas edge; the atlas passes SPRITE. */
+export function PieceIcon({ piece, color, x, y, bare = false, size: asked }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean; readonly size?: number }) {
   const code: Readonly<Record<string,string>> = {troops:"T",police:"P",guards:"G"};
   const letter=code[piece.piece];
   const factionColor = piece.faction === "state" ? "#bd1f2c" : piece.faction === "pkk" ? "#26734e" : color;
@@ -33,7 +33,9 @@ export function PieceIcon({ piece, color, x, y, bare = false, size: canvas = COM
   const h = SIZE / 2;
   const sprite = spriteOf(piece);
   if (sprite !== null) {
-    const size = bare ? 20 : canvas;
+    const canvas = asked ?? COMPACT;
+    // The legend asks for no size and gets a small sprite. The atlas draws single pieces at its own size.
+    const size = bare && asked === undefined ? 20 : canvas;
     // Only the atlas grid has room for a pile. The schematic fallback shows one sprite and the count.
     const pile = bare || canvas < SPRITE ? 1 : Math.max(1, Math.min(PILE, piece.count));
     const k = size / SPRITE;
