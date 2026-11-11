@@ -105,7 +105,8 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, onSe
             <circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} fill="#f2e9d6" />
             <image href="/diyarbakir-city.png" x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.3} clipPath="url(#clip-city)" pointerEvents="none" />
           </>}
-          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-outline" fill="none" stroke={outline ?? "#887456"} strokeWidth={outline === null ? 1.6 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
+          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-edge" fill="none" vectorEffect="non-scaling-stroke" strokeLinejoin="round" pointerEvents="none" />
+          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-outline" fill="none" stroke={outline ?? "#f4ecd6"} strokeWidth={outline === null ? 2.2 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
         </>
       ) : box === null ? (
         <>
@@ -165,7 +166,7 @@ function BoxTrack({ track, space, geographic }: {readonly geographic: boolean; r
   const layout = geographic ? atlasLayout(space) : undefined;
   const groups = space.pieces.length + space.markers.length;
   const columns = groups === 4 ? 2 : Math.min(3,Math.max(1,groups));
-  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*29+9 : 5)};
+  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*33+17 : 5)};
   const width = layout === undefined ? 116 : layout.info[2]-6;
   const label = numeric ? `${track.display}: ${String(track.value)}` : `${track.display.replace(" posture", "")}: ${words(String(track.value))}`;
   return <g role="group" aria-label={`${track.display} track`} data-track-space={space.id} className="box-track" pointerEvents="none">
@@ -253,8 +254,8 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
           <path d="M0,0L10,5L0,10Z" className="map-arrow-head" />
         </marker>
       </defs>
-      <rect x={0} y={0} width={MAP_X0 - 1} height={cells.geographic ? ATLAS.height : MAP_H} fill="var(--inset)" />
       <Terrain view={view} cells={cells} />
+      <rect x={0} y={0} width={MAP_X0 - 1} height={cells.geographic ? ATLAS.height : MAP_H} className="map-inset" />
       {cells.geographic && <AtlasContext />}
       {spaces.map((s) => (
         <Space

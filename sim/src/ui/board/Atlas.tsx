@@ -25,16 +25,19 @@ export function AtlasInfo({ space, view, layout }: {readonly space: SpaceView; r
     {names.map((text,i) => <text key={text} x={p.x+p.width/2} y={p.y+(space.id === "elazig" ? 26 : 20)+i*LABEL_LINE} textAnchor="middle" className={text === "CITY" ? "atlas-subtitle" : "map-label atlas-label"}>{text}</text>)}
     {control !== undefined && political !== undefined && population !== undefined && <>
       <g className="atlas-counter" aria-label={faction === undefined ? "No Control" : `${faction.name} Control`}>
-        <rect x={control.x} y={control.y} width={control.width} height={control.height} rx={3} fill={faction?.color ?? "#ede5d1"} />
+        <rect x={control.x+1.5} y={control.y+2} width={control.width} height={control.height} rx={3} className="counter-shadow" />
+        <rect x={control.x} y={control.y} width={control.width} height={control.height} rx={3} fill={faction?.color ?? "#ede5d1"} className="counter-face" />
         <text x={control.x+control.width/2} y={control.y+16} textAnchor="middle" fill={faction === undefined ? "#453d2b" : "#fff"}>{faction?.name ?? "No control"}</text>
       </g>
       <g className="atlas-population" aria-label={`Population ${String(space.pop)}`}>
+        <rect x={population.x+1.5} y={population.y+2} width={population.width} height={population.height} rx={2} className="counter-shadow" />
         <rect x={population.x} y={population.y} width={population.width} height={population.height} rx={2} />
         <text x={population.x+population.width/2} y={population.y+17} textAnchor="middle">{space.pop}</text>
       </g>
       <g className="atlas-political" aria-label={alignment ?? "No alignment scale"}>
         {level !== null && <title>{level} {Math.abs(space.level ?? 0)>1 ? "×2" : "×1"}</title>}
-        <text x={political.x+political.width/2} y={political.y+16} textAnchor="middle" className="level-marker" fill={(space.level ?? 0)>0 ? "#7d2525" : (space.level ?? 0)<0 ? "#28532b" : "#514735"}>{alignment?.replace("Opposition","Opp.")}</text>
+        {level !== null && <LevelCounter text={level.replace("Opposition","Opp.")} level={space.level ?? 0} x={political.x+political.width/2} y={political.y} />}
+        <text x={political.x+political.width/2} y={political.y+16} textAnchor="middle" className={level === null ? "level-marker neutral" : "level-marker on-counter"} fill={level === null ? "#3d362a" : Math.abs(space.level ?? 0)>1 ? "#fff" : (space.level ?? 0)>0 ? "#7d1620" : "#1d4a2f"}>{alignment?.replace("Opposition","Opp.")}</text>
       </g>
     </>}
     {space.id === "iran" && <text x={p.x+p.width/2} y={p.y+44} textAnchor="middle" className="atlas-special">EVENTS ONLY</text>}
@@ -42,14 +45,28 @@ export function AtlasInfo({ space, view, layout }: {readonly space: SpaceView; r
   </g>;
 }
 
+/** Cardboard Support or Opposition counter behind the level text: solid when Active, pale when Passive. */
+function LevelCounter({text, level, x, y}: {readonly text:string; readonly level:number; readonly x:number; readonly y:number}) {
+  const width = text.length*7.4+14;
+  const tint = level > 0 ? "#bd1f2c" : "#26734e";
+  return <g aria-hidden="true">
+    <rect x={x-width/2+1.5} y={y+2} width={width} height={21} rx={3} className="counter-shadow" />
+    <rect x={x-width/2} y={y} width={width} height={21} rx={3} className="counter-face" fill={Math.abs(level) > 1 ? tint : level > 0 ? "#f4d9d3" : "#d6e6d2"} />
+  </g>;
+}
+
+/** Stack grid cell in map units: one sprite pile and its count. */
+const CELL_W = 46;
+const CELL_H = 33;
+
 /** Fixed-size counted pieces. Dense contents keep an explicit inspection affordance. */
 function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:BoardView; readonly layout:AtlasSpace}) {
   const total = space.pieces.length+space.markers.length;
   if (total === 0) return null;
   const columns = total === 4 ? 2 : Math.min(3,total);
   const [x,y,w] = layout.stack;
-  const positions = Array.from({length:Math.min(total,6)},(_,i) => ({x:x+(w-columns*40)/2+10+(i%columns)*40,y:y+Math.floor(i/columns)*29}));
-  const contained = (point:{x:number;y:number}): boolean => layout.rings.length === 0 || [[point.x-11,point.y-11],[point.x+27,point.y-11],[point.x-11,point.y+13],[point.x+27,point.y+13]].every(([px,py]) => layout.rings.filter(r=>inside([px ?? 0,py ?? 0],r)).length%2 === 1);
+  const positions = Array.from({length:Math.min(total,6)},(_,i) => ({x:x+(w-columns*CELL_W)/2+15+(i%columns)*CELL_W,y:y+8+Math.floor(i/columns)*CELL_H}));
+  const contained = (point:{x:number;y:number}): boolean => layout.rings.length === 0 || [[point.x-14,point.y-18],[point.x+29,point.y-18],[point.x-14,point.y+15],[point.x+29,point.y+15]].every(([px,py]) => layout.rings.filter(r=>inside([px ?? 0,py ?? 0],r)).length%2 === 1);
   const capacity = positions.findIndex(p=>!contained(p));
   const available = capacity < 0 ? positions.length : capacity;
   const shown = total > available ? Math.max(0,available-1) : available;
@@ -61,7 +78,7 @@ function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:B
       const at = positions[pieces.length+i] ?? {x,y};
       const chip = chipOf(m.hidden ? "covert" : m.marker);
       return <g key={`${m.marker}-${m.side}`} aria-label={`${chip.name}${m.side === "default" ? "" : ` ${m.side}`} ${String(m.count)}`} transform={`translate(${String(at.x)} ${String(at.y)})`}>
-        <circle r={10} fill={chip.fill} /><text y={4} textAnchor="middle" className="chip-code">{chip.code}</text><text x={14} y={6} className="map-count">{m.count}</text><title>{`${chip.name} ${m.side} ${String(m.count)}`}</title>
+        <rect x={-9} y={-8} width={20} height={20} rx={3} className="chip-shadow" /><rect x={-10} y={-10} width={20} height={20} rx={3} fill={chip.fill} className="chip-face" /><text y={4} textAnchor="middle" className="chip-code">{chip.code}</text><text x={16} y={6} className="map-count">{m.count}</text><title>{`${chip.name} ${m.side} ${String(m.count)}`}</title>
       </g>;
     })}
     {total > shown && <g className="atlas-overflow" aria-label={`${String(total-shown)} more force or marker groups; select to inspect`}><text x={positions[shown]?.x ?? x} y={(positions[shown]?.y ?? y)+6}>+{total-shown}</text><title>Select this space to inspect every piece type, face, marker and count.</title></g>}

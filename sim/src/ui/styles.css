@@ -497,3 +497,38 @@ body:has(.play-screen) .tip {font-size:16px;}
   .play-screen .map-window {min-height:300px;}
   .play-screen .side {max-height:calc(100dvh - 64px); position:sticky; top:8px;}
 }
+
+/* Printed COIN board (docs/coin-visual-redesign.md): static terrain textures, cream area borders
+   with a dark casing, cardboard counters and painted-wood sprites. Light direction: upper left. */
+.map-window .map {background:#2a2622;}
+.map-relief {mix-blend-mode:normal; opacity:1;}
+.map-relief.mountain {opacity:1;}
+.map-relief.abroad {opacity:.42;}
+.map-inset {fill:#efe6cf; fill-opacity:.5; stroke:#8b7b5e; stroke-opacity:.6; stroke-width:1;}
+.atlas-edge {stroke:#2e2114; stroke-opacity:.55; stroke-width:5.5;}
+.map-space.selected .atlas-edge, .map-space.neighbor .atlas-edge {stroke-opacity:.75; stroke-width:8;}
+.map-space.selected .atlas-outline {stroke:#f0c54a; stroke-width:4;}
+.map-space.neighbor:not(.selected) .atlas-outline {stroke:#8fd0d6; stroke-width:3; stroke-dasharray:7 4;}
+.map-space:focus-visible .atlas-area, .map-space:hover .atlas-area {fill:#fff3c4; fill-opacity:.22; stroke:none;}
+.map-space.eligible .atlas-area {fill:#f3d868; fill-opacity:.3; stroke:#5a4810;}
+.map-space.ineligible .atlas-area {fill:#3b352b; fill-opacity:.2;}
+.atlas-label {fill:#231d14; stroke:#f6edd6; stroke-opacity:.92; stroke-width:4.5px; stroke-linejoin:round;}
+.atlas-subtitle {fill:#2f281c; stroke:#f6edd6; stroke-width:3px; paint-order:stroke;}
+.atlas-special, .context-note {fill:#3d4638; stroke:#ecE6d6; stroke-width:2.5px; paint-order:stroke;}
+.country-name {fill:#4a4336; fill-opacity:.85; stroke:#efe9da; stroke-opacity:.8; stroke-width:3px; font:600 24px var(--label-font); letter-spacing:4px;}
+.country-border-halo {stroke:#f3ecd9; stroke-opacity:.85; stroke-width:6;}
+.country-border {stroke:#3f3a33; stroke-width:2.6; stroke-dasharray:11 4 2 4;}
+.map-lake {fill:#93a8ad; stroke:#5d747b; stroke-width:1.4;}
+.lake-label {fill:#2f4248; stroke:#c5d2d3; stroke-width:2.5px; paint-order:stroke; font-style:italic;}
+.counter-shadow, .chip-shadow {fill:#1c140a; fill-opacity:.45; stroke:none !important;}
+.atlas-counter .counter-face, .chip-face {stroke:#00000059; stroke-width:.8;}
+.atlas-population rect:not(.counter-shadow) {fill:#fbf8ee; stroke:#3c352a; stroke-width:.8;}
+.atlas-political .level-marker {stroke:#f6edd6; stroke-width:3.5px;}
+.atlas-stack .map-count {fill:#1f1a12; stroke:#f8f1dd; stroke-width:4px; stroke-linejoin:round;}
+.atlas-overflow {stroke-width:4px;}
+.piece-code {font:800 10px system-ui,sans-serif; letter-spacing:0;}
+.atlas-political .level-marker.on-counter {stroke:none;}
+.atlas-political .level-marker.neutral {font-style:italic;}
+.box-track rect {fill:#f7f1e0; stroke:#3c352a; stroke-width:.8;}
+.europe-track circle {fill:#f7f1e0; stroke:#3c352a;}
+.europe-track line {stroke:#3c352a;}
