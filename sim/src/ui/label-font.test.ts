@@ -20,3 +20,12 @@ describe("map name font", () => {
     expect(main).toContain("@fontsource/crimson-pro/latin-700.css");
   });
 });
+
+describe("map keyboard focus", () => {
+  it("draws a focus ring on the area outline after every eligibility rule, so candidates keep it", () => {
+    const focus = css.lastIndexOf(".map-space:focus-visible .atlas-outline {");
+    expect(focus).toBeGreaterThan(-1);
+    expect(focus).toBeGreaterThan(css.lastIndexOf(".map-space.eligible .atlas-area"));
+    expect(focus).toBeGreaterThan(css.lastIndexOf(".map-space.ineligible .atlas-area"));
+  });
+});

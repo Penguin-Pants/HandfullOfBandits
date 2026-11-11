@@ -92,3 +92,83 @@ it("finds the Europe track without adding it to an operation plan", () => {
   fireEvent.focus(screen.getByRole("meter", { name: "Europe track" }));
   expect(select).not.toHaveBeenCalled();
 });
+
+describe("wheel zoom and drag pan", () => {
+  const readout = (): string | null => screen.getByLabelText("Map zoom").textContent;
+  const withCapture = (board: Element): void => {
+    Object.defineProperty(board, "setPointerCapture", { value: vi.fn(), configurable: true });
+    Object.defineProperty(board, "releasePointerCapture", { value: vi.fn(), configurable: true });
+  };
+  it("zooms in steps with the wheel and stops the page from scrolling", () => {
+    render(<MapCanvas view={view} selected={[]} onSelect={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Fit map" }));
+    const board = screen.getByRole("img", { name: "Board" });
+    expect(fireEvent.wheel(board, { deltaY: -100 })).toBe(false);
+    expect(readout()).toBe("125%");
+    expect(fireEvent.wheel(board, { deltaY: 100 })).toBe(false);
+    expect(readout()).toBe("100%");
+  });
+  it("clamps wheel zoom between 100% and 400%", () => {
+    render(<MapCanvas view={view} selected={[]} onSelect={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Fit map" }));
+    const board = screen.getByRole("img", { name: "Board" });
+    fireEvent.wheel(board, { deltaY: 100 });
+    expect(readout()).toBe("100%");
+    for (let i = 0; i < 20; i++) fireEvent.wheel(board, { deltaY: -100 });
+    expect(readout()).toBe("400%");
+    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Zoom in" }).disabled).toBe(true);
+  });
+  it("pans with a primary-button drag on the background without selecting a space", () => {
+    const select = vi.fn();
+    render(<MapCanvas view={view} selected={[]} onSelect={select} />);
+    fireEvent.click(screen.getByRole("button", { name: "Fit map" }));
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    const board = screen.getByRole("img", { name: "Board" });
+    withCapture(board);
+    const before = board.getAttribute("viewBox");
+    fireEvent.pointerDown(board, { button: 0, pointerId: 1, clientX: 100, clientY: 100 });
+    fireEvent.pointerMove(board, { pointerId: 1, clientX: 140, clientY: 120 });
+    fireEvent.pointerUp(board, { button: 0, pointerId: 1, clientX: 140, clientY: 120 });
+    fireEvent.click(board);
+    expect(board.getAttribute("viewBox")).not.toBe(before);
+    expect(select).not.toHaveBeenCalled();
+  });
+  it("pans with a middle-button drag that starts on a space", () => {
+    const onDrag = vi.fn();
+    render(<MapCanvas view={view} selected={[]} onSelect={vi.fn()} onDrag={onDrag} />);
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    const board = screen.getByRole("img", { name: "Board" });
+    withCapture(board);
+    const before = board.getAttribute("viewBox");
+    fireEvent.pointerDown(screen.getByRole("button", { name: "Hakkari" }), { button: 1, pointerId: 1, clientX: 100, clientY: 100 });
+    fireEvent.pointerMove(board, { pointerId: 1, clientX: 60, clientY: 100 });
+    fireEvent.pointerUp(screen.getByRole("button", { name: "Botan" }), { button: 1, pointerId: 1 });
+    expect(board.getAttribute("viewBox")).not.toBe(before);
+    expect(onDrag).not.toHaveBeenCalled();
+  });
+  it("keeps drag-to-plan for a primary-button drag that starts on a space", () => {
+    const onDrag = vi.fn();
+    render(<MapCanvas view={view} selected={[]} onSelect={vi.fn()} onDrag={onDrag} />);
+    const board = screen.getByRole("img", { name: "Board" });
+    withCapture(board);
+    const before = board.getAttribute("viewBox");
+    fireEvent.pointerDown(screen.getByRole("button", { name: "Hakkari" }), { button: 0, pointerId: 1, clientX: 100, clientY: 100 });
+    fireEvent.pointerMove(board, { pointerId: 1, clientX: 160, clientY: 100 });
+    fireEvent.pointerUp(screen.getByRole("button", { name: "Botan" }), { button: 0, pointerId: 1 });
+    expect(onDrag).toHaveBeenCalledWith("hakkari", "botan");
+    expect(board.getAttribute("viewBox")).toBe(before);
+  });
+  it("keeps the map inside the view when panning at a low zoom", () => {
+    render(<MapCanvas view={view} selected={[]} onSelect={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Fit map" }));
+    const board = screen.getByRole("img", { name: "Board" });
+    const fit = board.getAttribute("viewBox");
+    for (let i = 0; i < 40; i++) fireEvent.keyDown(board, { key: "ArrowRight" });
+    expect(board.getAttribute("viewBox")).toBe(fit);
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    for (let i = 0; i < 80; i++) fireEvent.keyDown(board, { key: "ArrowRight" });
+    const [x = 0, , w = 0] = (board.getAttribute("viewBox") ?? "").split(" ").map(Number);
+    expect(x + w).toBeLessThanOrEqual(1280.001);
+  });
+});

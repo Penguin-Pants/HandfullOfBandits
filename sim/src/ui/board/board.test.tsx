@@ -189,6 +189,15 @@ describe("Resources and politics card (UC-7)", () => {
     expect(er.querySelector("[aria-current]")?.textContent).toBe("Martial Law");
   });
 
+  it("keeps the step scales in a closed disclosure so the card stays one summary row", () => {
+    render(<TrackCard view={view} />);
+    const scales = screen.getByLabelText("Emergency Rule states").closest("details");
+    expect(scales).not.toBeNull();
+    expect(scales?.open).toBe(false);
+    expect(scales?.querySelector("summary")?.textContent).toBe("Scales");
+    expect(scales?.closest(".track-summaries")).not.toBeNull();
+  });
+
   it("falls back to words for a value with no readable name", () => {
     const odd = { ...view, status: { ...view.status, tracks: [{ id: "mood", display: "Mood", value: "veryTense", steps: ["calm", "veryTense"] }] } };
     render(<TrackCard view={odd} />);
@@ -325,14 +334,14 @@ describe("approved readable layout", () => {
     expect(city?.getAttribute("opacity")).toBe("0.3");
   });
 
-  it("keeps political states expanded and numeric scales available on expansion", () => {
+  it("keeps political states in the Scales disclosure and numeric scales available on expansion", () => {
     render(<TrackCard view={view} />);
     const card = screen.getByLabelText("Resources and politics");
-    expect(card.querySelectorAll("details")).toHaveLength(3);
+    expect(card.querySelectorAll("details")).toHaveLength(4);
     expect(screen.getByLabelText("Emergency Rule").textContent).toContain("Martial Law");
     for (const name of ["Emergency Rule", "Ceasefire", "Legal Space"]) {
       const states = screen.getByRole("group", { name: `${name} states` });
-      expect(states.closest("details")).toBeNull();
+      expect(states.closest("details")?.className).toBe("track-scales");
       expect(states.querySelectorAll(".mini-step")).toHaveLength(4);
       expect(states.querySelectorAll("[aria-current='true']")).toHaveLength(1);
     }
