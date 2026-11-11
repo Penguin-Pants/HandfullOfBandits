@@ -5,7 +5,7 @@ import { PieceIcon, SPRITE, spriteOf } from "./PieceIcon.tsx";
 
 const base: PieceView = { piece: "guerrilla", faction: "pkk", face: "underground", count: 0, shape: "octagon", colorVariant: "base", emblem: null, isBase: false };
 const of = (piece: Partial<PieceView>): PieceView => ({ ...base, ...piece });
-const icon = (piece: Partial<PieceView>, bare = true, size?: number): string => renderToStaticMarkup(<svg><PieceIcon piece={of(piece)} color="#2e7d32" x={9} y={9} bare={bare} size={size} /></svg>);
+const icon = (piece: Partial<PieceView>, bare = true, size?: number): string => renderToStaticMarkup(<svg><PieceIcon piece={of(piece)} color="#2e7d32" x={9} y={9} bare={bare} {...(size === undefined ? {} : { size })} /></svg>);
 
 describe("painted-wood piece sprites", () => {
   it("gives every package piece type and face its own sprite", () => {
