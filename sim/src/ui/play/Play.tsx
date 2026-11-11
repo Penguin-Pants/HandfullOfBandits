@@ -1,5 +1,5 @@
 // Play screen (08 s3): status bar, board, event or Propaganda panel, faction panel.
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalChoices, RuleLookup, SessionRow } from "../api.ts";
 import { createFocusStore } from "../focus-store.ts";
 import { Help } from "../help/Help.tsx";
@@ -130,7 +130,9 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     }
   };
 
-  useEffect(() => {
+  // A layout effect: the listener of a render is attached in the same commit that shows that
+  // render. A passive effect runs later, and a key in that gap went to the stale listener.
+  useLayoutEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       if (data === null || legal === null) return;
       const target = e.target as HTMLElement | null;
