@@ -4,7 +4,8 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const dir = import.meta.dirname;
-const css = readFileSync(join(dir, "styles.css"), "utf8");
+// A Windows checkout has CRLF line ends. The tests read the rules with LF.
+const css = readFileSync(join(dir, "styles.css"), "utf8").replaceAll("\r\n", "\n");
 
 describe("map name font", () => {
   it("every map and atlas label rule names the bundled Crimson Pro first", () => {
