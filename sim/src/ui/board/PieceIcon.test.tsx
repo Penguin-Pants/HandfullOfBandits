@@ -1,11 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import type { PieceView } from "../api.ts";
-import { PieceIcon, spriteOf } from "./PieceIcon.tsx";
+import { PieceIcon, SPRITE, spriteOf } from "./PieceIcon.tsx";
 
 const base: PieceView = { piece: "guerrilla", faction: "pkk", face: "underground", count: 0, shape: "octagon", colorVariant: "base", emblem: null, isBase: false };
 const of = (piece: Partial<PieceView>): PieceView => ({ ...base, ...piece });
-const icon = (piece: Partial<PieceView>, bare = true): string => renderToStaticMarkup(<svg><PieceIcon piece={of(piece)} color="#2e7d32" x={9} y={9} bare={bare} /></svg>);
+const icon = (piece: Partial<PieceView>, bare = true, size?: number): string => renderToStaticMarkup(<svg><PieceIcon piece={of(piece)} color="#2e7d32" x={9} y={9} bare={bare} size={size} /></svg>);
 
 describe("painted-wood piece sprites", () => {
   it("gives every package piece type and face its own sprite", () => {
@@ -28,10 +28,17 @@ describe("painted-wood piece sprites", () => {
     expect(icon({})).not.toContain("piece-code");
   });
 
-  it("piles at most three sprites and always prints the exact count", () => {
-    const images = (count: number): number => icon({ count }, false).split("<image").length - 1;
+  it("piles at most three sprites on the atlas and always prints the exact count", () => {
+    const images = (count: number): number => icon({ count }, false, SPRITE).split("<image").length - 1;
     expect([1, 2, 3, 9].map(images)).toEqual([1, 2, 3, 3]);
-    expect(icon({ count: 9 }, false)).toContain(">9</text>");
+    expect(icon({ count: 9 }, false, SPRITE)).toContain(">9</text>");
+  });
+
+  it("fits the schematic fallback grid: one 30-unit sprite and the count, with no pile", () => {
+    const compact = icon({ count: 9 }, false);
+    expect(compact.split("<image").length - 1).toBe(1);
+    expect(compact).toContain('width="30"');
+    expect(compact).toContain(">9</text>");
   });
 
   it("keeps the flat faction-colored shape for a piece without artwork", () => {

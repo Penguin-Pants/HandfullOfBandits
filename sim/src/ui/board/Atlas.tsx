@@ -2,7 +2,7 @@
 import type { BoardView, SpaceView } from "../api.ts";
 import { ATLAS, type AtlasSpace } from "./atlas-data.ts";
 import { chipOf, levelLabel } from "./markers.tsx";
-import { PieceIcon } from "./PieceIcon.tsx";
+import { PieceIcon, SPRITE } from "./PieceIcon.tsx";
 import { presentation, statusLayout } from "./layout.ts";
 import { inside } from "./region.ts";
 
@@ -73,7 +73,7 @@ function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:B
   const pieces = space.pieces.slice(0,shown);
   const markers = space.markers.slice(0,shown-pieces.length);
   return <g className="atlas-stack">
-    {pieces.map((piece,i) => <PieceIcon key={`${piece.piece}-${piece.face}`} piece={piece} color={view.factions.find(f=>f.id === piece.faction)?.color ?? "#444"} x={positions[i]?.x ?? x} y={positions[i]?.y ?? y} />)}
+    {pieces.map((piece,i) => <PieceIcon key={`${piece.piece}-${piece.face}`} piece={piece} color={view.factions.find(f=>f.id === piece.faction)?.color ?? "#444"} x={positions[i]?.x ?? x} y={positions[i]?.y ?? y} size={SPRITE} />)}
     {markers.map((m,i) => {
       const at = positions[pieces.length+i] ?? {x,y};
       const chip = chipOf(m.hidden ? "covert" : m.marker);

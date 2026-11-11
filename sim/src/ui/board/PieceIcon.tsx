@@ -4,8 +4,10 @@
 import type { PieceView } from "../api.ts";
 
 const SIZE = 16;
-/** Sprite canvas edge in map units. The canvas is 192 px with the top face centered at (96, 84). */
-const SPRITE = 54;
+/** Sprite canvas edge in map units on the atlas. The canvas is 192 px with the top face centered at (96, 84). */
+export const SPRITE = 54;
+/** Canvas edge for the schematic fallback, whose grid has 30-unit columns and 20-unit rows. */
+const COMPACT = 30;
 const TOP_FACE = 84 / 192 - 0.5;
 /** Up to this many sprites show for one counted group; the count stays printed beside them. */
 const PILE = 3;
@@ -21,8 +23,8 @@ export function spriteOf(piece: PieceView): string | null {
   return name === "guerrilla-underground" && piece.emblem === "starCircle" ? "guerrilla-active" : name;
 }
 
-/** `bare`: the shape only, with no count (legend). */
-export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean }) {
+/** `bare`: the shape only, with no count (legend). `size`: sprite canvas edge; the atlas passes SPRITE. */
+export function PieceIcon({ piece, color, x, y, bare = false, size: canvas = COMPACT }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean; readonly size?: number }) {
   const code: Readonly<Record<string,string>> = {troops:"T",police:"P",guards:"G"};
   const letter=code[piece.piece];
   const factionColor = piece.faction === "state" ? "#bd1f2c" : piece.faction === "pkk" ? "#26734e" : color;
@@ -31,13 +33,15 @@ export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece
   const h = SIZE / 2;
   const sprite = spriteOf(piece);
   if (sprite !== null) {
-    const size = bare ? SPRITE / 2 : SPRITE;
-    const pile = bare ? 1 : Math.max(1, Math.min(PILE, piece.count));
+    const size = bare ? 20 : canvas;
+    // Only the atlas grid has room for a pile. The schematic fallback shows one sprite and the count.
+    const pile = bare || canvas < SPRITE ? 1 : Math.max(1, Math.min(PILE, piece.count));
+    const k = size / SPRITE;
     return (
       <g aria-label={bare ? undefined : `${piece.piece} ${piece.face} ${String(piece.count)}`} data-sprite={sprite}>
         {Array.from({ length: pile }, (_, i) => pile - 1 - i).map(back => <image key={back} href={`/pieces/${sprite}.png`} x={x - size / 2 - back * 5} y={y - size / 2 - back * 5} width={size} height={size} />)}
-        {letter !== undefined && <text x={x} y={y + size * TOP_FACE} textAnchor="middle" dominantBaseline="central" className="piece-code" style={bare ? { fontSize: 5 } : undefined} fill={piece.colorVariant === "light" ? "#3a1218" : "#fff"}>{letter}</text>}
-        {!bare && <text x={x + (piece.shape === "disc" ? 18 : 14)} y={y + 5} className="map-count">{piece.count}</text>}
+        {letter !== undefined && <text x={x} y={y + size * TOP_FACE} textAnchor="middle" dominantBaseline="central" className="piece-code" style={size < SPRITE ? { fontSize: 10 * k } : undefined} fill={piece.colorVariant === "light" ? "#3a1218" : "#fff"}>{letter}</text>}
+        {!bare && <text x={x + (piece.shape === "disc" ? 18 : 14) * k} y={y + 5} className="map-count">{piece.count}</text>}
       </g>
     );
   }
