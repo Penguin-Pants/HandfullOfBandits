@@ -33,6 +33,23 @@ describe("Board", () => {
     expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
   });
 
+  it("draws the selected border above every area border, so no neighbor covers it", () => {
+    const { container } = render(<Board view={view} selected={["botan"]} onSelect={vi.fn()} />);
+    const ring = container.querySelector(".atlas-selected[data-of='botan']");
+    const lastArea = [...container.querySelectorAll(".map-space")].at(-1);
+    if (ring === null || lastArea === undefined) throw new Error("selected ring");
+    expect(lastArea.compareDocumentPosition(ring) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(ring.getAttribute("pointer-events")).toBe("none");
+    expect(container.querySelectorAll(".atlas-selected[data-of='hakkari']")).toHaveLength(0);
+  });
+
+  it("draws each piece of a small group one by one and keeps the group label", () => {
+    render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    const group = screen.getByLabelText("guerrilla underground 3");
+    expect(group.querySelectorAll("image")).toHaveLength(3);
+    expect(group.querySelector(".map-count")).toBeNull();
+  });
+
   it("shows the detail card and the status bar", () => {
     const botan = view.spaces.find((s) => s.id === "botan");
     if (botan === undefined) throw new Error("botan");

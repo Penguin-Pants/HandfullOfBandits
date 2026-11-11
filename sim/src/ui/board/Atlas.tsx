@@ -3,7 +3,7 @@ import type { BoardView, SpaceView } from "../api.ts";
 import { ATLAS, type AtlasSpace } from "./atlas-data.ts";
 import { chipOf, levelLabel } from "./markers.tsx";
 import { PieceIcon, SPRITE } from "./PieceIcon.tsx";
-import { presentation, statusLayout } from "./layout.ts";
+import { presentation, spreadPlan, statusLayout } from "./layout.ts";
 import { inside } from "./region.ts";
 
 /** Older packages retain their original schematic layout. */
@@ -55,6 +55,14 @@ function LevelCounter({text, level, x, y}: {readonly text:string; readonly level
   </g>;
 }
 
+/** One cardboard marker chip with its count. */
+function MarkerChip({marker:m, x, y, countX}: {readonly marker:SpaceView["markers"][number]; readonly x:number; readonly y:number; readonly countX:number}) {
+  const chip = chipOf(m.hidden ? "covert" : m.marker);
+  return <g aria-label={`${chip.name}${m.side === "default" ? "" : ` ${m.side}`} ${String(m.count)}`} transform={`translate(${String(x)} ${String(y)})`}>
+    <rect x={-9} y={-8} width={20} height={20} rx={3} className="chip-shadow" /><rect x={-10} y={-10} width={20} height={20} rx={3} fill={chip.fill} className="chip-face" /><text y={4} textAnchor="middle" className="chip-code">{chip.code}</text><text x={countX} y={6} className="map-count">{m.count}</text><title>{`${chip.name} ${m.side} ${String(m.count)}`}</title>
+  </g>;
+}
+
 /** Stack grid cell in map units: one sprite pile and its count. */
 const CELL_W = 46;
 const CELL_H = 33;
@@ -63,6 +71,21 @@ const CELL_H = 33;
 function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:BoardView; readonly layout:AtlasSpace}) {
   const total = space.pieces.length+space.markers.length;
   if (total === 0) return null;
+  const spread = spreadPlan(space, layout);
+  if (spread !== null) return <g className="atlas-stack" data-stack="spread">
+    {space.pieces.map((piece,i) => {
+      const group = spread.groups[i];
+      return group === undefined ? null : <g key={`${piece.piece}-${piece.face}`} aria-label={`${piece.piece} ${piece.face} ${String(piece.count)}`}>
+        {group.at.map((at,n) => <PieceIcon key={n} piece={piece} color={view.factions.find(f=>f.id === piece.faction)?.color ?? "#444"} x={at.x} y={at.y} size={SPRITE} bare />)}
+        {group.count !== null && <text x={group.count.x} y={group.count.y} className="map-count">{group.count.text}</text>}
+      </g>;
+    })}
+    {space.markers.map((m,i) => {
+      const group = spread.groups[space.pieces.length+i];
+      const at = group?.at[0];
+      return group === undefined || at === undefined ? null : <MarkerChip key={`${m.marker}-${m.side}`} marker={m} x={at.x} y={at.y} countX={(group.count?.x ?? at.x+14)-at.x} />;
+    })}
+  </g>;
   const columns = total === 4 ? 2 : Math.min(3,total);
   const [x,y,w] = layout.stack;
   const positions = Array.from({length:Math.min(total,6)},(_,i) => ({x:x+(w-columns*CELL_W)/2+15+(i%columns)*CELL_W,y:y+8+Math.floor(i/columns)*CELL_H}));
@@ -76,10 +99,7 @@ function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:B
     {pieces.map((piece,i) => <PieceIcon key={`${piece.piece}-${piece.face}`} piece={piece} color={view.factions.find(f=>f.id === piece.faction)?.color ?? "#444"} x={positions[i]?.x ?? x} y={positions[i]?.y ?? y} size={SPRITE} />)}
     {markers.map((m,i) => {
       const at = positions[pieces.length+i] ?? {x,y};
-      const chip = chipOf(m.hidden ? "covert" : m.marker);
-      return <g key={`${m.marker}-${m.side}`} aria-label={`${chip.name}${m.side === "default" ? "" : ` ${m.side}`} ${String(m.count)}`} transform={`translate(${String(at.x)} ${String(at.y)})`}>
-        <rect x={-9} y={-8} width={20} height={20} rx={3} className="chip-shadow" /><rect x={-10} y={-10} width={20} height={20} rx={3} fill={chip.fill} className="chip-face" /><text y={4} textAnchor="middle" className="chip-code">{chip.code}</text><text x={16} y={6} className="map-count">{m.count}</text><title>{`${chip.name} ${m.side} ${String(m.count)}`}</title>
-      </g>;
+      return <MarkerChip key={`${m.marker}-${m.side}`} marker={m} x={at.x} y={at.y} countX={16} />;
     })}
     {total > shown && <g className="atlas-overflow" aria-label={`${String(total-shown)} more force or marker groups; select to inspect`}><text x={positions[shown]?.x ?? x} y={(positions[shown]?.y ?? y)+6}>+{total-shown}</text><title>Select this space to inspect every piece type, face, marker and count.</title></g>}
   </g>;

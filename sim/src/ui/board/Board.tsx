@@ -10,6 +10,7 @@ import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
 import { counted, words } from "../common/names.ts";
 import { isEuropeTrack, spaceOfTrack } from "../status/tracks.ts";
+import { spreadPlan } from "./layout.ts";
 import { isInset, MAP_H, MAP_W, MAP_X0, pathOf, regionCells, type Point } from "./region.ts";
 
 const INSET_W = 116;
@@ -168,7 +169,7 @@ function BoxTrack({ track, space, geographic }: {readonly geographic: boolean; r
   const layout = geographic ? atlasLayout(space) : undefined;
   const groups = space.pieces.length + space.markers.length;
   const columns = groups === 4 ? 2 : Math.min(3,Math.max(1,groups));
-  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*33+17 : 5)};
+  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? (spreadPlan(space, layout)?.rows ?? Math.ceil(Math.min(groups,6)/columns))*33+17 : 5)};
   const width = layout === undefined ? 116 : layout.info[2]-6;
   const label = numeric ? `${track.display}: ${String(track.value)}` : `${track.display.replace(" posture", "")}: ${words(String(track.value))}`;
   return <g role="group" aria-label={`${track.display} track`} data-track-space={space.id} className="box-track" pointerEvents="none">
@@ -307,6 +308,14 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         />
       ))}
       {cells.geographic && <AtlasGeography />}
+      {/* The selected border is drawn again above all area and country borders, so no neighbor covers it. */}
+      {cells.geographic && spaces.filter(sp => selected.includes(sp.id)).map(sp => {
+        const area = atlasLayout(sp);
+        const d = area === undefined ? null : sp.id === "diyarbakir-rural" ? `${area.path.split("Z")[0] ?? ""}Z` : area.path;
+        return d === null ? null : <g key={sp.id} className="atlas-selected" data-of={sp.id} pointerEvents="none" fill="none" strokeLinejoin="round">
+          <path d={d} className="casing" vectorEffect="non-scaling-stroke" /><path d={d} className="ring" vectorEffect="non-scaling-stroke" />
+        </g>;
+      })}
       {spaces.map((s) => {
         const layout = cells.geographic ? atlasLayout(s) : undefined;
         return layout === undefined ? <Tokens key={s.id} space={s} view={view} x={s.x} y={s.y + 6} /> : <AtlasInfo key={s.id} space={s} view={view} layout={layout} />;
