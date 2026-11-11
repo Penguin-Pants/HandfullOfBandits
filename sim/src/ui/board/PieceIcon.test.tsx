@@ -1,32 +1,51 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import type { PieceView } from "../api.ts";
-import { PieceIcon } from "./PieceIcon.tsx";
+import { PieceIcon, SPRITE, spriteOf } from "./PieceIcon.tsx";
 
-function icon(piece: Partial<PieceView>): string {
-  const view: PieceView = {
-    piece: "guerrilla", faction: "pkk", face: "underground", count: 0,
-    shape: "octagon", colorVariant: "base", emblem: null, isBase: false, ...piece,
-  };
-  return renderToStaticMarkup(<svg><PieceIcon piece={view} color="#2e7d32" x={9} y={9} bare /></svg>);
-}
+const base: PieceView = { piece: "guerrilla", faction: "pkk", face: "underground", count: 0, shape: "octagon", colorVariant: "base", emblem: null, isBase: false };
+const of = (piece: Partial<PieceView>): PieceView => ({ ...base, ...piece });
+const icon = (piece: Partial<PieceView>, bare = true, size?: number): string => renderToStaticMarkup(<svg><PieceIcon piece={of(piece)} color="#2e7d32" x={9} y={9} bare={bare} {...(size === undefined ? {} : { size })} /></svg>);
 
-describe("approved piece faces", () => {
-  it("keeps both Bases as plain colored discs", () => {
-    const state = icon({ piece: "stateBase", faction: "state", shape: "disc", emblem: "crescentStar", isBase: true });
-    const pkk = icon({ piece: "pkkBase", shape: "disc", isBase: true });
-    expect(state).toContain('fill="#bd1f2c"');
-    expect(pkk).toContain('fill="#26734e"');
-    expect(state).not.toContain("<polygon");
-    expect(pkk).not.toContain("<polygon");
+describe("painted-wood piece sprites", () => {
+  it("gives every package piece type and face its own sprite", () => {
+    const sprites = [
+      spriteOf(of({ piece: "troops", faction: "state", shape: "cube" })),
+      spriteOf(of({ piece: "police", faction: "state", shape: "cube", colorVariant: "light" })),
+      spriteOf(of({ piece: "guards", faction: "state", shape: "cylinder" })),
+      spriteOf(of({ piece: "stateBase", faction: "state", shape: "disc", emblem: "crescentStar", isBase: true })),
+      spriteOf(of({ piece: "pkkBase", shape: "disc", isBase: true })),
+      spriteOf(of({})),
+      spriteOf(of({ face: "active", emblem: "starCircle" })),
+    ];
+    expect(sprites).toEqual(["troops", "police", "guards", "state-base", "pkk-base", "guerrilla-underground", "guerrilla-active"]);
   });
 
-  it("shows a symbol only on the Active Guerrilla face", () => {
-    const underground = icon({});
-    const active = icon({ face: "active", emblem: "starCircle" });
-    expect(underground).toContain('fill="#26734e"');
-    expect(underground).not.toContain("<circle");
-    expect(active).toContain('fill="#e5be52"');
-    expect(active).toContain('fill="#bd1f2c"');
+  it("draws the sprite image and keeps the T, P and G codes on State forces", () => {
+    const troops = icon({ piece: "troops", faction: "state", shape: "cube" });
+    expect(troops).toContain('href="/pieces/troops.png"');
+    expect(troops).toContain(">T</text>");
+    expect(icon({})).not.toContain("piece-code");
+  });
+
+  it("piles at most three sprites on the atlas and always prints the exact count", () => {
+    const images = (count: number): number => icon({ count }, false, SPRITE).split("<image").length - 1;
+    expect([1, 2, 3, 9].map(images)).toEqual([1, 2, 3, 3]);
+    expect(icon({ count: 9 }, false, SPRITE)).toContain(">9</text>");
+  });
+
+  it("fits the schematic fallback grid: one 30-unit sprite and the count, with no pile", () => {
+    const compact = icon({ count: 9 }, false);
+    expect(compact.split("<image").length - 1).toBe(1);
+    expect(compact).toContain('width="30"');
+    expect(compact).toContain(">9</text>");
+  });
+
+  it("keeps the flat faction-colored shape for a piece without artwork", () => {
+    const other = icon({ faction: "other", shape: "cube" });
+    expect(other).not.toContain("<image");
+    expect(other).toContain('fill="#2e7d32"');
+    const star = icon({ faction: "other", face: "active", emblem: "starCircle" });
+    expect(star).toContain('fill="#e5be52"');
   });
 });

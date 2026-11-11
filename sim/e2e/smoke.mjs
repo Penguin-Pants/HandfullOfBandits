@@ -61,12 +61,16 @@ try {
   check(victoryFits, "expanded victory track scrolls without widening the sidebar");
   await page.locator('.score-details summary').click();
   const artwork = await page.evaluate(async () => {
-    const image = new Image();
-    image.src = document.querySelector("#atlas-artwork image")?.getAttribute("href") ?? "";
-    await image.decode();
-    return image.naturalWidth > 0;
+    const hrefs = [...document.querySelectorAll('[data-artwork="printed-board"] image')].map((el) => el.getAttribute("href") ?? "");
+    const loaded = await Promise.all(hrefs.map(async (href) => {
+      const image = new Image();
+      image.src = href;
+      await image.decode();
+      return image.naturalWidth > 0;
+    }));
+    return { count: hrefs.length, loaded: loaded.every(Boolean) };
   });
-  check(artwork, "atlas artwork loads independently of game regions");
+  check(artwork.count === 4 && artwork.loaded, "printed board artwork (4 images) loads independently of game regions", artwork);
   const atlas = await page.evaluate(async () => {
     const svg = document.querySelector('[aria-label="Board"]');
     const outside = [];

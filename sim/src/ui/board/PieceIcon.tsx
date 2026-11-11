@@ -1,17 +1,50 @@
-// Flat SVG piece icons (08 s3.1 item 2; DEC-29, DEC-30): shape from pieces.yaml, faction color,
-// lighter shade for `colorVariant: light`, star disc only on an Active Guerrilla.
+// Piece icons (08 s3.1 item 2; DEC-29, DEC-30). The approved State and PKK pieces use pre-rendered
+// painted-wood sprites from the package map folder. Other factions keep the flat SVG shape:
+// faction color, lighter shade for `colorVariant: light`, star disc only on an Active Guerrilla.
 import type { PieceView } from "../api.ts";
 
 const SIZE = 16;
+/** Sprite canvas edge in map units on the atlas. The canvas is 192 px with the top face centered at (96, 84). */
+export const SPRITE = 54;
+/** Canvas edge for the schematic fallback, whose grid has 30-unit columns and 20-unit rows. */
+const COMPACT = 30;
+const TOP_FACE = 84 / 192 - 0.5;
+/** Up to this many sprites show for one counted group; the count stays printed beside them. */
+const PILE = 3;
 
-/** `bare`: the shape only, with no count (legend). */
-export function PieceIcon({ piece, color, x, y, bare = false }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean }) {
+const SPRITES: Readonly<Record<string, string>> = {
+  "state:cube:base": "troops", "state:cube:light": "police", "state:cylinder:base": "guards", "state:disc:base": "state-base",
+  "pkk:disc:base": "pkk-base", "pkk:octagon:base": "guerrilla-underground",
+};
+
+/** Sprite file name for a piece, or null where the package has no painted-wood artwork. */
+export function spriteOf(piece: PieceView): string | null {
+  const name = SPRITES[`${piece.faction}:${piece.shape}:${piece.colorVariant}`] ?? null;
+  return name === "guerrilla-underground" && piece.emblem === "starCircle" ? "guerrilla-active" : name;
+}
+
+/** `bare`: the shape only, with no count (legend). `size`: sprite canvas edge; the atlas passes SPRITE. */
+export function PieceIcon({ piece, color, x, y, bare = false, size: canvas = COMPACT }: { readonly piece: PieceView; readonly color: string; readonly x: number; readonly y: number; readonly bare?: boolean; readonly size?: number }) {
   const code: Readonly<Record<string,string>> = {troops:"T",police:"P",guards:"G"};
   const letter=code[piece.piece];
   const factionColor = piece.faction === "state" ? "#bd1f2c" : piece.faction === "pkk" ? "#26734e" : color;
   const fill = piece.colorVariant === "light" ? `color-mix(in srgb, ${factionColor} 55%, white)` : factionColor;
   const stroke = piece.isBase ? "black" : "var(--token-line)";
   const h = SIZE / 2;
+  const sprite = spriteOf(piece);
+  if (sprite !== null) {
+    const size = bare ? 20 : canvas;
+    // Only the atlas grid has room for a pile. The schematic fallback shows one sprite and the count.
+    const pile = bare || canvas < SPRITE ? 1 : Math.max(1, Math.min(PILE, piece.count));
+    const k = size / SPRITE;
+    return (
+      <g aria-label={bare ? undefined : `${piece.piece} ${piece.face} ${String(piece.count)}`} data-sprite={sprite}>
+        {Array.from({ length: pile }, (_, i) => pile - 1 - i).map(back => <image key={back} href={`/pieces/${sprite}.png`} x={x - size / 2 - back * 5} y={y - size / 2 - back * 5} width={size} height={size} />)}
+        {letter !== undefined && <text x={x} y={y + size * TOP_FACE} textAnchor="middle" dominantBaseline="central" className="piece-code" style={size < SPRITE ? { fontSize: 10 * k } : undefined} fill={piece.colorVariant === "light" ? "#3a1218" : "#fff"}>{letter}</text>}
+        {!bare && <text x={x + (piece.shape === "disc" ? 18 : 14) * k} y={y + 5} className="map-count">{piece.count}</text>}
+      </g>
+    );
+  }
   let shape;
   switch (piece.shape) {
     case "cube":

@@ -41,6 +41,8 @@ export interface BoardProps {
   readonly eligible?: readonly string[] | null;
   readonly camera?: {readonly zoom: number; readonly x: number; readonly y: number};
   readonly onPan?: (dx: number, dy: number) => void;
+  /** A wheel step: direction (1 in, -1 out) and the pointer offset from the view centre in map units. */
+  readonly onZoom?: (dir: 1 | -1, at: { readonly x: number; readonly y: number }) => void;
   readonly view: BoardView;
   readonly selected: readonly string[];
   readonly onSelect: (spaceId: string, add: boolean) => void;
@@ -105,7 +107,8 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, onSe
             <circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} fill="#f2e9d6" />
             <image href="/diyarbakir-city.png" x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.3} clipPath="url(#clip-city)" pointerEvents="none" />
           </>}
-          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-outline" fill="none" stroke={outline ?? "#887456"} strokeWidth={outline === null ? 1.6 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
+          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-edge" fill="none" vectorEffect="non-scaling-stroke" strokeLinejoin="round" pointerEvents="none" />
+          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-outline" fill="none" stroke={outline ?? "#f4ecd6"} strokeWidth={outline === null ? 2.2 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
         </>
       ) : box === null ? (
         <>
@@ -165,7 +168,7 @@ function BoxTrack({ track, space, geographic }: {readonly geographic: boolean; r
   const layout = geographic ? atlasLayout(space) : undefined;
   const groups = space.pieces.length + space.markers.length;
   const columns = groups === 4 ? 2 : Math.min(3,Math.max(1,groups));
-  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*29+9 : 5)};
+  const at = layout === undefined ? {x:space.x,y:space.y+(isInset(space) ? 20 : 48)} : {x:layout.info[0]+layout.info[2]/2,y:layout.info[1]+52+(groups > 0 ? Math.ceil(Math.min(groups,6)/columns)*33+17 : 5)};
   const width = layout === undefined ? 116 : layout.info[2]-6;
   const label = numeric ? `${track.display}: ${String(track.value)}` : `${track.display.replace(" posture", "")}: ${words(String(track.value))}`;
   return <g role="group" aria-label={`${track.display} track`} data-track-space={space.id} className="box-track" pointerEvents="none">
@@ -196,13 +199,15 @@ function EuropeTrack({ track, onReveal }: { readonly track: BoardView["status"][
   </g>;
 }
 
-export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [], mode = "full", eligible = null, camera = {zoom:1,x:0,y:0}, onPan, onReveal }: BoardProps) {
+export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [], mode = "full", eligible = null, camera = {zoom:1,x:0,y:0}, onPan, onZoom, onReveal }: BoardProps) {
   const cells = regionCells(view.spaces);
   const spaces = view.spaces.filter(s => !isEuropeTrack(s));
   const europe = view.spaces.find(isEuropeTrack);
   const pointerActive = useRef(false);
   const skipClick = useRef(false);
   const [panning, setPanning] = useState(false);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const lastPointer = useRef<Pt | null>(null);
   const base = cells.geographic ? {x:0,y:0,w:ATLAS.width,h:ATLAS.height} : {x:0,y:0,w:MAP_W,h:MAP_H};
   const bw = base.w / camera.zoom;
   const bh = base.h / camera.zoom;
@@ -220,9 +225,32 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
     window.addEventListener("pointerup", end);
     return () => { window.removeEventListener("pointerup", end); };
   }, [grab !== null]);
+  // Screen pixels per map unit. The view keeps its aspect ratio, so the smaller side sets the scale.
+  const pixelsPerUnit = (svg: SVGSVGElement): number => {
+    const r = svg.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 ? Math.min(r.width / bw, r.height / bh) : 1;
+  };
+  // The wheel listener is not passive, so the page never scrolls over the board.
+  const wheel = useRef<(e: WheelEvent) => void>(() => undefined);
+  wheel.current = (e) => {
+    e.preventDefault();
+    const svg = svgRef.current;
+    if (svg === null || e.deltaY === 0) return;
+    const r = svg.getBoundingClientRect();
+    const s = pixelsPerUnit(svg);
+    onZoom?.(e.deltaY < 0 ? 1 : -1, { x: (e.clientX - r.left - r.width / 2) / s, y: (e.clientY - r.top - r.height / 2) / s });
+  };
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (svg === null) return;
+    const on = (e: WheelEvent): void => { wheel.current(e); };
+    svg.addEventListener("wheel", on, { passive: false });
+    return () => { svg.removeEventListener("wheel", on); };
+  }, []);
   const from = grab === null ? null : centre(grab.from);
   return (
     <svg
+      ref={svgRef}
       viewBox={`${String(base.x + (base.w - bw) / 2 + camera.x)} ${String(base.y + (base.h - bh) / 2 + camera.y)} ${String(bw)} ${String(bh)}`}
       tabIndex={0}
       onFocusCapture={(e) => {const id = e.target instanceof Element ? e.target.closest("[data-space]")?.getAttribute("data-space") : null; if (!pointerActive.current && id !== null && id !== undefined) onReveal?.(id);}}
@@ -232,11 +260,19 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         const d = delta[e.key];
         if (d !== undefined) { e.preventDefault(); onPan?.(d[0] / camera.zoom, d[1] / camera.zoom); }
       }}
-      onPointerDownCapture={(e) => { pointerActive.current = true; if (e.altKey && onPan !== undefined) { e.preventDefault(); e.stopPropagation(); setPanning(true); skipClick.current = true; e.currentTarget.setPointerCapture(e.pointerId); } }}
+      onPointerDownCapture={(e) => {
+        pointerActive.current = true;
+        // Alt-drag, middle-button drag or a primary drag that starts off every space pans the map.
+        const onSpace = e.target instanceof Element && e.target.closest("[data-space]") !== null;
+        if (onPan === undefined || !(e.altKey || e.button === 1 || (e.button === 0 && !onSpace))) return;
+        if (e.altKey || e.button === 1) { e.preventDefault(); e.stopPropagation(); }
+        setPanning(true); skipClick.current = true; lastPointer.current = { x: e.clientX, y: e.clientY };
+        e.currentTarget.setPointerCapture(e.pointerId);
+      }}
       role="img"
       aria-label="Board"
       className={`map mode-${mode}${grab === null ? "" : " dragging"}`}
-      onPointerMove={(e) => { if (panning) { const scale = e.currentTarget.getScreenCTM()?.a ?? 1; onPan?.(-e.movementX / scale, -e.movementY / scale); return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
+      onPointerMove={(e) => { if (panning) { const last = lastPointer.current; lastPointer.current = { x: e.clientX, y: e.clientY }; if (last !== null) { const scale = pixelsPerUnit(e.currentTarget); onPan?.((last.x - e.clientX) / scale, (last.y - e.clientY) / scale); } return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
       onClickCapture={(e) => {if (skipClick.current) {e.preventDefault(); e.stopPropagation(); skipClick.current = false;}}}
       onPointerCancel={() => {skipClick.current = false; pointerActive.current = false; setPanning(false); setGrab(null);}}
       onPointerUp={(e) => {
@@ -253,8 +289,8 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
           <path d="M0,0L10,5L0,10Z" className="map-arrow-head" />
         </marker>
       </defs>
-      <rect x={0} y={0} width={MAP_X0 - 1} height={cells.geographic ? ATLAS.height : MAP_H} fill="var(--inset)" />
       <Terrain view={view} cells={cells} />
+      <rect x={0} y={0} width={MAP_X0 - 1} height={cells.geographic ? ATLAS.height : MAP_H} className="map-inset" />
       {cells.geographic && <AtlasContext />}
       {spaces.map((s) => (
         <Space
