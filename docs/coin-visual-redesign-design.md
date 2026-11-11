@@ -26,7 +26,7 @@ Implements `docs/coin-visual-redesign.md`. Geometry, identifiers, links, rules a
 
 | Element | Value |
 |---|---|
-| Highland (mean) | About #96754F, warm brown, shaded relief |
+| Highland (mean) | About #967957, warm brown, shaded relief with large massifs and soft valleys |
 | Plains | About #C1B37B, ochre with olive mottling |
 | Outside play | About #CEC9BA, neutral gray-beige |
 | Area border | Cream #f4ecd6 line, 2.2 px, over dark #2e2114 casing, 5.5 px |
@@ -81,7 +81,7 @@ Measured board share of the viewport:
 ## Asset generation
 
 - The textures and sprites were generated once with Python (Pillow and numpy).
-- Terrain uses fractal noise with hillshade. Pieces use a supersampled software render.
+- Terrain uses fractal noise with hillshade. The highland texture uses few large ridged-noise layers (periods of 100 to 700 px). The designer selected it from three variants. Pieces use a supersampled software render.
 - The scripts are not in the repository, under the repository rule for one-time scripts.
 - The artwork is original. It copies no published game art.
 
