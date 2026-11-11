@@ -566,6 +566,8 @@ body:has(.play-screen) .tip {font-size:16px;}
 @media (max-width:1100px) {
   .map-only .track-card, .map-only .map-caption {position:static; width:auto; box-shadow:none; border-radius:0;}
   .map-only .track-card .track-summaries {flex-direction:row; flex-wrap:wrap;}
+  /* The card is in flow here, so the scales open in flow below the summary row and are not clipped. */
+  .map-only .track-scales[open] > .political-tracks {position:static; width:auto; margin:4px 0 0; box-shadow:none;}
 }
 .play-screen .find-space > span {position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap;}
 .play-screen .find-space select {max-width:150px;}
