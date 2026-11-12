@@ -65,8 +65,8 @@ Result: 1 Blocker, 12 Major, 27 Minor. Decisions for the designer: `OPEN_QUESTIO
 ## Push log
 
 - ⚠️ 2026-11-12: the privacy check did not pass. `gh repo view --json visibility` is blocked in this session (GraphQL returns HTTP 403). The REST search `gh api -X GET search/repositories -f q='repo:Penguin-Pants/HandfullOfBandits'` returned `"private": false, "visibility": "public"`.
-- Action: the audit files were committed locally on `clawd/admiring-einstein-kmwmvh`. No push. No pull request.
-- The cloud container is temporary. The local commit is lost when the session ends. The four files were also sent to the session as attachments.
+- First action: the audit files were committed locally on `clawd/admiring-einstein-kmwmvh`. No push.
+- 2026-11-12, later: the designer was told that the repository reports as public and answered "Push". The branch was then pushed and a pull request was opened.
 
 ## Resume notes
 

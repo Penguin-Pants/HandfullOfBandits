@@ -36,4 +36,4 @@ Only decisions that need you. Each question names its finding in `AUDIT_REPORT.m
 
 ## Not a rules question, but needs you
 
-24. **Repository visibility.** The GitHub API reports `Penguin-Pants/HandfullOfBandits` as public (checked 2026-11-12). The request expected a private repository. The audit files were committed locally and not pushed. Do you want the repository made private, or the audit pushed as it is?
+24. **Repository visibility.** The GitHub API reports `Penguin-Pants/HandfullOfBandits` as public (checked 2026-11-12). The request expected a private repository. You chose to push the audit as it is. Open point: do you want the repository made private?
