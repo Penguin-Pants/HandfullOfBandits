@@ -86,6 +86,12 @@ describe("pruning keeps every option kind reachable (PR #40 review)", () => {
     allLegal(s, gen(s, "card", "pkk"));
   });
 
+  it("offers Rally flip without a Base", () => {
+    const s = setPieces(rich(turnOf("pkk")), "hakkari", "guerrilla", 2, "active");
+    const flips = gen(s, "card", "pkk").candidates.filter((c) => JSON.stringify(c.command).includes('"hakkari":{"option":"flip"}'));
+    expect(flips.length).toBeGreaterThan(0);
+  });
+
   it("offers Train Guards and Base where a State Base also allows Troops and Police", () => {
     // Van-Bitlis: Mountain with a State Base and Control; 2 Police allow a Base, Law 3175 allows Guards.
     const s = setPieces(rich(turnOf("state")), "van-bitlis", "police", 2);

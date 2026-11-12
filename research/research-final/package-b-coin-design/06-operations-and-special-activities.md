@@ -161,7 +161,8 @@ In each selected space or box:
 
 1. Place 1 Guerrilla from Available, or
 2. Replace 2 Guerrillas with 1 PKK Base (stacking limits apply; never in Western Cities; external Bases only where the host is Host, or Tolerant in the KDP Zone and PUK Zone after the Northern Iraq Vacuum card (07, section 5.1)), or
-3. If a PKK Base is there: place Guerrillas up to Pop + PKK Bases there (an external box counts Pop 1), or flip all Guerrillas there Underground.
+3. If a PKK Base is there: place Guerrillas up to Pop + PKK Bases there (an external box counts Pop 1), or
+4. Flip all Guerrillas there Underground. No PKK Base is required.
 
 Agitate: in one selected space with a PKK Base or PKK Control, even in a Limited Op, the PKK may pay for Agitation as in 07, section 1.3. Agitate costs Resources even when Rally is free.
 
@@ -275,7 +276,7 @@ Europe mobilization is not a separate SA. The PKK raises Europe by selecting the
 
 ## 7. Worked example
 
-The State has 10 Resources. Botan (Mountain) holds 4 Troops, 1 Police, 2 Guards and 2 Underground Guerrillas. The State chooses Op + SA: Sweep in Botan (2 Resources). It Activates (4 + 1 + 2) / 2 = 3, round down, so both Guerrillas flip Active. As its SA it takes Air Mobility and moves 2 more Troops into Botan. It cannot Assault on the same action, because Sweep was its Op. Next card the PKK is First Eligible (CT 2.3.5). The PKK may March the Active Guerrillas out, or Rally to flip them Underground if a PKK Base is there. Coverage and tempo compete, as in CT lessons example 1.
+The State has 10 Resources. Botan (Mountain) holds 4 Troops, 1 Police, 2 Guards and 2 Underground Guerrillas. The State chooses Op + SA: Sweep in Botan (2 Resources). It Activates (4 + 1 + 2) / 2 = 3, round down, so both Guerrillas flip Active. As its SA it takes Air Mobility and moves 2 more Troops into Botan. It cannot Assault on the same action, because Sweep was its Op. Next card the PKK is First Eligible (CT 2.3.5). The PKK may March the Active Guerrillas out, or Rally to flip them Underground without a PKK Base. Coverage and tempo compete, as in CT lessons example 1.
 
 ## 8. Tests
 

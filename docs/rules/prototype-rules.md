@@ -251,7 +251,7 @@ Choose one option in each selected space or camp:
 - Place one Available Guerrilla Underground.
 - Replace two Guerrillas with one Available PKK Base, subject to stacking and host limits. No Base in Western Cities. The prototype removes Active Guerrillas first for this replacement.
 - At a PKK Base, place up to **Pop + PKK Bases there** Guerrillas from Available. An external box counts as Pop 1. This is a placement allowance, not a ceiling on the total Guerrillas present.
-- At a PKK Base, flip all Guerrillas there Underground.
+- Flip all Guerrillas there Underground. No PKK Base is required.
 
 If a Rally plans more Guerrillas than are Available, place all that are Available.
 

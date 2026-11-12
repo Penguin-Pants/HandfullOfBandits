@@ -151,6 +151,17 @@ it("ends a Rally when Host Pressure leaves no legal, affordable location, keepin
   expect(next.state.initiative.actedThisCard).toEqual(["pkk"]);
   expect(next.entries.some((e) => e.kind === "EffectSkipped" && e.data["reason"] === "noLegalReplacement" && e.ruleRef === "DEC-54")).toBe(true);
 });
+it("offers a replacement Rally to flip Guerrillas without a Base", () => {
+  let state = noGuerrillas(withRoll(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), 1));
+  state = ruleset.spaces.reduce((s, x) => setPieces(s, x.id, "pkkBase", 0), state);
+  state = setPieces(setPieces(state, "kdp-zone", "guerrilla", 1, "active"), "dersim", "guerrilla", 1, "active");
+  state = setTrack(setMarkers({...state, pools: {...state.pools, guerrilla: {available: 0, outOfPlay: 0}}}, "europe", "europeBan", 1), "europe", 3);
+  const first = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone"], perLocation: {"kdp-zone": {option: "flip"}}, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
+  expect(first.state.pending?.resume?.op).toBe("pkk.rally");
+  const next = play(first.state, op("pkk", "opSa", {op: "pkk.rally", locations: ["dersim"], perLocation: {dersim: {option: "flip"}}}));
+  expect(next.state.pending).toBeNull();
+  expect(next.state.spaces["dersim"]?.pieces["guerrilla"]).toMatchObject({active: 0, underground: 1});
+});
 it("probes replacements without the original Agitate choices, so a legal replacement Rally still pauses (PR #43 review)", () => {
   // Two Agitate sub-actions (extra-agitate) name Botan and Hakkari; no one-location probe contains both.
   const base = withRoll(setTrack(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), "resources.pkk", 10), 1);

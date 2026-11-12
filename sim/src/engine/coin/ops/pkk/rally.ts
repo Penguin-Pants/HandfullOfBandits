@@ -1,7 +1,7 @@
 import { hasModifier, modifierLimit } from "../../../core/modifiers.ts";
 import { MOD } from "../../modifiers.ts";
 // Rally (research 06 s4.1): per location, place 1 Guerrilla, replace 2 Guerrillas with a Base, or
-// at a Base place up to Pop + Bases or flip all Underground. Europe as a location: Europe +1.
+// at a Base place up to Pop + Bases, or flip all Underground. Europe as a location: Europe +1.
 // Optional Agitate in one space with a PKK Base or PKK Control (07 s1.3).
 import { stackingRoom } from "../../../core/effects/common.ts";
 import { createExec, type Exec } from "../../../core/exec.ts";
@@ -95,7 +95,9 @@ export const rally: ActionHandler = {
         if (stackingRoom(ruleset, state, loc, PIECE.pkkBase) < 1) v("rallyBaseStacking", "PKK Base stacking limit (03 s5).");
         if (s.kind === "external" && !rallyBaseOpen(state, loc)) v("rallyBaseHost", "The host posture does not allow a Base here (07 s5.1).");
         basing += 1;
-      } else if (count(state, loc, PIECE.pkkBase) === 0) {
+      } else if (choice === "flip" && count(state, loc, PIECE.guerrilla) === 0) {
+        v("rallyFlipGuerrilla", "Flipping needs a Guerrilla here.");
+      } else if (choice === "grow" && count(state, loc, PIECE.pkkBase) === 0) {
         v("rallyNeedsBase", "This option needs a PKK Base here.");
       } else if (choice === "grow") {
         const n = growCount(ruleset, state, part, loc);
