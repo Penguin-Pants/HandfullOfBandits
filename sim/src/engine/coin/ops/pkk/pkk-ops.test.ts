@@ -30,12 +30,23 @@ describe("Rally (06 s4.1)", () => {
     expect(codes(west, rally("limitedOp", { "western-cities": { option: "base" } }))).toEqual(["rallyBaseStacking"]);
   });
 
-  it("at a Base places up to Pop + Bases (external box Pop 1), or flips all Underground", () => {
+  it("at a Base places up to Pop + Bases (external box Pop 1) and can flip Guerrillas", () => {
     expect(pieces(play(start, rally("limitedOp", { botan: { option: "grow" } })).state, "botan", "guerrilla")).toEqual({ underground: 5, active: 0 });
     expect(pieces(play(start, rally("limitedOp", { "kdp-zone": { option: "grow" } })).state, "kdp-zone", "guerrilla")).toEqual({ underground: 5, active: 0 });
     const active = setPieces(setPieces(start, "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
     expect(pieces(play(active, rally("limitedOp", { botan: { option: "flip" } })).state, "botan", "guerrilla")).toEqual({ underground: 2, active: 0 });
     expect(codes(start, rally("limitedOp", { hakkari: { option: "grow" } }))).toEqual(["rallyNeedsBase"]);
+  });
+
+  it("flips Active Guerrillas Underground in multiple spaces without Bases", () => {
+    const empty = setPieces(setPieces(start, "hakkari", "guerrilla", 0), "mardin-batman", "guerrilla", 0);
+    const board = setPieces(setPieces(empty, "hakkari", "guerrilla", 2, "active"), "mardin-batman", "guerrilla", 1, "active");
+    const command = rally("opOnly", { hakkari: { option: "flip" }, "mardin-batman": { option: "flip" } });
+    expect(codes(board, command)).toEqual([]);
+    const { state } = play(board, command);
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 2, active: 0 });
+    expect(pieces(state, "mardin-batman", "guerrilla")).toEqual({ underground: 1, active: 0 });
+    expect(res(state)).toBe(3);
   });
 
   it("rejects a Displacement space and a City at Support, except Western Cities (03 s2.1)", () => {

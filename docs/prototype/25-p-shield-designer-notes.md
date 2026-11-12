@@ -52,7 +52,7 @@ Each step cites the prototype rules.
 
 1. **A Base is safe while any Guerrilla shares its space.** Assault removes Active Guerrillas first and may remove a Base "only when no Guerrilla of either state remains". It never removes an Underground Guerrilla (`prototype-rules.md:218`, `:280`).
 2. **The State needs two Operations to reach a protected Base.** Sweep or Garrison must activate the Underground Guerrilla first, and a Sweep "cannot then Assault as part of the same Operation" (`:210`). So the Assault comes on a later card.
-3. **The PKK can re-hide between those cards.** A Rally at a Base flips all Guerrillas there Underground (`:233`). ARGK flips Guerrillas Underground in every Base space (`:420`). Reset flips all Guerrillas Underground (`:503`).
+3. **The PKK can re-hide between those cards.** A Rally can flip all Guerrillas there Underground without a Base (`:233`). ARGK flips Guerrillas Underground in every Base space (`:420`). Reset flips all Guerrillas Underground (`:503`).
 4. **Mountains halve the State's tools.** Sweep and Garrison activate one Guerrilla per two State pieces, and Assault removes one piece per two Troops (`:180`).
 5. **PKK conversion is cheaper.** Agitation costs 1 per shift with no Legitimacy cap (`:298-304`). Civic Action costs 2 per shift, and Propaganda Civic Action is capped at half Legitimacy (`:286-294`).
 

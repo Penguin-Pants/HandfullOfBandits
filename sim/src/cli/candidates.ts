@@ -257,7 +257,7 @@ function rallyPlans(r: Ruleset, s: GameState, limited: boolean, wide: number): P
     if (base) out.push({ option: "grow", ...(academy > 0 ? { extra: academy } : {}) });
     if (count(s, l, "guerrilla") >= 2 && l !== "western-cities") out.push({ option: "base" });
     out.push({ option: "place" });
-    if (base && count(s, l, "guerrilla", "active") > 0) out.push({ option: "flip" });
+    if (count(s, l, "guerrilla", "active") > 0) out.push({ option: "flip" });
     return out;
   };
   const locs = [...domestic(r), ...HOSTS, "europe"].filter(open).sort((a, b) => Number(count(s, b, "pkkBase") > 0) - Number(count(s, a, "pkkBase") > 0));
