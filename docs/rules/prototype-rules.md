@@ -528,7 +528,7 @@ Cards that reveal Covert markers reveal them as 4.2.5 describes. A card that say
 
 # 6.0 Propaganda Rounds
 
-Conduct these steps in order when Propaganda is revealed. Skip an immediately consecutive Propaganda card without conducting another round. The **first** Propaganda round of a game skips the victory check. The **final** round is the scenario's last (round 2 in Scenarios A to C, round 5 in the full campaign). It gives no income and ends after Agitation unless a faction already wins at the opening check. A Negotiated Outcome (8.6) can end the game in any round before the final one.
+Conduct these steps in order when Propaganda is revealed. Skip an immediately consecutive Propaganda card without conducting another round. The **first** Propaganda round of a game skips the victory check. The **final** round is the scenario's last (round 2 in Scenarios A to C, round 5 in the full campaign). It gives no income and ends after Agitation unless a faction already wins at the opening check.
 
 ## 6.1 Victory Phase
 
@@ -558,7 +558,7 @@ Apply the following in order, with the normal Legitimacy bounds and overflow rul
 4. **Disputed Harm:** lose one Legitimacy if three or more Disputed Harm markers are on the map.
 5. **Covert exposure:** if at least three face-down Covert markers are on the map, randomly reveal one. It becomes State Harm and costs two Legitimacy.
 6. **Europe:** raise Europe by one if State Harm is at least three greater than PKK Harm; lower it by one if PKK Harm is at least three greater than State Harm. Then lose one Legitimacy if Europe is 4 or 5.
-7. **Gains:** gain one Legitimacy for each that applies: (a) Legal Space is Open and two or more Offices are on the map; (b) Ceasefire is Reciprocal Restraint or Talks and no State Restraint Broken marker is on the map; (c) no New Displacement was flipped in step 2.
+7. **Gains:** gain one Legitimacy for each that applies: (a) Legal Space is Open and two or more Offices are on the map; (b) Ceasefire is Reciprocal Restraint and no State Restraint Broken marker is on the map; (c) no New Displacement was flipped in step 2.
 8. **Emergency choice:** the State may make one permitted move (8.2), or keep the current step. Apply any return-to-OHAL cost.
 
 ## 6.5 Legal Politics
@@ -567,7 +567,7 @@ Skip while Legal Space is Absent. This phase can first run after HEP Founded set
 
 1. **Closure filing.** The State may file a closure case (8.5).
 2. **Procedure table.** Run the Legal Politics procedure table, lines 1 to 6 in order (8.5).
-3. **Ceasefire step.** Resolve the ceasefire step (8.6). A Negotiated Outcome ends the game here, before Civic Action.
+3. **Ceasefire step.** Resolve the ceasefire step (8.6).
 
 ## 6.6 State Civic Action
 
@@ -644,11 +644,7 @@ Record the winner, ending round, both scores, thresholds, final margins and Harm
 
 For playtests, note repeated initiative streaks, forced Pass sequences, ambiguous rules and any harm-causing action that improves its user's relative margin. These are review flags, not extra automatic game endings.
 
-Also record the Emergency Rule step, the Leadership side (Present, Abroad or Captured), the Ceasefire step, any Negotiated Outcome, closure bans and successor returns, the Covert markers revealed and the first round in which a faction qualified.
-
-## 7.5 Negotiated Outcome Scoring
-
-A Negotiated Outcome (8.6) is not an instant win. Apply its concessions first. Then compute final margins as in 7.3. Reveal all face-down Covert markers first, except when Talks have held through two full Campaigns: then no Covert penalty applies. The higher margin names the label: "Negotiated outcome favorable to State" or "favorable to PKK". If the margins differ by two or less, the label is "Negotiated outcome, balanced" and the game has no winner.
+Also record the Emergency Rule step, the Leadership side (Present, Abroad or Captured), the Ceasefire step, closure bans and successor returns, the Covert markers revealed and the first round in which a faction qualified.
 
 # 8.0 Political and Sanctuary Systems
 
@@ -736,9 +732,9 @@ Legal Politics is a non-player system. It starts when HEP Founded sets Legal Spa
 
 Line 6 sees the Office count after lines 4 and 5 of the same phase. Line 2 places as many Offices as the eligible spaces allow and the rest are lost. A ban with no Offices still returns a Successor with one Office. Line 6 is a deliberate timer. No faction can stop it directly.
 
-## 8.6 Ceasefire and Talks
+## 8.6 Ceasefire
 
-The Ceasefire track has four steps: **None → Declared → Reciprocal Restraint → Talks.**
+The Ceasefire track has three steps: **None → Declared → Reciprocal Restraint.** A ceasefire is temporary. No negotiated settlement exists, and a ceasefire never ends the game.
 
 **Declaration.** From C3, the PKK may Declare Ceasefire as its card action, using the Limited Op box (2.3). Ceasefire must be None. Set it to Declared and raise Europe by one. Only the PKK declares, but an Event may declare for it.
 
@@ -747,20 +743,14 @@ The Ceasefire track has four steps: **None → Declared → Reciprocal Restraint
 | Ceasefire | The PKK may not | The State may not |
 |:---|:---|:---|
 | Declared | Attack, Ambush, Strike Collaborators | Nothing. Each State Assault, Village Clearance, Cross-Border or Covert Action places the State Restraint Broken marker. |
-| Reciprocal Restraint or Talks | Attack, Ambush, Strike Collaborators, Coerce, place a domestic Base | Assault, Village Clearance, Cross-Border, Covert Action |
+| Reciprocal Restraint | Attack, Ambush, Strike Collaborators, Coerce, place a domestic Base | Assault, Village Clearance, Cross-Border, Covert Action |
 
-**Breach.** A forbidden action stays legal, but the game shows a warning before you confirm it. The acting faction places its Restraint Broken marker in the first location of the action and Ceasefire goes to None. Free actions from Events count. A PKK breach lowers Europe by one. A State breach during Reciprocal Restraint or Talks costs two Legitimacy. A State action during Declared only places the marker. The State cannot accept at that round's ceasefire step. Reset removes the marker (6.9), so the State may accept at a later round if the PKK keeps Declared.
+**Breach.** A forbidden action stays legal, but the game shows a warning before you confirm it. The acting faction places its Restraint Broken marker in the first location of the action and Ceasefire goes to None. Free actions from Events count. A PKK breach lowers Europe by one. A State breach during Reciprocal Restraint costs two Legitimacy. A State action during Declared only places the marker. The State cannot accept at that round's ceasefire step. Reset removes the marker (6.9), so the State may accept at a later round if the PKK keeps Declared.
 
 **Ceasefire step** (in the Legal Politics phase, after the procedure table). Resolve in this order. At each sub-step the State acts first, then the PKK.
 
 1. **Declared**, with no State Restraint Broken marker: the State may accept. Ceasefire goes to Reciprocal Restraint. If the State does not accept, the PKK keeps Declared or ends it (Ceasefire to None). If the PKK ends a ceasefire that it declared, Europe −1.
-2. **Reciprocal Restraint** that was already in force at the previous Propaganda round, with no breach since: each faction votes yes or no to Talks. Two yes votes set Ceasefire to Talks. One no keeps Reciprocal Restraint.
-3. **Talks** that were already in force at the previous Propaganda round, with no breach since: resolve the Negotiated Outcome.
-4. Either faction may leave Talks (to Reciprocal Restraint) or leave Reciprocal Restraint (to None). The State pays no cost. The PKK loses one Europe if it leaves Reciprocal Restraint.
-
-**Negotiated Outcome.** It needs all of these: Talks held through a full Campaign with no breach; Legal Space not Banned; and acceptance by both factions. The concessions are: Emergency Rule to Normalizing; Legal Space to Open; the PKK chooses and removes half of its domestic Guerrillas, rounded up, to Available. If both accept, apply the concessions and the game ends. Score it under 7.5. If either refuses, Talks continue, or that faction may leave Talks at sub-step 4.
-
-A "full Campaign" of Talks means that Talks were in force at the previous Propaganda round with no breach since. Two full Campaigns are needed to waive the Covert penalty (7.5).
+2. Either faction may leave Reciprocal Restraint (to None). The State pays no cost. The PKK loses one Europe if it leaves Reciprocal Restraint.
 
 # 9.0 Key Terms
 
@@ -790,7 +780,6 @@ A "full Campaign" of Talks means that Talks were in force at the previous Propag
 
 **Covert marker:** a face-down State marker from Covert Action. It is State Harm once revealed (4.2.5).
 
-**Negotiated Outcome:** a game end by agreement after a full Campaign of Talks (8.6, 7.5).
 
 **Office:** a legal-party marker in a domestic space. It caps the space at Passive levels (8.4).
 

@@ -2,7 +2,7 @@
 
 ## B.1 Edition Boundary
 
-This is the **full game** ruleset R4, dated 8 November 2026: the full five-Campaign game and Scenarios A, B and C. The source baseline is main commit **f0e6415**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire and Talks, the four Pivotals, the structural cards and the Campaign switches. The earlier Scenario A edition was based on commit **d9a6453**.
+This is the **full game** ruleset R4, dated 8 November 2026: the full five-Campaign game and Scenarios A, B and C. The source baseline is main commit **f0e6415**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire, the four Pivotals, the structural cards and the Campaign switches. The earlier Scenario A edition was based on commit **d9a6453**.
 
 **Not covered in this edition:** the optional modules of research chapter 13 (including the third-player module) and the card appendix for Campaigns C3 to C5. Appendix A still reproduces C1 and C2 only. The C3 to C5 card text is in `game-packages/kurdish-coin/0.1.0/cards/`. The designer checkpoints IC-3a to IC-3c are still open, so the full-game systems are implemented but not yet playtested by the designer.
 
@@ -33,7 +33,6 @@ These differences are made explicit rather than silently resolved. For **current
 
 **Reclaiming on-map pieces.** Research 04 §2.1 permits some owner-chosen removals to replenish an exhausted Available supply, excluding Guards and external pieces. Current Operation handlers require Available supply and do not offer this withdrawal mechanism. This edition does not invent a simulator withdrawal action.
 
-**Talks vote.** Research 07 §7.3 step 2 has each faction choose yes or no to Talks in secret. The simulator takes both answers on one screen, State first (DEC-66). The printed rule in 8.6 says only that each faction votes. A future decision must say whether a physical game uses a secret vote.
 
 No general COIN-series rule should be imported to fill any of these differences without recording the change. These are implementation/research differences, not additional printed-game advantages.
 

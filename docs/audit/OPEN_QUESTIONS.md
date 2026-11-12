@@ -8,8 +8,8 @@ Items 1 to 14 are decided. Rule text is updated in `prototype-rules.md`. Engine 
 
 | # | Finding | Decision | Rules text | Pending |
 |:--|:--|:--|:--|:--|
-| 1 | B-01 | Negotiated Outcome must be reachable before the final round. Shorten one step. | Not changed. The step is not chosen. | Choose the step. Check Scenarios B and C (two rounds). Engine |
-| 2 | B-01 | The PKK chooses the Guerrilla removals. | 8.6 | None |
+| 1 | B-01 | No Negotiated Outcome. Ceasefires stay (None, Declared, Reciprocal Restraint). No permanent settlement, because Turkish territorial integrity and Kurdish independence are directly opposed. Talks and the Outcome are removed. | 6.0, 6.5, 7.4, 7.5 (deleted), 8.6, 9.0, B.3 | Engine: remove Talks, the Outcome and the Covert waiver. Tests |
+| 2 | B-01 | Moot. The Outcome and its removals no longer exist. | 8.6 | None |
 | 3 | M-01 | Block lasts until the next Reset. | 8.6 | None |
 | 4 | M-03 | One group is all Guerrillas from one origin to one destination. | 3.3.2 | Engine |
 | 5 | M-07 | The box follows the action. Op Only needs two or more locations. | 2.3, B.3 | Engine |
@@ -23,7 +23,7 @@ Items 1 to 14 are decided. Rule text is updated in `prototype-rules.md`. Engine 
 | 13 | M-11 | Rally places as many Guerrillas as are Available. | 1.4.2, 3.3.1 | None (engine already does it) |
 | 14 | M-12 | Keep DK-005 in C1 and print the evidence grade. | 5.4 | Print the grade on the card |
 
-Open from these decisions: item 1 (which step gets shorter, and whether it is enough for Scenarios B and C). Rule 6.0 (R:527) and 7.5 (Covert waiver) stay as they are until then.
+Open from these decisions: none. Item 1 replaced the earlier "shorten one step" answer.
 
 ## Original questions
 
