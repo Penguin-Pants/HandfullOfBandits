@@ -172,15 +172,16 @@ Balance notes (4, not counted) are in section 6.
 - **Locations**: R 5.4 (R:505), R 8.5 (R:718, R:724 to R:731), R 10.7 (R:942). Engine: `coin/propaganda/legal-politics.ts:134-160`.
 - **Evidence**
   - HEP Founded places two Offices. Line 4 adds one each round. At four Offices line 6 files: "The prosecutor files: place the Closure Case marker" (R:729). Line 1 bans at the next phase.
-  - Full campaign with no card effect: 3 Offices at round 3, 4 Offices and a filing at round 4, ban at round 5 (the final round). The State loses 2 Legitimacy just before final scoring.
+  - Full campaign with no card effect and one eligible space in each round: 3 Offices at round 3, 4 Offices and a filing at round 4, ban at round 5 (the final round). The State loses 2 Legitimacy just before final scoring.
   - After a ban, the Successor returns at Prosecuted with the limit of 3 and the cycle starts again.
   - Scenario C starts with the Closure Case marker on the track (R:942). The ban at round 1 is certain.
-  - No player choice stops the timer. The State can only make it faster (closure filing). The PKK cannot act on it (R:448).
+  - No rule gives a faction a direct choice to stop the timer. The State can only make it faster (closure filing). The PKK cannot execute Legal Politics Events (R:448).
+  - Indirect delay is possible. Line 4 places an Office only in a space with Pop 2 or more, no Office, no PKK Control and no Active level (R:727, `legal-politics.ts:28-31`). If no space in the line 4 order is eligible, no Office is placed, the limit is not reached and line 6 does not file. That needs PKK Control or an Active level in every listed space with no Office (9 of 11 spaces when 2 Offices are out). It is possible by the rules but not a practical plan.
   - Line 6 does not change Legal Space. A State filing and an Event filing both set Prosecuted (R:718). A line 6 filing leaves Open, so the Office limit stays 4 and gain 7(a) (R:557) still applies in the round before the ban.
 - **Two readings of line 6**
   1. Line 6 is a filing like the others, so Legal Space goes to Prosecuted.
   2. Line 6 only places the marker. (Engine, `legal-politics.ts:160`.)
-- **Impact**: a fixed 2 Legitimacy loss on a schedule that no player controls. It lands on the final round of the full campaign. Confidence: high for the sequence, by hand trace.
+- **Impact**: a 2 Legitimacy loss on a schedule that no player controls in practice. It lands on the final round of the full campaign. Confidence: high for the sequence, by hand trace.
 - **Fix options**
   1. Keep the timer and state it in 8.5 as intended, with the line 6 reading made explicit. Trade-off: text only.
   2. Give one faction a way to delay or stop the line 6 filing. Trade-off: new rule and new balance questions.
@@ -264,7 +265,7 @@ Each row: ID, type, locations, evidence, impact. Fix options follow the table wh
 | m-14 | Ambiguity | R 7.5 (R:647) | "Apply its concessions first." Then: "Reveal all face-down Covert markers first". Two steps are both "first". Engine order: concessions, reveal, margins. |
 | m-15 | Ambiguity | R 5.1 (R:446), Appendix A (DK-004, DK-021, DK-025, DK-033) | Card text says "(State choice)" or "(PKK choice)". The rule gives the choice to the executing faction. The card wording says the opposite on its face. |
 | m-16 | Ambiguity | R 5.5 (R:515). `cards/c1.yaml` DK-006 shaded | Guard Abuse applies with "any Harm marker". That includes PKK Harm, which the PKK places by Strike Collaborators in Guard spaces. The State then loses Legitimacy for a PKK act. Intent not stated. |
-| m-17 | Gap | R 3.3.1 (R:256), R 4.2.3 (R:368), R 3.2.4 (R:237). `rally.ts:67-70`, `assault.ts:36` | Paid actions with no possible effect are legal in the engine: Rally in Europe at 5, Diplomacy against Europe at 0, Assault with one Troop in a Mountain. The rules are silent. A no-effect location also counts for M-07. |
+| m-17 | Gap | R 3.3.1 (R:256), R 4.2.3 (R:368), R 3.2.4 (R:237). `rally.ts:67-70`, `assault.ts:36` | Paid actions with no possible effect are legal in the engine: Rally in Europe at 5 with no Ban marker (the engine cap is then unlimited, `common.ts:68-70`; with the Ban marker the engine refuses a Rally at the cap of 3), Diplomacy against Europe at 0, Assault with one Troop in a Mountain. The rules are silent. A no-effect location also counts for M-07. |
 | m-18 | Gap | R 5.3 (R:487). `coin/pivotal.ts:59, 100` | ARGK places "among spaces with PKK Bases". The engine accepts an external camp at any posture, also Hostile. 5.1 says card text does not waive other limits. |
 | m-19 | Contradiction | R 1.7 (R:118), R 2.7 (R:189). `choose-operation.ts:111-121` | "Pay the full required cost before taking a voluntary action." An Extort before the Operation can supply the Resources for that Operation. |
 | m-20 | Gap | R 10.3 (R:871 to R:886) | Chain order applies only "if both cards of a pair below are present". A later card can be in the pile with no earlier card (for example DK-057 with no DK-056). The rules do not say this is intended. |

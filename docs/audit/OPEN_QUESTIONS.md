@@ -13,7 +13,7 @@ Only decisions that need you. Each question names its finding in `AUDIT_REPORT.m
 ## Decide next
 
 6. **Ban marker (M-02).** Is the Europe cap marker permanent? Do you want a different name from the Legal Politics ban?
-7. **Legal Politics timer (M-08).** Is the automatic filing at the Office limit (line 6) intended to ban the party on a fixed schedule? Does a line 6 filing set Legal Space to Prosecuted, as the other filings do?
+7. **Legal Politics timer (M-08).** Is the automatic filing at the Office limit (line 6) intended to ban the party on a schedule that players can delay only by making every Office space ineligible? Does a line 6 filing set Legal Space to Prosecuted, as the other filings do?
 8. **Capture (M-09).** Must Capture be possible in every full game, or is a game with no Capture acceptable?
 9. **Event with no effect (M-10).** May a faction take the Event box and apply nothing, to keep First Eligible?
 10. **Strike Collaborators timing (M-04).** Before only (rule) or before and after (engine)?
@@ -27,7 +27,7 @@ Only decisions that need you. Each question names its finding in `AUDIT_REPORT.m
 15. **Guard Abuse (m-16).** Does PKK Harm in a Guard space trigger Guard Abuse against the State?
 16. **Ceasefire step 4 (m-26).** May one faction leave Talks and Reciprocal Restraint in the same step?
 17. **PKK Restraint Broken marker (m-26).** Does it have an effect, or is it a record only?
-18. **No-effect actions (m-17).** May a faction pay for a location where the action can do nothing (Rally in Europe at 5, Diplomacy against Europe at 0)?
+18. **No-effect actions (m-17).** May a faction pay for a location where the action can do nothing (Rally in Europe at 5 with no Ban marker, Diplomacy against Europe at 0)?
 19. **Leadership (m-13).** Can the Leadership return to Present?
 20. **Garrison (m-11).** Do Police move any distance? May the State activate fewer Guerrillas than the maximum?
 21. **Attack removal (m-10).** May the PKK mix one Troop and one Police? May it remove fewer pieces than the maximum?

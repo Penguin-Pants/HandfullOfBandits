@@ -113,12 +113,13 @@ Section numbers refer to `docs/rules/prototype-rules.md`.
 
 **T-M08-a: full campaign with no card effect on Offices**
 
-1. Setup: full campaign. HEP Founded is revealed in C3 and places 2 Offices. Its Event side is not executed. No other card touches Offices, Legal Space or the Closure Case marker. The State never files.
+1. Setup: full campaign. HEP Founded is revealed in C3 and places 2 Offices. Its Event side is not executed. No other card touches Offices, Legal Space or the Closure Case marker. The State never files. In each round one space or more in the line 4 order is eligible (Pop 2 or more, no Office, no PKK Control, no Active level).
 2. Round 3: line 4 places a third Office. Line 6 does nothing (3 is below 4).
 3. Round 4: line 4 places a fourth Office. Line 6 files. Legal Space stays Open.
 4. Round 5 (final): line 1 bans. Legitimacy -2, Europe +1, all Offices removed.
 
-- **Check**: the State score at final scoring is 2 lower with no decision by any player.
+- **Check**: the State score at final scoring is 2 lower with no direct decision by any player.
+- **Counter case**: before round 4, give every listed space with no Office either PKK Control or an Active level. Line 4 places nothing, the count stays 3 and line 6 does not file.
 - **Second check (line 6 reading)**: after step 3, is Legal Space Open (engine) or Prosecuted (same as a State filing)? At Open the State still gets gain 7(a) in round 5 before the ban.
 
 **T-M08-b: Scenario C**
