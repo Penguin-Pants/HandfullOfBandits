@@ -2,6 +2,31 @@
 
 Only decisions that need you. Each question names its finding in `AUDIT_REPORT.md`. Options and trade-offs are in the report.
 
+## Decisions (2026-11-12)
+
+Items 1 to 14 are decided. Rule text is updated in `prototype-rules.md`. Engine and data changes are pending and are not in this change.
+
+| # | Finding | Decision | Rules text | Pending |
+|:--|:--|:--|:--|:--|
+| 1 | B-01 | No Negotiated Outcome. Ceasefires stay (None, Declared, Reciprocal Restraint). No permanent settlement, because Turkish territorial integrity and Kurdish independence are directly opposed. Talks and the Outcome are removed. | 6.0, 6.5, 7.4, 7.5 (deleted), 8.6, 9.0, B.3 | Engine: remove Talks, the Outcome and the Covert waiver. Tests |
+| 2 | B-01 | Moot. The Outcome and its removals no longer exist. | 8.6 | None |
+| 3 | M-01 | Block lasts until the next Reset. | 8.6 | None |
+| 4 | M-03 | One group is all Guerrillas from one origin to one destination. | 3.3.2 | Engine |
+| 5 | M-07 | The box follows the action. Op Only needs two or more locations. | 2.3, B.3 | Engine |
+| 6 | M-02 | The cap marker is permanent and is renamed "Europe Ban marker". | 1.7, 3.3.1, 8.4 | Engine strings |
+| 7 | M-08 | Keep the line 6 timer. A line 6 filing sets Legal Space to Prosecuted. | 8.5 | Engine |
+| 8 | M-09 | Capture is not certain. Say so. | 8.1.5 | None |
+| 9 | M-10 | A faction may take the Event box and apply nothing. | 2.3 | None |
+| 10 | M-04 | Strike Collaborators may go before or after. | 2.7, 4.3.3 | None (engine already allows it) |
+| 11 | M-05 | Reception blocks every shift toward Support. | 8.4 | Data: `blocks: [support]` in `markers.yaml` |
+| 12 | M-06 | PKK Harm blocks the Coerce shift toward Neutral. | 3.3.4 | None (engine already does it) |
+| 13 | M-11 | Rally places as many Guerrillas as are Available. | 1.4.2, 3.3.1 | None (engine already does it) |
+| 14 | M-12 | Keep DK-005 in C1 and print the evidence grade. | 5.4 | Print the grade on the card |
+
+Open from these decisions: none. Item 1 replaced the earlier "shorten one step" answer.
+
+## Original questions
+
 ## Decide first
 
 1. **Negotiated Outcome (B-01).** Must a Negotiated Outcome be reachable before the final round? If yes: which step gets shorter, or does Declare Ceasefire open earlier? If no: does the Covert waiver (7.5) stay?
