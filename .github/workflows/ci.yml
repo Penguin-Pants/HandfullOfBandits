@@ -1,9 +1,18 @@
 name: CI
 
+# Documentation only changes do not start a build. `make check` and `make test` read no file
+# under docs/ and no root Markdown file. research/ stays in: `make test` compares the package
+# rules.yaml with the research documents.
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
   pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
 
 jobs:
   sim:
