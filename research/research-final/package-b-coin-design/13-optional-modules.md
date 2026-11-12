@@ -179,7 +179,7 @@ Cohesion runs 0 to 6. Start 4 [tune]. Confidence in these rules: Low.
 2. **Joint action.** If both State factions act against the PKK in the same space on one card, Cohesion +1, max once per Campaign.
 3. **Scandal.** Exposure events lower Cohesion [E-0015; E-0016].
 4. **Cost shift.** If one State faction's action costs Legitimacy, Cohesion -1 unless the other State faction agreed before the action.
-5. **Gates.** At Cohesion 4 or more, Diplomacy may move a host posture two steps [M-011; E-0018]. At 2 or less, Ankara cannot step Emergency Rule down and the State cannot accept Talks (DD-11).
+5. **Gates.** At Cohesion 4 or more, Diplomacy may move a host posture two steps [M-011; E-0018]. At 2 or less, Ankara cannot step Emergency Rule down and the State cannot accept a ceasefire (DD-11).
 
 Cohesion never decides whether the army or the cabinet "won" (Claude `political-and-military-systems/01-political-systems.md`, section 7).
 

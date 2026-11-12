@@ -8,7 +8,7 @@ Items 1 to 14 are decided. Rule text is updated in `prototype-rules.md`. The Pen
 
 | # | Finding | Decision | Rules text | Pending |
 |:--|:--|:--|:--|:--|
-| 1 | B-01 | No Negotiated Outcome. Ceasefires stay (None, Declared, Reciprocal Restraint). No permanent settlement, because Turkish territorial integrity and Kurdish independence are directly opposed. Talks and the Outcome are removed. | 6.0, 6.5, 7.4, 7.5 (deleted), 8.6, 9.0, B.3 | Done: engine, data and tests (`ceasefire-step.test.ts`) |
+| 1 | B-01 | No Negotiated Outcome. Ceasefires stay (None, Declared, Reciprocal Restraint). No permanent settlement, because Turkish territorial integrity and Kurdish independence are directly opposed. Talks and the Outcome are removed. | 6.0, 6.5, 7.4, 7.5 (deleted), 8.6, 9.0, B.3 | Done: engine, data, tests (`ceasefire-step.test.ts`), research documents 04, 05, 07, 09, 11, 12, 13 and `rules.yaml` |
 | 2 | B-01 | Moot. The Outcome and its removals no longer exist. | 8.6 | None |
 | 3 | M-01 | Block lasts until the next Reset. | 8.6 | None. Test: `sim/test/decisions.test.ts` |
 | 4 | M-03 | One group is all Guerrillas from one origin to one destination. | 3.3.2 | Done: `march.ts`, test in `decisions.test.ts` |

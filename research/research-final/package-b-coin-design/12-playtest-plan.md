@@ -97,7 +97,7 @@ One sheet per game. Fields marked (A) are per action; (P) per Propaganda round; 
 | Did either player change a decision because of Legal Space or Offices? (yes or no) | P | DD-02 passivity measure |
 | Village Clearance, Strike Collaborators, Coerce, Covert Action uses | G | Atrocity test |
 | Pieces left in Available at each Reset | P | 04, section 6 |
-| Winner, label, round of the end, Negotiated Outcome | G | M-035; M-041 |
+| Winner, label, round of the end | G | M-035 |
 | Outcome record sheet (09, section 6) | G | Record only (DD-14.5) |
 | Play time and setup time | G | Load |
 | Content comments; "Did any card feel wrong?"; "What do you want to check against a source?" | G | Tone (Claude 03, Debrief) |
@@ -137,7 +137,6 @@ One sheet per game. Fields marked (A) are per action; (P) per Propaganda round; 
 | M-007 | Is the Legal Politics table mechanical? | Two readers place the same Offices; the State files at least once in some games | 07, section 11 |
 | M-027 | Does Legal Politics stay off in C1 and C2? | Never runs before HEP Founded | 10, section 6.1 |
 | M-008 | Does the ceasefire path create choices? | Different games reach different ceasefire steps | Claude 03 Q3 |
-| M-041 | Is a Negotiated Outcome too easy? | Not more than one game in three ends this way | 07, section 11 |
 | M-016, M-044 | Do event-only actors stay outside player control? | No player strategy relies on a Hizbullah or reveal card | Sol 16 |
 | M-034 | Is Serhildan playable and not automatic? | Played in some games, not all | 05, section 4 |
 
@@ -186,7 +185,7 @@ Decision rule:
 Play each one at least once in Stage 0 or Stage 1 (Sol 16):
 
 1. State: force concentration with no Civic Action; Civic Action with minimal security; repeated Emergency Rule steps; Village Clearance at every legal chance.
-2. PKK: sanctuary stacking; perpetual concealment; Coerce-only; talks cycling.
+2. PKK: sanctuary stacking; perpetual concealment; Coerce-only; ceasefire cycling.
 3. Legal Politics (B and C): State closure at every chance.
 4. MOD-3B: permanent alignment with each armed player; a continuity-only strategy.
 

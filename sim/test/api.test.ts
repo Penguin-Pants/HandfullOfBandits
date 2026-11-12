@@ -53,7 +53,7 @@ describe("HTTP API (P2-11)", () => {
     const pkg = body.find((p) => p.packageId === "kurdish-coin");
     expect(pkg?.ok).toBe(true);
     expect(pkg?.scenarios.map((s) => [s.id, s.blockedBy])).toEqual([["full-campaign", []]]);
-    expect(pkg?.assumptions).toHaveLength(18);
+    expect(pkg?.assumptions).toHaveLength(17);
   });
 
   it("refuses a blocked scenario and creates a short session", async () => {
