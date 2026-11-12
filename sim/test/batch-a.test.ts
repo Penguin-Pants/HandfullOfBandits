@@ -17,12 +17,12 @@ it("uses faction-specific legal policies and a legal fallback when their faction
   expect(strategy("sanctuary")(engine,ruleset,state)).toEqual(scriptedPolicy(engine,ruleset,state));
   expect(() => strategy("unknown")).toThrow(/Unknown strategy/);
 });
-it("runs ten Scenario A games, swaps policies with paired seeds and emits round CSV and win rates", () => {
+it("runs ten full campaign games, swaps policies with paired seeds and emits round CSV and win rates", () => {
   const report = runBatch(engine,ruleset,{games: 10,strategies: ["concentration","coerce-only"],swapSeats: true});
   expect(report.games).toHaveLength(10);
   expect(report.games[0]).toMatchObject({seed: 0,swapped: false,stateStrategy: "concentration",pkkStrategy: "coerce-only"});
   expect(report.games[1]).toMatchObject({seed: 0,swapped: true,stateStrategy: "coerce-only",pkkStrategy: "concentration"});
-  expect(report.games.every(g => g.rounds > 0 && g.rounds <= 2)).toBe(true);
+  expect(report.games.every(g => g.rounds > 0 && g.rounds <= 5)).toBe(true);
   expect(report.csv.split("\n")[0]).toContain("state_strategy,pkk_strategy");
   expect(report.csv).toContain("state_score,pkk_score");
   expect(report.summary.join("\n")).toContain("State:");
@@ -30,9 +30,9 @@ it("runs ten Scenario A games, swaps policies with paired seeds and emits round 
 });
 
 it("flags eight-or-more wins in ten and records the early winning round with full metrics", () => {
-  const a = ruleset.scenarios["scenario-a"];
-  if (a === undefined) throw new Error("scenario-a");
-  const r = {...ruleset,scenarios: {...ruleset.scenarios,"scenario-a": {...a,thresholds: {state: -100,pkk: 1000}}}};
+  const a = ruleset.scenarios["full-campaign"];
+  if (a === undefined) throw new Error("full-campaign");
+  const r = {...ruleset,scenarios: {...ruleset.scenarios,"full-campaign": {...a,thresholds: {state: -100,pkk: 1000}}}};
   const report = runBatch(engine,r,{games: 10,strategies: ["concentration","coerce-only"],swapSeats: true});
   expect(report.summary[0]).toContain("10/10");
   expect(report.summary[0]).toContain("FLAG:");

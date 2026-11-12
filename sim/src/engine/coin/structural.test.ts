@@ -8,7 +8,7 @@ import { entryText } from "../../server/text.ts";
 // S0 board: Botan is the only domestic space with a PKK Base (level -1, no Office).
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
 const c3 = (s: GameState): GameState => inCampaign(ruleset, s, "C3");
-const reveal = (card: string, s: GameState = engine.start(ruleset, "s0", 1).state): GameState => c3({ ...s, deck: { ...s.deck, piles: [[card, "DK-016"]] } });
+const reveal = (card: string, s: GameState = engine.start(ruleset, "full-campaign", 1).state): GameState => c3({ ...s, deck: { ...s.deck, piles: [[card, "DK-016"]] } });
 const offices = (s: GameState): string[] => ruleset.spaces.filter((x) => (s.spaces[x.id]?.markers["office"]?.["default"] ?? 0) > 0).map((x) => x.id);
 const leadership = (s: GameState): Readonly<Record<string, number>> | undefined => s.spaces["syria-bekaa"]?.markers["leadership"];
 const abroad = (s: GameState): GameState => setMarkers(setMarkers(s, "syria-bekaa", "leadership", 0, "present"), "syria-bekaa", "leadership", 1, "abroad");
@@ -135,8 +135,8 @@ describe("Capture (DK-093)", () => {
     expect(state.spaces["botan"]?.level).toBe(-2);
   });
 
-  it("S: the Event Europe rise stops at the Ban marker cap (04 s3.6)", () => {
-    const board = setMarkers(setTrack(withCard(turnOf("pkk"), "DK-093"), "europe", 3), "europe", "ban", 1);
+  it("S: the Event Europe rise stops at the Europe Ban marker cap (04 s3.6)", () => {
+    const board = setMarkers(setTrack(withCard(turnOf("pkk"), "DK-093"), "europe", 3), "europe", "europeBan", 1);
     expect(play(board, event("pkk", "shaded", [["botan"]])).state.tracks["europe"]).toBe(3);
   });
 });

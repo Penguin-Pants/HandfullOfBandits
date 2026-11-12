@@ -18,6 +18,7 @@ const NAMES: Readonly<Record<string, string>> = {
   opSa: "Op + SA",
   outOfPlay: "Out of Play",
   law3175: "Law 3175",
+  europeBan: "Europe Ban",
 };
 
 /** "passiveSupport" or "resources.pkk" or "kdp-zone" as words in title case. */

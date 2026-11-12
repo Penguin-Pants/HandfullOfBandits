@@ -19,7 +19,7 @@ def card_reference() -> str:
     ]
     always = {
         "DK-003": "Move all Guards from Out of Play to Available; Law 3175 is in effect.",
-        "DK-005": "If KDP is Host, set its posture to Tolerant.",
+        "DK-005": "If KDP is Host, set its posture to Tolerant. The date of the KDP break is disputed (1985, 1987 or 1988). October 1985 is a design assumption. Evidence: Low.",
         "DK-019": "If Syria is Host, set its posture to Tolerant.",
         "DK-020": "If Emergency Rule is Martial Law, set it to OHAL.",
     }

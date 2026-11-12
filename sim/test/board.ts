@@ -12,7 +12,7 @@ export const engine = createEngine(coinHandlers);
 
 /** S0 start with a card in play and `faction` First Eligible. */
 export function turnOf(faction: "state" | "pkk", seed = 1): GameState {
-  const s = engine.start(ruleset, "s0", seed).state;
+  const s = engine.start(ruleset, "full-campaign", seed).state;
   const other = faction === "state" ? "pkk" : "state";
   return { ...s, turn: { ...s.turn, phase: PHASE.card }, initiative: { ...s.initiative, firstEligible: faction, secondEligible: other } };
 }

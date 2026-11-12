@@ -10,7 +10,7 @@ describe("06 s7 worked example: Sweep in Botan", () => {
   // Botan (Mountain): 4 Troops, 1 Police, 2 Guards, 2 Underground Guerrillas. State has 10 Resources.
   let board = setPieces(setPieces(setPieces(start, "botan", "troops", 2), "botan", "guards", 2), "botan", "pkkBase", 0);
   board = setTrack(board, "resources.state", 10);
-  const command = op("state", "opOnly", { op: "state.sweep", locations: ["botan"], perLocation: { botan: { moves: [{ from: "hakkari", count: 2 }] } } });
+  const command = op("state", "limitedOp", { op: "state.sweep", locations: ["botan"], perLocation: { botan: { moves: [{ from: "hakkari", count: 2 }] } } });
 
   it("activates (4 + 1 + 2) / 2 = 3, so both Guerrillas flip Active, for 2 Resources", () => {
     const { state, entries } = play(board, command);
@@ -20,9 +20,11 @@ describe("06 s7 worked example: Sweep in Botan", () => {
     expect(entries.some((e) => e.assumptionRef === "PA-07")).toBe(true);
   });
 
-  it("makes the PKK First Eligible on the next card (05 s2.4)", () => {
+  it("as a Limited Op keeps the State First Eligible; an Op Only in two locations makes the PKK First Eligible (05 s2.4)", () => {
     const { state } = play(play(board, command).state, { type: "Pass", faction: "pkk" });
-    expect(state.initiative.firstEligible).toBe("pkk");
+    expect(state.initiative.firstEligible).toBe("state");
+    const two = op("state", "opOnly", { op: "state.sweep", locations: ["botan", "hakkari"] });
+    expect(play(play(board, two).state, { type: "Pass", faction: "pkk" }).state.initiative.firstEligible).toBe("pkk");
   });
 });
 
@@ -110,16 +112,16 @@ describe("Garrison (06 s2.2)", () => {
   it("Limited Op: every move must end in the activation space; no moves into or out of Western Cities; at most 6", () => {
     const plan = (moves: unknown[], box = "limitedOp"): ReturnType<typeof op> => op("state", box, { op: "state.garrison", locations: ["hakkari"], perLocation: { hakkari: { moves } } });
     expect(codes(start, plan([{ from: "agri", to: "dersim", count: 1 }]))).toEqual(["limitedOneDestination"]);
-    expect(codes(start, plan([{ from: "western-cities", count: 1 }], "opOnly"))).toEqual(["garrisonWhere"]);
-    expect(codes(start, plan([{ from: "agri", count: 2 }], "opOnly"))).toEqual(["garrisonPolice"]);
+    expect(codes(start, plan([{ from: "western-cities", count: 1 }]))).toEqual(["garrisonWhere"]);
+    expect(codes(start, plan([{ from: "agri", count: 2 }]))).toEqual(["garrisonPolice"]);
   });
 });
 
 describe("Sweep (06 s2.3)", () => {
   it("rejects Western Cities, external boxes and non-adjacent origins", () => {
-    expect(codes(start, op("state", "opOnly", { op: "state.sweep", locations: ["western-cities"] }))).toEqual(["sweepWhere"]);
-    expect(codes(start, op("state", "opOnly", { op: "state.sweep", locations: ["kdp-zone"] }))).toEqual(["sweepWhere"]);
-    expect(codes(start, op("state", "opOnly", { op: "state.sweep", locations: ["botan"], perLocation: { botan: { moves: [{ from: "agri", count: 1 }] } } }))).toEqual(["sweepAdjacent"]);
+    expect(codes(start, op("state", "limitedOp", { op: "state.sweep", locations: ["western-cities"] }))).toEqual(["sweepWhere"]);
+    expect(codes(start, op("state", "limitedOp", { op: "state.sweep", locations: ["kdp-zone"] }))).toEqual(["sweepWhere"]);
+    expect(codes(start, op("state", "limitedOp", { op: "state.sweep", locations: ["botan"], perLocation: { botan: { moves: [{ from: "agri", count: 1 }] } } }))).toEqual(["sweepAdjacent"]);
   });
 
   it("costs 1 per space at OHAL Extended Powers", () => {
@@ -133,7 +135,7 @@ describe("Assault (06 s2.4)", () => {
     let board = setPieces(start, "mardin-batman", "troops", 3);
     board = setPieces(setPieces(board, "mardin-batman", "guerrilla", 0), "mardin-batman", "guerrilla", 1, "active");
     board = setPieces(board, "mardin-batman", "pkkBase", 1);
-    const { state, entries } = play(board, op("state", "opOnly", { op: "state.assault", locations: ["mardin-batman"] }));
+    const { state, entries } = play(board, op("state", "limitedOp", { op: "state.assault", locations: ["mardin-batman"] }));
     expect(pieces(state, "mardin-batman", "guerrilla")).toEqual({ underground: 0, active: 0 });
     expect(pieces(state, "mardin-batman", "pkkBase")).toEqual({ default: 0 });
     expect(entries.some((e) => e.assumptionRef === "PA-08")).toBe(true);
@@ -142,16 +144,16 @@ describe("Assault (06 s2.4)", () => {
   it("never removes Underground Guerrillas and halves in Mountains", () => {
     let board = setPieces(start, "botan", "troops", 3);
     board = setPieces(setPieces(board, "botan", "guerrilla", 1), "botan", "guerrilla", 2, "active");
-    const { state } = play(board, op("state", "opOnly", { op: "state.assault", locations: ["botan"] }));
+    const { state } = play(board, op("state", "limitedOp", { op: "state.assault", locations: ["botan"] }));
     expect(pieces(state, "botan", "guerrilla")).toEqual({ underground: 1, active: 1 });
     expect(pieces(state, "botan", "pkkBase")).toEqual({ default: 1 });
-    expect(codes(start, op("state", "opOnly", { op: "state.assault", locations: ["botan"] }))).toEqual(["assaultTargets"]);
+    expect(codes(start, op("state", "limitedOp", { op: "state.assault", locations: ["botan"] }))).toEqual(["assaultTargets"]);
   });
 
   it("counts Police as Troops in a City", () => {
     let board = setPieces(start, "diyarbakir-city", "troops", 0);
     board = setPieces(board, "diyarbakir-city", "guerrilla", 2, "active");
-    expect(pieces(play(board, op("state", "opOnly", { op: "state.assault", locations: ["diyarbakir-city"] })).state, "diyarbakir-city", "guerrilla")).toEqual({ underground: 0, active: 0 });
+    expect(pieces(play(board, op("state", "limitedOp", { op: "state.assault", locations: ["diyarbakir-city"] })).state, "diyarbakir-city", "guerrilla")).toEqual({ underground: 0, active: 0 });
   });
 });
 
@@ -159,14 +161,14 @@ describe("ChooseOperation sequence and cost layers (05 s4.1)", () => {
   it("rejects a second location in a Limited Op, an SA outside Op + SA, and a plan it cannot pay", () => {
     expect(codes(start, op("state", "limitedOp", { op: "state.assault", locations: ["botan", "hakkari"] }))).toContain("limitedOneLocation");
     const poor = setTrack(start, "resources.state", 1);
-    expect(codes(poor, op("state", "opOnly", { op: "state.sweep", locations: ["botan"] }))).toEqual(["cannotPay"]);
-    expect(codes(start, op("pkk", "opOnly", { op: "state.sweep", locations: ["botan"] }))).toEqual(["notEligible"]);
+    expect(codes(poor, op("state", "limitedOp", { op: "state.sweep", locations: ["botan"] }))).toEqual(["cannotPay"]);
+    expect(codes(start, op("pkk", "limitedOp", { op: "state.sweep", locations: ["botan"] }))).toEqual(["notEligible"]);
     expect(codes(start, op("state", "pass", { op: "state.sweep", locations: ["botan"] }))).toEqual(["notAnOpBox"]);
-    expect(codes(start, op("state", "opOnly", { op: "pkk.rally", locations: ["botan"] }))).toEqual(["unknownOp"]);
+    expect(codes(start, op("state", "limitedOp", { op: "pkk.rally", locations: ["botan"] }))).toEqual(["unknownOp"]);
   });
 
   it("previews the effects of a legal plan without changing state (05 s4)", () => {
-    const plan = op("state", "opOnly", { op: "state.sweep", locations: ["botan"] });
+    const plan = op("state", "limitedOp", { op: "state.sweep", locations: ["botan"] });
     const result = engine.validate(ruleset, start, plan);
     expect(result.ok).toBe(true);
     expect(result.preview.effects.map((e) => e.type)).toEqual(["adjustTrack", "setPieceState"]);

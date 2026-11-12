@@ -25,7 +25,7 @@ afterAll(async () => {
 
 const focus = { panel: "board" as const, selectedSpace: null, selectedPieces: [], hoveredActionId: null };
 const note = (packageDir: string, name: string): string => {
-  const { sessionId } = service.createSession({ dir: packageDir, scenarioId: "s0", seed: 1, name });
+  const { sessionId } = service.createSession({ dir: packageDir, scenarioId: "full-campaign", seed: 1, name });
   return service.annotate(sessionId, { anchor: "session", actionId: null, text: `Note in ${name}`, categoryIds: [], focus });
 };
 const [a, b, c] = [note(kurdishDir, "a"), note(kurdishDir, "b"), note(r5, "c")];

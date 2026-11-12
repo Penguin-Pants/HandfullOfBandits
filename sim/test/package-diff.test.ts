@@ -133,12 +133,15 @@ describe("P4-05 diffPackages", () => {
 
   it("names other files whose content changed, so no change goes unreported", () => {
     const next = copy();
-    const s0 = next.scenarios["scenarios/s0.yaml"];
-    if (s0 === undefined) throw new Error("s0");
-    s0["title"] = "Changed";
+    const full = next.scenarios["scenarios/full-campaign.yaml"];
+    if (full === undefined) throw new Error("full-campaign");
+    next.scenarios["scenarios/removed.yaml"] = { ...full };
+    const prev = copy();
+    prev.scenarios["scenarios/removed.yaml"] = { ...full };
+    full["title"] = "Changed";
     next.manifest.changeDescription = "Changed";
-    Reflect.deleteProperty(next.scenarios, "scenarios/scenario-c.yaml");
-    expect(diff(next).otherFiles).toEqual(["manifest.yaml", "scenarios/s0.yaml", "scenarios/scenario-c.yaml"]);
+    Reflect.deleteProperty(next.scenarios, "scenarios/removed.yaml");
+    expect(diff(next, prev).otherFiles).toEqual(["manifest.yaml", "scenarios/full-campaign.yaml", "scenarios/removed.yaml"]);
   });
 
   it("names a card file whose card order changed, because the order seeds the deck", () => {

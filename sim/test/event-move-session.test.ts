@@ -18,7 +18,7 @@ it.each(["hostile", "host"])("stores and replays chosen and legacy faces into a 
   let db = openStore(path);
   try {
     cpSync(kurdishDir, pkg, { recursive: true });
-    const file = join(pkg, "scenarios", "s0.yaml");
+    const file = join(pkg, "scenarios", "full-campaign.yaml");
     const scenario = parse(readFileSync(file, "utf8")) as { campaigns: string[]; tracks: Record<string, string>; spaces: Record<string, { pieces: Record<string, unknown> }> };
     scenario.campaigns = ["C5"];
     scenario.tracks["posture.puk"] = posture;
@@ -29,12 +29,12 @@ it.each(["hostile", "host"])("stores and replays chosen and legacy faces into a 
     const loaded = loadPackage(readPackageDir(pkg));
     if (!loaded.ok) throw new Error(JSON.stringify(loaded.issues));
     let seed = 0;
-    while (engine.start(loaded.ruleset, "s0", seed).state.deck.piles[0]?.[0] !== "DK-084") {
+    while (engine.start(loaded.ruleset, "full-campaign", seed).state.deck.piles[0]?.[0] !== "DK-084") {
       if (++seed > 100) throw new Error("No DK-084 seed");
     }
     for (const choose of [false, true]) {
       let service = new SessionService(db, dir);
-      const created = service.createSession({ dir: pkg, scenarioId: "s0", seed, name: "face choices" });
+      const created = service.createSession({ dir: pkg, scenarioId: "full-campaign", seed, name: "face choices" });
       const id = created.sessionId;
       const revealed = service.submit(id, { type: "Advance" }, created.head.actionId);
       const command = { type: "ChooseEvent", faction: "pkk", side: "shaded", answers: ["KDP Zone to PUK Zone", 1, ...(choose ? [1] : []), "KDP Zone"], ...(choose ? { chooseMoveFaces: true } : {}) };

@@ -5,10 +5,10 @@ import { independentStandings } from "../src/cli/qualification.ts";
 import type { GameState } from "../src/engine/core/types.ts";
 import { engine, play, ruleset, setLevel, setMarkers, setTrack } from "./board.ts";
 
-/** Scenario A start at a Propaganda phase of the given round. */
+/** Full campaign start at a Propaganda phase of the given round. Round 5 is the final round. */
 function at(phase: string, round: number, edit: (s: GameState) => GameState): GameState {
-  const s = edit(engine.start(ruleset, "scenario-a", 1).state);
-  return { ...s, turn: { ...s.turn, phase: "propaganda", propagandaRound: round, step: ruleset.sequence.propagandaPhases.indexOf(phase), campaign: "C2" }, deck: { ...s.deck, piles: [[], []], currentCard: "DK-035" } };
+  const s = edit(engine.start(ruleset, "full-campaign", 1).state);
+  return { ...s, turn: { ...s.turn, phase: "propaganda", propagandaRound: round, step: ruleset.sequence.propagandaPhases.indexOf(phase), campaign: round === 5 ? "C5" : "C2" }, deck: { ...s.deck, piles: [[], []], currentCard: "DK-035" } };
 }
 /** Every domestic space at `level`, except those listed. */
 const all = (level: number, except: Readonly<Record<string, number>> = {}) => (s: GameState): GameState => ({ ...s, spaces: Object.fromEntries(Object.entries(s.spaces).map(([id, sp]) => [id, sp.level === null ? sp : { ...sp, level: except[id] ?? level }])) });
@@ -26,7 +26,7 @@ describe("opening check with both factions qualified (rules 7.2)", () => {
 });
 
 describe("final scoring ties and negative margins (rules 7.3)", () => {
-  const final = (edit: (s: GameState) => GameState): GameState => play(at("agitation", 2, edit), { type: "Advance" }).state;
+  const final = (edit: (s: GameState) => GameState): GameState => play(at("agitation", 5, edit), { type: "Advance" }).state;
 
   it("equal margins go to lower Harm", () => {
     // State: Support 0 + Legitimacy 19 = 19 (-30). PKK: Opposition Botan 2 + Hakkari 1 = 3, + 1 Base = 4 (-26); 4 PKK Harm: no penalty.

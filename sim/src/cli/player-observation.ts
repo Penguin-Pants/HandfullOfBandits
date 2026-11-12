@@ -31,7 +31,7 @@ export interface Observation {
   readonly tracks: GameState["tracks"];
   readonly flags: GameState["flags"];
   readonly modifiers: GameState["modifiers"];
-  /** Face-down markers: location only (none exist in Scenario A). */
+  /** Face-down markers: location only (Covert markers, from C3). */
   readonly hiddenMarkers: readonly { readonly marker: string; readonly space: string }[];
   readonly pending: GameState["pending"];
   /** Public per-game counters (income received, Pass streaks, declined Pivotal windows). */

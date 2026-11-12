@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, inCampaign, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
+import { codes, engine, inCampaign, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
 import { createExec } from "../../core/exec.ts";
 import type { AnyCommand, GameState } from "../../core/types.ts";
 import { PHASE } from "../phases.ts";
@@ -28,7 +28,7 @@ describe("T-PROP: Resources (05 s6.2)", () => {
   });
 
   it("pays no income in the final Propaganda round (designer, playtest D2)", () => {
-    const { state, entries } = play(at(s0, "resources"), advance);
+    const { state, entries } = play(at(s0, "resources", 5), advance);
     expect([t(state, "resources.state"), t(state, "resources.pkk")]).toEqual([12, 5]);
     expect(entries.some((e) => e.kind === "EffectSkipped" && e.data["effect"] === "income")).toBe(true);
   });
@@ -73,7 +73,7 @@ describe("T-PROP: Legitimacy (05 s6.4)", () => {
   it("moves Europe +1 when State Harm leads by 3, and allows only 07 s8.2 Emergency steps", () => {
     const harmed = setMarkers(s0, "dersim", "stateHarm", 3);
     expect(t(play(at(harmed, "legitimacy"), advance).state, "europe")).toBe(2);
-    const capped = setMarkers(setTrack(harmed, "europe", 3), "europe", "ban", 1);
+    const capped = setMarkers(setTrack(harmed, "europe", 3), "europe", "europeBan", 1);
     expect(t(play(at(capped, "legitimacy"), advance).state, "europe")).toBe(3);
     expect(codes(at(s0, "legitimacy"), choice("legitimacy", { emergencyStep: "ohal" }))).toEqual(["emergencyStep"]);
     const ohal = setTrack(s0, "emergencyRule", "ohal");
@@ -135,14 +135,22 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
     expect(codes(at(setPieces(s0, "mardin-batman", "guerrilla", 2, "underground"), "agitation"), spend("mardin-batman"))).toEqual(["agitateWhere"]);
   });
 
-  it("ends the final round after Agitation: metrics row, final scoring, test-result label (S0)", () => {
+  it("ends the final round after Agitation: metrics row and final scoring", () => {
     // Margins -26 (PKK) and -28 (State): a difference of 2 is "narrow" (09 s4).
-    const { state, entries } = play(at(s0, "agitation"), advance);
+    const { state, entries } = play(at(s0, "agitation", 5), advance);
     expect(state.turn.phase).toBe("ended");
-    expect(state.ended).toMatchObject({ winner: "pkk", reason: "final scoring", labels: ["narrow", "test result, not comparable"] });
+    expect(state.ended).toMatchObject({ winner: "pkk", reason: "final scoring", labels: ["narrow"] });
     expect(state.ended?.recordSheet).toMatchObject({ protectedCivilianLife: "mixed", scoreChangeFromStart: { state: 0, pkk: 0 } });
     const metrics = entries.find((e) => e.kind === "RoundMetrics");
-    expect(metrics?.data).toMatchObject({ round: 1, scores: { state: 21, pkk: 4 }, harm: { state: 0, pkk: 0 } });
+    expect(metrics?.data).toMatchObject({ round: 5, scores: { state: 21, pkk: 4 }, harm: { state: 0, pkk: 0 } });
+  });
+
+  it("labels the result of a test-only scenario as not comparable (04 s4.10)", () => {
+    const full = ruleset.scenarios["full-campaign"];
+    if (full === undefined) throw new Error("full-campaign");
+    const testOnly = { ...ruleset, scenarios: { ...ruleset.scenarios, "full-campaign": { ...full, testOnly: true } } };
+    const result = engine.apply(testOnly, at(s0, "agitation", 5), advance);
+    expect(result.ok && result.transition.state.ended?.labels).toEqual(["narrow", "test result, not comparable"]);
   });
 
   it("metrics hold the research 12 s4 items 8 to 12 and 15 board values (P4-03)", () => {

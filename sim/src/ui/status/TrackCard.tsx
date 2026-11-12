@@ -41,7 +41,7 @@ function Scale({ track }: { readonly track: Track }) {
   );
 }
 
-const HIDDEN_AT_ZERO = new Set(["successor", "ceasefireRounds"]);
+const HIDDEN_AT_ZERO = new Set(["successor"]);
 
 export function TrackCard({ view }: { readonly view: BoardView }) {
   // Successor and the held ceasefire rounds show only above 0 (07 s6.4, s7.3; DEC-65, DEC-66).

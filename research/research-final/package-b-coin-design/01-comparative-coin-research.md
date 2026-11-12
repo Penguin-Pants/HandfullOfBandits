@@ -84,7 +84,7 @@ Sol drafted a ranked-choice initiative procedure. It ranked both players' choice
 2. **Legal politics.** CT has no legal party. The evidence does not support treating legal parties as PKK organs [F-018; C-025].
 3. **Government pieces.** The CT French and Algerian split must not become a Turkish and Kurdish split of State pieces. Guards are local and conditional [F-011; F-057].
 4. **Hosts.** Syria, the KDP and the PUK changed on their own interests [F-020; F-022; F-051].
-5. **Termination.** Talks and the capture of the leader do not give automatic victory or destroy the organization [F-021; F-038; E-0020].
+5. **Termination.** A ceasefire and the capture of the leader do not give automatic victory or destroy the organization [F-021; F-038; E-0020].
 
 ## 4. Contributions from other volumes
 
@@ -175,7 +175,7 @@ Judgment confidence: Moderate. Test: record per Campaign the count of player cho
 | Q4 Village Guards | DD-08 |
 | Q5 Displacement | DD-07. Village Clearance from OHAL. No Pop loss |
 | Q6 Legal party and bans | DD-10. Non-player. Successor at next Propaganda round |
-| Q7 Ceasefire and talks | DD-11. Adds Reciprocal Restraint |
+| Q7 Ceasefire | DD-11. Adds Reciprocal Restraint |
 | Q8 Covert state violence | Not in the decisions file. Chapter 04 adds face-down Covert markers that become State Harm when revealed. Record a decision |
 | Q9 Outside pressure | DD-05 Europe track and Legitimacy (DD-06.3) |
 | Q10 Rival groups and tags | Hizbullah by events. Space tags not adopted |

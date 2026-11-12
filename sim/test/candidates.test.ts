@@ -26,7 +26,10 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
     const set = gen(s, "card", "state");
     allLegal(s, set);
     const f = families(set);
-    for (const op of ["state.train", "state.garrison", "state.sweep", "state.assault"]) for (const box of ["limitedOp", "opOnly"]) expect(f).toContain(`op:${op}@${box}`);
+    for (const op of ["state.train", "state.garrison", "state.sweep", "state.assault"]) expect(f).toContain(`op:${op}@limitedOp`);
+    // Decision 5 (M-07): the First Eligible's Op Only has two or more locations.
+    const opOnly = set.candidates.filter((c) => c.command["box"] === "opOnly").map((c) => (c.command["plan"] as { locations: string[] }).locations.length);
+    expect([opOnly.length > 0, Math.min(...opOnly) >= 2]).toEqual([true, true]);
     for (const sa of ["state.air-mobility", "state.diplomacy"]) expect(f).toContain(`op:state.train+${sa}@opSa`);
     expect(f).toContain("op:state.sweep+state.cross-border@opSa");
     expect(f).toContain("pass");
@@ -34,9 +37,8 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
     // Guards, Base and Civic Action variants of Train.
     const train = set.candidates.filter((c) => c.family.startsWith("op:state.train")).map((c) => JSON.stringify(c.command));
     for (const needle of ["\"option\":\"guards\"", "\"option\":\"base\"", "\"civicAction\""]) expect(train.some((t) => t.includes(needle)), needle).toBe(true);
-    expect(f).toContain("op:state.sweep/multi@opOnly");
-    expect(f).toContain("op:state.train/civicAction@opOnly");
-    for (const v of ["guards", "base"]) expect(f).toContain(`op:state.train/${v}@opOnly`);
+    for (const v of ["state.sweep/multi", "state.train/multi", "state.train/multi+civicAction"]) expect(f).toContain(`op:${v}@opOnly`);
+    for (const v of ["civicAction", "guards", "base"]) expect(f).toContain(`op:state.train/${v}@limitedOp`);
   });
 
   it("covers every PKK Operation and Special Activity, Rally options and Agitate", () => {
@@ -44,8 +46,10 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
     const set = gen(s, "card", "pkk");
     allLegal(s, set);
     const f = families(set);
-    for (const op of ["pkk.rally", "pkk.march", "pkk.attack", "pkk.coerce"]) expect(f).toContain(`op:${op}@opOnly`);
-    for (const v of ["pkk.rally/grow+agitate", "pkk.rally/europe", "pkk.rally/multi", "pkk.rally/base", "pkk.march/multi"]) expect(f).toContain(`op:${v}@opOnly`);
+    for (const op of ["pkk.rally", "pkk.march", "pkk.attack", "pkk.coerce"]) expect(f).toContain(`op:${op}@limitedOp`);
+    for (const v of ["pkk.rally/multi", "pkk.rally/multi+agitate", "pkk.march/multi", "pkk.attack/multi"]) expect(f).toContain(`op:${v}@opOnly`);
+    for (const v of ["pkk.rally/grow+agitate", "pkk.rally/europe", "pkk.rally/base"]) expect(f).toContain(`op:${v}@limitedOp`);
+    expect(set.candidates.filter((c) => c.command["box"] === "opOnly").every((c) => (c.command["plan"] as { locations: string[] }).locations.length >= 2)).toBe(true);
     for (const pair of ["pkk.attack+pkk.ambush", "pkk.rally+pkk.extort", "pkk.march+pkk.host-pressure", "pkk.rally+pkk.strike-collaborators", "pkk.coerce+pkk.extort"]) expect(f).toContain(`op:${pair}@opSa`);
     const rally = set.candidates.filter((c) => c.family.startsWith("op:pkk.rally")).map((c) => JSON.stringify(c.command));
     for (const needle of ["\"grow\"", "\"base\"", "\"place\"", "\"agitate\"", "\"europe\""]) expect(rally.some((t) => t.includes(needle)), needle).toBe(true);
@@ -121,7 +125,7 @@ describe("second review round (PR #40)", () => {
 
 describe("campaign procedures (19 s5 Campaign row)", () => {
   it("offers ARGK decline and several placements", () => {
-    const ready = setPieces(setPieces(engine.start(ruleset, "scenario-a", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);
+    const ready = setPieces(setPieces(engine.start(ruleset, "full-campaign", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);
     const s = play(ready, { type: "Advance" }).state;
     expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "pivotal", faction: "pkk" });
     const set = gen(s, "pivotal", "pkk");
@@ -140,7 +144,7 @@ describe("campaign procedures (19 s5 Campaign row)", () => {
   });
 
   it("distinguishes automatic phases from choices: setup, victory, resources and full upkeep are automatic", () => {
-    expect(decisionPoint(engine, ruleset, engine.start(ruleset, "scenario-a", 1).state)).toMatchObject({ kind: "auto", reason: "setup" });
+    expect(decisionPoint(engine, ruleset, engine.start(ruleset, "full-campaign", 1).state)).toMatchObject({ kind: "auto", reason: "setup" });
     const s = turnOf("state");
     for (const phase of ["victory", "resources", "legalPolitics", "reset"]) expect(decisionPoint(engine, ruleset, propaganda(s, phase))).toMatchObject({ kind: "auto", reason: phase });
     expect(decisionPoint(engine, ruleset, propaganda(s, "upkeep"))).toMatchObject({ kind: "auto" });

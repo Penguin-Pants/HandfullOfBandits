@@ -356,10 +356,10 @@ describe("approved readable layout", () => {
     const card = screen.getByLabelText("Resources and politics");
     expect(card.querySelectorAll("details")).toHaveLength(4);
     expect(screen.getByLabelText("Emergency Rule").textContent).toContain("Martial Law");
-    for (const name of ["Emergency Rule", "Ceasefire", "Legal Space"]) {
+    for (const [name, steps] of [["Emergency Rule", 4], ["Ceasefire", 3], ["Legal Space", 4]] as const) {
       const states = screen.getByRole("group", { name: `${name} states` });
       expect(states.closest("details")?.className).toBe("track-scales");
-      expect(states.querySelectorAll(".mini-step")).toHaveLength(4);
+      expect(states.querySelectorAll(".mini-step")).toHaveLength(steps);
       expect(states.querySelectorAll("[aria-current='true']")).toHaveLength(1);
     }
     expect(card.querySelector("[aria-label='State Resources'] summary")?.textContent).toContain("12");

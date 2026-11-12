@@ -95,15 +95,9 @@ After phase 6.6 of the final Propaganda round:
 
 Result labels for the record sheet: a difference of 5 or less is a "narrow" result; 6 or more is a "clear" result (CT 8.6 pattern).
 
-## 5. Negotiated Outcome
+## 5. Not used
 
-If a Negotiated Outcome ends the game (07, section 7.4):
-
-1. Apply the concessions first.
-2. Compute final margins as in section 4, without the Covert reveal penalty if Talks held two full Campaigns [tune]; otherwise with it.
-3. Label: "Negotiated outcome favorable to State" or "favorable to PKK" by the higher margin. A difference of 2 or less is "Negotiated outcome, balanced".
-
-A Negotiated Outcome is not an instant win. It needs restraint across a full Propaganda round and both factions' consent (DD-11.3).
+This section scored a settlement that ended the game. It is removed (Designer decision of 2026-11-12 (`docs/audit/OPEN_QUESTIONS.md`, item 1)). A ceasefire never ends the game (07, section 7). The number is kept so that later section numbers do not change.
 
 ## 6. Outcome record sheet (Sol V-B, record only)
 
@@ -128,7 +122,7 @@ Also record:
 | Emergency Rule step at the end | |
 | Host postures at the end | Syria / KDP / PUK |
 | Leadership | Present / Abroad / Captured |
-| Ceasefire step at the end; Negotiated Outcome yes or no | |
+| Ceasefire step at the end | |
 | Closure bans and successor returns | |
 | First round in which a faction qualified (if any) | |
 | Village Clearance uses; Strike Collaborators uses; Coerce uses | |

@@ -9,7 +9,7 @@ import { activeFaction, legalBoxes, sequenceViolations } from "./ct.ts";
 // T-SEQ (11 P2-03): the CT two-faction track on the Kurdish package.
 const { ruleset } = kurdish;
 const engine = createEngine(coinHandlers);
-const start = engine.start(ruleset, "s0", 1).state;
+const start = engine.start(ruleset, "full-campaign", 1).state;
 const inCard = (state: GameState): GameState => ({ ...state, turn: { ...state.turn, phase: PHASE.card } });
 
 /** State after the First Eligible (pkk) placed its cylinder in `box`. */

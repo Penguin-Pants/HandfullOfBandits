@@ -6,7 +6,7 @@ import { at, type ActionHandler, type ActionOptions, type ActionPart } from "./a
 import { resources } from "./common.ts";
 import { HARMFUL_ACTIONS } from "./ids.ts";
 import { applyRestraint, restraintWarnings, type ActionUse } from "../ceasefire.ts";
-import { asList, asObject, asString } from "./plan.ts";
+import { asList, asMoves, asObject, asString } from "./plan.ts";
 import { flagHarmful, notePassOnly } from "../stop-rules.ts";
 import { actionHandlers } from "./registry.ts";
 
@@ -60,6 +60,18 @@ function simulate(ruleset: Ruleset, state: GameState, run: (ctx: Exec) => void):
   return ctx.state;
 }
 
+/**
+ * Locations an Operation part uses: its selected locations and, for an Operation whose moves name
+ * their own destination (Garrison), each of those destinations. Other Operations ignore `to`. One
+ * site with no Special Activity is a Limited Op (rules 2.3; research 05 s3.1 item 2).
+ */
+export function siteCount(opId: string, opPart: { readonly locations: readonly string[]; readonly perLocation: Readonly<Record<string, JsonObject | undefined>> }): number {
+  const sites = new Set(opPart.locations);
+  if (actionHandlers[opId]?.moveDestinations !== true) return sites.size;
+  for (const loc of opPart.locations) for (const m of asMoves(opPart.perLocation[loc]?.["moves"]) ?? []) if (m.to !== null) sites.add(m.to);
+  return sites.size;
+}
+
 /** Parse and check a ChooseOperation command. Returns violations, or the plan when it is legal. */
 function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { violations: Violation[]; plan: ParsedPlan | null } {
   const fail = (code: string, message: string): { violations: Violation[]; plan: null } => ({ violations: [at(null, code, message, ruleRef)], plan: null });
@@ -87,6 +99,10 @@ function parse(ruleset: Ruleset, state: GameState, command: AnyCommand): { viola
   if (new Set(opPart.locations).size !== opPart.locations.length) violations.push(at(null, "duplicateLocation", "Select each location once.", ruleRef));
   if (opPart.locations.length === 0) violations.push(at(null, "noLocation", "Select at least one location.", ruleRef));
   if (limited && opPart.locations.length > 1) violations.push(at(null, "limitedOneLocation", "A Limited Op selects one location (05 s3.1).", "05 s3.1"));
+  // The box follows the action (rules 2.3). The responder's Op Only keeps any number of locations (05 s2.3 note 2).
+  if (box === BOX.opOnly && resume === undefined && faction === state.initiative.firstEligible && siteCount(op.id, opPart) === 1) {
+    violations.push(at(null, "opOnlyLocations", "Op Only needs two or more locations. One location with no Special Activity is a Limited Op (rules 2.3).", "05 s2.2"));
+  }
   const rawSa = raw["sa"] === undefined || raw["sa"] === null ? null : asObject(raw["sa"]);
   let sa: ParsedPlan["sa"] = null;
   if (rawSa !== null) {

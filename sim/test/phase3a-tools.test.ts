@@ -19,7 +19,7 @@ vi.mock("node:fs", async (original) => {
 const dir = mkdtempSync(join(tmpdir(), "hob-phase3a-"));
 const db = openStore(join(dir, "store.sqlite"));
 const service = new SessionService(db, join(kurdishDir, "..", ".."));
-const {sessionId} = service.createSession({dir: kurdishDir, scenarioId: "s0", seed: 7, name: "tools"});
+const {sessionId} = service.createSession({dir: kurdishDir, scenarioId: "full-campaign", seed: 7, name: "tools"});
 const focus = {panel: "board" as const, selectedSpace: null, selectedPieces: [], hoveredActionId: null};
 afterAll(() => { db.close(); rmSync(dir, {recursive: true, force: true}); });
 it("backs up committed WAL rows, restores independently and keeps the last ten", () => {
@@ -38,7 +38,7 @@ it("exports session metadata, assumptions, debrief first, action references and 
   service.endSession(sessionId, "Debrief text");
   const text = exportMarkdown(exportJson(db, {sessionIds: [sessionId], withStates: false, appVersion: "test", exportedAt: "2026-10-30"}));
   expect(text).toContain("tools");
-  expect(text).toContain("s0");
+  expect(text).toContain("full-campaign");
   expect(text).toContain("PA-02");
   expect(text).toContain("State note \\*literal\\*");
   expect(text.indexOf("Debrief text")).toBeLessThan(text.indexOf("### Actions"));
@@ -68,7 +68,7 @@ it("skips memory stores and leaves all prior backups intact if SQLite refuses a 
 });
 it("backs up before session start, with an independent complete snapshot", () => {
   const before = service.listSessions().length;
-  service.createSession({dir: kurdishDir, scenarioId: "s0", seed: 8, name: "next"});
+  service.createSession({dir: kurdishDir, scenarioId: "full-campaign", seed: 8, name: "next"});
   const directory = join(dir, "backups");
   const latest = readdirSync(directory).sort().at(-1);
   const backup = new Database(join(directory, latest ?? ''), {readonly: true});
@@ -132,7 +132,7 @@ it("the CLI parses Markdown format and rejects an unsupported format with a clea
 });
 it("search preserves the review screen's session and note order", () => {
   service.annotate(sessionId, {anchor: "state", actionId: null, text: "Order sample first", categoryIds: [], focus});
-  const newer = service.createSession({dir: kurdishDir, scenarioId: "s0", seed: 9, name: "order"}).sessionId;
+  const newer = service.createSession({dir: kurdishDir, scenarioId: "full-campaign", seed: 9, name: "order"}).sessionId;
   service.annotate(newer, {anchor: "state", actionId: null, text: "Order sample second", categoryIds: [], focus});
   db.prepare("UPDATE sessions SET updated_at = ? WHERE session_id = ?").run("2099-01-01T00:00:00Z", newer);
   const expected = service.review({}).filter(r => r.text.includes("Order sample")).map(r => r.annotationId);

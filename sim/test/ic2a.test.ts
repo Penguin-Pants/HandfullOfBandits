@@ -1,16 +1,19 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { playGame, replay, scriptedPolicy, type PlayRecord } from "../src/cli/play.ts";
-import { engine, ruleset } from "./board.ts";
+import { engine } from "./board.ts";
+import { SHORT, short } from "./short-game.ts";
 
-// IC-2a (11 build plan): the engine plays S0 to the end from a scripted policy and a fixed seed.
+// IC-2a (11 build plan): the engine plays a short game (test fixture: one Campaign, 8 Event cards,
+// Propaganda last) to the end from a scripted policy and a fixed seed.
 // The golden replay file holds the commands and the state hash after each one. Regenerate it only
 // after a deliberate rules change: UPDATE_GOLDEN=1 make test.
-const golden = new URL("golden/s0-seed-7.json", import.meta.url);
+const golden = new URL("golden/short-c1-seed-7.json", import.meta.url);
+const ruleset = short.ruleset;
 const SEED = 7;
 
-describe("IC-2a: S0 engine-only playthrough", () => {
-  const game = playGame(engine, ruleset, "s0", SEED, scriptedPolicy);
+describe("IC-2a: short engine-only playthrough", () => {
+  const game = playGame(engine, ruleset, SHORT, SEED, scriptedPolicy);
   if (process.env["UPDATE_GOLDEN"] === "1" || !existsSync(golden)) {
     const record: PlayRecord = { scenario: game.scenario, seed: game.seed, commands: game.commands, hashes: game.hashes, ended: game.ended };
     writeFileSync(golden, `${JSON.stringify(record, null, 1)}\n`);

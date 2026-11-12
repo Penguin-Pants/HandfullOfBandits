@@ -55,10 +55,10 @@ One national track, 0 to 20 (DD-06.3).
 | Disputed Harm markers 3 or more | Propaganda | -1 | F-029; F-058 |
 | Europe at 4 or 5 | Propaganda | -1 | F-042; M-024 |
 | Party ban | Legal Politics | -2 | F-015; F-017; M-007 |
-| State breaks Reciprocal Restraint or Talks | At once | -2 | F-039 |
+| State breaks Reciprocal Restraint | At once | -2 | F-039 |
 | Step Normalizing to OHAL | Propaganda | -1 | F-055 |
 | Open Legal Space and 2+ Offices | Propaganda | +1 | F-052 |
-| Reciprocal Restraint or Talks kept by the State | Propaganda | +1 | F-039 |
+| Reciprocal Restraint kept by the State | Propaganda | +1 | F-039 |
 | No New Displacement marker flipped this round | Propaganda | +1 | Claude restraint step |
 | Events | Card | As printed | F-042; F-043; M-024; M-025 |
 
@@ -164,7 +164,9 @@ Notes:
 4. The 10 percent threshold kept the legal parties out of parliament [E-0153; F-016]. Offices stand for local presence, not seats.
 5. Line 6 is the non-player prosecutor. Closure cases were brought by the Chief Public Prosecutor at the Court of Cassation [O-116], not by the cabinet. The State may still file earlier by choice (section 6.3). Line 6 keeps the founding, ban and successor cycle alive when the State player has no reason to file (IR-33; F-052).
 
-## 7. Ceasefire and talks (DD-11)
+## 7. Ceasefire (DD-11)
+
+The Ceasefire track has three steps: None, Declared and Reciprocal Restraint. A ceasefire is temporary and never ends the game. Designer decision of 2026-11-12 (`docs/audit/OPEN_QUESTIONS.md`, item 1): no settlement step exists, because Turkish territorial integrity and Kurdish independence are directly opposed.
 
 ### 7.1 Declaration
 
@@ -176,26 +178,17 @@ From C3, the PKK may Declare Ceasefire as its action on a card, using the Limite
 |---|---|---|
 | Declared | Attack, Ambush, Strike Collaborators | No restriction. Each State Assault, Village Clearance, Cross-Border or Covert Action places the State Restraint Broken marker |
 | Reciprocal Restraint | Attack, Ambush, Strike Collaborators, Coerce, place a domestic Base (DD-19.3) | Assault, Village Clearance, Cross-Border, Covert Action |
-| Talks | As Reciprocal Restraint | As Reciprocal Restraint |
 
-Breach: a faction that takes a forbidden action places its Restraint Broken marker and the Ceasefire goes to None. Free actions granted by events count as actions for this table. PKK breach: Europe -1. State breach (Reciprocal Restraint or Talks only): Legitimacy -2. A spoiler event may set the Ceasefire to None with no Restraint Broken marker and a neutral title; attribution stays as the sources state it [E-0091; E-0092; E-0093; F-038; F-053].
+Breach: a faction that takes a forbidden action places its Restraint Broken marker and the Ceasefire goes to None. Free actions granted by events count as actions for this table. PKK breach: Europe -1. State breach (Reciprocal Restraint only): Legitimacy -2. A spoiler event may set the Ceasefire to None with no Restraint Broken marker and a neutral title; attribution stays as the sources state it [E-0091; E-0092; E-0093; F-038; F-053].
 
 ### 7.3 Ceasefire step (Propaganda, Legal Politics phase)
 
 1. Declared, no State Restraint Broken marker: the State may accept. Ceasefire to Reciprocal Restraint. If it does not, the PKK keeps Declared or ends it (None). If the PKK ends a ceasefire that it declared by section 7.1, Europe -1, so a declaration that is not kept returns its Europe gain [tune].
-2. Reciprocal Restraint that was already in force at the previous Propaganda round, with no breach since: each faction secretly chooses yes or no to Talks. Two yes: Talks.
-3. Talks that was already in force at the previous Propaganda round, with no breach since: resolve section 7.4.
-4. Either faction may leave Talks (to Reciprocal Restraint) or Reciprocal Restraint (to None) at this step. The State pays no cost. The PKK pays Europe -1 if it leaves Reciprocal Restraint for None (step 1 rule).
+2. Either faction may leave Reciprocal Restraint (to None) at this step. The State pays no cost. The PKK pays Europe -1 if it leaves Reciprocal Restraint for None (step 1 rule).
 
-### 7.4 Negotiated Outcome
+### 7.4 Not used
 
-Talks never give an instant win (DD-11.3). A Negotiated Outcome needs all of:
-
-1. Talks held through a full Campaign with no breach.
-2. Legal Space is not Banned.
-3. Both factions accept these concessions: the State sets Emergency Rule to Normalizing and Legal Space to Open; the PKK removes half its domestic Guerrillas, round up, to Available.
-
-If both accept, apply the concessions. The game ends. Margins decide which faction negotiated from strength (09, section 5). If either refuses, Talks continues or ends at that faction's choice. Evidence: none of the historical ceasefires was recognized by the State [F-039]; the PKK shifted toward a settlement inside Turkey [F-037; E-0207]. Basis: Sol V-B, "Negotiation as an outcome".
+This section held a settlement that ended the game. It is removed (Designer decision of 2026-11-12 (`docs/audit/OPEN_QUESTIONS.md`, item 1)). Evidence: none of the historical ceasefires was recognized by the State [F-039]. The number is kept so that later section numbers do not change.
 
 ## 8. Emergency Rule (DD-12)
 
@@ -240,5 +233,5 @@ Event-driven only. No player owns or orders it [M-016; F-058; F-057].
 ## 11. Tests
 
 1. Count closure filings and successor returns per game. If the State never files, raise the Office cap effect.
-2. Count Negotiated Outcomes. If more than one game in three ends this way, raise the concessions.
+2. Count the games that reach Reciprocal Restraint. If none does, lower the cost of State acceptance.
 3. Check that the Legal Politics table never needs a judgment call. Two readers must place the same Offices.

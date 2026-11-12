@@ -12,6 +12,7 @@ const CHIP: Readonly<Record<string, { code: string; fill: string; name: string }
   reception: { code: "R", fill: "#1565c0", name: "Reception" },
   covert: { code: "?", fill: "#424242", name: "Covert (face down)" },
   office: { code: "O", fill: "#6a1b9a", name: "Office" },
+  europeBan: { code: "EB", fill: "#37474f", name: "Europe Ban marker" },
   leadership: { code: "L", fill: "#00695c", name: "Leadership" },
 };
 

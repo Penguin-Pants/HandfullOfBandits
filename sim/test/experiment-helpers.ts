@@ -15,7 +15,7 @@ export function devManifest(overrides: Partial<Manifest> = {}): Manifest {
     id: "test-dev",
     stage: "development",
     description: "test",
-    scenario: "scenario-a",
+    scenario: "full-campaign",
     package: { dir: kurdishDir, hash: kurdish.hash },
     expected: { thresholds: { state: 49, pkk: 30 }, harmLimit: 6, engineFingerprint: null, playerFingerprint: null },
     conditions: [{ id: "baseline", options: { hotPursuit: "allow", syriaMarchRestricted: "allow" } }],

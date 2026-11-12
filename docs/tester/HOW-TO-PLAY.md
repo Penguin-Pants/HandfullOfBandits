@@ -1,13 +1,13 @@
-# How to play and test Scenario S0
+# How to play and test the full campaign
 
-S0 is the short test game: 8 Event cards and one Propaganda card. One game takes one sitting. You play both factions, State and PKK. You need no other file than this one and [INSTALL.md](INSTALL.md).
+The full campaign is the only scenario: five Campaigns (C1 to C5), each with 12 Event cards and one Propaganda card. One game takes more than one sitting. The session saves after each action, so you can stop and use **Resume** on the Home screen. The short S0 test game is archived. You play both factions, State and PKK. You need no other file than this one and [INSTALL.md](INSTALL.md).
 
-Your job: play S0 to the end and write a note each time something is unclear, wrong or slow.
+Your job: play the full campaign to the end and write a note each time something is unclear, wrong or slow.
 
 ## 1. Start a game
 
 1. Start the app (see [INSTALL.md](INSTALL.md)) and open `http://127.0.0.1:5174`.
-2. In **Scenario**, choose **S0 Opening (test)**. The list opens on another scenario. Do not start that one.
+2. In **Scenario**, **Full campaign (1984-1999)** is the only choice.
 3. Keep **Seed** at `1`. Type your name in **Name**.
 4. Click **Start**.
 5. Click **Reveal first card (Space)**.
@@ -29,7 +29,7 @@ A mistake: click **Undo (Ctrl+Z)** and confirm. Undo never deletes anything. The
 
 ## 3. The Propaganda card
 
-The last card (DK-016 Propaganda) ends the game. The right panel lists the Propaganda steps: Victory, Resources, Upkeep, Legitimacy and Emergency Rule, Legal Politics, Civic Action, Agitation, Redeploy and Reset.
+Each Campaign has one Propaganda card. Rounds 1 to 4 end with Redeploy and Reset, then the next Campaign starts. The fifth Propaganda round ends the game after Agitation. The right panel lists the Propaganda steps: Victory, Resources, Upkeep, Legitimacy and Emergency Rule, Legal Politics, Civic Action, Agitation, Redeploy and Reset.
 
 1. When the panel says "Nothing to choose. Press Advance.", press **Advance (Space)**.
 2. When the panel asks for a choice, use the buttons and the − and + counters in the panel. Then press the button the panel shows.
@@ -60,7 +60,7 @@ Write a note when:
 
 ## 6. End the game
 
-1. After the last Propaganda step, the right panel says **Game complete**. The top bar shows who won. The S0 result is labeled "test result, not comparable". This is correct.
+1. After the last Propaganda step, the right panel says **Game complete**. The top bar shows who won.
 2. Click **End session**.
 3. Type an overall comment (what was hard, what was good). Click **Save debrief and end**. To skip the comment, click **Skip and end**.
 
@@ -74,7 +74,7 @@ Write a note when:
 
 You are done when all four are true:
 
-1. You finished S0 and saw **Game complete**.
+1. You finished the full campaign and saw **Game complete**.
 2. You wrote at least one note, or you wrote the debrief.
 3. You opened **Rule** on at least one line.
 4. You exported the file.

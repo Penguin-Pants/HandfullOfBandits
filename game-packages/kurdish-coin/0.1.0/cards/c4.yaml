@@ -89,7 +89,7 @@
     effects:
       - {type: adjustTrack, track: resources.state, delta: -3}
       - {type: adjustTrack, track: resources.pkk, delta: 1}
-  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "Spoiler (07 s7.2): no breach and no marker; Talks is not listed, so Talks stays"}
+  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "Spoiler (07 s7.2): no breach and no marker"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0091, S-0259, S-0264, S-0270, S-0333, S-0334, S-0063, S-0077, S-0078]
@@ -227,22 +227,22 @@
   type: event
   chainAfter: [DK-061]
   unshaded:
-    text: "Place the Ban marker on the Europe track (04, section 3.6). If Europe is above 3, set it to 3. PKK Resources -2."
+    text: "Place the Europe Ban marker on the Europe track (04, section 3.6). If Europe is above 3, set it to 3. PKK Resources -2."
     owner: state
     tier: T0
     effects:
-      - {type: placeMarker, marker: ban, space: europe}
+      - {type: placeMarker, marker: europeBan, space: europe}
       - type: conditional
         if: {type: trackAtLeast, track: europe, value: 4}
         then: [{type: setTrack, track: europe, value: 3}]
       - {type: adjustTrack, track: resources.pkk, delta: -2}
   shaded:
-    text: "Protests across Europe: Europe +1. Do not place the Ban marker."
+    text: "Protests across Europe: Europe +1. Do not place the Europe Ban marker."
     owner: pkk
     tier: T0
     effects:
       - {type: adjustTrack, track: europe, delta: 1}
-  encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true, note: "The German ban event of 04 s3.6: the Ban marker in the Europe space sets the cap (europeCap); 3 is europe.banCap"}
+  encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true, note: "The German ban event of 04 s3.6: the Europe Ban marker in the Europe space sets the cap (europeCap); 3 is europe.banCap"}
   eventConfidence: High
   deckEligible: true
   sources: [E-0064, S-0055, S-0356, S-0053, S-0377, S-0054]

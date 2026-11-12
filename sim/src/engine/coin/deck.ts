@@ -24,7 +24,7 @@ export interface DeckOptions {
   readonly campaigns: readonly string[];
   /** Event cards per pile. Null: parameter `deck.pileSize`. */
   readonly pileSize: number | null;
-  /** S0: the Propaganda card goes last, so every Event card plays (DEC-20). */
+  /** Test scenarios: the Propaganda card goes last, so every Event card plays (DEC-20). */
   readonly propagandaLast: boolean;
   readonly excluded: readonly CardId[];
 }
@@ -99,7 +99,7 @@ export function buildDeck(ruleset: Ruleset, rng: RngState, cards: readonly DeckC
     chainOrder(pile, chains);
     const propaganda = inCampaign.find((c) => c.type === "propaganda")?.id;
     if (propaganda !== undefined) {
-      // Step 6: shuffle the Propaganda card into the bottom part (any of its gaps), or last in S0.
+      // Step 6: shuffle the Propaganda card into the bottom part (any of its gaps), or last with `propagandaLast`.
       const bottom = pile.length - topSize;
       const at = options.propagandaLast ? { value: bottom, rng: current } : randomInt(current, bottom + 1);
       current = at.rng;

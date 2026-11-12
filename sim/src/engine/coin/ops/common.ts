@@ -64,9 +64,9 @@ export function adjacent(ruleset: Ruleset, a: SpaceId, b: SpaceId): boolean {
   return ruleset.links.some((l) => (l.a === a && l.b === b) || (l.a === b && l.b === a));
 }
 
-/** Highest Europe value now: the German Ban marker caps it at `europe.banCap` (04 s3.6). */
+/** Highest Europe value now: the Europe Ban marker caps it at `europe.banCap` (04 s3.6). */
 export function europeCap(ruleset: Ruleset, state: GameState): number {
-  return markers(state, EUROPE_SPACE, MARKER.ban) > 0 ? param(ruleset, "europe.banCap", "number") : Infinity;
+  return markers(state, EUROPE_SPACE, MARKER.europeBan) > 0 ? param(ruleset, "europe.banCap", "number") : Infinity;
 }
 
 /** Move Europe by `delta`. A rise stops at `europeCap`; a rise with no room logs nothing (04 s3.6). */

@@ -1,4 +1,4 @@
-// Shared Scenario A evaluation (19 s3; 20 Phase 5). Observed values (scores, Harm, margins) stay
+// Shared evaluation, built for C1 and C2 (19 s3; 20 Phase 5). Observed values (scores, Harm, margins) stay
 // separate from estimates (potential shifts and strategy shaping) in the logged components.
 // Scores come from the engine derivation; the qualification tests check them independently.
 import { param } from "../../engine/core/params.ts";

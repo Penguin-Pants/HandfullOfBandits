@@ -20,7 +20,7 @@ export function runBatch(engine: Engine, r: Ruleset, o: BatchOptions): BatchRepo
     const swapped = o.swapSeats && i % 2 === 1;
     const seed = initialSeed + (o.swapSeats ? Math.floor(i/2) : i);
     const stateIndex = swapped ? 1 : 0, pkkIndex = swapped ? 0 : 1;
-    let state = engine.start(r,o.scenario ?? "scenario-a",seed).state;
+    let state = engine.start(r,o.scenario ?? "full-campaign",seed).state;
     const metrics: JsonObject[] = [];
     let steps = 0;
     while (state.ended === null) {

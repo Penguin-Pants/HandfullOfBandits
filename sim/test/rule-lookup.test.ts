@@ -29,7 +29,7 @@ afterAll(async () => {
   rmSync(dir, { recursive: true, force: true });
 });
 const focus = { panel: "board" as const, selectedSpace: null, selectedPieces: [], hoveredActionId: null };
-const { sessionId } = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 1, name: "rules" });
+const { sessionId } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 1, name: "rules" });
 
 describe("rule lookup (P4-08)", () => {
   it("gives the research text for a ref through the service and the API", async () => {
@@ -53,7 +53,7 @@ describe("rule lookup (P4-08)", () => {
     cpSync(kurdishDir, join(bare, "kurdish-coin", "0.1.0"), { recursive: true });
     rmSync(join(bare, "kurdish-coin", "0.1.0", "rules.yaml"));
     const lone = new SessionService(db, bare);
-    const { sessionId: id } = lone.createSession({ dir: join(bare, "kurdish-coin", "0.1.0"), scenarioId: "s0", seed: 2, name: "bare" });
+    const { sessionId: id } = lone.createSession({ dir: join(bare, "kurdish-coin", "0.1.0"), scenarioId: "full-campaign", seed: 2, name: "bare" });
     expect(lone.ruleLookup(id, "06 s3.2")).toMatchObject({ sections: [], missing: ["06 s3.2"] });
     expect(exportJson(db, { sessionIds: [id], withStates: false, appVersion: "t", exportedAt: "x" }).packages[0]?.["ruleIndex"]).toEqual({});
   });

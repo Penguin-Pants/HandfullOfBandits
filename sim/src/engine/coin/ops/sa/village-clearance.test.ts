@@ -74,7 +74,7 @@ describe("Village Clearance effects (06 s3.4)", () => {
   it("blocks Rally there afterwards (07 s3.2 item 3)", () => {
     const { state } = play(ready(), clear());
     const pkk = { ...state, turn: { ...state.turn, phase: "card" }, initiative: { ...state.initiative, firstEligible: "pkk", secondEligible: "state", actedThisCard: [] } };
-    expect(codes(pkk, op("pkk", "opOnly", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "place" } } }))).toContain("rallyDisplaced");
+    expect(codes(pkk, op("pkk", "limitedOp", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "place" } } }))).toContain("rallyDisplaced");
   });
 });
 
@@ -135,7 +135,7 @@ describe("T-PERV: Village Clearance never raises the State's relative margin (09
     it(`Pop ${String(c.pop)}, level ${String(c.lvl)}: relative change is negative`, () => {
       const base = setPieces(setPieces(setPieces(setLevel(ready(), c.id, c.lvl), c.id, "troops", 3), c.id, "police", 2), c.id, "guerrilla", 1);
       expect(ruleset.spaces.find((s) => s.id === c.id)?.pop).toBe(c.pop);
-      const op0 = play(base, op("state", "opOnly", { op: "state.sweep", locations: [c.id] })).state;
+      const op0 = play(base, op("state", "limitedOp", { op: "state.sweep", locations: [c.id] })).state;
       const both = play(base, clear(c.id)).state;
       expect(netChange(ruleset, op0, both, "state")).toBeLessThan(0);
       expect(both.spaces[c.id]?.markers["displacement"]?.["new"]).toBe(1);

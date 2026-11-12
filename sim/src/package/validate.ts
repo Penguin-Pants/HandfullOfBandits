@@ -24,7 +24,7 @@ export type IssueCode =
 export interface PackageIssue {
   readonly level: "error" | "warning";
   readonly code: IssueCode;
-  /** File path inside the package, for example `scenarios/s0.yaml`. */
+  /** File path inside the package, for example `scenarios/full-campaign.yaml`. */
   readonly file: string;
   /** Dot path inside the file. Empty for the file root. */
   readonly path: string;
@@ -51,7 +51,7 @@ export interface PackageData {
   readonly rules?: PackageFileData<"rules">;
   /** By file path, for example `cards/c1.yaml`. */
   readonly cards: Readonly<Record<string, PackageFileData<"cards">>>;
-  /** By file path, for example `scenarios/s0.yaml`. */
+  /** By file path, for example `scenarios/full-campaign.yaml`. */
   readonly scenarios: Readonly<Record<string, PackageFileData<"scenario">>>;
 }
 

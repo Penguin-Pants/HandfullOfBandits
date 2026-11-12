@@ -7,7 +7,7 @@ Status: rules draft. Binding decisions: DD-04, DD-13 and DD-14. CT means Colonia
 1. The deck has five piles, one per Campaign (C1 to C5). Each pile has 12 Event cards and one Propaganda card (DD-13.1). A Campaign is the Event cards between two Propaganda rounds (CT 2.4.1; DD-01.3).
 2. Play one card at a time. Only the current card is face up. There is no next-card preview (CT 2.2; DD-04.5).
 3. Each Event card gives both factions at most one action. A Propaganda card starts a Propaganda round (section 6).
-4. The game ends after the fifth Propaganda round, at an earlier victory check (09) or at a Negotiated Outcome (07, section 7.4).
+4. The game ends after the fifth Propaganda round or at an earlier victory check (09). A ceasefire never ends the game (07, section 7).
 
 ### 1.1 Deck building
 
@@ -149,7 +149,7 @@ Apply in this order. Legitimacy stays between 0 and 20.
 4. Disputed harm: -1 if 3 or more Disputed Harm markers are on the map.
 5. Covert exposure: if 3 or more face-down Covert markers are on the map, the PKK picks one at random and reveals it. It becomes a State Harm marker. Legitimacy -2.
 6. Europe adjustment: Europe +1 if the State Harm count is at least 3 more than the PKK Harm count. Europe -1 if the PKK Harm count is at least 3 more than the State Harm count. Then, if Europe is 4 or 5, Legitimacy -1.
-7. Gains: +1 if Legal Space is Open and 2 or more Offices are on the map. +1 if Ceasefire is Reciprocal Restraint or Talks and the State has no Restraint Broken marker. +1 if step 2 flipped no marker.
+7. Gains: +1 if Legal Space is Open and 2 or more Offices are on the map. +1 if Ceasefire is Reciprocal Restraint and the State has no Restraint Broken marker. +1 if step 2 flipped no marker.
 8. Emergency Rule step: the State may move the track one step (07, section 8.2).
 
 ### 6.5 Legal Politics phase (from C3)
@@ -189,8 +189,7 @@ State first. Do not adjust Control until both factions finish (CT 6.4).
 The game ends at the first of:
 
 1. A victory phase in which a faction meets its threshold and passes its Harm gate (09, section 3).
-2. A Negotiated Outcome (07, section 7.4; 09, section 5).
-3. The end of phase 6.6 in the final Propaganda round. Score margins (09, section 4).
+2. The end of phase 6.6 in the final Propaganda round. Score margins (09, section 4).
 
 After the game, fill in the outcome record sheet (09, section 6). It is a record, not a second score (DD-14.5).
 
@@ -236,9 +235,7 @@ flowchart TD
     R --> U[Upkeep]
     U --> L[Legitimacy and Emergency Rule]
     L --> LP[Legal Politics from C3 and ceasefire step]
-    LP --> N{Negotiated Outcome?}
-    N -- Yes --> W2[Game ends: margins decide terms]
-    N -- No --> CA[Civic Action and Agitation]
+    LP --> CA[Civic Action and Agitation]
     CA --> FR{Final round?}
     FR -- Yes --> FS[Reveal Covert markers. Score margins. Game ends]
     FR -- No --> RD[Redeploy]

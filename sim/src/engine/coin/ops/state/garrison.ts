@@ -17,6 +17,7 @@ function moves(part: ActionPart): Move[] | null {
 
 export const garrison: ActionHandler = {
   id: "state.garrison",
+  moveDestinations: true,
   faction: FACTION.state,
   kind: "op",
   ruleRef,

@@ -28,7 +28,7 @@ describe("qualification fixtures (19 s6)", () => {
 
   it("starts each fixture at its declared decision", () => {
     for (const f of FIXTURES) {
-      const s = f.build(engine.start(ruleset, "scenario-a", 1).state, ruleset);
+      const s = f.build(engine.start(ruleset, "full-campaign", 1).state, ruleset);
       expect(decisionPoint(engine, ruleset, s), f.id).toEqual({ kind: f.kind, faction: f.faction });
     }
   });
@@ -54,7 +54,7 @@ describe("qualification fixtures (19 s6)", () => {
 
   it("every fixture's decisive alternatives exist among the generated candidates", () => {
     for (const f of FIXTURES.filter((x) => x.benchmark !== "procedures")) {
-      const s = f.build(engine.start(ruleset, "scenario-a", 1).state, ruleset);
+      const s = f.build(engine.start(ruleset, "full-campaign", 1).state, ruleset);
       const projection = determinize(ruleset, observe(s, f.faction), new SearchRng(0));
       const set = generateCandidates(engine, ruleset, projection, f.kind, f.faction);
       // At least one generated candidate passes and at least one fails: the fixture is a real choice.
@@ -86,7 +86,7 @@ describe("search order (PR #40 review)", () => {
   });
 
   it("reaches every family of a large card decision within a small budget", () => {
-    const s = engine.start(ruleset, "scenario-a", 5).state;
+    const s = engine.start(ruleset, "full-campaign", 5).state;
     const started = engine.apply(ruleset, s, { type: "Advance" });
     expect.assert(started.ok);
     const live = started.transition.state;
@@ -106,7 +106,7 @@ describe("independent score oracle (19 s6: the engine is not the only oracle)", 
   it("agrees with the engine derivation and final margins over positions from random games", () => {
     let checked = 0;
     for (const seed of [1, 2, 3, 4]) {
-      let s: GameState = engine.start(ruleset, "scenario-a", seed).state;
+      let s: GameState = engine.start(ruleset, "full-campaign", seed).state;
       const rng = new SearchRng(seed);
       while (s.ended === null) {
         const st = independentStandings(ruleset, s);

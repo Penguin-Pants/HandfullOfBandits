@@ -87,7 +87,7 @@ export const legitimacyPhase: PropagandaPhase = {
     if (Number(ctx.state.tracks[TRACK.europe]) >= param(ruleset, "europe.drainFrom", "number")) legit(ctx, -1, "step 6");
     // 7. Gains.
     const legalOpen = ctx.state.tracks["legalSpace"] === "open" && onMap(ruleset, ctx.state, MARKER.office) >= 2;
-    const restraint = ["reciprocalRestraint", "talks"].includes(String(ctx.state.tracks["ceasefire"])) && ruleset.spaces.every((s) => (ctx.state.spaces[s.id]?.markers["restraintBroken"]?.[FACTION.state] ?? 0) === 0);
+    const restraint = ctx.state.tracks["ceasefire"] === "reciprocalRestraint" && ruleset.spaces.every((s) => (ctx.state.spaces[s.id]?.markers["restraintBroken"]?.[FACTION.state] ?? 0) === 0);
     legit(ctx, (legalOpen ? 1 : 0) + (restraint ? 1 : 0) + (flipped === 0 ? 1 : 0), "step 7");
     // 8. Emergency Rule step (State choice). Normalizing to OHAL costs Legitimacy (07 s8.2 item 3).
     const to = asString(choice?.["emergencyStep"]);

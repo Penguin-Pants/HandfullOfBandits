@@ -1,5 +1,6 @@
 // March (research 06 s4.2; 07 s5.1; PA-16): Guerrillas move one step into each destination.
-// Per destination: `moves: [{from, count, face?}]`; each move is one group. Entry into a box at
+// Per destination: `moves: [{from, count, face?}]`. One group is all Guerrillas from one origin to
+// one destination (rules 3.3.2), so entries with the same origin count as one group. Entry into a box at
 // Restricted costs 1 more and the group Activates; Hostile or Aligned is closed. Syria at
 // Restricted follows option syriaMarchRestricted (PA-16).
 import { param } from "../../../core/params.ts";
@@ -30,15 +31,17 @@ function reserveGroups(state: GameState, part: Parameters<ActionHandler["check"]
   const groups = new Map<string, Group[]>();
   const short: { from: string; need: number }[] = [];
   for (const dest of part.locations) {
+    const moves = asMoves(part.perLocation[dest]?.["moves"]) ?? [];
+    const size = (from: string): number => moves.reduce((n, m) => n + (m.from === from ? m.count : 0), 0);
     groups.set(
       dest,
-      (asMoves(part.perLocation[dest]?.["moves"]) ?? []).flatMap((m) => {
+      moves.flatMap((m) => {
         let need = m.count;
         const out = (m.face === null ? [FACE.underground, FACE.active] : [m.face]).flatMap((face) => {
           const n = Math.min(need, reserve(m.from, face));
           left.set(`${m.from}|${face}`, reserve(m.from, face) - n);
           need -= n;
-          return n > 0 ? [{ from: m.from, face, count: n, group: m.count }] : [];
+          return n > 0 ? [{ from: m.from, face, count: n, group: size(m.from) }] : [];
         });
         if (need > 0) short.push({ from: m.from, need: m.count });
         return out;
