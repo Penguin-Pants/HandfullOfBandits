@@ -20,7 +20,7 @@ const docs = {
     "",
     "### 3.3 Diplomacy",
     "",
-    "Talks text.",
+    "Diplomacy text.",
     "",
     "### 3.4 Village Clearance",
     "",

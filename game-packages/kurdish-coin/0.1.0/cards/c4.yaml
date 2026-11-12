@@ -89,7 +89,7 @@
     effects:
       - {type: adjustTrack, track: resources.state, delta: -3}
       - {type: adjustTrack, track: resources.pkk, delta: 1}
-  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "Spoiler (07 s7.2): no breach and no marker; Talks is not listed, so Talks stays"}
+  encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "Spoiler (07 s7.2): no breach and no marker"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0091, S-0259, S-0264, S-0270, S-0333, S-0334, S-0063, S-0077, S-0078]

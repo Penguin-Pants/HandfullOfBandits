@@ -44,9 +44,9 @@ describe("Ceasefire restrictions and breach (07 s7.2)", () => {
   it("Coerce and a domestic Base are forbidden only from Reciprocal Restraint", () => {
     expect(warnings(at(turnOf("pkk"), "declared"), coerce)).toEqual([]);
     expect(play(at(turnOf("pkk"), "reciprocalRestraint"), coerce).state.tracks["ceasefire"]).toBe("none");
-    expect(warnings(at(turnOf("pkk"), "talks"), rallyBase)).toHaveLength(1);
-    expect(warnings(at(turnOf("pkk"), "talks"), rallyPlace)).toEqual([]);
-    expect(play(at(turnOf("pkk"), "talks"), rallyPlace).state.tracks["ceasefire"]).toBe("talks");
+    expect(warnings(at(turnOf("pkk"), "reciprocalRestraint"), rallyBase)).toHaveLength(1);
+    expect(warnings(at(turnOf("pkk"), "reciprocalRestraint"), rallyPlace)).toEqual([]);
+    expect(play(at(turnOf("pkk"), "reciprocalRestraint"), rallyPlace).state.tracks["ceasefire"]).toBe("reciprocalRestraint");
   });
 
   it("State Assault while Declared places the State marker only; from Reciprocal Restraint it breaks it, Legitimacy -2", () => {
