@@ -98,13 +98,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/923edce095.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Siirt_location_Eruh.png",
+        "creator": "Batuhan duz",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Batuhan duz, CC BY-SA 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Eruh district location map, 2016; not an image of the 1984 raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -179,13 +181,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/df30eb7ae1.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Siirt_location_Merkez.png",
+        "creator": "Batuhan duz",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Batuhan duz, CC BY-SA 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Siirt central district location map, 2016; not an image of the 1984 raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -358,13 +362,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/bcf7d314e2.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Bismil_panorama.jpg",
+        "creator": "Dûrzan cîrano",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Dûrzan cîrano, CC BY-SA 3.0, via Wikimedia Commons. Resized for this catalogue.",
+        "caption": "Kurdish village near Bismil, 2015; thematic rural setting, not a depicted guard unit.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -458,13 +464,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -588,13 +596,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/29784d694c.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_KDP.svg",
+        "creator": "Illegitimate Barrister",
+        "license": "CC0 1.0",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Illegitimate Barrister, CC0 1.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "KDP flag illustration, 2013; identifies the party involved.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -706,13 +716,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/bcf7d314e2.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Bismil_panorama.jpg",
+        "creator": "Dûrzan cîrano",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Dûrzan cîrano, CC BY-SA 3.0, via Wikimedia Commons. Resized for this catalogue.",
+        "caption": "Kurdish village near Bismil, 2015; thematic rural setting, not a depicted guard unit.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -780,13 +792,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -856,13 +870,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -932,13 +948,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/088eb41f26.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Beqaa_valley_11.jpg",
+        "creator": "Freedom's Falcon",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Freedom's Falcon, CC BY-SA 3.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Beqaa Valley, Lebanon, 2011; regional context, not the training academy.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -1035,13 +1053,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -1108,13 +1128,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/b10660e339.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Mountains_near_Van.jpg",
+        "creator": "CallisonUpdate",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "attribution": "CallisonUpdate, CC BY 2.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Mountains near Van, 2005; regional terrain, not the 1986 offensive.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -1251,13 +1273,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/ea520fba3e.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:TurkishAirForceF5-A.jpg",
+        "creator": "Lieuwe Hofstra",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Lieuwe Hofstra, CC BY 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Turkish Air Force F-5A in the Netherlands, August 1986; not shown in the Iraq raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -1350,13 +1374,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/ea520fba3e.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:TurkishAirForceF5-A.jpg",
+        "creator": "Lieuwe Hofstra",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Lieuwe Hofstra, CC BY 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Turkish Air Force F-5A in the Netherlands, August 1986; not shown in the Iraq raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -1417,13 +1443,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/023a3c8070.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:%C4%B0nsan_Haklar%C4%B1_Derne%C4%9Fi_logo.svg",
+        "creator": "İnsan Hakları Derneği",
+        "license": "Public domain (Commons: simple logo)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Simple_designs",
+        "attribution": "İnsan Hakları Derneği, Public domain (Commons: simple logo), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Human Rights Association logo, uploaded in 2021; not a 1986 photograph.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -1492,13 +1520,15 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/41de3c75e9.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_Art%C3%AA%C5%9Fa_Rizgariye_G%C3%AAle_Kurdistan_(ARGK).svg",
+        "creator": "Shorepine",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Shorepine, CC BY-SA 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "ARGK pennant illustration, 2020; depicts the military wing founded in 1986.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml",
