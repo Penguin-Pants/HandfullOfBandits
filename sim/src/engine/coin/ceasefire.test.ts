@@ -9,11 +9,11 @@ const at = (s: GameState, ceasefire: string): GameState => setTrack(c3(s), "ceas
 const declare = (faction = "pkk"): AnyCommand => ({ type: "DeclareCeasefire", faction });
 const rb = (s: GameState, side: string): number => ruleset.spaces.reduce((n, x) => n + (s.spaces[x.id]?.markers["restraintBroken"]?.[side] ?? 0), 0);
 const warnings = (s: GameState, c: AnyCommand): string[] => engine.validate(ruleset, s, c).warnings.map((w) => w.message);
-const attack = op("pkk", "opOnly", { op: "pkk.attack", locations: ["hakkari"] });
-const coerce = op("pkk", "opOnly", { op: "pkk.coerce", locations: ["mardin-batman"] });
-const rallyBase = op("pkk", "opOnly", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "base" } } });
-const rallyPlace = op("pkk", "opOnly", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "place" } } });
-const assault = op("state", "opOnly", { op: "state.assault", locations: ["botan"] });
+const attack = op("pkk", "limitedOp", { op: "pkk.attack", locations: ["hakkari"] });
+const coerce = op("pkk", "limitedOp", { op: "pkk.coerce", locations: ["mardin-batman"] });
+const rallyBase = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "base" } } });
+const rallyPlace = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "place" } } });
+const assault = op("state", "limitedOp", { op: "state.assault", locations: ["botan"] });
 const activeBotan = (s: GameState): GameState => setPieces(setPieces(s, "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
 
 describe("Declare Ceasefire (07 s7.1)", () => {

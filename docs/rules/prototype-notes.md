@@ -29,7 +29,7 @@ The passing and eligibility procedure is the recorded DD-04 model. Passing does 
 
 These differences are made explicit rather than silently resolved. For **current simulator play**, this reading edition describes the implemented behavior. For a physical test using the research alternative, record the variant.
 
-**Op Only locations.** Decided 2026-11-12: the box follows the action. Op Only needs two or more locations (rule 2.3). One location with no Special Activity is a Limited Op. The engine still accepts one location as Op Only. Engine change pending.
+**Op Only locations.** Decided 2026-11-12: the box follows the action. Op Only needs two or more locations (rule 2.3). One location with no Special Activity is a Limited Op. The engine enforces it for First Eligible. The responder's Op Only keeps any number of locations (research 05 §2.3). A Garrison that moves Police to a second destination uses two locations.
 
 **Reclaiming on-map pieces.** Research 04 §2.1 permits some owner-chosen removals to replenish an exhausted Available supply, excluding Guards and external pieces. Current Operation handlers require Available supply and do not offer this withdrawal mechanism. This edition does not invent a simulator withdrawal action.
 

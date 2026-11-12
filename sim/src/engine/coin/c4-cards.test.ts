@@ -343,16 +343,16 @@ describe("Germany Bans PKK and ERNK (DK-064)", () => {
     expect(card("DK-064")?.chainAfter).toEqual(["DK-061"]);
   });
 
-  it("U: the Ban marker on the Europe track, Europe above the cap set to it, PKK Resources -2", () => {
+  it("U: the Europe Ban marker on the Europe track, Europe above the cap set to it, PKK Resources -2", () => {
     const { state } = play(setTrack(board("state", "DK-064"), "europe", 5), event("state", "unshaded"));
-    expect([marker(state, "europe", "ban"), track(state, "europe"), track(state, "resources.pkk")]).toEqual([1, 3, 3]);
+    expect([marker(state, "europe", "europeBan"), track(state, "europe"), track(state, "resources.pkk")]).toEqual([1, 3, 3]);
     expect(track(play(setTrack(board("state", "DK-064"), "europe", 2), event("state", "unshaded")).state, "europe")).toBe(2);
   });
 
-  it("S: Europe +1, no Ban marker; with a Ban marker already placed, Europe stops at the cap", () => {
+  it("S: Europe +1, no Europe Ban marker; with a Europe Ban marker already placed, Europe stops at the cap", () => {
     const { state } = play(board("pkk", "DK-064"), event("pkk", "shaded"));
-    expect([marker(state, "europe", "ban"), track(state, "europe")]).toEqual([0, 2]);
-    const capped = setMarkers(setTrack(board("pkk", "DK-064"), "europe", 3), "europe", "ban", 1);
+    expect([marker(state, "europe", "europeBan"), track(state, "europe")]).toEqual([0, 2]);
+    const capped = setMarkers(setTrack(board("pkk", "DK-064"), "europe", 3), "europe", "europeBan", 1);
     expect(track(play(capped, event("pkk", "shaded")).state, "europe")).toBe(3);
   });
 });

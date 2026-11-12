@@ -36,7 +36,7 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 **Mandatory structural card.**
 
-**Always:** If KDP is Host, set its posture to Tolerant.
+**Always:** If KDP is Host, set its posture to Tolerant. The date of the KDP break is disputed (1985, 1987 or 1988). October 1985 is a design assumption. Evidence: Low.
 
 **U:** KDP posture one more step toward Hostile.
 

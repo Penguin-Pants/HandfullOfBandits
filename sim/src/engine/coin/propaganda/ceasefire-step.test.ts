@@ -80,7 +80,7 @@ describe("A ceasefire never ends the game (rules 8.6, decision 1)", () => {
 describe("A breach ends the ceasefire (07 s7.2)", () => {
   it("State Assault during Reciprocal Restraint: Ceasefire to None", () => {
     const board = setPieces(setPieces(setTrack(inCampaign(ruleset, turnOf("state"), "C3"), "ceasefire", "reciprocalRestraint"), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
-    const s = play(board, { type: "ChooseOperation", faction: "state", box: "opOnly", plan: { op: "state.assault", locations: ["botan"], perLocation: {}, sa: null, subActions: [] } }).state;
+    const s = play(board, { type: "ChooseOperation", faction: "state", box: "limitedOp", plan: { op: "state.assault", locations: ["botan"], perLocation: {}, sa: null, subActions: [] } }).state;
     expect(cf(s)).toBe("none");
   });
 });

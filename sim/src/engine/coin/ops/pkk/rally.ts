@@ -20,7 +20,7 @@ type Option = "place" | "base" | "grow" | "flip";
 const OPTIONS: readonly Option[] = ["place", "base", "grow", "flip"];
 
 function banned(state: GameState): boolean {
-  return markers(state, EUROPE_SPACE, MARKER.ban) > 0;
+  return markers(state, EUROPE_SPACE, MARKER.europeBan) > 0;
 }
 
 function costOf(ruleset: Ruleset, state: GameState, loc: string): number {
@@ -66,7 +66,7 @@ export const rally: ActionHandler = {
       const s = space(ruleset, loc);
       if (loc === EUROPE_SPACE) {
         const cap = europeCap(ruleset, state);
-        if (Number(state.tracks[TRACK.europe]) >= cap) v("rallyEuropeCap", `The Ban marker caps Europe at ${String(cap)} (04 s3.6).`);
+        if (Number(state.tracks[TRACK.europe]) >= cap) v("rallyEuropeCap", `The Europe Ban marker caps Europe at ${String(cap)} (04 s3.6).`);
         continue;
       }
       if (s === undefined || hasTag(ruleset, loc, TAG.noPieces) || hasTag(ruleset, loc, TAG.eventsOnly)) {

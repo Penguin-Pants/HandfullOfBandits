@@ -57,8 +57,8 @@ describe("Legal Politics procedure table (07 s6.4)", () => {
     expect(state.flags["closureCase"]).toBe(false);
   });
 
-  it("the ban keeps Europe at 3 while the Ban marker is on the track (04 s3.6)", () => {
-    const board = setMarkers(setTrack(withCase(offices(open(), "diyarbakir-city")), "europe", 3), "europe", "ban", 1);
+  it("the ban keeps Europe at 3 while the Europe Ban marker is on the track (04 s3.6)", () => {
+    const board = setMarkers(setTrack(withCase(offices(open(), "diyarbakir-city")), "europe", 3), "europe", "europeBan", 1);
     expect(play(board, advance).state.tracks["europe"]).toBe(3);
   });
 

@@ -348,7 +348,7 @@ describe("Arrest in Rome (DK-092)", () => {
   });
 
   it("S: at the Ban cap the Rally is refused and may be skipped", () => {
-    const capped = setTrack(setMarkers(board("pkk", "DK-092"), "europe", "ban", 1), "europe", 2);
+    const capped = setTrack(setMarkers(board("pkk", "DK-092"), "europe", "europeBan", 1), "europe", 2);
     expect(codes(capped, event("pkk", "shaded", [plan(["europe"])]))).toContain("rallyEuropeCap");
     expect(track(play(capped, event("pkk", "shaded", [null])).state, "europe")).toBe(3);
   });
@@ -414,7 +414,7 @@ describe("US Designates the PKK (DK-083)", () => {
   it("S: a free Rally on the Europe track; at the Ban cap it is refused and may be skipped", () => {
     expect(track(play(board("pkk", "DK-083"), event("pkk", "shaded", [plan(["europe"])])).state, "europe")).toBe(2);
     expect(codes(board("pkk", "DK-083"), event("pkk", "shaded", [plan(["botan"])]))).toContain("eventConstraint");
-    const capped = setTrack(setMarkers(board("pkk", "DK-083"), "europe", "ban", 1), "europe", 3);
+    const capped = setTrack(setMarkers(board("pkk", "DK-083"), "europe", "europeBan", 1), "europe", 3);
     expect(codes(capped, event("pkk", "shaded", [plan(["europe"])]))).toContain("rallyEuropeCap");
     expect(track(play(capped, event("pkk", "shaded", [null])).state, "europe")).toBe(3);
   });

@@ -9,7 +9,7 @@ describe("SA pairing (06 s1 item 2)", () => {
   it("rejects an SA with a Limited Op or Op Only, and an SA its Op does not allow", () => {
     const sa = { action: "pkk.extort", locations: [], perLocation: {}, timing: "after" };
     expect(codes(pkkTurn, op("pkk", "limitedOp", { op: "pkk.rally", locations: ["dersim"], sa }))).toEqual(["saNotAllowed"]);
-    expect(codes(pkkTurn, op("pkk", "opOnly", { op: "pkk.rally", locations: ["dersim"], sa }))).toEqual(["saNotAllowed"]);
+    expect(codes(pkkTurn, op("pkk", "limitedOp", { op: "pkk.rally", locations: ["dersim"], sa }))).toEqual(["saNotAllowed"]);
     const ambush = { action: "pkk.ambush", locations: ["hakkari"], perLocation: {}, timing: "before" };
     expect(codes(pkkTurn, op("pkk", "opSa", { op: "pkk.rally", locations: ["hakkari"], sa: ambush }))).toContain("saNotWithOp");
   });

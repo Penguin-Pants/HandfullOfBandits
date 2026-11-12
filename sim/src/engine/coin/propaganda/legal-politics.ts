@@ -151,6 +151,9 @@ function procedure(ctx: Exec, choice: JsonObject | null): void {
     if (id === undefined) break;
     ctx.apply({ type: "removeMarker", marker: MARKER.office, space: id, side: SINGLE_FACE, ruleRef: `${ruleRef} line 5`, assumptionRef: null });
   }
-  // Line 6: the prosecutor files at the limit (DD-19.1).
-  if (officeCount(ruleset, ctx.state) === limit && ctx.state.flags[CASE] !== true) fileCase(ctx, `${ruleRef} line 6`);
+  // Line 6: the prosecutor files at the limit (DD-19.1). A filing sets Prosecuted (rules 8.5).
+  if (officeCount(ruleset, ctx.state) === limit && ctx.state.flags[CASE] !== true) {
+    fileCase(ctx, `${ruleRef} line 6`);
+    if (ctx.state.tracks[LEGAL] !== "prosecuted") ctx.apply({ type: "setTrack", track: LEGAL, value: "prosecuted", ifEquals: null, ruleRef: `${ruleRef} line 6`, assumptionRef: null });
+  }
 }

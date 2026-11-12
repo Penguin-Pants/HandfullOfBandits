@@ -135,8 +135,8 @@ describe("Capture (DK-093)", () => {
     expect(state.spaces["botan"]?.level).toBe(-2);
   });
 
-  it("S: the Event Europe rise stops at the Ban marker cap (04 s3.6)", () => {
-    const board = setMarkers(setTrack(withCard(turnOf("pkk"), "DK-093"), "europe", 3), "europe", "ban", 1);
+  it("S: the Event Europe rise stops at the Europe Ban marker cap (04 s3.6)", () => {
+    const board = setMarkers(setTrack(withCard(turnOf("pkk"), "DK-093"), "europe", 3), "europe", "europeBan", 1);
     expect(play(board, event("pkk", "shaded", [["botan"]])).state.tracks["europe"]).toBe(3);
   });
 });

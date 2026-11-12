@@ -19,7 +19,7 @@ export const MARKER = {
   reception: "reception",
   covert: "covert",
   office: "office",
-  ban: "ban",
+  europeBan: "europeBan",
   leadership: "leadership",
 } as const;
 export const TRACK = {

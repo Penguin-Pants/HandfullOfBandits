@@ -142,7 +142,7 @@ it("ends a Rally when Host Pressure leaves no legal, affordable location, keepin
   let state = noGuerrillas(withRoll(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), 1));
   state = ruleset.spaces.reduce((s, x) => setPieces(s, x.id, "pkkBase", 0), state);
   state = setPieces(setPieces(state, "kdp-zone", "guerrilla", 1, "active"), "kdp-zone", "pkkBase", 1);
-  state = setTrack(setMarkers({...state, pools: {...state.pools, guerrilla: {available: 0, outOfPlay: 0}}}, "europe", "ban", 1), "europe", 3);
+  state = setTrack(setMarkers({...state, pools: {...state.pools, guerrilla: {available: 0, outOfPlay: 0}}}, "europe", "europeBan", 1), "europe", 3);
   const before = Number(state.tracks["resources.pkk"]);
   const next = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone"], perLocation: {"kdp-zone": {option: "flip"}}, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
   expect(next.state.pending).toBeNull();

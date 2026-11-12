@@ -37,7 +37,8 @@ export function strategy(name: string): Policy {
 }
 
 function proposals(r: Ruleset, s: GameState, faction: string, name: string): AnyCommand[] {
-  const box = ["opOnly","opSa","limitedOp"].find(b => legalBoxes(r,s,faction).includes(b));
+  // Every proposal has one location, so the First Eligible uses the Limited Op box (rules 2.3).
+  const box = (faction === s.initiative.firstEligible ? ["limitedOp"] : ["opOnly","opSa","limitedOp"]).find(b => legalBoxes(r,s,faction).includes(b));
   if (box === undefined) return [];
   const out: AnyCommand[] = [];
   const add = (op: string, loc: string, choice: JsonObject = {}, subActions: readonly JsonObject[] = []) => {

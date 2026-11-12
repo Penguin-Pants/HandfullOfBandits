@@ -11,6 +11,7 @@ import type { Engine } from "../engine/index.ts";
 import { controlOf, count, isTerrain, markers, resources } from "../engine/coin/ops/common.ts";
 import { postureOf } from "../engine/coin/ops/common-pkk.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
+import { siteCount } from "../engine/coin/ops/choose-operation.ts";
 import { asObject } from "../engine/coin/ops/plan.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
@@ -624,7 +625,8 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
     for (const box of [BOX.limitedOp, BOX.opOnly, BOX.opSa]) {
       if (!boxes.includes(box)) continue;
       for (const op of Object.keys(OP_PLANS).filter((id) => actionHandlers[id]?.faction === faction)) {
-        const plans = OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? [];
+        // The box follows the action (rules 2.3): the First Eligible's Op Only has two or more locations.
+        const plans = (OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? []).filter((p) => box !== BOX.opOnly || faction !== s.initiative.firstEligible || siteCount(p) > 1);
         const byVariant = (prefix: string): void => {
           for (const variant of new Set(plans.map((p) => p.variant))) offer(`${prefix}${variant === undefined ? "" : `/${variant}`}@${box}`, plans.filter((p) => p.variant === variant).map((p) => opCommand(faction, box, op, p)));
         };
