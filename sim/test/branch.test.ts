@@ -155,10 +155,12 @@ describe("metrics round window on a branch", () => {
   it("counts the actions of the round played before the fork", () => {
     const run = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 3, name: "metrics branch" });
     const fork = [step(run.sessionId), step(run.sessionId), step(run.sessionId)].at(-1) ?? "";
-    while (service.session(run.sessionId).head.state.ended === null) step(run.sessionId);
+    // Play to the end of round 1 only (the Reset moves the game to C2), on both branches.
+    const inRoundOne = (): boolean => service.session(run.sessionId).head.state.turn.campaign === "C1";
+    while (inRoundOne()) step(run.sessionId);
     const { head } = service.session(run.sessionId);
     service.branch(run.sessionId, fork, head.actionId, head.stateHash);
-    while (service.session(run.sessionId).head.state.ended === null) step(run.sessionId);
+    while (inRoundOne()) step(run.sessionId);
     const table = metricsTable(exportJson(db, { sessionIds: [run.sessionId], withStates: false, appVersion: "0.1.0", exportedAt: "2026-11-05T00:00:00Z" }));
     const round1 = table.rows.filter((r) => r["round"] === 1);
     // The scripted policy plays the same from the same state, so both branches have the same round 1.

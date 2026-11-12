@@ -73,6 +73,11 @@ describe("Decision 5 (M-07): the box follows the action", () => {
     expect(codes(board, garrison("opOnly", [{ from: "van-bitlis", to: "hakkari", count: 1 }]))).toEqual(["opOnlyLocations"]);
   });
 
+  it("a March move with a `to` field is still one location: March ignores `to` (PR 101 review)", () => {
+    const march = op("pkk", "opOnly", { op: "pkk.march", locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "botan", to: "botan", count: 1 }] } } });
+    expect(codes(turnOf("pkk"), march)).toEqual(["opOnlyLocations"]);
+  });
+
   it("the responder to a Limited Op may take Op Only in one location (research 05 s2.3 note 2)", () => {
     const after = play(turnOf("pkk"), rally("limitedOp", "dersim")).state;
     const sweep = op("state", "opOnly", { op: "state.sweep", locations: ["hakkari"], perLocation: {}, sa: null, subActions: [] });

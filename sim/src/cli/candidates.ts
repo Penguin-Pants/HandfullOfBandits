@@ -626,7 +626,7 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
       if (!boxes.includes(box)) continue;
       for (const op of Object.keys(OP_PLANS).filter((id) => actionHandlers[id]?.faction === faction)) {
         // The box follows the action (rules 2.3): the First Eligible's Op Only has two or more locations.
-        const plans = (OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? []).filter((p) => box !== BOX.opOnly || faction !== s.initiative.firstEligible || siteCount(p) > 1);
+        const plans = (OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? []).filter((p) => box !== BOX.opOnly || faction !== s.initiative.firstEligible || siteCount(op, p) > 1);
         const byVariant = (prefix: string): void => {
           for (const variant of new Set(plans.map((p) => p.variant))) offer(`${prefix}${variant === undefined ? "" : `/${variant}`}@${box}`, plans.filter((p) => p.variant === variant).map((p) => opCommand(faction, box, op, p)));
         };
