@@ -125,7 +125,7 @@ describe("second review round (PR #40)", () => {
 
 describe("campaign procedures (19 s5 Campaign row)", () => {
   it("offers ARGK decline and several placements", () => {
-    const ready = setPieces(setPieces(engine.start(ruleset, "scenario-a", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);
+    const ready = setPieces(setPieces(engine.start(ruleset, "full-campaign", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);
     const s = play(ready, { type: "Advance" }).state;
     expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "pivotal", faction: "pkk" });
     const set = gen(s, "pivotal", "pkk");
@@ -144,7 +144,7 @@ describe("campaign procedures (19 s5 Campaign row)", () => {
   });
 
   it("distinguishes automatic phases from choices: setup, victory, resources and full upkeep are automatic", () => {
-    expect(decisionPoint(engine, ruleset, engine.start(ruleset, "scenario-a", 1).state)).toMatchObject({ kind: "auto", reason: "setup" });
+    expect(decisionPoint(engine, ruleset, engine.start(ruleset, "full-campaign", 1).state)).toMatchObject({ kind: "auto", reason: "setup" });
     const s = turnOf("state");
     for (const phase of ["victory", "resources", "legalPolitics", "reset"]) expect(decisionPoint(engine, ruleset, propaganda(s, phase))).toMatchObject({ kind: "auto", reason: phase });
     expect(decisionPoint(engine, ruleset, propaganda(s, "upkeep"))).toMatchObject({ kind: "auto" });

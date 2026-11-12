@@ -44,8 +44,8 @@ function variant(name: string, file: string, edits: readonly [string, string][])
   return out;
 }
 
-// Scenario A until one Propaganda round is done, then to the next action that changes a space.
-const { sessionId, head: setup } = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed: 3, name: "regression" });
+// The full campaign until one Propaganda round is done, then to the next action that changes a space.
+const { sessionId, head: setup } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 3, name: "regression" });
 const played: string[] = [];
 while (roundsDone(sessionId) === 0) played.push(step(sessionId));
 do played.push(step(sessionId));
@@ -58,7 +58,7 @@ describe("P4-06 case from a note (07 s9 items 1 and 2)", () => {
   it("stores the inputs, the command range to the note's action and the label", () => {
     const c = getCase(db, made.caseId);
     const session = service.session(sessionId).session;
-    expect(c).toMatchObject({ source_session_id: sessionId, source_action_id: target, source_annotation_id: noteId, package_hash: session.package_hash, seed: 3, scenario_id: "scenario-a", options: session.options, label: "Rally felt too cheap" });
+    expect(c).toMatchObject({ source_session_id: sessionId, source_action_id: target, source_annotation_id: noteId, package_hash: session.package_hash, seed: 3, scenario_id: "full-campaign", options: session.options, label: "Rally felt too cheap" });
     expect(JSON.parse(c?.command_range ?? "")).toEqual({ first: `${played[0] ?? ""}-C1`, last: expect.stringMatching(new RegExp(`^${target}-C\\d+$`)) as unknown });
     expect(made.commands).toBeGreaterThanOrEqual(played.length);
   });
@@ -87,7 +87,7 @@ describe("P4-06 run against a target version (09 s7.2)", () => {
   });
 
   it("reports changed with the per-round metric diff, old against new", () => {
-    const next = variant("threshold", join("scenarios", "scenario-a.yaml"), [["  state: 49", "  state: 47"]]);
+    const next = variant("threshold", join("scenarios", "full-campaign.yaml"), [["thresholds: {state: 49,", "thresholds: {state: 47,"]]);
     const { exitCode, lines } = runCommand(made.caseId, next, dbFile);
     expect(exitCode).toBe(1);
     expect(lines[1]).toBe("changed");
@@ -99,7 +99,7 @@ describe("P4-06 run against a target version (09 s7.2)", () => {
   });
 
   it("reports incompatible at the first command the target rules reject, with its violations, and never forces it", () => {
-    const next = variant("broke", join("scenarios", "scenario-a.yaml"), [["resources.state: 12", "resources.state: 0"], ["resources.pkk: 5", "resources.pkk: 0"]]);
+    const next = variant("broke", join("scenarios", "full-campaign.yaml"), [["resources.state: 12", "resources.state: 0"], ["resources.pkk: 5", "resources.pkk: 0"]]);
     const { exitCode, lines } = runCommand(made.caseId, next, dbFile);
     expect(exitCode).toBe(1);
     expect(lines[1]).toBe("incompatible");
@@ -140,7 +140,7 @@ describe("P4-06 run against a target version (09 s7.2)", () => {
 
 describe("P4-06 runCase branches", () => {
   const declared = kurdish.data.manifest.options ?? {};
-  const stored = (): CaseInputs => ({ scenarioId: "scenario-a", seed: 3, options: {}, steps: [], expectations: [], deck: engine.start(ruleset, "scenario-a", 3).state.deck });
+  const stored = (): CaseInputs => ({ scenarioId: "full-campaign", seed: 3, options: {}, steps: [], expectations: [], deck: engine.start(ruleset, "full-campaign", 3).state.deck });
 
   it("is incompatible when the scenario or an option is missing", () => {
     expect(runCase(engine, ruleset, declared, { ...stored(), scenarioId: "scenario-z" })).toMatchObject({ outcome: "incompatible", firstFailure: { commandId: null, reason: "missing scenario scenario-z" } });
@@ -149,7 +149,7 @@ describe("P4-06 runCase branches", () => {
   });
 
   it("accepts any option the manifest declares, as session start does, even one the scenario does not list", () => {
-    expect(runCase(engine, ruleset, declared, { ...stored(), options: { hotPursuit: "deny", "threshold.state": "46" } }).outcome).toBe("same");
+    expect(runCase(engine, ruleset, declared, { ...stored(), options: { hotPursuit: "deny" } }).outcome).toBe("same");
   });
 
   it("flags a changed deck order as its own result", () => {
@@ -170,7 +170,7 @@ describe("P4-06 runCase branches", () => {
   });
 
   it("reports an engine exception as error", () => {
-    const bad = { ...ruleset, scenarios: { ...ruleset.scenarios, "scenario-a": { ...ruleset.scenarios["scenario-a"], campaigns: 5 } } } as unknown as typeof ruleset;
+    const bad = { ...ruleset, scenarios: { ...ruleset.scenarios, "full-campaign": { ...ruleset.scenarios["full-campaign"], campaigns: 5 } } } as unknown as typeof ruleset;
     expect(runCase(engine, bad, declared, stored())).toMatchObject({ outcome: "error", firstFailure: { commandId: null } });
   });
 });

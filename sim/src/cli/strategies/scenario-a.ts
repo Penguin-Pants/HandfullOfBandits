@@ -1,4 +1,6 @@
-// The eight Scenario A strategy families (19 s4; 20 Phase 5). Each is a hypothesis, not a proven
+// The eight strategy families (19 s4; 20 Phase 5). They were tuned and qualified on Scenario A
+// (C1 and C2), which is archived (archive/README.md). They now play the full campaign. No family is
+// tuned for C3 to C5. Each is a hypothesis, not a proven
 // winning strategy. All share the search procedure below and differ in documented weights, risk and
 // conversion timing; the adaptive families add a sampled opponent reply. Assumptions per family:
 // docs/prototype/21-scenario-a-strategies.md.

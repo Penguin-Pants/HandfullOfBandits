@@ -164,7 +164,7 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
     const results = analyzeExperiment(dir, experimentCoverage(dir)).scheduled;
     expect(results).toBe(8);
     const job = (JSON.parse(JSON.stringify(readJournal(dir, "baseline~S-RANDOMv1~P-RANDOMv1~61~r0")[0])) as { job: { seed: number } }).job;
-    let s = engine.start(ruleset, "scenario-a", job.seed).state;
+    let s = engine.start(ruleset, "full-campaign", job.seed).state;
     let checked = 0;
     let law = 0;
     for (const e of readJournal(dir, "baseline~S-RANDOMv1~P-RANDOMv1~61~r0")) {

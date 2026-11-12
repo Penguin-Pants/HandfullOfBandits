@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 const focus = { panel: "board" as const, selectedSpace: null, selectedPieces: [], hoveredActionId: null };
-const { sessionId, head: setup } = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 5, name: "undo" });
+const { sessionId, head: setup } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 5, name: "undo" });
 const revealed = service.submit(sessionId, { type: "Advance" }, setup.actionId);
 const attack = { type: "ChooseOperation", faction: "pkk", box: "limitedOp", plan: { op: "pkk.attack", locations: ["hakkari"], perLocation: {}, sa: null, subActions: [] } };
 const attacked = service.submit(sessionId, attack, revealed.actionId);
@@ -54,7 +54,7 @@ describe("undo (06 s6)", () => {
 
   it("rejects an undo with a stale head and an undo of the setup", () => {
     expect(() => service.undo(sessionId, "old")).toThrow(/moved on/);
-    const fresh = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 6, name: "x" });
+    const fresh = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 6, name: "x" });
     expect(() => service.undo(fresh.sessionId, fresh.head.actionId)).toThrow(/Nothing to undo/);
   });
 });

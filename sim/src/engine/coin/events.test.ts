@@ -152,7 +152,7 @@ describe("Event execution rules (05 s5)", () => {
 
 describe("Card reveal and Always lines (05 s5 item 7)", () => {
   it("Advance in setup reveals the first card; the next card comes when both factions acted", () => {
-    const start = engine.start(ruleset, "s0", 1).state;
+    const start = engine.start(ruleset, "full-campaign", 1).state;
     const first = play(start, { type: "Advance" }).state;
     expect(first.deck.currentCard).toBe(start.deck.piles[0]?.[0]);
     expect(first.turn).toMatchObject({ phase: "card", cardIndex: 1 });
@@ -162,7 +162,7 @@ describe("Card reveal and Always lines (05 s5 item 7)", () => {
   });
 
   it("DK-003 Always moves the 16 Guards to Available on reveal and sets Law 3175", () => {
-    const start = engine.start(ruleset, "s0", 1).state;
+    const start = engine.start(ruleset, "full-campaign", 1).state;
     const ordered = { ...start, deck: { ...start.deck, piles: [["DK-003", "DK-016"]] } };
     const { state } = play(ordered, { type: "Advance" });
     expect(state.pools["guards"]).toEqual({ available: 16, outOfPlay: 0 });
@@ -170,7 +170,7 @@ describe("Card reveal and Always lines (05 s5 item 7)", () => {
   });
 
   it("DK-005 Always sets the KDP posture from Host to Tolerant only", () => {
-    const start = engine.start(ruleset, "s0", 1).state;
+    const start = engine.start(ruleset, "full-campaign", 1).state;
     const ordered = { ...start, deck: { ...start.deck, piles: [["DK-005", "DK-016"]] } };
     expect(play(ordered, { type: "Advance" }).state.tracks["posture.kdp"]).toBe("tolerant");
     const restricted = setTrack(ordered, "posture.kdp", "restricted");

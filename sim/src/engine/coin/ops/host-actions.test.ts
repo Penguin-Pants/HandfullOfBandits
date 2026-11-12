@@ -67,9 +67,9 @@ it("rejects hot pursuit overflow, forbidden boxes, extra Op entry and wrong timi
   expect(codes(base,border("syria-bekaa",1))).toContain("crossBorderTarget");
   expect(codes(base,border("kdp-zone",1,"after"))).toContain("saTiming");
   expect(codes(base,border("kdp-zone",1,"before",[{from: "hakkari",count: 1}]))).toContain("crossBorderMoves");
-  const scenario = ruleset.scenarios["s0"];
-  if (scenario === undefined) throw new Error("s0");
-  const deny = {...ruleset,scenarios: {...ruleset.scenarios,s0: {...scenario,options: {...scenario.options,hotPursuit: "deny"}}}};
+  const scenario = ruleset.scenarios["full-campaign"];
+  if (scenario === undefined) throw new Error("full-campaign");
+  const deny = {...ruleset,scenarios: {...ruleset.scenarios,"full-campaign": {...scenario,options: {...scenario.options,hotPursuit: "deny"}}}};
   expect(engine.validate(deny,base,border("kdp-zone",1)).violations.map(v => v.code)).toContain("crossBorderAccess");
 });
 it("Host Pressure requires a PKK piece and Leadership in Syria; KDP backfires on 2", async () => {

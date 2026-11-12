@@ -1,8 +1,11 @@
 // P3c-02: full campaign scenario (research 10 s2) and a long golden replay. Accept: the full
 // campaign replays in under 10 seconds (05 s11). Scripted policy, seed 7. UPDATE_GOLDEN=1 rewrites the file.
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 import { playGame, replay, scriptedPolicy, type PlayRecord } from "../src/cli/play.ts";
 import { replayFile } from "../src/cli/replay.ts";
 import { setupState } from "../src/engine/core/state.ts";
@@ -58,5 +61,22 @@ describe("full campaign golden (seed 7)", () => {
     const start = performance.now();
     expect(replayFile(fileURLToPath(golden), kurdishDir)).toEqual({ exitCode: 0, lines: [`identical (${String(stored.commands.length)} commands)`] });
     expect(performance.now() - start).toBeLessThan(10_000);
+  });
+
+  it("runs batch and golden replay through the real CLI", () => {
+    const temp = mkdtempSync(join(tmpdir(), "hob-full-cli-"));
+    afterAll(() => { rmSync(temp, { recursive: true, force: true }); });
+    const main = fileURLToPath(new URL("../src/cli/main.ts", import.meta.url));
+    const out = join(temp, "paired metrics.csv");
+    const batch = spawnSync(process.execPath, [main, "batch", "--games", "2", "--strategy", "concentration,coerce-only", "--swap-seats", "--package", kurdishDir, "--out", out], { encoding: "utf8" });
+    expect(batch.status, batch.stderr).toBe(0);
+    expect(batch.stdout).toContain("State:");
+    // One header line, then one line per Propaganda round of each game: 2 to 10 lines for two games.
+    const lines = readFileSync(out, "utf8").trim().split("\n");
+    expect(lines.length).toBeGreaterThanOrEqual(1 + 2);
+    expect(lines.length).toBeLessThanOrEqual(1 + 2 * 5);
+    const result = spawnSync(process.execPath, [main, "replay", fileURLToPath(golden), "--package", kurdishDir], { encoding: "utf8" });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain(`identical (${String(game.commands.length)} commands)`);
   });
 });

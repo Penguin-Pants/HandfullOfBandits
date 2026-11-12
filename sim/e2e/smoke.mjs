@@ -243,9 +243,9 @@ try {
   check(exported.exportMeta.schema === "coin-sim-export/1" && exported.annotations.length === 1 && exported.actions.some((a) => a.status === "undone"), "JSON export holds the note and the undone action");
   // Phase 3a automated flow. IC-3a still requires the designer's own UI playthrough.
   await page.getByRole("button", {name: "Home",exact: true}).click();
-  await page.getByLabel("Scenario", {exact: true}).selectOption("scenario-a");
+  await page.getByLabel("Scenario", {exact: true}).selectOption("full-campaign");
   await page.getByLabel("Seed", {exact: true}).fill("7");
-  check(await page.getByRole("button", {name: "Start",exact: true}).isEnabled(), "Home: Scenario A starts without exclusions");
+  check(await page.getByRole("button", {name: "Start",exact: true}).isEnabled(), "Home: the full campaign starts without exclusions");
   // P4-12: the Home row links to every export format; each link downloads a file.
   const row = page.getByRole("row").filter({hasText: sessions[0].name});
   const links = await Promise.all(["JSON", "Markdown", "Notes", "Actions", "Metrics"].map((name) => row.getByRole("link", {name, exact: true}).getAttribute("href")));
@@ -257,28 +257,28 @@ try {
   const packages = await (await fetch(`${base}/api/packages`)).json();
   const pkg = packages.find(p => p.packageId === "kurdish-coin");
   const loaded = loadPackage(readPackageDir(pkg.dir));
-  check(loaded.ok, "Scenario A package loads for automated play");
+  check(loaded.ok, "Package loads for automated play");
   const engine = createEngine(coinHandlers);
   let head = created.head;
   let steps = 0;
   while (head.state.ended === null) {
-    if (steps++ >= 2000) throw new Error("Scenario A exceeded 2000 commands");
+    if (steps++ >= 2000) throw new Error("The full campaign exceeded 2000 commands");
     const command = scriptedPolicy(engine,loaded.ruleset,head.state);
     const response = await fetch(`${base}/api/sessions/${created.sessionId}/commands`, {method: "POST",headers: {"content-type": "application/json"},body: JSON.stringify({command,headActionId: head.actionId,headStateHash: head.stateHash})});
     if (!response.ok) throw new Error(await response.text());
     head = (await response.json()).head;
   }
-  check(head.state.turn.propagandaRound === 2, "Scenario A completes both rounds through the session API");
+  check(head.state.turn.propagandaRound === 5, "The full campaign completes five rounds through the session API");
   await page.reload();
-  await page.getByRole("row").filter({hasText: "scenario-a"}).getByRole("button", {name: "Resume",exact: true}).click();
+  await page.getByRole("row").filter({hasText: "full-campaign-seed7"}).getByRole("button", {name: "Resume",exact: true}).click();
   await page.locator('header[aria-label="Status"]').getByText(/^Game over:/).waitFor();
-  check(true, "Scenario A result renders in the UI");
+  check(true, "Full campaign result renders in the UI");
   await page.keyboard.press("n");
-  await page.getByLabel("Note text").fill("Automated Scenario A smoke note; designer IC-3a remains pending.");
+  await page.getByLabel("Note text").fill("Automated full campaign smoke note; designer IC-3a remains pending.");
   await page.keyboard.press("Enter");
   await page.getByRole("status").filter({hasText: /Saved/}).waitFor();
   const aExport = await (await fetch(`${base}/api/sessions/${created.sessionId}/export`)).json();
-  check(aExport.sessions[0].scenario_id === "scenario-a" && aExport.annotations.length === 1 && aExport.metrics.filter(m => m.propaganda_round !== undefined).length === 2, "Scenario A export contains the session, both round metrics and UI note");
+  check(aExport.sessions[0].scenario_id === "full-campaign" && aExport.annotations.length === 1 && aExport.metrics.filter(m => m.propaganda_round !== undefined).length === 5, "Full campaign export contains the session, five round metrics and UI note");
 } finally {
   await browser?.close();
   // Windows holds the SQLite file open until the server exits; rmSync before that throws EPERM.

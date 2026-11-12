@@ -1,4 +1,4 @@
-// Candidate plans for every Scenario A decision family (19 s5; 20 Phase 4). The generator reads
+// Candidate plans for every decision family of C1 and C2 (19 s5; 20 Phase 4). The generator reads
 // only public state: the runner calls it on a determinized projection of the player's observation
 // and then validates each survivor on the live state. Every emitted command passed engine
 // validation; legality is never copied here. Pruning is bounded and documented per family below;

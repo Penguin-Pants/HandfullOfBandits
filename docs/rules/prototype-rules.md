@@ -9,7 +9,7 @@ date: 8 November 2026
 
 *A Handful of Bandits* is a two-player research prototype about the conflict in southeastern Turkey. One player directs the **State** and the other the **PKK**. The State seeks Support and Legitimacy. The PKK seeks Opposition and domestic Bases. Military Control, political attitudes and national Legitimacy are separate measures.
 
-This edition covers the **full game, 1984–1999**: five Campaigns (C1 to C5) and four ways to start it. The **full campaign** plays all five Campaigns. **Scenario A** (1984–1989) plays C1 and C2. **Scenario B** (1990–1995) plays C3 and C4. **Scenario C** (1993–1999) plays C4 and C5. Section 10 gives every setup. The edition includes the designer decisions implemented in ruleset R4. It is not a balanced or final published game.
+This edition covers the **full game, 1984–1999**: five Campaigns (C1 to C5). The **full campaign** plays all five Campaigns and is the only scenario in this edition. Section 10 gives its setup. The shorter Scenarios A, B and C are archived (10.6). The edition includes the designer decisions implemented in ruleset R4. It is not a balanced or final published game.
 
 **Reading the rules.** Numbered rules give the procedures. Italic examples explain them. Card text can modify a procedure (5.1). Section 10 gives the complete setups. Appendix A reproduces the Event text for Campaigns C1 and C2 only. The text of the C3 to C5 cards is not yet reproduced; read it in the simulator or in the card package. Appendix B identifies implementation differences and systems outside this edition.
 
@@ -131,7 +131,7 @@ Harm is not removed automatically. Civic Action can redress State Harm; Agitatio
 
 ## 2.1 Prepare the Game
 
-Choose a scenario and follow 10.0. Set PKK First Eligible and State Second Eligible. Build the piles of the scenario's Campaigns separately (10.3), then stack them in Campaign order. Give each faction the Pivotals that the scenario lists (5.3); they are held in hand and are not shuffled into the deck.
+Follow 10.0. Set PKK First Eligible and State Second Eligible. Build the piles of the five Campaigns separately (10.3), then stack them in Campaign order. Give each faction its Pivotals (5.3, 10.1); they are held in hand and are not shuffled into the deck.
 
 ## 2.2 Reveal a Card
 
@@ -471,7 +471,7 @@ A Capability card's other side may be a one-time Event. Taking that other side d
 
 ## 5.3 Pivotal Events
 
-Each faction may hold Pivotal Event cards. The scenario lists which (10.0). There are four:
+Each faction holds two Pivotal Event cards (10.1). There are four:
 
 | Faction | Pivotal | From | Board condition |
 |:---|:---|:---|:---|
@@ -528,7 +528,7 @@ Cards that reveal Covert markers reveal them as 4.2.5 describes. A card that say
 
 # 6.0 Propaganda Rounds
 
-Conduct these steps in order when Propaganda is revealed. Skip an immediately consecutive Propaganda card without conducting another round. The **first** Propaganda round of a game skips the victory check. The **final** round is the scenario's last (round 2 in Scenarios A to C, round 5 in the full campaign). It gives no income and ends after Agitation unless a faction already wins at the opening check.
+Conduct these steps in order when Propaganda is revealed. Skip an immediately consecutive Propaganda card without conducting another round. The **first** Propaganda round of a game skips the victory check. The **final** round is round 5. It gives no income and ends after Agitation unless a faction already wins at the opening check.
 
 ## 6.1 Victory Phase
 
@@ -542,7 +542,7 @@ Skip in round one. In every later round, check both scores and Harm gates as in 
 
 **PKK income:** one per domestic PKK Base + one per PKK Base in a Host or Tolerant camp + Leadership income + Europe income. Leadership Present gives 2 if Syria is Host, 1 if Tolerant and 0 otherwise. Abroad gives none. After Capture (8.1.5) subtract one more. Europe gives 0/1/2 as in 1.7. The PKK total is never below 0. Each faction stops at 50 Resources.
 
-> **EXAMPLE:** On the Scenario A starting board the State's income is 19 and PKK income is 5. Starting Resources of 12 and 5 would become 31 and 10 in a non-final round before upkeep. No such addition occurs in a final round.
+> **EXAMPLE:** On the starting board (10.2) the State's income is 19 and PKK income is 5. Starting Resources of 12 and 5 would become 31 and 10 in a non-final round before upkeep. No such addition occurs in a final round.
 
 ## 6.3 Guard Upkeep
 
@@ -608,15 +608,7 @@ Optional movements may be omitted. Required Iraqi Troop departures may not be sk
 
 Passive levels contribute Pop; Active levels contribute twice Pop. Neutral contributes none. Count only domestic Support/Opposition and domestic PKK Bases. Control, external Bases and removed enemy pieces add no points.
 
-Each scenario sets its own thresholds:
-
-| Scenario | State | PKK |
-|:---|---:|---:|
-| Full campaign and Scenario A | 49 | 30 |
-| Scenario B | 48 | 41 |
-| Scenario C | 44 | 48 |
-
-Scenario B may instead use a State threshold of 46, chosen before play (10.1). Each faction's Harm limit is **6**. These are playtest values, not historical measures.
+The thresholds are **State 49** and **PKK 30**. Each faction's Harm limit is **6**. These are playtest values, not historical measures.
 
 ## 7.2 Victory Check
 
@@ -799,37 +791,31 @@ The Ceasefire track has three steps: **None → Declared → Reciprocal Restrain
 
 **Underground:** a Guerrilla state protected from ordinary Assault, not an absence from Control counts.
 
-# 10.0 Scenarios and Setup
+# 10.0 Scenario and Setup
 
-## 10.1 Scenarios and Options
+## 10.1 Scenario and Options
 
 | Scenario | Start | Piles | Final round | State / PKK thresholds |
 |:---|:---|:---|:---:|:---:|
 | Full campaign | 15 August 1984 | C1 to C5 | 5 | 49 / 30 |
-| A: 1984–1989 | 15 August 1984 | C1, C2 | 2 | 49 / 30 |
-| B: 1990–1995 | January 1990 | C3, C4 | 2 | 48 / 41 |
-| C: 1993–1999 | January 1993 | C4, C5 | 2 | 44 / 48 |
 
-In every scenario the Harm limit is six each and the PKK is First Eligible. The Pivotals held are:
+The Harm limit is six each and the PKK is First Eligible. The Pivotals held are:
 
-| Scenario | State | PKK |
-|:---|:---|:---|
-| Full campaign | Area Domination, Coercive Diplomacy on Syria | ARGK Formed, Serhildan |
-| A | none | ARGK Formed |
-| B | Area Domination | Serhildan |
-| C | Area Domination, Coercive Diplomacy on Syria | Serhildan |
+| Faction | Pivotals |
+|:---|:---|
+| State | Area Domination, Coercive Diplomacy on Syria |
+| PKK | ARGK Formed, Serhildan |
 
 Before play, record these options. They stay fixed for the session.
 
 1. **Early KDP hot pursuit** (allowed or denied). It matters only in C1 and C2.
 2. **Restricted Syria March** (allowed or denied; 8.1.3).
-3. **Scenario B State threshold** (48 or 46). The default is 48. Other scenarios ignore it.
 
 The prototype defaults allow hot pursuit and Restricted Syria March. The hot-pursuit exception is a low-evidence design assumption; the options make its effect testable.
 
-## 10.2 Starting Position: Full Campaign and Scenario A
+## 10.2 Starting Position
 
-Both start from the same board. Set State Resources 12, PKK Resources 5, Legitimacy 10, Europe 1 and Campaign C1. Emergency Rule is Martial Law. Syria is Host, KDP Host and PUK Tolerant. Legal Space is Absent and Ceasefire None. There are no Harm, Coercion, Reception, Displacement, Covert or Office markers.
+Set State Resources 12, PKK Resources 5, Legitimacy 10, Europe 1 and Campaign C1. Emergency Rule is Martial Law. Syria is Host, KDP Host and PUK Tolerant. Legal Space is Absent and Ceasefire None. There are no Harm, Coercion, Reception, Displacement, Covert or Office markers.
 
 All Guerrillas below start Underground. Unlisted spaces or piece types are empty. State abbreviations: T = Troops, P = Police, B = State Base. PKK: G = Guerrillas, B = PKK Base.
 
@@ -882,8 +868,6 @@ Chain pairs, earlier card first:
 
 Stack the piles in Campaign order. Set unused pool cards aside unseen. Keep each faction's Pivotals in its hand. Set PKK First Eligible and reveal the first card.
 
-**S0 test exception:** S0 uses a smaller eight-card C1 selection, excludes the later slice's Capabilities, Momentum and Pivotals and puts Propaganda last. It ends after one round and is marked not comparable. It is not one of the scenarios above.
-
 ## 10.4 Movement Links
 
 Use each link in both directions, subject to action and posture restrictions. The complete domestic link list is:
@@ -903,63 +887,19 @@ External movement links are Hakkari–KDP, Botan–KDP, KDP–PUK, Mardin-Batman
 
 At the final Propaganda round, check victory first. If nobody wins, skip income, resolve the other steps through Agitation, reveal all Covert markers and compare final margins. Do not Redeploy or Reset after final scoring.
 
-In the simulator, save a debrief note and export it with the session. For a physical test, write the same details on paper: scenario, options, winner, final margins, Harm counts, unclear rules and any rule changes tested.
+In the simulator, save a debrief note and export it with the session. For a physical test, write the same details on paper: seed, options, winner, final margins, Harm counts, unclear rules and any rule changes tested.
 
-## 10.6 Scenario B: 1990–1995
+## 10.6 Archived Scenarios
 
-Start January 1990. Use piles C3 and C4. Law 3175 is in effect and all 16 Guards are Available or on the map. Set State Resources 15, PKK Resources 8, Legitimacy 9, Europe 2 and Campaign C3. Emergency Rule is OHAL. Syria, KDP and PUK are all Tolerant. Legal Space is Absent and Ceasefire None. There are no markers on the map. All Guerrillas start Underground. Apply the C3 switches (10.8).
+Scenarios A (C1 and C2), B (C3 and C4) and C (C4 and C5) and the S0 test scenario are archived. Their setups are in `archive/scenarios/` in the repository. Design and tests use the full campaign only. One shorter scenario returns after the full game is validated.
 
-Abbreviations as in 10.2, with Gd = Village Guards.
+## 10.7 Not Used
 
-| Space | State | PKK | Level |
-|:---|:---|:---|:---|
-| Hakkari | 2T, 1P, 1Gd | 2G, 1B | Passive Opposition |
-| Botan | 3T, 1P, 2Gd, 1B | 3G, 1B | Passive Opposition |
-| Mardin-Batman | 2T, 2P, 1Gd, 1B | 2G | Passive Opposition |
-| Diyarbakır City | 4T, 2P, 1B | 1G | Neutral |
-| Diyarbakır Rural | 1T, 1P, 1Gd | 1G, 1B | Neutral |
-| Şanlıurfa | 1T, 2P, 2Gd | — | Passive Support |
-| Adıyaman | 1P | — | Passive Support |
-| Elazığ | 1T, 1P, 1B | — | Passive Support |
-| Dersim | 1T, 1P | 1G | Neutral |
-| Bingöl-Muş | 1T, 1P, 1Gd | 2G, 1B | Passive Opposition |
-| Van-Bitlis | 2T, 1P, 1B | 1G | Neutral |
-| Ağrı | 1T, 1P | — | Neutral |
-| Western Cities | 1T, 1P, 1B | — | Passive Support |
-| KDP Zone | — | 2G, 1B | — |
-| PUK Zone | — | 1G | — |
-| Syria-Bekaa | — | 1G, 1B, Leadership Present | — |
-
-Available: 10 Troops, 8 Police, 8 Guards, 2 State Bases, 13 Guerrillas and 6 PKK Bases. Starting scores: State 20 (Total Support 11 plus Legitimacy 9); PKK 14 (Total Opposition 10 plus 4 domestic Bases). Pivotals: State Area Domination; PKK Serhildan. Thresholds 48 (or 46) and 41.
-
-## 10.7 Scenario C: 1993–1999
-
-Start January 1993. Use piles C4 and C5. Law 3175 is in effect and the Northern Iraq Vacuum is in force. Set State Resources 20, PKK Resources 10, Legitimacy 7, Europe 3 and Campaign C4. Emergency Rule is OHAL Extended Powers. Syria is Restricted, KDP Hostile and PUK Restricted. Legal Space is Prosecuted and a Closure Case marker is on the track. Ceasefire is None. All Guerrillas start Underground. Apply the C3 switches (10.8).
-
-| Space | State | PKK | Level | Markers |
-|:---|:---|:---|:---|:---|
-| Hakkari | 2T, 1P, 1Gd | 3G, 1B | Active Opposition | — |
-| Botan | 4T, 1P, 2Gd, 1B | 3G, 1B | Active Opposition | Displacement (Old), State Harm |
-| Mardin-Batman | 2T, 2P, 2Gd, 1B | 2G, 1B | Passive Opposition | Office, State Harm, Disputed Harm |
-| Diyarbakır City | 3T, 3P, 1B | 1G | Passive Opposition | Office |
-| Diyarbakır Rural | 2T, 1P, 1Gd | 2G, 1B | Passive Opposition | State Harm |
-| Şanlıurfa | 1T, 2P, 2Gd | — | Passive Support | — |
-| Adıyaman | 1P | — | Neutral | — |
-| Elazığ | 1T, 1P, 1B | — | Passive Support | — |
-| Dersim | 1T, 1P | 2G | Passive Opposition | — |
-| Bingöl-Muş | 1T, 1P, 1Gd | 3G, 1B | Passive Opposition | — |
-| Van-Bitlis | 2T, 1P, 1Gd, 1B | 2G | Neutral | — |
-| Ağrı | 1T, 1P | 1G | Neutral | — |
-| Western Cities | 1T, 1P, 1B | — | Passive Support | Office, Reception |
-| KDP Zone | — | 2G, 1B | — | — |
-| PUK Zone | — | 2G | — | — |
-| Syria-Bekaa | — | 1G, 1B, Leadership Present | — | — |
-
-Available: 9 Troops, 7 Police, 6 Guards, 2 State Bases, 6 Guerrillas and 5 PKK Bases. Starting scores: State 16 (Total Support 9 plus Legitimacy 7); PKK 23 (Total Opposition 18 plus 5 domestic Bases). Harm counts: State 3 and PKK 0. Pivotals: State Area Domination and Coercive Diplomacy on Syria; PKK Serhildan. Thresholds 44 and 48.
+This number is kept so that later section numbers do not change.
 
 ## 10.8 Campaign Switches
 
-A switch turns a system on or off. Set the switches of every Campaign up to the starting Campaign at setup, then set those of each new Campaign at Reset (6.9).
+A switch turns a system on or off. Set the C1 switches at setup, then set those of each new Campaign at Reset (6.9).
 
 | Entering | Switches on | Switches off |
 |:---|:---|:---|

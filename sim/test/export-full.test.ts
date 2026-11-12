@@ -25,7 +25,7 @@ afterAll(() => {
 });
 const focus = { panel: "board" as const, selectedSpace: null, selectedPieces: [], hoveredActionId: null };
 
-const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 7, name: "full export" });
+const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 7, name: "full export" });
 let state = head.state;
 let headId = head.actionId;
 let firstOp = "";
@@ -93,7 +93,7 @@ describe("Markdown export, 07 s8.2 sections", () => {
     const scope = section("## Scope");
     expect(scope).toContain(sessionId);
     expect(scope).toContain("kurdish-coin 0.1.0");
-    expect(scope).toContain("Scenario s0");
+    expect(scope).toContain("Scenario full-campaign");
     expect(scope).toContain("seed 7");
     expect(scope).toMatch(/Winner: (state|pkk|none)/);
   });
@@ -201,11 +201,11 @@ describe("CSV export, 07 s8.3", () => {
 
 describe("Codex review fixes on PR #65", () => {
   // A session exported right after its first Advance: the face-up card has no action yet.
-  const early = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 9, name: "early" });
+  const early = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 9, name: "early" });
   const advanced = service.submit(early.sessionId, scriptedPolicy(engine, ruleset, early.head.state), early.head.actionId);
   const onAdvance = service.annotate(early.sessionId, { anchor: "executed", actionId: advanced.actionId, text: "Note on the Advance.", categoryIds: ["ui"], focus });
   // A session whose round-ending action is undone: its metrics row stays in the store.
-  const undoneRound = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 7, name: "undone round" });
+  const undoneRound = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 7, name: "undone round" });
   let s = undoneRound.head.state;
   let h = undoneRound.head.actionId;
   while (s.ended === null) {
@@ -224,9 +224,10 @@ describe("Codex review fixes on PR #65", () => {
   });
 
   it("the metrics table leaves out rows of undone actions", () => {
-    expect(both.metrics.some((m) => m["session_id"] === undoneRound.sessionId)).toBe(true);
+    // Five rounds are stored. The action that ended round 5 is undone, so the table shows rounds 1 to 4.
+    expect(both.metrics.filter((m) => m["session_id"] === undoneRound.sessionId)).toHaveLength(5);
     const table = text.slice(text.indexOf("## Round metrics"), text.indexOf("## Action use by faction"));
-    expect(table).not.toContain(undoneRound.sessionId);
+    expect(table.split(undoneRound.sessionId)).toHaveLength(4 + 1);
   });
 
   it("a note on a factionless action shows Faction: none, not the faction active at note time", () => {
@@ -255,10 +256,10 @@ describe("Codex review fixes on PR #65", () => {
 });
 
 describe("Declare Ceasefire is stored as a card choice in the Limited Op box (P4-02 review follow-up)", () => {
-  const b = service.createSession({ dir: kurdishDir, scenarioId: "scenario-b", seed: 7, name: "ceasefire" });
+  const b = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 7, name: "ceasefire" });
   const declare = { type: "DeclareCeasefire", faction: "pkk" } as const;
   let found: string | null = null;
-  for (let i = 0; i < 80 && found === null; i++) {
+  for (let i = 0; i < 200 && found === null; i++) {
     const { head, ruleset: r } = service.session(b.sessionId);
     if (head.state.ended !== null) break;
     if (service.validateCommand(b.sessionId, declare).violations.length === 0) found = service.submit(b.sessionId, declare, head.actionId).actionId;

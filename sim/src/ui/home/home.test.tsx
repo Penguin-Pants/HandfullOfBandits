@@ -10,18 +10,18 @@ afterEach(cleanup);
 
 describe("startBlockers", () => {
   it("allows a clean package and scenario, and ignores errors that block another scenario", () => {
-    expect(startBlockers(okPackage, "s0", "7")).toEqual([]);
+    expect(startBlockers(okPackage, "short", "7")).toEqual([]);
   });
   it("blocks a blocked scenario, a package with errors, a bad seed and no package", () => {
     expect(startBlockers(okPackage, "full-campaign", "7")[0]).toMatch(/blocked/);
-    expect(startBlockers({ ...okPackage, ok: false, issues: [{ level: "error", code: "V-REF", file: "map.yaml", path: "", id: null, message: "x" }] }, "s0", "7")[0]).toMatch(/1 errors/);
-    expect(startBlockers(okPackage, "s0", "-1")).toEqual(["The seed must be a whole number of 0 or more."]);
-    expect(startBlockers(undefined, "s0", "1")).toEqual(["Choose a package."]);
+    expect(startBlockers({ ...okPackage, ok: false, issues: [{ level: "error", code: "V-REF", file: "map.yaml", path: "", id: null, message: "x" }] }, "short", "7")[0]).toMatch(/1 errors/);
+    expect(startBlockers(okPackage, "short", "-1")).toEqual(["The seed must be a whole number of 0 or more."]);
+    expect(startBlockers(undefined, "short", "1")).toEqual(["Choose a package."]);
   });
 });
 
 describe("Home", () => {
-  it("enables Start for S0, disables it for the blocked full campaign, and lists PA warnings", async () => {
+  it("enables Start for a clean scenario, disables it for the blocked full campaign, and lists PA warnings", async () => {
     render(<Home api={mockApi()} onOpen={vi.fn()} onCheck={vi.fn()} />);
     const start = await screen.findByRole("button", { name: "Start" });
     await waitFor(() => { expect((start as HTMLButtonElement).disabled).toBe(false); });
@@ -40,6 +40,6 @@ describe("Home", () => {
     fireEvent.change(screen.getByLabelText("Seed"), { target: { value: "42" } });
     fireEvent.click(start);
     await waitFor(() => { expect(onOpen).toHaveBeenCalledWith("S1"); });
-    expect(createSession).toHaveBeenCalledWith({ dir: okPackage.dir, scenarioId: "s0", seed: 42, name: "s0-seed42", options: {} });
+    expect(createSession).toHaveBeenCalledWith({ dir: okPackage.dir, scenarioId: "short", seed: 42, name: "short-seed42", options: {} });
   });
 });

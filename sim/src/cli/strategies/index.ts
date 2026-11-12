@@ -1,4 +1,4 @@
-// Research 12 s7 adversarial policies for Scenario A. These are screens, not strong opponents.
+// Research 12 s7 adversarial policies, built for C1 and C2. These are screens, not strong opponents.
 import type { AnyCommand, GameState, JsonObject, Ruleset } from "../../engine/core/types.ts";
 import type { Engine } from "../../engine/index.ts";
 import { activeFaction, legalBoxes } from "../../engine/coin/sequence/ct.ts";

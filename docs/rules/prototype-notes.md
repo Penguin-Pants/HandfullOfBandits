@@ -2,7 +2,7 @@
 
 ## B.1 Edition Boundary
 
-This is the **full game** ruleset R4, dated 8 November 2026: the full five-Campaign game and Scenarios A, B and C. The source baseline is main commit **f0e6415**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire, the four Pivotals, the structural cards and the Campaign switches. The earlier Scenario A edition was based on commit **d9a6453**.
+This is the **full game** ruleset R4, dated 8 November 2026: the full five-Campaign game. Scenarios A, B and C and the S0 test scenario are archived (`archive/README.md`, rule 10.6). The source baseline is main commit **f0e6415**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire, the four Pivotals, the structural cards and the Campaign switches. The earlier Scenario A edition was based on commit **d9a6453**.
 
 **Not covered in this edition:** the optional modules of research chapter 13 (including the third-player module) and the card appendix for Campaigns C3 to C5. Appendix A still reproduces C1 and C2 only. The C3 to C5 card text is in `game-packages/kurdish-coin/0.1.0/cards/`. The designer checkpoints IC-3a to IC-3c are still open, so the full-game systems are implemented but not yet playtested by the designer.
 
@@ -20,7 +20,7 @@ The latest explicit designer decisions take precedence over older research wordi
 - **DEC-57:** Guard Abuse applies once in every qualifying space.
 - **DEC-63 to DEC-66 and DEC-74:** Village Clearance, Covert Action, Legal Politics and the ceasefire step, in the approved texts of `docs/prototype/27` to `30`. DEC-68 deleted the separate OHAL Powers flag, so Village Clearance depends on Campaign C3 and Emergency Rule only.
 - **DEC-67 and DEC-69 to DEC-73, DEC-75:** the Pivotals, the structural cards and the C3 to C5 card encodings, including the PKK Event restriction.
-- **DEC-77:** the Scenario B State threshold defaults to 48; 46 stays a session option.
+- **DEC-77:** the Scenario B State threshold defaults to 48; 46 stays a session option. Archived with Scenario B.
 - **PA-01 to PA-10 and PA-13/14/16 to 18:** executing-faction choices, bounded tracks, modified die totals, Coerce order, no-roll Ambush, detection after movement, finite supply, victory ties, seeded randomness, Air Mobility's domestic-only limits, the Syria March option and the Village Clearance shift block.
 
 The passing and eligibility procedure is the recorded DD-04 model. Passing does not automatically promote Second Eligible to First Eligible. The fixed default simulator seed of 1 is a reproducibility choice; select Random for a new game seed.
@@ -47,9 +47,9 @@ The source files below are in the *HandfulOfBandits* project. Numbers in origina
 - **07 Political, Civilian and Sanctuary Systems:** Civic Action, Agitation, Harm, Guards, Emergency Rule and hosts.
 - **08 Event Deck:** pools, lasting effects, chain constraints and attribution.
 - **09 Victory and Scoring:** thresholds, Harm gate, final margins and ties.
-- **10 Scenarios and Setup:** the four setups, the structural cards and the Campaign switches.
+- **10 Scenario and Setup:** the full campaign setup, the structural cards and the Campaign switches.
 
-The Phase 3b texts (`docs/prototype/27` to `31`) and the scenario files in `game-packages/kurdish-coin/0.1.0/scenarios/` give the current wording and values for Village Clearance, Covert Action, Legal Politics, ceasefire, the Pivotals and the setups.
+The Phase 3b texts (`docs/prototype/27` to `31`) and the scenario file `game-packages/kurdish-coin/0.1.0/scenarios/full-campaign.yaml` give the current wording and values for Village Clearance, Covert Action, Legal Politics, ceasefire, the Pivotals and the setups.
 
 All eight chapters are under `research/research-final/package-b-coin-design/`. The decision register is `research/research-final/project-management/design-decisions.md`; prototype decisions are in `docs/prototype/13-design-decisions.md`. Package parameters, assumptions, scenario files and current card YAML supplied the implemented values.
 

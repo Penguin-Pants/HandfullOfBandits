@@ -21,7 +21,7 @@ afterAll(() => {
 });
 const focus = { panel: "board" as const, selectedSpace: null, selectedPieces: [], hoveredActionId: null };
 
-const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 7, name: "export" });
+const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 7, name: "export" });
 let state = head.state;
 let headId = head.actionId;
 let firstAction = "";

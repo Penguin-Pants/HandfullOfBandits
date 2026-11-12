@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
+import { codes, inCampaign, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
 import type { GameState } from "../../core/types.ts";
 const at = (s: GameState, phase: string): GameState => ({ ...s, turn: { ...s.turn, phase: "propaganda", step: ruleset.sequence.propagandaPhases.indexOf(phase) } });
 const choose = (choice: unknown) => ({ type: "PropagandaChoice", phase: "redeploy", choice });
@@ -55,7 +55,7 @@ describe("P3a-01 (research 05 s6.7, s6.8; DEC-53)", () => {
     expect(state.tracks["resources.pkk"]).toBe(4);
     expect(state.spaces["kdp-zone"]?.pieces["guerrilla"]?.["active"]).toBe(1);
     expect(codes(setTrack(start, "resources.pkk", 0), command)).toContain("cannotPay");
-    expect(codes(at(turnOf("pkk"), "reset"), {type: "Advance"})).toEqual(["noNextCampaign"]);
+    expect(codes(at(inCampaign(ruleset, turnOf("pkk"), "C5"), "reset"), {type: "Advance"})).toEqual(["noNextCampaign"]);
   });
 
 });

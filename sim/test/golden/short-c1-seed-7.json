@@ -1,0 +1,243 @@
+{
+ "scenario": "short-c1",
+ "seed": 7,
+ "commands": [
+  {
+   "type": "Advance"
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": []
+  },
+  {
+   "type": "ChooseOperation",
+   "faction": "state",
+   "box": "opSa",
+   "plan": {
+    "op": "state.train",
+    "locations": [
+     "diyarbakir-city"
+    ],
+    "perLocation": {
+     "diyarbakir-city": {
+      "option": "place",
+      "troops": 1,
+      "police": 0
+     }
+    },
+    "sa": null,
+    "subActions": []
+   }
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": [
+    null
+   ]
+  },
+  {
+   "type": "ChooseOperation",
+   "faction": "state",
+   "box": "opSa",
+   "plan": {
+    "op": "state.train",
+    "locations": [
+     "diyarbakir-city"
+    ],
+    "perLocation": {
+     "diyarbakir-city": {
+      "option": "place",
+      "troops": 1,
+      "police": 0
+     }
+    },
+    "sa": null,
+    "subActions": []
+   }
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": [
+    "PUK Zone",
+    3
+   ]
+  },
+  {
+   "type": "ChooseOperation",
+   "faction": "state",
+   "box": "opSa",
+   "plan": {
+    "op": "state.train",
+    "locations": [
+     "diyarbakir-city"
+    ],
+    "perLocation": {
+     "diyarbakir-city": {
+      "option": "place",
+      "troops": 1,
+      "police": 0
+     }
+    },
+    "sa": null,
+    "subActions": []
+   }
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": []
+  },
+  {
+   "type": "ChooseOperation",
+   "faction": "state",
+   "box": "opSa",
+   "plan": {
+    "op": "state.train",
+    "locations": [
+     "diyarbakir-city"
+    ],
+    "perLocation": {
+     "diyarbakir-city": {
+      "option": "place",
+      "troops": 1,
+      "police": 0
+     }
+    },
+    "sa": null,
+    "subActions": []
+   }
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": [
+    [
+     "hakkari"
+    ]
+   ]
+  },
+  {
+   "type": "Pass",
+   "faction": "state"
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": []
+  },
+  {
+   "type": "ChooseOperation",
+   "faction": "state",
+   "box": "opSa",
+   "plan": {
+    "op": "state.train",
+    "locations": [
+     "hakkari"
+    ],
+    "perLocation": {
+     "hakkari": {
+      "option": "guards",
+      "count": 1
+     }
+    },
+    "sa": null,
+    "subActions": []
+   }
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": []
+  },
+  {
+   "type": "Pass",
+   "faction": "state"
+  },
+  {
+   "type": "ChooseEvent",
+   "faction": "pkk",
+   "side": "shaded",
+   "answers": [
+    2
+   ]
+  },
+  {
+   "type": "ChooseOperation",
+   "faction": "state",
+   "box": "opSa",
+   "plan": {
+    "op": "state.train",
+    "locations": [
+     "hakkari"
+    ],
+    "perLocation": {
+     "hakkari": {
+      "option": "guards",
+      "count": 1
+     }
+    },
+    "sa": null,
+    "subActions": []
+   }
+  },
+  {
+   "type": "Advance"
+  },
+  {
+   "type": "Advance"
+  },
+  {
+   "type": "Advance"
+  },
+  {
+   "type": "Advance"
+  },
+  {
+   "type": "Advance"
+  },
+  {
+   "type": "Advance"
+  },
+  {
+   "type": "Advance"
+  }
+ ],
+ "hashes": [
+  "c47d7611859afbc64f4505f797a2024600fdc84d0a057fe8174b6f0785d38c2c",
+  "a47e642f387bef864a3fabbb531ba6f387f9d8bc5f77e14f46f0d211a73d533b",
+  "d8f5b0689c2cb720ebbf4c4d7264c48ae8e32593dd48100be7ed15a7a2362a2a",
+  "6063b395190c89eef723c45858e50a02e4a5ee112765be33f9014ae545ab520d",
+  "06d8a6c8b588bd3e0d1a0fe9dff7255274b1199abeb925f1b845094e2d3178ce",
+  "141ee8e4b1a17c3f95d2fb9df4a5dbf234979697885316e7b5c43a5ed6870853",
+  "35b644819ecf502af1279a72ff9de7f19c78409def42e7aa9e48ecc10c69a85f",
+  "e2125f5e41b5b52f2d1d0c8fae316fa0a27de4300565f4240a1cb099aaa96b3f",
+  "f8f19e85cf3925bc55243c53435c2534ed18ce21cdb17e1780442ccf074b6db1",
+  "c52640eaab75c547cd62e51a6514f8d3611707ff01b0127b86ea6b3183477d8d",
+  "4294379751e13cf147595188b5416617b3cdf1d9eea5255cba98a78a0fee3731",
+  "429411aa2072e72e8e6bd4eea895a7d208388df75d20f7fb61cbcbff05cb7cbf",
+  "913266ab1fe746a05a61a68641ac3cf03d12cae365a0bfcac71a7fa173ed2970",
+  "f29a55aff01c02d98fc368d369122a07b40aa48bc30bcf3d7453c32f97becaf2",
+  "96b396a1af8bf181f9b8a2820cefe1e5b87ff5c13509763695b72df3aeeaf205",
+  "dff2a885437a73ad387a8f15c6e0bb79eaced407b62b2c97cdad88a17189f411",
+  "8559a2893e75bf298d825ae2513940d5e86cb085969edf47da53c783f65068ab",
+  "5e615214a6ff85ccdc883e3fa5ec8feb1807a686ae717e020c717a947e147f60",
+  "6f04d842066e951d914ed5b2fc19366c66ed4c78bb1ee666c5a79a17656e2a1c",
+  "f4b11b32195a656684c68d01c9892534aeb0a2de8dca2711a09e736ecee9e934",
+  "8527ce6baf481d7df7a587b2286c33413b4ecedf91f88a3c3a2b79de82b3539e",
+  "c64230bdf4e99d9647fdf06c356feb670a0c19efd7ea942ca749a394fcc103a7",
+  "6a413b7d984cf40bc0d8c932231fca323b0564d4e11577320d8f9d0add4a99c1",
+  "4d35de5e03dad46c623c3141e327b7f6c3460ed63af84f466626fc37a9f96e0f",
+  "7e3234e21e358dce21536c229db867b0abc41dbae76561b17621dece5c1d378c"
+ ],
+ "ended": true
+}

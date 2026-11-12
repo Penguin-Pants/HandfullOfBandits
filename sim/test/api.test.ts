@@ -9,13 +9,15 @@ import { buildApp } from "../src/server/app.ts";
 import { SessionService } from "../src/server/service.ts";
 import { openStore } from "../src/store/migrate.ts";
 import { listMetrics } from "../src/store/repos/metrics.ts";
-import { engine, ruleset } from "./board.ts";
+import { engine } from "./board.ts";
+import { SHORT, short, shortPackage } from "./short-game.ts";
 
-// P2-11 integration suite: the HTTP API runs a short S0 session end to end.
+// P2-11 integration suite: the HTTP API runs a short session end to end (test fixture, one Campaign).
 const dir = mkdtempSync(join(tmpdir(), "hob-api-"));
 const file = join(dir, "store.sqlite");
 const packages = fileURLToPath(new URL("../../game-packages", import.meta.url));
-const kurdish = join(packages, "kurdish-coin", "0.1.0");
+const fixture = shortPackage("hob-api-short-");
+const ruleset = short.ruleset;
 // No Kurdish scenario is blocked since P3b-07j. A fixture copy with its only C1 card excluded is (V-CARDS, DEC-51).
 const blockedDir = join(dir, "blocked");
 cpSync(fileURLToPath(new URL("fixtures/packages/valid", import.meta.url)), blockedDir, { recursive: true });
@@ -26,6 +28,7 @@ afterAll(async () => {
   await app.close();
   db.close();
   rmSync(dir, { recursive: true, force: true });
+  rmSync(fixture.root, { recursive: true, force: true });
 });
 
 interface HeadView {
@@ -49,15 +52,14 @@ describe("HTTP API (P2-11)", () => {
     expect(status).toBe(200);
     const pkg = body.find((p) => p.packageId === "kurdish-coin");
     expect(pkg?.ok).toBe(true);
-    expect(pkg?.scenarios.find((s) => s.id === "s0")?.blockedBy).toEqual([]);
-    expect(pkg?.scenarios.find((s) => s.id === "full-campaign")?.blockedBy).toEqual([]);
+    expect(pkg?.scenarios.map((s) => [s.id, s.blockedBy])).toEqual([["full-campaign", []]]);
     expect(pkg?.assumptions).toHaveLength(18);
   });
 
-  it("refuses a blocked scenario and creates an S0 session", async () => {
+  it("refuses a blocked scenario and creates a short session", async () => {
     const refused = await call<{ error: string }>("POST", "/api/sessions", { dir: blockedDir, scenarioId: "s0", seed: 7, name: "x" });
     expect([refused.status, refused.body.error]).toEqual([422, 'Scenario "s0" cannot start.']);
-    const created = await call<{ sessionId: string; head: HeadView }>("POST", "/api/sessions", { dir: kurdish, scenarioId: "s0", seed: 7, name: "API test" });
+    const created = await call<{ sessionId: string; head: HeadView }>("POST", "/api/sessions", { dir: fixture.dir, scenarioId: SHORT, seed: 7, name: "API test" });
     expect(created.status).toBe(201);
     sessionId = created.body.sessionId;
     head = created.body.head;
@@ -78,7 +80,7 @@ describe("HTTP API (P2-11)", () => {
     expect(stale.status).toBe(409);
   });
 
-  it("plays S0 to the end through the API, storing every action, the metrics row and the result", async () => {
+  it("plays a short game to the end through the API, storing every action, the metrics row and the result", async () => {
     let state = head?.state;
     let headId = head?.actionId ?? "";
     let steps = 0;
@@ -140,7 +142,7 @@ describe("HTTP API (P2-11)", () => {
 
   it("serves a stored state by hash", async () => {
     const res = await call<{ state: GameState }>("GET", `/api/states/${head?.stateHash ?? ""}`);
-    expect(res.body.state.meta.scenarioId).toBe("s0");
+    expect(res.body.state.meta.scenarioId).toBe(SHORT);
   });
 
   it("on resume with a changed code fingerprint, replays: identical stays active, different is read-only", () => {

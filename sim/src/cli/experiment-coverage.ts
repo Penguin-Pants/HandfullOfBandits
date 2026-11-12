@@ -18,7 +18,7 @@ export interface Mechanic {
   readonly label: string;
   /** Reviewed constructed fixtures (test file and test name). Empty: none. */
   readonly fixtures: readonly string[];
-  /** Why the mechanic cannot arise in Scenario A, or null. */
+  /** Why the mechanic cannot arise in the scenario, or null. */
   readonly notApplicable: string | null;
 }
 
@@ -81,7 +81,7 @@ export const MECHANICS: readonly (Mechanic & { readonly probe: Probe })[] = [
   { id: "C-europe", area: "Civilian effects", label: "Europe track change", fixtures: [F.prop, F.events], notApplicable: null, probe: (x) => effect(x, "adjustTrack", (d) => d["track"] === "europe" && d["before"] !== d["after"]) },
   { id: "C-marker-removal", area: "Civilian effects", label: "Harm or Coercion marker removed (Redress, Reset)", fixtures: [F.redeploy, F.qual], notApplicable: null, probe: (x) => effect(x, "removeMarker", (d) => ["stateHarm", "pkkHarm", "coercion"].includes(str(d["marker"]))) },
   { id: "C-reception", area: "Civilian effects", label: "Reception marker placed", fixtures: [F.prop], notApplicable: null, probe: (x) => effect(x, "placeMarker", (d) => d["marker"] === "reception") },
-  { id: "C-displacement", area: "Civilian effects", label: "Displacement marker placed", fixtures: [F.prop], notApplicable: "No Scenario A action or C1/C2 card places Displacement; Village Clearance is outside this edition (rules 8.4). Its Legitimacy effect has a fixture.", probe: (x) => effect(x, "placeMarker", (d) => d["marker"] === "displacement") },
+  { id: "C-displacement", area: "Civilian effects", label: "Displacement marker placed", fixtures: [F.prop], notApplicable: null, probe: (x) => effect(x, "placeMarker", (d) => d["marker"] === "displacement") },
   ...(["syria", "kdp", "puk"] as const).flatMap((host) => (["host", "tolerant", "restricted", "hostile", "aligned"] as const).map((posture) => ({
     id: `H-${host}-${posture}`, area: "Sanctuary" as const, label: `${host} posture reaches ${posture}`, fixtures: [F.host, F.events],
     notApplicable: host === "syria" && posture === "aligned" ? "Syria has no Aligned step (rules 8.1)" : null,

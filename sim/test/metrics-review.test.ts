@@ -26,9 +26,9 @@ afterAll(async () => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-/** Scenario A to the end with the scripted policy: two Propaganda rounds. */
-function playScenarioA(seed: number): string {
-  const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed, name: `metrics ${String(seed)}` });
+/** The full campaign to the end with the scripted policy: five Propaganda rounds. */
+function playFullCampaign(seed: number): string {
+  const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed, name: `metrics ${String(seed)}` });
   let state = head.state;
   let headId = head.actionId;
   while (state.ended === null) {
@@ -38,14 +38,14 @@ function playScenarioA(seed: number): string {
   }
   return sessionId;
 }
-const sessionA = playScenarioA(3);
+const sessionA = playFullCampaign(3);
 const data = exportJson(db, { sessionIds: [sessionA], withStates: false, appVersion: "0.1.0", exportedAt: "2026-11-05T00:00:00Z" });
 const table = metricsTable(data);
 const keys = table.columns.map((c) => c.key);
 
 describe("P4-03 metrics table: research 12 s4 items 6 to 15", () => {
   it("has one row per Propaganda round of the session", () => {
-    expect(table.rows.map((r) => r["round"])).toEqual([1, 2]);
+    expect(table.rows.map((r) => r["round"])).toEqual([1, 2, 3, 4, 5]);
   });
 
   it("has columns for every per-round sheet item", () => {
@@ -172,8 +172,8 @@ describe("P4-03 CSV export and API", () => {
   it("GET /api/metrics returns the table for the listed sessions, or all sessions", async () => {
     const one = await app.inject({ method: "GET", url: `/api/metrics?sessions=${sessionA}` });
     expect(one.statusCode).toBe(200);
-    expect((one.json<{ rows: unknown[] }>()).rows).toHaveLength(2);
-    const sessionB = playScenarioA(4);
+    expect((one.json<{ rows: unknown[] }>()).rows).toHaveLength(5);
+    const sessionB = playFullCampaign(4);
     const all = await app.inject({ method: "GET", url: "/api/metrics" });
     expect(new Set(all.json<{ rows: { session_id: string }[] }>().rows.map((r) => r.session_id))).toEqual(new Set([sessionA, sessionB]));
   });
@@ -190,7 +190,7 @@ describe("P4-03 CSV export and API", () => {
 
 describe("P4-14 item 13 in a played session", () => {
   it("each answer lands in its own round, before or after the metrics action", () => {
-    const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed: 5, name: "signal" });
+    const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 5, name: "signal" });
     const focus = { panel: "board", selectedSpace: null, selectedPieces: [], hoveredActionId: null } as const;
     const phases = ruleset.sequence.propagandaPhases;
     // Round 1: answered at Redeploy (after the metrics action, which follows Agitation). Round 2: at Agitation (before it).
@@ -211,6 +211,6 @@ describe("P4-14 item 13 in a played session", () => {
     }
     expect([...done]).toEqual([1, 2]);
     const played = metricsTable(exportJson(db, { sessionIds: [sessionId], withStates: false, appVersion: "0.1.0", exportedAt: "2026-11-05T00:00:00Z" }));
-    expect(played.rows.map((r) => r["legal_politics_signal"])).toEqual(["y", "n"]);
+    expect(played.rows.map((r) => r["legal_politics_signal"])).toEqual(["y", "n", null, null, null]);
   });
 });

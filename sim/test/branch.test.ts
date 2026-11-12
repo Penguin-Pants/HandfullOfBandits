@@ -33,7 +33,7 @@ function step(sessionId: string): string {
 const ids = (sessionId: string): string[] => service.history(sessionId).map((h) => h.action.action_id);
 const rows = (branchId: string): string => JSON.stringify(listActions(db, branchId));
 
-const { sessionId, head: setup } = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed: 3, name: "branch" });
+const { sessionId, head: setup } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 3, name: "branch" });
 const main = service.session(sessionId).session.current_branch_id;
 const [a2, a3, a4, a5] = [step(sessionId), step(sessionId), step(sessionId), step(sessionId)];
 const mainBefore = rows(main);
@@ -90,7 +90,7 @@ describe("branch from a past action (P4-04)", () => {
     // A branch at the head keeps the head ID, so a stale tab would write to it (PR #67 review).
     expect(() => service.branch(sessionId, head.actionId, head.actionId, head.stateHash)).toThrow(/current head/);
     expect(() => service.branch(sessionId, "nope", head.actionId, head.stateHash)).toThrow(/Unknown action/);
-    const other = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 1, name: "other" });
+    const other = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 1, name: "other" });
     expect(() => service.branch(sessionId, other.head.actionId, head.actionId, head.stateHash)).toThrow(/Unknown action/);
     db.prepare("UPDATE sessions SET status = 'readOnly' WHERE session_id = ?").run(other.sessionId);
     expect(() => service.branch(other.sessionId, other.head.actionId, other.head.actionId)).toThrow(/read-only/);
@@ -153,7 +153,7 @@ describe("metrics round window on a branch", () => {
   });
 
   it("counts the actions of the round played before the fork", () => {
-    const run = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed: 3, name: "metrics branch" });
+    const run = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 3, name: "metrics branch" });
     const fork = [step(run.sessionId), step(run.sessionId), step(run.sessionId)].at(-1) ?? "";
     while (service.session(run.sessionId).head.state.ended === null) step(run.sessionId);
     const { head } = service.session(run.sessionId);

@@ -17,7 +17,7 @@ vi.setConfig({ testTimeout: 120000 });
 
 /** Scripted play for `steps` commands from the Scenario A start. */
 function after(seed: number, steps: number): GameState {
-  let s = engine.start(ruleset, "scenario-a", seed).state;
+  let s = engine.start(ruleset, "full-campaign", seed).state;
   for (let i = 0; i < steps && s.ended === null; i++) {
     const r = engine.apply(ruleset, s, scriptedPolicy(engine, ruleset, s));
     if (!r.ok) throw new Error("scripted play must be legal");
@@ -53,10 +53,10 @@ describe("observation allowlist (19 s5)", () => {
   });
 
   it("shows each faction its own Pivotal hand and only a count of the opponent's", () => {
-    const start = engine.start(ruleset, "scenario-a", 1).state;
-    expect(observe(start, "pkk").ownHand).toEqual(["DK-015"]);
-    expect(observe(start, "state").ownHand).toEqual([]);
-    expect(observe(start, "state").handCounts).toEqual({ state: 0, pkk: 1 });
+    const start = engine.start(ruleset, "full-campaign", 1).state;
+    expect(observe(start, "pkk").ownHand).toEqual(["DK-015", "DK-054"]);
+    expect(observe(start, "state").ownHand).toEqual(["DK-076", "DK-098"]);
+    expect(observe(start, "state").handCounts).toEqual({ state: 2, pkk: 2 });
   });
 
   it("is identical when only the hidden deck, RNG and seed differ", () => {
@@ -72,7 +72,7 @@ describe("observation allowlist (19 s5)", () => {
   });
 
   it("includes an open Pivotal decision, which is public", () => {
-    const ready = setPieces(setPieces(engine.start(ruleset, "scenario-a", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);
+    const ready = setPieces(setPieces(engine.start(ruleset, "full-campaign", 1).state, "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 6);
     const revealed = engine.apply(ruleset, ready, { type: "Advance" });
     expect.assert(revealed.ok);
     const found = revealed.transition.state;
@@ -113,7 +113,7 @@ describe("hidden-state equivalence for candidates and players (20 Phase 3)", () 
 
 describe("sampled futures follow the deck rules (19 s5; rules 10.3)", () => {
   it("never reuses seen cards and keeps mandatory cards in the top part, Propaganda in the bottom part", () => {
-    const start = engine.start(ruleset, "scenario-a", 1).state;
+    const start = engine.start(ruleset, "full-campaign", 1).state;
     const mandatory = Object.values(ruleset.cards).filter((c) => c.mandatory).map((c) => c.id);
     const propaganda = Object.values(ruleset.cards).filter((c) => c.type === "propaganda").map((c) => c.id);
     const rng = new SearchRng(3);
@@ -124,7 +124,7 @@ describe("sampled futures follow the deck rules (19 s5; rules 10.3)", () => {
       for (const [k, pile] of piles.entries()) {
         expect(new Set(pile).size).toBe(pile.length);
         const real = start.deck.piles[k] ?? [];
-        for (const id of pile) expect(Object.values(ruleset.cards).find((c) => c.id === id)?.campaign).toBe(k === 0 ? "C1" : "C2");
+        for (const id of pile) expect(Object.values(ruleset.cards).find((c) => c.id === id)?.campaign).toBe(`C${String(k + 1)}`);
         for (const id of mandatory.filter((m) => pile.includes(m))) expect(pile.indexOf(id)).toBeLessThan(8);
         for (const id of propaganda.filter((m) => pile.includes(m))) expect(pile.indexOf(id)).toBeGreaterThanOrEqual(8);
         expect(pile.filter((c) => mandatory.includes(c)).sort()).toEqual(real.filter((c) => mandatory.includes(c)).sort());
