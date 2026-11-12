@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Printed wording follows implemented package; Always text is separately sourced where the package has only effects. Null means absent, not invented. Implementation fields preserve the package record excluding printed side text.",
+  "description": "Printed wording follows implemented package; Always text is separately sourced where the package has only effects. Flavor is new editorial context and is not implemented package text. Null means absent. Implementation fields preserve the package record excluding printed side text.",
   "cards": [
     {
       "id": "DK-001",
@@ -10,9 +10,10 @@
       "printed": {
         "unshaded": "Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2.",
         "shaded": "Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Botan. Shift Botan one level toward Opposition.",
-        "flavor": null,
+        "flavor": "On 15 August 1984, PKK fighters attacked Eruh and Şemdinli, opening a new phase of armed conflict in southeastern Turkey.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1984-08-15",
@@ -97,17 +98,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/923edce095.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Siirt_location_Eruh.png",
+        "creator": "Batuhan duz",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Batuhan duz, CC BY-SA 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Eruh district location map, 2016; not an image of the 1984 raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-001"
+        "research/research-final/data/prototype-deck.csv#DK-001",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -119,9 +123,10 @@
       "printed": {
         "unshaded": "Police alert: the State conducts a free Garrison. Its Activation must be in Botan.",
         "shaded": "Second strike: place 1 Underground Guerrilla in Botan, then the PKK conducts a free Attack in Botan with Ambush (no roll).",
-        "flavor": null,
+        "flavor": "Two days after the Eruh and Şemdinli attacks, another raid struck the Siirt area.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1984-08-17",
@@ -176,17 +181,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/df30eb7ae1.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Siirt_location_Merkez.png",
+        "creator": "Batuhan duz",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Batuhan duz, CC BY-SA 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Siirt central district location map, 2016; not an image of the 1984 raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-002"
+        "research/research-final/data/prototype-deck.csv#DK-002",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -198,9 +206,10 @@
       "printed": {
         "unshaded": "Guard recruitment: place up to 2 Village Guards in each of up to 2 Mountain or Plain spaces with State Control and Police.",
         "shaded": "Recruitment under pressure and pay: State Resources -3. Shift one space with a Village Guard and no PKK Harm marker, or one Mountain space with State Control, one level toward Opposition.",
-        "flavor": null,
+        "flavor": "In 1985, Law 3175 created the legal basis for recruiting temporary village guards in the southeast.",
         "always": "Move all Guards from Out of Play to Available; Law 3175 is in effect.",
-        "always_source_kind": "supporting document wording, not package printed text"
+        "always_source_kind": "supporting document wording, not package printed text",
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1985-03-26",
@@ -353,18 +362,21 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/bcf7d314e2.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Bismil_panorama.jpg",
+        "creator": "Dûrzan cîrano",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Dûrzan cîrano, CC BY-SA 3.0, via Wikimedia Commons. Resized for this catalogue.",
+        "caption": "Kurdish village near Bismil, 2015; thematic rural setting, not a depicted guard unit.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
         "docs/rules/prototype-card-reference.md",
-        "research/research-final/data/prototype-deck.csv#DK-003"
+        "research/research-final/data/prototype-deck.csv#DK-003",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -376,9 +388,10 @@
       "printed": {
         "unshaded": "Front network exposed: remove 1 Guerrilla from Diyarbakır City or Western Cities, or PKK Resources -2 (State choice).",
         "shaded": "PKK Capability (ERNK): Agitate in a Rally may select a City with a PKK Guerrilla even without a PKK Base or PKK Control.",
-        "flavor": null,
+        "flavor": "The PKK established the National Liberation Front of Kurdistan, or ERNK, as a political front in 1985.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1985-03-21",
@@ -451,17 +464,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-004"
+        "research/research-final/data/prototype-deck.csv#DK-004",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -473,9 +489,10 @@
       "printed": {
         "unshaded": "KDP posture one more step toward Hostile.",
         "shaded": "Guests stay: the PKK moves up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground, free, or places 2 Underground Guerrillas in the PUK Zone. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "Relations between the PKK and the Kurdistan Democratic Party were strained as the PKK sought bases in northern Iraq.",
         "always": "If KDP is Host, set its posture to Tolerant. The date of the KDP break is disputed (1985, 1987 or 1988). October 1985 is a design assumption. Evidence: Low.",
-        "always_source_kind": "supporting document wording, not package printed text"
+        "always_source_kind": "supporting document wording, not package printed text",
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1985-10",
@@ -579,18 +596,21 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/29784d694c.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_KDP.svg",
+        "creator": "Illegitimate Barrister",
+        "license": "CC0 1.0",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Illegitimate Barrister, CC0 1.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "KDP flag illustration, 2013; identifies the party involved.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
         "docs/rules/prototype-card-reference.md",
-        "research/research-final/data/prototype-deck.csv#DK-005"
+        "research/research-final/data/prototype-deck.csv#DK-005",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -602,9 +622,10 @@
       "printed": {
         "unshaded": "State Capability (Tribal Allies): Train may place Village Guards in a Mountain or Plain space with State Control even without Police. Needs Law 3175.",
         "shaded": "Armed retinues: apply Guard Abuse (07, section 4.7). Then shift one space with a Village Guard one level toward Opposition.",
-        "flavor": null,
+        "flavor": "The village guard system drew on local alliances and armed networks as the Turkish state expanded its rural security forces.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1985",
@@ -695,17 +716,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/bcf7d314e2.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Bismil_panorama.jpg",
+        "creator": "Dûrzan cîrano",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Dûrzan cîrano, CC BY-SA 3.0, via Wikimedia Commons. Resized for this catalogue.",
+        "caption": "Kurdish village near Bismil, 2015; thematic rural setting, not a depicted guard unit.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-006"
+        "research/research-final/data/prototype-deck.csv#DK-006",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -717,9 +741,10 @@
       "printed": {
         "unshaded": "Police raids: the State conducts a free Garrison. Place 1 Police in Diyarbakır City.",
         "shaded": "PKK Momentum: until the next Reset, each Rally may Agitate in one extra space (normal cost).",
-        "flavor": null,
+        "flavor": "The ERNK organized a campaign of actions in 1985 as the PKK sought to broaden its political reach.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1985-06",
@@ -767,17 +792,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-007"
+        "research/research-final/data/prototype-deck.csv#DK-007",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -789,9 +817,10 @@
       "printed": {
         "unshaded": "Europe -1. PKK Resources -1.",
         "shaded": "Damage control: Europe -1. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "A former PKK member was killed abroad in 1985, amid disputes extending beyond Turkey’s borders.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1985-11-02",
@@ -841,17 +870,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-008"
+        "research/research-final/data/prototype-deck.csv#DK-008",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -863,9 +895,10 @@
       "printed": {
         "unshaded": "Camp watched: the State conducts a free Diplomacy targeting Syria with +1.",
         "shaded": "PKK Capability (Academy): while Syria is Host or Tolerant, a Rally in Syria-Bekaa places up to 2 extra Guerrillas there.",
-        "flavor": null,
+        "flavor": "The PKK maintained training facilities in Lebanon’s Bekaa Valley, a region shaped by Syrian influence.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1986",
@@ -915,17 +948,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/088eb41f26.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Beqaa_valley_11.jpg",
+        "creator": "Freedom's Falcon",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Freedom's Falcon, CC BY-SA 3.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Beqaa Valley, Lebanon, 2011; regional context, not the training academy.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-009"
+        "research/research-final/data/prototype-deck.csv#DK-009",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -937,9 +973,10 @@
       "printed": {
         "unshaded": "Recruits divided: PKK Resources -2. State Momentum: until the next Reset, a PKK Rally in a Mountain space places 1 fewer Guerrilla (minimum 1).",
         "shaded": "Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van-Bitlis or Ağrı.",
-        "flavor": null,
+        "flavor": "Rival Kurdish groups formed the TSK in 1986, reflecting divisions within the wider Kurdish political movement.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1986",
@@ -1016,17 +1053,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "PKK flag used in 1978–1995; organizational context, not the event depicted.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-010"
+        "research/research-final/data/prototype-deck.csv#DK-010",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1038,9 +1078,10 @@
       "printed": {
         "unshaded": "Patrol security: the State conducts a free Sweep in up to 2 Mountain spaces.",
         "shaded": "PKK Momentum: until the next Reset, Ambush may select up to 3 Attack spaces.",
-        "flavor": null,
+        "flavor": "A PKK spring offensive in 1986 formed part of the widening armed conflict in the southeast.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1986-03",
@@ -1087,17 +1128,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/b10660e339.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Mountains_near_Van.jpg",
+        "creator": "CallisonUpdate",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "attribution": "CallisonUpdate, CC BY 2.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Mountains near Van, 2005; regional terrain, not the 1986 offensive.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-011"
+        "research/research-final/data/prototype-deck.csv#DK-011",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1109,9 +1153,10 @@
       "printed": {
         "unshaded": "War budget: State Resources +4. Place 2 Troops from Available in any Mountain spaces.",
         "shaded": "Recognition of the conflict: Europe +1. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "By 1985, Turkish authorities were publicly describing the violence as a guerrilla war.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1985-05-24",
@@ -1228,17 +1273,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/ea520fba3e.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:TurkishAirForceF5-A.jpg",
+        "creator": "Lieuwe Hofstra",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Lieuwe Hofstra, CC BY 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Turkish Air Force F-5A in the Netherlands, August 1986; not shown in the Iraq raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-012"
+        "research/research-final/data/prototype-deck.csv#DK-012",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1250,9 +1298,10 @@
       "printed": {
         "unshaded": "Hot pursuit raid: the State conducts a free Assault with Cross-Border in the KDP Zone (06, section 3.2, hot pursuit: at most 3 Troops). No extra Resources.",
         "shaded": "Camps rebuilt after the raid: the PKK places up to 2 Underground Guerrillas in the KDP Zone if its posture is Host or Tolerant. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "A border attack in August 1986 was followed by a Turkish air raid into northern Iraq.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1986-08-12",
@@ -1325,17 +1374,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/ea520fba3e.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:TurkishAirForceF5-A.jpg",
+        "creator": "Lieuwe Hofstra",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Lieuwe Hofstra, CC BY 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Turkish Air Force F-5A in the Netherlands, August 1986; not shown in the Iraq raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-013"
+        "research/research-final/data/prototype-deck.csv#DK-013",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1347,9 +1399,10 @@
       "printed": {
         "unshaded": "Tolerated civil society: Legitimacy +1.",
         "shaded": "Documentation begins: Europe +1.",
-        "flavor": null,
+        "flavor": "Turkey’s Human Rights Association was founded in 1986, adding an organized voice documenting abuses.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1986-07-17",
@@ -1390,17 +1443,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/023a3c8070.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:%C4%B0nsan_Haklar%C4%B1_Derne%C4%9Fi_logo.svg",
+        "creator": "İnsan Hakları Derneği",
+        "license": "Public domain (Commons: simple logo)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Simple_designs",
+        "attribution": "İnsan Hakları Derneği, Public domain (Commons: simple logo), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Human Rights Association logo, uploaded in 2021; not a 1986 photograph.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-014"
+        "research/research-final/data/prototype-deck.csv#DK-014",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1412,9 +1468,10 @@
       "printed": {
         "unshaded": "Earliest C1. Precondition: 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases. Effect: place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in those spaces Underground, PKK +3 Resources.",
         "shaded": "None (single-sided Pivotal Event)",
-        "flavor": null,
+        "flavor": "The PKK formed the ARGK as its military wing in 1986, giving its armed campaign a distinct organizational name.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1986-10",
@@ -1463,17 +1520,20 @@
         ]
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/41de3c75e9.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_Art%C3%AA%C5%9Fa_Rizgariye_G%C3%AAle_Kurdistan_(ARGK).svg",
+        "creator": "Shorepine",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Shorepine, CC BY-SA 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "ARGK pennant illustration, 2020; depicts the military wing founded in 1986.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-015"
+        "research/research-final/data/prototype-deck.csv#DK-015",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1485,9 +1545,10 @@
       "printed": {
         "unshaded": null,
         "shaded": null,
-        "flavor": null,
+        "flavor": "The first campaign covers the opening years of the conflict, from the 1984 raids to the expansion of armed networks.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "encoding": {
@@ -1509,7 +1570,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-016"
+        "research/research-final/data/prototype-deck.csv#DK-016",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": [
         "Package has no printed Propaganda instruction; reference says: conduct 6.0. No player Event choice."
@@ -1523,9 +1585,10 @@
       "printed": {
         "unshaded": "Remove 1 Guerrilla from the KDP Zone, or 1 PKK Base there if no Guerrilla remains. Place a Disputed Harm marker in the KDP Zone if it has none.",
         "shaded": "Camps disperse: move up to 3 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground.",
-        "flavor": null,
+        "flavor": "In March 1987, Turkish aircraft struck camps in northern Iraq as the conflict crossed the border.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -1664,7 +1727,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-017"
+        "research/research-final/data/prototype-deck.csv#DK-017",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1676,9 +1740,10 @@
       "printed": {
         "unshaded": "Place a Disputed Harm marker in Mardin-Batman. Place up to 2 Village Guards there (needs Law 3175). Europe -1.",
         "shaded": "Place a Disputed Harm marker in Mardin-Batman. The PKK may pay 2 Resources to remove 1 PKK Harm marker anywhere.",
-        "flavor": null,
+        "flavor": "The killings at Pınarcık in June 1987 brought the conflict’s violence against villagers into sharp focus.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -1803,7 +1868,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-018"
+        "research/research-final/data/prototype-deck.csv#DK-018",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1815,9 +1881,10 @@
       "printed": {
         "unshaded": "The State conducts a free Diplomacy targeting Syria with +1.",
         "shaded": "Paper limits: Syria posture one step toward Host. The PKK conducts a free Rally in Syria-Bekaa.",
-        "flavor": null,
+        "flavor": "Turkey and Syria signed a security protocol in July 1987 amid Turkish pressure over PKK activity from Syrian territory.",
         "always": "If Syria is Host, set its posture to Tolerant.",
-        "always_source_kind": "supporting document wording, not package printed text"
+        "always_source_kind": "supporting document wording, not package printed text",
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -1894,7 +1961,8 @@
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
         "docs/rules/prototype-card-reference.md",
-        "research/research-final/data/prototype-deck.csv#DK-019"
+        "research/research-final/data/prototype-deck.csv#DK-019",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -1906,9 +1974,10 @@
       "printed": {
         "unshaded": "Regional governor: the State conducts a free Garrison, then a free Sweep in one space.",
         "shaded": "Emergency rule draws scrutiny: Legitimacy -1. Europe +1.",
-        "flavor": null,
+        "flavor": "Turkey introduced the OHAL emergency rule region in 1987, concentrating special powers in the southeast.",
         "always": "If Emergency Rule is Martial Law, set it to OHAL.",
-        "always_source_kind": "supporting document wording, not package printed text"
+        "always_source_kind": "supporting document wording, not package printed text",
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -1990,7 +2059,8 @@
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
         "docs/rules/prototype-card-reference.md",
-        "research/research-final/data/prototype-deck.csv#DK-020"
+        "research/research-final/data/prototype-deck.csv#DK-020",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2002,9 +2072,10 @@
       "printed": {
         "unshaded": "Place a Disputed Harm marker in Botan or Mardin-Batman (State choice). Europe -1.",
         "shaded": "Block only: place a Disputed Harm marker in Botan or Mardin-Batman (PKK choice). No other effect.",
-        "flavor": null,
+        "flavor": "Rival Newroz gatherings became sites of violence in March 1987, reflecting divisions among Kurdish political groups.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2100,7 +2171,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-021"
+        "research/research-final/data/prototype-deck.csv#DK-021",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2112,9 +2184,10 @@
       "printed": {
         "unshaded": "State Capability (Strike Force): Air Mobility may move up to 6 Troops among up to 4 spaces.",
         "shaded": "Plan stalls: State Resources -3. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "In 1987, plans for a special strike force formed part of the state’s response to the insurgency.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2174,7 +2247,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-022"
+        "research/research-final/data/prototype-deck.csv#DK-022",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2186,9 +2260,10 @@
       "printed": {
         "unshaded": "Border sealed: place 2 Troops in Hakkari and 1 in Botan.",
         "shaded": "World attention to Kurds: Europe +1.",
-        "flavor": null,
+        "flavor": "The final Anfal campaign in Badinan in 1988 brought mass violence to Iraqi Kurdish communities near the Turkish border.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2251,7 +2326,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-023"
+        "research/research-final/data/prototype-deck.csv#DK-023",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2263,9 +2339,10 @@
       "printed": {
         "unshaded": "Humanitarian opening: Legitimacy +2. State Resources -2.",
         "shaded": "Camps under strain: place 1 Reception marker in Diyarbakır City. Europe +1.",
-        "flavor": null,
+        "flavor": "After the 1988 Anfal campaign, Iraqi Kurdish refugees crossed into Turkey seeking safety.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2331,7 +2408,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-024"
+        "research/research-final/data/prototype-deck.csv#DK-024",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2343,9 +2421,10 @@
       "printed": {
         "unshaded": "Place a PKK Harm marker in Mardin-Batman, Elazığ or Dersim (State choice). Europe -1.",
         "shaded": "Block only: place a PKK Harm marker in one of those spaces (PKK choice). No other effect.",
-        "flavor": null,
+        "flavor": "Attacks on village schools in 1988 exposed teachers, pupils and rural communities to the conflict.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2462,7 +2541,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-025"
+        "research/research-final/data/prototype-deck.csv#DK-025",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2474,9 +2554,10 @@
       "printed": {
         "unshaded": "Institutions renewed: Legitimacy +2.",
         "shaded": "Opposition mayors in the southeast: shift Diyarbakır City or Mardin-Batman one level toward Opposition.",
-        "flavor": null,
+        "flavor": "Turkey’s March 1989 local elections took place as the southeast faced mounting political and security pressures.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2550,7 +2631,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-026"
+        "research/research-final/data/prototype-deck.csv#DK-026",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2562,9 +2644,10 @@
       "printed": {
         "unshaded": "Place up to 4 Troops from Available in Botan and Hakkari. The State conducts a free Sweep in Botan.",
         "shaded": "Rising tempo: the PKK conducts a free Attack in one space with an Underground Guerrilla and Troops. State Resources -2.",
-        "flavor": null,
+        "flavor": "The expansion of regional forces in 1989 reflected the state’s growing security commitment in the southeast.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2887,7 +2970,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-027"
+        "research/research-final/data/prototype-deck.csv#DK-027",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2899,9 +2983,10 @@
       "printed": {
         "unshaded": "Diplomatic protest: the State conducts a free Diplomacy targeting the Europe track.",
         "shaded": "Europe +1. The PKK conducts a free Rally on the Europe track.",
-        "flavor": null,
+        "flavor": "A Kurdish conference in Paris in October 1989 brought the issue before an international audience.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -2966,7 +3051,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-028"
+        "research/research-final/data/prototype-deck.csv#DK-028",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -2978,9 +3064,10 @@
       "printed": {
         "unshaded": "Party discipline holds: shift Şanlıurfa or Adıyaman one level toward Support if it has State Control and Police.",
         "shaded": "Expelled deputies speak abroad: Europe +1. Shift Diyarbakır City one level toward Opposition.",
-        "flavor": null,
+        "flavor": "The SHP expelled Kurdish deputies in 1989 after their participation in a Kurdish conference in Paris.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -3072,7 +3159,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-029"
+        "research/research-final/data/prototype-deck.csv#DK-029",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3084,9 +3172,10 @@
       "printed": {
         "unshaded": "Place a PKK Harm marker in Hakkari. Europe -1. Place 1 Village Guard in Hakkari (needs Law 3175).",
         "shaded": "Block only: place a PKK Harm marker in Hakkari. No other effect.",
-        "flavor": null,
+        "flavor": "Villagers were killed at İkikaya in November 1989 as violence continued across the southeast.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -3160,7 +3249,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-030"
+        "research/research-final/data/prototype-deck.csv#DK-030",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3172,9 +3262,10 @@
       "printed": {
         "unshaded": "Prosecutions hold the line: place 1 Police and 1 Village Guard in Hakkari.",
         "shaded": "Guards hand back weapons: remove up to 2 Village Guards from Hakkari or Botan to Available. No Harm marker. State Resources -1.",
-        "flavor": null,
+        "flavor": "In 1989, villagers in Çukurca refused village guard duty, highlighting the pressures placed on rural communities.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -3253,7 +3344,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-031"
+        "research/research-final/data/prototype-deck.csv#DK-031",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3265,9 +3357,10 @@
       "printed": {
         "unshaded": "Custody reform: Legitimacy +2.",
         "shaded": "Lawyers barred again: Legitimacy -1. Europe +1.",
-        "flavor": null,
+        "flavor": "A September 1989 decree addressed lawyers’ access to detainees amid concern about detention practices.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -3323,7 +3416,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-032"
+        "research/research-final/data/prototype-deck.csv#DK-032",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3335,9 +3429,10 @@
       "printed": {
         "unshaded": "Block only: place a State Harm marker in Mardin-Batman or Hakkari (State choice). No other effect.",
         "shaded": "Place a State Harm marker in Mardin-Batman or Hakkari (PKK choice). Legitimacy -1. Shift that space one level toward Opposition.",
-        "flavor": null,
+        "flavor": "Reports of abuse and deaths in custody drew attention to the treatment of detainees in 1989.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -3453,7 +3548,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-033"
+        "research/research-final/data/prototype-deck.csv#DK-033",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3465,9 +3561,10 @@
       "printed": {
         "unshaded": "Emergency powers: the State conducts a free Garrison with Activation in Botan or Dersim.",
         "shaded": "Banishment without trial: Legitimacy -1. Shift Botan one level toward Opposition.",
-        "flavor": null,
+        "flavor": "In 1989, emergency-rule governors used their powers against local political figures in the southeast.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": true,
@@ -3529,7 +3626,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-034"
+        "research/research-final/data/prototype-deck.csv#DK-034",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3541,9 +3639,10 @@
       "printed": {
         "unshaded": "Conduct a Propaganda round (05, section 6).",
         "shaded": null,
-        "flavor": null,
+        "flavor": "During the late 1980s, emergency rule, cross-border operations and the village guard system reshaped the conflict.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": false,
@@ -3570,7 +3669,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-035"
+        "research/research-final/data/prototype-deck.csv#DK-035",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3582,9 +3682,10 @@
       "printed": {
         "unshaded": "If Emergency Rule is OHAL, set it to OHAL Extended Powers. Village Clearance is now available (DD-07.2; 07, section 8.2).",
         "shaded": "Press curbs: Legitimacy -2. Europe +1.",
-        "flavor": null,
+        "flavor": "Decree KHK 413 expanded the emergency governor’s powers in April 1990.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1990-04-09",
@@ -3642,7 +3743,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-036"
+        "research/research-final/data/prototype-deck.csv#DK-036",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3654,9 +3756,10 @@
       "printed": {
         "unshaded": "The State may place the Closure Case marker now if none is on the track (07, section 6.3).",
         "shaded": "Political opening: shift one space with a PKK Base and no Office one level toward Opposition.",
-        "flavor": null,
+        "flavor": "The People’s Labour Party, HEP, was founded in June 1990 as Kurdish political representation developed in legal party politics.",
         "always": "Legal Space to Open. Then run procedure lines 3 and 4 twice (07 s6.4). From an empty map this places 2 Offices, normally in Diyarbakır City and Western Cities. Lines 5 and 6 do not run, so no prosecutor filing.",
-        "always_source_kind": "supporting document wording, not package printed text"
+        "always_source_kind": "supporting document wording, not package printed text",
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1990-06-07",
@@ -3796,7 +3899,8 @@
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
         "docs/prototype/31-pivotals-structural-draft.md §5.1",
-        "research/research-final/data/prototype-deck.csv#DK-037"
+        "research/research-final/data/prototype-deck.csv#DK-037",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": [
         "Always wording is from an approved design document and includes implementation or explanatory details; final card wording is not specified in the package."
@@ -3810,9 +3914,10 @@
       "printed": {
         "unshaded": "State Momentum: until the next Reset, Sweep costs 1 Resource per space at any Emergency Rule step. The State conducts a free Garrison.",
         "shaded": "Near-immunity for governors draws scrutiny: Legitimacy -2.",
-        "flavor": null,
+        "flavor": "Decree KHK 430 granted further powers to the emergency-rule administration in December 1990.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1990-12-15",
@@ -3869,7 +3974,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-038"
+        "research/research-final/data/prototype-deck.csv#DK-038",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3881,9 +3987,10 @@
       "printed": {
         "unshaded": "Language ban lifted: Legitimacy +2. Shift one City with State Control and Police one level toward Support.",
         "shaded": "Article 8 prosecutions: Legitimacy -1. Europe +1.",
-        "flavor": null,
+        "flavor": "Turkey adopted the Anti-Terror Law, Law 3713, in April 1991.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1991-04-12",
@@ -3977,7 +4084,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-039"
+        "research/research-final/data/prototype-deck.csv#DK-039",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -3989,9 +4097,10 @@
       "printed": {
         "unshaded": "Coalition presence: the State conducts a free Sweep in the KDP Zone through Cross-Border (access rules apply).",
         "shaded": "Power vacuum: place 2 Guerrillas and 1 PKK Base in the KDP Zone or PUK Zone (posture permitting).",
-        "flavor": null,
+        "flavor": "The 1991 Gulf War and Kurdish uprising left a power vacuum in northern Iraq, changing conditions along Turkey’s border.",
         "always": "set flag `northernIraqVacuum`. It stays for the rest of the game. Code already reads it: Tolerant then allows Cross-Border (from C3) and PKK Bases in the KDP Zone and PUK Zone (`ops/sa/cross-border.ts`, `ops/common-pkk.ts`).",
-        "always_source_kind": "supporting document wording, not package printed text"
+        "always_source_kind": "supporting document wording, not package printed text",
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1991-04-06",
@@ -4191,7 +4300,8 @@
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
         "docs/prototype/31-pivotals-structural-draft.md §5.2",
-        "research/research-final/data/prototype-deck.csv#DK-040"
+        "research/research-final/data/prototype-deck.csv#DK-040",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": [
         "Supporting Always text describes an implementation flag rather than player-facing card wording.",
@@ -4206,9 +4316,10 @@
       "printed": {
         "unshaded": "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border (access and Disputed Harm rules apply).",
         "shaded": "Criticism of the operation: Legitimacy -1. Move up to 3 Guerrillas from the KDP Zone to the PUK Zone, Underground.",
-        "flavor": null,
+        "flavor": "Turkish forces conducted an operation in northern Iraq in August 1991 against PKK positions.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1991-08-05",
@@ -4290,7 +4401,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-041"
+        "research/research-final/data/prototype-deck.csv#DK-041",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -4302,9 +4414,10 @@
       "printed": {
         "unshaded": "Deputies enter parliament: Legitimacy +1. If Legal Space is Open, run Legal Politics line 4 once.",
         "shaded": "Votes in the southeast: shift Mardin-Batman or Diyarbakır Rural one level toward Opposition if it has no Office.",
-        "flavor": null,
+        "flavor": "In the 1991 election, HEP candidates entered parliament on an electoral alliance with the SHP.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1991-10-20",
@@ -4407,7 +4520,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-042"
+        "research/research-final/data/prototype-deck.csv#DK-042",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -4419,9 +4533,10 @@
       "printed": {
         "unshaded": "Block only: place a State Harm marker in Mardin-Batman and in Botan. No other effect.",
         "shaded": "Place a State Harm marker in Mardin-Batman and in Botan. Legitimacy -1. Europe +1. Shift Mardin-Batman one level toward Opposition.",
-        "flavor": null,
+        "flavor": "Newroz celebrations in March 1992 were marked by deadly confrontations in southeastern Turkey.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-03-21",
@@ -4501,7 +4616,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-043"
+        "research/research-final/data/prototype-deck.csv#DK-043",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -4513,9 +4629,10 @@
       "printed": {
         "unshaded": "Bekaa camp closed: Syria posture one step toward Hostile. Remove 1 PKK Base from Syria-Bekaa if 2 or more are there.",
         "shaded": "Leader stays: move up to 2 Guerrillas from Syria-Bekaa to Mardin-Batman or Şanlıurfa, free. State Resources -2.",
-        "flavor": null,
+        "flavor": "Turkey and Syria reached an accord in 1992 amid continued Turkish concern about PKK activity linked to Syria.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-04",
@@ -4628,7 +4745,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-044"
+        "research/research-final/data/prototype-deck.csv#DK-044",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -4640,9 +4758,10 @@
       "printed": {
         "unshaded": "Block only: place a State Harm marker in Botan and 1 Reception marker in Diyarbakır City. No other effect.",
         "shaded": "Place a State Harm marker in Botan and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition.",
-        "flavor": null,
+        "flavor": "A battle in Şırnak in August 1992 brought heavy fighting and destruction to the town.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-08-18",
@@ -4716,7 +4835,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-045"
+        "research/research-final/data/prototype-deck.csv#DK-045",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -4728,9 +4848,10 @@
       "printed": {
         "unshaded": "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border. If KDP is Hostile or Aligned with Turkey, ignore the Mountain modifier.",
         "shaded": "Fighters slip away: move up to 4 Guerrillas from the KDP Zone to the PUK Zone or Hakkari, Underground. State Resources -3.",
-        "flavor": null,
+        "flavor": "Turkish forces and the KDP took part in a large operation against PKK forces in northern Iraq in late 1992.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-10-12",
@@ -4876,7 +4997,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-047"
+        "research/research-final/data/prototype-deck.csv#DK-047",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -4888,9 +5010,10 @@
       "printed": {
         "unshaded": "Block only: place a State Harm marker in Diyarbakır Rural. No other effect.",
         "shaded": "Place a State Harm marker in Diyarbakır Rural. Legitimacy -1. Europe +1.",
-        "flavor": null,
+        "flavor": "Houses were burned at Kelekçi in November 1992, part of the conflict’s toll on rural settlements.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-11-10",
@@ -4953,7 +5076,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-048"
+        "research/research-final/data/prototype-deck.csv#DK-048",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -4965,9 +5089,10 @@
       "printed": {
         "unshaded": "Block only: place a Disputed Harm marker in Diyarbakır City. No other effect.",
         "shaded": "Place a Disputed Harm marker in Diyarbakır City. Reveal 1 Covert marker at random. Europe +1.",
-        "flavor": null,
+        "flavor": "Journalists and press workers were killed in 1992 while reporting on the conflict and Kurdish politics.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992",
@@ -5031,7 +5156,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-049"
+        "research/research-final/data/prototype-deck.csv#DK-049",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5043,9 +5169,10 @@
       "printed": {
         "unshaded": "Press prosecutions: State Momentum: until the next Reset, Agitation in Diyarbakır City costs 1 more per step.",
         "shaded": "Reporting raises the cost of harm: Europe +1. PKK Momentum: until the next Reset, each revealed Covert marker costs Legitimacy 1 more.",
-        "flavor": null,
+        "flavor": "The newspaper Özgür Gündem began publication in May 1992, reporting on Kurdish issues and the conflict.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-05-30",
@@ -5108,7 +5235,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-050"
+        "research/research-final/data/prototype-deck.csv#DK-050",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5120,9 +5248,10 @@
       "printed": {
         "unshaded": "Place the Closure Case marker now if none is on the track. Legal Space to Prosecuted.",
         "shaded": "The case draws attention abroad: Europe +1.",
-        "flavor": null,
+        "flavor": "In July 1992, a prosecutor sought the closure of HEP, placing the party under legal threat.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-07-03",
@@ -5206,7 +5335,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-051"
+        "research/research-final/data/prototype-deck.csv#DK-051",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5218,9 +5348,10 @@
       "printed": {
         "unshaded": "Reinforcement: place 2 Police and 1 Troop in Diyarbakır Rural.",
         "shaded": "The PKK conducts a free Attack with Ambush in Diyarbakır Rural or an adjacent space with an Underground Guerrilla.",
-        "flavor": null,
+        "flavor": "An attack on the Boğazköy gendarme station in November 1992 was one of the armed clashes of the period.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992-11-01",
@@ -5291,7 +5422,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-052"
+        "research/research-final/data/prototype-deck.csv#DK-052",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5303,9 +5435,10 @@
       "printed": {
         "unshaded": "Apply 07, section 10.1: remove 1 Office or 1 Guerrilla, in that priority, from the highest-Pop eligible space among Botan, Mardin-Batman, Diyarbakır City and Diyarbakır Rural. Place a Disputed Harm marker there.",
         "shaded": "Apply 07, section 10.1 as unshaded. Then Europe +1 (calls for an inquiry).",
-        "flavor": null,
+        "flavor": "A wave of killings in the southeast in 1992 remained unattributed, deepening fear and demands for accountability.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1992",
@@ -5358,7 +5491,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-053"
+        "research/research-final/data/prototype-deck.csv#DK-053",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5370,9 +5504,10 @@
       "printed": {
         "unshaded": "Earliest C3. Precondition: Total Opposition is 14 or more and Mardin-Batman or Botan is at Opposition. Effect: shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1.",
         "shaded": "None (single-sided Pivotal Event)",
-        "flavor": null,
+        "flavor": "Serhildan, Kurdish for uprising, came to describe a wave of popular protests in the Kurdish regions of Turkey.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "precondition": {
@@ -5495,7 +5630,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-054"
+        "research/research-final/data/prototype-deck.csv#DK-054",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5507,9 +5643,10 @@
       "printed": {
         "unshaded": "Conduct a Propaganda round (05, section 6).",
         "shaded": null,
-        "flavor": null,
+        "flavor": "The early 1990s brought mass protests, new legal parties and an intensifying war across the southeast.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": false,
@@ -5535,7 +5672,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-055"
+        "research/research-final/data/prototype-deck.csv#DK-055",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5547,9 +5685,10 @@
       "printed": {
         "unshaded": "Ceasefire not recognized: State Resources +3. The State conducts a free Garrison.",
         "shaded": "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1 (07, section 7.1). Shift up to 2 spaces with PKK pieces and no Office one level toward Opposition.",
-        "flavor": null,
+        "flavor": "The PKK declared a unilateral ceasefire in March 1993, opening a brief period of uncertainty about the conflict’s direction.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-03-17",
@@ -5649,7 +5788,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-056"
+        "research/research-final/data/prototype-deck.csv#DK-056",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5661,9 +5801,10 @@
       "printed": {
         "unshaded": "If Ceasefire is Declared, the State may accept now: Ceasefire to Reciprocal Restraint and Legitimacy +1. Otherwise no effect.",
         "shaded": "If Ceasefire is None, set it to Declared. PUK posture one step toward Host. Europe +1.",
-        "flavor": null,
+        "flavor": "At Bar Elias in April 1993, the PKK announced an extension of its unilateral ceasefire.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-04-16",
@@ -5791,7 +5932,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-057"
+        "research/research-final/data/prototype-deck.csv#DK-057",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5803,9 +5945,10 @@
       "printed": {
         "unshaded": "Spoiler: if Ceasefire is Declared or Reciprocal Restraint, set it to None with no Restraint Broken marker. State Resources +2.",
         "shaded": "Uncertainty in Ankara: State Resources -3. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "President Turgut Özal died in April 1993 during the period of the PKK ceasefire.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-04-17",
@@ -5887,7 +6030,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-058"
+        "research/research-final/data/prototype-deck.csv#DK-058",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5899,9 +6043,10 @@
       "printed": {
         "unshaded": "Place a PKK Harm marker in Bingöl-Muş. Ceasefire to None; place the PKK Restraint Broken marker. Europe -1.",
         "shaded": "Block only: place a PKK Harm marker in Bingöl-Muş. Ceasefire to None. No other effect.",
-        "flavor": null,
+        "flavor": "In May 1993, PKK fighters killed unarmed soldiers on the Bingöl road, a defining episode in the collapse of the ceasefire.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-05-24",
@@ -5976,7 +6121,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-059"
+        "research/research-final/data/prototype-deck.csv#DK-059",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -5988,9 +6134,10 @@
       "printed": {
         "unshaded": "If a Closure Case marker is on the track, resolve Legal Politics line 1 now (ban).",
         "shaded": "The ban draws protest: Europe +1. Shift Diyarbakır City one level toward Opposition if it has no Office.",
-        "flavor": null,
+        "flavor": "Turkey’s Constitutional Court dissolved HEP in July 1993, closing a key vehicle for Kurdish legal politics.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-07-14",
@@ -6084,7 +6231,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-060"
+        "research/research-final/data/prototype-deck.csv#DK-060",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6096,9 +6244,10 @@
       "printed": {
         "unshaded": "Europe -2. Legitimacy +1.",
         "shaded": "Diaspora networks raise funds: PKK Resources +2. Europe -1.",
-        "flavor": null,
+        "flavor": "In June 1993, coordinated attacks on Turkish offices in Europe brought the conflict into European cities.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-06-24",
@@ -6158,7 +6307,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-061"
+        "research/research-final/data/prototype-deck.csv#DK-061",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6170,9 +6320,10 @@
       "printed": {
         "unshaded": "Place a Disputed Harm marker in Mardin-Batman. A prosecution opens: Legitimacy +1.",
         "shaded": "Place a Disputed Harm marker in Mardin-Batman. Reveal 1 Covert marker at random. Europe +1.",
-        "flavor": null,
+        "flavor": "A deputy was shot dead in Batman in September 1993 amid a wave of political violence.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-09-04",
@@ -6241,7 +6392,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-062"
+        "research/research-final/data/prototype-deck.csv#DK-062",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6253,9 +6405,10 @@
       "printed": {
         "unshaded": "Block only: place a State Harm marker in Diyarbakır Rural and 1 Reception marker in Diyarbakır City. No other effect.",
         "shaded": "Place a State Harm marker in Diyarbakır Rural and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition.",
-        "flavor": null,
+        "flavor": "In October 1993, Lice suffered extensive destruction during violence involving Turkish security forces.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-10-22",
@@ -6329,7 +6482,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-063"
+        "research/research-final/data/prototype-deck.csv#DK-063",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6341,9 +6495,10 @@
       "printed": {
         "unshaded": "Place the Europe Ban marker on the Europe track (04, section 3.6). If Europe is above 3, set it to 3. PKK Resources -2.",
         "shaded": "Protests across Europe: Europe +1. Do not place the Europe Ban marker.",
-        "flavor": null,
+        "flavor": "Germany banned the PKK and ERNK in November 1993 after a period of attacks and protests in Europe.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-11-22",
@@ -6420,7 +6575,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-064"
+        "research/research-final/data/prototype-deck.csv#DK-064",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6432,9 +6588,10 @@
       "printed": {
         "unshaded": "The State may place the Closure Case marker if none is on the track.",
         "shaded": "Non-player side: if Legal Space is Banned, resolve Legal Politics line 2 now. Otherwise place 1 Office in the line 4 order.",
-        "flavor": null,
+        "flavor": "The Democracy Party, DEP, was founded in May 1993 as pressure mounted on HEP.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1993-05-07",
@@ -6549,7 +6706,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-065"
+        "research/research-final/data/prototype-deck.csv#DK-065",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6561,9 +6719,10 @@
       "printed": {
         "unshaded": "Remove 2 Offices. Legitimacy -1.",
         "shaded": "Arrests of deputies draw protest: Legitimacy -2. Europe +1.",
-        "flavor": null,
+        "flavor": "In March 1994, Turkey’s parliament lifted the immunity of DEP deputies, exposing them to prosecution.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1994-03-02",
@@ -6646,7 +6805,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-066"
+        "research/research-final/data/prototype-deck.csv#DK-066",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6658,9 +6818,10 @@
       "printed": {
         "unshaded": "Legal Space to Prosecuted if it is Open.",
         "shaded": "Non-player side: if Legal Space is Banned, resolve Legal Politics line 2 now without the minus 1. Otherwise place 1 Office in the line 4 order.",
-        "flavor": null,
+        "flavor": "The People’s Democracy Party, HADEP, was founded in May 1994 as Kurdish party politics continued under pressure.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1994-05-11",
@@ -6740,7 +6901,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-067"
+        "research/research-final/data/prototype-deck.csv#DK-067",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6752,9 +6914,10 @@
       "printed": {
         "unshaded": "If a Closure Case marker is on the track, resolve Legal Politics line 1 now. Otherwise place the Closure Case marker.",
         "shaded": "Deputies leave for Europe: Europe +1. Legitimacy -1.",
-        "flavor": null,
+        "flavor": "Turkey’s Constitutional Court dissolved DEP in June 1994, following the lifting of its deputies’ immunity.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1994-06-16",
@@ -6857,7 +7020,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-068"
+        "research/research-final/data/prototype-deck.csv#DK-068",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6869,9 +7033,10 @@
       "printed": {
         "unshaded": "Official denial: if fewer than 2 Displacement markers are on the map, Legitimacy +1; otherwise Legitimacy -1.",
         "shaded": "Legitimacy -1 per 2 Displacement markers on the map (round down, maximum -3). Europe +1.",
-        "flavor": null,
+        "flavor": "A Human Rights Watch report in October 1994 documented forced displacement in southeastern Turkey.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1994-10",
@@ -6925,7 +7090,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-069"
+        "research/research-final/data/prototype-deck.csv#DK-069",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -6937,9 +7103,10 @@
       "printed": {
         "unshaded": "KDP seeks Turkish help: KDP posture one step toward Aligned with Turkey.",
         "shaded": "Vacuum widens: place 2 Guerrillas in the PUK Zone and 1 PKK Base in the KDP Zone or PUK Zone (posture permitting).",
-        "flavor": null,
+        "flavor": "Fighting between the KDP and PUK broke out in northern Iraq in 1994, dividing the region’s principal Kurdish parties.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1994-05",
@@ -7104,7 +7271,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-070"
+        "research/research-final/data/prototype-deck.csv#DK-070",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7116,9 +7284,10 @@
       "printed": {
         "unshaded": "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border, moving up to 10 Troops from Hakkari or Botan (access and Disputed Harm rules apply).",
         "shaded": "Fighters disperse and return: move up to 4 Guerrillas from the KDP Zone to Hakkari or Botan, Underground. Legitimacy -1. Europe +1.",
-        "flavor": null,
+        "flavor": "Operation Steel sent Turkish forces into northern Iraq in March 1995 in a major cross-border campaign.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1995-03-20",
@@ -7236,7 +7405,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-071"
+        "research/research-final/data/prototype-deck.csv#DK-071",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7248,9 +7418,10 @@
       "printed": {
         "unshaded": "Legitimacy +2. State Resources +3.",
         "shaded": "European conditions: Europe +1. PKK Momentum: until the next Reset, Village Clearance costs Legitimacy 1 more.",
-        "flavor": null,
+        "flavor": "Turkey and the European Union agreed on a customs union in March 1995, linking economic integration to a period of political scrutiny.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1995-03-06",
@@ -7314,7 +7485,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-072"
+        "research/research-final/data/prototype-deck.csv#DK-072",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7326,9 +7498,10 @@
       "printed": {
         "unshaded": "Ceasefire not recognized: the State conducts a free Sweep in one Mountain space. State Resources +2.",
         "shaded": "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1. PKK Resources +2.",
-        "flavor": null,
+        "flavor": "The PKK declared a second unilateral ceasefire in December 1995.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1995-12-15",
@@ -7394,7 +7567,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-073"
+        "research/research-final/data/prototype-deck.csv#DK-073",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7406,9 +7580,10 @@
       "printed": {
         "unshaded": "Aid flows: State Resources +4.",
         "shaded": "Conditions attached: Legitimacy -1. PKK Momentum: until the next Reset, each Village Clearance also costs 2 State Resources.",
-        "flavor": null,
+        "flavor": "In 1994, conditions on US lending brought international attention to Turkey’s military and human rights policies.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1994",
@@ -7466,7 +7641,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-074"
+        "research/research-final/data/prototype-deck.csv#DK-074",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7478,9 +7654,10 @@
       "printed": {
         "unshaded": "Place a PKK Harm marker in one space with a Village Guard (State choice). Europe -1. Place 1 Village Guard there.",
         "shaded": "Block only: place a PKK Harm marker in one space with a Village Guard (PKK choice). No other effect.",
-        "flavor": null,
+        "flavor": "A raid on two village guard villages in January 1994 showed how the conflict endangered rural communities.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1994-01-22",
@@ -7570,7 +7747,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-075"
+        "research/research-final/data/prototype-deck.csv#DK-075",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7582,9 +7760,10 @@
       "printed": {
         "unshaded": "Earliest C4. Precondition: Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more. Effect: free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost.",
         "shaded": "None (single-sided Pivotal Event)",
-        "flavor": null,
+        "flavor": "Turkey’s area-domination strategy sought sustained control over contested rural terrain during the emergency-rule years.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "precondition": {
@@ -7666,7 +7845,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-076"
+        "research/research-final/data/prototype-deck.csv#DK-076",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7678,9 +7858,10 @@
       "printed": {
         "unshaded": "Conduct a Propaganda round (05, section 6).",
         "shaded": null,
-        "flavor": null,
+        "flavor": "The mid-1990s saw forced displacement, party closures and major Turkish operations across the Iraqi border.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": false,
@@ -7706,7 +7887,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-077"
+        "research/research-final/data/prototype-deck.csv#DK-077",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7718,9 +7900,10 @@
       "printed": {
         "unshaded": "Place a PKK Harm marker in Dersim. Europe -1. The State conducts a free Garrison.",
         "shaded": "Block only: place a PKK Harm marker in Dersim. No other effect.",
-        "flavor": null,
+        "flavor": "A series of suicide attacks in 1996 marked a new and deadly form of violence in the conflict.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1996-06-30",
@@ -7787,7 +7970,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-078"
+        "research/research-final/data/prototype-deck.csv#DK-078",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7799,9 +7983,10 @@
       "printed": {
         "unshaded": "Contained inquiry: reveal 1 Covert marker at random. A minister resigns: Legitimacy +1.",
         "shaded": "Reveal up to 2 Covert markers at random (07, section 10.2). Europe +1.",
-        "flavor": null,
+        "flavor": "A car crash at Susurluk in November 1996 exposed links among security officials, politics and organized crime.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1996-11-03",
@@ -7896,7 +8081,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-079"
+        "research/research-final/data/prototype-deck.csv#DK-079",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -7908,9 +8094,10 @@
       "printed": {
         "unshaded": "Dissent notes limit the report: reveal 1 Covert marker at random. The State may then pay 1 Resource to remove 1 State Harm marker.",
         "shaded": "Reveal up to 2 Covert markers at random. Then apply Guard Abuse (07, section 4.7).",
-        "flavor": null,
+        "flavor": "A parliamentary commission reported on the Susurluk affair in 1997, examining the networks exposed by the crash.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1997-05-16",
@@ -8080,7 +8267,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-080"
+        "research/research-final/data/prototype-deck.csv#DK-080",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -8092,9 +8280,10 @@
       "printed": {
         "unshaded": "Province relief: Legitimacy +1. The State may move Emergency Rule one step toward Normalizing now.",
         "shaded": "Emergency rule renewed elsewhere: Legitimacy -1. Europe +1.",
-        "flavor": null,
+        "flavor": "The geographic scope of emergency rule narrowed during the late 1990s as provinces left the OHAL region.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1997",
@@ -8203,7 +8392,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-081"
+        "research/research-final/data/prototype-deck.csv#DK-081",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -8215,9 +8405,10 @@
       "printed": {
         "unshaded": "With KDP help: the State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border. If KDP is Hostile, ignore the Mountain modifier and move KDP one step toward Aligned with Turkey.",
         "shaded": "Fighters shift to the PUK Zone: move up to 4 Guerrillas from the KDP Zone to the PUK Zone, Underground. State Resources -2.",
-        "flavor": null,
+        "flavor": "Operation Hammer brought Turkish forces into northern Iraq in 1997 amid fighting involving Kurdish factions.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1997-05-12",
@@ -8343,7 +8534,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-082"
+        "research/research-final/data/prototype-deck.csv#DK-082",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -8355,9 +8547,10 @@
       "printed": {
         "unshaded": "Europe -1. PKK Resources -2.",
         "shaded": "Networks adapt: the PKK conducts a free Rally on the Europe track.",
-        "flavor": null,
+        "flavor": "The United States designated the PKK a foreign terrorist organization in October 1997.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1997-10-08",
@@ -8417,7 +8610,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-083"
+        "research/research-final/data/prototype-deck.csv#DK-083",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -8429,9 +8623,10 @@
       "printed": {
         "unshaded": "Move KDP posture or PUK posture one step toward Hostile, or from Hostile to Aligned with Turkey.",
         "shaded": "Calm in northern Iraq: move up to 3 Guerrillas between the KDP Zone and PUK Zone, free. Place 1 PKK Base in one of them (posture permitting).",
-        "flavor": null,
+        "flavor": "The Ankara Process sought to mediate between the KDP and PUK during the conflict in northern Iraq.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1996-10-23",
@@ -8684,7 +8879,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-084"
+        "research/research-final/data/prototype-deck.csv#DK-084",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -8696,9 +8892,10 @@
       "printed": {
         "unshaded": "Place the Closure Case marker if none is on the track. Legal Space to Prosecuted.",
         "shaded": "Convictions draw protest: Legitimacy -1. Europe +1.",
-        "flavor": null,
+        "flavor": "Events at a HADEP congress in 1996 led to a flag-related prosecution and further pressure on the party.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1996-06",
@@ -8790,7 +8987,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-085"
+        "research/research-final/data/prototype-deck.csv#DK-085",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -8802,9 +9000,10 @@
       "printed": {
         "unshaded": "Pay damages: State Resources -3. Remove 1 State Harm marker.",
         "shaded": "Legitimacy -1 per 2 State Harm markers on the map (round down, maximum -3). Europe +1.",
-        "flavor": null,
+        "flavor": "European Court of Human Rights judgments in 1997 and 1998 addressed cases arising from the conflict in southeastern Turkey.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1998-04-24",
@@ -8880,7 +9079,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-086"
+        "research/research-final/data/prototype-deck.csv#DK-086",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -8892,9 +9092,10 @@
       "printed": {
         "unshaded": "Official count adopted: the State may pay Relief for up to 2 Reception markers at 1 Resource each.",
         "shaded": "Legitimacy -1 per 2 Displacement markers on the map (round down, maximum -3). Place 1 Reception marker in Western Cities.",
-        "flavor": null,
+        "flavor": "A parliamentary migration commission reported in January 1998 on displacement from the southeast.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1998-01-14",
@@ -9043,7 +9244,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-087"
+        "research/research-final/data/prototype-deck.csv#DK-087",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9055,9 +9257,10 @@
       "printed": {
         "unshaded": "Ceasefire not recognized: the State conducts a free Sweep in up to 2 spaces.",
         "shaded": "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1. PKK Resources +2.",
-        "flavor": null,
+        "flavor": "The PKK announced a third unilateral ceasefire in September 1998.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1998-09-01",
@@ -9114,7 +9317,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-088"
+        "research/research-final/data/prototype-deck.csv#DK-088",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9126,9 +9330,10 @@
       "printed": {
         "unshaded": "The State conducts a free Diplomacy targeting KDP or PUK with +1.",
         "shaded": "Turkey not consulted: State Resources -2. PUK posture one step toward Host.",
-        "flavor": null,
+        "flavor": "The Washington Agreement of September 1998 brought the KDP and PUK together in an effort to end their civil war.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1998-09-17",
@@ -9192,7 +9397,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-089"
+        "research/research-final/data/prototype-deck.csv#DK-089",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9204,9 +9410,10 @@
       "printed": {
         "unshaded": "If Syria is Restricted or Hostile: set Syria to Hostile and flip the Leadership to Abroad. Otherwise Syria posture one step toward Hostile.",
         "shaded": "Dispersal from Syria: move up to 3 Guerrillas from Syria-Bekaa to Mardin-Batman, Şanlıurfa or the KDP Zone, Underground. PKK Resources +2.",
-        "flavor": null,
+        "flavor": "Under Turkish pressure, PKK leader Abdullah Öcalan left Syria in October 1998.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1998-10-09",
@@ -9314,7 +9521,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-090"
+        "research/research-final/data/prototype-deck.csv#DK-090",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9326,9 +9534,10 @@
       "printed": {
         "unshaded": "State Capability (Adana): while Syria is Hostile, Host Pressure may not target Syria. Remove all PKK Bases in Syria-Bekaa to Available now.",
         "shaded": "Slow implementation: if Syria is Hostile, move it to Restricted. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "The October 1998 Adana Minutes recorded Turkish and Syrian security understandings concerning the PKK.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1998-10-20",
@@ -9405,7 +9614,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-091"
+        "research/research-final/data/prototype-deck.csv#DK-091",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9417,9 +9627,10 @@
       "printed": {
         "unshaded": "If the Leadership is Abroad: the State conducts a free Diplomacy targeting the Europe track with +1.",
         "shaded": "Asylum campaign: Europe +1. The PKK conducts a free Rally on the Europe track.",
-        "flavor": null,
+        "flavor": "Abdullah Öcalan was arrested in Rome in November 1998 after leaving Syria.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1998-11-12",
@@ -9506,7 +9717,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-092"
+        "research/research-final/data/prototype-deck.csv#DK-092",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9518,9 +9730,10 @@
       "printed": {
         "unshaded": "If the Leadership is Present: Syria posture one step toward Hostile. Otherwise Legitimacy +1 and PKK Resources -3.",
         "shaded": "Protests in Europe and the southeast: Europe +1. Shift one space with a PKK Base and no Office one level toward Opposition.",
-        "flavor": null,
+        "flavor": "Abdullah Öcalan was captured in February 1999 after months of movement between countries.",
         "always": "if the Leadership is Abroad, apply Capture: remove the Leadership marker; PKK income -1 at each later Resources phase (new parameter `income.pkk.captured`, tune). The PKK keeps its pieces; the game does not end (07 s5.2 item 5). If the Leadership is Present, nothing happens.",
-        "always_source_kind": "supporting document wording, not package printed text"
+        "always_source_kind": "supporting document wording, not package printed text",
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1999-02-15",
@@ -9687,7 +9900,8 @@
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
         "docs/prototype/31-pivotals-structural-draft.md §5.3",
-        "research/research-final/data/prototype-deck.csv#DK-093"
+        "research/research-final/data/prototype-deck.csv#DK-093",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": [
         "Always wording is from an approved design document and includes implementation or explanatory details; final card wording is not specified in the package."
@@ -9701,9 +9915,10 @@
       "printed": {
         "unshaded": "Elections held on time: Legitimacy +1. If Legal Space is Prosecuted, set it to Open.",
         "shaded": "Non-player side: place 2 Offices in the line 4 order, up to the Office limit plus 1.",
-        "flavor": null,
+        "flavor": "HADEP won local offices in the April 1999 elections, including municipalities in the southeast.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1999-04-18",
@@ -9769,7 +9984,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-094"
+        "research/research-final/data/prototype-deck.csv#DK-094",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9781,9 +9997,10 @@
       "printed": {
         "unshaded": "Return event: the State may remove up to 2 Displacement markers for 3 Resources each (07, section 3.3; no Support, Harm stays). Legitimacy +1.",
         "shaded": "Return stays small: Legitimacy -1 if 3 or more Displacement markers are on the map.",
-        "flavor": null,
+        "flavor": "Turkey’s Return to Village project addressed the return of people displaced from rural areas during the conflict.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1999",
@@ -9916,7 +10133,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-095"
+        "research/research-final/data/prototype-deck.csv#DK-095",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -9928,9 +10146,10 @@
       "printed": {
         "unshaded": "Surrender offer: remove up to 3 Active Guerrillas from domestic spaces to Available. Legitimacy +1.",
         "shaded": "Few take the offer: PKK Resources +1. Flip all Guerrillas in up to 2 spaces Underground.",
-        "flavor": null,
+        "flavor": "A repentance law was adopted in August 1999, offering a legal route for some participants to leave armed organizations.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1999-08",
@@ -10093,7 +10312,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-096"
+        "research/research-final/data/prototype-deck.csv#DK-096",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -10105,9 +10325,10 @@
       "printed": {
         "unshaded": "Withdrawal under pressure: the State conducts a free Assault in one space with Active Guerrillas.",
         "shaded": "Declare Ceasefire for the PKK: Ceasefire to Declared and Europe +1. Move up to 4 Guerrillas from domestic spaces to the KDP Zone or PUK Zone (posture permitting), Underground.",
-        "flavor": null,
+        "flavor": "In August 1999, Abdullah Öcalan called on PKK forces to withdraw beyond Turkey’s borders.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1999-08",
@@ -10242,7 +10463,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-097"
+        "research/research-final/data/prototype-deck.csv#DK-097",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -10254,9 +10476,10 @@
       "printed": {
         "unshaded": "Earliest C5. Precondition: Syria posture is Tolerant or Restricted and Legitimacy is 5 or more. Effect: Syria posture to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing.",
         "shaded": "None (single-sided Pivotal Event)",
-        "flavor": null,
+        "flavor": "In 1998, Turkish pressure on Syria culminated in Öcalan’s departure and the Adana security understandings.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "precondition": {
@@ -10348,7 +10571,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-098"
+        "research/research-final/data/prototype-deck.csv#DK-098",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -10360,9 +10584,10 @@
       "printed": {
         "unshaded": "Conduct a Propaganda round (05, section 6).",
         "shaded": null,
-        "flavor": null,
+        "flavor": "The late 1990s brought diplomatic pressure, Öcalan’s capture and calls for PKK withdrawal.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "deckEligible": false,
@@ -10388,7 +10613,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-099"
+        "research/research-final/data/prototype-deck.csv#DK-099",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     },
@@ -10400,9 +10626,10 @@
       "printed": {
         "unshaded": "Ankara names the raid a reprisal for the loss of its soldiers: Legitimacy +1. State Resources +1.",
         "shaded": "Iran and Libya condemn the raid: shift Syria posture one step toward Host, or Europe +1 if Syria is already Host. PKK Resources +1.",
-        "flavor": null,
+        "flavor": "After the August 1986 Turkish air raid into northern Iraq, Iran and Libya condemned the operation.",
         "always": null,
-        "always_source_kind": null
+        "always_source_kind": null,
+        "flavor_source_kind": "New editorial historical context; not present in implemented package."
       },
       "implementation": {
         "date": "1986-09",
@@ -10484,7 +10711,8 @@
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
-        "research/research-final/data/prototype-deck.csv#DK-100"
+        "research/research-final/data/prototype-deck.csv#DK-100",
+        "research/research-final/package-b-coin-design/08-event-deck.md"
       ],
       "unresolved_questions": []
     }
