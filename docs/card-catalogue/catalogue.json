@@ -1560,13 +1560,15 @@
         "deckEligible": false
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "The PKK flag used in 1978–1995; organizational context for the campaign.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
@@ -1717,13 +1719,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/ea520fba3e.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:TurkishAirForceF5-A.jpg",
+        "creator": "Lieuwe Hofstra",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Lieuwe Hofstra, CC BY 4.0, via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Turkish Air Force F-5A in the Netherlands, 1986; not an aircraft shown in the 1987 raid.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -1858,13 +1862,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/a575a12286.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Mardin_location_%C3%96merli.PNG",
+        "creator": "Batuhan duz",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Batuhan duz, CC BY-SA 4.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Ömerli district map, 2015. Pınarcık is in this district; this is not a photograph of the attack.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -1950,13 +1956,15 @@
         "mandatory": true
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/fb8529c5ae.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Syria-Turkey_border_map.png",
+        "creator": "US Department of State",
+        "license": "Public domain (US government)",
+        "license_url": "https://www.usa.gov/government-works",
+        "attribution": "US Department of State, Public domain (US government), via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Map of the Syria–Turkey border; geographical context for the 1987 protocol.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2048,13 +2056,15 @@
         "mandatory": true
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/28bd5a8ca7.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Building_of_the_Grand_National_Assembly_of_Turkey.jpg",
+        "creator": "Makril; building architect Clemens Holzmeister",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Makril; building architect Clemens Holzmeister, CC BY-SA 3.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Grand National Assembly of Turkey, 2007; state political context, not a photograph of this event.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2161,13 +2171,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/4d98bb5080.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Istanbul_photos_by_J.Lubbock_2015_1001.jpg",
+        "creator": "Jwslubbock",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Jwslubbock, CC BY-SA 3.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Newroz celebration in Istanbul, 2015; not the 1987 gatherings.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2237,13 +2249,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/28bd5a8ca7.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Building_of_the_Grand_National_Assembly_of_Turkey.jpg",
+        "creator": "Makril; building architect Clemens Holzmeister",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "attribution": "Makril; building architect Clemens Holzmeister, CC BY-SA 3.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Grand National Assembly of Turkey, 2007; government context, not the planned 1987 strike force.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2316,13 +2330,15 @@
         "eventConfidence": "High"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/ba6a091dbb.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Refugee_camp_for_Kurds_in_Kermanshah,_Iran,_1988.jpg",
+        "creator": "Sasan Moayedi / Fars Media Corporation",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Sasan Moayedi / Fars Media Corporation, CC BY 4.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Kurdish refugees in Iran after Halabja, April 1988; related Anfal displacement, not Badinan or Turkey.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2398,13 +2414,15 @@
         "eventConfidence": "High"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/7d991cc36f.jpeg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Kurdish_refugees_travel_by_truck,_Turkey,_1991.jpeg",
+        "creator": "PHAN April Hatton / US Department of Defense",
+        "license": "Public domain (US government)",
+        "license_url": "https://www.usa.gov/government-works",
+        "attribution": "PHAN April Hatton / US Department of Defense, Public domain (US government), via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Iraqi Kurdish refugees during Operation Provide Comfort, 1991; not the 1988 arrivals.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2531,13 +2549,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/077717eef1.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Ziya_Gokalp_Secondary_School.jpg",
+        "creator": "Tragic Kingdom",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Tragic Kingdom, CC BY-SA 4.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "A school in Diyarbakır, 2021; educational context, not a school attacked in 1988.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2621,13 +2641,15 @@
         "eventConfidence": "High"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/f53c0f5a76.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:2014_Turkish_presidential_election_ballot_box.JPG",
+        "creator": "T.C. Ataturkiye",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "T.C. Ataturkiye, CC BY-SA 4.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Ballot box in Turkey, 2014 presidential election; electoral context, not the 1989 vote.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -2960,13 +2982,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/995ba848eb.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Turkish_Army_vehicles_in_south-eastern_Turkey.jpg",
+        "creator": "Mahmut Bozarslan / Voice of America",
+        "license": "Public domain (VOA; United States)",
+        "license_url": "https://www.usa.gov/government-works",
+        "attribution": "Mahmut Bozarslan / Voice of America, public domain in the United States, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Turkish Army vehicles in southeastern Turkey, 2015; not the force increase in 1989.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -3041,18 +3065,21 @@
         "eventConfidence": "High"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/kendal-nezan-960.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Kendal_NEZAN.jpg",
+        "creator": "Frédérique LE BRUN",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Frédérique LE BRUN, CC BY-SA 4.0, via Wikimedia Commons; 960-pixel resized version.",
+        "caption": "Kendal Nezan in 2014, director of the Kurdish Institute of Paris, a 1989 conference organizer; not a photograph of the conference.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
         "research/research-final/data/prototype-deck.csv#DK-028",
-        "research/research-final/package-b-coin-design/08-event-deck.md"
+        "research/research-final/package-b-coin-design/08-event-deck.md",
+        "https://www.merip.org/1990/03/report-from-paris-the-kurdish-conference/"
       ],
       "unresolved_questions": []
     },
@@ -3149,13 +3176,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/f53c0f5a76.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:2014_Turkish_presidential_election_ballot_box.JPG",
+        "creator": "T.C. Ataturkiye",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "T.C. Ataturkiye, CC BY-SA 4.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Ballot box in Turkey, 2014 presidential election; electoral context, not the 1989 vote.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -3239,13 +3268,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/703058887e.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hakkari_districts.png",
+        "creator": "Rarelibra and later contributors",
+        "license": "Public domain (creator dedication)",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Hakkari_districts.png",
+        "attribution": "Rarelibra and later contributors, Public domain (creator dedication), via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Hakkâri districts map, updated 2019; İkikaya is in Yüksekova district.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -3334,13 +3365,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/b5c556d747.png",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hakkari_location_%C3%87ukurca.png",
+        "creator": "Batuhan duz",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Batuhan duz, CC BY-SA 4.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Çukurca district map, 2016; geographic context, not the 1989 village action.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -3406,13 +3439,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/023a3c8070.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:%C4%B0nsan_Haklar%C4%B1_Derne%C4%9Fi_logo.svg",
+        "creator": "İnsan Hakları Derneği",
+        "license": "Public domain (Commons: simple logo)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Simple_designs",
+        "attribution": "İnsan Hakları Derneği, Public domain (Commons: simple logo), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Human Rights Association logo, uploaded in 2021; human-rights context, not an image of the 1989 decree.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -3538,13 +3573,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/023a3c8070.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:%C4%B0nsan_Haklar%C4%B1_Derne%C4%9Fi_logo.svg",
+        "creator": "İnsan Hakları Derneği",
+        "license": "Public domain (Commons: simple logo)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Simple_designs",
+        "attribution": "İnsan Hakları Derneği, Public domain (Commons: simple logo), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "Human Rights Association logo, uploaded in 2021; human-rights context, not an image of the reported incidents.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -3616,13 +3653,15 @@
         "eventConfidence": "Moderate"
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/f53c0f5a76.jpg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:2014_Turkish_presidential_election_ballot_box.JPG",
+        "creator": "T.C. Ataturkiye",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "T.C. Ataturkiye, CC BY-SA 4.0, via Wikimedia Commons; displayed at reduced size.",
+        "caption": "Ballot box in Turkey, 2014 presidential election; electoral context, not the 1989 expulsions.",
+        "historical_relevance": "Contextual illustration; the caption states subject and date."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
@@ -3659,13 +3698,15 @@
         "sources": []
       },
       "image": {
-        "status": "placeholder",
-        "path": null,
-        "reason": "Subject, period and reuse permission have not been confirmed for an image.",
-        "source_page": null,
-        "creator": null,
-        "license": null,
-        "attribution": null
+        "status": "illustrative",
+        "path": "assets/641ff38cf8.svg",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Flag_of_the_Kurdistan_Workers%27_Party_(1978-1995).svg",
+        "creator": "Unknown; SVG originally uploaded by -jha-",
+        "license": "Public domain (Commons: ineligible for copyright)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_subject_matter#Flags",
+        "attribution": "Unknown; SVG originally uploaded by -jha-, Public domain (Commons: ineligible for copyright), via Wikimedia Commons. Displayed at reduced size.",
+        "caption": "The PKK flag used in 1978–1995; organizational context for the campaign.",
+        "historical_relevance": "Contextual illustration; see caption for date and relation to event."
       },
       "source_references": [
         "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
