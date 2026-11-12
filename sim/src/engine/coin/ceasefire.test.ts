@@ -9,11 +9,11 @@ const at = (s: GameState, ceasefire: string): GameState => setTrack(c3(s), "ceas
 const declare = (faction = "pkk"): AnyCommand => ({ type: "DeclareCeasefire", faction });
 const rb = (s: GameState, side: string): number => ruleset.spaces.reduce((n, x) => n + (s.spaces[x.id]?.markers["restraintBroken"]?.[side] ?? 0), 0);
 const warnings = (s: GameState, c: AnyCommand): string[] => engine.validate(ruleset, s, c).warnings.map((w) => w.message);
-const attack = op("pkk", "opOnly", { op: "pkk.attack", locations: ["hakkari"] });
-const coerce = op("pkk", "opOnly", { op: "pkk.coerce", locations: ["mardin-batman"] });
-const rallyBase = op("pkk", "opOnly", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "base" } } });
-const rallyPlace = op("pkk", "opOnly", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "place" } } });
-const assault = op("state", "opOnly", { op: "state.assault", locations: ["botan"] });
+const attack = op("pkk", "limitedOp", { op: "pkk.attack", locations: ["hakkari"] });
+const coerce = op("pkk", "limitedOp", { op: "pkk.coerce", locations: ["mardin-batman"] });
+const rallyBase = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "base" } } });
+const rallyPlace = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "place" } } });
+const assault = op("state", "limitedOp", { op: "state.assault", locations: ["botan"] });
 const activeBotan = (s: GameState): GameState => setPieces(setPieces(s, "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
 
 describe("Declare Ceasefire (07 s7.1)", () => {
@@ -44,9 +44,9 @@ describe("Ceasefire restrictions and breach (07 s7.2)", () => {
   it("Coerce and a domestic Base are forbidden only from Reciprocal Restraint", () => {
     expect(warnings(at(turnOf("pkk"), "declared"), coerce)).toEqual([]);
     expect(play(at(turnOf("pkk"), "reciprocalRestraint"), coerce).state.tracks["ceasefire"]).toBe("none");
-    expect(warnings(at(turnOf("pkk"), "talks"), rallyBase)).toHaveLength(1);
-    expect(warnings(at(turnOf("pkk"), "talks"), rallyPlace)).toEqual([]);
-    expect(play(at(turnOf("pkk"), "talks"), rallyPlace).state.tracks["ceasefire"]).toBe("talks");
+    expect(warnings(at(turnOf("pkk"), "reciprocalRestraint"), rallyBase)).toHaveLength(1);
+    expect(warnings(at(turnOf("pkk"), "reciprocalRestraint"), rallyPlace)).toEqual([]);
+    expect(play(at(turnOf("pkk"), "reciprocalRestraint"), rallyPlace).state.tracks["ceasefire"]).toBe("reciprocalRestraint");
   });
 
   it("State Assault while Declared places the State marker only; from Reciprocal Restraint it breaks it, Legitimacy -2", () => {

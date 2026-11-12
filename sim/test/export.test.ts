@@ -21,7 +21,7 @@ afterAll(() => {
 });
 const focus = { panel: "board" as const, selectedSpace: null, selectedPieces: [], hoveredActionId: null };
 
-const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 7, name: "export" });
+const { sessionId, head } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 7, name: "export" });
 let state = head.state;
 let headId = head.actionId;
 let firstAction = "";
@@ -51,7 +51,7 @@ describe("JSON export coin-sim-export/1", () => {
   it("holds the S0 round metrics row, the result and the referenced package, categories and states", () => {
     expect(data.metrics.filter((m) => m["propaganda_round"] === 1)).toHaveLength(1);
     expect(data.sessions[0]?.["result"]).toMatchObject({ reason: "final scoring" });
-    expect(data.packages[0]?.["assumptions"]).toHaveLength(18);
+    expect(data.packages[0]?.["assumptions"]).toHaveLength(17);
     expect(data.categories.map((c) => c["category_id"])).toEqual(["pacing"]);
     expect(data.states.every((s) => s["derived"] !== null && !("content" in s))).toBe(true);
     expect(data.index.annotations.find((i) => i["annotation_id"] === noteId)).toMatchObject({ action_id: firstAction, package_hash: data.packages[0]?.["package_hash"] });

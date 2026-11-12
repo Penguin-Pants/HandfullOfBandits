@@ -21,7 +21,7 @@ afterAll(async () => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-const { sessionId } = service.createSession({ dir: kurdishDir, scenarioId: "scenario-a", seed: 3, name: "links" });
+const { sessionId } = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 3, name: "links" });
 const expected = exportJson(db, { sessionIds: [sessionId], withStates: false, appVersion: "0.1.0", exportedAt: "" });
 
 describe("P4-12 export downloads", () => {

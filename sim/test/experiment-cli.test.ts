@@ -160,7 +160,7 @@ describe("experiment runner (20 Phase 2)", () => {
 describe("game failures are incomplete, never losses (19 s5, s7)", () => {
   const play = (pkk: ObservationPlayer, limits = { commands: 2000, decisionMs: null }): JournalEvent[] => {
     const events: JournalEvent[] = [];
-    runGame(engine, ruleset, "scenario-a", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-RANDOM@1", pkk: "P-X@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, (id) => (id === "P-X@1" ? pkk : resolvePlayer(id)), limits, (e) => events.push(e));
+    runGame(engine, ruleset, "full-campaign", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-RANDOM@1", pkk: "P-X@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, (id) => (id === "P-X@1" ? pkk : resolvePlayer(id)), limits, (e) => events.push(e));
     return events;
   };
   const random = resolvePlayer("P-RANDOM@1") as ObservationPlayer;
@@ -180,20 +180,20 @@ describe("game failures are incomplete, never losses (19 s5, s7)", () => {
   });
 
   it("refuses a player whose faction differs from its seat", () => {
-    expect(() => runGame(engine, ruleset, "scenario-a", { gameId: "g", seed: 3, conditionId: "c", players: { state: "P-RANDOM@1", pkk: "P-RANDOM@1" }, playerSeeds: {}, repeat: 0 }, resolvePlayer, { commands: 10, decisionMs: null }, () => undefined)).toThrow(/plays pkk, not state/);
+    expect(() => runGame(engine, ruleset, "full-campaign", { gameId: "g", seed: 3, conditionId: "c", players: { state: "P-RANDOM@1", pkk: "P-RANDOM@1" }, playerSeeds: {}, repeat: 0 }, resolvePlayer, { commands: 10, decisionMs: null }, () => undefined)).toThrow(/plays pkk, not state/);
   });
 
   it("applies the decision time limit to full-state controls too", () => {
     let now = 0;
     const events: JournalEvent[] = [];
-    runGame(engine, ruleset, "scenario-a", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-CTRL-concentration@1", pkk: "P-CTRL-sanctuary@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, resolvePlayer, { commands: 2000, decisionMs: 5 }, (e) => events.push(e), () => (now += 10));
+    runGame(engine, ruleset, "full-campaign", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-CTRL-concentration@1", pkk: "P-CTRL-sanctuary@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, resolvePlayer, { commands: 2000, decisionMs: 5 }, (e) => events.push(e), () => (now += 10));
     expect(events.at(-1)).toMatchObject({ t: "end", status: "decisionTimeLimit" });
   });
 
   it("ends with decisionTimeLimit when a decision is too slow", () => {
     let now = 0;
     const events: JournalEvent[] = [];
-    runGame(engine, ruleset, "scenario-a", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-RANDOM@1", pkk: "P-RANDOM@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, resolvePlayer, { commands: 2000, decisionMs: 5 }, (e) => events.push(e), () => (now += 10));
+    runGame(engine, ruleset, "full-campaign", { gameId: "g", seed: 3, conditionId: "c", players: { state: "S-RANDOM@1", pkk: "P-RANDOM@1" }, playerSeeds: { state: 1, pkk: 2 }, repeat: 0 }, resolvePlayer, { commands: 2000, decisionMs: 5 }, (e) => events.push(e), () => (now += 10));
     expect(events.at(-1)).toMatchObject({ t: "end", status: "decisionTimeLimit" });
   });
 });

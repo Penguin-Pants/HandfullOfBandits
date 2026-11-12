@@ -19,9 +19,14 @@ const resetInto = (campaign: string, flags: Record<string, boolean> = {}): GameS
 
 describe("P3c-01 structural switches (10 s6.2)", () => {
   it("sets the switches of the first Campaign and every earlier one at setup", () => {
-    for (const id of ["s0", "scenario-a", "full-campaign"]) expect(on(engine.start(ruleset, id, 7).state), id).toEqual([SWITCH.hotPursuit]);
-    for (const id of ["scenario-b", "scenario-c"]) expect(on(engine.start(ruleset, id, 7).state), id).toEqual([...C3_ON].sort());
-    expect(engine.start(ruleset, "scenario-b", 7).state.flags[SWITCH.hotPursuit]).toBe(false);
+    expect(on(engine.start(ruleset, "full-campaign", 7).state)).toEqual([SWITCH.hotPursuit]);
+    // A game that starts in C3 (test fixture: the full campaign without C1 and C2).
+    const full = ruleset.scenarios["full-campaign"];
+    if (full === undefined) throw new Error("full-campaign");
+    const later = { ...ruleset, scenarios: { ...ruleset.scenarios, "full-campaign": { ...full, campaigns: ["C3", "C4", "C5"], finalRound: 3 } } };
+    const start = engine.start(later, "full-campaign", 7).state;
+    expect(on(start)).toEqual([...C3_ON].sort());
+    expect(start.flags[SWITCH.hotPursuit]).toBe(false);
   });
   it("switches on and off at each Reset, as the 10 s6.2 rows", () => {
     const rows: [string, string[]][] = [

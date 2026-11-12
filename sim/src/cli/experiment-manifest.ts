@@ -40,7 +40,7 @@ export const manifestSchema = z.strictObject({
   id,
   stage: z.enum(STAGES),
   description: z.string().min(1),
-  scenario: z.literal("scenario-a"),
+  scenario: z.literal("full-campaign"),
   package: z.strictObject({ dir: z.string().min(1), hash: hex64 }),
   expected: z.strictObject({
     thresholds: z.record(z.string(), z.number().int()),

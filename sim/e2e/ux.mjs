@@ -1,4 +1,4 @@
-/* global process, console, fetch, setTimeout, document, innerWidth, innerHeight, DOMPoint, getComputedStyle */
+/* global process, console, fetch, setTimeout, document, innerWidth, innerHeight, scrollX, scrollY, DOMPoint, getComputedStyle */
 // Real browser checks. Build first; optional Playwright must be available in NODE_PATH.
 import {createRequire} from 'node:module';
 import {spawn} from 'node:child_process';
@@ -19,7 +19,7 @@ try {
  for(let i=0;i<50;i++){try{if((await fetch(base+'/api/packages')).ok)break;}catch{/* Server may still be starting. */}await new Promise(r=>setTimeout(r,100));}
  browser=await chromium.launch({executablePath:process.env.HOB_CHROMIUM ?? '/usr/bin/chromium',args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1920,height:1080}});
- const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('dialog',d=>d.accept());
  await page.goto(base);await page.getByRole('button',{name:'Start',exact:true}).click();await page.getByRole('button',{name:/Reveal first card/}).click();
  await page.getByRole('heading',{name:'Choose your action'}).waitFor();
  const geometry=await page.evaluate(()=>{
@@ -66,6 +66,46 @@ try {
   await page.screenshot({path:join(shots,`after-${label}-collapsed.png`)});
   await page.getByRole('button',{name:'Show actions',exact:true}).click();
 
+ }
+
+ // Phase 3: board-first full-window layout and wheel and drag navigation at the two target sizes.
+ for(const [width,height,label] of [[1920,1080,'1920'],[1366,768,'1366']]) {
+  await page.setViewportSize({width,height});await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
+  await page.getByRole('heading',{name:'Choose your action'}).waitFor();await page.waitForTimeout(300);
+  const measure=()=>page.evaluate(()=>{
+   const rect=sel=>document.querySelector(sel)?.getBoundingClientRect(),board=rect('[aria-label="Board"]'),root=document.documentElement;
+   return {ratio:board.width*board.height/(innerWidth*innerHeight),noScroll:root.scrollWidth<=innerWidth&&root.scrollHeight<=innerHeight&&scrollX===0&&scrollY===0,toolbar:rect('.map-navigation').height,track:rect('.track-card')?.height??0,side:rect('aside.side')?.width??0,navWidth:rect('.map-navigation').width,uncovered:(board.width*board.height-['aside.side','.track-card','.map-caption','.forces-bar','.space-inspector'].reduce((sum,sel)=>{const r=rect(sel);return r===undefined?sum:sum+Math.max(0,Math.min(r.right,board.right)-Math.max(r.left,board.left))*Math.max(0,Math.min(r.bottom,board.bottom)-Math.max(r.top,board.top));},0))/(innerWidth*innerHeight)};
+  });
+  const open=await measure();
+  check(open.noScroll,'no page scroll, panels open '+label,open);
+  check(open.toolbar<=(width>=1900?48:96),'compact toolbar (one row at 1920, two at 1366) '+label,open);
+  if(width>=1900){check(open.ratio>=.6,'board covers 60% of the window with panels open '+label,open);check(open.side<=420&&open.track<=60,'side panel and track card compact '+label,open);}
+  else {check(open.side<=360,'side panel width '+label,open);check(open.uncovered>=.6,'uncovered board is 60% of the window with the overlay side panel open '+label,open);check(open.navWidth>=width-12,'side panel takes no layout column: the toolbar has the full width '+label,open);}
+  await page.screenshot({path:join(shots,`board-first-${label}-panels.png`)});
+  await page.getByRole('button',{name:'Map only (M)',exact:true}).click();await page.waitForTimeout(200);
+  const only=await measure();
+  check(only.noScroll&&only.ratio>=.85,'board covers 85% of the window in Map only '+label,only);
+  await page.screenshot({path:join(shots,`board-first-${label}-maponly.png`)});
+  await page.getByRole('button',{name:'Show panels (M)',exact:true}).click();await page.getByRole('button',{name:'Fit map'}).click();
+  const board=page.getByRole('img',{name:'Board'}),zoom=page.getByLabel('Map zoom'),box=await board.boundingBox();
+  const px=box.x+box.width/2+120,py=box.y+box.height/2+60;
+  const under=()=>board.evaluate((svg,[x,y])=>{const p=new DOMPoint(x,y).matrixTransform(svg.getScreenCTM().inverse());return [p.x,p.y];},[px,py]);
+  const was=await under(),zoomWas=await zoom.textContent();
+  await page.mouse.move(px,py);await page.mouse.wheel(0,-100);await page.waitForTimeout(150);
+  check(await zoom.textContent()!==zoomWas&&await page.evaluate(()=>scrollY)===0,'wheel over the board zooms and the page does not scroll '+label,{zoomWas,now:await zoom.textContent()});
+  const now=await under();
+  check(Math.hypot(now[0]-was[0],now[1]-was[1])<3,'wheel zoom keeps the point under the pointer '+label,{was,now});
+  // A small centered zoom keeps the board margin in view, so a background start point exists at every window size.
+  await page.getByRole('button',{name:'Fit map'}).click();await page.getByRole('button',{name:'Zoom in'}).click();await page.getByRole('button',{name:'Zoom in'}).click();await page.waitForTimeout(150);
+  const before=await board.getAttribute('viewBox');
+  const start=await page.evaluate(()=>{const b=document.querySelector('[aria-label="Board"]').getBoundingClientRect();for(let x=b.left+20;x<b.right-20;x+=9)for(let y=b.top+20;y<b.bottom-20;y+=9){const el=document.elementFromPoint(x,y);if(el&&el.closest('[data-space]')===null&&!el.closest('[role="meter"]'))return [x,y];}return null;});
+  check(start!==null,'board background point found '+label);
+  await page.mouse.move(start[0],start[1]);await page.mouse.down();await page.mouse.move(start[0]+80,start[1]+40,{steps:5});await page.mouse.up();
+  check(await board.getAttribute('viewBox')!==before&&await page.locator('[aria-label$=" detail"]').count()===0,'background drag pans without selecting a space '+label);
+  for(let i=0;i<12;i++){await page.mouse.wheel(0,-100);}await page.waitForTimeout(150);
+  check(await zoom.textContent()==='400%','wheel zoom stops at 400% '+label);
+  await page.screenshot({path:join(shots,`board-first-${label}-zoomed.png`)});
+  await page.getByRole('button',{name:'Fit map'}).click();
  }
  await page.setViewportSize({width:1920,height:1080});await page.getByRole('button',{name:'Fit map'}).click();
  const europe=page.getByRole('meter',{name:'Europe track',exact:true});

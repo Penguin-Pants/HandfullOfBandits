@@ -98,7 +98,7 @@ export async function nativeChecks({chromium,base,shots,check}) {
   // Reach a real Propaganda decision through legal engine commands, never synthetic state.
   const packages=await (await page.request.get(base+'/api/packages')).json();
   const pkg=packages.find(p=>p.packageId==='kurdish-coin'),loaded=loadPackage(readPackageDir(pkg.dir));if(!loaded.ok)throw new Error('Package did not load');
-  const created=await (await page.request.post(base+'/api/sessions',{data:{dir:pkg.dir,scenarioId:'scenario-a',seed:7,name:'Native Propaganda decision'}})).json();
+  const created=await (await page.request.post(base+'/api/sessions',{data:{dir:pkg.dir,scenarioId:'full-campaign',seed:7,name:'Native Propaganda decision'}})).json();
   const engine=createEngine(coinHandlers);let head=created.head,steps=0;
   while(!(head.view.status.phase==='propaganda'&&head.view.status.propagandaPhases[head.view.status.propagandaStep]==='legitimacy'&&head.view.status.emergencyMoves.length>0)){
    if(steps++>2000)throw new Error('No Propaganda choice reached');

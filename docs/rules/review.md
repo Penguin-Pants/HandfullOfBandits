@@ -63,3 +63,12 @@ One rules file edited in place. Existing section numbers kept, so `build-ruleboo
 ## Validation
 
 Not run: `make rulebook`. This machine has no Pandoc or XeLaTeX, so the PDF was not rebuilt and the committed PDF is stale. Rebuild it where the toolchain exists, then check page count, overfull boxes and contents links.
+
+## Stale PDF (2026-11-12)
+
+`handful-of-bandits-rules-a4.pdf` is stale. It was built before these changes to `prototype-rules.md`:
+
+- Designer decisions 1 to 14 (`docs/audit/OPEN_QUESTIONS.md`): no Talks and no Negotiated Outcome, March group, Op Only box, Europe Ban marker, Reception, line 6.
+- Scenarios A, B and C and the S0 test are archived. Sections 10.1, 10.2, 10.6 and 10.7 changed. Section numbers are kept.
+
+Not run: `make rulebook` (no Pandoc or XeLaTeX on this machine). Rebuild the PDF where the toolchain exists.

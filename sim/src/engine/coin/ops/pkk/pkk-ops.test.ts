@@ -15,9 +15,9 @@ describe("Rally (06 s4.1)", () => {
     expect(res(state)).toBe(4);
   });
 
-  it("selects the Europe track: Europe +1; with the Ban marker it costs 2 and stops at 3", () => {
+  it("selects the Europe track: Europe +1; with the Europe Ban marker it costs 2 and stops at 3", () => {
     expect(play(start, rally("limitedOp", { europe: {} })).state.tracks["europe"]).toBe(2);
-    const banned = setMarkers(start, "europe", "ban", 1);
+    const banned = setMarkers(start, "europe", "europeBan", 1);
     expect(res(play(banned, rally("limitedOp", { europe: {} })).state)).toBe(3);
     expect(codes(setTrack(banned, "europe", 3), rally("limitedOp", { europe: {} }))).toEqual(["rallyEuropeCap"]);
   });

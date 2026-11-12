@@ -67,9 +67,9 @@ it("rejects hot pursuit overflow, forbidden boxes, extra Op entry and wrong timi
   expect(codes(base,border("syria-bekaa",1))).toContain("crossBorderTarget");
   expect(codes(base,border("kdp-zone",1,"after"))).toContain("saTiming");
   expect(codes(base,border("kdp-zone",1,"before",[{from: "hakkari",count: 1}]))).toContain("crossBorderMoves");
-  const scenario = ruleset.scenarios["s0"];
-  if (scenario === undefined) throw new Error("s0");
-  const deny = {...ruleset,scenarios: {...ruleset.scenarios,s0: {...scenario,options: {...scenario.options,hotPursuit: "deny"}}}};
+  const scenario = ruleset.scenarios["full-campaign"];
+  if (scenario === undefined) throw new Error("full-campaign");
+  const deny = {...ruleset,scenarios: {...ruleset.scenarios,"full-campaign": {...scenario,options: {...scenario.options,hotPursuit: "deny"}}}};
   expect(engine.validate(deny,base,border("kdp-zone",1)).violations.map(v => v.code)).toContain("crossBorderAccess");
 });
 it("Host Pressure requires a PKK piece and Leadership in Syria; KDP backfires on 2", async () => {
@@ -142,7 +142,7 @@ it("ends a Rally when Host Pressure leaves no legal, affordable location, keepin
   let state = noGuerrillas(withRoll(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), 1));
   state = ruleset.spaces.reduce((s, x) => setPieces(s, x.id, "pkkBase", 0), state);
   state = setPieces(setPieces(state, "kdp-zone", "guerrilla", 1, "active"), "kdp-zone", "pkkBase", 1);
-  state = setTrack(setMarkers({...state, pools: {...state.pools, guerrilla: {available: 0, outOfPlay: 0}}}, "europe", "ban", 1), "europe", 3);
+  state = setTrack(setMarkers({...state, pools: {...state.pools, guerrilla: {available: 0, outOfPlay: 0}}}, "europe", "europeBan", 1), "europe", 3);
   const before = Number(state.tracks["resources.pkk"]);
   const next = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone"], perLocation: {"kdp-zone": {option: "flip"}}, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
   expect(next.state.pending).toBeNull();

@@ -93,7 +93,7 @@
     2. **Legal politics.** CT has no legal party. The evidence does not support treating legal parties as PKK organs [F-018; C-025].
     3. **Government pieces.** The CT French and Algerian split must not become a Turkish and Kurdish split of State pieces. Guards are local and conditional [F-011; F-057].
     4. **Hosts.** Syria, the KDP and the PUK changed on their own interests [F-020; F-022; F-051].
-    5. **Termination.** Talks and the capture of the leader do not give automatic victory or destroy the organization [F-021; F-038; E-0020].
+    5. **Termination.** A ceasefire and the capture of the leader do not give automatic victory or destroy the organization [F-021; F-038; E-0020].
   subsections: []
 - id: 01 s4
   file: 01-comparative-coin-research.md
@@ -215,7 +215,7 @@
     | Q4 Village Guards | DD-08 |
     | Q5 Displacement | DD-07. Village Clearance from OHAL. No Pop loss |
     | Q6 Legal party and bans | DD-10. Non-player. Successor at next Propaganda round |
-    | Q7 Ceasefire and talks | DD-11. Adds Reciprocal Restraint |
+    | Q7 Ceasefire | DD-11. Adds Reciprocal Restraint |
     | Q8 Covert state violence | Not in the decisions file. Chapter 04 adds face-down Covert markers that become State Harm when revealed. Record a decision |
     | Q9 Outside pressure | DD-05 Europe track and Legitimacy (DD-06.3) |
     | Q10 Rival groups and tags | Hizbullah by events. Space tags not adopted |
@@ -744,7 +744,7 @@
     | KDP posture | Host, Tolerant, Restricted, Hostile, Aligned with Turkey | Host | Same | 07, section 5 |
     | PUK posture | Host, Tolerant, Restricted, Hostile, Aligned with Turkey | Tolerant | Same | 07, section 5 |
     | Europe | 0 to 5 | 1 | Rally on Europe, Diplomacy, Propaganda adjustment, events, Ban marker | 07, section 9 |
-    | Ceasefire | None, Declared, Reciprocal Restraint, Talks | None | PKK declaration (from C3), State acceptance, attacks, spoiler events | 07, section 7 |
+    | Ceasefire | None, Declared, Reciprocal Restraint | None | PKK declaration (from C3), State acceptance, attacks, spoiler events | 07, section 7 |
     | Legal Space | Absent, Open, Prosecuted, Banned | Absent | HEP event (C3), closure case, Legal Politics procedure | 07, section 6 |
     | Campaign | C1 to C5 | C1 | Each Propaganda Reset | 05 |
     | Victory score (2 markers) | 0 to 84 | State 21, PKK 4 | Recompute after each change | 09 |
@@ -882,7 +882,7 @@
     1. The deck has five piles, one per Campaign (C1 to C5). Each pile has 12 Event cards and one Propaganda card (DD-13.1). A Campaign is the Event cards between two Propaganda rounds (CT 2.4.1; DD-01.3).
     2. Play one card at a time. Only the current card is face up. There is no next-card preview (CT 2.2; DD-04.5).
     3. Each Event card gives both factions at most one action. A Propaganda card starts a Propaganda round (section 6).
-    4. The game ends after the fifth Propaganda round, at an earlier victory check (09) or at a Negotiated Outcome (07, section 7.4).
+    4. The game ends after the fifth Propaganda round or at an earlier victory check (09). A ceasefire never ends the game (07, section 7).
   subsections:
     - 1.1 Deck building
 - id: 05 s1.1
@@ -1069,7 +1069,7 @@
     4. Disputed harm: -1 if 3 or more Disputed Harm markers are on the map.
     5. Covert exposure: if 3 or more face-down Covert markers are on the map, the PKK picks one at random and reveals it. It becomes a State Harm marker. Legitimacy -2.
     6. Europe adjustment: Europe +1 if the State Harm count is at least 3 more than the PKK Harm count. Europe -1 if the PKK Harm count is at least 3 more than the State Harm count. Then, if Europe is 4 or 5, Legitimacy -1.
-    7. Gains: +1 if Legal Space is Open and 2 or more Offices are on the map. +1 if Ceasefire is Reciprocal Restraint or Talks and the State has no Restraint Broken marker. +1 if step 2 flipped no marker.
+    7. Gains: +1 if Legal Space is Open and 2 or more Offices are on the map. +1 if Ceasefire is Reciprocal Restraint and the State has no Restraint Broken marker. +1 if step 2 flipped no marker.
     8. Emergency Rule step: the State may move the track one step (07, section 8.2).
   subsections: []
 - id: 05 s6.5
@@ -1119,8 +1119,7 @@
     The game ends at the first of:
 
     1. A victory phase in which a faction meets its threshold and passes its Harm gate (09, section 3).
-    2. A Negotiated Outcome (07, section 7.4; 09, section 5).
-    3. The end of phase 6.6 in the final Propaganda round. Score margins (09, section 4).
+    2. The end of phase 6.6 in the final Propaganda round. Score margins (09, section 4).
 
     After the game, fill in the outcome record sheet (09, section 6). It is a record, not a second score (DD-14.5).
   subsections: []
@@ -1170,9 +1169,7 @@
         R --> U[Upkeep]
         U --> L[Legitimacy and Emergency Rule]
         L --> LP[Legal Politics from C3 and ceasefire step]
-        LP --> N{Negotiated Outcome?}
-        N -- Yes --> W2[Game ends: margins decide terms]
-        N -- No --> CA[Civic Action and Agitation]
+        LP --> CA[Civic Action and Agitation]
         CA --> FR{Final round?}
         FR -- Yes --> FS[Reveal Covert markers. Score margins. Game ends]
         FR -- No --> RD[Redeploy]
@@ -1606,10 +1603,10 @@
     | Disputed Harm markers 3 or more | Propaganda | -1 | F-029; F-058 |
     | Europe at 4 or 5 | Propaganda | -1 | F-042; M-024 |
     | Party ban | Legal Politics | -2 | F-015; F-017; M-007 |
-    | State breaks Reciprocal Restraint or Talks | At once | -2 | F-039 |
+    | State breaks Reciprocal Restraint | At once | -2 | F-039 |
     | Step Normalizing to OHAL | Propaganda | -1 | F-055 |
     | Open Legal Space and 2+ Offices | Propaganda | +1 | F-052 |
-    | Reciprocal Restraint or Talks kept by the State | Propaganda | +1 | F-039 |
+    | Reciprocal Restraint kept by the State | Propaganda | +1 | F-039 |
     | No New Displacement marker flipped this round | Propaganda | +1 | Claude restraint step |
     | Events | Card | As printed | F-042; F-043; M-024; M-025 |
 
@@ -1753,13 +1750,13 @@
   subsections: []
 - id: 07 s7
   file: 07-political-civilian-and-sanctuary-systems.md
-  heading: Ceasefire and talks (DD-11)
-  text: ""
+  heading: Ceasefire (DD-11)
+  text: "The Ceasefire track has three steps: None, Declared and Reciprocal Restraint. A ceasefire is temporary and never ends the game. Designer decision of 2026-11-12 (`docs/audit/OPEN_QUESTIONS.md`, item 1): no settlement step exists, because Turkish territorial integrity and Kurdish independence are directly opposed."
   subsections:
     - 7.1 Declaration
     - 7.2 Restrictions and breaches
     - 7.3 Ceasefire step (Propaganda, Legal Politics phase)
-    - 7.4 Negotiated Outcome
+    - 7.4 Not used
 - id: 07 s7.1
   file: 07-political-civilian-and-sanctuary-systems.md
   heading: Declaration
@@ -1773,30 +1770,20 @@
     |---|---|---|
     | Declared | Attack, Ambush, Strike Collaborators | No restriction. Each State Assault, Village Clearance, Cross-Border or Covert Action places the State Restraint Broken marker |
     | Reciprocal Restraint | Attack, Ambush, Strike Collaborators, Coerce, place a domestic Base (DD-19.3) | Assault, Village Clearance, Cross-Border, Covert Action |
-    | Talks | As Reciprocal Restraint | As Reciprocal Restraint |
 
-    Breach: a faction that takes a forbidden action places its Restraint Broken marker and the Ceasefire goes to None. Free actions granted by events count as actions for this table. PKK breach: Europe -1. State breach (Reciprocal Restraint or Talks only): Legitimacy -2. A spoiler event may set the Ceasefire to None with no Restraint Broken marker and a neutral title; attribution stays as the sources state it [E-0091; E-0092; E-0093; F-038; F-053].
+    Breach: a faction that takes a forbidden action places its Restraint Broken marker and the Ceasefire goes to None. Free actions granted by events count as actions for this table. PKK breach: Europe -1. State breach (Reciprocal Restraint only): Legitimacy -2. A spoiler event may set the Ceasefire to None with no Restraint Broken marker and a neutral title; attribution stays as the sources state it [E-0091; E-0092; E-0093; F-038; F-053].
   subsections: []
 - id: 07 s7.3
   file: 07-political-civilian-and-sanctuary-systems.md
   heading: Ceasefire step (Propaganda, Legal Politics phase)
   text: |-
     1. Declared, no State Restraint Broken marker: the State may accept. Ceasefire to Reciprocal Restraint. If it does not, the PKK keeps Declared or ends it (None). If the PKK ends a ceasefire that it declared by section 7.1, Europe -1, so a declaration that is not kept returns its Europe gain [tune].
-    2. Reciprocal Restraint that was already in force at the previous Propaganda round, with no breach since: each faction secretly chooses yes or no to Talks. Two yes: Talks.
-    3. Talks that was already in force at the previous Propaganda round, with no breach since: resolve section 7.4.
-    4. Either faction may leave Talks (to Reciprocal Restraint) or Reciprocal Restraint (to None) at this step. The State pays no cost. The PKK pays Europe -1 if it leaves Reciprocal Restraint for None (step 1 rule).
+    2. Either faction may leave Reciprocal Restraint (to None) at this step. The State pays no cost. The PKK pays Europe -1 if it leaves Reciprocal Restraint for None (step 1 rule).
   subsections: []
 - id: 07 s7.4
   file: 07-political-civilian-and-sanctuary-systems.md
-  heading: Negotiated Outcome
-  text: |-
-    Talks never give an instant win (DD-11.3). A Negotiated Outcome needs all of:
-
-    1. Talks held through a full Campaign with no breach.
-    2. Legal Space is not Banned.
-    3. Both factions accept these concessions: the State sets Emergency Rule to Normalizing and Legal Space to Open; the PKK removes half its domestic Guerrillas, round up, to Available.
-
-    If both accept, apply the concessions. The game ends. Margins decide which faction negotiated from strength (09, section 5). If either refuses, Talks continues or ends at that faction's choice. Evidence: none of the historical ceasefires was recognized by the State [F-039]; the PKK shifted toward a settlement inside Turkey [F-037; E-0207]. Basis: Sol V-B, "Negotiation as an outcome".
+  heading: Not used
+  text: "This section held a settlement that ended the game. It is removed (Designer decision of 2026-11-12 (`docs/audit/OPEN_QUESTIONS.md`, item 1)). Evidence: none of the historical ceasefires was recognized by the State [F-039]. The number is kept so that later section numbers do not change."
   subsections: []
 - id: 07 s8
   file: 07-political-civilian-and-sanctuary-systems.md
@@ -1862,7 +1849,7 @@
   heading: Tests
   text: |-
     1. Count closure filings and successor returns per game. If the State never files, raise the Office cap effect.
-    2. Count Negotiated Outcomes. If more than one game in three ends this way, raise the concessions.
+    2. Count the games that reach Reciprocal Restraint. If none does, lower the cost of State acceptance.
     3. Check that the Legal Politics table never needs a judgment call. Two readers must place the same Offices.
   subsections: []
 - id: 08 s1
@@ -2315,15 +2302,8 @@
   subsections: []
 - id: 09 s5
   file: 09-victory-and-scoring.md
-  heading: Negotiated Outcome
-  text: |-
-    If a Negotiated Outcome ends the game (07, section 7.4):
-
-    1. Apply the concessions first.
-    2. Compute final margins as in section 4, without the Covert reveal penalty if Talks held two full Campaigns [tune]; otherwise with it.
-    3. Label: "Negotiated outcome favorable to State" or "favorable to PKK" by the higher margin. A difference of 2 or less is "Negotiated outcome, balanced".
-
-    A Negotiated Outcome is not an instant win. It needs restraint across a full Propaganda round and both factions' consent (DD-11.3).
+  heading: Not used
+  text: This section scored a settlement that ended the game. It is removed (Designer decision of 2026-11-12 (`docs/audit/OPEN_QUESTIONS.md`, item 1)). A ceasefire never ends the game (07, section 7). The number is kept so that later section numbers do not change.
   subsections: []
 - id: 09 s6
   file: 09-victory-and-scoring.md
@@ -2350,7 +2330,7 @@
     | Emergency Rule step at the end | |
     | Host postures at the end | Syria / KDP / PUK |
     | Leadership | Present / Abroad / Captured |
-    | Ceasefire step at the end; Negotiated Outcome yes or no | |
+    | Ceasefire step at the end | |
     | Closure bans and successor returns | |
     | First round in which a faction qualified (if any) | |
     | Village Clearance uses; Strike Collaborators uses; Coerce uses | |
@@ -2939,7 +2919,7 @@
     |---|---|---|---|
     | State never uses Village Clearance | Clearance is an optional SA; restraint gain +1 per round | Clearance cut PKK logistics early and cost later [F-050] | What a different field policy would have done |
     | Earlier Normalizing | After the OHAL card the State may step to Normalizing; drain 0, Return legal | The emergency region shrank from 1994 [F-014] | Whether earlier normalization would have reduced violence |
-    | Ceasefire holds into Talks | Declare Ceasefire from C3; Reciprocal Restraint; Talks; Negotiated Outcome (07, section 7) | The 1993 ceasefire was declared and collapsed [E-0089; F-038]; the State recognized none [F-039] | Whether any ceasefire could have held; responsibility for the collapse is disputed |
+    | Ceasefire holds | Declare Ceasefire from C3; Reciprocal Restraint (07, section 7) | The 1993 ceasefire was declared and collapsed [E-0089; F-038]; the State recognized none [F-039] | Whether any ceasefire could have held; responsibility for the collapse is disputed |
     | Legal party never banned | Closure filing is a State choice (07, section 6.3) | Each closure was followed by a successor [F-052] | Whether the legal channel would have reduced the war |
     | PKK avoids coercion | Coerce and Strike Collaborators are optional | Both armed sides pressed the same villages [F-034] | The political payoff of restraint |
     | Syria pressure earlier or later | Diplomacy SA from C1 (with -1 before C5); Pivotal from C5 | Syria yielded in 1998 under threats [F-020] | Whether earlier pressure would have worked |
@@ -3242,7 +3222,7 @@
     | Did either player change a decision because of Legal Space or Offices? (yes or no) | P | DD-02 passivity measure |
     | Village Clearance, Strike Collaborators, Coerce, Covert Action uses | G | Atrocity test |
     | Pieces left in Available at each Reset | P | 04, section 6 |
-    | Winner, label, round of the end, Negotiated Outcome | G | M-035; M-041 |
+    | Winner, label, round of the end | G | M-035 |
     | Outcome record sheet (09, section 6) | G | Record only (DD-14.5) |
     | Play time and setup time | G | Load |
     | Content comments; "Did any card feel wrong?"; "What do you want to check against a source?" | G | Tone (Claude 03, Debrief) |
@@ -3293,7 +3273,6 @@
     | M-007 | Is the Legal Politics table mechanical? | Two readers place the same Offices; the State files at least once in some games | 07, section 11 |
     | M-027 | Does Legal Politics stay off in C1 and C2? | Never runs before HEP Founded | 10, section 6.1 |
     | M-008 | Does the ceasefire path create choices? | Different games reach different ceasefire steps | Claude 03 Q3 |
-    | M-041 | Is a Negotiated Outcome too easy? | Not more than one game in three ends this way | 07, section 11 |
     | M-016, M-044 | Do event-only actors stay outside player control? | No player strategy relies on a Hizbullah or reveal card | Sol 16 |
     | M-034 | Is Serhildan playable and not automatic? | Played in some games, not all | 05, section 4 |
   subsections: []
@@ -3350,7 +3329,7 @@
     Play each one at least once in Stage 0 or Stage 1 (Sol 16):
 
     1. State: force concentration with no Civic Action; Civic Action with minimal security; repeated Emergency Rule steps; Village Clearance at every legal chance.
-    2. PKK: sanctuary stacking; perpetual concealment; Coerce-only; talks cycling.
+    2. PKK: sanctuary stacking; perpetual concealment; Coerce-only; ceasefire cycling.
     3. Legal Politics (B and C): State closure at every chance.
     4. MOD-3B: permanent alignment with each armed player; a continuity-only strategy.
 

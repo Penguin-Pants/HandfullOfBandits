@@ -4,6 +4,7 @@ import { derive } from "../src/engine/coin/derive.ts";
 import { startState } from "../src/engine/coin/setup.ts";
 import { setupState } from "../src/engine/core/state.ts";
 import { kurdish as result, kurdishDir as dir } from "./kurdish-package.ts";
+import { SHORT, short } from "./short-game.ts";
 
 // P2-01: Kurdish package 0.1.0 static data. Accept: `sim validate` passes, start scores 21 and 4.
 const { data, ruleset } = result;
@@ -54,8 +55,8 @@ describe("kurdish-coin 0.1.0", () => {
     expect(sorted(actual)).toEqual(sorted(printed));
   });
 
-  it("lists PA-01 to PA-18 in assumptions.yaml", () => {
-    expect(data.assumptions?.map((a) => a.id)).toEqual(Array.from({ length: 18 }, (_, i) => `PA-${String(i + 1).padStart(2, "0")}`));
+  it("lists PA-01 to PA-18 in assumptions.yaml, without PA-11 (deleted with decision 1)", () => {
+    expect(data.assumptions?.map((a) => a.id)).toEqual(Array.from({ length: 18 }, (_, i) => `PA-${String(i + 1).padStart(2, "0")}`).filter((id) => id !== "PA-11"));
   });
 
   it("T-SCORE: full campaign setup scores 21 and 4 with Harm 0 and 0 (09 s2.2, 10 s2.2)", () => {
@@ -76,12 +77,12 @@ describe("kurdish-coin 0.1.0", () => {
   });
 });
 
-// P2-05: cards. Accept: V-ENCODE passes for S0; DK-003 unshaded needs no module procedure.
+// P2-05: cards. Accept: V-ENCODE passes for the first C1 cards; DK-003 unshaded needs no module procedure.
 describe("kurdish-coin cards", () => {
-  const s0Cards = ["DK-001", "DK-002", "DK-003", "DK-005", "DK-008", "DK-012", "DK-014", "DK-100", "DK-016"];
+  const firstCards = ["DK-001", "DK-002", "DK-003", "DK-005", "DK-008", "DK-012", "DK-014", "DK-100", "DK-016"];
 
-  it("encodes the 8 S0 cards and the C1 Propaganda card, with their CSV text", () => {
-    for (const id of s0Cards) expect(ruleset.cards[id]?.encoded, id).toBe(true);
+  it("encodes the first 8 C1 cards and the C1 Propaganda card, with their CSV text", () => {
+    for (const id of firstCards) expect(ruleset.cards[id]?.encoded, id).toBe(true);
     expect(ruleset.cards["DK-001"]?.unshaded?.text).toBe("Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2.");
     expect(Object.values(ruleset.cards).filter((c) => c.campaign === "C1" && c.type !== "pivotal")).toHaveLength(16);
   });
@@ -93,19 +94,20 @@ describe("kurdish-coin cards", () => {
     expect(ruleset.cards["DK-003"]?.always.map((e) => e.type)).toEqual(["transferPool", "setFlag"]);
   });
 
-  it("deals the 8 S0 cards in a seeded order with DK-016 last (10-mvp-scope s2.1)", () => {
-    const piles = startState(ruleset, "s0", 3).deck.piles;
+  it("deals a pile of 8 C1 cards in a seeded order with DK-016 last when the scenario sets pileSize and propagandaLast", () => {
+    const piles = startState(short.ruleset, SHORT, 3).deck.piles;
     expect(piles).toHaveLength(1);
-    expect([...(piles[0] ?? [])].sort()).toEqual([...s0Cards].sort());
+    expect(piles[0]).toHaveLength(9);
+    expect((piles[0] ?? []).every((id) => short.ruleset.cards[id]?.campaign === "C1")).toBe(true);
     expect(piles[0]?.at(-1)).toBe("DK-016");
-    expect(startState(ruleset, "s0", 4).deck.piles).not.toEqual(piles);
+    expect(startState(short.ruleset, SHORT, 4).deck.piles).not.toEqual(piles);
   });
 
   it("refuses to start a blocked scenario (DEC-51)", () => {
-    const s0 = ruleset.scenarios["s0"];
-    if (s0 === undefined) throw new Error("s0 missing");
-    const blocked = { ...ruleset, scenarios: { ...ruleset.scenarios, s0: { ...s0, blockedBy: ["V-CARDS test"] } } };
-    expect(() => startState(blocked, "s0", 1)).toThrow(/cannot start/);
+    const full = ruleset.scenarios["full-campaign"];
+    if (full === undefined) throw new Error("full-campaign missing");
+    const blocked = { ...ruleset, scenarios: { ...ruleset.scenarios, "full-campaign": { ...full, blockedBy: ["V-CARDS test"] } } };
+    expect(() => startState(blocked, "full-campaign", 1)).toThrow(/cannot start/);
   });
 });
 
@@ -121,7 +123,7 @@ describe("kurdish-coin scenarios", () => {
     pkkBase: [3, 9, 0],
   };
 
-  it.each(["full-campaign", "s0"])("%s: piece totals reconcile with 10 s2.2", (scenario) => {
+  it.each(["full-campaign"])("%s: piece totals reconcile with 10 s2.2", (scenario) => {
     const state = setupState(ruleset, scenario, 1);
     const actual = Object.fromEntries(
       Object.entries(state.pools).map(([piece, pool]) => {
@@ -130,14 +132,5 @@ describe("kurdish-coin scenarios", () => {
       }),
     );
     expect(actual).toEqual(totals);
-  });
-
-  it("s0 starts from the full campaign setup, as a one-round test scenario (10-mvp-scope s2.1)", () => {
-    const full = setupState(ruleset, "full-campaign", 1);
-    const s0 = setupState(ruleset, "s0", 1);
-    expect(s0.spaces).toEqual(full.spaces);
-    expect(s0.tracks).toEqual(full.tracks);
-    const s0Data = data.scenarios["scenarios/s0.yaml"];
-    expect(s0Data).toMatchObject({ testOnly: true, finalRound: 1, pileSize: 8, campaigns: ["C1"], pivotals: { state: [], pkk: [] } });
   });
 });

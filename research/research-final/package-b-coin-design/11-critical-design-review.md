@@ -169,7 +169,7 @@ The deck fixes the frame. Players change the board, not the facts on a card. A c
 |---|---|---|---|
 | State never uses Village Clearance | Clearance is an optional SA; restraint gain +1 per round | Clearance cut PKK logistics early and cost later [F-050] | What a different field policy would have done |
 | Earlier Normalizing | After the OHAL card the State may step to Normalizing; drain 0, Return legal | The emergency region shrank from 1994 [F-014] | Whether earlier normalization would have reduced violence |
-| Ceasefire holds into Talks | Declare Ceasefire from C3; Reciprocal Restraint; Talks; Negotiated Outcome (07, section 7) | The 1993 ceasefire was declared and collapsed [E-0089; F-038]; the State recognized none [F-039] | Whether any ceasefire could have held; responsibility for the collapse is disputed |
+| Ceasefire holds | Declare Ceasefire from C3; Reciprocal Restraint (07, section 7) | The 1993 ceasefire was declared and collapsed [E-0089; F-038]; the State recognized none [F-039] | Whether any ceasefire could have held; responsibility for the collapse is disputed |
 | Legal party never banned | Closure filing is a State choice (07, section 6.3) | Each closure was followed by a successor [F-052] | Whether the legal channel would have reduced the war |
 | PKK avoids coercion | Coerce and Strike Collaborators are optional | Both armed sides pressed the same villages [F-034] | The political payoff of restraint |
 | Syria pressure earlier or later | Diplomacy SA from C1 (with -1 before C5); Pivotal from C5 | Syria yielded in 1998 under threats [F-020] | Whether earlier pressure would have worked |

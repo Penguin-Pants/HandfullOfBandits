@@ -47,7 +47,7 @@ State total 78 pieces. PKK total 42 pieces plus the Leadership marker.
 | KDP posture | Host, Tolerant, Restricted, Hostile, Aligned with Turkey | Host | Same | 07, section 5 |
 | PUK posture | Host, Tolerant, Restricted, Hostile, Aligned with Turkey | Tolerant | Same | 07, section 5 |
 | Europe | 0 to 5 | 1 | Rally on Europe, Diplomacy, Propaganda adjustment, events, Ban marker | 07, section 9 |
-| Ceasefire | None, Declared, Reciprocal Restraint, Talks | None | PKK declaration (from C3), State acceptance, attacks, spoiler events | 07, section 7 |
+| Ceasefire | None, Declared, Reciprocal Restraint | None | PKK declaration (from C3), State acceptance, attacks, spoiler events | 07, section 7 |
 | Legal Space | Absent, Open, Prosecuted, Banned | Absent | HEP event (C3), closure case, Legal Politics procedure | 07, section 6 |
 | Campaign | C1 to C5 | C1 | Each Propaganda Reset | 05 |
 | Victory score (2 markers) | 0 to 84 | State 21, PKK 4 | Recompute after each change | 09 |

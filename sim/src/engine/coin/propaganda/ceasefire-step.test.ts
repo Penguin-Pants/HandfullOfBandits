@@ -1,26 +1,29 @@
 import { describe, expect, it } from "vitest";
-import { codes, inCampaign, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
+import { inCampaign, play, ruleset, setMarkers, setPieces, setTrack, turnOf } from "../../../../test/board.ts";
 import type { GameState } from "../../core/types.ts";
 import { PHASE } from "../phases.ts";
+import { ceasefireOptions } from "./ceasefire-step.ts";
 
-// T-PROP for the ceasefire step and Negotiated Outcome (11 P3b-05; research 07 s7.3, s7.4, 09 s5;
-// approved text docs/prototype/30, DEC-66). Legal Space Open, so the Legal Politics phase runs.
-const at = (s: GameState, ceasefire: string, rounds = 0): GameState => {
+// T-PROP for the ceasefire step (11 P3b-05; research 07 s7.3; rules 8.6). A ceasefire is temporary
+// (decision 1, 2026-11-12). Legal Space Open, so the Legal Politics phase runs.
+const at = (s: GameState, ceasefire: string): GameState => {
   const step = ruleset.sequence.propagandaPhases.indexOf("legalPolitics");
-  const b = setTrack(setTrack(setTrack(s, "legalSpace", "open"), "ceasefire", ceasefire), "ceasefireRounds", rounds);
-  const c = inCampaign(ruleset, b, "C3");
+  const c = inCampaign(ruleset, setTrack(setTrack(s, "legalSpace", "open"), "ceasefire", ceasefire), "C3");
   return { ...c, deck: { ...c.deck, currentCard: "DK-016" }, turn: { ...c.turn, phase: PHASE.propaganda, propagandaRound: 2, step } };
 };
 const run = (s: GameState, ceasefire: Record<string, unknown> | null): GameState =>
   play(s, ceasefire === null ? { type: "Advance" } : ({ type: "PropagandaChoice", phase: "legalPolitics", choice: { ceasefire } })).state;
 const cf = (s: GameState): unknown => s.tracks["ceasefire"];
-const rounds = (s: GameState): unknown => s.tracks["ceasefireRounds"];
-const guerrillas = (s: GameState): number => ruleset.spaces.filter((x) => x.kind === "domestic").reduce((n, x) => n + Object.values(s.spaces[x.id]?.pieces["guerrilla"] ?? {}).reduce((a, b) => a + b, 0), 0);
+
+describe("Ceasefire track (rules 8.6)", () => {
+  it("has three steps: None, Declared, Reciprocal Restraint", () => {
+    expect(ruleset.tracks.find((t) => t.id === "ceasefire")).toMatchObject({ kind: "ordinal", steps: ["none", "declared", "reciprocalRestraint"] });
+  });
+});
 
 describe("Ceasefire step 1: Declared (07 s7.3)", () => {
-  it("the State accepts: Reciprocal Restraint, held from now", () => {
-    const s = run(at(turnOf("state"), "declared"), { accept: true });
-    expect([cf(s), rounds(s)]).toEqual(["reciprocalRestraint", 1]);
+  it("the State accepts: Reciprocal Restraint", () => {
+    expect(cf(run(at(turnOf("state"), "declared"), { accept: true }))).toBe("reciprocalRestraint");
   });
 
   it("no State acceptance with a State Restraint Broken marker", () => {
@@ -36,67 +39,48 @@ describe("Ceasefire step 1: Declared (07 s7.3)", () => {
   });
 });
 
-describe("Ceasefire step 2: Talks vote (07 s7.3, DEC-66 points 1 and 2)", () => {
-  it("two yes after a full round of restraint: Talks", () => {
-    const s = run(at(turnOf("state"), "reciprocalRestraint", 1), { talks: { state: true, pkk: true } });
-    expect([cf(s), rounds(s)]).toEqual(["talks", 1]);
+describe("Ceasefire step 2: leaving (07 s7.3)", () => {
+  it("the PKK pays Europe -1 to leave Reciprocal Restraint; the State pays nothing", () => {
+    const board = setTrack(at(turnOf("state"), "reciprocalRestraint"), "europe", 2);
+    const pkk = run(board, { leave: { pkk: true } });
+    expect([cf(pkk), pkk.tracks["europe"]]).toEqual(["none", 1]);
+    const state = run(board, { leave: { state: true } });
+    expect([cf(state), state.tracks["europe"], state.tracks["legitimacy"]]).toEqual(["none", 2, board.tracks["legitimacy"]]);
   });
 
-  it("one no keeps Reciprocal Restraint; a new restraint cannot vote yet", () => {
-    expect(cf(run(at(turnOf("state"), "reciprocalRestraint", 1), { talks: { state: true, pkk: false } }))).toBe("reciprocalRestraint");
-    expect(cf(run(at(turnOf("state"), "reciprocalRestraint", 0), { talks: { state: true, pkk: true } }))).toBe("reciprocalRestraint");
-    expect(rounds(run(at(turnOf("state"), "reciprocalRestraint", 1), null))).toBe(2);
-  });
-});
-
-describe("Ceasefire step 4: leaving (07 s7.3, DEC-66 point 5)", () => {
-  it("leaving Talks goes to Reciprocal Restraint; the PKK pays Europe -1 to leave Reciprocal Restraint", () => {
-    expect(cf(run(at(turnOf("state"), "talks", 1), { leave: { state: true } }))).toBe("reciprocalRestraint");
-    const s = run(setTrack(at(turnOf("state"), "reciprocalRestraint", 1), "europe", 2), { leave: { pkk: true } });
-    expect([cf(s), s.tracks["europe"], rounds(s)]).toEqual(["none", 1, 0]);
-    expect(cf(run(at(turnOf("state"), "talks", 1), { leave: { state: true, pkk: true } }))).toBe("none");
+  it("Reciprocal Restraint stays when no faction leaves", () => {
+    expect(cf(run(at(turnOf("state"), "reciprocalRestraint"), null))).toBe("reciprocalRestraint");
   });
 });
 
-describe("Negotiated Outcome (07 s7.4, 09 s5, DEC-66 points 3 and 4)", () => {
-  // S0 domestic Guerrillas: Hakkari 2, Botan 2, Mardin-Batman 1 = 5; half, round up = 3.
-  const accept = { outcome: { state: true, pkk: true, removals: { hakkari: 2, "mardin-batman": 1 } } };
-
-  it("both accept after a full Campaign of Talks: concessions, then the game ends with a label", () => {
-    const s = run(at(turnOf("state"), "talks", 1), accept);
-    expect(s.turn.phase).toBe(PHASE.ended);
-    expect([s.tracks["emergencyRule"], s.tracks["legalSpace"], guerrillas(s)]).toEqual(["normalizing", "open", 2]);
-    expect(s.ended?.reason).toBe("negotiated outcome");
-    expect(s.ended?.labels[0]).toMatch(/^Negotiated outcome( favorable to (State|PKK)|, balanced)$/);
+describe("A ceasefire never ends the game (rules 8.6, decision 1)", () => {
+  it("Reciprocal Restraint held through three ceasefire steps stays Reciprocal Restraint and the game goes on", () => {
+    let s = at(turnOf("state"), "reciprocalRestraint");
+    for (let i = 0; i < 3; i++) {
+      const next = run(s, null);
+      expect([cf(next), next.ended, next.turn.phase]).toEqual(["reciprocalRestraint", null, PHASE.propaganda]);
+      s = { ...next, turn: s.turn };
+    }
   });
 
-  it("removals must total half the domestic Guerrillas, rounded up", () => {
-    const bad = { type: "PropagandaChoice", phase: "legalPolitics", choice: { ceasefire: { outcome: { state: true, pkk: true, removals: { hakkari: 1 } } } } };
-    expect(codes(at(turnOf("state"), "talks", 1), bad)).toEqual(["outcomeRemovals"]);
+  it("the step offers only acceptance and leaving, and keeps no count of rounds held", () => {
+    const held = run(at(turnOf("state"), "reciprocalRestraint"), null);
+    expect(ceasefireOptions(ruleset, held)).toEqual({ accept: false, leave: true });
+    expect(ceasefireOptions(ruleset, at(turnOf("state"), "declared"))).toEqual({ accept: true, leave: false });
+    expect(Object.keys(held.tracks).filter((t) => t.startsWith("ceasefire"))).toEqual(["ceasefire"]);
   });
 
-  it("validates removals on the board after the procedure table: a successor ends Banned first (PR 46 review)", () => {
-    const banned = setTrack(at(turnOf("state"), "talks", 1), "legalSpace", "banned");
-    const none = { type: "PropagandaChoice", phase: "legalPolitics", choice: { ceasefire: { outcome: { state: true, pkk: true } } } };
-    expect(codes(banned, none)).toEqual(["outcomeRemovals"]);
-  });
-
-  it("a refusal keeps Talks; new Talks or a Banned Legal Space cannot end the game", () => {
-    expect(cf(run(at(turnOf("state"), "talks", 1), { outcome: { state: true, pkk: false } }))).toBe("talks");
-    expect(run(at(turnOf("state"), "talks", 0), accept).turn.phase).not.toBe(PHASE.ended);
-  });
-
-  it("Covert markers are revealed unless Talks held two full Campaigns (09 s5 item 2)", () => {
-    const covert = setMarkers(at(turnOf("state"), "talks", 1), "dersim", "covert", 1);
-    expect(run(covert, accept).tracks["legitimacy"]).toBe(8);
-    expect(run(setTrack(covert, "ceasefireRounds", 2), accept).tracks["legitimacy"]).toBe(10);
+  it("the step removes no Guerrillas and changes no Emergency Rule or Legal Space", () => {
+    const before = at(turnOf("state"), "reciprocalRestraint");
+    const after = run(before, { leave: { state: true } });
+    expect([after.tracks["emergencyRule"], after.tracks["legalSpace"], after.spaces["hakkari"]?.pieces["guerrilla"]]).toEqual([before.tracks["emergencyRule"], before.tracks["legalSpace"], before.spaces["hakkari"]?.pieces["guerrilla"]]);
   });
 });
 
-describe("A breach resets the held rounds (07 s7.2)", () => {
-  it("ends the ceasefire and the count", () => {
-    const board = setPieces(setPieces(setTrack(setTrack(inCampaign(ruleset, turnOf("state"), "C3"), "ceasefire", "talks"), "ceasefireRounds", 2), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
-    const s = play(board, { type: "ChooseOperation", faction: "state", box: "opOnly", plan: { op: "state.assault", locations: ["botan"], perLocation: {}, sa: null, subActions: [] } }).state;
-    expect([cf(s), rounds(s)]).toEqual(["none", 0]);
+describe("A breach ends the ceasefire (07 s7.2)", () => {
+  it("State Assault during Reciprocal Restraint: Ceasefire to None", () => {
+    const board = setPieces(setPieces(setTrack(inCampaign(ruleset, turnOf("state"), "C3"), "ceasefire", "reciprocalRestraint"), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
+    const s = play(board, { type: "ChooseOperation", faction: "state", box: "limitedOp", plan: { op: "state.assault", locations: ["botan"], perLocation: {}, sa: null, subActions: [] } }).state;
+    expect(cf(s)).toBe("none");
   });
 });

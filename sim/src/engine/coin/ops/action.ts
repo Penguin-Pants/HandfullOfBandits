@@ -32,6 +32,8 @@ export interface ActionOptions {
 }
 
 export interface ActionHandler {
+  /** True when a move may name its own destination with `to` (Garrison). Such a destination is a location of the Operation. */
+  readonly moveDestinations?: true;
   readonly timing?: "before" | "after";
   readonly id: string;
   readonly faction: FactionId;

@@ -72,7 +72,7 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           ))}
         </div>
       )}
-      {phase === "legalPolitics" && <LegalPoliticsForm view={view} selected={selected} onChoose={choose} />}
+      {phase === "legalPolitics" && <LegalPoliticsForm view={view} onChoose={choose} />}
       {phase === "upkeep" && (
         <div aria-label="Upkeep">
           {selected.map((s) => (

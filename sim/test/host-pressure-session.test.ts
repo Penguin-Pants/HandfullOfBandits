@@ -13,16 +13,16 @@ it("saves, resumes, replays and undoes the rolling SA and replacement Rally as o
   const dir = mkdtempSync(join(tmpdir(), "hob-pressure-"));
   const pkg = join(dir, "package");
   cpSync(kurdishDir, pkg, {recursive: true});
-  const scenario = join(pkg, "scenarios/s0.yaml");
+  const scenario = join(pkg, "scenarios/full-campaign.yaml");
   writeFileSync(scenario, readFileSync(scenario, "utf8").replace("posture.kdp: host", "posture.kdp: tolerant"));
   const path = join(dir, "store.sqlite");
   let db = openStore(path);
   try {
     let service = new SessionService(db, dir);
-    let created = service.createSession({dir: pkg, scenarioId: "s0", seed: 0, name: "backfire"});
+    let created = service.createSession({dir: pkg, scenarioId: "full-campaign", seed: 0, name: "backfire"});
     for (let seed = 1; rollDie(created.head.state.rng).value !== 1; seed++) {
       if (seed > 100) throw new Error("No backfire seed");
-      created = service.createSession({dir: pkg, scenarioId: "s0", seed, name: "backfire"});
+      created = service.createSession({dir: pkg, scenarioId: "full-campaign", seed, name: "backfire"});
     }
     const id = created.sessionId;
     const revealed = service.submit(id, {type: "Advance"}, created.head.actionId);

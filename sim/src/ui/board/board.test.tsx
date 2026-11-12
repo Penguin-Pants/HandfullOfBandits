@@ -33,6 +33,23 @@ describe("Board", () => {
     expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
   });
 
+  it("draws the selected border above every area border, so no neighbor covers it", () => {
+    const { container } = render(<Board view={view} selected={["botan"]} onSelect={vi.fn()} />);
+    const ring = container.querySelector(".atlas-selected[data-of='botan']");
+    const lastArea = [...container.querySelectorAll(".map-space")].at(-1);
+    if (ring === null || lastArea === undefined) throw new Error("selected ring");
+    expect(lastArea.compareDocumentPosition(ring) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(ring.getAttribute("pointer-events")).toBe("none");
+    expect(container.querySelectorAll(".atlas-selected[data-of='hakkari']")).toHaveLength(0);
+  });
+
+  it("draws each piece of a small group one by one and keeps the group label", () => {
+    render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    const group = screen.getByLabelText("guerrilla underground 3");
+    expect(group.querySelectorAll("image")).toHaveLength(3);
+    expect(group.querySelector(".map-count")).toBeNull();
+  });
+
   it("shows the detail card and the status bar", () => {
     const botan = view.spaces.find((s) => s.id === "botan");
     if (botan === undefined) throw new Error("botan");
@@ -189,6 +206,15 @@ describe("Resources and politics card (UC-7)", () => {
     expect(er.querySelector("[aria-current]")?.textContent).toBe("Martial Law");
   });
 
+  it("keeps the step scales in a closed disclosure so the card stays one summary row", () => {
+    render(<TrackCard view={view} />);
+    const scales = screen.getByLabelText("Emergency Rule states").closest("details");
+    expect(scales).not.toBeNull();
+    expect(scales?.open).toBe(false);
+    expect(scales?.querySelector("summary")?.textContent).toBe("Scales");
+    expect(scales?.closest(".track-summaries")).not.toBeNull();
+  });
+
   it("falls back to words for a value with no readable name", () => {
     const odd = { ...view, status: { ...view.status, tracks: [{ id: "mood", display: "Mood", value: "veryTense", steps: ["calm", "veryTense"] }] } };
     render(<TrackCard view={odd} />);
@@ -325,15 +351,15 @@ describe("approved readable layout", () => {
     expect(city?.getAttribute("opacity")).toBe("0.3");
   });
 
-  it("keeps political states expanded and numeric scales available on expansion", () => {
+  it("keeps political states in the Scales disclosure and numeric scales available on expansion", () => {
     render(<TrackCard view={view} />);
     const card = screen.getByLabelText("Resources and politics");
-    expect(card.querySelectorAll("details")).toHaveLength(3);
+    expect(card.querySelectorAll("details")).toHaveLength(4);
     expect(screen.getByLabelText("Emergency Rule").textContent).toContain("Martial Law");
-    for (const name of ["Emergency Rule", "Ceasefire", "Legal Space"]) {
+    for (const [name, steps] of [["Emergency Rule", 4], ["Ceasefire", 3], ["Legal Space", 4]] as const) {
       const states = screen.getByRole("group", { name: `${name} states` });
-      expect(states.closest("details")).toBeNull();
-      expect(states.querySelectorAll(".mini-step")).toHaveLength(4);
+      expect(states.closest("details")?.className).toBe("track-scales");
+      expect(states.querySelectorAll(".mini-step")).toHaveLength(steps);
       expect(states.querySelectorAll("[aria-current='true']")).toHaveLength(1);
     }
     expect(card.querySelector("[aria-label='State Resources'] summary")?.textContent).toContain("12");

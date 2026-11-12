@@ -10,7 +10,6 @@
 - {id: PA-08, gap: GAP-B08, status: accepted, appliesTo: [state.assault], text: "Assault removals above the removable pieces are lost"}
 - {id: PA-09, gap: GAP-B09, status: accepted, appliesTo: [markers], text: "If no marker of the type is available, the placement does not happen and the log records supply exhausted. Harm markers also raise a warning"}
 - {id: PA-10, gap: GAP-B10, status: accepted, appliesTo: [victory.check], text: "Equal margins at a victory check: lower Harm count wins, then PKK"}
-- {id: PA-11, gap: GAP-B11, status: replaced, appliesTo: [ceasefire.talks], text: "Any no vote on Talks ends the ceasefire. Ceasefire goes to None"}
 - {id: PA-12, gap: GAP-B12, status: replaced, appliesTo: [pkk.extort], text: "The PKK chooses any subset of qualifying Extort locations. Each activates one Guerrilla and gives +1 Resource"}
 - {id: PA-13, gap: GAP-B13, status: accepted, appliesTo: [rng], text: "All random selections use the session seeded generator"}
 - {id: PA-14, gap: GAP-B14, status: accepted, appliesTo: [state.air-mobility], text: "Air Mobility never uses an external box as origin or destination. Troops leave a box only at Redeploy"}

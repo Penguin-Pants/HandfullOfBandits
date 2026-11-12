@@ -1,4 +1,4 @@
-// Resource-style summaries with political states always visible below them.
+// Resource-style summaries in one row. The full political scales open from the Scales disclosure.
 import type { BoardView } from "../api.ts";
 import { words } from "../common/names.ts";
 import { FactionMark } from "../common/FactionMark.tsx";
@@ -41,7 +41,7 @@ function Scale({ track }: { readonly track: Track }) {
   );
 }
 
-const HIDDEN_AT_ZERO = new Set(["successor", "ceasefireRounds"]);
+const HIDDEN_AT_ZERO = new Set(["successor"]);
 
 export function TrackCard({ view }: { readonly view: BoardView }) {
   // Successor and the held ceasefire rounds show only above 0 (07 s6.4, s7.3; DEC-65, DEC-66).
@@ -67,12 +67,15 @@ export function TrackCard({ view }: { readonly view: BoardView }) {
         <Scale track={t} />
       </details>;
     })}
+    {stepTracks.length > 0 && <details className="track-scales">
+      <summary onKeyDown={e => { if (e.key === " ") e.stopPropagation(); }}>Scales</summary>
+      <div className="political-tracks">
+        {stepTracks.map(t => <div key={t.id} className="political-track" role="group" aria-label={`${t.display} states`}>
+          <strong>{t.display}</strong>
+          <Scale track={t} />
+        </div>)}
+      </div>
+    </details>}
     </div>
-    {stepTracks.length > 0 && <div className="political-tracks">
-      {stepTracks.map(t => <div key={t.id} className="political-track" role="group" aria-label={`${t.display} states`}>
-        <strong>{t.display}</strong>
-        <Scale track={t} />
-      </div>)}
-    </div>}
   </section>;
 }

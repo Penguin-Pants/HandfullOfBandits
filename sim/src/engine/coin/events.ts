@@ -129,7 +129,7 @@ function runOne(run: EventRun, cursor: Cursor, e: CardEffect): void {
   if (primitive !== null) {
     const box = "track" in primitive ? Object.keys(HOST_OF).find(id => HOST_OF[id] === primitive.track) : undefined;
     if (box !== undefined && primitive.type === "stepOrdinal") shiftHost(ctx, box, primitive.direction === "next" ? primitive.steps : -primitive.steps, run.ruleRef);
-    // An Event rise in Europe stops at the Ban marker cap (04 s3.6).
+    // An Event rise in Europe stops at the Europe Ban marker cap (04 s3.6).
     else if (primitive.type === "adjustTrack" && primitive.track === TRACK.europe) adjustEurope(ctx, primitive.delta, run.ruleRef);
     else if (primitive.type === "movePieces") moveWithFaces(run, cursor, primitive);
     else ctx.apply(primitive);

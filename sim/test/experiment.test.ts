@@ -30,7 +30,7 @@ describe("manifest validation (19 s2; 20 Phase 1)", () => {
   it("rejects malformed JSON and schema errors with every issue", () => {
     expect(() => parseManifest("{")).toThrow(/not JSON/);
     expect(() => parseManifest(JSON.stringify({ ...devManifest(), extra: 1 }))).toThrow(ManifestError);
-    expect(() => parseManifest(JSON.stringify({ ...devManifest(), scenario: "s0" }))).toThrow(/scenario/);
+    expect(() => parseManifest(JSON.stringify({ ...devManifest(), scenario: "scenario-a" }))).toThrow(/scenario/);
     expect(() => parseManifest(JSON.stringify({ ...devManifest(), matchups: [] }))).toThrow(/matchups/);
     expect(() => parseManifest(JSON.stringify({ ...devManifest(), seeds: { registry: "development", blocks: [{ from: -1, count: 1 }] } }))).toThrow(/seeds/);
   });

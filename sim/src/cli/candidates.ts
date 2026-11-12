@@ -1,4 +1,4 @@
-// Candidate plans for every Scenario A decision family (19 s5; 20 Phase 4). The generator reads
+// Candidate plans for every decision family of C1 and C2 (19 s5; 20 Phase 4). The generator reads
 // only public state: the runner calls it on a determinized projection of the player's observation
 // and then validates each survivor on the live state. Every emitted command passed engine
 // validation; legality is never copied here. Pruning is bounded and documented per family below;
@@ -11,6 +11,7 @@ import type { Engine } from "../engine/index.ts";
 import { controlOf, count, isTerrain, markers, resources } from "../engine/coin/ops/common.ts";
 import { postureOf } from "../engine/coin/ops/common-pkk.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
+import { siteCount } from "../engine/coin/ops/choose-operation.ts";
 import { asObject } from "../engine/coin/ops/plan.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
@@ -624,7 +625,8 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
     for (const box of [BOX.limitedOp, BOX.opOnly, BOX.opSa]) {
       if (!boxes.includes(box)) continue;
       for (const op of Object.keys(OP_PLANS).filter((id) => actionHandlers[id]?.faction === faction)) {
-        const plans = OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? [];
+        // The box follows the action (rules 2.3): the First Eligible's Op Only has two or more locations.
+        const plans = (OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? []).filter((p) => box !== BOX.opOnly || faction !== s.initiative.firstEligible || siteCount(op, p) > 1);
         const byVariant = (prefix: string): void => {
           for (const variant of new Set(plans.map((p) => p.variant))) offer(`${prefix}${variant === undefined ? "" : `/${variant}`}@${box}`, plans.filter((p) => p.variant === variant).map((p) => opCommand(faction, box, op, p)));
         };

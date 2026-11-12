@@ -31,7 +31,7 @@ const usage = [
   "       sim replay <file.json> [--package <dir>]",
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
-  "       sim batch --games N --strategy <state>,<pkk> [--swap-seats] [--seed N] [--scenario scenario-a] [--package <dir>] [--out <csv>]",
+  "       sim batch --games N --strategy <state>,<pkk> [--swap-seats] [--seed N] [--scenario full-campaign] [--package <dir>] [--out <csv>]",
   "       sim experiment run <manifest.json> --out <new-dir> | --out <interrupted-dir> --resume",
   "       sim experiment replay <experiment-dir> [--game <gameId>]",
   "       sim experiment analyze <experiment-dir>",
@@ -98,7 +98,7 @@ if (command === "validate" && target !== undefined) {
     if (names.length !== 2 || names.some(n => n === "")) throw new RangeError("strategy must name two policies separated by a comma");
     const loaded = loadPackage(readPackageDir(flag("--package",kurdish)));
     if (!loaded.ok) throw new Error("the package does not load");
-    const report = runBatch(createEngine(coinHandlers),loaded.ruleset,{games: Number(flag("--games","10")),strategies: [names[0] ?? "",names[1] ?? ""],swapSeats: args.includes("--swap-seats"),seed: Number(flag("--seed","0")),scenario: flag("--scenario","scenario-a")});
+    const report = runBatch(createEngine(coinHandlers),loaded.ruleset,{games: Number(flag("--games","10")),strategies: [names[0] ?? "",names[1] ?? ""],swapSeats: args.includes("--swap-seats"),seed: Number(flag("--seed","0")),scenario: flag("--scenario","full-campaign")});
     if (args.includes("--out")) writeFileSync(flag("--out","metrics.csv"),report.csv,"utf8");
     else console.log(report.csv.trimEnd());
     print({exitCode: 0,lines: report.summary});
@@ -157,7 +157,7 @@ if (command === "validate" && target !== undefined) {
   if (!loaded.ok) {
     print({ exitCode: 1, lines: ["error: the package does not load"] });
   } else {
-    const report = fuzz(createEngine(coinHandlers), loaded.ruleset, "s0", Number(flag("--seeds", "50")), () => performance.now());
+    const report = fuzz(createEngine(coinHandlers), loaded.ruleset, "full-campaign", Number(flag("--seeds", "50")), () => performance.now());
     const lines = [`${String(report.games)} games, ${String(report.steps)} commands, apply mean ${report.applyMs.mean.toFixed(2)} ms, max ${report.applyMs.max.toFixed(2)} ms`];
     for (const f of report.failures) lines.push(`FAIL seed ${String(f.seed)}: ${f.reason}\n${JSON.stringify(f.commands)}`);
     print({ exitCode: report.failures.length === 0 ? 0 : 1, lines });

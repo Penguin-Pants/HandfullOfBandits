@@ -143,6 +143,22 @@ describe("Play map space (UC-4)", () => {
     expect(screen.getByLabelText("Status")).toBeTruthy();
   });
 
+  it("M works from the moment the loaded board is on screen", async () => {
+    // Press M in the same tick as the commit that shows the board, before passive effects run.
+    const pressed = new Promise<void>((resolve) => {
+      const seen = new MutationObserver(() => {
+        if (screen.queryByLabelText("Status") === null) return;
+        seen.disconnect();
+        window.dispatchEvent(new KeyboardEvent("keydown", { key: "m" }));
+        resolve();
+      });
+      seen.observe(document.body, { childList: true, subtree: true });
+    });
+    await render1();
+    await pressed;
+    await waitFor(() => { expect(screen.queryByLabelText("Status")).toBeNull(); });
+  });
+
   it("hides actions without losing status, resources, forces, selection or the camera", async () => {
     await render1();
     fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "botan" } });

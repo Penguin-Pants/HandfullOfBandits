@@ -10,7 +10,7 @@ export const okPackage: PackageSummary = {
   ok: true,
   issues: [{ level: "error", code: "V-ENCODE", file: "scenarios/full-campaign.yaml", path: "", id: "DK-004", message: "Not encoded.", scenario: "full-campaign" }],
   scenarios: [
-    { id: "s0", title: "S0 Opening (test)", blockedBy: [], testOnly: true },
+    { id: "short", title: "Short game (test)", blockedBy: [], testOnly: true },
     { id: "full-campaign", title: "Full campaign", blockedBy: ["V-ENCODE DK-004: Not encoded."], testOnly: false },
   ],
   assumptions: [{ id: "PA-01", text: "Executing faction chooses", status: "accepted" }],

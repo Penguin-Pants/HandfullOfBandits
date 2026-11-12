@@ -24,7 +24,7 @@ export interface ActionUse { readonly id: string; readonly part: ActionPart }
 export function restraintEffect(ruleset: Ruleset, state: GameState, faction: FactionId, uses: readonly ActionUse[]): "none" | "marker" | "breach" {
   const status = String(state.tracks[CEASEFIRE]);
   if (status === "none" || state.tracks[CEASEFIRE] === undefined) return "none";
-  const restraint = status === "reciprocalRestraint" || status === "talks";
+  const restraint = status === "reciprocalRestraint";
   const forbidden = (u: ActionUse): boolean => {
     if (faction === FACTION.pkk) {
       if (DECLARED_PKK.includes(u.id)) return true;
@@ -68,7 +68,6 @@ function placeRestraintBroken(ctx: Exec, faction: FactionId, location: string, r
 /** Set the ceasefire to None (breach, PKK end, leaving restraint). */
 export function endCeasefire(ctx: Exec, ref: string): void {
   ctx.apply({ type: "setTrack", track: CEASEFIRE, value: "none", ifEquals: null, ruleRef: ref, assumptionRef: null });
-  if (Number(ctx.state.tracks["ceasefireRounds"] ?? 0) !== 0) ctx.apply({ type: "setTrack", track: "ceasefireRounds", value: 0, ifEquals: null, ruleRef: ref, assumptionRef: null });
   if (ctx.state.flags["ceasefireDeclaredByPkk"] === true) ctx.apply({ type: "setFlag", flag: "ceasefireDeclaredByPkk", value: false, ruleRef: ref, assumptionRef: null });
 }
 

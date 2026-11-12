@@ -95,6 +95,7 @@ export function Help({ onClose, view, forms = [] }: HelpProps) {
           <ol>
             <li>The current card lies face up next to the deck.</li>
             <li>The First Eligible faction picks a box on the eligibility track: Event, Limited Op, Op Only, Op + SA or Pass. Each box shows what the other faction may do next.</li>
+            <li>The box follows the action. Op Only needs two or more locations. One location with no Special Activity is a Limited Op.</li>
             <li>The Second Eligible faction picks from the boxes left open.</li>
             <li>When both have acted, the next card is revealed. Op Only and Op + SA hand First Eligible to the other faction.</li>
           </ol>

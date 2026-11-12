@@ -227,8 +227,8 @@ describe("Ceasefire Extended at Bar Elias (DK-057)", () => {
   it("S: at None a PKK declaration without its own Europe +1; PUK one step toward Host; Europe +1 (DEC-69 point 6)", () => {
     const { state } = play(board("pkk", "DK-057"), event("pkk", "shaded"));
     expect([track(state, "ceasefire"), byPkk(state), track(state, "posture.puk"), track(state, "europe")]).toEqual(["declared", true, "host", 2]);
-    const held = play(cf(board("pkk", "DK-057"), "talks"), event("pkk", "shaded")).state;
-    expect([track(held, "ceasefire"), byPkk(held), track(held, "europe")]).toEqual(["talks", false, 2]);
+    const held = play(cf(board("pkk", "DK-057"), "reciprocalRestraint"), event("pkk", "shaded")).state;
+    expect([track(held, "ceasefire"), byPkk(held), track(held, "europe")]).toEqual(["reciprocalRestraint", false, 2]);
   });
 });
 
@@ -240,11 +240,6 @@ describe("President Özal Dies (DK-058)", () => {
       const { state } = play(before, event("state", "unshaded"));
       expect([track(state, "ceasefire"), byPkk(state), rb(state, "state"), rb(state, "pkk"), track(state, "resources.state")]).toEqual(["none", false, {}, {}, 14]);
     }
-  });
-
-  it("U: Talks is not listed, so Talks stays", () => {
-    const { state } = play(cf(board("state", "DK-058"), "talks"), event("state", "unshaded"));
-    expect([track(state, "ceasefire"), track(state, "resources.state")]).toEqual(["talks", 14]);
   });
 
   it("S: State Resources -3, PKK Resources +1", () => {
@@ -348,16 +343,16 @@ describe("Germany Bans PKK and ERNK (DK-064)", () => {
     expect(card("DK-064")?.chainAfter).toEqual(["DK-061"]);
   });
 
-  it("U: the Ban marker on the Europe track, Europe above the cap set to it, PKK Resources -2", () => {
+  it("U: the Europe Ban marker on the Europe track, Europe above the cap set to it, PKK Resources -2", () => {
     const { state } = play(setTrack(board("state", "DK-064"), "europe", 5), event("state", "unshaded"));
-    expect([marker(state, "europe", "ban"), track(state, "europe"), track(state, "resources.pkk")]).toEqual([1, 3, 3]);
+    expect([marker(state, "europe", "europeBan"), track(state, "europe"), track(state, "resources.pkk")]).toEqual([1, 3, 3]);
     expect(track(play(setTrack(board("state", "DK-064"), "europe", 2), event("state", "unshaded")).state, "europe")).toBe(2);
   });
 
-  it("S: Europe +1, no Ban marker; with a Ban marker already placed, Europe stops at the cap", () => {
+  it("S: Europe +1, no Europe Ban marker; with a Europe Ban marker already placed, Europe stops at the cap", () => {
     const { state } = play(board("pkk", "DK-064"), event("pkk", "shaded"));
-    expect([marker(state, "europe", "ban"), track(state, "europe")]).toEqual([0, 2]);
-    const capped = setMarkers(setTrack(board("pkk", "DK-064"), "europe", 3), "europe", "ban", 1);
+    expect([marker(state, "europe", "europeBan"), track(state, "europe")]).toEqual([0, 2]);
+    const capped = setMarkers(setTrack(board("pkk", "DK-064"), "europe", 3), "europe", "europeBan", 1);
     expect(track(play(capped, event("pkk", "shaded")).state, "europe")).toBe(3);
   });
 });

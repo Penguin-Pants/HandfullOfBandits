@@ -1,4 +1,4 @@
-// `sim fuzz --seeds N` (T-FUZZ, DEC-33; 09 s2): play S0 with random legal choices. A failure is an
+// `sim fuzz --seeds N` (T-FUZZ, DEC-33; 09 s2): play a scenario with random legal choices. A failure is an
 // exception, a dead end (no legal command, game not over) or more than 2,000 steps. Each failure
 // returns its seed and commands as a regression case.
 import { legalOps } from "../engine/coin/stop-rules.ts";
@@ -34,6 +34,8 @@ export function randomPolicy(seed: number): Policy {
     }
   };
   return (engine: Engine, ruleset: Ruleset, state: GameState): AnyCommand => {
+    // The Pivotal window (rules 5.3): decline, as the scripted policy does.
+    if (state.turn.phase === "pivotal" && state.pending !== null) return { type: "ResolveDecision", decisionId: state.pending.id, answer: "decline" };
     const faction = activeFaction(state);
     if (faction === null) {
       const advance = { type: "Advance" };

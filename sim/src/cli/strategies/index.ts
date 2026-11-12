@@ -1,4 +1,4 @@
-// Research 12 s7 adversarial policies for Scenario A. These are screens, not strong opponents.
+// Research 12 s7 adversarial policies, built for C1 and C2. These are screens, not strong opponents.
 import type { AnyCommand, GameState, JsonObject, Ruleset } from "../../engine/core/types.ts";
 import type { Engine } from "../../engine/index.ts";
 import { activeFaction, legalBoxes } from "../../engine/coin/sequence/ct.ts";
@@ -37,7 +37,8 @@ export function strategy(name: string): Policy {
 }
 
 function proposals(r: Ruleset, s: GameState, faction: string, name: string): AnyCommand[] {
-  const box = ["opOnly","opSa","limitedOp"].find(b => legalBoxes(r,s,faction).includes(b));
+  // Every proposal has one location, so the First Eligible uses the Limited Op box (rules 2.3).
+  const box = (faction === s.initiative.firstEligible ? ["limitedOp"] : ["opOnly","opSa","limitedOp"]).find(b => legalBoxes(r,s,faction).includes(b));
   if (box === undefined) return [];
   const out: AnyCommand[] = [];
   const add = (op: string, loc: string, choice: JsonObject = {}, subActions: readonly JsonObject[] = []) => {

@@ -18,7 +18,7 @@ afterAll(() => {
 
 describe("P3c-01 sessions stored before the switch rows", () => {
   const packages = join(kurdishDir, "..", "..");
-  const { sessionId, head } = new SessionService(db, packages).createSession({ dir: kurdishDir, scenarioId: "s0", seed: 1, name: "old" });
+  const { sessionId, head } = new SessionService(db, packages).createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 1, name: "old" });
 
   it("stay active with the switch rows", () => {
     expect(new SessionService(db, packages).session(sessionId).session.status).toBe("active");

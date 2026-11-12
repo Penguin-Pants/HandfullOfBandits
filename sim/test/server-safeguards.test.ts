@@ -11,7 +11,7 @@ describe("server safety boundaries", () => {
   it("keeps a session read-only after a replay exception, including subsequent requests", async () => {
     const db = openStore(":memory:");
     const service = new SessionService(db, "");
-    const created = service.createSession({ dir: kurdishDir, scenarioId: "s0", seed: 7, name: "Replay failure" });
+    const created = service.createSession({ dir: kurdishDir, scenarioId: "full-campaign", seed: 7, name: "Replay failure" });
     const advanced = service.submit(created.sessionId, { type: "Advance" }, created.head.actionId, created.head.stateHash);
     db.prepare("UPDATE commands SET payload = 'invalid-json' WHERE action_id = ?").run(advanced.actionId);
     db.prepare("UPDATE sessions SET code_fingerprint = 'old' WHERE session_id = ?").run(created.sessionId);

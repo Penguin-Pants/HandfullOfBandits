@@ -5,12 +5,13 @@
 import { canonicalHash } from "../engine/core/canonical.ts";
 import type { AnyCommand, FactionId, GameState, Ruleset } from "../engine/core/types.ts";
 import type { Engine } from "../engine/index.ts";
+import { switchesAt } from "../engine/coin/switches.ts";
 import { decisionPoint, generateCandidates, type DecisionKind } from "./candidates.ts";
 import { determinize, observe, SearchRng } from "./player-observation.ts";
 import { isObservationPlayer, TransitionBudget, type Player } from "./players.ts";
 
 export const SUITE_VERSION = 1;
-/** Scenario A values from rules 7.1, written here independently of the package. */
+/** Full campaign values from rules 7.1, written here independently of the package. */
 const THRESHOLD: Readonly<Record<string, number>> = { state: 49, pkk: 30 };
 const HARM_LIMIT = 6;
 
@@ -75,12 +76,13 @@ function lastCard(actor: FactionId): Edit {
   });
 }
 
-/** Final round (rules 6.1 to 6.7), at the given phase. */
+/** Final round of the full campaign (round 5 in C5; rules 6.1 to 6.7), at the given phase. */
 function finalPhase(phase: string): Edit {
   return (s, r) => ({
     ...s,
-    turn: { campaign: "C2", propagandaRound: 2, cardIndex: 26, phase: "propaganda", step: r.sequence.propagandaPhases.indexOf(phase) },
-    deck: { piles: [[], []], currentCard: "DK-035", played: [...C1, ...C2_SEEN, "DK-021"], setAside: [] },
+    flags: { ...s.flags, ...switchesAt(r, "C5") },
+    turn: { campaign: "C5", propagandaRound: 5, cardIndex: 26, phase: "propaganda", step: r.sequence.propagandaPhases.indexOf(phase) },
+    deck: { piles: [[], [], [], [], []], currentCard: "DK-099", played: [...C1, ...C2_SEEN, "DK-021"], setAside: [] },
     hands: { state: [], pkk: [] },
     initiative: { boxes: { state: null, pkk: null }, firstEligible: "pkk", secondEligible: "state", actedThisCard: [] },
   });
@@ -181,7 +183,7 @@ export interface FixtureResult {
 
 /** Hash of the fixture definitions (19 s6: record the suite hash). */
 export function suiteHash(engine: Engine, r: Ruleset): string {
-  const start = engine.start(r, "scenario-a", 1).state;
+  const start = engine.start(r, "full-campaign", 1).state;
   return canonicalHash({ version: SUITE_VERSION, fixtures: FIXTURES.map((f) => ({ id: f.id, benchmark: f.benchmark, faction: f.faction, source: f.source, alternatives: f.alternatives, accepts: f.accepts, kind: f.kind, state: canonicalHash(f.build(start, r)) })) });
 }
 
@@ -189,7 +191,7 @@ export function suiteHash(engine: Engine, r: Ruleset): string {
 export function runFixture(engine: Engine, r: Ruleset, fixture: Fixture, player: Player): FixtureResult {
   const base = { fixture: fixture.id, player: player.spec.id };
   if (player.spec.faction !== fixture.faction) return { ...base, passed: true, detail: "not applicable (other faction)", command: null };
-  const s = fixture.build(engine.start(r, "scenario-a", 1).state, r);
+  const s = fixture.build(engine.start(r, "full-campaign", 1).state, r);
   const point = decisionPoint(engine, r, s);
   if (point.kind !== fixture.kind || !("faction" in point) || point.faction !== fixture.faction) return { ...base, passed: false, detail: `fixture error: decision point ${JSON.stringify(point)}`, command: null };
   if (!isObservationPlayer(player)) return { ...base, passed: false, detail: "full-state control: not eligible for qualification", command: null };
