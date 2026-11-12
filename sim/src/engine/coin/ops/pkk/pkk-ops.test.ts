@@ -49,6 +49,13 @@ describe("Rally (06 s4.1)", () => {
     expect(res(state)).toBe(3);
   });
 
+  it("requires a Guerrilla to choose the flip option", () => {
+    const empty = setPieces(setPieces(start, "dersim", "guerrilla", 0), "dersim", "guerrilla", 0, "active");
+    const command = rally("limitedOp", { dersim: { option: "flip" } });
+    expect(codes(empty, command)).toEqual(["rallyFlipGuerrilla"]);
+    expect(codes(setPieces(empty, "dersim", "guerrilla", 1), command)).toEqual([]);
+  });
+
   it("rejects a Displacement space and a City at Support, except Western Cities (03 s2.1)", () => {
     expect(codes(setMarkers(start, "dersim", "displacement", 1, "new"), rally("limitedOp", { dersim: {} }))).toEqual(["rallyDisplaced"]);
     expect(codes(setLevel(start, "diyarbakir-city", 1), rally("limitedOp", { "diyarbakir-city": {} }))).toEqual(["rallyCity"]);

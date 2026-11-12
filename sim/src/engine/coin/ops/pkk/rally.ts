@@ -95,6 +95,8 @@ export const rally: ActionHandler = {
         if (stackingRoom(ruleset, state, loc, PIECE.pkkBase) < 1) v("rallyBaseStacking", "PKK Base stacking limit (03 s5).");
         if (s.kind === "external" && !rallyBaseOpen(state, loc)) v("rallyBaseHost", "The host posture does not allow a Base here (07 s5.1).");
         basing += 1;
+      } else if (choice === "flip" && count(state, loc, PIECE.guerrilla) === 0) {
+        v("rallyFlipGuerrilla", "Flipping needs a Guerrilla here.");
       } else if (choice === "grow" && count(state, loc, PIECE.pkkBase) === 0) {
         v("rallyNeedsBase", "This option needs a PKK Base here.");
       } else if (choice === "grow") {
