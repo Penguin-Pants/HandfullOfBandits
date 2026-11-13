@@ -1,6 +1,6 @@
 # Automated players: reference and review checklist
 
-Date: 2026-11-04. State of the code: generator `cand-5`, search `search-2`, observation version 1, roster State v1 and PKK v2, engine with DEC-62. Use this file before each new simulation program, and update it whenever the bots change. Details: [21](21-scenario-a-strategies.md) (players), [19](19-scenario-a-automated-playtest-spec.md) (requirements), [23](23-scenario-a-automated-playtest-report.md) (results).
+Date: 2026-11-13 (was 2026-11-04). State of the code: generator `cand-6`, qualification suite 2, search `search-2`, observation version 1, roster State v1 and PKK v2, engine with DEC-62. Use this file before each new simulation program, and update it whenever the bots change. Details: [21](21-scenario-a-strategies.md) (players), [19](19-scenario-a-automated-playtest-spec.md) (requirements), [23](23-scenario-a-automated-playtest-report.md) (results).
 
 ## Part 1: summary
 
@@ -25,7 +25,7 @@ Date: 2026-11-04. State of the code: generator `cand-5`, search `search-2`, obse
 - **Hand-set weights.** Each strategy is a guess about good play, not a learned or optimal policy.
 - **Passive State.** The State passes on about 39% of its card choices and ends with about 4.8 unused Resources.
 - **Narrow strategy set.** Eight families plus two counters; any line nobody coded is untested.
-- **Built for Scenario A.** Fixtures, the coverage list and several space names assume Scenario A (Part 2).
+- **Tuned for Scenario A.** The weights, the potential estimate and the win and loss fixtures come from the archived Scenario A (C1 and C2). Since `cand-6` the bots have candidates, coverage entries and procedure fixtures for the C3 to C5 decisions, but no weight is tuned for them (Part 2).
 
 ### What the program can and cannot show
 
@@ -88,9 +88,20 @@ PKK v2 caps the potential estimate by the remaining conversion opportunities. Co
 | Potential estimate: Civic Action caps and Train/Rally chances of the remaining Propaganda rounds | `evaluation.ts` | Partly; tuned on a 2-round game |
 | Strategy weights | `FAMILIES` in `scenario-a.ts` | No; tuned on Scenario A pilots |
 | Qualification fixtures (campaign C2, round 1 or 2, named cards) | `qualification.ts` | No |
-| Coverage mechanics list | `experiment-coverage.ts` (`MECHANICS`) | No; Scenario A mechanics only |
+| Coverage mechanics list | `experiment-coverage.ts` (`MECHANICS`) | Yes since 2026-11-13: Village Clearance, Covert Action, ceasefire, Legal Politics, the three later Pivotals, Europe Ban |
 | Space and box names (host zones, Western Cities, Diyarbakir City fallback) | `candidates.ts` | No; map-specific |
 | Event candidates: answers to each card's questions, 60 question nodes per side | `candidates.ts` | Yes for new cards using existing question types |
+
+### C3 to C5 decisions (`cand-6`, 2026-11-13)
+
+| Decision | Candidates | Code |
+|---|---|---|
+| Village Clearance, Covert Action | Special Activity variants with Sweep and Garrison; both Reception spaces; before and after | `candidates.ts` (`saVariants`) |
+| Declare Ceasefire | One candidate in the Limited Op box, from C3 | `candidates.ts` (card decision) |
+| Legal Politics | Two parts, State first: closure filing, accept or leave a ceasefire; then the PKK ends or leaves | `candidates.ts` (`legalPoliticsState`, `legalPoliticsPkk`), `game-runner.ts` |
+| Serhildan, Area Domination, Coercive Diplomacy on Syria | Every completion of the card's questions, or decline | `candidates.ts` (pivotal decision) |
+
+Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, development seeds 11 to 13): all games complete. Seen: Serhildan in 4 games, ceasefire Declared in 4, Reciprocal Restraint in 2, a Restraint Broken marker in 3 (breach or State marker only; the probe did not separate them in this run), a State closure filing in 6, a ban in 5, Covert Action in 3, Area Domination in 1. Not seen: Village Clearance, the line 6 prosecutor filing, Coercive Diplomacy on Syria, leaving a ceasefire at the ceasefire step. Six games are a smoke check, not a result.
 
 ## Part 3: known gaps log
 
@@ -102,6 +113,11 @@ PKK v2 caps the potential estimate by the remaining conversion opportunities. Co
 | Hand-set weights | Design | Results depend on these families | Open; review per program |
 | Pruning gaps in candidate generation | PR #40 and #41 reviews (cand-2 to cand-5) | Missed best moves in rare positions | Fixed as found; broad-mode audit exists |
 | DEC-56 dead end | options-4 | One game stopped | Closed by DEC-62 |
+| No candidates for C3 to C5 decisions | Full campaign port, 2026-11-12 | Bots never used Village Clearance, Covert Action, ceasefire, closure filing or the later Pivotals | Closed by `cand-6` |
+| ARGK fixture offered only "decline" | `cand-6` work | The fixture did not test an ARGK play | Fixed in suite 2 |
+| Later free actions of one card were planned on the board before the card | PR 106 review | Area Domination: the Assault after the Sweep was offered only against Guerrillas already Active. The same held for every Event with two free actions | Closed: `engine.questionState` gives the board at the open question, and `eventCompletions` plans each answer on it |
+| A question after a random result (DK-079 and DK-080 shaded with 2 Covert markers) had no answer | Smoke run after `cand-6` | Validation stops at the random reveal, so the generator sent no answer and `engine.apply` threw. One random-bot game failed | Closed: the generator applies a valid command on its sampled board and answers a late question |
+| Weights and potential estimate not tuned for C3 to C5 | Full campaign port | Choices in C3 to C5 are legal but not informed | Open; needs the designer's view of good play |
 
 ## Part 4: review checklist before the next simulations
 

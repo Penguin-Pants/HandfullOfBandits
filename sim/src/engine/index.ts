@@ -2,6 +2,7 @@
 // the result. Command handlers are passed in, so a test-only command such as AdjustTrackDebug
 // never ships in production (11 P1-10). Production handlers: coin/handlers.ts.
 import { control } from "./coin/derive.ts";
+import { AnswerNeeded } from "./coin/events.ts";
 import { startState } from "./coin/setup.ts";
 import { afterCommand } from "./coin/turn.ts";
 import { canonicalHash } from "./core/canonical.ts";
@@ -24,6 +25,11 @@ export interface Engine {
   start(ruleset: Ruleset, scenarioId: string, seed: number): Transition;
   validate(ruleset: Ruleset, state: GameState, command: AnyCommand): ValidationResult;
   apply(ruleset: Ruleset, state: GameState, command: AnyCommand): ApplyResult;
+  /**
+   * The board at the open question of `command`: the state after the effects of its answers so
+   * far. Null when the command asks no question. For planning the next answer (bots, 19 s5).
+   */
+  questionState(ruleset: Ruleset, state: GameState, command: AnyCommand): GameState | null;
 }
 
 function transition(state: GameState, logEntries: readonly LogEntry[]): Transition {
@@ -69,6 +75,19 @@ export function createEngine(handlers: Readonly<Record<string, CommandHandler>>)
   }
 
   return {
+    questionState(ruleset, state, command) {
+      const handler = handlerFor(command.type);
+      if (handler?.execute === undefined || handler.check(ruleset, state, command)[0]?.code !== "needsAnswer") return null;
+      // The same dry run as the handler's check: it stops at the question, with the earlier effects applied.
+      const ctx = createExec(ruleset, state, true);
+      try {
+        handler.execute(ctx, command);
+      } catch (e) {
+        if (e instanceof AnswerNeeded) return ctx.state;
+        if (!(e instanceof PreviewStop)) throw e;
+      }
+      return null;
+    },
     start(ruleset, scenarioId, seed) {
       const state = startState(ruleset, scenarioId, seed);
       return transition(state, [logEntry(state, "PhaseStarted", { phase: state.turn.phase, scenario: scenarioId })]);
