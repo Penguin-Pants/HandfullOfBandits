@@ -371,6 +371,20 @@ describe("C3 to C5 decisions", () => {
     const poor = setTrack(both, "legitimacy", 0);
     const sweeps = gen(poor, "pivotal", "state").candidates.filter((c) => c.family === "pivotal:play:DK-076").map((c) => (c.command["answers"] as unknown[])[0]);
     expect(sweeps.some((a) => a !== null)).toBe(true);
+    // Every Guerrilla starts Underground. The Sweep activates some, so the Assault after it has targets (PR 106 review).
+    const area = gen(both, "pivotal", "state").candidates.filter((c) => c.family === "pivotal:play:DK-076").map((c) => c.command["answers"] as unknown[]);
+    expect(area.some((a) => a[0] !== null && a[1] !== null && a[1] !== undefined)).toBe(true);
+  });
+
+  it("answers a question that opens after a random reveal (DK-079 and DK-080 shaded with 2 Covert markers)", () => {
+    // Validation stops at the first random result, so it does not see the "reveal a second" question. Apply needs its answer.
+    for (const card of ["DK-079", "DK-080"]) {
+      const s = setMarkers(setMarkers(inCampaign(ruleset, withCard(turnOf("pkk"), card), "C5"), "dersim", "covert", 1), "agri", "covert", 1);
+      const shaded = gen(s, "card", "pkk").candidates.filter((c) => c.family === "event:shaded");
+      expect(shaded.length, card).toBeGreaterThan(1);
+      for (const c of shaded) expect(() => engine.apply(ruleset, s, c.command), `${card} ${JSON.stringify(c.command["answers"])}`).not.toThrow();
+      expect(new Set(shaded.map((c) => (c.command["answers"] as unknown[]).at(-1))).size, card).toBeGreaterThan(1);
+    }
   });
 
   describe("Legal Politics (rules 6.5, 8.5, 8.6)", () => {

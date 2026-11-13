@@ -130,3 +130,24 @@ function engineMessage(state: GameState, command: AnyCommand): string | undefine
   }
   return undefined;
 }
+
+describe("board at an open question (engine.questionState)", () => {
+  const open = reveal("C4", { state: ["DK-076"] }, (s) => setTrack(opposed(s), "emergencyRule", "ohalExtendedPowers"));
+  const sweep = { locations: ["hakkari"], perLocation: {} };
+  const active = (s: GameState | null): number => s?.spaces["hakkari"]?.pieces["guerrilla"]?.["active"] ?? -1;
+
+  it("gives the board after the answers so far: the Sweep of Area Domination has activated Guerrillas before the Assault question", () => {
+    expect(active(open)).toBe(0);
+    expect(active(engine.questionState(ruleset, open, pivotal("state", "DK-076")))).toBe(0);
+    expect(active(engine.questionState(ruleset, open, pivotal("state", "DK-076", [sweep])))).toBe(1);
+  });
+
+  it("changes no state, and gives null when no question is open", () => {
+    const before = JSON.stringify(open);
+    engine.questionState(ruleset, open, pivotal("state", "DK-076", [sweep]));
+    expect(JSON.stringify(open)).toBe(before);
+    expect(engine.questionState(ruleset, open, pivotal("state", "DK-076", [sweep, null]))).toBeNull();
+    expect(engine.questionState(ruleset, open, pivotal("pkk", "DK-076", [sweep]))).toBeNull();
+    expect(engine.questionState(ruleset, open, { type: "NoSuchCommand" })).toBeNull();
+  });
+});

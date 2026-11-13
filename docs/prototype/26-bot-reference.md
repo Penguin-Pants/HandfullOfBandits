@@ -115,7 +115,8 @@ Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, 
 | DEC-56 dead end | options-4 | One game stopped | Closed by DEC-62 |
 | No candidates for C3 to C5 decisions | Full campaign port, 2026-11-12 | Bots never used Village Clearance, Covert Action, ceasefire, closure filing or the later Pivotals | Closed by `cand-6` |
 | ARGK fixture offered only "decline" | `cand-6` work | The fixture did not test an ARGK play | Fixed in suite 2 |
-| Later free actions of one card are planned on the board before the card | PR 106 review | Area Domination: the Assault after the Sweep is offered only against Guerrillas that were Active before the Sweep. The same holds for every Event with two free actions | Open; the engine must expose the board at an open question |
+| Later free actions of one card were planned on the board before the card | PR 106 review | Area Domination: the Assault after the Sweep was offered only against Guerrillas already Active. The same held for every Event with two free actions | Closed: `engine.questionState` gives the board at the open question, and `eventCompletions` plans each answer on it |
+| A question after a random result (DK-079 and DK-080 shaded with 2 Covert markers) had no answer | Smoke run after `cand-6` | Validation stops at the random reveal, so the generator sent no answer and `engine.apply` threw. One random-bot game failed | Closed: the generator applies a valid command on its sampled board and answers a late question |
 | Weights and potential estimate not tuned for C3 to C5 | Full campaign port | Choices in C3 to C5 are legal but not informed | Open; needs the designer's view of good play |
 
 ## Part 4: review checklist before the next simulations
