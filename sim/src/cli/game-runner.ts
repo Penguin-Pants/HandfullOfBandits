@@ -144,7 +144,7 @@ export function runGame(engine: Engine, ruleset: Ruleset, scenario: string, job:
   const rngs: Record<string, SearchRng> = Object.fromEntries(Object.entries(job.playerSeeds).map(([f, seed]) => [f, new SearchRng(seed)]));
   let decisionCount = 0;
 
-  const decide = (kind: DecisionKind, faction: FactionId, extra: { stateRedeploy?: JsonObject }): { command: AnyCommand; record: DecisionRecord } => {
+  const decide = (kind: DecisionKind, faction: FactionId, extra: { stateRedeploy?: JsonObject; stateLegalPolitics?: JsonObject }): { command: AnyCommand; record: DecisionRecord } => {
     const player = players[faction];
     if (player === undefined) throw new GameFailure("failed", `no player for ${faction}`);
     const id = `${job.gameId}:d${String(decisionCount++)}`;
@@ -159,7 +159,7 @@ export function runGame(engine: Engine, ruleset: Ruleset, scenario: string, job:
     }
     const observation = observe(state, faction);
     const projection = determinize(ruleset, observation, new SearchRng(0));
-    const generated = generateCandidates(engine, ruleset, projection, kind, faction, { familyCap: 14, broad: false, ...(extra.stateRedeploy === undefined ? {} : { stateRedeploy: extra.stateRedeploy }) });
+    const generated = generateCandidates(engine, ruleset, projection, kind, faction, { familyCap: 14, broad: false, ...extra });
     const live = generated.candidates.filter((c) => engine.validate(ruleset, state, c.command).ok);
     const base = { ...common, observationHash: canonicalHash(observation), candidates: live.length, families: generated.families, rejectedSample: generated.rejected, liveRejected: generated.candidates.length - live.length };
     if (live.length === 0) throw new GameFailure("failed", `empty candidate set for ${kind} (${faction}); families ${JSON.stringify(generated.families)}`);
@@ -197,6 +197,22 @@ export function runGame(engine: Engine, ruleset: Ruleset, scenario: string, job:
           command = second.command;
         } else {
           command = first.command;
+        }
+      } else if (point.kind === "legalPoliticsState" || point.kind === "legalPoliticsPkk") {
+        // State answers first, then the PKK extends them (rules 8.6), as Redeploy does.
+        let chosen: JsonObject = {};
+        command = { type: "Advance" };
+        if (point.kind === "legalPoliticsState") {
+          const first = decide("legalPoliticsState", "state", {});
+          decisions.push(first.record);
+          command = first.command;
+          chosen = (first.command["choice"] ?? {}) as JsonObject;
+        }
+        const pkkPlayer = players["pkk"];
+        if (pkkPlayer !== undefined && isObservationPlayer(pkkPlayer)) {
+          const second = decide("legalPoliticsPkk", "pkk", { stateLegalPolitics: chosen });
+          decisions.push(second.record);
+          command = second.command;
         }
       } else {
         const d = decide(point.kind, point.faction, {});

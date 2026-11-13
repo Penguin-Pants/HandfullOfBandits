@@ -13,12 +13,14 @@ import { postureOf } from "../engine/coin/ops/common-pkk.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { siteCount } from "../engine/coin/ops/choose-operation.ts";
 import { asObject } from "../engine/coin/ops/plan.ts";
+import { ceasefireOptions } from "../engine/coin/propaganda/ceasefire-step.ts";
+import { closureViolations } from "../engine/coin/propaganda/legal-politics.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
 
-export const GENERATOR_VERSION = "cand-5";
+export const GENERATOR_VERSION = "cand-6";
 
-export type DecisionKind = "card" | "pivotal" | "resume" | "upkeep" | "legitimacy" | "civicAction" | "agitation" | "redeployState" | "redeployPkk";
+export type DecisionKind = "card" | "pivotal" | "resume" | "upkeep" | "legitimacy" | "legalPoliticsState" | "legalPoliticsPkk" | "civicAction" | "agitation" | "redeployState" | "redeployPkk";
 
 /** What the game needs next. `auto`: one command with no choice (not a fallback, 19 s5). */
 export type DecisionPoint =
@@ -49,11 +51,15 @@ export interface GeneratorOptions {
   readonly broad: boolean;
   /** Redeploy: the State's chosen part, which the PKK part extends. */
   readonly stateRedeploy?: JsonObject;
+  /** Legal Politics: the State's chosen answers, which the PKK answers extend. */
+  readonly stateLegalPolitics?: JsonObject;
 }
 
 export const DEFAULT_OPTIONS: GeneratorOptions = { familyCap: 14, broad: false };
 
-const AUTO_PHASES = new Set(["victory", "resources", "legalPolitics", "reset"]);
+const AUTO_PHASES = new Set(["victory", "resources", "reset"]);
+const RECEPTION = ["diyarbakir-city", "western-cities"];
+const ARGK = "DK-015";
 const ZONES = ["kdp-zone", "puk-zone"];
 const HOSTS = ["syria-bekaa", "kdp-zone", "puk-zone"];
 
@@ -72,6 +78,10 @@ export function decisionPoint(engine: Engine, r: Ruleset, s: GameState): Decisio
     if (AUTO_PHASES.has(phase)) return { kind: "auto", command: { type: "Advance" }, reason: phase };
     if (phase === "upkeep") return engine.validate(r, s, { type: "Advance" }).ok ? { kind: "auto", command: { type: "Advance" }, reason: "upkeep paid in full" } : { kind: "upkeep", faction: "state" };
     if (phase === "legitimacy") return emergencyMoves(r, s).length === 0 ? { kind: "auto", command: { type: "Advance" }, reason: "no Emergency Rule move" } : { kind: "legitimacy", faction: "state" };
+    if (phase === "legalPolitics") {
+      if (stateLegalChoices(r, s).length > 1) return { kind: "legalPoliticsState", faction: "state" };
+      return pkkLegalChoices(s, {}).length > 1 ? { kind: "legalPoliticsPkk", faction: "pkk" } : { kind: "auto", command: { type: "Advance" }, reason: phase };
+    }
     if (phase === "civicAction") return { kind: "civicAction", faction: "state" };
     if (phase === "agitation") return { kind: "agitation", faction: "pkk" };
     if (phase === "redeploy") return { kind: "redeployState", faction: "state" };
@@ -389,6 +399,16 @@ function saVariants(r: Ruleset, s: GameState, sa: string, base: Plan): Plan[] {
       const locs = domestic(r).filter((l) => count(s, l, "guards") > 0 && count(s, l, "guerrilla", "underground") > 0).sort((a, b) => count(s, b, "guards") - count(s, a, "guards"));
       return [...locs.map((l) => withSa(sa, [l], { [l]: { guards: Math.min(2, count(s, l, "guards")) } }, "before")), ...combos(locs, 2, 2).map((pair) => withSa(sa, pair, Object.fromEntries(pair.map((l) => [l, { guards: 1 }])), "before"))];
     }
+    case "state.village-clearance": {
+      // One Operation space: Mountain or Plain, Neutral or Opposition, no Displacement (rules 4.2.4). Both Reception spaces.
+      const locs = base.locations.filter((l) => r.spaces.find((x) => x.id === l)?.kind === "domestic" && isTerrain(r, l, "mountain", "plain") && level(s, l) <= 0 && markers(s, l, "displacement") === 0);
+      return locs.flatMap((l) => RECEPTION.flatMap((reception) => (["after", "before"] as const).map((timing) => withSa(sa, [l], { [l]: { reception } }, timing))));
+    }
+    case "state.covert-action": {
+      // Any space with State Control, Police, an Underground Guerrilla and no Office (rules 4.2.5). It need not be an Operation space.
+      const locs = domestic(r).filter((l) => controlOf(r, s, l) === "state" && count(s, l, "police") > 0 && count(s, l, "guerrilla", "underground") > 0 && markers(s, l, "office") === 0).slice(0, 3); // literal-ok: bounded targets per plan
+      return locs.flatMap((l) => (["before", "after"] as const).map((timing) => withSa(sa, [l], {}, timing)));
+    }
     case "pkk.host-pressure":
       return HOSTS.filter((h) => count(s, h, "guerrilla") + count(s, h, "pkkBase") > 0).flatMap((h) => [withSa(sa, [h], {}, "before"), withSa(sa, [h], {}, "after")]);
     default:
@@ -585,6 +605,25 @@ function pkkRedeployChoices(r: Ruleset, s: GameState): JsonValue[] {
   return [[], moves(() => true), moves(external), moves((f) => !external(f))];
 }
 
+/** Legal Politics, State answers (rules 8.5, 8.6): nothing, a closure filing, accepting or leaving a ceasefire. Empty when the phase does nothing. */
+function stateLegalChoices(r: Ruleset, s: GameState): JsonObject[] {
+  if (s.tracks["legalSpace"] === "absent") return [];
+  const ceasefire = ceasefireOptions(r, s);
+  const steps: JsonObject[] = [...(ceasefire.accept ? [{ ceasefire: { accept: true } }] : []), ...(ceasefire.leave ? [{ ceasefire: { leave: { state: true } } }] : [])];
+  const filing: JsonObject[] = closureViolations(r, s).length === 0 ? [{ closureFiling: true }] : [];
+  return [{}, ...filing, ...steps, ...filing.flatMap((f) => steps.map((c) => ({ ...f, ...c })))];
+}
+
+/** Legal Politics, PKK answers on top of the State's: end its Declared ceasefire, or leave Reciprocal Restraint. */
+function pkkLegalChoices(s: GameState, state: JsonObject): JsonObject[] {
+  if (s.tracks["legalSpace"] === "absent") return [];
+  const chosen = asObject(state["ceasefire"]) ?? {};
+  const extend = (more: JsonObject): JsonObject => ({ ...state, ceasefire: { ...chosen, ...more } });
+  if (s.tracks["ceasefire"] === "declared" && chosen["accept"] !== true) return [state, extend({ pkkEnd: true })];
+  if (s.tracks["ceasefire"] === "reciprocalRestraint" && asObject(chosen["leave"])?.["state"] !== true) return [state, extend({ leave: { pkk: true } })];
+  return [state];
+}
+
 // ---------------------------------------------------------------- assembly
 
 /** Every candidate for the decision, validated on `s`. */
@@ -618,6 +657,7 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
   if (kind === "card") {
     const boxes = legalBoxes(r, s, faction);
     if (boxes.includes(BOX.pass)) offer("pass", [{ type: "Pass", faction }]);
+    if (faction === "pkk" && boxes.includes(BOX.limitedOp)) offer("ceasefire:declare", [{ type: "DeclareCeasefire", faction }]);
     const card = s.deck.currentCard === null ? undefined : r.cards[s.deck.currentCard];
     if (boxes.includes(BOX.event) && card !== undefined) {
       for (const side of ["unshaded", "shaded"] as const) if (card[side] !== null) offer(`event:${side}`, eventCompletions(engine, r, s, { type: "ChooseEvent", faction, side, answers: [] }, wide, cap), true);
@@ -645,9 +685,11 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
     const bases = [...domestic(r), ...HOSTS].filter((l) => count(s, l, "pkkBase") > 0);
     const n = Math.min(max, avail(s, "guerrilla"));
     const spreads: Record<string, number>[] = [...bases.map((b) => ({ [b]: n })), ...combos(bases, 2, 6 * wide).map(([a, b]) => ({ [a ?? ""]: Math.ceil(n / 2), [b ?? ""]: Math.floor(n / 2) })), Object.fromEntries(bases.slice(0, n).map((b) => [b, 1]))];
-    // Bots play ARGK only; the other Pivotals (P3b-06b) wait for the bot review (doc 26).
-    const argk = (s.pending?.answers ?? []).some((a) => asObject(a)?.["card"] === "DK-015");
-    if (argk) offer("pivotal:play", spreads.map((placements) => ({ type: "PlayPivotal", faction, card: "DK-015", placements: Object.fromEntries(Object.entries(placements).filter(([, v]) => v > 0)) })));
+    // ARGK Formed allocates recruits; every other offered Pivotal runs its card text with answers (rules 5.3).
+    for (const card of (s.pending?.answers ?? []).flatMap((a) => { const c = asObject(a)?.["card"]; return typeof c === "string" ? [c] : []; })) {
+      if (card === ARGK) offer("pivotal:play", spreads.map((placements) => ({ type: "PlayPivotal", faction, card, placements: Object.fromEntries(Object.entries(placements).filter(([, v]) => v > 0)) })));
+      else offer(`pivotal:play:${card}`, eventCompletions(engine, r, s, { type: "PlayPivotal", faction, card, answers: [] }, wide, cap), true);
+    }
   } else if (kind === "resume") {
     const resume = s.pending?.resume;
     if (resume !== undefined) offer(`resume:${resume.op}`, (OP_PLANS[resume.op]?.(r, s, resume.box === BOX.limitedOp, wide) ?? []).map((p) => opCommand(faction, resume.box, resume.op, p)));
@@ -655,6 +697,9 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
     offer("propaganda:upkeep", upkeepChoices(r, s).map((c) => propaganda("upkeep", c)));
   } else if (kind === "legitimacy") {
     offer("propaganda:legitimacy", [{ type: "Advance" }, ...emergencyMoves(r, s).map((step) => propaganda("legitimacy", { emergencyStep: step }))]);
+  } else if (kind === "legalPoliticsState" || kind === "legalPoliticsPkk") {
+    const choices = kind === "legalPoliticsState" ? stateLegalChoices(r, s) : pkkLegalChoices(s, options.stateLegalPolitics ?? {});
+    offer("propaganda:legalPolitics", choices.map((c) => (Object.keys(c).length === 0 ? { type: "Advance" } : propaganda("legalPolitics", c))));
   } else if (kind === "civicAction") {
     offer("propaganda:civicAction", civicChoices(r, s).map((c) => propaganda("civicAction", c)));
   } else if (kind === "agitation") {

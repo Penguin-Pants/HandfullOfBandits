@@ -54,7 +54,19 @@ const F = {
   state: "src/engine/coin/ops/state/state-ops.test.ts",
   ct: "src/engine/coin/sequence/ct.test.ts",
   qual: "src/cli/qualification.ts fixtures",
+  clearance: "src/engine/coin/ops/sa/village-clearance.test.ts",
+  covert: "src/engine/coin/ops/sa/covert-action.test.ts",
+  ceasefire: "src/engine/coin/ceasefire.test.ts",
+  ceasefireStep: "src/engine/coin/propaganda/ceasefire-step.test.ts",
+  legal: "src/engine/coin/propaganda/legal-politics.test.ts",
+  pivotals: "src/engine/coin/pivotals.test.ts",
+  structural: "src/engine/coin/structural.test.ts",
+  c4: "src/engine/coin/c4-cards.test.ts",
+  decisions: "test/decisions.test.ts",
 };
+const track = (x: Seen, id: string, after: string, pred: (d: JsonObject) => boolean = () => true): boolean => effect(x, "setTrack", (d) => d["track"] === id && d["after"] === after && pred(d));
+const legalChoice = (c: AnyCommand): JsonObject => (c.type === "PropagandaChoice" && c["phase"] === "legalPolitics" ? ((c["choice"] ?? {}) as JsonObject) : {});
+const pivotal = (card: string): Probe => (x) => x.command.type === "PlayPivotal" && x.command["card"] === card;
 
 /** R8 mechanics with probes over replayed log entries and commands. */
 export const MECHANICS: readonly (Mechanic & { readonly probe: Probe })[] = [
@@ -97,8 +109,25 @@ export const MECHANICS: readonly (Mechanic & { readonly probe: Probe })[] = [
   { id: "S-always", area: "Sequence/cards", label: "Mandatory Always line on reveal (DK-003, DK-005, DK-019, DK-020)", fixtures: [F.events, F.cards], notApplicable: null, probe: (x) => x.entries.some((e) => e.kind === "CardRevealed" && ["DK-003", "DK-005", "DK-019", "DK-020"].includes(str(e.data["card"]))) },
   { id: "S-event-unshaded", area: "Sequence/cards", label: "Unshaded Event executed", fixtures: [F.events], notApplicable: null, probe: (x) => x.command.type === "ChooseEvent" && x.command["side"] === "unshaded" },
   { id: "S-event-shaded", area: "Sequence/cards", label: "Shaded Event executed", fixtures: [F.events], notApplicable: null, probe: (x) => x.command.type === "ChooseEvent" && x.command["side"] === "shaded" },
-  { id: "S-argk-play", area: "Sequence/cards", label: "ARGK played", fixtures: [F.pivotal], notApplicable: null, probe: (x) => x.command.type === "PlayPivotal" },
-  { id: "S-argk-decline", area: "Sequence/cards", label: "ARGK declined", fixtures: [F.pivotal], notApplicable: null, probe: (x) => x.command.type === "ResolveDecision" },
+  { id: "S-argk-play", area: "Sequence/cards", label: "ARGK played", fixtures: [F.pivotal], notApplicable: null, probe: pivotal("DK-015") },
+  { id: "S-argk-decline", area: "Sequence/cards", label: "Pivotal window declined", fixtures: [F.pivotal, F.pivotals], notApplicable: null, probe: (x) => x.command.type === "ResolveDecision" },
+  { id: "S-serhildan-play", area: "Sequence/cards", label: "Serhildan played (DK-054, from C3)", fixtures: [F.pivotals], notApplicable: null, probe: pivotal("DK-054") },
+  { id: "S-area-domination-play", area: "Sequence/cards", label: "Area Domination played (DK-076, from C4)", fixtures: [F.pivotals], notApplicable: null, probe: pivotal("DK-076") },
+  { id: "S-coercive-diplomacy-play", area: "Sequence/cards", label: "Coercive Diplomacy on Syria played (DK-098, from C5)", fixtures: [F.pivotals], notApplicable: null, probe: pivotal("DK-098") },
+  { id: "S-emergency-extended", area: "Sequence/cards", label: "Emergency Rule reaches OHAL Extended Powers (from C3)", fixtures: [F.prop], notApplicable: null, probe: (x) => track(x, "emergencyRule", "ohalExtendedPowers") },
+  { id: "C-covert-reveal", area: "Civilian effects", label: "Covert marker revealed", fixtures: [F.covert, F.prop], notApplicable: null, probe: (x) => effect(x, "removeMarker", (d) => d["marker"] === "covert") },
+  { id: "C-strike-after", area: "Civilian effects", label: "Strike Collaborators after the Operation", fixtures: [F.decisions], notApplicable: null, probe: (x) => sa(x.command) === "pkk.strike-collaborators" && (plan(x.command)["sa"] as JsonObject)["timing"] === "after" },
+  { id: "P-ceasefire-declared", area: "Political economy", label: "Ceasefire Declared (from C3)", fixtures: [F.ceasefire, F.c4], notApplicable: null, probe: (x) => track(x, "ceasefire", "declared") },
+  { id: "P-ceasefire-restraint", area: "Political economy", label: "Ceasefire reaches Reciprocal Restraint", fixtures: [F.ceasefireStep, F.c4], notApplicable: null, probe: (x) => track(x, "ceasefire", "reciprocalRestraint") },
+  { id: "P-ceasefire-breach", area: "Political economy", label: "Ceasefire breach (Restraint Broken marker)", fixtures: [F.ceasefire], notApplicable: null, probe: (x) => effect(x, "placeMarker", (d) => d["marker"] === "restraintBroken") },
+  { id: "P-ceasefire-left", area: "Political economy", label: "Ceasefire ended at the ceasefire step", fixtures: [F.ceasefireStep], notApplicable: null, probe: (x) => legalChoice(x.command)["ceasefire"] !== undefined && track(x, "ceasefire", "none") },
+  { id: "L-legal-open", area: "Political economy", label: "Legal Space opens (HEP Founded)", fixtures: [F.structural, F.legal], notApplicable: null, probe: (x) => track(x, "legalSpace", "open") },
+  { id: "L-office-placed", area: "Political economy", label: "Office placed", fixtures: [F.legal], notApplicable: null, probe: (x) => effect(x, "placeMarker", (d) => d["marker"] === "office") },
+  { id: "L-state-filing", area: "Political economy", label: "State files a closure case", fixtures: [F.legal], notApplicable: null, probe: (x) => legalChoice(x.command)["closureFiling"] === true },
+  { id: "L-prosecutor-filing", area: "Political economy", label: "Prosecutor files at the Office limit (line 6)", fixtures: [F.legal, F.decisions], notApplicable: null, probe: (x) => x.entries.some((e) => e.kind === "EffectApplied" && e.data["effect"] === "setFlag" && e.data["flag"] === "closureCase" && e.data["after"] === true && (e.ruleRef ?? "").includes("line 6")) },
+  { id: "L-ban", area: "Political economy", label: "Legal party banned (line 1)", fixtures: [F.legal], notApplicable: null, probe: (x) => track(x, "legalSpace", "banned") },
+  { id: "L-successor", area: "Political economy", label: "Successor party returns (line 2)", fixtures: [F.legal], notApplicable: null, probe: (x) => effect(x, "setTrack", (d) => d["track"] === "successor" && d["after"] === 0 && Number(d["before"]) > 0) },
+  { id: "H-europe-ban", area: "Sanctuary", label: "Europe Ban marker placed (DK-064)", fixtures: [F.c4, F.decisions], notApplicable: null, probe: (x) => effect(x, "placeMarker", (d) => d["marker"] === "europeBan") },
   { id: "S-pass", area: "Sequence/cards", label: "Pass", fixtures: [F.ct], notApplicable: null, probe: (x) => x.command.type === "Pass" },
   { id: "S-limited", area: "Sequence/cards", label: "Limited Op", fixtures: [F.ct], notApplicable: null, probe: (x) => x.command["box"] === "limitedOp" },
   { id: "S-op-only", area: "Sequence/cards", label: "Op Only", fixtures: [F.ct], notApplicable: null, probe: (x) => x.command["box"] === "opOnly" },
@@ -108,7 +137,7 @@ export const MECHANICS: readonly (Mechanic & { readonly probe: Probe })[] = [
   { id: "S-final-skips", area: "Sequence/cards", label: "Final round skips income, Redeploy and Reset", fixtures: [F.prop, F.multi], notApplicable: null, probe: (x) => x.entries.some((e) => e.kind === "EffectSkipped" && e.data["effect"] === "income") },
   { id: "S-emergency", area: "Sequence/cards", label: "Emergency Rule step chosen (OHAL to Normalizing or back)", fixtures: [F.prop], notApplicable: null, probe: (x) => x.command.type === "PropagandaChoice" && x.command["phase"] === "legitimacy" },
   ...["state.train", "state.garrison", "state.sweep", "state.assault", "pkk.rally", "pkk.march", "pkk.attack", "pkk.coerce"].map((op) => ({ id: `O-${op}`, area: "Sequence/cards" as const, label: `Operation ${op}`, fixtures: [F.state, F.pkk], notApplicable: null, probe: ops(op) })),
-  ...["state.air-mobility", "pkk.ambush", "pkk.extort"].map((s) => ({ id: `A-${s}`, area: "Sequence/cards" as const, label: `Special Activity ${s}`, fixtures: [F.sa], notApplicable: null, probe: (x: Seen) => sa(x.command) === s })),
+  ...["state.air-mobility", "state.village-clearance", "state.covert-action", "pkk.ambush", "pkk.extort"].map((s) => ({ id: `A-${s}`, area: "Sequence/cards" as const, label: `Special Activity ${s}`, fixtures: [F.sa, F.clearance, F.covert], notApplicable: null, probe: (x: Seen) => sa(x.command) === s })),
 ];
 
 export interface LedgerEntry {

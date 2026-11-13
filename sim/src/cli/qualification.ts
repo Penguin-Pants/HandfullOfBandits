@@ -10,7 +10,7 @@ import { decisionPoint, generateCandidates, type DecisionKind } from "./candidat
 import { determinize, observe, SearchRng } from "./player-observation.ts";
 import { isObservationPlayer, TransitionBudget, type Player } from "./players.ts";
 
-export const SUITE_VERSION = 1;
+export const SUITE_VERSION = 2;
 /** Full campaign values from rules 7.1, written here independently of the package. */
 const THRESHOLD: Readonly<Record<string, number>> = { state: 49, pkk: 30 };
 const HARM_LIMIT = 6;
@@ -73,6 +73,31 @@ function lastCard(actor: FactionId): Edit {
     deck: { piles: [[], ["DK-035"]], currentCard: "DK-021", played: [...C1, ...C2_SEEN], setAside: [] },
     hands: { state: [], pkk: [] },
     initiative: { boxes: { [actor]: null, [other]: "pass" }, firstEligible: other, secondEligible: actor, actedThisCard: [other] },
+  });
+}
+
+/** `campaign` with its switches, as after the Resets of a full game. */
+const inCampaign = (campaign: string): Edit => (s, r) => ({ ...s, turn: { ...s.turn, campaign }, flags: { ...s.flags, ...switchesAt(r, campaign) } });
+
+/** The actor answers `card` in `campaign` after the other faction passed. */
+function laterCard(actor: FactionId, campaign: string, card: string): Edit {
+  return compose(lastCard(actor), inCampaign(campaign), (s) => ({ ...s, deck: { ...s.deck, currentCard: card } }));
+}
+
+/** One marker with a named side (Restraint Broken). */
+const sideMarker = (space: string, m: string, side: string): Edit => (s) => {
+  const here = s.spaces[space];
+  if (here === undefined) throw new RangeError(space);
+  return { ...s, spaces: { ...s.spaces, [space]: { ...here, markers: { ...here.markers, [m]: { ...here.markers[m], [side]: 1 } } } }, markerPools: { ...s.markerPools, [m]: (s.markerPools[m] ?? 0) - 1 } };
+};
+
+/** An open Pivotal window that offers `cards` to `faction` on the first card of the pile. */
+function pivotalWindow(faction: FactionId, cards: readonly string[]): Edit {
+  return (s) => ({
+    ...s,
+    turn: { ...s.turn, phase: "pivotal", cardIndex: 1 },
+    deck: { ...s.deck, currentCard: s.deck.piles[0]?.[0] ?? null, piles: s.deck.piles.map((p, i) => (i === 0 ? p.slice(1) : p)) },
+    pending: { id: `pivotal-1-${faction}`, faction, prompt: "Play a Pivotal Event instead of this card, or decline for this card?", answers: ["decline", ...cards.map((card) => ({ card }))], ruleRef: "05 s4" },
   });
 }
 
@@ -164,8 +189,23 @@ export const FIXTURES: readonly Fixture[] = [
   { id: "P-PROC-ARGK", benchmark: "procedures", faction: "pkk", source: "rules 5.3", kind: "pivotal", alternatives: "Play ARGK with placements or decline", accepts: "a legal command",
     build: (s, r) => {
       const ready = compose(pieces("hakkari", "pkkBase", 1), pieces("hakkari", "guerrilla", 6))(s, r);
-      return { ...ready, turn: { ...ready.turn, phase: "pivotal", cardIndex: 1 }, deck: { ...ready.deck, currentCard: ready.deck.piles[0]?.[0] ?? null, piles: ready.deck.piles.map((p, i) => (i === 0 ? p.slice(1) : p)) }, pending: { id: "pivotal-1-pkk", faction: "pkk", prompt: "Play a Pivotal Event instead of this card, or decline for this card?", answers: ["decline"], ruleRef: "05 s4; DK-015" } };
+      return { ...ready, turn: { ...ready.turn, phase: "pivotal", cardIndex: 1 }, deck: { ...ready.deck, currentCard: ready.deck.piles[0]?.[0] ?? null, piles: ready.deck.piles.map((p, i) => (i === 0 ? p.slice(1) : p)) }, pending: { id: "pivotal-1-pkk", faction: "pkk", prompt: "Play a Pivotal Event instead of this card, or decline for this card?", answers: ["decline", { card: "DK-015", maxPlace: 4 }], ruleRef: "05 s4; DK-015" } }; // literal-ok: argk.maxPlace, as the engine offers it
     }, accept: legal },
+  // Procedures of C3 to C5 (26-bot-reference Part 4): any legal resolution passes.
+  { id: "S-PROC-CLEARANCE", benchmark: "procedures", faction: "state", source: "rules 4.2.4 (Village Clearance, from C3 at OHAL)", kind: "card", alternatives: "Sweep or Garrison with Village Clearance in Botan, other Operations, Event, Pass", accepts: "a legal command",
+    build: compose(laterCard("state", "C3", "DK-039"), pieces("botan", "troops", 6), track("emergencyRule", "ohal")), accept: legal },
+  { id: "S-PROC-COVERT", benchmark: "procedures", faction: "state", source: "rules 4.2.5 (Covert Action, from C3)", kind: "card", alternatives: "Sweep or Garrison with Covert Action in Mardin-Batman, other Operations, Event, Pass", accepts: "a legal command",
+    build: laterCard("state", "C3", "DK-039"), accept: legal },
+  { id: "P-PROC-DECLARE", benchmark: "procedures", faction: "pkk", source: "rules 8.6 (Declare Ceasefire, from C3)", kind: "card", alternatives: "Declare Ceasefire in the Limited Op box, Operations, Event, Pass", accepts: "a legal command",
+    build: laterCard("pkk", "C3", "DK-039"), accept: legal },
+  { id: "S-PROC-LEGAL", benchmark: "procedures", faction: "state", source: "rules 8.5, 8.6 (closure filing, accepting a ceasefire)", kind: "legalPoliticsState", alternatives: "Nothing, a closure filing, accepting the declared ceasefire, or both", accepts: "a legal command",
+    build: compose(inCampaign("C3"), track("legalSpace", "open"), track("ceasefire", "declared"), marker("diyarbakir-city", "office", 1), phaseAt("legalPolitics", 3, "DK-055")), accept: legal },
+  { id: "P-PROC-CEASEFIRE", benchmark: "procedures", faction: "pkk", source: "rules 8.6 (ceasefire step after a State Restraint Broken marker)", kind: "legalPoliticsPkk", alternatives: "Keep the declared ceasefire or end it (Europe -1)", accepts: "a legal command",
+    build: compose(inCampaign("C3"), track("legalSpace", "open"), track("ceasefire", "declared"), sideMarker("botan", "restraintBroken", "state"), phaseAt("legalPolitics", 3, "DK-055")), accept: legal },
+  { id: "P-PROC-SERHILDAN", benchmark: "procedures", faction: "pkk", source: "rules 5.3 (Serhildan, from C3)", kind: "pivotal", alternatives: "Play Serhildan with up to 3 spaces, or decline", accepts: "a legal command",
+    build: compose(inCampaign("C3"), levels({ botan: -1, hakkari: -2, "mardin-batman": -2, "van-bitlis": -2, sanliurfa: -2 }), pivotalWindow("pkk", ["DK-054"])), accept: legal },
+  { id: "S-PROC-PIVOTAL-C5", benchmark: "procedures", faction: "state", source: "rules 5.3 (Area Domination, Coercive Diplomacy on Syria)", kind: "pivotal", alternatives: "Play one of the two State Pivotals, or decline", accepts: "a legal command",
+    build: compose(inCampaign("C5"), levels({ botan: -2, hakkari: -2, "mardin-batman": -2, "van-bitlis": -2 }), track("emergencyRule", "ohalExtendedPowers"), track("posture.syria", "tolerant"), pivotalWindow("state", ["DK-076", "DK-098"])), accept: legal },
   { id: "S-PROC-REDEPLOY", benchmark: "procedures", faction: "state", source: "rules 6.8 (Iraqi Troops must leave)", kind: "redeployState", alternatives: "Required exits to each legal destination, optional moves", accepts: "a legal command", build: compose(pieces("kdp-zone", "troops", 3), phaseAt("redeploy", 1, "DK-016")), accept: legal },
   { id: "S-PROC-UPKEEP", benchmark: "procedures", faction: "state", source: "rules 6.3", kind: "upkeep", alternatives: "Which Guards to remove for an unpaid upkeep", accepts: "a legal command", build: compose(pieces("dersim", "guards", 3), pieces("agri", "guards", 3), track("resources.state", 1), (s) => ({ ...s, flags: { ...s.flags, law3175: true } }), phaseAt("upkeep", 1, "DK-016")), accept: legal },
   { id: "P-PROC-RESUME", benchmark: "procedures", faction: "pkk", source: "rules 4.3.4 (Host Pressure continuation, DEC-54)", kind: "resume", alternatives: "New legal Rally locations for the saved Operation", accepts: "a legal command",

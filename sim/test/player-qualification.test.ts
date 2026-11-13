@@ -48,6 +48,29 @@ describe("qualification fixtures (19 s6)", () => {
     for (const p of Object.values(report.players)) expect(p.failures.some((f) => decisive.has(f))).toBe(true);
   });
 
+  it("has a procedure fixture for each C3 to C5 decision, and each offers the action it names", () => {
+    const expected: Record<string, string[]> = {
+      "P-PROC-ARGK": ["pivotal:play", "pivotal:decline"],
+      "S-PROC-CLEARANCE": ["op:state.sweep+state.village-clearance@opSa"],
+      "S-PROC-COVERT": ["op:state.sweep+state.covert-action@opSa"],
+      "P-PROC-DECLARE": ["ceasefire:declare"],
+      "S-PROC-LEGAL": ["propaganda:legalPolitics"],
+      "P-PROC-CEASEFIRE": ["propaganda:legalPolitics"],
+      "P-PROC-SERHILDAN": ["pivotal:play:DK-054", "pivotal:decline"],
+      "S-PROC-PIVOTAL-C5": ["pivotal:play:DK-076", "pivotal:play:DK-098", "pivotal:decline"],
+    };
+    for (const [id, families] of Object.entries(expected)) {
+      const f = FIXTURES.find((x) => x.id === id);
+      expect(f?.benchmark, id).toBe("procedures");
+      if (f === undefined) continue;
+      const s = f.build(engine.start(ruleset, "full-campaign", 1).state, ruleset);
+      const set = generateCandidates(engine, ruleset, determinize(ruleset, observe(s, f.faction), new SearchRng(0)), f.kind, f.faction);
+      const live = set.candidates.filter((c) => engine.validate(ruleset, s, c.command).ok);
+      for (const family of families) expect(live.some((c) => c.family === family), `${id} ${family}`).toBe(true);
+      if (families[0] === "propaganda:legalPolitics") expect(live.length, id).toBeGreaterThan(1);
+    }
+  });
+
   it("has a stable suite hash", () => {
     expect(suiteHash(engine, ruleset)).toBe(suiteHash(engine, ruleset));
   });

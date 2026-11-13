@@ -7,7 +7,7 @@ import { independentStandings } from "../src/cli/qualification.ts";
 import { evaluate } from "../src/cli/strategies/evaluation.ts";
 import { CURRENT } from "../src/cli/strategies/scenario-a.ts";
 import type { AnyCommand, GameState } from "../src/engine/core/types.ts";
-import { engine, op, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "./board.ts";
+import { engine, inCampaign, op, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "./board.ts";
 
 // Real games and workers: slow under full-suite load.
 vi.setConfig({ testTimeout: 120000 });
@@ -312,5 +312,102 @@ describe("spending ties (PR #41 review, cand-5)", () => {
     const offered = set.candidates.map(shifts);
     expect(offered).toContain(JSON.stringify({ "mardin-batman": 2, sanliurfa: 1 }));
     expect(offered).toContain(JSON.stringify({ sanliurfa: 1, "van-bitlis": 2 }));
+  });
+});
+
+// Decisions of C3 to C5 (26-bot-reference Part 4, "When adding cards (C3 and later)").
+describe("C3 to C5 decisions", () => {
+  const c3 = (s: GameState): GameState => inCampaign(ruleset, s, "C3");
+  const hasFamily = (set: CandidateSet, family: string): boolean => (set.families[family]?.retained ?? 0) > 0;
+
+  it("offers Village Clearance with Sweep and Garrison, with each Reception space, in a State Controlled Opposition space", () => {
+    // Botan: Mountain, Passive Opposition. 6 Troops and 1 Police against 2 Guerrillas and 1 Base give State Control.
+    const s = setTrack(setPieces(c3(rich(turnOf("state"))), "botan", "troops", 6), "emergencyRule", "ohal");
+    const set = gen(s, "card", "state");
+    allLegal(s, set);
+    for (const op of ["state.sweep", "state.garrison"]) expect(hasFamily(set, `op:${op}+state.village-clearance@opSa`), op).toBe(true);
+    const receptions = new Set(set.candidates.filter((c) => c.family.includes("village-clearance")).flatMap((c) => Object.values((c.command["plan"] as { sa: { perLocation: Record<string, { reception: string }> } }).sa.perLocation).map((p) => p.reception)));
+    expect([...receptions].sort()).toEqual(["diyarbakir-city", "western-cities"]);
+    expect(hasFamily(gen(setTrack(s, "emergencyRule", "martialLaw"), "card", "state"), "op:state.sweep+state.village-clearance@opSa")).toBe(false);
+  });
+
+  it("offers Covert Action with Sweep and Garrison in a space that is not an Operation space", () => {
+    // Mardin-Batman: 1 Troop and 1 Police against 1 Underground Guerrilla gives State Control.
+    const s = c3(rich(turnOf("state")));
+    const set = gen(s, "card", "state");
+    allLegal(s, set);
+    for (const op of ["state.sweep", "state.garrison"]) expect(hasFamily(set, `op:${op}+state.covert-action@opSa`), op).toBe(true);
+    const covert = set.candidates.filter((c) => c.family.includes("covert-action")).map((c) => c.command["plan"] as { locations: string[]; sa: { locations: string[] } });
+    expect(covert.every((p) => p.sa.locations.length === 1)).toBe(true);
+    expect(covert.some((p) => !p.locations.includes(p.sa.locations[0] ?? ""))).toBe(true);
+    expect(hasFamily(gen(inCampaign(ruleset, s, "C2"), "card", "state"), "op:state.sweep+state.covert-action@opSa")).toBe(false);
+  });
+
+  it("offers Declare Ceasefire to the PKK from C3 while no ceasefire is in force", () => {
+    const s = c3(turnOf("pkk"));
+    const set = gen(s, "card", "pkk");
+    allLegal(s, set);
+    expect(set.candidates.filter((c) => c.family === "ceasefire:declare").map((c) => c.command)).toEqual([{ type: "DeclareCeasefire", faction: "pkk" }]);
+    expect(hasFamily(gen(turnOf("pkk"), "card", "pkk"), "ceasefire:declare")).toBe(false);
+    expect(hasFamily(gen(setTrack(s, "ceasefire", "declared"), "card", "pkk"), "ceasefire:declare")).toBe(false);
+  });
+
+  it("offers every eligible Pivotal with its answers, and decline", () => {
+    const opposed = (s: GameState): GameState => ["botan", "hakkari", "mardin-batman", "diyarbakir-rural", "sanliurfa", "van-bitlis"].reduce((b, id) => setLevel(b, id, -2), s);
+    const reveal = (campaign: string, hands: Record<string, string[]>, prepare: (s: GameState) => GameState): GameState => {
+      const base = inCampaign(ruleset, turnOf("state"), campaign);
+      return play(prepare({ ...base, hands: { state: [], pkk: [], ...hands }, deck: { ...base.deck, currentCard: null, piles: [["DK-001", "DK-014"]] }, turn: { ...base.turn, phase: "setup" } }), { type: "Advance" }).state;
+    };
+    const serhildan = reveal("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "botan", -1));
+    const pkk = gen(serhildan, "pivotal", "pkk");
+    allLegal(serhildan, pkk);
+    expect(hasFamily(pkk, "pivotal:decline")).toBe(true);
+    expect(pkk.candidates.filter((c) => c.family === "pivotal:play:DK-054").length).toBeGreaterThan(1);
+    const both = reveal("C5", { state: ["DK-076", "DK-098"] }, (s) => setTrack(setTrack(opposed(s), "emergencyRule", "ohalExtendedPowers"), "posture.syria", "tolerant"));
+    const state = gen(both, "pivotal", "state");
+    allLegal(both, state);
+    for (const card of ["DK-076", "DK-098"]) expect(hasFamily(state, `pivotal:play:${card}`), card).toBe(true);
+  });
+
+  describe("Legal Politics (rules 6.5, 8.5, 8.6)", () => {
+    const at = (s: GameState): GameState => propaganda(c3(s), "legalPolitics", 2);
+    const choices = (set: CandidateSet): unknown[] => set.candidates.map((c) => (c.command.type === "Advance" ? null : c.command["choice"]));
+
+    it("is automatic while Legal Space is Absent or no faction has a choice", () => {
+      expect(decisionPoint(engine, ruleset, at(setTrack(turnOf("state"), "ceasefire", "declared")))).toMatchObject({ kind: "auto" });
+      expect(decisionPoint(engine, ruleset, at(setTrack(turnOf("state"), "legalSpace", "open")))).toMatchObject({ kind: "auto" });
+    });
+
+    it("the State may file a closure case when an Office is on the map and no case is pending", () => {
+      const s = at(setMarkers(setTrack(turnOf("state"), "legalSpace", "open"), "diyarbakir-city", "office", 1));
+      expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "legalPoliticsState", faction: "state" });
+      const set = gen(s, "legalPoliticsState", "state");
+      allLegal(s, set);
+      expect(choices(set)).toEqual([null, { closureFiling: true }]);
+    });
+
+    it("the State may accept a declared ceasefire, then the PKK may keep it or end it", () => {
+      const s = at(setTrack(setTrack(turnOf("state"), "legalSpace", "open"), "ceasefire", "declared"));
+      expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "legalPoliticsState", faction: "state" });
+      expect(choices(gen(s, "legalPoliticsState", "state"))).toEqual([null, { ceasefire: { accept: true } }]);
+      const pkk = generateCandidates(engine, ruleset, s, "legalPoliticsPkk", "pkk", { familyCap: 14, broad: false, stateLegalPolitics: {} });
+      allLegal(s, pkk);
+      expect(choices(pkk)).toEqual([null, { ceasefire: { pkkEnd: true } }]);
+      const kept = generateCandidates(engine, ruleset, s, "legalPoliticsPkk", "pkk", { familyCap: 14, broad: false, stateLegalPolitics: { ceasefire: { accept: true } } });
+      // The State accepted: ending the declaration has no effect, so it is not offered.
+      expect(choices(kept)).toEqual([{ ceasefire: { accept: true } }]);
+    });
+
+    it("with a State Restraint Broken marker only the PKK has a choice", () => {
+      const s = at(setMarkers(setTrack(setTrack(turnOf("state"), "legalSpace", "open"), "ceasefire", "declared"), "botan", "restraintBroken", 1, "state"));
+      expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "legalPoliticsPkk", faction: "pkk" });
+    });
+
+    it("each faction may leave Reciprocal Restraint", () => {
+      const s = at(setTrack(setTrack(turnOf("state"), "legalSpace", "open"), "ceasefire", "reciprocalRestraint"));
+      expect(choices(gen(s, "legalPoliticsState", "state"))).toEqual([null, { ceasefire: { leave: { state: true } } }]);
+      const pkk = generateCandidates(engine, ruleset, s, "legalPoliticsPkk", "pkk", { familyCap: 14, broad: false, stateLegalPolitics: {} });
+      expect(choices(pkk)).toEqual([null, { ceasefire: { leave: { pkk: true } } }]);
+    });
   });
 });
