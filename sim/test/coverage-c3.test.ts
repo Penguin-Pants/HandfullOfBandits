@@ -68,6 +68,16 @@ describe("coverage ledger: C3 to C5 mechanics", () => {
     expect(result.ok && MECHANICS.find((m) => m.id === id)?.probe({ entries: result.transition.logEntries, command, before })).toBe(false);
   });
 
+  it("a State action during Declared places the marker only: it is not a breach (PR 106 review)", () => {
+    const before = setPieces(setPieces(cf(turnOf("state"), "declared"), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
+    const command = op("state", "limitedOp", { op: "state.assault", locations: ["botan"] });
+    const result = engine.apply(ruleset, before, command);
+    expect(result.ok && result.transition.state.tracks["ceasefire"]).toBe("declared");
+    const seen = { entries: result.ok ? result.transition.logEntries : [], command, before };
+    expect(MECHANICS.find((m) => m.id === "P-ceasefire-breach")?.probe(seen)).toBe(false);
+    expect(MECHANICS.find((m) => m.id === "P-ceasefire-state-marker")?.probe(seen)).toBe(true);
+  });
+
   it("the ARGK probes name ARGK only, now that the bots play every Pivotal", () => {
     const window = pivotalWindow("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "botan", -1));
     const command = { type: "PlayPivotal", faction: "pkk", card: "DK-054", answers: [["botan"]] };

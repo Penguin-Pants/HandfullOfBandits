@@ -367,6 +367,10 @@ describe("C3 to C5 decisions", () => {
     const state = gen(both, "pivotal", "state");
     allLegal(both, state);
     for (const card of ["DK-076", "DK-098"]) expect(hasFamily(state, `pivotal:play:${card}`), card).toBe(true);
+    // Village Clearance is optional in Area Domination. At Legitimacy 0 it is illegal, and the free Sweep must still be offered (PR 106 review).
+    const poor = setTrack(both, "legitimacy", 0);
+    const sweeps = gen(poor, "pivotal", "state").candidates.filter((c) => c.family === "pivotal:play:DK-076").map((c) => (c.command["answers"] as unknown[])[0]);
+    expect(sweeps.some((a) => a !== null)).toBe(true);
   });
 
   describe("Legal Politics (rules 6.5, 8.5, 8.6)", () => {
@@ -394,8 +398,10 @@ describe("C3 to C5 decisions", () => {
       allLegal(s, pkk);
       expect(choices(pkk)).toEqual([null, { ceasefire: { pkkEnd: true } }]);
       const kept = generateCandidates(engine, ruleset, s, "legalPoliticsPkk", "pkk", { familyCap: 14, broad: false, stateLegalPolitics: { ceasefire: { accept: true } } });
-      // The State accepted: ending the declaration has no effect, so it is not offered.
-      expect(choices(kept)).toEqual([{ ceasefire: { accept: true } }]);
+      // The State accepted: the ceasefire is Reciprocal Restraint at step 2, so the PKK may leave it (rules 8.6).
+      allLegal(s, kept);
+      expect(choices(kept)).toEqual([{ ceasefire: { accept: true } }, { ceasefire: { accept: true, leave: { pkk: true } } }]);
+      expect(play(s, kept.candidates[1]?.command ?? { type: "Advance" }).state.tracks["ceasefire"]).toBe("none");
     });
 
     it("with a State Restraint Broken marker only the PKK has a choice", () => {

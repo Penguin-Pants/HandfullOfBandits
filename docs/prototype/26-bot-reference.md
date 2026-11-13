@@ -101,7 +101,7 @@ PKK v2 caps the potential estimate by the remaining conversion opportunities. Co
 | Legal Politics | Two parts, State first: closure filing, accept or leave a ceasefire; then the PKK ends or leaves | `candidates.ts` (`legalPoliticsState`, `legalPoliticsPkk`), `game-runner.ts` |
 | Serhildan, Area Domination, Coercive Diplomacy on Syria | Every completion of the card's questions, or decline | `candidates.ts` (pivotal decision) |
 
-Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, development seeds 11 to 13): all games complete. Seen: Serhildan in 4 games, ceasefire Declared in 4, Reciprocal Restraint in 2, a breach in 3, a State closure filing in 6, a ban in 5, Covert Action in 3, Area Domination in 1. Not seen: Village Clearance, the line 6 prosecutor filing, Coercive Diplomacy on Syria, leaving a ceasefire at the ceasefire step. Six games are a smoke check, not a result.
+Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, development seeds 11 to 13): all games complete. Seen: Serhildan in 4 games, ceasefire Declared in 4, Reciprocal Restraint in 2, a Restraint Broken marker in 3 (breach or State marker only; the probe did not separate them in this run), a State closure filing in 6, a ban in 5, Covert Action in 3, Area Domination in 1. Not seen: Village Clearance, the line 6 prosecutor filing, Coercive Diplomacy on Syria, leaving a ceasefire at the ceasefire step. Six games are a smoke check, not a result.
 
 ## Part 3: known gaps log
 
@@ -115,6 +115,7 @@ Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, 
 | DEC-56 dead end | options-4 | One game stopped | Closed by DEC-62 |
 | No candidates for C3 to C5 decisions | Full campaign port, 2026-11-12 | Bots never used Village Clearance, Covert Action, ceasefire, closure filing or the later Pivotals | Closed by `cand-6` |
 | ARGK fixture offered only "decline" | `cand-6` work | The fixture did not test an ARGK play | Fixed in suite 2 |
+| Later free actions of one card are planned on the board before the card | PR 106 review | Area Domination: the Assault after the Sweep is offered only against Guerrillas that were Active before the Sweep. The same holds for every Event with two free actions | Open; the engine must expose the board at an open question |
 | Weights and potential estimate not tuned for C3 to C5 | Full campaign port | Choices in C3 to C5 are legal but not informed | Open; needs the designer's view of good play |
 
 ## Part 4: review checklist before the next simulations

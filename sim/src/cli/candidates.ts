@@ -445,7 +445,8 @@ function answers(r: Ruleset, s: GameState, q: Question, wide: number): JsonValue
         const part = { locations: p.locations, perLocation: p.perLocation };
         if (sa === undefined) return [part];
         const v = saVariants(r, s, sa, p).map((x) => x.sa);
-        return v.length === 0 ? [{ ...part, sa: { locations: p.locations, perLocation: {} } }] : v.map((x) => ({ ...part, sa: { locations: x?.locations ?? [], perLocation: x?.perLocation ?? {} } }));
+        // The plain plan is for an optional SA (Area Domination Village Clearance); validation drops it where the SA is required.
+        return [part, ...(v.length === 0 ? [{ ...part, sa: { locations: p.locations, perLocation: {} } }] : v.map((x) => ({ ...part, sa: { locations: x?.locations ?? [], perLocation: x?.perLocation ?? {} } })))];
       })];
     }
   }
@@ -619,9 +620,10 @@ function pkkLegalChoices(s: GameState, state: JsonObject): JsonObject[] {
   if (s.tracks["legalSpace"] === "absent") return [];
   const chosen = asObject(state["ceasefire"]) ?? {};
   const extend = (more: JsonObject): JsonObject => ({ ...state, ceasefire: { ...chosen, ...more } });
-  if (s.tracks["ceasefire"] === "declared" && chosen["accept"] !== true) return [state, extend({ pkkEnd: true })];
-  if (s.tracks["ceasefire"] === "reciprocalRestraint" && asObject(chosen["leave"])?.["state"] !== true) return [state, extend({ leave: { pkk: true } })];
-  return [state];
+  // Step 1 runs first (rules 8.6): an accepted declaration is Reciprocal Restraint at step 2, which the PKK may leave.
+  const restraint = s.tracks["ceasefire"] === "reciprocalRestraint" || (s.tracks["ceasefire"] === "declared" && chosen["accept"] === true);
+  if (restraint) return asObject(chosen["leave"])?.["state"] === true ? [state] : [state, extend({ leave: { pkk: true } })];
+  return s.tracks["ceasefire"] === "declared" ? [state, extend({ pkkEnd: true })] : [state];
 }
 
 // ---------------------------------------------------------------- assembly
