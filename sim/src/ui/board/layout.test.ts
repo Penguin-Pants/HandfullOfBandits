@@ -61,11 +61,16 @@ describe("individual pieces (spread plan)", () => {
     expect(spreadPlan(botan, area)).toEqual(plan);
   });
 
-  it("draws 6 sprites and prints the exact total for a group above the cap", () => {
-    const plan = spreadPlan(withCounts(9, 1), area);
-    if (plan === null) throw new Error("one group of 9 must fit");
-    expect(plan.groups[0]?.at).toHaveLength(SPREAD_CAP);
-    expect(plan.groups[0]?.count?.text).toBe("9");
+  it("draws one sprite and the exact total for a group above the cap, even with room to spare", () => {
+    const plan = spreadPlan(withCounts(SPREAD_CAP + 3, 1), area);
+    expect(plan?.groups[0]?.at).toHaveLength(1);
+    expect(plan?.groups[0]?.count?.text).toBe(String(SPREAD_CAP + 3));
+  });
+
+  it("draws one sprite per piece for a group at the cap", () => {
+    const plan = spreadPlan(withCounts(SPREAD_CAP, 1), area);
+    expect(plan?.groups[0]?.at).toHaveLength(SPREAD_CAP);
+    expect(plan?.groups[0]?.count).toBeNull();
   });
 
   it("keeps every sprite inside the area border", () => {

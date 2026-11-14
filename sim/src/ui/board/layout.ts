@@ -29,7 +29,7 @@ export function statusLayout(space: SpaceView): readonly SpaceLayout[] {
   return [{...p,x:p.x+4,y:y+1,width:p.width-34,height:21},{...p,y:y+27,height:22},{...p,x:p.x+p.width-24,y,width:22,height:23}];
 }
 
-/** At most this many sprites of one piece group are drawn one by one. A larger group also prints its total. */
+/** At most this many sprites of one piece group are drawn one by one. A larger group is one sprite and its total. */
 export const SPREAD_CAP = 6;
 const ROW = 31;
 const GAP = 6;
@@ -48,12 +48,13 @@ export interface SpreadGroup {
  * Null when the groups do not fit inside the area border even as single sprites: the caller then draws piles and counts.
  */
 export function spreadPlan(space: SpaceView, area: Pick<AtlasSpace, "stack" | "rings">): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
-  const collapsed = new Set<number>();
+  // A group above the cap is always one sprite and its total.
+  const collapsed = new Set(space.pieces.flatMap((p, i) => p.count > SPREAD_CAP ? [i] : []));
   for (;;) {
     const plan = place(space, area, unitsOf(space, collapsed));
     if (plan !== null) return plan;
     // Net width a group gives back when it shrinks to one sprite and a printed total. A group that would not get narrower is never shrunk.
-    const saved = space.pieces.map((p, i) => collapsed.has(i) ? 0 : (Math.min(p.count, SPREAD_CAP) - 1) * (p.shape === "disc" ? 20 : 14) - (p.count > SPREAD_CAP ? 0 : 4 + 11 * String(p.count).length));
+    const saved = space.pieces.map((p, i) => collapsed.has(i) ? 0 : (p.count - 1) * (p.shape === "disc" ? 20 : 14) - (4 + 11 * String(p.count).length));
     const best = Math.max(0, ...saved);
     if (best === 0) return null;
     collapsed.add(saved.indexOf(best));
@@ -66,10 +67,10 @@ interface Unit { readonly n: number; readonly half: number; readonly step: numbe
 function unitsOf(space: SpaceView, collapsed: ReadonlySet<number>): readonly Unit[] {
   return [
     ...space.pieces.map((p, i) => {
-      const n = collapsed.has(i) ? 1 : Math.min(p.count, SPREAD_CAP);
+      const n = collapsed.has(i) ? 1 : p.count;
       const half = p.shape === "disc" ? 16 : 12;
       const step = p.shape === "disc" ? 20 : 14;
-      const counted = collapsed.has(i) || p.count > SPREAD_CAP;
+      const counted = collapsed.has(i);
       return { n, half, step, body: 2 * half + (n - 1) * step, number: counted ? 4 + 11 * String(p.count).length : 0, text: counted ? String(p.count) : null };
     }),
     ...space.markers.map(m => ({ n: 1, half: 10, step: 0, body: 20, number: 4 + 11 * String(m.count).length, text: String(m.count) })),
