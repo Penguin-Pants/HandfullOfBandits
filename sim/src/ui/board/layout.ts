@@ -43,10 +43,31 @@ export interface SpreadGroup {
 
 /**
  * Positions for every piece of the space drawn one by one, in the order pieces then markers.
+ * A stack box narrower than the area is widened to the free width of its first row when the box alone does not fit.
  * Null when a group does not fit inside the area border: the caller then draws piles and counts.
  */
 export function spreadPlan(space: SpaceView, area: Pick<AtlasSpace, "stack" | "rings">): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
   const [x, y, w] = area.stack;
+  const box = pack(space, area, x, y, w);
+  if (box !== null || area.rings.length === 0) return box;
+  const [left, right] = freeWidth(area.rings, x + w / 2, y + 8);
+  return right - left > w ? pack(space, area, left, y, right - left) : null;
+}
+
+/** Even-odd test, so the city hole in the hinterland counts as outside. False when the area has no ring. */
+const inArea = (rings: AtlasSpace["rings"], px: number, py: number): boolean => rings.filter(r => inside([px, py], r)).length % 2 === 1;
+
+/** The widest span around `cx` where a sprite row centered on `cy` stays inside the border, less a margin for the border stroke. */
+function freeWidth(rings: AtlasSpace["rings"], cx: number, cy: number): readonly [number, number] {
+  const clear = (px: number): boolean => inArea(rings, px, cy - 17) && inArea(rings, px, cy + 15);
+  let left = cx;
+  let right = cx;
+  while (clear(left - 1)) left -= 1;
+  while (clear(right + 1)) right += 1;
+  return [left + 4, right - 4];
+}
+
+function pack(space: SpaceView, area: Pick<AtlasSpace, "rings">, x: number, y: number, w: number): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
   const units = [
     ...space.pieces.map(p => {
       const n = Math.min(p.count, SPREAD_CAP);
@@ -64,7 +85,7 @@ export function spreadPlan(space: SpaceView, area: Pick<AtlasSpace, "stack" | "r
     if (row === undefined || width + GAP + u.body + u.number > w) { rows.push([u]); width = u.body + u.number; }
     else { row.push(u); width += GAP + u.body + u.number; }
   }
-  const within = (px: number, py: number): boolean => area.rings.length === 0 || area.rings.filter(r => inside([px, py], r)).length % 2 === 1;
+  const within = (px: number, py: number): boolean => area.rings.length === 0 || inArea(area.rings, px, py);
   // An inset box has no border ring. It holds one row.
   if (area.rings.length === 0 && rows.length > 1) return null;
   // A host area prints its posture counter below the pieces. More rows than the piles need would push it over the border.

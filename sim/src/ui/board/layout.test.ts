@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { SpaceView } from "../api.ts";
 import { boardView } from "../../server/view.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { turnOf } from "../../../test/board.ts";
@@ -89,5 +90,34 @@ describe("individual pieces (spread plan)", () => {
 
   it("returns null when the individual pieces do not fit, so the area falls back to piles", () => {
     expect(spreadPlan(withCounts(12), area)).toBeNull();
+  });
+
+  // Four groups after a PKK Rally replaces Guerrillas with a Base. The stack box sits on the south border, so a second row cannot fit.
+  const piece = (id: string) => {
+    const found = view.spaces.flatMap(s => s.pieces).find(p => p.piece === id);
+    if (found === undefined) throw new Error(id);
+    return found;
+  };
+  const rallied = (s: SpaceView): SpaceView => ({ ...s, markers: [], pieces: [{ ...piece("troops"), count: 3 }, { ...piece("police"), count: 2 }, { ...piece("guerrilla"), count: 1 }, { ...piece("pkkBase"), count: 1 }] });
+
+  it("uses the free width of the area when the stack box is too narrow, so Şanlıurfa shows all four groups", () => {
+    const urfa = view.spaces.find(s => s.id === "sanliurfa");
+    const layout = ATLAS.spaces.sanliurfa;
+    if (urfa === undefined || layout === undefined) throw new Error("sanliurfa");
+    const plan = spreadPlan(rallied(urfa), layout);
+    expect(plan?.groups.map(g => g.at.length)).toEqual([3, 2, 1, 1]);
+    for (const g of plan?.groups ?? []) for (const p of g.at) for (const point of [[p.x - 12, p.y - 15], [p.x + 12, p.y + 13]] as const)
+      expect(layout.rings.filter(r => inside(point, r)).length % 2).toBe(1);
+  });
+
+  it("keeps every sprite clear of the name and political status labels", () => {
+    for (const s of view.spaces) {
+      const layout = ATLAS.spaces[s.id];
+      const plan = layout === undefined ? null : spreadPlan(rallied(s), layout);
+      if (plan === null) continue;
+      const labels = [presentation(s), ...statusLayout(s)];
+      for (const g of plan.groups) for (const p of g.at)
+        expect(labels.some(b => p.x - 12 < b.x + b.width && p.x + 12 > b.x && p.y - 15 < b.y + b.height && p.y + 13 > b.y), s.id).toBe(false);
+    }
   });
 });
