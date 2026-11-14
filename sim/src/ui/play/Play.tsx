@@ -52,6 +52,9 @@ function LastAction({ item, view, onRule }: { readonly item: HistoryItem | undef
   );
 }
 
+/** The click-to-open space detail panel. Off: the map hover text gives the same data (see spaceTooltip). */
+const SPACE_INSPECTOR: boolean = false;
+
 export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
   const [data, setData] = useState<{ session: SessionRow; head: Head } | null>(null);
   const [legal, setLegal] = useState<LegalChoices | null>(null);
@@ -237,7 +240,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
             <div className="map-body">
             <MapCanvas tools={mapTools} eligible={plans.active === "event" ? eventTargets : factionTargets} view={board} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
             </div>
-            {detail !== undefined && <div className="space-inspector" aria-live="polite"><button type="button" aria-label="Close space details" onClick={() => {setFocused(null);}}>×</button><SpaceDetail space={detail} tracks={view.status.tracks} /><p className="hint">{(legal.actions ?? []).filter(a => a.locations.includes(detail.id)).map(a => a.label).join(" · ") || "No standalone operation target listed for the acting faction."} Complete plans are checked by the rules engine.</p></div>}
+            {SPACE_INSPECTOR && detail !== undefined && <div className="space-inspector" aria-live="polite"><button type="button" aria-label="Close space details" onClick={() => {setFocused(null);}}>×</button><SpaceDetail space={detail} tracks={view.status.tracks} /><p className="hint">{(legal.actions ?? []).filter(a => a.locations.includes(detail.id)).map(a => a.label).join(" · ") || "No standalone operation target listed for the acting faction."} Complete plans are checked by the rules engine.</p></div>}
             {showKey && (
               <div className="map-key">
                 <Legend view={board} />

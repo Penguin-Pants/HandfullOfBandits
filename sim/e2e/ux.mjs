@@ -122,9 +122,11 @@ try {
  check(await page.locator('[data-space="europe"]').count()===0,'Europe has no playable hit area');
  await page.screenshot({path:join(shots,'europe-vertical-focused.png')});
  await page.getByRole('button',{name:'Fit map'}).click();
- await page.getByLabel('Find space').selectOption('botan');await page.getByLabel('Botan detail',{exact:true}).waitFor();
- check(await page.getByLabel('Botan detail').getByText(/Underground Guerrilla/).count()===1,'inspection exposes full forces');
- await page.screenshot({path:join(shots,'selected-space.png')});await page.getByRole('button',{name:'Close space details'}).click();
+ await page.getByLabel('Find space').selectOption('botan');
+ const hoverText=id=>page.locator('[data-space="'+id+'"] title').first().textContent();
+ check(/Underground Guerrilla/.test(await hoverText('botan')),'hover text exposes full forces');
+ check(await page.locator('.space-inspector').count()===0,'selection opens no detail panel');
+ await page.screenshot({path:join(shots,'selected-space.png')});
  const initial=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox');
  await page.getByRole('button',{name:'Zoom in'}).click();await page.getByRole('img',{name:'Board'}).focus();await page.keyboard.press('ArrowRight');
  check(await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')!==initial,'zoom and keyboard pan');
@@ -134,16 +136,15 @@ try {
  const hit=await page.locator('[data-info="hakkari"] text.map-label').first().boundingBox();
  if(hit===null)throw new Error('Hakkari label');
  await page.mouse.click(hit.x+hit.width/2,hit.y+hit.height/2);
- check(await page.getByLabel('Hakkari detail',{exact:true}).isVisible(),'mouse selection at zoom');
+ check(await page.getByRole('button',{name:'Hakkari',exact:true}).getAttribute('aria-pressed')==='true','mouse selection at zoom');
  check(await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')===beforeClick,'mouse focus preserves camera');
- await page.getByRole('button',{name:'Close space details'}).click();
  await page.getByRole('button',{name:'Fit map'}).click();
  for(const mode of ['Forces','Political','Terrain','Full']) {
   await page.getByRole('button',{name:mode,exact:true}).click();
   check(await page.locator('.atlas-stack').first().isVisible()===(mode==='Forces'||mode==='Full'),'force layer '+mode);
   check(await page.locator('.atlas-political').first().isVisible()===(mode==='Political'||mode==='Full'),'political layer '+mode);
   await page.getByLabel('Find space').selectOption('diyarbakir-city');
-  check(await page.getByLabel('Diyarbakir detail',{exact:true}).isVisible(),'inspection in '+mode);await page.getByRole('button',{name:'Close space details'}).click();
+  check((await hoverText('diyarbakir-city')).startsWith('Diyarbakir\n'),'inspection in '+mode);
  }
  await page.getByRole('button',{name:'Limited Op',exact:true}).click();await page.getByRole('button',{name:'March',exact:true}).click();
  await page.locator('.map-space.eligible').first().waitFor({state:'attached'});
@@ -162,7 +163,7 @@ try {
  });
  await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();await page.getByLabel('Find space').selectOption('botan');
  check(await page.locator('[data-info="botan"] .atlas-overflow').count()===1,'dense overflow is explicit');
- check((await page.getByLabel('Botan detail').textContent()).includes('Stress 8'),'dense inspection retains all groups');
+ check((await hoverText('botan')).includes('Stress 8'),'dense inspection retains all groups');
  await page.screenshot({path:join(shots,'dense-state.png')});
  stressMode='empty';await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
  await page.getByRole('heading',{name:'Choose your action'}).waitFor();

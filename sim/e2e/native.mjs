@@ -85,7 +85,7 @@ export async function nativeChecks({chromium,base,shots,check}) {
   await page.keyboard.press('Escape'); // Close the note, after the browser has exited.
   await page.getByRole('button',{name:'Show actions',exact:true}).click();
   check(await move.textContent()===draft&&await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')===camera,'draft and camera survive native fullscreen and sidebar changes');
-  check(await page.getByLabel('Botan detail',{exact:true}).isVisible()&&await page.getByRole('button',{name:'Political',exact:true}).getAttribute('aria-pressed')==='true','selection and display layer survive fullscreen');
+  check(await page.getByRole('button',{name:'Botan',exact:true}).getAttribute('aria-pressed')==='true'&&await page.getByRole('button',{name:'Political',exact:true}).getAttribute('aria-pressed')==='true','selection and display layer survive fullscreen');
   check(await page.getByLabel('Cards',{exact:true}).evaluate(el=>el.open),'supporting disclosure stays open through layout changes');
   await page.getByRole('button',{name:'Fullscreen',exact:true}).click();await page.waitForFunction(()=>!!document.fullscreenElement);
   await page.getByRole('button',{name:'Exit fullscreen',exact:true}).waitFor();
