@@ -213,6 +213,33 @@ describe("map tooltip", () => {
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
+  it("keeps the tooltip beside the focused space after the camera moves, and inside the viewport", () => {
+    const size = (width: number, height: number): void => {
+      vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(width);
+      vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(height);
+    };
+    const at = (x: number, y: number): DOMRect => ({ left: x, top: y, width: 0, height: 0 }) as DOMRect;
+    size(200, 300);
+    const props = { view: marked, selected: [], onSelect: vi.fn() };
+    const { rerender } = render(<Board {...props} />);
+    const rect = vi.spyOn(space("Botan"), "getBoundingClientRect").mockReturnValue(at(-500, -500));
+    fireEvent.focus(space("Botan"));
+    rect.mockReturnValue(at(100, 100));
+    rerender(<Board {...props} camera={{ zoom: 2, x: 40, y: 40 }} />);
+    const tip = screen.getByRole("tooltip");
+    expect([tip.style.left, tip.style.top]).toEqual(["116px", "116px"]);
+    // Near the bottom right corner the tooltip goes to the other side of the point.
+    rect.mockReturnValue(at(window.innerWidth - 50, window.innerHeight - 50));
+    rerender(<Board {...props} camera={{ zoom: 2, x: 80, y: 80 }} />);
+    expect([tip.style.left, tip.style.top]).toEqual([`${String(window.innerWidth - 266)}px`, `${String(window.innerHeight - 366)}px`]);
+    // A tooltip taller than the room on each side stays inside the viewport.
+    size(200, window.innerHeight - 40);
+    rect.mockReturnValue(at(300, window.innerHeight / 2));
+    rerender(<Board {...props} camera={{ zoom: 2, x: 90, y: 90 }} />);
+    expect(tip.style.top).toBe("8px");
+    vi.restoreAllMocks();
+  });
+
   it("adds the target note when the rules engine lists candidates", () => {
     render(<Board view={marked} selected={[]} onSelect={vi.fn()} eligible={["botan"]} />);
     fireEvent.pointerOver(space("Botan"));

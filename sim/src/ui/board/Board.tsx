@@ -28,15 +28,13 @@ const levelLine = (space: SpaceView): string => `Level: ${space.levelName === nu
 const orNone = (value: string | null): string => value === null ? "None" : words(value);
 const TIP_ID = "space-tip";
 const TIP_GAP = 16;
+const TIP_MARGIN = 8;
 
-/** Puts the tooltip beside a screen point, on the side with more room. */
+/** Puts the tooltip beside a screen point, on the side where it fits, and keeps all of it in the viewport. */
 function placeTip(el: HTMLElement, at: Pt): void {
-  const right = at.x > window.innerWidth / 2;
-  const low = at.y > window.innerHeight / 2;
-  el.style.left = right ? "" : `${String(at.x + TIP_GAP)}px`;
-  el.style.right = right ? `${String(window.innerWidth - at.x + TIP_GAP)}px` : "";
-  el.style.top = low ? "" : `${String(at.y + TIP_GAP)}px`;
-  el.style.bottom = low ? `${String(window.innerHeight - at.y + TIP_GAP)}px` : "";
+  const fit = (p: number, size: number, room: number): number => Math.max(TIP_MARGIN, Math.min(p + TIP_GAP + size <= room - TIP_MARGIN ? p + TIP_GAP : p - TIP_GAP - size, room - TIP_MARGIN - size));
+  el.style.left = `${String(fit(at.x, el.offsetWidth, window.innerWidth))}px`;
+  el.style.top = `${String(fit(at.y, el.offsetHeight, window.innerHeight))}px`;
 }
 
 /** A heading and one line for each item, or "None". */
@@ -245,9 +243,16 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
   /** The space the tooltip describes, and the screen point it sits beside. */
   const [tip, setTip] = useState<string | null>(null);
   const tipAt = useRef<Pt>({ x: 0, y: 0 });
+  /** The focused space. Its position is measured after each render, because focus can move the camera. */
+  const tipAnchor = useRef<Element | null>(null);
+  const pointTip = (e: { readonly clientX: number; readonly clientY: number }): void => { tipAnchor.current = null; tipAt.current = { x: e.clientX, y: e.clientY }; };
   const tipRef = useRef<HTMLDivElement>(null);
   const tipSpace = panning || grab?.at != null ? undefined : spaces.find((s) => s.id === tip);
-  useLayoutEffect(() => { if (tipRef.current !== null) placeTip(tipRef.current, tipAt.current); });
+  useLayoutEffect(() => {
+    if (tipRef.current === null) return;
+    if (tipAnchor.current !== null) { const r = tipAnchor.current.getBoundingClientRect(); tipAt.current = { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+    placeTip(tipRef.current, tipAt.current);
+  });
   const spaceOf = (target: EventTarget): Element | null => target instanceof Element ? target.closest("[data-space]") : null;
   const centre = (id: string): Pt | null => {
     const s = view.spaces.find((x) => x.id === id);
@@ -294,14 +299,13 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         const id = el?.getAttribute("data-space");
         if (pointerActive.current || el === null || id === null || id === undefined) return;
         onReveal?.(id);
-        const r = el.getBoundingClientRect();
-        tipAt.current = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        tipAnchor.current = el;
         setTip(id);
       }}
       onBlurCapture={() => { setTip(null); }}
-      onPointerOver={(e) => { if (e.pointerType === "touch") return; tipAt.current = { x: e.clientX, y: e.clientY }; setTip(spaceOf(e.target)?.getAttribute("data-space") ?? null); }}
+      onPointerOver={(e) => { if (e.pointerType === "touch") return; pointTip(e); setTip(spaceOf(e.target)?.getAttribute("data-space") ?? null); }}
       onPointerLeave={() => { setTip(null); }}
-      onClick={(e) => { const id = spaceOf(e.target)?.getAttribute("data-space"); if (id !== null && id !== undefined) { tipAt.current = { x: e.clientX, y: e.clientY }; setTip(id); } }}
+      onClick={(e) => { const id = spaceOf(e.target)?.getAttribute("data-space"); if (id !== null && id !== undefined) { pointTip(e); setTip(id); } }}
       onKeyDown={(e) => {
         if (e.key === "Escape") setTip(null);
         if (e.target !== e.currentTarget) return;
@@ -322,7 +326,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       role="img"
       aria-label="Board"
       className={`map mode-${mode}${grab === null ? "" : " dragging"}`}
-      onPointerMove={(e) => { if (tipRef.current !== null && e.pointerType !== "touch") { tipAt.current = { x: e.clientX, y: e.clientY }; placeTip(tipRef.current, tipAt.current); } if (panning) { const last = lastPointer.current; lastPointer.current = { x: e.clientX, y: e.clientY }; if (last !== null) { const scale = pixelsPerUnit(e.currentTarget); onPan?.((last.x - e.clientX) / scale, (last.y - e.clientY) / scale); } return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
+      onPointerMove={(e) => { if (tipRef.current !== null && e.pointerType !== "touch") { pointTip(e); placeTip(tipRef.current, tipAt.current); } if (panning) { const last = lastPointer.current; lastPointer.current = { x: e.clientX, y: e.clientY }; if (last !== null) { const scale = pixelsPerUnit(e.currentTarget); onPan?.((last.x - e.clientX) / scale, (last.y - e.clientY) / scale); } return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
       onClickCapture={(e) => {if (skipClick.current) {e.preventDefault(); e.stopPropagation(); skipClick.current = false;}}}
       onPointerCancel={() => {skipClick.current = false; pointerActive.current = false; setPanning(false); setGrab(null);}}
       onPointerUp={(e) => {

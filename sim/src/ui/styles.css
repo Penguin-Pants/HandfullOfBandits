@@ -616,7 +616,7 @@ body:has(.play-screen) .tip {font-size:16px;}
 }
 
 /* Map space tooltip: opens on hover, keyboard focus and touch. */
-.space-tip {position:fixed; z-index:20; max-width:280px; padding:10px 12px; border:1px solid #7f765e; border-radius:6px; background:#fbf5e9; color:#2f2a20; box-shadow:0 4px 14px rgb(0 0 0 / .3); font-size:14px; line-height:1.35; pointer-events:none;}
+.space-tip {position:fixed; z-index:20; box-sizing:border-box; max-width:280px; max-height:calc(100vh - 16px); overflow:hidden; padding:10px 12px; border:1px solid #7f765e; border-radius:6px; background:#fbf5e9; color:#2f2a20; box-shadow:0 4px 14px rgb(0 0 0 / .3); font-size:14px; line-height:1.35; pointer-events:none;}
 .space-tip strong {display:block; margin-bottom:6px; font:700 17px Georgia,serif;}
 .space-tip dl {display:grid; grid-template-columns:auto 1fr; gap:2px 12px; margin:0;}
 .space-tip dt {color:#625944;}
