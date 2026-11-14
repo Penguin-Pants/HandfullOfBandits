@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { turnOf } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
@@ -168,49 +168,96 @@ describe("map tooltip", () => {
   const lines = (): (string | null)[] => [...screen.getByRole("tooltip").querySelectorAll("strong, dt, dd:not(.space-tip-list), li, p")].map((el) => el.textContent);
   const space = (name: string): HTMLElement => screen.getByRole("button", { name });
 
-  it("shows one item of data on each line when the pointer is on a space", () => {
+  it("shows one item of data on each line", () => {
     render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.pointerOver(space("Botan"));
+    fireEvent.contextMenu(space("Botan"));
     const all = lines();
     expect(all.slice(0, 10)).toEqual(["Botan", "Pop", "2", "Terrain", "Mountain", "Level", "Passive Opposition", "Control", "None", "Pieces"]);
     const pieces = all.slice(10, 10 + botan.pieces.length);
     expect(pieces.length).toBeGreaterThan(0);
     for (const line of pieces) expect(line).toMatch(/^\d+ [^,·]+$/);
     expect(pieces.some((line) => line?.includes("Underground Guerrilla"))).toBe(true);
-    expect(all.slice(10 + botan.pieces.length)).toEqual(["Markers", "1 Coercion", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space"]);
+    expect(all.slice(10 + botan.pieces.length)).toEqual(["Markers", "1 Coercion", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space", "Press or Esc: close"]);
     expect(space("Botan").getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
   });
 
   it("shows an empty space and an external box without empty lists", () => {
     const empty = { ...marked, spaces: marked.spaces.map((s) => s.id === "botan" ? { ...s, pieces: [], markers: [] } : s) };
     render(<Board view={empty} selected={[]} onSelect={vi.fn()} />);
-    fireEvent.pointerOver(space("Botan"));
-    expect(lines().slice(9)).toEqual(["Pieces", "None", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space"]);
+    fireEvent.contextMenu(space("Botan"));
+    expect(lines().slice(9)).toEqual(["Pieces", "None", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space", "Press or Esc: close"]);
     const box = marked.spaces.find((s) => s.kind !== "domestic" && document.querySelector(`[data-space="${s.id}"]`) !== null);
     if (box === undefined) throw new Error("external box");
-    fireEvent.pointerOver(document.querySelector(`[data-space="${box.id}"]`) ?? document.body);
+    fireEvent.contextMenu(document.querySelector(`[data-space="${box.id}"]`) ?? document.body);
     expect(lines().slice(0, 3)).toEqual([box.name, "Type", "External box"]);
   });
 
-  it("opens on keyboard focus and on a touch tap, and closes on blur, Escape and a press off every space", () => {
+  it("opens on a right-click and on keyboard focus, but not when the pointer crosses or clicks a space", () => {
     render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
+    fireEvent.pointerOver(space("Botan"));
+    fireEvent.pointerMove(space("Botan"));
+    fireEvent.click(space("Botan"));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    expect(fireEvent.contextMenu(space("Hakkari"))).toBe(false);
+    expect(lines()[0]).toBe("Hakkari");
+    fireEvent.pointerOver(space("Botan"));
+    fireEvent.pointerLeave(screen.getByRole("img", { name: "Board" }));
+    expect(lines()[0]).toBe("Hakkari");
+    fireEvent.contextMenu(space("Botan"));
+    expect(lines()[0]).toBe("Botan");
+    fireEvent.keyDown(space("Botan"), { key: "Escape" });
+    expect(screen.queryByRole("tooltip")).toBeNull();
     fireEvent.focus(space("Botan"));
     expect(lines()[0]).toBe("Botan");
     fireEvent.blur(space("Botan"));
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.pointerOver(space("Botan"), { pointerType: "touch" });
+  });
+
+  it("closes on a press at any place on the page and on a wheel zoom", () => {
+    render(<><Board view={marked} selected={[]} onSelect={vi.fn()} onZoom={vi.fn()} /><button type="button">Outside</button></>);
+    fireEvent.contextMenu(space("Botan"));
+    expect(lines()[0]).toBe("Botan");
+    fireEvent.pointerDown(screen.getByRole("button", { name: "Outside" }));
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.click(space("Hakkari"));
-    expect(lines()[0]).toBe("Hakkari");
-    fireEvent.keyDown(space("Hakkari"), { key: "Escape" });
+    fireEvent.contextMenu(space("Botan"));
+    expect(lines()[0]).toBe("Botan");
+    fireEvent.pointerDown(space("Hakkari"));
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.click(space("Hakkari"));
-    fireEvent.pointerDown(screen.getByRole("img", { name: "Board" }));
+    fireEvent.contextMenu(space("Botan"));
+    expect(lines()[0]).toBe("Botan");
+    fireEvent.wheel(screen.getByRole("img", { name: "Board" }), { deltaY: -100 });
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.pointerOver(space("Botan"));
-    fireEvent.pointerLeave(screen.getByRole("img", { name: "Board" }));
-    expect(screen.queryByRole("tooltip")).toBeNull();
+  });
+
+  it("opens on a touch long press without a selection, and not on a tap or a touch drag", () => {
+    vi.useFakeTimers();
+    try {
+      const onSelect = vi.fn();
+      render(<Board view={marked} selected={[]} onSelect={onSelect} />);
+      const touch = { pointerType: "touch", button: 0 };
+      const hold = (ms: number): void => { act(() => { vi.advanceTimersByTime(ms); }); };
+      fireEvent.pointerDown(space("Botan"), touch);
+      hold(300);
+      fireEvent.pointerUp(space("Botan"), touch);
+      fireEvent.click(space("Botan"));
+      hold(1000);
+      expect(screen.queryByRole("tooltip")).toBeNull();
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      fireEvent.pointerDown(space("Botan"), { ...touch, clientX: 100, clientY: 100 });
+      fireEvent.pointerMove(space("Botan"), { ...touch, clientX: 140, clientY: 100 });
+      hold(1000);
+      expect(screen.queryByRole("tooltip")).toBeNull();
+      fireEvent.pointerUp(space("Botan"), touch);
+      fireEvent.pointerDown(space("Hakkari"), { ...touch, clientX: 100, clientY: 100 });
+      fireEvent.pointerMove(space("Hakkari"), { ...touch, clientX: 104, clientY: 102 });
+      hold(600);
+      expect(lines()[0]).toBe("Hakkari");
+      fireEvent.pointerUp(space("Hakkari"), touch);
+      fireEvent.click(space("Hakkari"));
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(lines()[0]).toBe("Hakkari");
+    } finally { vi.useRealTimers(); }
   });
 
   it("keeps the tooltip beside the focused space after the camera moves, and inside the viewport", () => {
@@ -242,9 +289,9 @@ describe("map tooltip", () => {
 
   it("adds the target note when the rules engine lists candidates", () => {
     render(<Board view={marked} selected={[]} onSelect={vi.fn()} eligible={["botan"]} />);
-    fireEvent.pointerOver(space("Botan"));
+    fireEvent.contextMenu(space("Botan"));
     expect(screen.getByRole("tooltip").textContent).toContain("Candidate target.");
-    fireEvent.pointerOver(space("Hakkari"));
+    fireEvent.contextMenu(space("Hakkari"));
     expect(screen.getByRole("tooltip").textContent).toContain("Not a standalone target.");
   });
 });

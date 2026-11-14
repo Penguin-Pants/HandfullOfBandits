@@ -54,6 +54,6 @@ export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: Reac
     <div className="map-window">
       <Board {...props} onReveal={id => {const space=props.view.spaces.find(s => s.id === id); if (space !== undefined) setCamera(c => c.zoom <= 1 ? c : keep({...c,x:anchor(space).x+anchor(space).width/2-centreX,y:anchor(space).y+anchor(space).height/2-centreY}));}} mode={mode} camera={camera} onZoom={(dir,at) => {zoom(dir*.25,at);}} onPan={(dx,dy) => {setCamera(c => keep({...c,x:c.x+dx,y:c.y+dy}));}} />
     </div>
-    <div className="map-caption">{props.eligible != null && <strong>{props.eligible.length} candidate targets · Outlined on map · Validate the full plan</strong>}{mode === "terrain" ? "Terrain view · Select any space to inspect its live state." : "Select to inspect · Shift-click to add · Drag pieces to plan a move"}<span>Wheel to zoom · Drag to pan · Arrow keys pan</span></div>
+    <div className="map-caption">{props.eligible != null && <strong>{props.eligible.length} candidate targets · Outlined on map · Validate the full plan</strong>}{mode === "terrain" ? "Terrain view · Select any space to inspect its live state." : "Right-click or long press for space details · Shift-click to add · Drag pieces to plan a move"}<span>Wheel to zoom · Drag to pan · Arrow keys pan</span></div>
   </>;
 }

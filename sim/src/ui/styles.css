@@ -626,3 +626,5 @@ body:has(.play-screen) .tip {font-size:16px;}
 .space-tip p {margin:0; color:#625944; font-size:12.5px;}
 .space-tip dl + p {margin-top:8px; padding-top:6px; border-top:1px solid #d8ccb2;}
 .space-tip p.space-tip-note {color:#2f2a20; margin-bottom:4px;}
+/* A touch long press opens the space tooltip, not the text selection or the system callout. */
+.map-window .map {-webkit-touch-callout:none; -webkit-user-select:none; user-select:none;}

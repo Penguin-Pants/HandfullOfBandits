@@ -127,6 +127,14 @@ try {
  const hoverText=async id=>{await page.mouse.move(0,0);await page.locator('[data-space="'+id+'"]').first().focus();return page.getByRole('tooltip').innerText();};
  check(/Underground Guerrilla/.test(await hoverText('botan')),'hover text exposes full forces');
  check(await page.locator('.space-inspector').count()===0,'selection opens no detail panel');
+ // The focus from hoverText opens a tooltip. Escape closes it before the hover check.
+ await page.keyboard.press('Escape');check(await page.getByRole('tooltip').count()===0,'Escape closes the focus tooltip');
+ const vanBox=await page.locator('[data-space="van-bitlis"]').first().boundingBox();
+ await page.mouse.move(vanBox.x+vanBox.width/2,vanBox.y+vanBox.height/2);await page.mouse.move(vanBox.x+vanBox.width/2+4,vanBox.y+vanBox.height/2+4);
+ check(await page.getByRole('tooltip').count()===0,'pointer hover opens no tooltip');
+ await page.mouse.click(vanBox.x+vanBox.width/2,vanBox.y+vanBox.height/2,{button:'right'});
+ check((await page.getByRole('tooltip').innerText()).startsWith('Van-Bitlis'),'right-click opens the tooltip');
+ await page.keyboard.press('Escape');check(await page.getByRole('tooltip').count()===0,'Escape closes the tooltip');
  await page.screenshot({path:join(shots,'selected-space.png')});
  const initial=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox');
  await page.getByRole('button',{name:'Zoom in'}).click();await page.getByRole('img',{name:'Board'}).focus();await page.keyboard.press('ArrowRight');
