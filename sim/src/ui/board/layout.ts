@@ -42,16 +42,47 @@ export interface SpreadGroup {
 }
 
 /**
- * Positions for every piece of the space drawn one by one, in the order pieces then markers.
+ * Positions for every piece of the space, in the order pieces then markers.
+ * Each group is drawn one sprite per piece while the area has room. When it does not, the widest group shrinks to one sprite and its total, and the plan tries again.
  * A stack box narrower than the area is widened to the free width of its first row when the box alone does not fit.
- * Null when a group does not fit inside the area border: the caller then draws piles and counts.
+ * Null when the groups do not fit inside the area border even as single sprites: the caller then draws piles and counts.
  */
 export function spreadPlan(space: SpaceView, area: Pick<AtlasSpace, "stack" | "rings">): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
+  const collapsed = new Set<number>();
+  for (;;) {
+    const plan = place(space, area, unitsOf(space, collapsed));
+    if (plan !== null) return plan;
+    // Net width a group gives back when it shrinks to one sprite and a printed total. A group that would not get narrower is never shrunk.
+    const saved = space.pieces.map((p, i) => collapsed.has(i) ? 0 : (Math.min(p.count, SPREAD_CAP) - 1) * (p.shape === "disc" ? 20 : 14) - (p.count > SPREAD_CAP ? 0 : 4 + 11 * String(p.count).length));
+    const best = Math.max(0, ...saved);
+    if (best === 0) return null;
+    collapsed.add(saved.indexOf(best));
+  }
+}
+
+interface Unit { readonly n: number; readonly half: number; readonly step: number; readonly body: number; readonly number: number; readonly text: string | null }
+
+/** Sprite runs for each group. A collapsed piece group is one sprite and its total. */
+function unitsOf(space: SpaceView, collapsed: ReadonlySet<number>): readonly Unit[] {
+  return [
+    ...space.pieces.map((p, i) => {
+      const n = collapsed.has(i) ? 1 : Math.min(p.count, SPREAD_CAP);
+      const half = p.shape === "disc" ? 16 : 12;
+      const step = p.shape === "disc" ? 20 : 14;
+      const counted = collapsed.has(i) || p.count > SPREAD_CAP;
+      return { n, half, step, body: 2 * half + (n - 1) * step, number: counted ? 4 + 11 * String(p.count).length : 0, text: counted ? String(p.count) : null };
+    }),
+    ...space.markers.map(m => ({ n: 1, half: 10, step: 0, body: 20, number: 4 + 11 * String(m.count).length, text: String(m.count) })),
+  ].filter(u => u.n > 0);
+}
+
+/** The stack box first, then the free width of the area. */
+function place(space: SpaceView, area: Pick<AtlasSpace, "stack" | "rings">, units: readonly Unit[]): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
   const [x, y, w] = area.stack;
-  const box = pack(space, area, x, y, w);
+  const box = pack(space, area, units, x, y, w);
   if (box !== null || area.rings.length === 0) return box;
   const [left, right] = freeWidth(area.rings, x + w / 2, y + 8);
-  return right - left > w ? pack(space, area, left, y, right - left) : null;
+  return right - left > w ? pack(space, area, units, left, y, right - left) : null;
 }
 
 /** Even-odd test, so the city hole in the hinterland counts as outside. False when the area has no ring. */
@@ -67,18 +98,8 @@ function freeWidth(rings: AtlasSpace["rings"], cx: number, cy: number): readonly
   return [left + 4, right - 4];
 }
 
-function pack(space: SpaceView, area: Pick<AtlasSpace, "rings">, x: number, y: number, w: number): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
-  const units = [
-    ...space.pieces.map(p => {
-      const n = Math.min(p.count, SPREAD_CAP);
-      const half = p.shape === "disc" ? 16 : 12;
-      const step = p.shape === "disc" ? 20 : 14;
-      const number = p.count > SPREAD_CAP ? 4 + 11 * String(p.count).length : 0;
-      return { n, half, step, body: 2 * half + (n - 1) * step, number, text: p.count > SPREAD_CAP ? String(p.count) : null };
-    }),
-    ...space.markers.map(m => ({ n: 1, half: 10, step: 0, body: 20, number: 4 + 11 * String(m.count).length, text: String(m.count) })),
-  ].filter(u => u.n > 0);
-  const rows: (typeof units)[] = [];
+function pack(space: SpaceView, area: Pick<AtlasSpace, "rings">, units: readonly Unit[], x: number, y: number, w: number): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
+  const rows: Unit[][] = [];
   let width = 0;
   for (const u of units) {
     const row = rows.at(-1);
