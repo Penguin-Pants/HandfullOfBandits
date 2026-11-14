@@ -9,7 +9,7 @@ import { StatusBar } from "../status/StatusBar.tsx";
 import { TrackCard } from "../status/TrackCard.tsx";
 import { setMarkers, setPieces } from "../../../test/board.ts";
 import { changedSpaces } from "../play/Play.tsx";
-import { Board, Legend, SpaceDetail, spaceTooltip } from "./Board.tsx";
+import { Board, Legend, SpaceDetail } from "./Board.tsx";
 import { withoutHidden } from "./markers.tsx";
 import { ATLAS } from "./atlas-data.ts";
 import { isInset, regionCells, voronoi } from "./region.ts";
@@ -161,26 +161,64 @@ describe("map markers", () => {
 });
 
 describe("map tooltip", () => {
-  it("puts one item of data on each line", () => {
-    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(turnOf("pkk"), "botan", "coercion", 1));
-    const botan = marked.spaces.find((s) => s.id === "botan");
-    if (botan === undefined) throw new Error("botan");
-    const lines = spaceTooltip(botan).split("\n");
-    expect(lines.slice(0, 6)).toEqual(["Botan", "Pop: 2", "Terrain: Mountain", "Level: Passive Opposition", "Control: None", "Pieces:"]);
-    const pieces = lines.slice(6, 6 + botan.pieces.length);
+  const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(turnOf("pkk"), "botan", "coercion", 1));
+  const botan = marked.spaces.find((s) => s.id === "botan");
+  if (botan === undefined) throw new Error("botan");
+  /** The text of each tooltip line, in order. */
+  const lines = (): (string | null)[] => [...screen.getByRole("tooltip").querySelectorAll("strong, dt, dd:not(.space-tip-list), li, p")].map((el) => el.textContent);
+  const space = (name: string): HTMLElement => screen.getByRole("button", { name });
+
+  it("shows one item of data on each line when the pointer is on a space", () => {
+    render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    fireEvent.pointerOver(space("Botan"));
+    const all = lines();
+    expect(all.slice(0, 10)).toEqual(["Botan", "Pop", "2", "Terrain", "Mountain", "Level", "Passive Opposition", "Control", "None", "Pieces"]);
+    const pieces = all.slice(10, 10 + botan.pieces.length);
     expect(pieces.length).toBeGreaterThan(0);
-    for (const line of pieces) expect(line).toMatch(/^• \d+ [^,·]+$/);
-    expect(pieces.some((line) => line.includes("Underground Guerrilla"))).toBe(true);
-    expect(lines.slice(6 + botan.pieces.length)).toEqual(["Markers:", "• 1 Coercion", "", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space"]);
+    for (const line of pieces) expect(line).toMatch(/^\d+ [^,·]+$/);
+    expect(pieces.some((line) => line?.includes("Underground Guerrilla"))).toBe(true);
+    expect(all.slice(10 + botan.pieces.length)).toEqual(["Markers", "1 Coercion", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space"]);
+    expect(space("Botan").getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
   });
 
-  it("shows an empty space and an external box without empty sections", () => {
-    const botan = view.spaces.find((s) => s.id === "botan");
-    if (botan === undefined) throw new Error("botan");
-    expect(spaceTooltip({ ...botan, pieces: [], markers: [] })).toContain("\nPieces: None\n\nClick: select");
-    const box = view.spaces.find((s) => s.kind !== "domestic");
+  it("shows an empty space and an external box without empty lists", () => {
+    const empty = { ...marked, spaces: marked.spaces.map((s) => s.id === "botan" ? { ...s, pieces: [], markers: [] } : s) };
+    render(<Board view={empty} selected={[]} onSelect={vi.fn()} />);
+    fireEvent.pointerOver(space("Botan"));
+    expect(lines().slice(9)).toEqual(["Pieces", "None", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space"]);
+    const box = marked.spaces.find((s) => s.kind !== "domestic" && document.querySelector(`[data-space="${s.id}"]`) !== null);
     if (box === undefined) throw new Error("external box");
-    expect(spaceTooltip(box).split("\n").slice(0, 2)).toEqual([box.name, "External box"]);
+    fireEvent.pointerOver(document.querySelector(`[data-space="${box.id}"]`) ?? document.body);
+    expect(lines().slice(0, 3)).toEqual([box.name, "Type", "External box"]);
+  });
+
+  it("opens on keyboard focus and on a touch tap, and closes on blur, Escape and a press off every space", () => {
+    render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
+    fireEvent.focus(space("Botan"));
+    expect(lines()[0]).toBe("Botan");
+    fireEvent.blur(space("Botan"));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    fireEvent.pointerOver(space("Botan"), { pointerType: "touch" });
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    fireEvent.click(space("Hakkari"));
+    expect(lines()[0]).toBe("Hakkari");
+    fireEvent.keyDown(space("Hakkari"), { key: "Escape" });
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    fireEvent.click(space("Hakkari"));
+    fireEvent.pointerDown(screen.getByRole("img", { name: "Board" }));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    fireEvent.pointerOver(space("Botan"));
+    fireEvent.pointerLeave(screen.getByRole("img", { name: "Board" }));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+  });
+
+  it("adds the target note when the rules engine lists candidates", () => {
+    render(<Board view={marked} selected={[]} onSelect={vi.fn()} eligible={["botan"]} />);
+    fireEvent.pointerOver(space("Botan"));
+    expect(screen.getByRole("tooltip").textContent).toContain("Candidate target.");
+    fireEvent.pointerOver(space("Hakkari"));
+    expect(screen.getByRole("tooltip").textContent).toContain("Not a standalone target.");
   });
 });
 

@@ -101,7 +101,7 @@ function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:B
       const at = positions[pieces.length+i] ?? {x,y};
       return <MarkerChip key={`${m.marker}-${m.side}`} marker={m} x={at.x} y={at.y} countX={16} />;
     })}
-    {total > shown && <g className="atlas-overflow" aria-label={`${String(total-shown)} more force or marker groups; select to inspect`}><text x={positions[shown]?.x ?? x} y={(positions[shown]?.y ?? y)+6}>+{total-shown}</text><title>Select this space to inspect every piece type, face, marker and count.</title></g>}
+    {total > shown && <g className="atlas-overflow" aria-label={`${String(total-shown)} more force or marker groups; point at, focus or tap the space to inspect`}><text x={positions[shown]?.x ?? x} y={(positions[shown]?.y ?? y)+6}>+{total-shown}</text><title>Point at, focus or tap this space to inspect every piece type, face, marker and count.</title></g>}
   </g>;
 }
 

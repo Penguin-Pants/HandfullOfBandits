@@ -123,7 +123,8 @@ try {
  await page.screenshot({path:join(shots,'europe-vertical-focused.png')});
  await page.getByRole('button',{name:'Fit map'}).click();
  await page.getByLabel('Find space').selectOption('botan');
- const hoverText=id=>page.locator('[data-space="'+id+'"] title').first().textContent();
+ // The pointer leaves the map first, so the space under it does not take the tooltip.
+ const hoverText=async id=>{await page.mouse.move(0,0);await page.locator('[data-space="'+id+'"]').first().focus();return page.getByRole('tooltip').innerText();};
  check(/Underground Guerrilla/.test(await hoverText('botan')),'hover text exposes full forces');
  check(await page.locator('.space-inspector').count()===0,'selection opens no detail panel');
  await page.screenshot({path:join(shots,'selected-space.png')});
@@ -144,7 +145,7 @@ try {
   check(await page.locator('.atlas-stack').first().isVisible()===(mode==='Forces'||mode==='Full'),'force layer '+mode);
   check(await page.locator('.atlas-political').first().isVisible()===(mode==='Political'||mode==='Full'),'political layer '+mode);
   await page.getByLabel('Find space').selectOption('diyarbakir-city');
-  check((await hoverText('diyarbakir-city')).startsWith('Diyarbakir\n'),'inspection in '+mode);
+  check((await hoverText('diyarbakir-city')).startsWith('Diyarbakir'),'inspection in '+mode);
  }
  await page.getByRole('button',{name:'Limited Op',exact:true}).click();await page.getByRole('button',{name:'March',exact:true}).click();
  await page.locator('.map-space.eligible').first().waitFor({state:'attached'});

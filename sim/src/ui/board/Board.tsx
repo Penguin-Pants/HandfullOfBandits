@@ -4,7 +4,7 @@ import { ATLAS } from "./atlas-data.ts";
 import type { AtlasSpace } from "./atlas-data.ts";
 import { atlasLayout, AtlasContext, AtlasGeography, AtlasInfo } from "./Atlas.tsx";
 import { Terrain } from "./Terrain.tsx";
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { BoardView, SpaceView } from "../api.ts";
 import { chipOf, LevelMarker, MarkerChips } from "./markers.tsx";
 import { PieceIcon } from "./PieceIcon.tsx";
@@ -26,23 +26,42 @@ const markerText = (m: SpaceView["markers"][number]): string => `${String(m.coun
 const levelLine = (space: SpaceView): string => `Level: ${space.levelName === null ? "none" : words(space.levelName)} · Control: ${space.control === null ? "none" : words(space.control)}`;
 
 const orNone = (value: string | null): string => value === null ? "None" : words(value);
-/** A heading line and one bullet line for each item, or "Heading: None". */
-const listLines = (heading: string, items: readonly string[]): string[] => items.length === 0 ? [`${heading}: None`] : [`${heading}:`, ...items.map((item) => `• ${item}`)];
+const TIP_ID = "space-tip";
+const TIP_GAP = 16;
 
-/** Hover text: one item of data on each line, then the pointer actions. */
-export function spaceTooltip(space: SpaceView): string {
-  return [
-    space.name,
-    ...(space.kind === "domestic" ? [`Pop: ${String(space.pop)}`, ...(space.terrain === null ? [] : [`Terrain: ${words(space.terrain)}`])] : ["External box"]),
-    `Level: ${orNone(space.levelName)}`,
-    `Control: ${orNone(space.control)}`,
-    ...listLines("Pieces", space.pieces.map(pieceText)),
-    ...(space.markers.length === 0 ? [] : listLines("Markers", space.markers.map(markerText))),
-    "",
-    "Click: select",
-    "Shift-click: add to selection",
-    "Drag: move pieces to another space",
-  ].join("\n");
+/** Puts the tooltip beside a screen point, on the side with more room. */
+function placeTip(el: HTMLElement, at: Pt): void {
+  const right = at.x > window.innerWidth / 2;
+  const low = at.y > window.innerHeight / 2;
+  el.style.left = right ? "" : `${String(at.x + TIP_GAP)}px`;
+  el.style.right = right ? `${String(window.innerWidth - at.x + TIP_GAP)}px` : "";
+  el.style.top = low ? "" : `${String(at.y + TIP_GAP)}px`;
+  el.style.bottom = low ? `${String(window.innerHeight - at.y + TIP_GAP)}px` : "";
+}
+
+/** A heading and one line for each item, or "None". */
+function TipList({ heading, items }: { readonly heading: string; readonly items: readonly string[] }) {
+  return <><dt>{heading}</dt>{items.length === 0 ? <dd>None</dd> : <dd className="space-tip-list"><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></dd>}</>;
+}
+
+/** Space data for hover, keyboard focus and touch: one item on each line, then the pointer actions. */
+function SpaceTip({ space, eligible, tipRef }: { readonly space: SpaceView; readonly eligible: boolean | null; readonly tipRef: React.Ref<HTMLDivElement> }) {
+  return (
+    <div ref={tipRef} id={TIP_ID} role="tooltip" className="space-tip">
+      <strong>{space.name}</strong>
+      <dl>
+        {space.kind === "domestic" ? <><dt>Pop</dt><dd>{space.pop}</dd>{space.terrain !== null && <><dt>Terrain</dt><dd>{words(space.terrain)}</dd></>}</> : <><dt>Type</dt><dd>External box</dd></>}
+        <dt>Level</dt><dd>{orNone(space.levelName)}</dd>
+        <dt>Control</dt><dd>{orNone(space.control)}</dd>
+        <TipList heading="Pieces" items={space.pieces.map(pieceText)} />
+        {space.markers.length > 0 && <TipList heading="Markers" items={space.markers.map(markerText)} />}
+      </dl>
+      {eligible !== null && <p className="space-tip-note">{eligible ? "Candidate target. Validate the complete plan before you commit." : "Not a standalone target. Inspect or validate a combined plan for details."}</p>}
+      <p>Click: select</p>
+      <p>Shift-click: add to selection</p>
+      <p>Drag: move pieces to another space</p>
+    </div>
+  );
 }
 
 export interface BoardProps {
@@ -93,7 +112,7 @@ function Tokens({ space, view, x, y }: { space: SpaceView; view: BoardView; x: n
   );
 }
 
-function Space({ space, cell, atlas, selected, neighbor, changed, eligible, onSelect, onGrab }: { space: SpaceView; cell: Point[] | null; atlas: AtlasSpace | undefined; selected: boolean; neighbor: boolean; changed: boolean; eligible: boolean | null; onSelect: BoardProps["onSelect"]; onGrab: (id: string) => void }) {
+function Space({ space, cell, atlas, selected, neighbor, changed, eligible, described, onSelect, onGrab }: { space: SpaceView; cell: Point[] | null; atlas: AtlasSpace | undefined; selected: boolean; neighbor: boolean; changed: boolean; eligible: boolean | null; described: boolean; onSelect: BoardProps["onSelect"]; onGrab: (id: string) => void }) {
   const outline = selected ? "var(--accent)" : changed ? "var(--changed)" : null;
   const box = cell === null ? { x: space.x - INSET_W / 2, y: space.y - INSET_H / 2 } : null;
   return (
@@ -101,6 +120,7 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, onSe
       role="button"
       aria-label={atlas?.labels.map(l => l.text).join(" ") ?? space.name}
       aria-pressed={selected}
+      aria-describedby={described ? TIP_ID : undefined}
       tabIndex={0}
       className={`map-space${neighbor ? " neighbor" : ""}${selected ? " selected" : ""}${eligible === true ? " eligible" : eligible === false ? " ineligible" : ""}`}
       data-space={space.id}
@@ -108,7 +128,6 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, onSe
       onClick={(e) => { onSelect(space.id, e.shiftKey); }}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(space.id, e.shiftKey); } }}
     >
-      <title>{spaceTooltip(space)}{eligible === null ? "" : eligible ? "\n\nCandidate target.\nValidate the complete plan before you commit." : "\n\nNot a standalone target.\nInspect or validate a combined plan for details."}</title>
       {atlas !== undefined ? (
         <>
           <path d={atlas.path} fill="#fff6dd" fillOpacity={.1} fillRule="evenodd" className="atlas-area" />
@@ -223,6 +242,13 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
   const bh = base.h / camera.zoom;
 
   const [grab, setGrab] = useState<{ from: string; at: Pt | null } | null>(null);
+  /** The space the tooltip describes, and the screen point it sits beside. */
+  const [tip, setTip] = useState<string | null>(null);
+  const tipAt = useRef<Pt>({ x: 0, y: 0 });
+  const tipRef = useRef<HTMLDivElement>(null);
+  const tipSpace = panning || grab?.at != null ? undefined : spaces.find((s) => s.id === tip);
+  useLayoutEffect(() => { if (tipRef.current !== null) placeTip(tipRef.current, tipAt.current); });
+  const spaceOf = (target: EventTarget): Element | null => target instanceof Element ? target.closest("[data-space]") : null;
   const centre = (id: string): Pt | null => {
     const s = view.spaces.find((x) => x.id === id);
     const layout = cells.geographic && s !== undefined ? atlasLayout(s) : undefined;
@@ -258,13 +284,26 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
     return () => { svg.removeEventListener("wheel", on); };
   }, []);
   const from = grab === null ? null : centre(grab.from);
-  return (
+  return (<>
     <svg
       ref={svgRef}
       viewBox={`${String(base.x + (base.w - bw) / 2 + camera.x)} ${String(base.y + (base.h - bh) / 2 + camera.y)} ${String(bw)} ${String(bh)}`}
       tabIndex={0}
-      onFocusCapture={(e) => {const id = e.target instanceof Element ? e.target.closest("[data-space]")?.getAttribute("data-space") : null; if (!pointerActive.current && id !== null && id !== undefined) onReveal?.(id);}}
+      onFocusCapture={(e) => {
+        const el = spaceOf(e.target);
+        const id = el?.getAttribute("data-space");
+        if (pointerActive.current || el === null || id === null || id === undefined) return;
+        onReveal?.(id);
+        const r = el.getBoundingClientRect();
+        tipAt.current = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        setTip(id);
+      }}
+      onBlurCapture={() => { setTip(null); }}
+      onPointerOver={(e) => { if (e.pointerType === "touch") return; tipAt.current = { x: e.clientX, y: e.clientY }; setTip(spaceOf(e.target)?.getAttribute("data-space") ?? null); }}
+      onPointerLeave={() => { setTip(null); }}
+      onClick={(e) => { const id = spaceOf(e.target)?.getAttribute("data-space"); if (id !== null && id !== undefined) { tipAt.current = { x: e.clientX, y: e.clientY }; setTip(id); } }}
       onKeyDown={(e) => {
+        if (e.key === "Escape") setTip(null);
         if (e.target !== e.currentTarget) return;
         const delta: Record<string, readonly [number,number]> = {ArrowLeft:[-30,0],ArrowRight:[30,0],ArrowUp:[0,-30],ArrowDown:[0,30]};
         const d = delta[e.key];
@@ -273,7 +312,8 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       onPointerDownCapture={(e) => {
         pointerActive.current = true;
         // Alt-drag, middle-button drag or a primary drag that starts off every space pans the map.
-        const onSpace = e.target instanceof Element && e.target.closest("[data-space]") !== null;
+        const onSpace = spaceOf(e.target) !== null;
+        if (!onSpace) setTip(null);
         if (onPan === undefined || !(e.altKey || e.button === 1 || (e.button === 0 && !onSpace))) return;
         if (e.altKey || e.button === 1) { e.preventDefault(); e.stopPropagation(); }
         setPanning(true); skipClick.current = true; lastPointer.current = { x: e.clientX, y: e.clientY };
@@ -282,7 +322,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       role="img"
       aria-label="Board"
       className={`map mode-${mode}${grab === null ? "" : " dragging"}`}
-      onPointerMove={(e) => { if (panning) { const last = lastPointer.current; lastPointer.current = { x: e.clientX, y: e.clientY }; if (last !== null) { const scale = pixelsPerUnit(e.currentTarget); onPan?.((last.x - e.clientX) / scale, (last.y - e.clientY) / scale); } return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
+      onPointerMove={(e) => { if (tipRef.current !== null && e.pointerType !== "touch") { tipAt.current = { x: e.clientX, y: e.clientY }; placeTip(tipRef.current, tipAt.current); } if (panning) { const last = lastPointer.current; lastPointer.current = { x: e.clientX, y: e.clientY }; if (last !== null) { const scale = pixelsPerUnit(e.currentTarget); onPan?.((last.x - e.clientX) / scale, (last.y - e.clientY) / scale); } return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
       onClickCapture={(e) => {if (skipClick.current) {e.preventDefault(); e.stopPropagation(); skipClick.current = false;}}}
       onPointerCancel={() => {skipClick.current = false; pointerActive.current = false; setPanning(false); setGrab(null);}}
       onPointerUp={(e) => {
@@ -309,6 +349,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
           cell={isInset(s) ? null : (cells.domestic.get(s.id) ?? cells.external.get(s.id) ?? null)}
           atlas={cells.geographic ? atlasLayout(s) : undefined}
           eligible={eligible === null ? null : eligible.includes(s.id)}
+          described={s.id === tip}
           selected={selected.includes(s.id)}
           neighbor={view.links.some(l => l.a === s.id && selected.includes(l.b) || l.b === s.id && selected.includes(l.a))}
           changed={changed.includes(s.id)}
@@ -343,7 +384,8 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         {from !== null && grab?.at != null && <Arrow a={from} b={grab.at} live />}
       </g>
     </svg>
-  );
+    {tipSpace !== undefined && <SpaceTip space={tipSpace} eligible={eligible === null ? null : eligible.includes(tipSpace.id)} tipRef={tipRef} />}
+  </>);
 }
 
 /** Key to the board symbols. */
