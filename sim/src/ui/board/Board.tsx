@@ -29,6 +29,10 @@ const orNone = (value: string | null): string => value === null ? "None" : words
 const TIP_ID = "space-tip";
 const TIP_GAP = 16;
 const TIP_MARGIN = 8;
+/** How long a touch must stay down to open the tooltip. */
+const LONG_PRESS_MS = 500;
+/** A touch that moves more than this many pixels is a drag, not a long press. */
+const LONG_PRESS_SLOP = 10;
 
 /** Puts the tooltip beside a screen point, on the side where it fits, and keeps all of it in the viewport. */
 function placeTip(el: HTMLElement, at: Pt): void {
@@ -42,7 +46,7 @@ function TipList({ heading, items }: { readonly heading: string; readonly items:
   return <><dt>{heading}</dt>{items.length === 0 ? <dd>None</dd> : <dd className="space-tip-list"><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></dd>}</>;
 }
 
-/** Space data for hover, keyboard focus and touch: one item on each line, then the pointer actions. */
+/** Space data, opened by a right-click, a touch long press or keyboard focus: one item on each line, then the pointer actions. */
 function SpaceTip({ space, eligible, tipRef }: { readonly space: SpaceView; readonly eligible: boolean | null; readonly tipRef: React.Ref<HTMLDivElement> }) {
   return (
     <div ref={tipRef} id={TIP_ID} role="tooltip" className="space-tip">
@@ -58,6 +62,7 @@ function SpaceTip({ space, eligible, tipRef }: { readonly space: SpaceView; read
       <p>Click: select</p>
       <p>Shift-click: add to selection</p>
       <p>Drag: move pieces to another space</p>
+      <p>Press or Esc: close</p>
     </div>
   );
 }
@@ -245,8 +250,19 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
   const tipAt = useRef<Pt>({ x: 0, y: 0 });
   /** The focused space. Its position is measured after each render, because focus can move the camera. */
   const tipAnchor = useRef<Element | null>(null);
-  const pointTip = (e: { readonly clientX: number; readonly clientY: number }): void => { tipAnchor.current = null; tipAt.current = { x: e.clientX, y: e.clientY }; };
   const tipRef = useRef<HTMLDivElement>(null);
+  const longPress = useRef<number | null>(null);
+  const longPressAt = useRef({ clientX: 0, clientY: 0 });
+  const endLongPress = (): void => { if (longPress.current !== null) { window.clearTimeout(longPress.current); longPress.current = null; } };
+  const openTip = (id: string, e: { readonly clientX: number; readonly clientY: number }): void => { tipAnchor.current = null; tipAt.current = { x: e.clientX, y: e.clientY }; setTip(id); };
+  // A press at any place on the page closes the tooltip. The press that opens it comes before its context menu event or long press.
+  useEffect(() => {
+    if (tip === null) return;
+    const close = (): void => { setTip(null); };
+    window.addEventListener("pointerdown", close, true);
+    return () => { window.removeEventListener("pointerdown", close, true); };
+  }, [tip]);
+  useEffect(() => endLongPress, []);
   const tipSpace = panning || grab?.at != null ? undefined : spaces.find((s) => s.id === tip);
   useLayoutEffect(() => {
     if (tipRef.current === null) return;
@@ -275,6 +291,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
   const wheel = useRef<(e: WheelEvent) => void>(() => undefined);
   wheel.current = (e) => {
     e.preventDefault();
+    setTip(null);
     const svg = svgRef.current;
     if (svg === null || e.deltaY === 0) return;
     const r = svg.getBoundingClientRect();
@@ -303,9 +320,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         setTip(id);
       }}
       onBlurCapture={() => { setTip(null); }}
-      onPointerOver={(e) => { if (e.pointerType === "touch") return; pointTip(e); setTip(spaceOf(e.target)?.getAttribute("data-space") ?? null); }}
-      onPointerLeave={() => { setTip(null); }}
-      onClick={(e) => { const id = spaceOf(e.target)?.getAttribute("data-space"); if (id !== null && id !== undefined) { pointTip(e); setTip(id); } }}
+      onContextMenu={(e) => { const id = spaceOf(e.target)?.getAttribute("data-space"); if (id === null || id === undefined) return; e.preventDefault(); openTip(id, e); }}
       onKeyDown={(e) => {
         if (e.key === "Escape") setTip(null);
         if (e.target !== e.currentTarget) return;
@@ -317,7 +332,14 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         pointerActive.current = true;
         // Alt-drag, middle-button drag or a primary drag that starts off every space pans the map.
         const onSpace = spaceOf(e.target) !== null;
-        if (!onSpace) setTip(null);
+        const pressed = spaceOf(e.target)?.getAttribute("data-space");
+        endLongPress();
+        if (e.pointerType === "touch" && pressed !== null && pressed !== undefined) {
+          const at = { clientX: e.clientX, clientY: e.clientY };
+          longPressAt.current = at;
+          // The click that follows the release does not select the space.
+          longPress.current = window.setTimeout(() => { longPress.current = null; skipClick.current = true; setGrab(null); openTip(pressed, at); }, LONG_PRESS_MS);
+        }
         if (onPan === undefined || !(e.altKey || e.button === 1 || (e.button === 0 && !onSpace))) return;
         if (e.altKey || e.button === 1) { e.preventDefault(); e.stopPropagation(); }
         setPanning(true); skipClick.current = true; lastPointer.current = { x: e.clientX, y: e.clientY };
@@ -326,10 +348,11 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       role="img"
       aria-label="Board"
       className={`map mode-${mode}${grab === null ? "" : " dragging"}`}
-      onPointerMove={(e) => { if (tipRef.current !== null && e.pointerType !== "touch") { pointTip(e); placeTip(tipRef.current, tipAt.current); } if (panning) { const last = lastPointer.current; lastPointer.current = { x: e.clientX, y: e.clientY }; if (last !== null) { const scale = pixelsPerUnit(e.currentTarget); onPan?.((last.x - e.clientX) / scale, (last.y - e.clientY) / scale); } return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
+      onPointerMove={(e) => { if (Math.hypot(e.clientX - longPressAt.current.clientX, e.clientY - longPressAt.current.clientY) > LONG_PRESS_SLOP) endLongPress(); if (panning) { const last = lastPointer.current; lastPointer.current = { x: e.clientX, y: e.clientY }; if (last !== null) { const scale = pixelsPerUnit(e.currentTarget); onPan?.((last.x - e.clientX) / scale, (last.y - e.clientY) / scale); } return; } if (grab !== null) setGrab({ ...grab, at: toMap(e.currentTarget, e) }); }}
       onClickCapture={(e) => {if (skipClick.current) {e.preventDefault(); e.stopPropagation(); skipClick.current = false;}}}
-      onPointerCancel={() => {skipClick.current = false; pointerActive.current = false; setPanning(false); setGrab(null);}}
+      onPointerCancel={() => {endLongPress(); skipClick.current = false; pointerActive.current = false; setPanning(false); setGrab(null);}}
       onPointerUp={(e) => {
+        endLongPress();
         pointerActive.current = false;
         if (panning) { setPanning(false); e.currentTarget.releasePointerCapture(e.pointerId); window.setTimeout(() => {skipClick.current = false;},0); return; }
         if (grab === null) return;

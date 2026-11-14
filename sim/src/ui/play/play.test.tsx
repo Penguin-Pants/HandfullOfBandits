@@ -219,7 +219,7 @@ describe("Play hidden markers (P4-07)", () => {
     await screen.findByText(/DK-012/, { selector: "span" });
     fireEvent.click(screen.getByRole("button", { name: "Key" }));
     fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "botan" } });
-    const botanText = (): string => { fireEvent.pointerOver(screen.getByRole("button", { name: "Botan" })); return screen.getByRole("tooltip").textContent; };
+    const botanText = (): string => { fireEvent.contextMenu(screen.getByRole("button", { name: "Botan" })); return screen.getByRole("tooltip").textContent; };
     const covert = (): number => document.querySelectorAll("[aria-label^='Covert (face down)']").length;
     expect(covert()).toBeGreaterThan(0);
     expect(screen.getByLabelText("Legend").textContent).toContain("Covert (face down)");
