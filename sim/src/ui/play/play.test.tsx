@@ -172,7 +172,8 @@ describe("Play map space (UC-4)", () => {
     expect(document.activeElement).toBe(restore);
     expect(restore.getAttribute("aria-expanded")).toBe("false");
     expect(screen.queryByRole("button", { name: "Clear (Esc)" })).toBeNull();
-    for (const label of ["Status", "Resources and politics", "Forces", "Botan detail"]) expect(screen.getByLabelText(label)).toBeTruthy();
+    for (const label of ["Status", "Resources and politics", "Forces"]) expect(screen.getByLabelText(label)).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByRole("img", { name: "Board" }).getAttribute("viewBox")).toBe(camera);
     fireEvent.click(restore);
     expect(screen.getByRole("button", { name: "Hide actions" }).getAttribute("aria-expanded")).toBe("true");
@@ -210,7 +211,7 @@ it("opens a compact track without using Space to advance the game", async () => 
 });
 
 describe("Play hidden markers (P4-07)", () => {
-  it("shows Covert markers by default and Hide Covert removes them from the map, legend and space detail", async () => {
+  it("shows Covert markers by default and Hide Covert removes them from the map, legend and space hover text", async () => {
     const state = setMarkers(withCard(turnOf("state"), "DK-012"), "botan", "covert", 1);
     const h: Head = { actionId: "S-A3", stateHash: "S-A3", state, derived: null as never, view: boardView(kurdish.ruleset, kurdish.data, state) };
     const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))) });
@@ -218,17 +219,20 @@ describe("Play hidden markers (P4-07)", () => {
     await screen.findByText(/DK-012/, { selector: "span" });
     fireEvent.click(screen.getByRole("button", { name: "Key" }));
     fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "botan" } });
+    const botanText = (): string => { fireEvent.pointerOver(screen.getByRole("button", { name: "Botan" })); return screen.getByRole("tooltip").textContent; };
     const covert = (): number => document.querySelectorAll("[aria-label^='Covert (face down)']").length;
     expect(covert()).toBeGreaterThan(0);
     expect(screen.getByLabelText("Legend").textContent).toContain("Covert (face down)");
-    expect(screen.getByLabelText("Botan detail").textContent).toContain("1 Covert (face down)");
+    expect(botanText()).toContain("1 Covert (face down)");
     const toggle = screen.getByRole("button", { name: "Hide Covert" });
     expect(toggle.getAttribute("aria-pressed")).toBe("false");
     fireEvent.click(toggle);
     expect(toggle.getAttribute("aria-pressed")).toBe("true");
     expect(covert()).toBe(0);
     expect(screen.getByLabelText("Legend").textContent).not.toContain("Covert");
-    expect(screen.getByLabelText("Botan detail").textContent).not.toContain("Covert");
+    expect(botanText()).toContain("Pieces");
+    expect(botanText()).not.toContain("Covert");
+    expect(screen.queryByLabelText("Botan detail")).toBeNull();
     fireEvent.click(toggle);
     expect(covert()).toBeGreaterThan(0);
   });

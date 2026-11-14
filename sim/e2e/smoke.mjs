@@ -131,7 +131,6 @@ try {
   await page.getByRole('button', {name:'Hakkari',exact:true}).click({modifiers:['Shift']});
   check(await page.getByRole('button', {name:'Western Cities',exact:true}).getAttribute('aria-pressed') === 'true' && await page.getByRole('button', {name:'Hakkari',exact:true}).getAttribute('aria-pressed') === 'true', 'Western Cities remains selectable with Shift');
   await page.getByRole('button', {name:'Clear (Esc)',exact:true}).click();
-  await page.getByRole('button', {name:'Close space details',exact:true}).click();
   await page.emulateMedia({ colorScheme: "dark" });
   const contrast = await page.evaluate(() => {
     const luminance = color => {
