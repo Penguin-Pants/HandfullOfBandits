@@ -25,14 +25,23 @@ const pieceText = (p: SpaceView["pieces"][number]): string => {
 const markerText = (m: SpaceView["markers"][number]): string => `${String(m.count)} ${m.hidden ? "Covert (face down)" : words(m.marker)}${m.side === "default" ? "" : ` (${words(m.side)})`}`;
 const levelLine = (space: SpaceView): string => `Level: ${space.levelName === null ? "none" : words(space.levelName)} · Control: ${space.control === null ? "none" : words(space.control)}`;
 
-/** Hover text: name, Pop and terrain, level, Control, pieces and markers, one per line. */
+const orNone = (value: string | null): string => value === null ? "None" : words(value);
+/** A heading line and one bullet line for each item, or "Heading: None". */
+const listLines = (heading: string, items: readonly string[]): string[] => items.length === 0 ? [`${heading}: None`] : [`${heading}:`, ...items.map((item) => `• ${item}`)];
+
+/** Hover text: one item of data on each line, then the pointer actions. */
 export function spaceTooltip(space: SpaceView): string {
   return [
-    `${space.name} · ${space.kind === "domestic" ? `Pop ${String(space.pop)}${space.terrain === null ? "" : ` · ${space.terrain}`}` : "external box"}`,
-    levelLine(space),
-    `Pieces: ${space.pieces.map(pieceText).join(", ") || "none"}`,
-    ...(space.markers.length === 0 ? [] : [`Markers: ${space.markers.map(markerText).join(", ")}`]),
-    "Click to select · Shift-click to add · Drag to another space to move pieces",
+    space.name,
+    ...(space.kind === "domestic" ? [`Pop: ${String(space.pop)}`, ...(space.terrain === null ? [] : [`Terrain: ${words(space.terrain)}`])] : ["External box"]),
+    `Level: ${orNone(space.levelName)}`,
+    `Control: ${orNone(space.control)}`,
+    ...listLines("Pieces", space.pieces.map(pieceText)),
+    ...(space.markers.length === 0 ? [] : listLines("Markers", space.markers.map(markerText))),
+    "",
+    "Click: select",
+    "Shift-click: add to selection",
+    "Drag: move pieces to another space",
   ].join("\n");
 }
 
@@ -99,7 +108,7 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, onSe
       onClick={(e) => { onSelect(space.id, e.shiftKey); }}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(space.id, e.shiftKey); } }}
     >
-      <title>{spaceTooltip(space)}{eligible === null ? "" : eligible ? "\nCandidate target. Validate the complete plan before committing." : "\nNot listed as a standalone target by the rules engine. Inspect or validate a combined plan for details."}</title>
+      <title>{spaceTooltip(space)}{eligible === null ? "" : eligible ? "\n\nCandidate target.\nValidate the complete plan before you commit." : "\n\nNot a standalone target.\nInspect or validate a combined plan for details."}</title>
       {atlas !== undefined ? (
         <>
           <path d={atlas.path} fill="#fff6dd" fillOpacity={.1} fillRule="evenodd" className="atlas-area" />

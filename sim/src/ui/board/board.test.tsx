@@ -161,15 +161,26 @@ describe("map markers", () => {
 });
 
 describe("map tooltip", () => {
-  it("lists level, Control, pieces and markers on separate lines", () => {
+  it("puts one item of data on each line", () => {
     const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(turnOf("pkk"), "botan", "coercion", 1));
     const botan = marked.spaces.find((s) => s.id === "botan");
     if (botan === undefined) throw new Error("botan");
     const lines = spaceTooltip(botan).split("\n");
-    expect(lines[0]).toBe("Botan · Pop 2 · mountain");
-    expect(lines[1]).toBe("Level: Passive Opposition · Control: none");
-    expect(lines[2]).toMatch(/^Pieces: .*Underground Guerrilla/);
-    expect(lines[3]).toBe("Markers: 1 Coercion");
+    expect(lines.slice(0, 6)).toEqual(["Botan", "Pop: 2", "Terrain: Mountain", "Level: Passive Opposition", "Control: None", "Pieces:"]);
+    const pieces = lines.slice(6, 6 + botan.pieces.length);
+    expect(pieces.length).toBeGreaterThan(0);
+    for (const line of pieces) expect(line).toMatch(/^• \d+ [^,·]+$/);
+    expect(pieces.some((line) => line.includes("Underground Guerrilla"))).toBe(true);
+    expect(lines.slice(6 + botan.pieces.length)).toEqual(["Markers:", "• 1 Coercion", "", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space"]);
+  });
+
+  it("shows an empty space and an external box without empty sections", () => {
+    const botan = view.spaces.find((s) => s.id === "botan");
+    if (botan === undefined) throw new Error("botan");
+    expect(spaceTooltip({ ...botan, pieces: [], markers: [] })).toContain("\nPieces: None\n\nClick: select");
+    const box = view.spaces.find((s) => s.kind !== "domestic");
+    if (box === undefined) throw new Error("external box");
+    expect(spaceTooltip(box).split("\n").slice(0, 2)).toEqual([box.name, "External box"]);
   });
 });
 
