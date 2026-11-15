@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { SpaceView } from "../api.ts";
 import { boardView } from "../../server/view.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { turnOf } from "../../../test/board.ts";
@@ -60,11 +61,16 @@ describe("individual pieces (spread plan)", () => {
     expect(spreadPlan(botan, area)).toEqual(plan);
   });
 
-  it("draws 6 sprites and prints the exact total for a group above the cap", () => {
-    const plan = spreadPlan(withCounts(9, 1), area);
-    if (plan === null) throw new Error("one group of 9 must fit");
-    expect(plan.groups[0]?.at).toHaveLength(SPREAD_CAP);
-    expect(plan.groups[0]?.count?.text).toBe("9");
+  it("draws one sprite and the exact total for a group above the cap, even with room to spare", () => {
+    const plan = spreadPlan(withCounts(SPREAD_CAP + 3, 1), area);
+    expect(plan?.groups[0]?.at).toHaveLength(1);
+    expect(plan?.groups[0]?.count?.text).toBe(String(SPREAD_CAP + 3));
+  });
+
+  it("draws one sprite per piece for a group at the cap", () => {
+    const plan = spreadPlan(withCounts(SPREAD_CAP, 1), area);
+    expect(plan?.groups[0]?.at).toHaveLength(SPREAD_CAP);
+    expect(plan?.groups[0]?.count).toBeNull();
   });
 
   it("keeps every sprite inside the area border", () => {
@@ -87,7 +93,55 @@ describe("individual pieces (spread plan)", () => {
     expect(spreadPlan(syria, host)?.rows).toBe(1);
   });
 
-  it("returns null when the individual pieces do not fit, so the area falls back to piles", () => {
-    expect(spreadPlan(withCounts(12), area)).toBeNull();
+  it("returns null when even one sprite per group does not fit, so the area falls back to piles", () => {
+    const adiyaman = view.spaces.find(s => s.id === "adiyaman");
+    const layout = ATLAS.spaces.adiyaman;
+    if (adiyaman === undefined || layout === undefined) throw new Error("adiyaman");
+    expect(spreadPlan(crowded(adiyaman), layout)).toBeNull();
+  });
+
+  it("shrinks a group to one sprite and its total only where the area has no room", () => {
+    const sprites = (id: string) => {
+      const s = view.spaces.find(v => v.id === id);
+      const layout = ATLAS.spaces[id];
+      if (s === undefined || layout === undefined) throw new Error(id);
+      const plan = spreadPlan(crowded(s), layout);
+      for (const g of plan?.groups ?? []) for (const p of g.at) for (const point of [[p.x - 12, p.y - 15], [p.x + 12, p.y + 13]] as const)
+        expect(layout.rings.filter(r => inside(point, r)).length % 2, id).toBe(1);
+      return plan?.groups.map(g => [g.at.length, g.count?.text ?? null]);
+    };
+    expect(sprites("mardin-batman")).toEqual([[4, null], [3, null], [5, null], [1, null], [1, null]]);
+    expect(sprites("sanliurfa")).toEqual([[4, null], [3, null], [1, "5"], [1, null], [1, null]]);
+  });
+
+  // Four groups after a PKK Rally replaces Guerrillas with a Base. The stack box sits on the south border, so a second row cannot fit.
+  const piece = (id: string) => {
+    const found = view.spaces.flatMap(s => s.pieces).find(p => p.piece === id);
+    if (found === undefined) throw new Error(id);
+    return found;
+  };
+  const rallied = (s: SpaceView): SpaceView => ({ ...s, markers: [], pieces: [{ ...piece("troops"), count: 3 }, { ...piece("police"), count: 2 }, { ...piece("guerrilla"), count: 1 }, { ...piece("pkkBase"), count: 1 }] });
+  // A busy space: five groups, one of them 5 Guerrillas.
+  const crowded = (s: SpaceView): SpaceView => ({ ...s, markers: [], pieces: [{ ...piece("troops"), count: 4 }, { ...piece("police"), count: 3 }, { ...piece("guerrilla"), count: 5 }, { ...piece("pkkBase"), count: 1 }, { ...piece("stateBase"), count: 1 }] });
+
+  it("uses the free width of the area when the stack box is too narrow, so Şanlıurfa shows all four groups", () => {
+    const urfa = view.spaces.find(s => s.id === "sanliurfa");
+    const layout = ATLAS.spaces.sanliurfa;
+    if (urfa === undefined || layout === undefined) throw new Error("sanliurfa");
+    const plan = spreadPlan(rallied(urfa), layout);
+    expect(plan?.groups.map(g => g.at.length)).toEqual([3, 2, 1, 1]);
+    for (const g of plan?.groups ?? []) for (const p of g.at) for (const point of [[p.x - 12, p.y - 15], [p.x + 12, p.y + 13]] as const)
+      expect(layout.rings.filter(r => inside(point, r)).length % 2).toBe(1);
+  });
+
+  it("keeps every sprite clear of the name and political status labels", () => {
+    for (const s of view.spaces) for (const load of [rallied, crowded]) {
+      const layout = ATLAS.spaces[s.id];
+      const plan = layout === undefined ? null : spreadPlan(load(s), layout);
+      if (plan === null) continue;
+      const labels = [presentation(s), ...statusLayout(s)];
+      for (const g of plan.groups) for (const p of g.at)
+        expect(labels.some(b => p.x - 12 < b.x + b.width && p.x + 12 > b.x && p.y - 15 < b.y + b.height && p.y + 13 > b.y), s.id).toBe(false);
+    }
   });
 });

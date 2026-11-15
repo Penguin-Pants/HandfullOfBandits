@@ -212,5 +212,6 @@ describe("P4-14 item 13 in a played session", () => {
     expect([...done]).toEqual([1, 2]);
     const played = metricsTable(exportJson(db, { sessionIds: [sessionId], withStates: false, appVersion: "0.1.0", exportedAt: "2026-11-05T00:00:00Z" }));
     expect(played.rows.map((r) => r["legal_politics_signal"])).toEqual(["y", "n", null, null, null]);
-  });
+    // Plays a whole campaign. A loaded CI runner can take longer than the 5 s default.
+  }, 30000);
 });

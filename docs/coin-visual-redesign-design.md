@@ -48,8 +48,10 @@ Seven transparent PNG sprites sit in `map/pieces/`. Each is 192 x 192 px and 15 
 - `spriteOf` in `PieceIcon.tsx` maps faction, shape and color variant to a sprite. The `starCircle` emblem selects the active Guerrilla face.
 - Shapes come from `pieces.yaml`: cube (Troops, Police), cylinder (Guards), disc (both Bases) and octagon (Guerrilla).
 - On the atlas, a sprite is 54 map units. The T, P and G codes stay on State forces.
-- An area draws its pieces one by one when all of them fit inside its border. One group shows at most 6 sprites. A group of 7 or more also prints its exact total. `spreadPlan` in `layout.ts` gives the positions.
-- An area where the pieces do not fit shows piles: at most 3 piled sprites for one group, with the exact count. Thus one area can show single pieces while its neighbor shows piles.
+- An area draws a group of 6 or fewer pieces one sprite per piece while they fit inside its border. A group of 7 or more is always one sprite with its exact total to the right. `spreadPlan` in `layout.ts` gives the positions.
+- When the stack box is too narrow, `spreadPlan` uses the free width inside the border at the first row.
+- When the pieces still do not fit, the group that saves the most width becomes one sprite with its total, and the plan tries again. So a large area keeps single pieces longer than a small one. A group that would not get narrower (for example 2 cubes) is never shrunk.
+- An area where even one sprite per group does not fit shows piles: at most 3 piled sprites for one group, with the exact count. Thus one area can show single pieces while its neighbor shows piles.
 - The accessible label of each group and the space inspector always give the exact count.
 - Placement uses the existing deterministic grid in `Stack` in `Atlas.tsx`, with 46 x 33 unit cells. A group that would cross the area border becomes a "+N" overflow. The space inspector lists everything.
 
@@ -112,6 +114,7 @@ At 1366 x 768:
 3. The legacy printed draft `draft-map.svg` and the rulebook are not restyled.
 4. Browser checks ran on Linux Chromium only. Windows runs `make check` and `make test` in CI.
 5. Rendering speed was measured in headless Chromium only (software rendering, no GPU). See "Rendering speed".
+6. For a future map redesign: Adıyaman, Diyarbakır city and Iran are too small for 4 or more groups. Even one sprite per group does not fit, so they fall back to the grid and show a "+N" overflow. Adıyaman and Diyarbakır city cannot fit a 3 x 2 grid anywhere below their labels. Iran is events only, so it rarely holds pieces. Options: larger areas, a smaller sprite scale in small areas, or a stack placed beside the labels.
 
 ## Rendering speed
 
