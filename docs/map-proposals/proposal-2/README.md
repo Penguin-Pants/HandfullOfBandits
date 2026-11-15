@@ -15,6 +15,7 @@ Confidence: medium. Pop, terrain and Batman values are unverified design values.
 | 1 | Batman as a small city plus a Batman province | Batman City (Pop 1, small circle) and Batman hinterland (Plain, Pop 1). Siirt is now its own space (Mountain, Pop 1). "Siirt-Batman" no longer exists |
 | 2 | Diyarbakır City overlaps other provinces and has no city art | Every city circle is now fitted fully inside its own province. A check confirms no circle touches another province. Diyarbakır City uses the game's `diyarbakir-city.png` at the same low opacity |
 | 3 | City art for Batman and Van from real photos | Two real photos (CC BY-SA 4.0) converted to the sepia etching look. See `SOURCES.md` |
+| 4 | Malatya hatch looks wrong; out-of-play Turkey should match | The hatch is gone. All non-playable Turkish provinces now show the same terrain art, faded to 32 percent, with thin borders and the label "OUT OF PLAY" (top and left). The "TURKEY" label is removed |
 
 ## Spaces (18 domestic)
 
@@ -51,7 +52,8 @@ Colonial Twilight has 25 Sectors and 3 Cities. This map has 14 non-city spaces a
 1. **Local magnification near Batman.** Batman is the smallest space. At true scale its labels were unreadable (scale 0.35). The map applies a smooth 1.9x magnification inside a 330-unit radius around Batman. Borders stay shared and none cross. This is a schematic display change, like DEC-61. Neighbor shapes near Batman (Siirt, Bitlis, Mardin, Diyarbakır) stretch slightly.
 2. **Frame.** 1700 x 960 units. Province shapes are 19 percent larger than in v1 so labels fit.
 3. **City art opacity.** 42 percent over a parchment base for all three cities. The game uses 30 percent for Diyarbakır. Pick one value.
-4. **Smallest label scales.** Batman City 0.55, Bitlis 0.65, Batman hinterland 0.7. Piece stacks still need a larger board or smaller pieces in these spaces.
+4. **Out-of-play terrain.** Mountain or plain art per province is a guess (Erzurum, Kars, Ardahan, Erzincan, Bayburt, Gümüşhane, Artvin, Rize, Trabzon, Giresun, Sivas, Ordu use mountain art). Unverified assumption. It is decoration only.
+5. **Smallest label scales.** Batman City 0.55, Bitlis 0.65, Batman hinterland 0.7. Piece stacks still need a larger board or smaller pieces in these spaces.
 
 ## Unverified assumptions
 
