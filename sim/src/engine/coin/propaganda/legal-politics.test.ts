@@ -4,7 +4,7 @@ import type { AnyCommand, GameState } from "../../core/types.ts";
 import { PHASE } from "../phases.ts";
 
 // T-PROP for Legal Politics (11 P3b-04; research 07 s6.3, s6.4, 05 s6.5; approved text
-// docs/prototype/29, DEC-65). S0 board: Hakkari and Dersim are Pop 1, so never on the line 4 list.
+// docs/prototype/29, DEC-65). S0 board: Hakkari and Bingöl-Tunceli are Pop 1, so never on the line 4 list.
 const at = (state: GameState): GameState => {
   const step = ruleset.sequence.propagandaPhases.indexOf("legalPolitics");
   return { ...state, deck: { ...state.deck, currentCard: "DK-016" }, turn: { ...state.turn, phase: PHASE.propaganda, propagandaRound: 1, step } };
@@ -31,24 +31,24 @@ describe("Legal Politics procedure table (07 s6.4)", () => {
     let board = setLevel(open(), "diyarbakir-city", 2);
     board = setPieces(setPieces(board, "western-cities", "guerrilla", 9), "western-cities", "police", 0);
     board = setPieces(setPieces(board, "western-cities", "troops", 0), "western-cities", "stateBase", 0);
-    board = offices(board, "mardin-batman");
-    expect(where(play(board, advance).state)).toEqual(["mardin-batman", "van-bitlis"]);
+    board = offices(board, "mardin");
+    expect(where(play(board, advance).state)).toEqual(["mardin", "van-city"]);
   });
 
   it("line 6: reaching the limit in line 4 files a case in the same phase (DEC-65 point 2)", () => {
-    const { state } = play(offices(open(), "diyarbakir-city", "western-cities", "mardin-batman"), advance);
+    const { state } = play(offices(open(), "diyarbakir-city", "western-cities", "mardin"), advance);
     expect(where(state)).toHaveLength(4);
     expect(state.flags["closureCase"]).toBe(true);
   });
 
   it("line 5 removes an Office outside the list first, then the latest in the list (DEC-65 point 1)", () => {
-    const board = at(setTrack(offices(turnOf("state"), "diyarbakir-city", "western-cities", "mardin-batman", "van-bitlis", "hakkari"), "legalSpace", "prosecuted"));
+    const board = at(setTrack(offices(turnOf("state"), "diyarbakir-city", "western-cities", "mardin", "van-rural", "hakkari"), "legalSpace", "prosecuted"));
     const { state } = play(board, advance);
-    expect([...where(state)].sort()).toEqual(["diyarbakir-city", "mardin-batman", "western-cities"]);
+    expect([...where(state)].sort()).toEqual(["diyarbakir-city", "mardin", "western-cities"]);
   });
 
   it("line 1 bans the party when a case was pending at phase start", () => {
-    const { state } = play(withCase(offices(open(), "diyarbakir-city", "western-cities", "mardin-batman")), advance);
+    const { state } = play(withCase(offices(open(), "diyarbakir-city", "western-cities", "mardin")), advance);
     expect(state.tracks["legalSpace"]).toBe("banned");
     expect(state.tracks["successor"]).toBe(3);
     expect(where(state)).toEqual([]);
@@ -74,7 +74,7 @@ describe("Legal Politics procedure table (07 s6.4)", () => {
   });
 
   it("line 2 places as many Offices as eligible spaces allow (DEC-65 point 3)", () => {
-    const list = ["diyarbakir-city", "western-cities", "mardin-batman", "van-bitlis", "sanliurfa", "bingol-mus", "diyarbakir-rural", "botan", "agri", "adiyaman"];
+    const list = ["diyarbakir-city", "western-cities", "mardin", "van-city", "sanliurfa", "mus", "diyarbakir-rural", "bingol-tunceli", "agri-igdir", "adiyaman"];
     const board = list.reduce((b, id) => setLevel(b, id, 2), at(setTrack(setTrack(turnOf("state"), "legalSpace", "banned"), "successor", 4)));
     expect(where(play(board, advance).state)).toEqual(["elazig"]);
   });

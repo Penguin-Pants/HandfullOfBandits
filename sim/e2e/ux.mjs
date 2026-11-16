@@ -122,18 +122,18 @@ try {
  check(await page.locator('[data-space="europe"]').count()===0,'Europe has no playable hit area');
  await page.screenshot({path:join(shots,'europe-vertical-focused.png')});
  await page.getByRole('button',{name:'Fit map'}).click();
- await page.getByLabel('Find space').selectOption('botan');
+ await page.getByLabel('Find space').selectOption('sirnak');
  // The pointer leaves the map first, so the space under it does not take the tooltip.
  const hoverText=async id=>{await page.mouse.move(0,0);await page.locator('[data-space="'+id+'"]').first().focus();return page.getByRole('tooltip').innerText();};
- check(/Underground Guerrilla/.test(await hoverText('botan')),'hover text exposes full forces');
+ check(/Underground Guerrilla/.test(await hoverText('sirnak')),'hover text exposes full forces');
  check(await page.locator('.space-inspector').count()===0,'selection opens no detail panel');
  // The focus from hoverText opens a tooltip. Escape closes it before the hover check.
  await page.keyboard.press('Escape');check(await page.getByRole('tooltip').count()===0,'Escape closes the focus tooltip');
- const vanBox=await page.locator('[data-space="van-bitlis"]').first().boundingBox();
+ const vanBox=await page.locator('[data-space="sanliurfa"]').first().boundingBox();
  await page.mouse.move(vanBox.x+vanBox.width/2,vanBox.y+vanBox.height/2);await page.mouse.move(vanBox.x+vanBox.width/2+4,vanBox.y+vanBox.height/2+4);
  check(await page.getByRole('tooltip').count()===0,'pointer hover opens no tooltip');
  await page.mouse.click(vanBox.x+vanBox.width/2,vanBox.y+vanBox.height/2,{button:'right'});
- check((await page.getByRole('tooltip').innerText()).startsWith('Van-Bitlis'),'right-click opens the tooltip');
+ check((await page.getByRole('tooltip').innerText()).startsWith('Şanlıurfa'),'right-click opens the tooltip');
  await page.keyboard.press('Escape');check(await page.getByRole('tooltip').count()===0,'Escape closes the tooltip');
  await page.screenshot({path:join(shots,'selected-space.png')});
  const initial=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox');
@@ -153,7 +153,7 @@ try {
   check(await page.locator('.atlas-stack').first().isVisible()===(mode==='Forces'||mode==='Full'),'force layer '+mode);
   check(await page.locator('.atlas-political').first().isVisible()===(mode==='Political'||mode==='Full'),'political layer '+mode);
   await page.getByLabel('Find space').selectOption('diyarbakir-city');
-  check((await hoverText('diyarbakir-city')).startsWith('Diyarbakir'),'inspection in '+mode);
+  check((await hoverText('diyarbakir-city')).startsWith('Diyarbakır'),'inspection in '+mode);
  }
  await page.getByRole('button',{name:'Limited Op',exact:true}).click();await page.getByRole('button',{name:'March',exact:true}).click();
  await page.locator('.map-space.eligible').first().waitFor({state:'attached'});
@@ -163,16 +163,16 @@ try {
  let stressMode='dense';
  await page.route(/\/api\/sessions\/[^/]+$/,async route=>{
   const response=await route.fetch(),json=await response.json();
-  if(json.head?.view && stressMode==='dense')for(const s of json.head.view.spaces)if(s.id==='botan'){
+  if(json.head?.view && stressMode==='dense')for(const s of json.head.view.spaces)if(s.id==='sirnak'){
    s.markers=Array.from({length:9},(_,i)=>({marker:`stress${i}`,side:'old',count:i+1,hidden:false}));s.pieces=s.pieces.map(p=>({...p,count:12}));s.level=-2;s.levelName='activeOpposition';s.control='pkk';
   }
   if(json.head?.view && stressMode==='empty')for(const s of json.head.view.spaces){s.pieces=[];s.markers=[];s.control=null;}
   if(json.head?.view && stressMode==='legacy')json.head.view.spaces.find(s=>s.id==='hakkari').x-=20;
   await route.fulfill({response,json});
  });
- await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();await page.getByLabel('Find space').selectOption('botan');
- check(await page.locator('[data-info="botan"] .atlas-overflow').count()===1,'dense overflow is explicit');
- check((await hoverText('botan')).includes('Stress 8'),'dense inspection retains all groups');
+ await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();await page.getByLabel('Find space').selectOption('sirnak');
+ check(await page.locator('[data-info="sirnak"] .atlas-overflow').count()===1,'dense overflow is explicit');
+ check((await hoverText('sirnak')).includes('Stress 8'),'dense inspection retains all groups');
  await page.screenshot({path:join(shots,'dense-state.png')});
  stressMode='empty';await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
  await page.getByRole('heading',{name:'Choose your action'}).waitFor();

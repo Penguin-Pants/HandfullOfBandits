@@ -377,8 +377,7 @@ h3 {font-size:16px;}
 .atlas-population text {font-size:16px;}
 .atlas-political .level-marker {font-size:14px;}
 .atlas-subtitle {font:600 12px system-ui,sans-serif;letter-spacing:2px;fill:#6f6248;}
-.atlas-special,.context-note {font:10px system-ui,sans-serif;letter-spacing:1px;fill:#5c6757;}
-.context-name {font:italic 16px Georgia,serif;fill:#53604e;}
+.atlas-special {font:10px system-ui,sans-serif;letter-spacing:1px;fill:#5c6757;}
 .map-space.neighbor:not(.selected) .atlas-outline {stroke:#2b6b77;stroke-width:3;stroke-dasharray:7 4;}
 .map-space.selected .atlas-outline {stroke:#9a6a20;stroke-width:4;}
 
@@ -516,7 +515,7 @@ body:has(.play-screen) .tip {font-size:16px;}
 .map-space:focus-visible .atlas-outline {stroke:#12323d; stroke-width:4.5; stroke-dasharray:none;}
 .atlas-label {fill:#231d14; stroke:#f6edd6; stroke-opacity:.92; stroke-width:4.5px; stroke-linejoin:round;}
 .atlas-subtitle {fill:#2f281c; stroke:#f6edd6; stroke-width:3px; paint-order:stroke;}
-.atlas-special, .context-note {fill:#3d4638; stroke:#ecE6d6; stroke-width:2.5px; paint-order:stroke;}
+.atlas-special {fill:#3d4638; stroke:#ecE6d6; stroke-width:2.5px; paint-order:stroke;}
 .country-name {fill:#4a4336; fill-opacity:.85; stroke:#efe9da; stroke-opacity:.8; stroke-width:3px; font:600 24px var(--label-font); letter-spacing:4px;}
 .country-border-halo {stroke:#f3ecd9; stroke-opacity:.85; stroke-width:6;}
 .country-border {stroke:#3f3a33; stroke-width:2.6; stroke-dasharray:11 4 2 4;}
@@ -628,3 +627,5 @@ body:has(.play-screen) .tip {font-size:16px;}
 .space-tip p.space-tip-note {color:#2f2a20; margin-bottom:4px;}
 /* A touch long press opens the space tooltip, not the text selection or the system callout. */
 .map-window .map {-webkit-touch-callout:none; -webkit-user-select:none; user-select:none;}
+.oop-border {stroke:#6f6450; stroke-opacity:.35; stroke-width:1.2;}
+.oop-label {letter-spacing:9px; fill-opacity:.6;}

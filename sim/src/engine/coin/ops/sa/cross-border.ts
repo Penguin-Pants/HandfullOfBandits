@@ -24,13 +24,14 @@ export const crossBorder: ActionHandler = {
     const fail = (code: string, message: string) => [at(box, code, message, "06 s3.2")];
     if (p.locations.length !== 1 || !["kdp-zone", "puk-zone"].includes(box) || !o.opLocations.includes(box)) return fail("crossBorderTarget", "Select one KDP or PUK Zone also selected for the Operation.");
     const moves = asMoves(p.perLocation[box]?.["moves"]);
-    if (moves === null || moves.some(m => !["hakkari", "botan"].includes(m.from) || m.to !== null || m.face !== null)) return fail("crossBorderMoves", "Move Troops from Hakkari or Botan into the selected zone.");
+    const origins = param(r, "crossBorder.origins", "list").map(String);
+    if (moves === null || moves.some(m => !origins.includes(m.from) || m.to !== null || m.face !== null)) return fail("crossBorderMoves", "Move Troops from Hakkari or Şırnak into the selected zone.");
     const moved = moves.reduce((n, m) => n + m.count, 0);
     // Card constraint `maxLift` (DK-071) replaces the normal lift limit.
     const maxLift = typeof o.constraints["maxLift"] === "number" ? o.constraints["maxLift"] : param(r, "crossBorder.maxTroops", "number");
     if (moved > maxLift) return fail("crossBorderTroops", "Too many Troops in the lift.");
     if (o.constraints["noLift"] === true && moved > 0) return fail("crossBorderNoLift", "The card allows one Cross-Border lift, with the Sweep.");
-    for (const origin of ["hakkari", "botan"]) if (moves.filter(m => m.from === origin).reduce((n, m) => n + m.count, 0) > count(s, origin, PIECE.troops)) return fail("crossBorderSupply", "The origin has too few Troops.");
+    for (const origin of origins) if (moves.filter(m => m.from === origin).reduce((n, m) => n + m.count, 0) > count(s, origin, PIECE.troops)) return fail("crossBorderSupply", "The origin has too few Troops.");
     if (typeof o.constraints["maxTroops"] === "number" && count(s, box, PIECE.troops) + moved > o.constraints["maxTroops"]) return fail("crossBorderTroops", "The card limits the zone force.");
     if (crossBorderOpen(r, s, box)) return [];
     const hot = box === "kdp-zone" && s.flags[SWITCH.hotPursuit] === true && r.scenarios[s.meta.scenarioId]?.options["hotPursuit"] !== "deny";

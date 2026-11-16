@@ -104,7 +104,7 @@ The four Pivotals and their rules come from 05, section 4. Each faction holds bo
 | Deck ID | Faction | Pivotal | Earliest | Board precondition | Effect | Evidence |
 |---|---|---|---|---|---|---|
 | DK-015 | PKK | ARGK Formed | C1 | 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases | Place up to 4 Guerrillas in spaces with PKK Bases. Flip all Guerrillas there Underground. PKK +3 Resources | [E-0075] |
-| DK-054 | PKK | Serhildan | C3 | Total Opposition 14 or more; Mardin-Batman or Botan at Opposition (DD-19.5) | Shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1 | [E-0173; E-0271; E-0272] |
+| DK-054 | PKK | Serhildan | C3 | Total Opposition 14 or more; Mardin, Batman, Şırnak or Siirt at Opposition (DD-19.5) | Shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1 | [E-0173; E-0271; E-0272] |
 | DK-076 | State | Area Domination | C4 | Emergency Rule is OHAL Extended Powers; Total Opposition 12 or more | Free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost | [E-0202; E-0204] |
 | DK-098 | State | Coercive Diplomacy on Syria | C5 | Syria is Tolerant or Restricted; Legitimacy 5 or more | Syria to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing | [E-0124; E-0126; E-0127; E-0018; E-0019] |
 
@@ -243,7 +243,7 @@ Cards that need a board state (a Declared ceasefire, an Abroad Leadership, a Clo
 
 Date disputes with no attribution issue: Law 3175 [C-002], KDP break [C-044], HEP ban [C-001], German ban [C-014], 1993 ceasefire start [C-020], Bar Elias [C-027], 1992 Syria accord [C-043], Operation Hammer start [C-058], 1998 ceasefire [C-040], first suicide attack [C-042], leader's departure from Syria [C-003].
 
-Resolved: 10, section 5.2, note 2 now places a Disputed Harm marker in Mardin-Batman for Pınarcık, as DK-018 does (C-045; DD-15.4).
+Resolved: 10, section 5.2, note 2 now places a Disputed Harm marker in Mardin for Pınarcık, as DK-018 does (C-045; DD-15.4).
 
 ## 10. Gaps per Campaign
 

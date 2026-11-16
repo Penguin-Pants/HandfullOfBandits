@@ -100,21 +100,21 @@
   type: event
   chainAfter: [DK-056]
   unshaded:
-    text: "Place a PKK Harm marker in Bingöl-Muş. Ceasefire to None; place the PKK Restraint Broken marker. Europe -1."
+    text: "Place a PKK Harm marker in Bingöl-Tunceli. Ceasefire to None; place the PKK Restraint Broken marker. Europe -1."
     owner: state
     tier: T2
     effects:
-      - {type: placeMarker, marker: pkkHarm, space: bingol-mus}
+      - {type: placeMarker, marker: pkkHarm, space: bingol-tunceli}
       - {type: procedure, id: ceasefire.end}
       - {type: procedure, id: ceasefire.pkkBroken}
       - {type: adjustTrack, track: europe, delta: -1}
   shaded:
-    text: "Block only: place a PKK Harm marker in Bingöl-Muş. Ceasefire to None. No other effect."
+    text: "Block only: place a PKK Harm marker in Bingöl-Tunceli. Ceasefire to None. No other effect."
     owner: pkk
     blockOnly: true
     tier: T2
     effects:
-      - {type: placeMarker, marker: pkkHarm, space: bingol-mus}
+      - {type: placeMarker, marker: pkkHarm, space: bingol-tunceli}
       - {type: procedure, id: ceasefire.end}
   encoding: {status: encoded, encodedBy: "P3b-07e", reviewedAgainstText: true, note: "U: the PKK marker even with Ceasefire None, unless one is on the map (DEC-69 point 7). Block-only harmer side (08 s7.2 item 3)"}
   eventConfidence: High
@@ -176,18 +176,18 @@
   date: "1993-09-04"
   type: event
   unshaded:
-    text: "Place a Disputed Harm marker in Mardin-Batman. A prosecution opens: Legitimacy +1."
+    text: "Place a Disputed Harm marker in Batman City. A prosecution opens: Legitimacy +1."
     owner: state
     tier: T3
     effects:
-      - {type: placeMarker, marker: disputedHarm, space: mardin-batman}
+      - {type: placeMarker, marker: disputedHarm, space: batman-city}
       - {type: adjustTrack, track: legitimacy, delta: 1}
   shaded:
-    text: "Place a Disputed Harm marker in Mardin-Batman. Reveal 1 Covert marker at random. Europe +1."
+    text: "Place a Disputed Harm marker in Batman City. Reveal 1 Covert marker at random. Europe +1."
     owner: pkk
     tier: T3
     effects:
-      - {type: placeMarker, marker: disputedHarm, space: mardin-batman}
+      - {type: placeMarker, marker: disputedHarm, space: batman-city}
       - {type: procedure, id: covert.revealRandom}
       - {type: adjustTrack, track: europe, delta: 1}
   encoding: {status: encoded, encodedBy: "P3b-07f", reviewedAgainstText: true, note: "Perpetrators disputed (C-035): Disputed Harm. Random reveal as DK-049 (procedure covert.revealRandom)"}
@@ -200,7 +200,7 @@
   date: "1993-10-22"
   type: event
   unshaded:
-    text: "Block only: place a State Harm marker in Diyarbakır Rural and 1 Reception marker in Diyarbakır City. No other effect."
+    text: "Block only: place a State Harm marker in Diyarbakır hinterland and 1 Reception marker in Diyarbakır City. No other effect."
     owner: state
     blockOnly: true
     tier: T2
@@ -208,7 +208,7 @@
       - {type: placeMarker, marker: stateHarm, space: diyarbakir-rural}
       - {type: placeMarker, marker: reception, space: diyarbakir-city}
   shaded:
-    text: "Place a State Harm marker in Diyarbakır Rural and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition."
+    text: "Place a State Harm marker in Diyarbakır hinterland and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition."
     owner: pkk
     tier: T2
     effects:
@@ -429,21 +429,21 @@
   date: "1995-03-20"
   type: event
   unshaded:
-    text: "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border, moving up to 10 Troops from Hakkari or Botan (access and Disputed Harm rules apply)."
+    text: "The State conducts a free Sweep and a free Assault in the KDP Zone through Cross-Border, moving up to 10 Troops from Hakkari or Şırnak (access and Disputed Harm rules apply)."
     owner: state
     tier: T1
     effects:
       - {type: freeAction, action: state.sweep, constraints: {spaces: [kdp-zone], sa: state.cross-border, maxLift: 10}}
       - {type: freeAction, action: state.assault, constraints: {spaces: [kdp-zone], sa: state.cross-border, noLift: true}}
   shaded:
-    text: "Fighters disperse and return: move up to 4 Guerrillas from the KDP Zone to Hakkari or Botan, Underground. Legitimacy -1. Europe +1."
+    text: "Fighters disperse and return: move up to 4 Guerrillas from the KDP Zone to Hakkari or Şırnak, Underground. Legitimacy -1. Europe +1."
     owner: pkk
     tier: T1
     effects:
       - type: choice
         options:
           - {label: Hakkari, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: hakkari}]}
-          - {label: Botan, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: botan}]}
+          - {label: Şırnak, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 4}, from: kdp-zone, to: sirnak}]}
       - {type: adjustTrack, track: legitimacy, delta: -1}
       - {type: adjustTrack, track: europe, delta: 1}
   encoding: {status: encoded, encodedBy: "P3b-07g", reviewedAgainstText: true, note: "As DK-041: one lift of up to 10 Troops with the Sweep (maxLift, B5); the Assault lifts none (noLift). Shaded: one destination"}

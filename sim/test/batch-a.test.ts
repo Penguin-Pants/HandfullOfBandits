@@ -13,7 +13,7 @@ it("uses faction-specific legal policies and a legal fallback when their faction
   expect(sanctuary).toMatchObject({plan: {op: "pkk.rally"}});
   expect(["kdp-zone","puk-zone","syria-bekaa"]).toContain(asList(asObject(sanctuary["plan"])?.["locations"])[0]);
   expect(strategy("coerce-only")(engine,ruleset,pkk)).toMatchObject({plan: {op: "pkk.coerce"}});
-  expect(strategy("concealment")(engine,ruleset,setPieces(pkk,"botan","guerrilla",1,"active"))).toMatchObject({plan: {op: "pkk.rally",perLocation: {botan: {option: "flip"}}}});
+  expect(strategy("concealment")(engine,ruleset,setPieces(pkk,"sirnak","guerrilla",1,"active"))).toMatchObject({plan: {op: "pkk.rally",perLocation: {sirnak: {option: "flip"}}}});
   expect(strategy("sanctuary")(engine,ruleset,state)).toEqual(scriptedPolicy(engine,ruleset,state));
   expect(() => strategy("unknown")).toThrow(/Unknown strategy/);
 });

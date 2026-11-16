@@ -27,14 +27,14 @@
   title: "Serhildan"
   type: pivotal
   precondition:
-    text: "Total Opposition is 14 or more, and Mardin-Batman or Botan is at Passive or Active Opposition"
+    text: "Total Opposition is 14 or more, and Mardin, Batman, Şırnak or Siirt is at Passive or Active Opposition"
     if:
       type: all
       of:
         - {type: totalAtLeast, total: totalOpposition, value: 14}
-        - {type: any, of: [{type: atSpace, space: mardin-batman, of: {type: spaceLevelIn, levels: [-1, -2]}}, {type: atSpace, space: botan, of: {type: spaceLevelIn, levels: [-1, -2]}}]}
+        - {type: any, of: [{type: atSpace, space: mardin, of: {type: spaceLevelIn, levels: [-1, -2]}}, {type: atSpace, space: batman-rural, of: {type: spaceLevelIn, levels: [-1, -2]}}, {type: atSpace, space: batman-city, of: {type: spaceLevelIn, levels: [-1, -2]}}, {type: atSpace, space: sirnak, of: {type: spaceLevelIn, levels: [-1, -2]}}, {type: atSpace, space: siirt, of: {type: spaceLevelIn, levels: [-1, -2]}}]}
   unshaded:
-    text: "Earliest C3. Precondition: Total Opposition is 14 or more and Mardin-Batman or Botan is at Opposition. Effect: shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1."
+    text: "Earliest C3. Precondition: Total Opposition is 14 or more and Mardin, Batman, Şırnak or Siirt is at Opposition. Effect: shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1."
     owner: pkk
     tier: T0
     effects:

@@ -301,13 +301,13 @@
     effects:
       - {type: stepOrdinal, track: posture.syria, direction: next, steps: 1}
   shaded:
-    text: "Dispersal from Syria: move up to 3 Guerrillas from Syria-Bekaa to Mardin-Batman, Şanlıurfa or the KDP Zone, Underground. PKK Resources +2."
+    text: "Dispersal from Syria: move up to 3 Guerrillas from Syria-Bekaa to Mardin, Şanlıurfa or the KDP Zone, Underground. PKK Resources +2."
     owner: pkk
     tier: T0
     effects:
       - type: choice
         options:
-          - {label: Mardin-Batman, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: syria-bekaa, to: mardin-batman}]}
+          - {label: Mardin, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: syria-bekaa, to: mardin}]}
           - {label: Şanlıurfa, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: syria-bekaa, to: sanliurfa}]}
           - {label: KDP Zone, effects: [{type: movePieces, piece: guerrilla, toState: underground, count: {min: 0, max: 3}, from: syria-bekaa, to: kdp-zone}]}
       - {type: adjustTrack, track: resources.pkk, delta: 2}
@@ -370,20 +370,20 @@
   date: "1996-06-30"
   type: event
   unshaded:
-    text: "Place a PKK Harm marker in Dersim. Europe -1. The State conducts a free Garrison."
+    text: "Place a PKK Harm marker in Bingöl-Tunceli. Europe -1. The State conducts a free Garrison."
     owner: state
     tier: T2
     effects:
-      - {type: placeMarker, marker: pkkHarm, space: dersim}
+      - {type: placeMarker, marker: pkkHarm, space: bingol-tunceli}
       - {type: adjustTrack, track: europe, delta: -1}
       - {type: freeAction, action: state.garrison, constraints: {}}
   shaded:
-    text: "Block only: place a PKK Harm marker in Dersim. No other effect."
+    text: "Block only: place a PKK Harm marker in Bingöl-Tunceli. No other effect."
     owner: pkk
     blockOnly: true
     tier: T2
     effects:
-      - {type: placeMarker, marker: pkkHarm, space: dersim}
+      - {type: placeMarker, marker: pkkHarm, space: bingol-tunceli}
   encoding: {status: encoded, encodedBy: "P3b-07j", reviewedAgainstText: true, note: "As DK-059. Block-only harmer side (08 s7.2 item 3)"}
   eventConfidence: Moderate
   deckEligible: true

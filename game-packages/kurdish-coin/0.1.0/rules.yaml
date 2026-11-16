@@ -454,7 +454,7 @@
   file: 03-map-and-spaces.md
   heading: Map overview
   text: |-
-    The map has 13 domestic spaces and five external boxes.
+    The map has 18 domestic spaces and five external boxes. DD-22 (Proposal 2 v2) replaced the 13-space map of DD-05.
 
     1. Domestic spaces hold pieces of both factions. They count for victory.
     2. External boxes hold PKK pieces only, except the KDP Zone and PUK Zone during a State Cross-Border action (06, section 3.2). External boxes never count for victory (DD-14.4).
@@ -468,26 +468,37 @@
     | Space | 1990s provinces | Terrain | Pop | Foreign border | Basis for Pop (1990 total, rounded) |
     |---|---|---|---:|---|---|
     | Hakkari | Hakkari | Mountain | 1 | Iraq, Iran | 172,479; raised to minimum 1 [Q-061] |
-    | Botan | Şırnak, Siirt | Mountain | 2 | Iraq, Syria (note 2) | 262,006 + 243,435 = 505,441 [Q-109; Q-096] |
-    | Mardin-Batman | Mardin, Batman | Plain | 4 | Syria | 557,727 + 344,669 = 902,396, rounds to 3.6 and so 4 [Q-079; Q-018] |
+    | Şırnak | Şırnak | Mountain | 1 | Iraq, Syria (note 2) | 262,006, rounds to 1.05 and so 1 [Q-109] |
+    | Siirt | Siirt | Mountain | 1 | none | 243,435, rounds to 0.97 and so 1 [Q-096] |
+    | Batman hinterland | Batman (outside the city) | Plain | 1 | none | Batman 344,669 is 1.4 Pop in total [Q-018]. The hinterland takes 1 (note 8) |
+    | Batman City | Batman (urban) | City | 1 | none | Small city, design weight 1 (note 8) |
+    | Mardin | Mardin | Plain | 2 | Syria | 557,727, rounds to 2.2 and so 2 [Q-079] |
+    | Van hinterland | Van (outside the city) | Mountain | 1 | Iran | Van 637,433 is 2.55 Pop in total, which rounds to 3 [Q-125]. The city takes 2 and the hinterland 1 (note 7) |
+    | Van City | Van (urban) | City | 2 | none | Designer decision, design weight 2 (note 7) |
+    | Bitlis | Bitlis | Mountain | 1 | none | 330,115, rounds to 1.3 and so 1 [Q-035] |
+    | Muş | Muş | Mountain | 2 | none | 376,543, rounds to 1.5 and so 2 [Q-087] |
+    | Bingöl-Tunceli | Bingöl, Tunceli | Mountain | 2 | none | 250,966 + 133,143, each raised to minimum 1 [Q-026; Q-117] |
+    | Elazığ | Elazığ | Plain | 2 | none | 498,225 [Q-053] |
     | Diyarbakır City | Diyarbakır (urban) | City | 2 | none | 600,640 [Q-045] |
-    | Diyarbakır Rural | Diyarbakır (rest) | Plain | 2 | none | 494,356 [Q-046] |
+    | Diyarbakır hinterland | Diyarbakır (rest) | Plain | 2 | none | 494,356 [Q-046] |
     | Şanlıurfa | Şanlıurfa | Plain | 4 | Syria | 1,001,455 [Q-104] |
     | Adıyaman | Adıyaman | Plain | 2 | none | 513,131 [Q-004] |
-    | Elazığ | Elazığ | Plain | 2 | none | 498,225 [Q-053] |
-    | Dersim | Tunceli | Mountain | 1 | none | 133,143; raised to minimum 1 [Q-117] |
-    | Bingöl-Muş | Bingöl, Muş | Mountain | 3 | none | 250,966 + 376,543 = 627,509 [Q-026; Q-087] |
-    | Van-Bitlis | Van, Bitlis | Mountain | 4 | Iran | 637,433 + 330,115 = 967,548 [Q-125; Q-035] |
-    | Ağrı | Ağrı | Mountain | 2 | Iran | 437,093 [Q-012] |
+    | Ağrı-Iğdır | Ağrı, Iğdır | Mountain | 3 | Iran | Ağrı 437,093, rounds to 1.75 and so 2 [Q-012]. Iğdır has no census row in the repository: design weight 1 (note 9) |
     | Western Cities | Istanbul, Ankara, İzmir, Adana, Mersin (abstract) | City | 3 | none | Design node, no census basis [L-035; Q-176] |
 
-    Total domestic Pop: 32. Without Western Cities: 29. Mardin-Batman is 4 per the corrected DD-05 (grouped 1990 total, half-up rounding).
+    Total domestic Pop: 33. Without Western Cities: 30. DD-05 had 32 and 29. The extra point is Batman City and Iğdır, less the Van rounding (note 7).
 
     Notes:
 
-    1. Place names follow the location registry rule: Turkish name first, Kurdish name where sourced (DD-15.5). Print "Dersim" as the space name with "Tunceli" as the province name, because the registry gives Dersim as the historical regional name [L-016]. Print Amed beside Diyarbakır City [L-010]. Other Kurdish names in the registry are marked "n/v" or "model knowledge" and are not printed until verified [L-021 to L-030].
-    2. Şırnak province borders Syria as well as Iraq, near Cizre (source in section 4). DD-17.2 records the border. The short Syrian border has no game effect, because Syria-Bekaa is not a movement space for State pieces and its PKK link uses Mardin-Batman and Şanlıurfa only.
-    3. Terrain is a design tag. Only provincial seat elevations were found in the research. Mountain and Plain tags follow DD-05. Mark them "unverified assumption" in the Playbook until a terrain source is read.
+    1. Place names follow the location registry rule: Turkish name first, Kurdish name where sourced (DD-15.5). Print "Tunceli (Dersim)" for the Tunceli part of Bingöl-Tunceli on the board key, because the registry gives Dersim as the historical regional name [L-016] (DD-22 replaces the DD-15.5 "Dersim" space name). Print Amed beside Diyarbakır City [L-010]. Other Kurdish names in the registry are marked "n/v" or "model knowledge" and are not printed until verified [L-021 to L-030].
+    2. Şırnak province borders Syria as well as Iraq, near Cizre (source in section 4). DD-17.2 records the border. The short Syrian border has no game effect, because Syria-Bekaa is not a movement space for State pieces and its PKK link uses Mardin and Şanlıurfa only.
+    3. Terrain is a design tag. Only provincial seat elevations were found in the research. Mountain and Plain tags follow DD-05, except Siirt (Mountain), Batman hinterland (Plain), Iğdır and Bingöl-Tunceli (Mountain), which DD-22 added. Mark them "unverified assumption" in the Playbook until a terrain source is read.
+    4. Display only: the atlas magnifies the map smoothly around Batman (1.9 times, radius 330 map units at scale 1) so its labels stay readable. Borders stay shared and none cross. This is not a rule.
+    5. Display only: the atlas draws every Turkish province outside the playable area as faded terrain marked "OUT OF PLAY" (Malatya, Kars, Erzurum and others). They hold no pieces and have no links.
+    6. A reference map shows small orange areas in Kars, Erzurum, Kahramanmaraş and Gaziantep. None is a space in this version.
+    7. Van City is a City space (designer decision, DD-22). Van hinterland is the rest of Van province. Van City links to Van hinterland and, by designer decision, to Hakkari. The city location is approximate.
+    8. Batman City is a small City space. Batman hinterland is the rest of Batman province. The two together carry Pop 2, more than the 1.4 that the census gives. Needs a designer decision if the extra point matters in play.
+    9. Iğdır became a province in 1992 (unverified assumption: check TÜİK). Before 1992 its area belonged to Kars. It is grouped with Ağrı as one space in every scenario, so no rule changes with the date.
   subsections:
     - 2.1 Terrain effects
 - id: 03 s2.1
@@ -506,8 +517,8 @@
   text: |-
     | Box | Who may enter | How | Pop | Notes |
     |---|---|---|---:|---|
-    | Syria-Bekaa | PKK only | Rally if Syria posture permits; March to or from Mardin-Batman or Şanlıurfa if Syria is Host or Tolerant | 0 | Holds the PKK Leadership marker. State pieces never enter (CT 1.3.4, 5.1.8 pattern) [F-007; F-020; E-0053; L-088] |
-    | KDP Zone | PKK; State by Cross-Border only | March from Hakkari, Botan or PUK Zone; Rally if KDP posture permits | 0 | Bahdinan border area [L-031; F-022] |
+    | Syria-Bekaa | PKK only | Rally if Syria posture permits; March to or from Mardin or Şanlıurfa if Syria is Host or Tolerant | 0 | Holds the PKK Leadership marker. State pieces never enter (CT 1.3.4, 5.1.8 pattern) [F-007; F-020; E-0053; L-088] |
+    | KDP Zone | PKK; State by Cross-Border only | March from Hakkari, Şırnak or PUK Zone; Rally if KDP posture permits | 0 | Bahdinan border area [L-031; F-022] |
     | PUK Zone | PKK; State by Cross-Border only | March from KDP Zone only; Rally if PUK posture permits | 0 | Soran area near Iran [L-032; F-022] |
     | Iran | PKK only, by event | No Rally, no March. Events may place or remove up to 2 Guerrillas | 0 | Evidence is Low [F-025; E-0166]. A Low-confidence event carries no hard effect (DD-15.4) |
     | Europe | No pieces | Off-map track (04, section 3.6) | 0 | Diaspora resources and international pressure [L-033; F-040] |
@@ -528,7 +539,7 @@
     | Box | PKK uses | State answer | Closes when |
     |---|---|---|---|
     | Syria-Bekaa | Leadership safety, training Base, entry to the Syrian border spaces | Diplomacy SA, Pivotal Event "Coercive Diplomacy on Syria", events | Syria posture reaches Hostile. Leadership flips to its Abroad side. Capture is an event effect only (DD-09.6) [F-020; F-021] |
-    | KDP Zone | Camps near the border, staging into Hakkari and Botan | Cross-Border SA, Diplomacy SA, events | KDP posture reaches Restricted or worse. Cross-Border opens [F-022; F-023; F-059] |
+    | KDP Zone | Camps near the border, staging into Hakkari and Şırnak | Cross-Border SA, Diplomacy SA, events | KDP posture reaches Restricted or worse. Cross-Border opens [F-022; F-023; F-059] |
     | PUK Zone | Rear area behind the KDP Zone | Cross-Border SA (only if KDP posture also permits), Diplomacy SA | PUK posture reaches Restricted or worse [F-022] |
     | Iran | Event-driven deniable use | Events only | Never by rule |
     | Europe | Resources and political pressure | Diplomacy SA, events (bans) | Ban marker caps the track (04) [E-0064] |
@@ -572,27 +583,32 @@
   text: |-
     | Space | Adjacent domestic spaces | Special links |
     |---|---|---|
-    | Hakkari | Botan, Van-Bitlis | KDP Zone |
-    | Botan | Hakkari, Van-Bitlis, Mardin-Batman | KDP Zone |
-    | Mardin-Batman | Botan, Van-Bitlis, Bingöl-Muş, Diyarbakır Rural, Şanlıurfa | Syria-Bekaa (PKK only, Syria Host or Tolerant) |
-    | Diyarbakır City | Diyarbakır Rural | none |
-    | Diyarbakır Rural | Diyarbakır City, Mardin-Batman, Şanlıurfa, Adıyaman, Elazığ, Bingöl-Muş | none |
-    | Şanlıurfa | Mardin-Batman, Diyarbakır Rural, Adıyaman | Syria-Bekaa (PKK only, Syria Host or Tolerant) |
-    | Adıyaman | Diyarbakır Rural, Şanlıurfa | none |
-    | Elazığ | Diyarbakır Rural, Bingöl-Muş, Dersim | none |
-    | Dersim | Elazığ, Bingöl-Muş | none |
-    | Bingöl-Muş | Mardin-Batman, Diyarbakır Rural, Elazığ, Dersim, Van-Bitlis, Ağrı | none |
-    | Van-Bitlis | Hakkari, Botan, Mardin-Batman, Bingöl-Muş, Ağrı | Iran (events only) |
-    | Ağrı | Bingöl-Muş, Van-Bitlis | Iran (events only) |
+    | Hakkari | Şırnak, Van hinterland, Van City | KDP Zone |
+    | Şırnak | Hakkari, Siirt, Mardin, Van hinterland | KDP Zone |
+    | Siirt | Şırnak, Batman hinterland, Van hinterland, Bitlis | none |
+    | Batman hinterland | Siirt, Batman City, Mardin, Bitlis, Muş, Diyarbakır hinterland | none |
+    | Batman City | Batman hinterland | none |
+    | Mardin | Şırnak, Batman hinterland, Diyarbakır hinterland, Şanlıurfa | Syria-Bekaa (PKK only, Syria Host or Tolerant) |
+    | Van hinterland | Hakkari, Şırnak, Siirt, Van City, Bitlis, Ağrı-Iğdır | Iran (events only) |
+    | Van City | Hakkari, Van hinterland | none |
+    | Bitlis | Siirt, Batman hinterland, Van hinterland, Muş, Ağrı-Iğdır | none |
+    | Muş | Batman hinterland, Bitlis, Bingöl-Tunceli, Diyarbakır hinterland, Ağrı-Iğdır | none |
+    | Bingöl-Tunceli | Muş, Elazığ, Diyarbakır hinterland | none |
+    | Elazığ | Bingöl-Tunceli, Diyarbakır hinterland | none |
+    | Diyarbakır hinterland | Batman hinterland, Mardin, Muş, Bingöl-Tunceli, Elazığ, Diyarbakır City, Şanlıurfa, Adıyaman | none |
+    | Diyarbakır City | Diyarbakır hinterland | none |
+    | Şanlıurfa | Mardin, Diyarbakır hinterland, Adıyaman | Syria-Bekaa (PKK only, Syria Host or Tolerant) |
+    | Adıyaman | Diyarbakır hinterland, Şanlıurfa | none |
+    | Ağrı-Iğdır | Van hinterland, Bitlis, Muş | Iran (events only) |
     | Western Cities | none | No land adjacency (section 4.2) |
-    | KDP Zone | Hakkari, Botan, PUK Zone | Restricted (section 3) |
+    | KDP Zone | Hakkari, Şırnak, PUK Zone | Restricted (section 3) |
     | PUK Zone | KDP Zone | Restricted (section 3) |
 
-    Count check: 20 domestic links, 4 KDP and PUK links, 2 Syria-Bekaa links.
+    Count check: 31 domestic links (30 shared borders of the atlas plus Van City to Hakkari by designer decision), 3 KDP and PUK links (Hakkari and Şırnak to the KDP Zone, and KDP Zone to PUK Zone: 3 links in all), 2 Syria-Bekaa links.
 
     Design choices in the list:
 
-    1. Diyarbakır City touches only Diyarbakır Rural. The city sits inside its province. Other spaces reach it through Diyarbakır Rural.
+    1. A city inside a province touches only its hinterland: Diyarbakır City, Van City and Batman City. Other spaces reach a city through its hinterland. Van City also links to Hakkari by designer decision (DD-22).
     2. Hakkari borders Iran and Iraq [L-021]. Mardin borders Syria [L-023]. Van borders Iran [L-025]. Nusaybin faces Qamishli [L-042; L-014]. Habur faces Zakho [L-060; L-069]. These records agree with the check above.
   subsections: []
 - id: 03 s4.2
@@ -612,35 +628,46 @@
   text: |-
     ```mermaid
     graph TD
-      HAK[Hakkari M1] --- BOT[Botan M2]
-      HAK --- VB[Van-Bitlis M4]
-      BOT --- VB
-      BOT --- MB[Mardin-Batman P4]
-      MB --- VB
-      MB --- BM[Bingöl-Muş M3]
-      MB --- DR[Diyarbakır Rural P2]
-      MB --- URF[Şanlıurfa P4]
-      DC[Diyarbakır City C2] --- DR
-      DR --- URF
-      DR --- ADI[Adıyaman P2]
-      DR --- ELA[Elazığ P2]
-      DR --- BM
-      URF --- ADI
-      ELA --- BM
-      ELA --- DER[Dersim M1]
-      DER --- BM
-      BM --- VB
-      BM --- AGR[Ağrı M2]
-      VB --- AGR
-      HAK -.- KDP[KDP Zone]
-      BOT -.- KDP
-      KDP -.- PUK[PUK Zone]
-      MB -.- SYR[Syria-Bekaa]
-      URF -.- SYR
-      HAK -.- IRN[Iran events only]
-      VB -.- IRN
-      AGR -.- IRN
-      WC[Western Cities C3 no land links]
+      hakkari[Hakkari M1] --- sirnak[Şırnak M1]
+      hakkari[Hakkari M1] --- van_rural[Van hinterland M1]
+      sirnak[Şırnak M1] --- siirt[Siirt M1]
+      sirnak[Şırnak M1] --- mardin[Mardin P2]
+      sirnak[Şırnak M1] --- van_rural[Van hinterland M1]
+      siirt[Siirt M1] --- batman_rural[Batman hinterland P1]
+      siirt[Siirt M1] --- van_rural[Van hinterland M1]
+      siirt[Siirt M1] --- bitlis[Bitlis M1]
+      batman_rural[Batman hinterland P1] --- mardin[Mardin P2]
+      batman_rural[Batman hinterland P1] --- bitlis[Bitlis M1]
+      batman_rural[Batman hinterland P1] --- mus[Muş M2]
+      batman_rural[Batman hinterland P1] --- diyarbakir_rural[Diyarbakır hinterland P2]
+      batman_rural[Batman hinterland P1] --- batman_city[Batman City C1]
+      mardin[Mardin P2] --- diyarbakir_rural[Diyarbakır hinterland P2]
+      mardin[Mardin P2] --- sanliurfa[Şanlıurfa P4]
+      van_rural[Van hinterland M1] --- bitlis[Bitlis M1]
+      van_rural[Van hinterland M1] --- agri_igdir[Ağrı-Iğdır M3]
+      van_rural[Van hinterland M1] --- van_city[Van City C2]
+      bitlis[Bitlis M1] --- mus[Muş M2]
+      bitlis[Bitlis M1] --- agri_igdir[Ağrı-Iğdır M3]
+      mus[Muş M2] --- bingol_tunceli[Bingöl-Tunceli M2]
+      mus[Muş M2] --- diyarbakir_rural[Diyarbakır hinterland P2]
+      mus[Muş M2] --- agri_igdir[Ağrı-Iğdır M3]
+      bingol_tunceli[Bingöl-Tunceli M2] --- elazig[Elazığ P2]
+      bingol_tunceli[Bingöl-Tunceli M2] --- diyarbakir_rural[Diyarbakır hinterland P2]
+      elazig[Elazığ P2] --- diyarbakir_rural[Diyarbakır hinterland P2]
+      diyarbakir_rural[Diyarbakır hinterland P2] --- sanliurfa[Şanlıurfa P4]
+      diyarbakir_rural[Diyarbakır hinterland P2] --- adiyaman[Adıyaman P2]
+      diyarbakir_rural[Diyarbakır hinterland P2] --- diyarbakir_city[Diyarbakır City C2]
+      sanliurfa[Şanlıurfa P4] --- adiyaman[Adıyaman P2]
+      van_city[Van City C2] --- hakkari[Hakkari M1]
+      hakkari -.- kdp[KDP Zone]
+      sirnak -.- kdp
+      kdp -.- puk[PUK Zone]
+      mardin -.- syr[Syria-Bekaa]
+      sanliurfa -.- syr
+      hakkari -.- irn[Iran events only]
+      van_rural -.- irn
+      agri_igdir -.- irn
+      wc[Western Cities C3 no land links]
     ```
 
     Solid lines are ordinary adjacency. Dotted lines are restricted links. M, P and C give terrain (Mountain, Plain, City) and the number is Pop.
@@ -675,10 +702,10 @@
 
     Rules:
 
-    1. The space names stay fixed in every scenario (DD-05). Botan and Mardin-Batman name regions, not legal units.
-    2. In C1 and C2 the Playbook explains that the area of Botan and Mardin-Batman belonged to the old Siirt and Mardin provinces. No rule changes.
+    1. The space names stay fixed in every scenario (DD-05, DD-22). Şırnak, Siirt, Mardin and the two Batman spaces name today's provinces, not legal units of 1984.
+    2. In C1 and C2 the Playbook explains that the area of Şırnak and Batman belonged to the old Siirt and Mardin provinces. No rule changes.
     3. Pop stays fixed. Do not read the 1985 to 1990 change in the four provinces as migration [Q-163; Q-164].
-    4. Event cards dated before 1990 that name "Siirt" or "Mardin" affect the space that holds the named place today: Eruh is in Botan [L-002], Nusaybin and Midyat are in Mardin-Batman [L-041; L-042].
+    4. Event cards dated before 1990 that name "Siirt" or "Mardin" affect the space that holds the named place today: Eruh is in Siirt [L-002], Nusaybin and Midyat are in Mardin [L-041; L-042], Cizre is in Şırnak.
     5. The emergency region list changed over time. Batman and Şırnak were added in May 1990 (one source, Low) and Mardin left in Nov 1996 [F-014; E-0219]. The game uses one national Emergency Rule track (07, section 8). Province-level changes are event effects only (DD-12.4).
   subsections: []
 - id: 03 s8
@@ -686,7 +713,7 @@
   heading: Map tests
   text: |-
     1. Check that the PUK Zone link through the KDP Zone does not make PUK access useless. If the PKK never uses the PUK Zone, link it to Hakkari and record the change.
-    2. Check that Diyarbakır City with one link is reachable enough. Count March and Sweep moves into it per game.
+    2. Check that each City with one land link (Diyarbakır City, Van City, Batman City) is reachable enough. Count March and Sweep moves into each per game. Van City also links to Hakkari.
     3. Check that Western Cities with no land links still sees play. Count Rally and Train actions there.
     4. Two readers must produce the same adjacency for every space from section 4.1 alone.
   subsections: []
@@ -998,7 +1025,7 @@
     | State | Area Domination | C4 | Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more | Free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost | E-0202; E-0204; F-036 |
     | State | Coercive Diplomacy on Syria | C5 | Syria posture is Tolerant or Restricted and Legitimacy is 5 or more | Syria posture to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing | E-0124; E-0126; E-0127; E-0018; E-0019; F-020 |
     | PKK | ARGK Formed | C1 | 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases | Place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in every space with a PKK Base Underground (DEC-55), PKK +3 Resources | E-0075 |
-    | PKK | Serhildan | C3 | Total Opposition is 14 or more and Mardin-Batman or Botan is at Opposition (DD-19.5) | Shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1 | E-0173; E-0271; E-0272; F-035 |
+    | PKK | Serhildan | C3 | Total Opposition is 14 or more and Mardin, Batman, Şırnak or Siirt is at Opposition (DD-19.5) | Shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1 | E-0173; E-0271; E-0272; F-035 |
 
     Procedure (CT 2.3.7):
 
@@ -1300,7 +1327,7 @@
     Procedure:
 
     1. Pay 2 Resources in addition to the Op cost. Pay 0 extra if the target host is Aligned with Turkey [tune].
-    2. Move up to 6 Troops from Hakkari or Botan into the zone. For the PUK Zone, Troops may pass through the KDP Zone in this move.
+    2. Move up to 6 Troops from Hakkari or Şırnak into the zone (parameter `crossBorder.origins`). For the PUK Zone, Troops may pass through the KDP Zone in this move.
     3. Conduct the Sweep or Assault in the zone as one selected location. The zone is Mountain terrain. If the host is Aligned with Turkey, ignore the Mountain modifier for Assault (local allied forces) [E-0082].
     4. If the Assault removes at least one PKK piece and the zone has no Disputed Harm marker, place one. Civilian harm in these operations is not verified in the research. The marker records "unknown", not "none".
     5. State Troops stay in the zone until the next Redeploy phase. They give no Control.
@@ -1527,7 +1554,7 @@
 - id: 06 s7
   file: 06-operations-and-special-activities.md
   heading: Worked example
-  text: "The State has 10 Resources. Botan (Mountain) holds 4 Troops, 1 Police, 2 Guards and 2 Underground Guerrillas. The State chooses Op + SA: Sweep in Botan (2 Resources). It Activates (4 + 1 + 2) / 2 = 3, round down, so both Guerrillas flip Active. As its SA it takes Air Mobility and moves 2 more Troops into Botan. It cannot Assault on the same action, because Sweep was its Op. Next card the PKK is First Eligible (CT 2.3.5). The PKK may March the Active Guerrillas out, or Rally to flip them Underground without a PKK Base. Coverage and tempo compete, as in CT lessons example 1."
+  text: "The State has 10 Resources. Şırnak (Mountain) holds 4 Troops, 1 Police, 2 Guards and 2 Underground Guerrillas. The State chooses Op + SA: Sweep in Şırnak (2 Resources). It Activates (4 + 1 + 2) / 2 = 3, round down, so both Guerrillas flip Active. As its SA it takes Air Mobility and moves 2 more Troops into Botan. It cannot Assault on the same action, because Sweep was its Op. Next card the PKK is First Eligible (CT 2.3.5). The PKK may March the Active Guerrillas out, or Rally to flip them Underground without a PKK Base. Coverage and tempo compete, as in CT lessons example 1."
   subsections: []
 - id: 06 s8
   file: 06-operations-and-special-activities.md
@@ -1736,7 +1763,7 @@
     | 1 | A Closure Case marker was on the track at the start of this phase | Ban: Legal Space to Banned. Place the Successor marker at the number of Offices on the map. Remove all Offices. Legitimacy -2. Europe +1. Remove the Closure Case marker. Stop. |
     | 2 | Legal Space is Banned (line 1 did not apply) | Successor: Legal Space to Prosecuted. Place Offices equal to the Successor number minus 1 (minimum 1), using the line 4 order. Remove the Successor marker. Stop. |
     | 3 | Legal Space is Open or Prosecuted | Office limit: Open 4, Prosecuted 3 [tune]. |
-    | 4 | Offices on the map are fewer than the limit | Place 1 Office in the first eligible space in this order: Diyarbakır City, Western Cities, Mardin-Batman, Van-Bitlis, Şanlıurfa, Bingöl-Muş, Diyarbakır Rural, Botan, Ağrı, Adıyaman, Elazığ. Eligible: Pop 2 or more, no Office, no PKK Control, not at Active Support or Active Opposition. |
+    | 4 | Offices on the map are fewer than the limit | Place 1 Office in the first eligible space in this order: Diyarbakır City, Western Cities, Mardin, Van City, Şanlıurfa, Muş, Diyarbakır hinterland, Bingöl-Tunceli, Ağrı-Iğdır, Adıyaman, Elazığ. Eligible: Pop 2 or more, no Office, no PKK Control, not at Active Support or Active Opposition. |
     | 5 | Offices on the map are more than the limit | Remove Offices from the eligible spaces latest in the line 4 order until at the limit. |
     | 6 | Offices on the map equal the limit and no Closure Case marker is on the track | The prosecutor files: place the Closure Case marker. Line 1 bans at the next phase (DD-19.1). |
 
@@ -1831,7 +1858,7 @@
     Event-driven only. No player owns or orders it [M-016; F-058; F-057].
 
     1. Card titles are neutral, for example "Unattributed killings in the southeast".
-    2. Effect: if any of Botan, Mardin-Batman, Diyarbakır City and Diyarbakır Rural holds an Office, remove one Office from the highest-Pop such space. Otherwise remove one Guerrilla from the highest-Pop such space with a Guerrilla. Ties go in this order: Mardin-Batman, Diyarbakır City, Diyarbakır Rural, Botan. The executing faction does not choose the target. Place a Disputed Harm marker there.
+    2. Effect: if any of Şırnak, Mardin, Diyarbakır City and Diyarbakır hinterland holds an Office, remove one Office from the highest-Pop such space. Otherwise remove one Guerrilla from the highest-Pop such space with a Guerrilla. Ties go in this order: Mardin, Diyarbakır City, Diyarbakır hinterland, Şırnak. The executing faction does not choose the target. Place a Disputed Harm marker there.
     3. Attribution limit: a later event may turn a Disputed marker into a State Harm marker only if the card rests on a High or Moderate court or commission finding. Reported security-force links rest on a 1995 commission as relayed by HRW [F-058; E-0087]. No court has settled them.
     4. Never print the "2,000 murders" figure [Q-403].
   subsections: []
@@ -1981,7 +2008,7 @@
     | Deck ID | Faction | Pivotal | Earliest | Board precondition | Effect | Evidence |
     |---|---|---|---|---|---|---|
     | DK-015 | PKK | ARGK Formed | C1 | 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases | Place up to 4 Guerrillas in spaces with PKK Bases. Flip all Guerrillas there Underground. PKK +3 Resources | [E-0075] |
-    | DK-054 | PKK | Serhildan | C3 | Total Opposition 14 or more; Mardin-Batman or Botan at Opposition (DD-19.5) | Shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1 | [E-0173; E-0271; E-0272] |
+    | DK-054 | PKK | Serhildan | C3 | Total Opposition 14 or more; Mardin, Batman, Şırnak or Siirt at Opposition (DD-19.5) | Shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1 | [E-0173; E-0271; E-0272] |
     | DK-076 | State | Area Domination | C4 | Emergency Rule is OHAL Extended Powers; Total Opposition 12 or more | Free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost | [E-0202; E-0204] |
     | DK-098 | State | Coercive Diplomacy on Syria | C5 | Syria is Tolerant or Restricted; Legitimacy 5 or more | Syria to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing | [E-0124; E-0126; E-0127; E-0018; E-0019] |
 
@@ -2156,7 +2183,7 @@
 
     Date disputes with no attribution issue: Law 3175 [C-002], KDP break [C-044], HEP ban [C-001], German ban [C-014], 1993 ceasefire start [C-020], Bar Elias [C-027], 1992 Syria accord [C-043], Operation Hammer start [C-058], 1998 ceasefire [C-040], first suicide attack [C-042], leader's departure from Syria [C-003].
 
-    Resolved: 10, section 5.2, note 2 now places a Disputed Harm marker in Mardin-Batman for Pınarcık, as DK-018 does (C-045; DD-15.4).
+    Resolved: 10, section 5.2, note 2 now places a Disputed Harm marker in Mardin for Pınarcık, as DK-018 does (C-045; DD-15.4).
   subsections: []
 - id: 08 s10
   file: 08-event-deck.md
@@ -2234,7 +2261,7 @@
     Start scores:
 
     1. State: Passive Support in Western Cities (3), Şanlıurfa (4), Elazığ (2) and Adıyaman (2) = Total Support 11. Legitimacy 10. Score 21.
-    2. PKK: Passive Opposition in Botan (2) and Hakkari (1) = Total Opposition 3. Domestic Bases 1 (Botan). Score 4.
+    2. PKK: Passive Opposition in Şırnak (1), Siirt (1) and Hakkari (1) = Total Opposition 3. Domestic Bases 1 (Şırnak). Score 4.
 
     | Faction | Start | Easy ceiling | Maximum | Headroom | Headroom / 3 | Threshold [tune] |
     |---|---:|---:|---:|---:|---:|---:|
@@ -2243,8 +2270,8 @@
 
     Example boards that reach a threshold (illustration, not prediction):
 
-    1. State 49: Legitimacy 12 and Total Support 37, for example Active Support in Western Cities (6), Şanlıurfa (8), Elazığ (4) and Adıyaman (4), plus Passive Support in Mardin-Batman (4), Diyarbakır City (2), Diyarbakır Rural (2), Van-Bitlis (4) and Ağrı (2) and Dersim (1).
-    2. PKK 30: Active Opposition in Botan (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin-Batman (4), Bingöl-Muş (3), Van-Bitlis (4) and Dersim (1) = 22, plus 8 domestic Bases.
+    1. State 49: Legitimacy 12 and Total Support 37, for example Active Support in Western Cities (6), Şanlıurfa (8), Elazığ (4) and Adıyaman (4), plus Passive Support in Mardin, Batman hinterland and Batman City (4), Diyarbakır City (2), Diyarbakır hinterland (2), Van City, Van hinterland and Bitlis (4) and Ağrı-Iğdır (3).
+    2. PKK 30: Active Opposition in Şırnak and Siirt (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin, Batman hinterland and Batman City (4), Muş and Bingöl-Tunceli (4) and Van City, Van hinterland and Bitlis (4) = 22, plus 8 domestic Bases.
   subsections: []
 - id: 09 s2.3
   file: 09-victory-and-scoring.md
@@ -2258,7 +2285,7 @@
     | B (1990-1995) | 20 | 2 x 11 + 9 = 31 | 31 + 53/3 = 48 | 14 | 2 x 10 + 4 = 24 | 24 + 52/3 = 41 |
     | C (1993-1999) | 16 | 2 x 9 + 7 = 25 | 25 + 59/3 = 44 | 23 | 2 x 15 + 5 = 35 | 35 + 41/3 = 48 |
 
-    In Scenario C, Hakkari and Botan already start at Active Opposition; the easy ceiling counts them once at the Active level. All divisions round down.
+    In Scenario C, Hakkari and Şırnak already start at Active Opposition; the easy ceiling counts them once at the Active level. All divisions round down.
   subsections: []
 - id: 09 s3
   file: 09-victory-and-scoring.md
@@ -2455,17 +2482,22 @@
     | Space (terrain, Pop) | State | PKK | Level | Control |
     |---|---|---|---|---|
     | Hakkari (M, 1) | 2 Troops, 1 Police | 2 Guerrillas | Passive Opposition | State (3 v 2) |
-    | Botan (M, 2) | 2 Troops, 1 Police | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
-    | Mardin-Batman (P, 4) | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
+    | Şırnak (M, 1) | 2 Troops, 1 Police | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
+    | Siirt (M, 1) | none | none | Passive Opposition | none |
+    | Mardin (P, 2) | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
+    | Batman hinterland (P, 1) | none | none | Neutral | none |
+    | Batman City (C, 1) | none | none | Neutral | none |
     | Diyarbakır City (C, 2) | 3 Troops, 2 Police, 1 State Base | none | Neutral | State |
-    | Diyarbakır Rural (P, 2) | 1 Police | none | Neutral | State |
+    | Diyarbakır hinterland (P, 2) | 1 Police | none | Neutral | State |
     | Şanlıurfa (P, 4) | 2 Police | none | Passive Support | State |
     | Adıyaman (P, 2) | 1 Police | none | Passive Support | State |
     | Elazığ (P, 2) | 1 Troop, 1 Police, 1 State Base | none | Passive Support | State |
-    | Dersim (M, 1) | 1 Troop, 1 Police | none | Neutral | State |
-    | Bingöl-Muş (M, 3) | 1 Troop, 1 Police | none | Neutral | State |
-    | Van-Bitlis (M, 4) | 2 Troops, 1 Police, 1 State Base | none | Neutral | State |
-    | Ağrı (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
+    | Bingöl-Tunceli (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
+    | Muş (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
+    | Van City (C, 2) | none | none | Neutral | none |
+    | Van hinterland (M, 1) | 2 Troops, 1 Police, 1 State Base | none | Neutral | State |
+    | Bitlis (M, 1) | none | none | Neutral | none |
+    | Ağrı-Iğdır (M, 3) | 1 Troop, 1 Police | none | Neutral | State |
     | Western Cities (C, 3) | 2 Troops, 2 Police, 1 State Base | none | Passive Support | State |
     | KDP Zone | none | 3 Guerrillas, 1 Base | n/a | n/a |
     | PUK Zone | none | none | n/a | n/a |
@@ -2486,10 +2518,10 @@
 
     Basis notes:
 
-    1. PKK pieces in Hakkari and Botan: the 15 Aug 1984 attacks hit Eruh (Botan) and Şemdinli (Hakkari), with a follow-up raid in Siirt on 17 Aug [E-0003; E-0073; E-0155; F-009]. Confidence: Moderate for places, none for size.
+    1. PKK pieces in Hakkari and Şırnak: the 15 Aug 1984 attacks hit Eruh (Siirt) and Şemdinli (Hakkari), with a follow-up raid in Siirt on 17 Aug [E-0003; E-0073; E-0155; F-009]. Confidence: Moderate for places, none for size.
     2. External PKK strength: fighters moved to northern Iraq in 1982 and the leadership sat in Syria [E-0048; E-0071; F-007]. The Bekaa camp is recorded from 1986 [E-0053]; the 1984 Syria-Bekaa Base is a design value. Confidence: Moderate for direction.
     3. Passive Support in Şanlıurfa and Adıyaman: state-allied landlord and tribal networks, such as the Bucak family at Siverek [E-0041; L-013; F-006; F-057]. Confidence: Low. Support is an abstraction of active minorities, not a measure of the population (DD-06.2).
-    4. Passive Opposition in Botan and Hakkari: the PKK's first operating areas. Confidence: Low.
+    4. Passive Opposition in Şırnak, Siirt and Hakkari: the PKK's first operating areas. Confidence: Low.
     5. State Bases at Diyarbakır, Elazığ, Van and Western Cities: design posts. No basing data was researched.
     6. Village Guards start Out of Play until the Law 3175 card [E-0004; DD-08.1].
   subsections: []
@@ -2543,17 +2575,22 @@
     | Space | State | PKK | Level | Control |
     |---|---|---|---|---|
     | Hakkari | 2 Troops, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | State (4 v 3) |
-    | Botan | 3 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Passive Opposition | State (7 v 4) |
-    | Mardin-Batman | 2 Troops, 2 Police, 1 Guard, 1 State Base | 2 Guerrillas | Passive Opposition | State |
+    | Şırnak | 3 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Passive Opposition | State (7 v 4) |
+    | Siirt | none | none | Passive Opposition | none |
+    | Mardin | 2 Troops, 2 Police, 1 Guard, 1 State Base | 2 Guerrillas | Passive Opposition | State |
+    | Batman hinterland | none | none | Neutral | none |
+    | Batman City | none | none | Neutral | none |
     | Diyarbakır City | 4 Troops, 2 Police, 1 State Base | 1 Guerrilla | Neutral | State |
-    | Diyarbakır Rural | 1 Troop, 1 Police, 1 Guard | 1 Guerrilla, 1 Base | Neutral | State (3 v 2) |
+    | Diyarbakır hinterland | 1 Troop, 1 Police, 1 Guard | 1 Guerrilla, 1 Base | Neutral | State (3 v 2) |
     | Şanlıurfa | 1 Troop, 2 Police, 2 Guards | none | Passive Support | State |
     | Adıyaman | 1 Police | none | Passive Support | State |
     | Elazığ | 1 Troop, 1 Police, 1 State Base | none | Passive Support | State |
-    | Dersim | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
-    | Bingöl-Muş | 1 Troop, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
-    | Van-Bitlis | 2 Troops, 1 Police, 1 State Base | 1 Guerrilla | Neutral | State |
-    | Ağrı | 1 Troop, 1 Police | none | Neutral | State |
+    | Bingöl-Tunceli | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
+    | Muş | 1 Troop, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
+    | Van City | none | none | Neutral | none |
+    | Van hinterland | 2 Troops, 1 Police, 1 State Base | 1 Guerrilla | Neutral | State |
+    | Bitlis | none | none | Neutral | none |
+    | Ağrı-Iğdır | 1 Troop, 1 Police | none | Neutral | State |
     | Western Cities | 1 Troop, 1 Police, 1 State Base | none | Passive Support | State |
     | KDP Zone | none | 2 Guerrillas, 1 Base | n/a | n/a |
     | PUK Zone | none | 1 Guerrilla | n/a | n/a |
@@ -2590,7 +2627,7 @@
     | Europe | 3 | Before the 1993 attacks and the German ban [E-0194; E-0064] | Low |
     | Ceasefire | None | The Mar 1993 ceasefire is a C4 pool card [E-0089] | High |
     | Legal Space | Prosecuted, Closure Case marker on the track | Prosecutor filed against HEP on 3 Jul 1992 [E-0186]; HEP dissolved 14 Jul 1993 [E-0009] | High |
-    | Offices | 3: Diyarbakır City, Mardin-Batman, Western Cities | HEP local presence; SHP-HEP deputies elected 1991 [E-0178; F-016] | Low for places |
+    | Offices | 3: Diyarbakır City, Mardin, Western Cities | HEP local presence; SHP-HEP deputies elected 1991 [E-0178; F-016] | Low for places |
     | Northern Iraq Vacuum | In effect | [E-0176; F-023] | Moderate |
     | Campaign | C4 | | |
   subsections: []
@@ -2601,17 +2638,22 @@
     | Space | State | PKK | Level | Markers | Control |
     |---|---|---|---|---|---|
     | Hakkari | 2 Troops, 1 Police, 1 Guard | 3 Guerrillas, 1 Base | Active Opposition | none | none (4 v 4) |
-    | Botan | 4 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Active Opposition | Displacement (Old), State Harm | State |
-    | Mardin-Batman | 2 Troops, 2 Police, 2 Guards, 1 State Base | 2 Guerrillas, 1 Base | Passive Opposition | Office, State Harm, Disputed Harm | State |
+    | Şırnak | 4 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Active Opposition | Displacement (Old), State Harm | State |
+    | Siirt | none | none | Active Opposition | none | none |
+    | Mardin | 2 Troops, 2 Police, 2 Guards, 1 State Base | 2 Guerrillas, 1 Base | Passive Opposition | Office, State Harm, Disputed Harm | State |
+    | Batman hinterland | none | none | Neutral | none | none |
+    | Batman City | none | none | Neutral | none | none |
     | Diyarbakır City | 3 Troops, 3 Police, 1 State Base | 1 Guerrilla | Passive Opposition | Office | State |
-    | Diyarbakır Rural | 2 Troops, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | State Harm | State (4 v 3) |
+    | Diyarbakır hinterland | 2 Troops, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | State Harm | State (4 v 3) |
     | Şanlıurfa | 1 Troop, 2 Police, 2 Guards | none | Passive Support | none | State |
     | Adıyaman | 1 Police | none | Neutral | none | State |
     | Elazığ | 1 Troop, 1 Police, 1 State Base | none | Passive Support | none | State |
-    | Dersim | 1 Troop, 1 Police | 2 Guerrillas | Passive Opposition | none | none (2 v 2) |
-    | Bingöl-Muş | 1 Troop, 1 Police, 1 Guard | 3 Guerrillas, 1 Base | Passive Opposition | none | PKK (4 v 3) |
-    | Van-Bitlis | 2 Troops, 1 Police, 1 Guard, 1 State Base | 2 Guerrillas | Neutral | none | State |
-    | Ağrı | 1 Troop, 1 Police | 1 Guerrilla | Neutral | none | State |
+    | Bingöl-Tunceli | 1 Troop, 1 Police | 2 Guerrillas | Passive Opposition | none | none (2 v 2) |
+    | Muş | 1 Troop, 1 Police, 1 Guard | 3 Guerrillas, 1 Base | Passive Opposition | none | PKK (4 v 3) |
+    | Van City | none | none | Neutral | none | none |
+    | Van hinterland | 2 Troops, 1 Police, 1 Guard, 1 State Base | 2 Guerrillas | Neutral | none | State |
+    | Bitlis | none | none | Neutral | none | none |
+    | Ağrı-Iğdır | 1 Troop, 1 Police | 1 Guerrilla | Neutral | none | State |
     | Western Cities | 1 Troop, 1 Police, 1 State Base | none | Passive Support | Office, Reception | State |
     | KDP Zone | none | 2 Guerrillas, 1 Base | n/a | none | n/a |
     | PUK Zone | none | 2 Guerrillas | n/a | none | n/a |
@@ -2625,9 +2667,9 @@
 
     Basis notes for markers:
 
-    1. Botan Displacement and State Harm: destruction in Şırnak town, 18-21 Aug 1992 [E-0081; F-035]. Confidence: High for the event, design for the marker.
-    2. Mardin-Batman State Harm: Newroz 1992 deaths in Cizre, Nusaybin and Şırnak, about 80 to 94 [E-0183; F-035]. Mardin-Batman Disputed Harm: the Pınarcık attack on a guard village, 1987 [E-0169]. The event is Moderate; the attribution is contested (C-045), so the marker is Disputed, as on the deck card. Confidence: Moderate.
-    3. Diyarbakır Rural State Harm: houses burned at Kelekçi, accepted by the ECtHR [E-0191; E-0218; F-033; L-118]. Confidence: High for the case.
+    1. Şırnak Displacement and State Harm: destruction in Şırnak town, 18-21 Aug 1992 [E-0081; F-035]. Confidence: High for the event, design for the marker.
+    2. Mardin and Şırnak State Harm: Newroz 1992 deaths in Cizre, Nusaybin and Şırnak, about 80 to 94 [E-0183; F-035]. Mardin Disputed Harm: the Pınarcık attack on a guard village, 1987 [E-0169]. The event is Moderate; the attribution is contested (C-045), so the marker is Disputed, as on the deck card. Confidence: Moderate.
+    3. Diyarbakır hinterland State Harm: houses burned at Kelekçi, accepted by the ECtHR [E-0191; E-0218; F-033; L-118]. Confidence: High for the case.
     4. Western Cities Reception: displacement had begun before 1993 [F-031 is Low; F-032]. Confidence: Low.
   subsections: []
 - id: 10 s6

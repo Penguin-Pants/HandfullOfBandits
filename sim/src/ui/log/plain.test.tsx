@@ -29,11 +29,11 @@ describe("plain sentences per log kind", () => {
     [entry("ChoiceMade", { faction: "pkk", box: "event", card: "DK-001", side: "shaded" }, { cardTitle: "Eruh" }), 'PKK chose Event: "Eruh", shaded.'],
     [entry("ChoiceMade", { faction: "state", box: "opSa" }), "State chose Op + SA."],
     [entry("ChoiceMade", { faction: "pkk", choice: "Hakkari" }), 'PKK chose "Hakkari".'],
-    [entry("ChoiceMade", { faction: "pkk", spaces: ["botan", "hakkari"] }), "PKK picked Botan, Hakkari."],
-    [entry("ChoiceMade", { freeAction: "pkk.attack", locations: ["botan"] }), "PKK planned a free Attack in Botan."],
+    [entry("ChoiceMade", { faction: "pkk", spaces: ["sirnak", "hakkari"] }), "PKK picked Şırnak, Hakkari."],
+    [entry("ChoiceMade", { freeAction: "pkk.attack", locations: ["sirnak"] }), "PKK planned a free Attack in Şırnak."],
     [entry("DieRolled", { purpose: "attackResult", space: "hakkari", roll: 2, guerrillas: 3, hit: true }), "Attack in Hakkari: rolled 2 against 3 Guerrillas, a hit."],
     [entry("ControlChanged", { space: "hakkari", before: "state", after: "pkk" }), "Hakkari: Control passed from State to PKK."],
-    [entry("ControlChanged", { space: "botan", before: null, after: "pkk" }), "Botan: Control passed from no one to PKK."],
+    [entry("ControlChanged", { space: "sirnak", before: null, after: "pkk" }), "Şırnak: Control passed from no one to PKK."],
     [entry("EligibilityChanged", { firstEligible: "pkk", secondEligible: "state" }), "Next card: PKK is First Eligible, State is Second Eligible."],
     [entry("PhaseStarted", { phase: "civicAction" }), "Civic Action (State) phase started."],
     [entry("PhaseEnded", { phase: "upkeep" }), "Upkeep phase ended."],
@@ -56,16 +56,16 @@ describe("plain sentences per effect", () => {
     [entry("EffectApplied", { effect: "placePieces", piece: "guerrilla", space: "hakkari", face: "underground", count: 2 }, { cause: event }), 'PKK placed 2 Underground Guerrillas in Hakkari (Event "Eruh and Şemdinli (15 Aug 1984)", shaded).'],
     [entry("EffectApplied", { effect: "movePieces", piece: "guerrilla", from: "kdp-zone", to: "hakkari", face: "underground", arrive: "active", count: 1 }), "PKK moved 1 Underground Guerrilla from KDP Zone to Hakkari, now Active."],
     [entry("EffectApplied", { effect: "removePieces", piece: "troops", space: "hakkari", face: "default", count: 2, to: "available" }), "2 Troops removed from Hakkari."],
-    [entry("EffectApplied", { effect: "setPieceState", piece: "guerrilla", space: "botan", from: "underground", to: "active", count: 2 }), "2 Guerrillas in Botan flipped from Underground to Active."],
-    [entry("EffectApplied", { effect: "placeMarker", marker: "coercion", space: "botan", side: "default" }), "Coercion marker placed in Botan."],
-    [entry("EffectApplied", { effect: "removeMarker", marker: "displacement", space: "dersim", side: "old" }), "Displacement (Old) marker removed from Dersim."],
-    [entry("EffectApplied", { effect: "flipMarker", marker: "displacement", space: "dersim", from: "new", to: "old" }), "Displacement marker in Dersim flipped from New to Old."],
-    [entry("EffectApplied", { effect: "shiftLevel", space: "botan", before: -1, after: -2, steps: 1 }), "Botan shifted from Passive Opposition to Active Opposition."],
+    [entry("EffectApplied", { effect: "setPieceState", piece: "guerrilla", space: "sirnak", from: "underground", to: "active", count: 2 }), "2 Guerrillas in Şırnak flipped from Underground to Active."],
+    [entry("EffectApplied", { effect: "placeMarker", marker: "coercion", space: "sirnak", side: "default" }), "Coercion marker placed in Şırnak."],
+    [entry("EffectApplied", { effect: "removeMarker", marker: "displacement", space: "bingol-tunceli", side: "old" }), "Displacement (Old) marker removed from Bingöl-Tunceli."],
+    [entry("EffectApplied", { effect: "flipMarker", marker: "displacement", space: "bingol-tunceli", from: "new", to: "old" }), "Displacement marker in Bingöl-Tunceli flipped from New to Old."],
+    [entry("EffectApplied", { effect: "shiftLevel", space: "sirnak", before: -1, after: -2, steps: 1 }), "Şırnak shifted from Passive Opposition to Active Opposition."],
     [entry("EffectApplied", { effect: "transferPool", piece: "guards", from: "outOfPlay", to: "available", count: 16 }), "16 Village Guards moved from Out of Play to Available."],
     [entry("EffectSkipped", { effect: "freeAction", action: "pkk.attack", reason: "declined" }), "The free Attack was declined."],
     [entry("EffectSkipped", { effect: "legalPolitics", reason: "legalSpaceAbsent" }), "Legal Politics skipped: Legal Space is Absent."],
     [entry("EffectSkipped", { effect: "specialActivity", action: "pkk.ambush", reason: "ambushNotAttack,ambushGuerrilla" }), "The Ambush Special Activity was not carried out: Ambush Not Attack, Ambush Guerrilla."],
-    [entry("EffectSkipped", { effect: "coerceShift", space: "botan", reason: "block" }), "Coerce could not shift Botan: a marker blocks it."],
+    [entry("EffectSkipped", { effect: "coerceShift", space: "sirnak", reason: "block" }), "Coerce could not shift Şırnak: a marker blocks it."],
   ])("%#", (e, text) => {
     expect(one(e)).toBe(text);
   });
@@ -82,17 +82,17 @@ describe("fallbacks, folding, filtering", () => {
 
   it("folds a cost and its Resources change into one line with the cause", () => {
     const lines = plainLines([
-      entry("CostPaid", { faction: "pkk", track: "resources.pkk", amount: 1, location: "dersim" }, { cause: rally, rule_ref: "06 s4.1" }),
+      entry("CostPaid", { faction: "pkk", track: "resources.pkk", amount: 1, location: "bingol-tunceli" }, { cause: rally, rule_ref: "06 s4.1" }),
       entry("EffectApplied", { effect: "adjustTrack", track: "resources.pkk", before: 5, after: 4, lost: 0 }),
-      entry("EffectApplied", { effect: "placePieces", piece: "guerrilla", space: "dersim", face: "underground", count: 1 }, { cause: rally }),
+      entry("EffectApplied", { effect: "placePieces", piece: "guerrilla", space: "bingol-tunceli", face: "underground", count: 1 }, { cause: rally }),
     ], view, "pkk", true);
-    expect(lines.map((l) => l.text)).toEqual(["PKK spent 1 Resource for Rally in Dersim (5 → 4).", "PKK placed 1 Underground Guerrilla in Dersim (Rally)."]);
+    expect(lines.map((l) => l.text)).toEqual(["PKK spent 1 Resource for Rally in Bingöl-Tunceli (5 → 4).", "PKK placed 1 Underground Guerrilla in Bingöl-Tunceli (Rally)."]);
     expect(lines[0]?.ref).toBe("06 s4.1");
   });
 
   it("drops bookkeeping only for the Last action box and keeps rule refs out of the text", () => {
-    const es = [entry("PhaseStarted", { phase: "upkeep" }), entry("ValidationPassed", {}), entry("ControlChanged", { space: "botan", before: null, after: "pkk" }, { rule_ref: "coin.control", assumption_ref: "PA-06" })];
-    expect(plainLines(es, view, null, true).map((l) => l.text)).toEqual(["Botan: Control passed from no one to PKK."]);
+    const es = [entry("PhaseStarted", { phase: "upkeep" }), entry("ValidationPassed", {}), entry("ControlChanged", { space: "sirnak", before: null, after: "pkk" }, { rule_ref: "coin.control", assumption_ref: "PA-06" })];
+    expect(plainLines(es, view, null, true).map((l) => l.text)).toEqual(["Şırnak: Control passed from no one to PKK."]);
     expect(plainLines(es, view, null, false)).toHaveLength(3);
     const ref = plainLines(es, view, null, true)[0];
     expect(ref?.text).not.toMatch(/coin\.control|PA-06/);
@@ -126,14 +126,14 @@ describe("Tip and LogLines (R7)", () => {
   });
 
   it("renders a line with no reference without a hover target", () => {
-    const item = { action: { faction: "pkk" }, entries: [entry("ControlChanged", { space: "botan", before: null, after: "pkk" })], notes: 0 } as unknown as HistoryItem;
+    const item = { action: { faction: "pkk" }, entries: [entry("ControlChanged", { space: "sirnak", before: null, after: "pkk" })], notes: 0 } as unknown as HistoryItem;
     render(<LogLines item={item} view={view} playerOnly />);
-    expect(screen.getByText("Botan: Control passed from no one to PKK.").getAttribute("tabindex")).toBeNull();
+    expect(screen.getByText("Şırnak: Control passed from no one to PKK.").getAttribute("tabindex")).toBeNull();
   });
 });
 
 describe("Rule text in a log line (P4-08)", () => {
-  const item = { action: { faction: "pkk" }, entries: [entry("ControlChanged", { space: "botan", before: null, after: "pkk" }, { rule_ref: "06 s3.2" }), entry("CardRevealed", { card: "DK-001", type: "event" })], notes: 0 } as unknown as HistoryItem;
+  const item = { action: { faction: "pkk" }, entries: [entry("ControlChanged", { space: "sirnak", before: null, after: "pkk" }, { rule_ref: "06 s3.2" }), entry("CardRevealed", { card: "DK-001", type: "event" })], notes: 0 } as unknown as HistoryItem;
   const found = { ref: "06 s3.2", sections: [{ cite: "06 s3.2", file: "06-operations.md", section: "3.2", heading: "Cross-Border", text: "Pay 2 Resources.", subsections: ["3.2.1 Access"] }], missing: ["06 s9.9"], other: ["DD-19.4"] };
 
   it("opens the research text of the line's rule ref on request and closes it again", async () => {
@@ -175,11 +175,11 @@ describe("preview lines (UC-9)", () => {
   it.each([
     [{ type: "adjustTrack", track: "resources.pkk", delta: -1 }, "PKK Resources −1"],
     [{ type: "adjustTrack", track: "resources.state", delta: 4 }, "State Resources +4"],
-    [{ type: "placePieces", piece: "guerrilla", count: 1, space: "dersim", state: "underground" }, "Place 1 Underground Guerrilla in Dersim"],
-    [{ type: "placePieces", piece: "troops", count: 2, space: "diyarbakir-city", state: null }, "Place 2 Troops in Diyarbakir"],
+    [{ type: "placePieces", piece: "guerrilla", count: 1, space: "bingol-tunceli", state: "underground" }, "Place 1 Underground Guerrilla in Bingöl-Tunceli"],
+    [{ type: "placePieces", piece: "troops", count: 2, space: "diyarbakir-city", state: null }, "Place 2 Troops in Diyarbakır City (Amed)"],
     [{ type: "setPieceState", piece: "guerrilla", space: "hakkari", from: "underground", to: "active", count: 1 }, "Flip 1 Guerrilla in Hakkari from Underground to Active"],
-    [{ type: "movePieces", piece: "police", state: null, toState: null, count: 1, from: "mardin-batman", to: "botan" }, "Move 1 Police from Mardin-Batman to Botan"],
-    [{ type: "shiftLevel", space: "botan", direction: "opposition", steps: 1 }, "Shift Botan 1 level toward Opposition"],
+    [{ type: "movePieces", piece: "police", state: null, toState: null, count: 1, from: "mardin", to: "sirnak" }, "Move 1 Police from Mardin to Şırnak"],
+    [{ type: "shiftLevel", space: "sirnak", direction: "opposition", steps: 1 }, "Shift Şırnak 1 level toward Opposition"],
   ])("%o reads %s", (effect, text) => {
     expect(previewLine({ ...effect, ruleRef: "06", assumptionRef: null } as unknown as ValidationResult["preview"]["effects"][number], view)).toBe(text);
   });

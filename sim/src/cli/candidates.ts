@@ -356,13 +356,13 @@ const OP_PLANS: Readonly<Record<string, (r: Ruleset, s: GameState, limited: bool
   "pkk.rally": rallyPlans, "pkk.march": marchPlans, "pkk.attack": attackPlans, "pkk.coerce": coercePlans,
 };
 
-/** Cross-Border variants: Sweep or Assault in one Iraqi zone with a lift from Hakkari/Botan (rules 4.2.2). */
+/** Cross-Border variants: Sweep or Assault in one Iraqi zone with a lift from Hakkari/Şırnak (rules 4.2.2). */
 function crossBorderPlans(s: GameState, op: string): Plan[] {
   if (op !== "state.sweep" && op !== "state.assault") return [];
   const lift = (n: number): JsonObject[] => {
     const h = Math.min(n, count(s, "hakkari", "troops"));
-    const b = Math.min(n - h, count(s, "botan", "troops"));
-    return [...(h > 0 ? [{ from: "hakkari", count: h }] : []), ...(b > 0 ? [{ from: "botan", count: b }] : [])];
+    const b = Math.min(n - h, count(s, "sirnak", "troops"));
+    return [...(h > 0 ? [{ from: "hakkari", count: h }] : []), ...(b > 0 ? [{ from: "sirnak", count: b }] : [])];
   };
   return ZONES.flatMap((zone) => [0, 2, 3, 6].map((n) => { // literal-ok: lift sizes (none, small, hot pursuit limit, full lift)
     const moves = lift(n);

@@ -25,7 +25,7 @@ There is **no next-card preview**. A faction may remain First Eligible for sever
 
 ## 1.2 Components
 
-Use a board with 13 domestic spaces and five external boxes, the cards of the chosen Campaigns, four Pivotal cards, one six-sided die, two initiative cylinders, track markers and these pieces:
+Use a board with 18 domestic spaces and five external boxes, the cards of the chosen Campaigns, four Pivotal cards, one six-sided die, two initiative cylinders, track markers and these pieces:
 
 | State pieces | Supply |
 |:---|---:|
@@ -66,20 +66,25 @@ Support and Opposition are levels on the space, not markers (1.6). Events and la
 | Space | Terrain | Pop [design] |
 |:---|:---|---:|
 | Hakkari | Mountain | 1 |
-| Botan | Mountain | 2 |
-| Mardin-Batman | Plain | 4 |
+| Şırnak | Mountain | 1 |
+| Siirt | Mountain | 1 |
+| Batman hinterland | Plain | 1 |
+| Batman City | City | 1 |
+| Mardin | Plain | 2 |
+| Van hinterland | Mountain | 1 |
+| Van City | City | 2 |
+| Bitlis | Mountain | 1 |
+| Muş | Mountain | 2 |
+| Bingöl-Tunceli | Mountain | 2 |
+| Elazığ | Plain | 2 |
+| Diyarbakır hinterland | Plain | 2 |
 | Diyarbakır City (Amed) | City | 2 |
-| Diyarbakır Rural | Plain | 2 |
 | Şanlıurfa | Plain | 4 |
 | Adıyaman | Plain | 2 |
-| Elazığ | Plain | 2 |
-| Dersim (Tunceli) | Mountain | 1 |
-| Bingöl-Muş | Mountain | 3 |
-| Van-Bitlis | Mountain | 4 |
-| Ağrı | Mountain | 2 |
+| Ağrı-Iğdır | Mountain | 3 |
 | Western Cities | City | 3 |
 
-**1.3.2 Adjacency.** A shared gameplay border or listed link determines adjacency. Decorative rivers and relief have no additional rule effect. Diyarbakır City touches only Diyarbakır Rural. Section 10.4 lists all movement links.
+**1.3.2 Adjacency.** A shared gameplay border or listed link determines adjacency. Decorative rivers and relief have no additional rule effect. Each City inside a province (Diyarbakır, Van and Batman) touches only its hinterland. Van City also links to Hakkari. Section 10.4 lists all movement links.
 
 **1.3.3 External boxes.** Syria-Bekaa, KDP Zone, PUK Zone, Iran and Europe are external. They have no Support, Opposition or Control and do not contribute Bases to the PKK victory score. Syria-Bekaa, KDP and PUK hold camps subject to host posture (8.1). KDP and PUK are Mountain for combat. Iran is Event-only. Europe holds a track and **no pieces**.
 
@@ -101,7 +106,7 @@ A faction Controls a domestic space when its pieces there outnumber the other fa
 
 Recompute Control when pieces change, except during Redeploy, which uses the position before either faction moves (6.8). Control gives no victory points by itself and does not change Support or Opposition.
 
-> **EXAMPLE:** Botan starts with two Troops and one Police against two Guerrillas and one PKK Base. The piece totals are 3–3, so neither side Controls it. Its Passive Opposition remains in place.
+> **EXAMPLE:** Şırnak starts with two Troops and one Police against two Guerrillas and one PKK Base. The piece totals are 3–3, so neither side Controls it. Its Passive Opposition remains in place.
 
 ## 1.6 Support and Opposition
 
@@ -228,7 +233,7 @@ Select domestic spaces other than Western Cities. Move any Troops from adjacent 
 
 Use Cross-Border to Sweep a permitted Iraqi zone (4.2.2). For a Limited Op, select one destination; Troops may come from several adjacent spaces.
 
-> **EXAMPLE:** Botan has four Troops, one Police and two Guards. A Sweep can activate up to three Underground Guerrillas: floor((4 + 1 + 2) ÷ 2). It cannot then Assault as part of the same Operation.
+> **EXAMPLE:** Şırnak has four Troops, one Police and two Guards. A Sweep can activate up to three Underground Guerrillas: floor((4 + 1 + 2) ÷ 2). It cannot then Assault as part of the same Operation.
 
 ### 3.2.4 Assault
 
@@ -326,7 +331,7 @@ Maximum two Support shifts per space per action or phase. Return is permitted at
 
 Maximum two Opposition shifts per space per action or phase. Remove every Coercion and PKK Harm marker that blocks the planned shifts. Agitation has no Legitimacy-based spending cap. It is limited by PKK Resources. In an external Base space it can remove qualifying markers, but cannot shift a political level because the box has none.
 
-> **EXAMPLE:** Botan has a PKK Base, one Coercion and one PKK Harm. One Opposition shift costs 4 Resources: 1 to remove Coercion, 2 to redress PKK Harm and 1 to shift. The PKK may instead pay only for removals and make no shift.
+> **EXAMPLE:** Şırnak has a PKK Base, one Coercion and one PKK Harm. One Opposition shift costs 4 Resources: 1 to remove Coercion, 2 to redress PKK Harm and 1 to shift. The PKK may instead pay only for removals and make no shift.
 
 # 4.0 Special Activities
 
@@ -352,7 +357,7 @@ Choose one zone, also selected for the Operation:
 - **PUK:** requires both PUK and KDP to qualify in the same way.
 - **Early hot pursuit:** in C1 and C2, with the option allowed, KDP may be entered at any posture, but the total Troops there after the move may not exceed three. No such exception opens PUK. The exception ends when C3 begins (10.8).
 
-Move up to six Troops from Hakkari and/or Botan into the target zone. PUK movement may pass through KDP as part of this lift. Conduct the accompanying Sweep or Assault in the zone as one selected location. It is Mountain terrain. If its host is Aligned, ignore the Mountain divisor for Assault.
+Move up to six Troops from Hakkari and/or Şırnak into the target zone. PUK movement may pass through KDP as part of this lift. Conduct the accompanying Sweep or Assault in the zone as one selected location. It is Mountain terrain. If its host is Aligned, ignore the Mountain divisor for Assault.
 
 If Cross-Border Assault removes any PKK piece and the zone has no Disputed Harm, place one Disputed Harm marker there. Troops remain in the zone until Redeploy and give no Control. Never Cross-Border into Syria-Bekaa or Iran.
 
@@ -476,7 +481,7 @@ Each faction holds two Pivotal Event cards (10.1). There are four:
 | Faction | Pivotal | From | Board condition |
 |:---|:---|:---|:---|
 | PKK | DK-015 ARGK Formed | C1 | At least eight Guerrillas and two PKK Bases in domestic spaces |
-| PKK | DK-054 Serhildan | C3 | Total Opposition 14 or more, and Mardin-Batman or Botan at Passive or Active Opposition |
+| PKK | DK-054 Serhildan | C3 | Total Opposition 14 or more, and Mardin, Batman, Şırnak or Siirt at Passive or Active Opposition |
 | State | DK-076 Area Domination | C4 | Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more |
 | State | DK-098 Coercive Diplomacy on Syria | C5 | Syria is Tolerant or Restricted and Legitimacy is 5 or more |
 
@@ -522,7 +527,7 @@ Use the Harm attribution printed on the card. Disputed Harm remains Disputed unl
 
 ## 5.6 Kurdish Hizbullah and Covert Violence
 
-Event cards, not players, represent Kurdish Hizbullah and unattributed killings. No player owns or orders them, and card titles stay neutral. When the card DK-053 runs its procedure: if any of Botan, Mardin-Batman, Diyarbakır City and Diyarbakır Rural holds an Office, remove one Office from the highest-Pop such space. Otherwise remove one Guerrilla, Underground first, from the highest-Pop such space that holds a Guerrilla. Break ties in this order: Mardin-Batman, Diyarbakır City, Diyarbakır Rural, Botan. The executing faction does not choose the target. Place a Disputed Harm marker there. The Event does nothing if there is no target.
+Event cards, not players, represent Kurdish Hizbullah and unattributed killings. No player owns or orders them, and card titles stay neutral. When the card DK-053 runs its procedure: if any of Şırnak, Mardin, Diyarbakır City and Diyarbakır hinterland holds an Office, remove one Office from the highest-Pop such space. Otherwise remove one Guerrilla, Underground first, from the highest-Pop such space that holds a Guerrilla. Break ties in this order: Mardin, Diyarbakır City, Diyarbakır hinterland, Şırnak. The executing faction does not choose the target. Place a Disputed Harm marker there. The Event does nothing if there is no target.
 
 Cards that reveal Covert markers reveal them as 4.2.5 describes. A card that says "reveal up to two" lets the executor stop after one.
 
@@ -718,8 +723,8 @@ Legal Politics is a non-player system. It starts when HEP Founded sets Legal Spa
 | 1 | A Closure Case marker was on the track at the start of this phase. | **Ban.** Legal Space to Banned. Set the Successor marker to the number of Offices on the map. Remove all Offices. Legitimacy −2. Europe +1. Remove the Closure Case marker. Stop. |
 | 2 | Legal Space is Banned. | **Successor.** Legal Space to Prosecuted. Place Offices equal to the Successor number minus 1 (at least 1) in the line 4 order. Remove the Successor marker. Stop. |
 | 3 | Legal Space is Open or Prosecuted. | **Office limit:** 4 if Open, 3 if Prosecuted. |
-| 4 | Offices on the map are fewer than the limit. | Place one Office in the first eligible space in this order: Diyarbakır City, Western Cities, Mardin-Batman, Van-Bitlis, Şanlıurfa, Bingöl-Muş, Diyarbakır Rural, Botan, Ağrı, Adıyaman, Elazığ. Eligible: Pop 2 or more, no Office, no PKK Control and not at Active Support or Active Opposition. |
-| 5 | Offices on the map are more than the limit. | Remove Offices until at the limit. Remove an Office outside the line 4 order first (only Hakkari or Dersim can hold one, by Event). Then remove the latest in the line 4 order. |
+| 4 | Offices on the map are fewer than the limit. | Place one Office in the first eligible space in this order: Diyarbakır City, Western Cities, Mardin, Van City, Şanlıurfa, Muş, Diyarbakır hinterland, Bingöl-Tunceli, Ağrı-Iğdır, Adıyaman, Elazığ. Eligible: Pop 2 or more, no Office, no PKK Control and not at Active Support or Active Opposition. |
+| 5 | Offices on the map are more than the limit. | Remove Offices until at the limit. Remove an Office outside the line 4 order first (for example Hakkari or Siirt, by Event). Then remove the latest in the line 4 order. |
 | 6 | Offices equal the limit and no Closure Case marker is on the track. | The prosecutor files: place the Closure Case marker and set Legal Space to Prosecuted. Line 1 bans at the next phase. |
 
 Line 6 sees the Office count after lines 4 and 5 of the same phase. Line 2 places as many Offices as the eligible spaces allow and the rest are lost. A ban with no Offices still returns a Successor with one Office. Line 6 is a deliberate timer. No faction can stop it directly.
@@ -822,25 +827,26 @@ All Guerrillas below start Underground. Unlisted spaces or piece types are empty
 | Space | State | PKK |
 |:---|:---|:---|
 | Hakkari | 2T, 1P | 2G |
-| Botan | 2T, 1P | 2G, 1B |
-| Mardin-Batman | 1T, 1P | 1G |
+| Şırnak | 2T, 1P | 2G, 1B |
+| Siirt | — | — |
+| Mardin | 1T, 1P | 1G |
 | Diyarbakır City | 3T, 2P, 1B | — |
-| Diyarbakır Rural | 1P | — |
+| Diyarbakır hinterland | 1P | — |
 | Şanlıurfa | 2P | — |
 | Adıyaman | 1P | — |
 | Elazığ | 1T, 1P, 1B | — |
-| Dersim | 1T, 1P | — |
-| Bingöl-Muş | 1T, 1P | — |
-| Van-Bitlis | 2T, 1P, 1B | — |
-| Ağrı | 1T, 1P | — |
+| Bingöl-Tunceli | 1T, 1P | — |
+| Muş | 1T, 1P | — |
+| Van hinterland | 2T, 1P, 1B | — |
+| Ağrı-Iğdır | 1T, 1P | — |
 | Western Cities | 2T, 2P, 1B | — |
 | KDP Zone | — | 3G, 1B |
 | PUK Zone | — | — |
 | Syria-Bekaa | — | 2G, 1B, Leadership Present |
 
-Set **Passive Opposition** in Hakkari and Botan. Set **Passive Support** in Şanlıurfa, Adıyaman, Elazığ and Western Cities. All other domestic spaces are Neutral.
+Set **Passive Opposition** in Hakkari, Şırnak and Siirt. Set **Passive Support** in Şanlıurfa, Adıyaman, Elazığ and Western Cities. All other domestic spaces are Neutral.
 
-Available: 14 Troops, 8 Police, 4 State Bases, 20 Guerrillas and 9 PKK Bases. All 16 Guards are Out of Play. Starting scores: State 21; PKK 4. Starting margins: −28 and −26. Harm counts: zero each. Botan has no Control; all other occupied domestic spaces are State-Controlled.
+Available: 14 Troops, 8 Police, 4 State Bases, 20 Guerrillas and 9 PKK Bases. All 16 Guards are Out of Play. Starting scores: State 21; PKK 4. Starting margins: −28 and −26. Harm counts: zero each. Şırnak has no Control; all other occupied domestic spaces are State-Controlled.
 
 ## 10.3 Build the Deck
 
@@ -872,16 +878,20 @@ Stack the piles in Campaign order. Set unused pool cards aside unseen. Keep each
 
 Use each link in both directions, subject to action and posture restrictions. The complete domestic link list is:
 
-- Hakkari–Botan; Hakkari–Van-Bitlis.
-- Botan–Van-Bitlis; Botan–Mardin-Batman.
-- Mardin-Batman–Van-Bitlis; Mardin-Batman–Bingöl-Muş; Mardin-Batman–Diyarbakır Rural; Mardin-Batman–Şanlıurfa.
-- Diyarbakır City–Diyarbakır Rural.
-- Diyarbakır Rural–Şanlıurfa; Diyarbakır Rural–Adıyaman; Diyarbakır Rural–Elazığ; Diyarbakır Rural–Bingöl-Muş.
+- Hakkari–Şırnak; Hakkari–Van hinterland; Hakkari–Van City.
+- Şırnak–Siirt; Şırnak–Mardin; Şırnak–Van hinterland.
+- Siirt–Batman hinterland; Siirt–Van hinterland; Siirt–Bitlis.
+- Batman hinterland–Batman City; Batman hinterland–Mardin; Batman hinterland–Bitlis; Batman hinterland–Muş; Batman hinterland–Diyarbakır hinterland.
+- Mardin–Diyarbakır hinterland; Mardin–Şanlıurfa.
+- Van hinterland–Van City; Van hinterland–Bitlis; Van hinterland–Ağrı-Iğdır.
+- Bitlis–Muş; Bitlis–Ağrı-Iğdır.
+- Muş–Bingöl-Tunceli; Muş–Diyarbakır hinterland; Muş–Ağrı-Iğdır.
+- Bingöl-Tunceli–Elazığ; Bingöl-Tunceli–Diyarbakır hinterland.
+- Elazığ–Diyarbakır hinterland.
+- Diyarbakır City–Diyarbakır hinterland; Diyarbakır hinterland–Şanlıurfa; Diyarbakır hinterland–Adıyaman.
 - Şanlıurfa–Adıyaman.
-- Elazığ–Bingöl-Muş; Elazığ–Dersim; Dersim–Bingöl-Muş.
-- Bingöl-Muş–Van-Bitlis; Bingöl-Muş–Ağrı; Van-Bitlis–Ağrı.
 
-External movement links are Hakkari–KDP, Botan–KDP, KDP–PUK, Mardin-Batman–Syria-Bekaa and Şanlıurfa–Syria-Bekaa. There is no gameplay movement link to Iran, Europe or Western Cities. Iran's geographical border does not grant March access.
+External movement links are Hakkari–KDP, Şırnak–KDP, KDP–PUK, Mardin–Syria-Bekaa and Şanlıurfa–Syria-Bekaa. There is no gameplay movement link to Iran, Europe or Western Cities. Iran's geographical border does not grant March access.
 
 ## 10.5 End and Debrief
 

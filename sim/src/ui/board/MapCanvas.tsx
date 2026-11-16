@@ -1,3 +1,4 @@
+import { ATLAS } from "./atlas-data.ts";
 import { useState, type ReactNode } from "react";
 import { presentation } from "./layout.ts";
 import { usesAtlas } from "./region.ts";
@@ -9,8 +10,8 @@ const MAX_ZOOM = 4;
 /** Local camera and layer controls never alter game state or operation plans. */
 export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: ReactNode}) {
   const geographic = usesAtlas(props.view.spaces);
-  const centreX = geographic ? 640 : 500;
-  const centreY = geographic ? 480 : 350;
+  const centreX = geographic ? ATLAS.width / 2 : 500;
+  const centreY = geographic ? ATLAS.height / 2 : 350;
   const anchor = (space: BoardProps["view"]["spaces"][number]) => geographic || isEuropeTrack(space) ? presentation(space) : {x:space.x,y:space.y,width:0,height:0};
   // Start at the smallest zoom (in quarter steps) that keeps the printed names readable at this window size.
   const [camera, setCamera] = useState(() => {

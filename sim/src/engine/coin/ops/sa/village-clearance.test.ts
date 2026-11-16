@@ -36,10 +36,10 @@ describe("Village Clearance effects (06 s3.4)", () => {
   });
 
   it("costs Legitimacy 2 x Pop and no Resources; no Office means no extra cost", () => {
-    const board = setPieces(setPieces(setLevel(ready(), "mardin-batman", -2), "mardin-batman", "troops", 2), "mardin-batman", "guerrilla", 0);
-    const { state } = play(board, clear("mardin-batman", "western-cities"));
+    const board = setPieces(setPieces(setLevel(ready(), "sanliurfa", -2), "sanliurfa", "troops", 2), "sanliurfa", "guerrilla", 0);
+    const { state } = play(board, clear("sanliurfa", "western-cities"));
     expect(legitimacy(state)).toBe(10 - 8);
-    expect(level(state, "mardin-batman")).toBe(-1);
+    expect(level(state, "sanliurfa")).toBe(-1);
     expect(state.tracks["resources.state"]).toBe(12 - 2);
     expect(marker(state, "western-cities", "reception")).toEqual({ default: 1 });
   });
@@ -94,9 +94,9 @@ describe("Village Clearance conditions (06 s3.4)", () => {
   });
 
   it("targets exactly one Mountain or Plain space that the Op selected", () => {
-    const two = op("state", "opSa", { op: "state.sweep", locations: ["hakkari", "botan"], sa: { action: "state.village-clearance", locations: ["hakkari", "botan"], perLocation: {}, timing: "after" } });
+    const two = op("state", "opSa", { op: "state.sweep", locations: ["hakkari", "sirnak"], sa: { action: "state.village-clearance", locations: ["hakkari", "sirnak"], perLocation: {}, timing: "after" } });
     expect(codes(ready(), two)).toContain("clearanceSpaces");
-    const other = op("state", "opSa", { op: "state.sweep", locations: ["botan"], sa: { action: "state.village-clearance", locations: ["hakkari"], perLocation: { hakkari: { reception: "diyarbakir-city" } }, timing: "after" } });
+    const other = op("state", "opSa", { op: "state.sweep", locations: ["sirnak"], sa: { action: "state.village-clearance", locations: ["hakkari"], perLocation: { hakkari: { reception: "diyarbakir-city" } }, timing: "after" } });
     expect(codes(ready(), other)).toEqual(["clearanceOpSpace"]);
     expect(codes(ready(), clear("diyarbakir-city"))).toContain("clearanceTerrain");
   });
@@ -126,8 +126,8 @@ describe("Village Clearance conditions (06 s3.4)", () => {
 describe("T-PERV: Village Clearance never raises the State's relative margin (09 s7.1)", () => {
   // Cases from the 09 s7.1 table, with the target at State Control and enough Legitimacy.
   const cases: readonly { id: string; pop: number; lvl: number }[] = [
-    { id: "mardin-batman", pop: 4, lvl: -2 },
-    { id: "mardin-batman", pop: 4, lvl: -1 },
+    { id: "sanliurfa", pop: 4, lvl: -2 },
+    { id: "sanliurfa", pop: 4, lvl: -1 },
     { id: "hakkari", pop: 1, lvl: -2 },
     { id: "diyarbakir-rural", pop: 2, lvl: 0 },
   ];

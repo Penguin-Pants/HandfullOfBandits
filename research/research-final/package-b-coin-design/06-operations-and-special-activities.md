@@ -88,7 +88,7 @@ Access:
 Procedure:
 
 1. Pay 2 Resources in addition to the Op cost. Pay 0 extra if the target host is Aligned with Turkey [tune].
-2. Move up to 6 Troops from Hakkari or Botan into the zone. For the PUK Zone, Troops may pass through the KDP Zone in this move.
+2. Move up to 6 Troops from Hakkari or Şırnak into the zone (parameter `crossBorder.origins`). For the PUK Zone, Troops may pass through the KDP Zone in this move.
 3. Conduct the Sweep or Assault in the zone as one selected location. The zone is Mountain terrain. If the host is Aligned with Turkey, ignore the Mountain modifier for Assault (local allied forces) [E-0082].
 4. If the Assault removes at least one PKK piece and the zone has no Disputed Harm marker, place one. Civilian harm in these operations is not verified in the research. The marker records "unknown", not "none".
 5. State Troops stay in the zone until the next Redeploy phase. They give no Control.
@@ -276,7 +276,7 @@ Europe mobilization is not a separate SA. The PKK raises Europe by selecting the
 
 ## 7. Worked example
 
-The State has 10 Resources. Botan (Mountain) holds 4 Troops, 1 Police, 2 Guards and 2 Underground Guerrillas. The State chooses Op + SA: Sweep in Botan (2 Resources). It Activates (4 + 1 + 2) / 2 = 3, round down, so both Guerrillas flip Active. As its SA it takes Air Mobility and moves 2 more Troops into Botan. It cannot Assault on the same action, because Sweep was its Op. Next card the PKK is First Eligible (CT 2.3.5). The PKK may March the Active Guerrillas out, or Rally to flip them Underground without a PKK Base. Coverage and tempo compete, as in CT lessons example 1.
+The State has 10 Resources. Şırnak (Mountain) holds 4 Troops, 1 Police, 2 Guards and 2 Underground Guerrillas. The State chooses Op + SA: Sweep in Şırnak (2 Resources). It Activates (4 + 1 + 2) / 2 = 3, round down, so both Guerrillas flip Active. As its SA it takes Air Mobility and moves 2 more Troops into Botan. It cannot Assault on the same action, because Sweep was its Op. Next card the PKK is First Eligible (CT 2.3.5). The PKK may March the Active Guerrillas out, or Rally to flip them Underground without a PKK Base. Coverage and tempo compete, as in CT lessons example 1.
 
 ## 8. Tests
 

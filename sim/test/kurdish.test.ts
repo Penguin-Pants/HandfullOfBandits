@@ -11,22 +11,27 @@ const { data, ruleset } = result;
 
 // Research 03 s4.1 printed adjacency list, typed from the table (domestic and special links).
 const printed: Record<string, string[]> = {
-  hakkari: ["botan", "van-bitlis", "kdp-zone"],
-  botan: ["hakkari", "van-bitlis", "mardin-batman", "kdp-zone"],
-  "mardin-batman": ["botan", "van-bitlis", "bingol-mus", "diyarbakir-rural", "sanliurfa", "syria-bekaa"],
+  hakkari: ["sirnak", "van-rural", "van-city", "kdp-zone"],
+  sirnak: ["hakkari", "siirt", "mardin", "van-rural", "kdp-zone"],
+  siirt: ["sirnak", "batman-rural", "van-rural", "bitlis"],
+  "batman-rural": ["siirt", "mardin", "bitlis", "mus", "diyarbakir-rural", "batman-city"],
+  "batman-city": ["batman-rural"],
+  mardin: ["sirnak", "batman-rural", "diyarbakir-rural", "sanliurfa", "syria-bekaa"],
+  "van-rural": ["hakkari", "sirnak", "siirt", "bitlis", "agri-igdir", "van-city"],
+  "van-city": ["van-rural", "hakkari"],
+  bitlis: ["siirt", "batman-rural", "van-rural", "mus", "agri-igdir"],
+  mus: ["batman-rural", "bitlis", "bingol-tunceli", "diyarbakir-rural", "agri-igdir"],
+  "bingol-tunceli": ["mus", "elazig", "diyarbakir-rural"],
+  elazig: ["bingol-tunceli", "diyarbakir-rural"],
+  "diyarbakir-rural": ["batman-rural", "mardin", "mus", "bingol-tunceli", "elazig", "sanliurfa", "adiyaman", "diyarbakir-city"],
   "diyarbakir-city": ["diyarbakir-rural"],
-  "diyarbakir-rural": ["diyarbakir-city", "mardin-batman", "sanliurfa", "adiyaman", "elazig", "bingol-mus"],
-  sanliurfa: ["mardin-batman", "diyarbakir-rural", "adiyaman", "syria-bekaa"],
+  sanliurfa: ["mardin", "diyarbakir-rural", "adiyaman", "syria-bekaa"],
   adiyaman: ["diyarbakir-rural", "sanliurfa"],
-  elazig: ["diyarbakir-rural", "bingol-mus", "dersim"],
-  dersim: ["elazig", "bingol-mus"],
-  "bingol-mus": ["mardin-batman", "diyarbakir-rural", "elazig", "dersim", "van-bitlis", "agri"],
-  "van-bitlis": ["hakkari", "botan", "mardin-batman", "bingol-mus", "agri"],
-  agri: ["bingol-mus", "van-bitlis"],
+  "agri-igdir": ["van-rural", "bitlis", "mus"],
   "western-cities": [],
-  "kdp-zone": ["hakkari", "botan", "puk-zone"],
+  "kdp-zone": ["hakkari", "sirnak", "puk-zone"],
   "puk-zone": ["kdp-zone"],
-  "syria-bekaa": ["mardin-batman", "sanliurfa"],
+  "syria-bekaa": ["mardin", "sanliurfa"],
   iran: [],
   europe: [],
 };
@@ -38,10 +43,10 @@ describe("kurdish-coin 0.1.0", () => {
     expect(Object.entries(ruleset.scenarios).filter(([, s]) => s.blockedBy.length > 0).map(([id]) => id)).toEqual([]);
   });
 
-  it("has 13 domestic spaces with total Pop 32 and 5 external boxes (03 s1, s2)", () => {
+  it("has 18 domestic spaces with total Pop 33 and 5 external boxes (03 s1, s2; DD-22)", () => {
     const domestic = data.map.spaces.filter((s) => s.kind === "domestic");
-    expect(domestic).toHaveLength(13);
-    expect(domestic.reduce((sum, s) => sum + s.pop, 0)).toBe(32);
+    expect(domestic).toHaveLength(18);
+    expect(domestic.reduce((sum, s) => sum + s.pop, 0)).toBe(33);
     expect(data.map.spaces.filter((s) => s.kind === "external").map((s) => s.id).sort()).toEqual(["europe", "iran", "kdp-zone", "puk-zone", "syria-bekaa"]);
   });
 
@@ -71,7 +76,7 @@ describe("kurdish-coin 0.1.0", () => {
     const view = derive(ruleset, setupState(ruleset, "full-campaign", 1));
     const state = Object.entries(view.control).filter(([, f]) => f === "state").map(([s]) => s).sort();
     expect(state).toEqual(
-      ["hakkari", "mardin-batman", "diyarbakir-city", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "dersim", "bingol-mus", "van-bitlis", "agri", "western-cities"].sort(),
+      ["hakkari", "mardin", "diyarbakir-city", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "bingol-tunceli", "mus", "van-rural", "agri-igdir", "western-cities"].sort(),
     );
     expect(Object.values(view.control).filter((f) => f === "pkk")).toEqual([]);
   });
@@ -83,7 +88,7 @@ describe("kurdish-coin cards", () => {
 
   it("encodes the first 8 C1 cards and the C1 Propaganda card, with their CSV text", () => {
     for (const id of firstCards) expect(ruleset.cards[id]?.encoded, id).toBe(true);
-    expect(ruleset.cards["DK-001"]?.unshaded?.text).toBe("Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2.");
+    expect(ruleset.cards["DK-001"]?.unshaded?.text).toBe("Martial law reinforcement: place 2 Troops from Available in Hakkari or Siirt. State Resources +2.");
     expect(Object.values(ruleset.cards).filter((c) => c.campaign === "C1" && c.type !== "pivotal")).toHaveLength(16);
   });
 

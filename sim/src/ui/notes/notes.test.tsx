@@ -16,7 +16,7 @@ const categories: CategoryRow[] = [
   { category_id: "balance", label: "Balance concern", hotkey: "Alt+1", color: null, sort: 1, active: 1 },
   { category_id: "rule-ambiguity", label: "Rule ambiguity", hotkey: "Alt+2", color: null, sort: 2, active: 1 },
 ];
-const focus = (): NoteInput["focus"] => ({ panel: "board", selectedSpace: "botan", selectedPieces: [], hoveredActionId: null });
+const focus = (): NoteInput["focus"] => ({ panel: "board", selectedSpace: "sirnak", selectedPieces: [], hoveredActionId: null });
 const plan = { type: "ChooseOperation", faction: "pkk", box: "limitedOp", plan: {} };
 
 describe("defaultAnchor", () => {
@@ -24,7 +24,7 @@ describe("defaultAnchor", () => {
     const base = { lastActionId: "S-A3", lastActionAt: 1000, draft: null, selectedSpace: null };
     expect(defaultAnchor({ ...base, now: 21_000 })).toEqual({ anchor: "executed", actionId: "S-A3" });
     expect(defaultAnchor({ ...base, now: 21_001, draft: plan })).toEqual({ anchor: "proposed", actionId: null, proposed: plan });
-    expect(defaultAnchor({ ...base, now: 99_000, selectedSpace: "botan" })).toEqual({ anchor: "state", actionId: null });
+    expect(defaultAnchor({ ...base, now: 99_000, selectedSpace: "sirnak" })).toEqual({ anchor: "state", actionId: null });
     expect(defaultAnchor({ ...base, now: 99_000 })).toEqual({ anchor: "session", actionId: null });
   });
 

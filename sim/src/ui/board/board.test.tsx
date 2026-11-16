@@ -19,23 +19,23 @@ afterEach(cleanup);
 const view = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));
 
 describe("Board", () => {
-  it("draws 17 selectable locations and the Europe track", () => {
+  it("draws 22 selectable locations and the Europe track", () => {
     render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    expect(screen.getAllByRole("button")).toHaveLength(17);
+    expect(screen.getAllByRole("button")).toHaveLength(22);
     expect(screen.getByLabelText("guerrilla underground 3")).toBeTruthy();
   });
 
   it("selects on click and adds with Shift", () => {
     const onSelect = vi.fn();
-    render(<Board view={view} selected={["botan"]} onSelect={onSelect} />);
+    render(<Board view={view} selected={["sirnak"]} onSelect={onSelect} />);
     fireEvent.click(screen.getByRole("button", { name: "Hakkari" }), { shiftKey: true });
     expect(onSelect).toHaveBeenCalledWith("hakkari", true);
-    expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "Şırnak" }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("draws the selected border above every area border, so no neighbor covers it", () => {
-    const { container } = render(<Board view={view} selected={["botan"]} onSelect={vi.fn()} />);
-    const ring = container.querySelector(".atlas-selected[data-of='botan']");
+    const { container } = render(<Board view={view} selected={["sirnak"]} onSelect={vi.fn()} />);
+    const ring = container.querySelector(".atlas-selected[data-of='sirnak']");
     const lastArea = [...container.querySelectorAll(".map-space")].at(-1);
     if (ring === null || lastArea === undefined) throw new Error("selected ring");
     expect(lastArea.compareDocumentPosition(ring) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -51,11 +51,11 @@ describe("Board", () => {
   });
 
   it("shows the detail card and the status bar", () => {
-    const botan = view.spaces.find((s) => s.id === "botan");
-    if (botan === undefined) throw new Error("botan");
+    const sirnak = view.spaces.find((s) => s.id === "sirnak");
+    if (sirnak === undefined) throw new Error("sirnak");
     render(
       <>
-        <SpaceDetail space={botan} />
+        <SpaceDetail space={sirnak} />
         <StatusBar view={view} />
       </>,
     );
@@ -112,11 +112,11 @@ describe("map geometry", () => {
 
 describe("change outline", () => {
   it("lists only the spaces an action changed and outlines them on the board", () => {
-    const after = boardView(kurdish.ruleset, kurdish.data, setPieces(turnOf("pkk"), "dersim", "guerrilla", 1));
-    expect(changedSpaces(view, after)).toEqual(["dersim"]);
-    render(<Board view={after} selected={[]} onSelect={vi.fn()} changed={["dersim"]} />);
-    expect(screen.getByRole("button", { name: "Dersim" }).querySelector('[stroke-width="4"]')).not.toBeNull();
-    expect(screen.getByRole("button", { name: "Botan" }).querySelector('[stroke-width="4"]')).toBeNull();
+    const after = boardView(kurdish.ruleset, kurdish.data, setPieces(turnOf("pkk"), "bingol-tunceli", "guerrilla", 1));
+    expect(changedSpaces(view, after)).toEqual(["bingol-tunceli"]);
+    render(<Board view={after} selected={[]} onSelect={vi.fn()} changed={["bingol-tunceli"]} />);
+    expect(screen.getByRole("button", { name: "Bingöl-Tunceli" }).querySelector('[stroke-width="4"]')).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Şırnak" }).querySelector('[stroke-width="4"]')).toBeNull();
   });
 
   it("shows a legend entry for each piece on the board", () => {
@@ -149,21 +149,21 @@ describe("victory track and forces", () => {
 
 describe("map markers", () => {
   it("draws a level marker for Support or Opposition and a chip per space marker", () => {
-    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(setMarkers(turnOf("pkk"), "botan", "coercion", 2), "botan", "displacement", 1, "old"));
-    const botan = marked.spaces.find(s => s.id === "botan");
-    if (botan === undefined) throw new Error("botan");
-    render(<><Board view={marked} selected={[]} onSelect={vi.fn()} /><SpaceDetail space={botan} /></>);
-    expect(screen.getByRole("button", { name: "Botan" }).ownerDocument.querySelectorAll("[aria-label=\"Passive Opposition\"]").length).toBe(marked.spaces.filter((s) => s.levelName === "passiveOpposition").length);
-    expect(screen.getByLabelText("Botan detail").textContent).toContain("2 Coercion");
-    expect(screen.getByLabelText("Botan detail").textContent).toContain("1 Displacement (Old)");
+    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(setMarkers(turnOf("pkk"), "sirnak", "coercion", 2), "sirnak", "displacement", 1, "old"));
+    const sirnak = marked.spaces.find(s => s.id === "sirnak");
+    if (sirnak === undefined) throw new Error("sirnak");
+    render(<><Board view={marked} selected={[]} onSelect={vi.fn()} /><SpaceDetail space={sirnak} /></>);
+    expect(screen.getByRole("button", { name: "Şırnak" }).ownerDocument.querySelectorAll("[aria-label=\"Passive Opposition\"]").length).toBe(marked.spaces.filter((s) => s.levelName === "passiveOpposition").length);
+    expect(screen.getByLabelText("Şırnak detail").textContent).toContain("2 Coercion");
+    expect(screen.getByLabelText("Şırnak detail").textContent).toContain("1 Displacement (Old)");
     expect(screen.getByLabelText("Leadership present 1").textContent).toContain("present");
   });
 });
 
 describe("map tooltip", () => {
-  const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(turnOf("pkk"), "botan", "coercion", 1));
-  const botan = marked.spaces.find((s) => s.id === "botan");
-  if (botan === undefined) throw new Error("botan");
+  const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(turnOf("pkk"), "sirnak", "coercion", 1));
+  const sirnak = marked.spaces.find((s) => s.id === "sirnak");
+  if (sirnak === undefined) throw new Error("sirnak");
   /** The text of each tooltip line, in order. */
   const lines = (): (string | null)[] => [...screen.getByRole("tooltip").querySelectorAll("strong, dt, dd:not(.space-tip-list), li, p")].map((el) => el.textContent);
   const space = (name: string): HTMLElement => screen.getByRole("button", { name });
@@ -171,21 +171,21 @@ describe("map tooltip", () => {
   it("shows one item of data on each line", () => {
     render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.contextMenu(space("Botan"));
+    fireEvent.contextMenu(space("Şırnak"));
     const all = lines();
-    expect(all.slice(0, 10)).toEqual(["Botan", "Pop", "2", "Terrain", "Mountain", "Level", "Passive Opposition", "Control", "None", "Pieces"]);
-    const pieces = all.slice(10, 10 + botan.pieces.length);
+    expect(all.slice(0, 10)).toEqual(["Şırnak", "Pop", "1", "Terrain", "Mountain", "Level", "Passive Opposition", "Control", "None", "Pieces"]);
+    const pieces = all.slice(10, 10 + sirnak.pieces.length);
     expect(pieces.length).toBeGreaterThan(0);
     for (const line of pieces) expect(line).toMatch(/^\d+ [^,·]+$/);
     expect(pieces.some((line) => line?.includes("Underground Guerrilla"))).toBe(true);
-    expect(all.slice(10 + botan.pieces.length)).toEqual(["Markers", "1 Coercion", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space", "Press or Esc: close"]);
-    expect(space("Botan").getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
+    expect(all.slice(10 + sirnak.pieces.length)).toEqual(["Markers", "1 Coercion", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space", "Press or Esc: close"]);
+    expect(space("Şırnak").getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
   });
 
   it("shows an empty space and an external box without empty lists", () => {
-    const empty = { ...marked, spaces: marked.spaces.map((s) => s.id === "botan" ? { ...s, pieces: [], markers: [] } : s) };
+    const empty = { ...marked, spaces: marked.spaces.map((s) => s.id === "sirnak" ? { ...s, pieces: [], markers: [] } : s) };
     render(<Board view={empty} selected={[]} onSelect={vi.fn()} />);
-    fireEvent.contextMenu(space("Botan"));
+    fireEvent.contextMenu(space("Şırnak"));
     expect(lines().slice(9)).toEqual(["Pieces", "None", "Click: select", "Shift-click: add to selection", "Drag: move pieces to another space", "Press or Esc: close"]);
     const box = marked.spaces.find((s) => s.kind !== "domestic" && document.querySelector(`[data-space="${s.id}"]`) !== null);
     if (box === undefined) throw new Error("external box");
@@ -195,37 +195,37 @@ describe("map tooltip", () => {
 
   it("opens on a right-click and on keyboard focus, but not when the pointer crosses or clicks a space", () => {
     render(<Board view={marked} selected={[]} onSelect={vi.fn()} />);
-    fireEvent.pointerOver(space("Botan"));
-    fireEvent.pointerMove(space("Botan"));
-    fireEvent.click(space("Botan"));
+    fireEvent.pointerOver(space("Şırnak"));
+    fireEvent.pointerMove(space("Şırnak"));
+    fireEvent.click(space("Şırnak"));
     expect(screen.queryByRole("tooltip")).toBeNull();
     expect(fireEvent.contextMenu(space("Hakkari"))).toBe(false);
     expect(lines()[0]).toBe("Hakkari");
-    fireEvent.pointerOver(space("Botan"));
+    fireEvent.pointerOver(space("Şırnak"));
     fireEvent.pointerLeave(screen.getByRole("img", { name: "Board" }));
     expect(lines()[0]).toBe("Hakkari");
-    fireEvent.contextMenu(space("Botan"));
-    expect(lines()[0]).toBe("Botan");
-    fireEvent.keyDown(space("Botan"), { key: "Escape" });
+    fireEvent.contextMenu(space("Şırnak"));
+    expect(lines()[0]).toBe("Şırnak");
+    fireEvent.keyDown(space("Şırnak"), { key: "Escape" });
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.focus(space("Botan"));
-    expect(lines()[0]).toBe("Botan");
-    fireEvent.blur(space("Botan"));
+    fireEvent.focus(space("Şırnak"));
+    expect(lines()[0]).toBe("Şırnak");
+    fireEvent.blur(space("Şırnak"));
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
   it("closes on a press at any place on the page and on a wheel zoom", () => {
     render(<><Board view={marked} selected={[]} onSelect={vi.fn()} onZoom={vi.fn()} /><button type="button">Outside</button></>);
-    fireEvent.contextMenu(space("Botan"));
-    expect(lines()[0]).toBe("Botan");
+    fireEvent.contextMenu(space("Şırnak"));
+    expect(lines()[0]).toBe("Şırnak");
     fireEvent.pointerDown(screen.getByRole("button", { name: "Outside" }));
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.contextMenu(space("Botan"));
-    expect(lines()[0]).toBe("Botan");
+    fireEvent.contextMenu(space("Şırnak"));
+    expect(lines()[0]).toBe("Şırnak");
     fireEvent.pointerDown(space("Hakkari"));
     expect(screen.queryByRole("tooltip")).toBeNull();
-    fireEvent.contextMenu(space("Botan"));
-    expect(lines()[0]).toBe("Botan");
+    fireEvent.contextMenu(space("Şırnak"));
+    expect(lines()[0]).toBe("Şırnak");
     fireEvent.wheel(screen.getByRole("img", { name: "Board" }), { deltaY: -100 });
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
@@ -237,18 +237,18 @@ describe("map tooltip", () => {
       render(<Board view={marked} selected={[]} onSelect={onSelect} />);
       const touch = { pointerType: "touch", button: 0 };
       const hold = (ms: number): void => { act(() => { vi.advanceTimersByTime(ms); }); };
-      fireEvent.pointerDown(space("Botan"), touch);
+      fireEvent.pointerDown(space("Şırnak"), touch);
       hold(300);
-      fireEvent.pointerUp(space("Botan"), touch);
-      fireEvent.click(space("Botan"));
+      fireEvent.pointerUp(space("Şırnak"), touch);
+      fireEvent.click(space("Şırnak"));
       hold(1000);
       expect(screen.queryByRole("tooltip")).toBeNull();
       expect(onSelect).toHaveBeenCalledTimes(1);
-      fireEvent.pointerDown(space("Botan"), { ...touch, clientX: 100, clientY: 100 });
-      fireEvent.pointerMove(space("Botan"), { ...touch, clientX: 140, clientY: 100 });
+      fireEvent.pointerDown(space("Şırnak"), { ...touch, clientX: 100, clientY: 100 });
+      fireEvent.pointerMove(space("Şırnak"), { ...touch, clientX: 140, clientY: 100 });
       hold(1000);
       expect(screen.queryByRole("tooltip")).toBeNull();
-      fireEvent.pointerUp(space("Botan"), touch);
+      fireEvent.pointerUp(space("Şırnak"), touch);
       fireEvent.pointerDown(space("Hakkari"), { ...touch, clientX: 100, clientY: 100 });
       fireEvent.pointerMove(space("Hakkari"), { ...touch, clientX: 104, clientY: 102 });
       hold(600);
@@ -269,8 +269,8 @@ describe("map tooltip", () => {
     size(200, 300);
     const props = { view: marked, selected: [], onSelect: vi.fn() };
     const { rerender } = render(<Board {...props} />);
-    const rect = vi.spyOn(space("Botan"), "getBoundingClientRect").mockReturnValue(at(-500, -500));
-    fireEvent.focus(space("Botan"));
+    const rect = vi.spyOn(space("Şırnak"), "getBoundingClientRect").mockReturnValue(at(-500, -500));
+    fireEvent.focus(space("Şırnak"));
     rect.mockReturnValue(at(100, 100));
     rerender(<Board {...props} camera={{ zoom: 2, x: 40, y: 40 }} />);
     const tip = screen.getByRole("tooltip");
@@ -288,8 +288,8 @@ describe("map tooltip", () => {
   });
 
   it("adds the target note when the rules engine lists candidates", () => {
-    render(<Board view={marked} selected={[]} onSelect={vi.fn()} eligible={["botan"]} />);
-    fireEvent.contextMenu(space("Botan"));
+    render(<Board view={marked} selected={[]} onSelect={vi.fn()} eligible={["sirnak"]} />);
+    fireEvent.contextMenu(space("Şırnak"));
     expect(screen.getByRole("tooltip").textContent).toContain("Candidate target.");
     fireEvent.contextMenu(space("Hakkari"));
     expect(screen.getByRole("tooltip").textContent).toContain("Not a standalone target.");
@@ -382,17 +382,17 @@ describe("map drag (UC-5)", () => {
     const onDrag = vi.fn();
     render(<Board view={view} selected={[]} onSelect={vi.fn()} onDrag={onDrag} />);
     const hakkari = screen.getByRole("button", { name: "Hakkari" });
-    const botan = screen.getByRole("button", { name: "Botan" });
+    const sirnak = screen.getByRole("button", { name: "Şırnak" });
     fireEvent.pointerDown(hakkari, { button: 0 });
     fireEvent.pointerUp(hakkari, { button: 0 });
     expect(onDrag).not.toHaveBeenCalled();
     fireEvent.pointerDown(hakkari, { button: 0 });
-    fireEvent.pointerUp(botan, { button: 0 });
-    expect(onDrag).toHaveBeenCalledWith("hakkari", "botan");
+    fireEvent.pointerUp(sirnak, { button: 0 });
+    expect(onDrag).toHaveBeenCalledWith("hakkari", "sirnak");
   });
 
   it("draws an arrow with the piece count for each planned move", () => {
-    render(<Board view={view} selected={[]} onSelect={vi.fn()} arrows={[{ from: "hakkari", to: "botan", count: 3 }]} />);
+    render(<Board view={view} selected={[]} onSelect={vi.fn()} arrows={[{ from: "hakkari", to: "sirnak", count: 3 }]} />);
     const moves = screen.getByLabelText("Planned moves");
     expect(moves.querySelectorAll("line")).toHaveLength(1);
     expect(moves.textContent).toBe("3");
@@ -405,8 +405,8 @@ describe("approved atlas board", () => {
     expect(container.querySelector("[data-geography='country-borders']")).not.toBeNull();
     expect(container.querySelector("[data-geography='lake-van']")?.getAttribute("d")?.length).toBeGreaterThan(1000);
     expect(container.querySelectorAll(".map-river")).toHaveLength(0);
-    expect(screen.getByRole("button", { name: "Diyarbakir" }).querySelector("image")?.getAttribute("href")).toBe("/diyarbakir-city.png");
-    expect(screen.getByRole("button", { name: "Diyarbakir hinterland" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Diyarbakır City (Amed)" }).querySelector("image")?.getAttribute("href")).toBe("/diyarbakir-city.png");
+    expect(screen.getByRole("button", { name: "Diyarbakır hinterland" })).toBeTruthy();
   });
 
   it("shows a printed population and separate live Control and Support counters, including empty slots", () => {
@@ -414,9 +414,9 @@ describe("approved atlas board", () => {
     const city = container.querySelector("[data-info='diyarbakir-city']");
     expect(city?.querySelector("[aria-label='Population 2']")?.textContent).toBe("2");
     expect(city?.querySelector("[aria-label='State Control']")).not.toBeNull();
-    const botan = container.querySelector("[data-info='botan']");
-    expect(botan?.querySelector("[aria-label='No Control']")).not.toBeNull();
-    expect(botan?.querySelector("[aria-label='Passive Opposition']")?.textContent).toContain("×1");
+    const sirnak = container.querySelector("[data-info='sirnak']");
+    expect(sirnak?.querySelector("[aria-label='No Control']")).not.toBeNull();
+    expect(sirnak?.querySelector("[aria-label='Passive Opposition']")?.textContent).toContain("×1");
     const rural = container.querySelector("[data-info='diyarbakir-rural']");
     expect(rural?.querySelector("[aria-label='Neutral']")).not.toBeNull();
   });
@@ -432,9 +432,9 @@ describe("approved atlas board", () => {
   it("renders the same atlas for a saved view while keeping all legal links unchanged", () => {
     const before = JSON.stringify(view);
     const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
-    expect(container.querySelectorAll("[data-info]")).toHaveLength(17);
+    expect(container.querySelectorAll("[data-info]")).toHaveLength(22);
     expect(JSON.stringify(view)).toBe(before);
-    expect(view.links.some(l => [l.a, l.b].includes("mardin-batman") && [l.a, l.b].includes("kdp-zone"))).toBe(false);
+    expect(view.links.some(l => [l.a, l.b].includes("mardin") && [l.a, l.b].includes("kdp-zone"))).toBe(false);
   });
 });
 
@@ -443,9 +443,9 @@ it.each([
   ["passiveSupport", 1, "Passive Support", "×1"],
   ["activeOpposition", -2, "Active Opposition", "×2"],
 ] as const)("updates live counters for %s and PKK Control", (levelName, level, label, multiplier) => {
-  const changed = { ...view, spaces: view.spaces.map(s => s.id === "botan" ? { ...s, level, levelName, control: "pkk" } : s) };
+  const changed = { ...view, spaces: view.spaces.map(s => s.id === "sirnak" ? { ...s, level, levelName, control: "pkk" } : s) };
   const { container } = render(<Board view={changed} selected={[]} onSelect={vi.fn()} />);
-  const info = container.querySelector("[data-info='botan']");
+  const info = container.querySelector("[data-info='sirnak']");
   expect(info?.querySelector("[aria-label='PKK Control']")?.textContent).toBe("PKK");
   expect(info?.querySelector(`[aria-label='${label}']`)?.textContent).toContain(multiplier);
 });
@@ -453,8 +453,8 @@ it.each([
 it("keeps the city and hinterland independently keyboard-selectable", () => {
   const select = vi.fn();
   render(<Board view={view} selected={[]} onSelect={select} />);
-  fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakir"}), {key: "Enter"});
-  fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakir hinterland"}), {key: "Enter",shiftKey: true});
+  fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakır City (Amed)"}), {key: "Enter"});
+  fireEvent.keyDown(screen.getByRole("button", {name: "Diyarbakır hinterland"}), {key: "Enter",shiftKey: true});
   expect(select.mock.calls).toEqual([["diyarbakir-city",false],["diyarbakir-rural",true]]);
 });
 
@@ -462,16 +462,16 @@ describe("approved readable layout", () => {
   it("keeps Western Cities in a space box and Europe in a separate track", () => {
     const {container} = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
     expect([...container.querySelectorAll("[data-callout]")].map(e=>e.getAttribute("data-info")).sort()).toEqual(["western-cities"]);
-    expect(container.querySelector("[data-geography='outside-play']")?.textContent).toContain("Malatya");
-    expect(screen.getAllByRole("button")).toHaveLength(17);
+    expect(container.querySelector("[data-geography='outside-play']")?.textContent).toContain("OUT OF PLAY");
+    expect(screen.getAllByRole("button")).toHaveLength(22);
   });
 
   it("highlights the exact rules neighbors without implying a city connection", () => {
     const {container} = render(<Board view={view} selected={["elazig"]} onSelect={vi.fn()} />);
-    expect([...container.querySelectorAll(".map-space.neighbor")].map(e=>e.getAttribute("data-space")).sort()).toEqual(["bingol-mus","dersim","diyarbakir-rural"]);
+    expect([...container.querySelectorAll(".map-space.neighbor")].map(e=>e.getAttribute("data-space")).sort()).toEqual(["bingol-tunceli","diyarbakir-rural"]);
     expect(container.querySelector(".map-space[data-space='diyarbakir-rural'] .atlas-outline")?.getAttribute("d")).not.toContain("A94");
     const city = container.querySelector("[data-space='diyarbakir-city'] image");
-    expect(city?.getAttribute("opacity")).toBe("0.3");
+    expect(city?.getAttribute("opacity")).toBe("0.4");
   });
 
   it("keeps political states in the Scales disclosure and numeric scales available on expansion", () => {
@@ -498,10 +498,10 @@ describe("approved readable layout", () => {
 
 describe("hidden marker toggle (P4-07)", () => {
   it("removes hidden markers from every space and keeps the others", () => {
-    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(setMarkers(setMarkers(turnOf("pkk"), "botan", "covert", 2), "botan", "coercion", 1), "hakkari", "covert", 1));
+    const marked = boardView(kurdish.ruleset, kurdish.data, setMarkers(setMarkers(setMarkers(turnOf("pkk"), "sirnak", "covert", 2), "sirnak", "coercion", 1), "hakkari", "covert", 1));
     const shown = withoutHidden(marked);
     expect(shown.spaces.flatMap(s => s.markers.filter(m => m.hidden))).toEqual([]);
-    expect(shown.spaces.find(s => s.id === "botan")?.markers.map(m => m.marker)).toEqual(["coercion"]);
+    expect(shown.spaces.find(s => s.id === "sirnak")?.markers.map(m => m.marker)).toEqual(["coercion"]);
     expect(shown.spaces.map(s => s.pieces)).toEqual(marked.spaces.map(s => s.pieces));
     expect(marked.spaces.find(s => s.id === "hakkari")?.markers.map(m => m.marker)).toEqual(["covert"]);
   });
@@ -523,4 +523,24 @@ it.each([0, 3, 5])("shows Europe value %s without a playable hit area", value =>
   expect(select).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole("button", { name: "Western Cities" }));
   expect(select).toHaveBeenCalledWith("western-cities", false);
+});
+
+describe("city art and small spaces (DD-22)", () => {
+  it("draws each City with its own illustration", () => {
+    render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    for (const [name, href] of [["Diyarbakır City (Amed)", "/diyarbakir-city.png"], ["Van City", "/van-city.webp"], ["Batman City", "/batman-city.webp"]] as const)
+      expect(screen.getByRole("button", { name }).querySelector("image")?.getAttribute("href"), name).toBe(href);
+  });
+
+  it("draws a block at reduced scale only where the area is small", () => {
+    const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    expect(container.querySelector("[data-info='batman-city']")?.getAttribute("transform")).toMatch(/^translate\(.*\) scale\(0\.\d+\) translate\(.*\)$/);
+    expect(container.querySelector("[data-info='sanliurfa']")?.getAttribute("transform")).toBeNull();
+  });
+
+  it("draws a hinterland outline without the hole of its city", () => {
+    const { container } = render(<Board view={view} selected={[]} onSelect={vi.fn()} />);
+    for (const id of ["diyarbakir-rural", "van-rural", "batman-rural"])
+      expect(container.querySelector(`.map-space[data-space='${id}'] .atlas-outline`)?.getAttribute("d")?.match(/Z/g)?.length, id).toBe(1);
+  });
 });

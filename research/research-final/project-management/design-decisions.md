@@ -208,7 +208,7 @@ Source: `playtestresults.md` (October 2026, finding D2).
 1. No income in the final Propaganda round. The Resources phase is skipped in the round that ends the game. Reason: the income came after the last card and could not be spent.
 2. Agitation in Propaganda uses the Rally rule: a space with a PKK Base or PKK Control (was: a PKK piece and no State Control). Reason: one rule for both, and Propaganda Agitation was almost never possible (finding D6).
 3. Strike Collaborators keeps its PKK Harm marker: violence against civilians costs the PKK local support, as State Harm does for the State. The action text now warns that the marker blocks Agitation shifts until the PKK pays to remove it (finding D7).
-4. Shaded sides that could have no effect now always do something (finding D9): DK-002 places 1 Underground Guerrilla in Botan before the free Attack; DK-003 may shift a Mountain space with State Control; DK-005 may place 2 Guerrillas in the PUK Zone; DK-008 adds PKK Resources +1 and is no longer block only; DK-100 gives Europe +1 when Syria is already Host.
+4. Shaded sides that could have no effect now always do something (finding D9): DK-002 places 1 Underground Guerrilla in Siirt (was Botan) before the free Attack; DK-003 may shift a Mountain space with State Control; DK-005 may place 2 Guerrillas in the PUK Zone; DK-008 adds PKK Resources +1 and is no longer block only; DK-100 gives Europe +1 when Syria is already Host.
 5. Ambush follows 06 s5.1: in an Ambush space the Attack has no roll, Activates only 1 Underground Guerrilla, removes 1 State piece and has no attrition (PA-06 accepted; finding D5).
 
 ## DD-21 Attack return fire uses the existing die
@@ -225,6 +225,23 @@ Example: four Guerrillas attack two Troops. Rolls 1–4 succeed. If both Troops 
 
 Reason: retain the danger of engaging regular forces while allowing a successful attack without Guerrilla losses. One roll resolves success and conditional return fire, with stronger Troop concentrations posing greater risk. The two outcomes are deliberately correlated. Research supports combat risk, but does not validate a fixed piece exchange or a precise die probability. Pieces are design weights, not equal head counts. The rule borrows the general distinction between ordinary Attack and Ambush from Colonial Twilight, with a project-specific attrition procedure. Balance remains subject to Scenario A playtests. Ruleset R4 records this change; no extra random draw or parameter is needed.
 
+## DD-22 Map from the province reference (Proposal 2 v2)
+
+Approved by the designer on 15 November 2026 after reviewing the mockups in `docs/map-proposals/proposal-2/`. Supersedes the space list of DD-05. The mapping rules of DD-05 (Pop weights from 1990 totals, external boxes, names fixed in every scenario) stay.
+
+1. The map has 18 domestic spaces: 14 regions and provinces and 4 Cities. Space shapes follow real province outlines of the reference map of Turkey (Natural Earth, 1:10m).
+2. Spaces: Hakkari, Şırnak, Siirt, Batman hinterland, Batman City, Mardin, Van hinterland, Van City, Bitlis, Muş, Bingöl-Tunceli, Elazığ, Diyarbakır hinterland, Diyarbakır City, Şanlıurfa, Adıyaman, Ağrı-Iğdır, Western Cities. Pop, terrain and Iğdır are in `03-map-and-spaces.md` section 2.
+3. Old spaces map to new ones: Botan to Şırnak and Siirt, Mardin-Batman to Mardin and the two Batman spaces, Van-Bitlis to Van City, Van hinterland and Bitlis, Dersim to Bingöl-Tunceli, Bingöl-Muş to Muş and Bingöl-Tunceli, Ağrı to Ağrı-Iğdır.
+4. Batman City and Van City are small Cities (Pop 1 and 2). City rules (03 section 2.1) apply. Only Diyarbakır City and Western Cities receive Reception markers.
+5. Van City links to Van hinterland and to Hakkari. The Diyarbakır City and Batman City link only to their hinterland. The game has 31 domestic land links.
+6. Scenario setup: Botan pieces go to Şırnak and its level also applies to Siirt. Mardin-Batman pieces go to Mardin. Van-Bitlis pieces go to Van hinterland, State Base included: income counts only Mountain or Plain spaces with a State Base (05 section 6.2), so a Base in Van City would cut State income by 4. Van City starts empty. Dersim pieces go to Bingöl-Tunceli, Bingöl-Muş pieces to Muş, Ağrı pieces to Ağrı-Iğdır.
+7. Cross-Border Troops lift from Hakkari or Şırnak (parameter `crossBorder.origins`). DK-001 and DK-002 target Siirt (Eruh and the Siirt raid). DK-059 targets Bingöl-Tunceli. DK-062 targets Batman City. Rules and cards that named a region now name each of its parts where the region meant the whole.
+8. The Office placement order is Diyarbakır City, Western Cities, Mardin, Van City, Şanlıurfa, Muş, Diyarbakır hinterland, Bingöl-Tunceli, Ağrı-Iğdır, Adıyaman, Elazığ.
+9. Display only: the atlas magnifies the area around Batman, draws the rest of Turkey as faded terrain marked "OUT OF PLAY" and scales each space block to fit small spaces.
+10. Total Pop is 33 (DD-05 had 32). Victory thresholds are unchanged. Re-run the qualification set before relying on them.
+
+Reason: the reference map shows individual provinces. Splitting Mardin-Batman, Botan and Van-Bitlis fixes names that were not provinces, adds Van and Batman as Cities, and keeps Pop totals close to the DD-05 weights.
+
 ## Decision record
 
 | ID | Claude input | Sol input | CT lessons | Final |
@@ -233,5 +250,5 @@ Reason: retain the danger of engaging regular forces while allowing a successful
 | DD-02 | MOD-3B, fallback MOD-2 | Two players, fallback legal third player | Two players | Two players; MOD-3B optional module from C3 |
 | DD-03 | Cohesion track | Unified constraints | Reject Commitment as political will | No Cohesion in core |
 | DD-04 | CT track in 2-faction mode | Ranked-choice procedure | Adopt CT pattern | CT pattern |
-| DD-05 | Concept A, 15 provinces | Concept A, 8 regions and 2 nodes | Restricted Iraqi spaces, Syria off-map | 13 domestic spaces grouped from provinces |
+| DD-05 | Concept A, 15 provinces | Concept A, 8 regions and 2 nodes | Restricted Iraqi spaces, Syria off-map | 13 domestic spaces grouped from provinces. Superseded by DD-22 (18 domestic spaces) |
 | DD-14 | System 1 primary | V-A then V-B | Define precise checkpoints | CT thresholds and margins, V-B as record |

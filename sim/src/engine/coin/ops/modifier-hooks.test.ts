@@ -3,9 +3,9 @@ import { codes, op, play, setPieces, turnOf } from "../../../../test/board.ts";
 import type { GameState } from "../../core/types.ts";
 const mod = (s: GameState, id: string, params: Record<string, number> = {}): GameState => ({...s, modifiers: [{id, params, duration: "game", sourceCard: "DK-004"}]});
 it("Tribal Allies removes only the Police prerequisite for Guard recruitment", () => {
-  const base = setPieces(turnOf("state"), "dersim", "police", 0);
+  const base = setPieces(turnOf("state"), "bingol-tunceli", "police", 0);
   const state = {...base, flags: {...base.flags, law3175: true}, pools: {...base.pools, guards: {available: 16, outOfPlay: 0}}};
-  const command = op("state", "limitedOp", {op: "state.train", locations: ["dersim"], perLocation: {dersim: {option: "guards", count: 1}}});
+  const command = op("state", "limitedOp", {op: "state.train", locations: ["bingol-tunceli"], perLocation: {"bingol-tunceli": {option: "guards", count: 1}}});
   expect(codes(state, command)).toContain("trainGuardsWhere");
   expect(codes(mod(state, "tribal-allies"), command)).toEqual([]);
 });
@@ -17,13 +17,13 @@ it("ERNK lets a Rally Agitate in a City with a Guerrilla without a Base or PKK C
 });
 it("the extra Agitate Momentum allows two different spaces at normal cost, never duplicate spending", () => {
   const state = setPieces(turnOf("pkk"), "hakkari", "pkkBase", 1);
-  const subs = ["botan", "hakkari"].map(space => ({action: "agitate", space, params: {shifts: 1}}));
-  const command = op("pkk", "opOnly", {op: "pkk.rally", locations: ["botan", "hakkari"], subActions: subs});
+  const subs = ["sirnak", "hakkari"].map(space => ({action: "agitate", space, params: {shifts: 1}}));
+  const command = op("pkk", "opOnly", {op: "pkk.rally", locations: ["sirnak", "hakkari"], subActions: subs});
   expect(codes(state, command)).toContain("rallySubAction");
   const active = mod(state, "extra-agitate", {maxSpaces: 2});
   expect(codes(active, command)).toEqual([]);
   expect(play(active, command).state.tracks["resources.pkk"]).toBe(1);
-  expect(codes(active, op("pkk", "limitedOp", {op: "pkk.rally", locations: ["botan"], subActions: [subs[0], subs[0]]}))).toContain("rallySubAction");
+  expect(codes(active, op("pkk", "limitedOp", {op: "pkk.rally", locations: ["sirnak"], subActions: [subs[0], subs[0]]}))).toContain("rallySubAction");
 });
 it("Academy adds chosen extra recruits in Syria while rivals reduce Mountain recruits to at least one", () => {
   const academy = mod(turnOf("pkk"), "academy", {extra: 2});
@@ -31,15 +31,15 @@ it("Academy adds chosen extra recruits in Syria while rivals reduce Mountain rec
   expect(play(academy, command).state.spaces["syria-bekaa"]?.pieces["guerrilla"]?.["underground"]).toBe(6);
   expect(codes(turnOf("pkk"), command)).toContain("rallyExtra");
   const rivals = mod(turnOf("pkk"), "rivals", {reduction: 1});
-  expect(play(rivals, op("pkk", "limitedOp", {op: "pkk.rally", locations: ["botan"], perLocation: {botan: {option: "grow"}}})).state.spaces["botan"]?.pieces["guerrilla"]?.["underground"]).toBe(4);
+  expect(play(rivals, op("pkk", "limitedOp", {op: "pkk.rally", locations: ["sirnak"], perLocation: {sirnak: {option: "grow"}}})).state.spaces["sirnak"]?.pieces["guerrilla"]?.["underground"]).toBe(3);
 });
 it("Strike Force raises both Air Mobility limits and Ambush Momentum raises its Attack space limit", () => {
   const state = turnOf("state");
-  const moves = [{from: "van-bitlis", count: 2}, {from: "diyarbakir-city", count: 3}, {from: "elazig", count: 1}];
-  const command = op("state", "opSa", {op: "state.train", locations: ["diyarbakir-city"], perLocation: {"diyarbakir-city": {option: "place", police: 1}}, sa: {action: "state.air-mobility", timing: "before", locations: ["hakkari", "van-bitlis", "diyarbakir-city", "elazig"], perLocation: {hakkari: {moves}}}});
+  const moves = [{from: "van-rural", count: 2}, {from: "diyarbakir-city", count: 3}, {from: "elazig", count: 1}];
+  const command = op("state", "opSa", {op: "state.train", locations: ["diyarbakir-city"], perLocation: {"diyarbakir-city": {option: "place", police: 1}}, sa: {action: "state.air-mobility", timing: "before", locations: ["hakkari", "van-rural", "diyarbakir-city", "elazig"], perLocation: {hakkari: {moves}}}});
   expect(codes(state, command)).toContain("airMobilityTroops");
   expect(codes(mod(state, "strike-force", {maxTroops: 6, maxSpaces: 4}), command)).toEqual([]);
-  const attack = op("pkk", "opSa", {op: "pkk.attack", locations: ["hakkari", "botan", "mardin-batman"], sa: {action: "pkk.ambush", timing: "before", locations: ["hakkari", "botan", "mardin-batman"], perLocation: {}}});
+  const attack = op("pkk", "opSa", {op: "pkk.attack", locations: ["hakkari", "sirnak", "mardin"], sa: {action: "pkk.ambush", timing: "before", locations: ["hakkari", "sirnak", "mardin"], perLocation: {}}});
   expect(codes(turnOf("pkk"), attack)).toContain("ambushSpaces");
   expect(codes(mod(turnOf("pkk"), "ambush", {maxSpaces: 3}), attack)).toEqual([]);
 });
@@ -52,7 +52,7 @@ it("an encoded Capability is a non-Pass choice even when Resources prevent every
 });
 
 it("Ambush Momentum resolves three guaranteed hits without rolls, attrition or extra activation", () => {
-  const locations = ["hakkari", "botan", "mardin-batman"];
+  const locations = ["hakkari", "sirnak", "mardin"];
   let state = turnOf("pkk");
   for (const space of locations) {
     state = setPieces(setPieces(setPieces(state, space, "guerrilla", 3), space, "guerrilla", 0, "active"), space, "troops", 2);

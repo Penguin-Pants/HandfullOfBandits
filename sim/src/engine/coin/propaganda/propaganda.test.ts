@@ -21,10 +21,10 @@ const choice = (phase: string, c: Record<string, unknown>): AnyCommand => ({ typ
 const t = (s: GameState, k: string): unknown => s.tracks[k];
 
 describe("T-PROP: Resources (05 s6.2)", () => {
-  it("hand-computed income on the 1984 setup: State 8 + 10/2 + Elazığ 2 + Van-Bitlis 4 = 19; PKK 1 + 2 + 2 + 0 = 5", () => {
-    expect(income(ruleset, s0)).toEqual({ state: 19, pkk: 5 });
+  it("hand-computed income on the 1984 setup: State 8 + 10/2 + Elazığ 2 + Van hinterland 1 = 16; PKK 1 + 2 + 2 + 0 = 5 (DD-22: Van hinterland is Pop 1, so the 1984 State income is 3 lower than on the 13-space map)", () => {
+    expect(income(ruleset, s0)).toEqual({ state: 16, pkk: 5 });
     const { state } = play(at(campaign, "resources"), advance);
-    expect([t(state, "resources.state"), t(state, "resources.pkk")]).toEqual([31, 10]);
+    expect([t(state, "resources.state"), t(state, "resources.pkk")]).toEqual([28, 10]);
   });
 
   it("pays no income in the final Propaganda round (designer, playtest D2)", () => {
@@ -40,19 +40,19 @@ describe("T-PROP: Resources (05 s6.2)", () => {
 });
 
 describe("T-PROP: Upkeep (05 s6.3)", () => {
-  const guarded = setPieces(setPieces(s0, "dersim", "guards", 2), "agri", "guards", 1);
+  const guarded = setPieces(setPieces(s0, "bingol-tunceli", "guards", 2), "agri-igdir", "guards", 1);
   it("pays 1 per 2 Guards, round up", () => {
     expect(t(play(at(guarded, "upkeep"), advance).state, "resources.state")).toBe(10);
   });
   it("asks for Guard removals when the State cannot pay, then pays for the rest", () => {
     const poor = at(setTrack(guarded, "resources.state", 1), "upkeep");
     expect(codes(poor, advance)).toEqual(["needsAnswer"]);
-    const { state } = play(poor, choice("upkeep", { removeGuards: { dersim: 1 } }));
-    expect(state.spaces["dersim"]?.pieces["guards"]).toEqual({ default: 1 });
+    const { state } = play(poor, choice("upkeep", { removeGuards: { "bingol-tunceli": 1 } }));
+    expect(state.spaces["bingol-tunceli"]?.pieces["guards"]).toEqual({ default: 1 });
     expect(t(state, "resources.state")).toBe(0);
   });
   it("rejects Guard removals when the State can pay in full", () => {
-    expect(codes(at(guarded, "upkeep"), choice("upkeep", { removeGuards: { dersim: 2 } }))).toEqual(["upkeepPaid"]);
+    expect(codes(at(guarded, "upkeep"), choice("upkeep", { removeGuards: { "bingol-tunceli": 2 } }))).toEqual(["upkeepPaid"]);
   });
 });
 
@@ -62,16 +62,16 @@ describe("T-PROP: Legitimacy (05 s6.4)", () => {
   });
 
   it("hand-computed fixture: -1 drain, -2 New Displacement, -1 Reception 3+, Europe 4: -1, = 5; markers flip to Old", () => {
-    let board = setMarkers(setMarkers(s0, "dersim", "displacement", 1, "new"), "agri", "displacement", 1, "new");
+    let board = setMarkers(setMarkers(s0, "bingol-tunceli", "displacement", 1, "new"), "agri-igdir", "displacement", 1, "new");
     board = setMarkers(setMarkers(board, "diyarbakir-city", "reception", 2), "western-cities", "reception", 1);
     board = setTrack(board, "europe", 4);
     const { state } = play(at(board, "legitimacy"), advance);
     expect(t(state, "legitimacy")).toBe(5);
-    expect(state.spaces["dersim"]?.markers["displacement"]).toEqual({ new: 0, old: 1 });
+    expect(state.spaces["bingol-tunceli"]?.markers["displacement"]).toEqual({ new: 0, old: 1 });
   });
 
   it("moves Europe +1 when State Harm leads by 3, and allows only 07 s8.2 Emergency steps", () => {
-    const harmed = setMarkers(s0, "dersim", "stateHarm", 3);
+    const harmed = setMarkers(s0, "bingol-tunceli", "stateHarm", 3);
     expect(t(play(at(harmed, "legitimacy"), advance).state, "europe")).toBe(2);
     const capped = setMarkers(setTrack(harmed, "europe", 3), "europe", "europeBan", 1);
     expect(t(play(at(capped, "legitimacy"), advance).state, "europe")).toBe(3);
@@ -128,11 +128,11 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
 
   it("PKK Agitation needs a PKK Base or PKK Control, as in Rally (designer, playtest C2)", () => {
     const spend = (space: string): AnyCommand => choice("agitation", { spaces: { [space]: { shifts: 1 } } });
-    expect(play(at(s0, "agitation"), spend("botan")).state.spaces["botan"]?.level).toBe(-2);
+    expect(play(at(s0, "agitation"), spend("sirnak")).state.spaces["sirnak"]?.level).toBe(-2);
     expect(codes(at(s0, "agitation"), spend("hakkari"))).toEqual(["agitateWhere"]);
     // A Base under State Control is enough; Guerrillas with no Control and no Base are not.
     expect(codes(at(setPieces(s0, "diyarbakir-city", "pkkBase", 1), "agitation"), spend("diyarbakir-city"))).toEqual([]);
-    expect(codes(at(setPieces(s0, "mardin-batman", "guerrilla", 2, "underground"), "agitation"), spend("mardin-batman"))).toEqual(["agitateWhere"]);
+    expect(codes(at(setPieces(s0, "mardin", "guerrilla", 2, "underground"), "agitation"), spend("mardin"))).toEqual(["agitateWhere"]);
   });
 
   it("ends the final round after Agitation: metrics row and final scoring", () => {
@@ -155,9 +155,9 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
 
   it("metrics hold the research 12 s4 items 8 to 12 and 15 board values (P4-03)", () => {
     let board = setTrack(setTrack(setTrack(s0, "legalSpace", "prosecuted"), "successor", 3), "ceasefire", "declared");
-    board = setMarkers(setMarkers(board, "dersim", "office", 2), "agri", "office", 1);
-    board = setMarkers(setMarkers(board, "dersim", "restraintBroken", 1, "pkk"), "dersim", "displacement", 2, "old");
-    board = setMarkers(setMarkers(board, "botan", "coercion", 1), "hakkari", "covert", 1);
+    board = setMarkers(setMarkers(board, "bingol-tunceli", "office", 2), "agri-igdir", "office", 1);
+    board = setMarkers(setMarkers(board, "bingol-tunceli", "restraintBroken", 1, "pkk"), "bingol-tunceli", "displacement", 2, "old");
+    board = setMarkers(setMarkers(board, "sirnak", "coercion", 1), "hakkari", "covert", 1);
     board = { ...board, flags: { ...board.flags, closureCase: true }, pools: { ...board.pools, troops: { available: 7, outOfPlay: 3 } } };
     const metrics = play(at(board, "agitation"), advance).entries.find((e) => e.kind === "RoundMetrics")?.data;
     expect(metrics).toMatchObject({
@@ -178,12 +178,12 @@ describe("T-VIC (09 s3, s4; PA-10)", () => {
   });
 
   it("counts face-down Covert markers at a check: State -2 score and +1 Harm each", () => {
-    const board = setMarkers(s0, "dersim", "covert", 2);
+    const board = setMarkers(s0, "bingol-tunceli", "covert", 2);
     expect(checkStandings(ruleset, board, false).find((s) => s.faction === "state")).toMatchObject({ score: 17, harm: 2 });
   });
 
   it("final margin subtracts 2 per Harm point above the limit", () => {
-    const board = setMarkers(setMarkers(s0, "dersim", "pkkHarm", 6), "agri", "coercion", 2);
+    const board = setMarkers(setMarkers(s0, "bingol-tunceli", "pkkHarm", 6), "agri-igdir", "coercion", 2);
     expect(checkStandings(ruleset, board, true).find((s) => s.faction === "pkk")).toMatchObject({ harm: 8, margin: 4 - 30 - 4 });
   });
 
@@ -191,7 +191,7 @@ describe("T-VIC (09 s3, s4; PA-10)", () => {
     const won = setTrack(setLevel4(s0), "legitimacy", 20);
     const { state } = play(at(won, "victory", 2), advance);
     expect(state.ended).toMatchObject({ winner: "state", reason: "victory check" });
-    const harmed = setMarkers(won, "dersim", "stateHarm", 7);
+    const harmed = setMarkers(won, "bingol-tunceli", "stateHarm", 7);
     expect(play(at(harmed, "victory", 2), advance).state.ended).toBeNull();
   });
 });
@@ -206,7 +206,7 @@ describe("T-PERV and stop rules (09 s7; 12 s9)", () => {
     const law = { ...s0, flags: { ...s0.flags, law3175: true } };
     const board = setPieces(law, "hakkari", "guards", 2);
     const sa = { action: "pkk.strike-collaborators", locations: ["hakkari"], perLocation: {}, timing: "before" };
-    const { state, entries } = play(board, { type: "ChooseOperation", faction: "pkk", box: "opSa", plan: { op: "pkk.rally", locations: ["dersim"], perLocation: {}, sa, subActions: [] } });
+    const { state, entries } = play(board, { type: "ChooseOperation", faction: "pkk", box: "opSa", plan: { op: "pkk.rally", locations: ["bingol-tunceli"], perLocation: {}, sa, subActions: [] } });
     expect(netChange(ruleset, board, state, "pkk")).toBe(0);
     expect(entries.some((e) => e.kind === "StopRuleFlag")).toBe(false);
   });

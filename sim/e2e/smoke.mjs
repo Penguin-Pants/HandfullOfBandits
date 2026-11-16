@@ -99,23 +99,30 @@ try {
         if (b.x < r.x || b.x + b.width > r.x + r.width) outside.push(`counter text: ${text.textContent}`);
       }
     }
-    const circle = svg.querySelector("#clip-city circle");
-    const cityPoint = new DOMPoint(Number(circle.getAttribute("cx")), Number(circle.getAttribute("cy")));
-    const citySeparated = svg.querySelector('[data-space="diyarbakir-city"] .atlas-area').isPointInFill(cityPoint) && !svg.querySelector('[data-space="diyarbakir-rural"] .atlas-area').isPointInFill(cityPoint);
-    const city = new Image(); city.src = '/diyarbakir-city.png'; await city.decode();
-    return {outside, citySeparated, city: city.naturalWidth > 0, countries: svg.querySelectorAll('[data-geography="country-borders"]').length, countryLength: svg.querySelector('[data-geography="country-borders"]').getTotalLength(), rivers: svg.querySelectorAll('.map-river').length};
+    const art = {"diyarbakir-city": ["diyarbakir-rural", "/diyarbakir-city.png"], "van-city": ["van-rural", "/van-city.webp"], "batman-city": ["batman-rural", "/batman-city.webp"]};
+    let citySeparated = true;
+    let city = true;
+    for (const [id, [hinterland, href]] of Object.entries(art)) {
+      const circle = svg.querySelector(`#clip-city-${id} circle`);
+      const cityPoint = new DOMPoint(Number(circle.getAttribute("cx")), Number(circle.getAttribute("cy")));
+      citySeparated = citySeparated && svg.querySelector(`[data-space="${id}"] .atlas-area`).isPointInFill(cityPoint) && !svg.querySelector(`[data-space="${hinterland}"] .atlas-area`).isPointInFill(cityPoint);
+      const image = new Image(); image.src = href; await image.decode();
+      city = city && image.naturalWidth > 0;
+    }
+    return {outside, citySeparated, city, countries: svg.querySelectorAll('[data-geography="country-borders"]').length, countryLength: svg.querySelector('[data-geography="country-borders"]').getTotalLength(), rivers: svg.querySelectorAll('.map-river').length};
   });
   check(atlas.outside.length === 0, `atlas labels, population, counters and stacks remain inside their areas: ${atlas.outside.join(', ')}`);
   check(atlas.city && atlas.citySeparated && atlas.countries === 1 && atlas.countryLength > 500 && atlas.rivers === 0, 'city art loads, country borders are separate and rivers are absent');
   const readable = await page.evaluate(() => {
-    const ids = ['botan','hakkari','mardin-batman'];
+    // Large spaces keep the full reviewed sizes. The smallest spaces draw their block at a reduced scale (DD-22), so they get a lower floor.
     const pixels = el => parseFloat(getComputedStyle(el).fontSize) * Math.abs(el.getScreenCTM().d);
-    return ids.every(id => {
+    const sizes = (ids, name, counter, count) => ids.every(id => {
       const info = document.querySelector(`[data-info="${id}"]`);
-      return pixels(info.querySelector('.map-label')) >= 18 && pixels(info.querySelector('.atlas-counter text')) >= 11.5 && [...info.querySelectorAll('.map-count')].every(t => pixels(t) >= 14);
+      return pixels(info.querySelector('.map-label')) >= name && pixels(info.querySelector('.atlas-counter text')) >= counter && [...info.querySelectorAll('.map-count')].every(t => pixels(t) >= count);
     });
+    return sizes(['hakkari','mardin','sanliurfa'], 18, 11.5, 14) && sizes(['sirnak','batman-city'], 11, 7, 8);
   });
-  check(readable, 'reviewed name, counter and piece-count sizes at 1908 x 904');
+  check(readable, 'reviewed name, counter and piece-count sizes at 1908 x 904 (reduced floor for the smallest spaces)');
   const legitimacy = page.locator('[aria-label="Resources and politics"] [aria-label="Legitimacy"]');
   await legitimacy.locator('summary').focus();
   await page.keyboard.press('Space');
@@ -215,12 +222,12 @@ try {
     const b = await page.locator("text.map-label", { hasText: name }).first().boundingBox();
     return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
   };
-  const [from, to] = [await centre("Hakkari"), await centre("Botan")];
+  const [from, to] = [await centre("Hakkari"), await centre("Şırnak")];
   await page.mouse.move(from.x, from.y);
   await page.mouse.down();
   await page.mouse.move(to.x, to.y, { steps: 8 });
   await page.mouse.up();
-  await page.getByLabel("Move Hakkari to Botan", { exact: true }).waitFor();
+  await page.getByLabel("Move Hakkari to Şırnak", { exact: true }).waitFor();
   await page.getByLabel("Preview").waitFor();
   check((await page.locator("[aria-label='Planned moves'] line").count()) === 1, "March planned by a drag: move row, arrow and legal preview");
   check((await page.locator("aside input, aside select, aside textarea").count()) === 0, "no text, number or list fields in the right column");

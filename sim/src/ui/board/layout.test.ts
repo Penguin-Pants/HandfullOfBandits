@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { boardView } from "../../server/view.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { turnOf } from "../../../test/board.ts";
-import { presentation, SPREAD_CAP, spreadPlan, statusLayout } from "./layout.ts";
+import { blockTransform, presentation, SPREAD_CAP, spreadPlan, statusLayout, toBoard } from "./layout.ts";
 import { inside } from "./region.ts";
 import { ATLAS } from "./atlas-data.ts";
 const view = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));
@@ -14,7 +14,7 @@ describe("readable atlas layouts", () => {
       expect(p).toEqual(presentation(s));
       expect(p.width).toBeGreaterThanOrEqual(34);
       expect(p.x).toBeGreaterThanOrEqual(-130);
-      expect(p.x + p.width).toBeLessThanOrEqual(1280);
+      expect(p.x + p.width).toBeLessThanOrEqual(ATLAS.width);
       if (!p.callout && ATLAS.spaces[s.id] !== undefined) {
         const rings = ATLAS.spaces[s.id]?.rings ?? [];
         expect(rings.filter(r => inside([p.x+p.width/2,p.y+20],r)).length % 2, s.id).toBe(1);
@@ -47,17 +47,17 @@ it.each(view.spaces.filter(s => s.kind === "domestic" && !s.tags.includes("noLan
 },30000);
 
 describe("individual pieces (spread plan)", () => {
-  const botan = view.spaces.find(s => s.id === "botan");
-  const area = ATLAS.spaces.botan;
-  if (botan === undefined || area === undefined) throw new Error("botan");
-  const withCounts = (count: number, groups = botan.pieces.length) => ({ ...botan, markers: [], pieces: botan.pieces.slice(0, groups).map(p => ({ ...p, count })) });
+  const sirnak = view.spaces.find(s => s.id === "sirnak");
+  const area = ATLAS.spaces.sirnak;
+  if (sirnak === undefined || area === undefined) throw new Error("sirnak");
+  const withCounts = (count: number, groups = sirnak.pieces.length) => ({ ...sirnak, markers: [], pieces: sirnak.pieces.slice(0, groups).map(p => ({ ...p, count })) });
 
   it("places one sprite per piece and no count while every group is at the cap or below", () => {
-    const plan = spreadPlan(botan, area);
+    const plan = spreadPlan(sirnak, area);
     if (plan === null) throw new Error("the start setup must fit");
-    expect(plan.groups.map(g => g.at.length)).toEqual(botan.pieces.map(p => p.count));
+    expect(plan.groups.map(g => g.at.length)).toEqual(sirnak.pieces.map(p => p.count));
     expect(plan.groups.every(g => g.count === null)).toBe(true);
-    expect(spreadPlan(botan, area)).toEqual(plan);
+    expect(spreadPlan(sirnak, area)).toEqual(plan);
   });
 
   it("draws 6 sprites and prints the exact total for a group above the cap", () => {
@@ -73,7 +73,7 @@ describe("individual pieces (spread plan)", () => {
       const plan = layout === undefined ? null : spreadPlan(s, layout);
       if (plan === null || layout === undefined) continue;
       for (const g of plan.groups) for (const p of g.at) for (const point of [[p.x - 12, p.y - 15], [p.x + 12, p.y + 13]] as const)
-        expect(layout.rings.filter(r => inside(point, r)).length % 2, s.id).toBe(1);
+        expect(layout.rings.filter(r => inside(toBoard(layout, point), r)).length % 2, s.id).toBe(1);
     }
   });
 
@@ -89,5 +89,23 @@ describe("individual pieces (spread plan)", () => {
 
   it("returns null when the individual pieces do not fit, so the area falls back to piles", () => {
     expect(spreadPlan(withCounts(12), area)).toBeNull();
+  });
+});
+
+describe("reduced block scale (DD-22)", () => {
+  const area = { info: [100, 200, 120] as const, stack: [104, 300, 112, 58] as const };
+
+  it("leaves a block at full scale untouched", () => {
+    expect(blockTransform({ ...area })).toBeUndefined();
+    expect(blockTransform({ ...area, scale: 1 })).toBeUndefined();
+    expect(toBoard({ ...area }, [150, 250])).toEqual([150, 250]);
+  });
+
+  it("scales a block about its centre, so the centre point stays fixed and the corners move inwards", () => {
+    const small = { ...area, scale: 0.5 };
+    // Centre: x 100 + 120 / 2, y (200 + 300 + 58) / 2.
+    expect(blockTransform(small)).toBe("translate(160 279) scale(0.5) translate(-160 -279)");
+    expect(toBoard(small, [160, 279])).toEqual([160, 279]);
+    expect(toBoard(small, [100, 200])).toEqual([130, 239.5]);
   });
 });

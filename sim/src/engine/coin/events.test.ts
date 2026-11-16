@@ -10,67 +10,71 @@ const on = (s: GameState, card: string): GameState => withCard(s, card);
 const t = (s: GameState, track: string): unknown => s.tracks[track];
 
 describe("T-EVT: S0 cards", () => {
-  it("DK-001 U: 2 Troops in Hakkari or Botan, State Resources +2", () => {
-    const { state } = play(on(state0, "DK-001"), event("state", "unshaded", ["Botan"]));
-    expect(pieces(state, "botan", "troops")).toEqual({ default: 4 });
+  // DK-001 and DK-002 name Eruh and a raid in Siirt (DD-22). The 1984 setup holds no pieces in Siirt, so these tests place the old Botan force there.
+  const atSiirt = (s: GameState): GameState => setPieces(setPieces(setPieces(s, "siirt", "troops", 2), "siirt", "police", 1), "siirt", "guerrilla", 2);
+
+  it("DK-001 U: 2 Troops in Hakkari or Siirt, State Resources +2", () => {
+    const { state } = play(on(state0, "DK-001"), event("state", "unshaded", ["Siirt"]));
+    expect(pieces(state, "siirt", "troops")).toEqual({ default: 2 });
     expect(t(state, "resources.state")).toBe(14);
   });
 
-  it("DK-001 S: 2 Underground Guerrillas in Hakkari, 1 in Botan, Botan one level toward Opposition", () => {
+  it("DK-001 S: 2 Underground Guerrillas in Hakkari, 1 in Siirt, Siirt one level toward Opposition", () => {
     const { state } = play(on(pkk0, "DK-001"), event("pkk", "shaded"));
     expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 4, active: 0 });
-    expect(pieces(state, "botan", "guerrilla")).toEqual({ underground: 3, active: 0 });
-    expect(state.spaces["botan"]?.level).toBe(-2);
+    expect(pieces(state, "siirt", "guerrilla")).toEqual({ underground: 1, active: 0 });
+    expect(state.spaces["siirt"]?.level).toBe(-2);
   });
 
-  it("DK-002 U: free Garrison with Activation in Botan, no cost", () => {
-    // Botan (Mountain): 1 + 2 Police = 3, so 3 / 2 = 1 Activation.
-    const plan = { locations: ["botan"], perLocation: { botan: { moves: [{ from: "van-bitlis", count: 1 }, { from: "mardin-batman", count: 1 }] } } };
-    const { state } = play(on(state0, "DK-002"), event("state", "unshaded", [plan]));
-    expect(pieces(state, "botan", "guerrilla")).toEqual({ underground: 1, active: 1 });
+  it("DK-002 U: free Garrison with Activation in Siirt, no cost", () => {
+    // Siirt (Mountain): 2 Police = 2, so 2 / 2 = 1 Activation.
+    const board = setPieces(setPieces(on(state0, "DK-002"), "siirt", "guerrilla", 2), "van-rural", "police", 1);
+    const plan = { locations: ["siirt"], perLocation: { siirt: { moves: [{ from: "van-rural", count: 1 }, { from: "sirnak", count: 1 }] } } };
+    const { state } = play(board, event("state", "unshaded", [plan]));
+    expect(pieces(state, "siirt", "guerrilla")).toEqual({ underground: 1, active: 1 });
     expect(t(state, "resources.state")).toBe(12);
     expect(codes(on(state0, "DK-002"), event("state", "unshaded", [{ locations: ["hakkari"], perLocation: {} }]))).toEqual(["eventConstraint"]);
   });
 
-  it("DK-002 S: 1 Guerrilla placed, then free Attack in Botan with Ambush: no roll, 1 Activation, 1 removal (PA-06), no cost", () => {
-    const board = withRoll(on(pkk0, "DK-002"), 6);
-    const { state } = play(board, event("pkk", "shaded", [{ locations: ["botan"], perLocation: {}, sa: { locations: ["botan"], perLocation: {} } }]));
-    expect(pieces(state, "botan", "troops")).toEqual({ default: 1 });
-    expect(pieces(state, "botan", "guerrilla")).toEqual({ underground: 2, active: 1 });
+  it("DK-002 S: 1 Guerrilla placed, then free Attack in Siirt with Ambush: no roll, 1 Activation, 1 removal (PA-06), no cost", () => {
+    const board = withRoll(atSiirt(on(pkk0, "DK-002")), 6);
+    const { state } = play(board, event("pkk", "shaded", [{ locations: ["siirt"], perLocation: {}, sa: { locations: ["siirt"], perLocation: {} } }]));
+    expect(pieces(state, "siirt", "troops")).toEqual({ default: 1 });
+    expect(pieces(state, "siirt", "guerrilla")).toEqual({ underground: 2, active: 1 });
     expect(t(state, "resources.pkk")).toBe(5);
   });
 
-  it("DK-002 S: places 1 Underground Guerrilla in Botan first, so Ambush works after a Sweep (playtest D9)", () => {
-    const swept = setPieces(setPieces(on(pkk0, "DK-002"), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
-    const plan = { locations: ["botan"], perLocation: {}, sa: { locations: ["botan"], perLocation: {} } };
+  it("DK-002 S: places 1 Underground Guerrilla in Siirt first, so Ambush works after a Sweep (playtest D9)", () => {
+    const swept = setPieces(setPieces(atSiirt(on(pkk0, "DK-002")), "siirt", "guerrilla", 0), "siirt", "guerrilla", 2, "active");
+    const plan = { locations: ["siirt"], perLocation: {}, sa: { locations: ["siirt"], perLocation: {} } };
     expect(codes(swept, event("pkk", "shaded", [plan]))).toEqual([]);
   });
 
   it("DK-003 U: up to 2 Guards in each of up to 2 controlled Mountain or Plain spaces with Police", () => {
     const law = { ...on(state0, "DK-003"), flags: { law3175: true }, pools: { ...state0.pools, guards: { available: 16, outOfPlay: 0 } } };
-    const { state } = play(law, event("state", "unshaded", [["dersim", "elazig"], 2, 1]));
-    expect(pieces(state, "dersim", "guards")).toEqual({ default: 2 });
+    const { state } = play(law, event("state", "unshaded", [["bingol-tunceli", "elazig"], 2, 1]));
+    expect(pieces(state, "bingol-tunceli", "guards")).toEqual({ default: 2 });
     expect(pieces(state, "elazig", "guards")).toEqual({ default: 1 });
-    expect(codes(law, event("state", "unshaded", [["botan"]]))).toEqual(["badAnswer"]);
+    expect(codes(law, event("state", "unshaded", [["sirnak"]]))).toEqual(["badAnswer"]);
   });
 
   it("DK-003 U: each count question names the space it is for (UC-9)", () => {
     const law = { ...on(state0, "DK-003"), flags: { law3175: true }, pools: { ...state0.pools, guards: { available: 16, outOfPlay: 0 } } };
     const asked = (answers: unknown[]): unknown => engine.validate(ruleset, law, event("state", "unshaded", answers)).violations[0]?.question;
-    expect(asked([["dersim", "elazig"]])).toMatchObject({ kind: "count", space: "dersim" });
-    expect(asked([["dersim", "elazig"], 2])).toMatchObject({ kind: "count", space: "elazig" });
+    expect(asked([["bingol-tunceli", "elazig"]])).toMatchObject({ kind: "count", space: "bingol-tunceli" });
+    expect(asked([["bingol-tunceli", "elazig"], 2])).toMatchObject({ kind: "count", space: "elazig" });
   });
 
   it("DK-003 S: State Resources -3; shift one space with a Guard and no PKK Harm toward Opposition", () => {
-    const board = setPieces(on(pkk0, "DK-003"), "dersim", "guards", 1);
-    const { state } = play(board, event("pkk", "shaded", [["dersim"]]));
+    const board = setPieces(on(pkk0, "DK-003"), "bingol-tunceli", "guards", 1);
+    const { state } = play(board, event("pkk", "shaded", [["bingol-tunceli"]]));
     expect(t(state, "resources.state")).toBe(9);
-    expect(state.spaces["dersim"]?.level).toBe(-1);
+    expect(state.spaces["bingol-tunceli"]?.level).toBe(-1);
   });
 
   it("DK-003 S: with no Guard on the map, a Mountain space with State Control can shift (playtest D9)", () => {
-    const { state } = play(on(pkk0, "DK-003"), event("pkk", "shaded", [["dersim"]]));
-    expect(state.spaces["dersim"]?.level).toBe(-1);
+    const { state } = play(on(pkk0, "DK-003"), event("pkk", "shaded", [["bingol-tunceli"]]));
+    expect(state.spaces["bingol-tunceli"]?.level).toBe(-1);
   });
 
   it("DK-005 U: KDP posture one more step toward Hostile", () => {
@@ -101,9 +105,9 @@ describe("T-EVT: S0 cards", () => {
   });
 
   it("DK-012 U: State Resources +4; 2 Troops in any Mountain spaces", () => {
-    const { state } = play(on(state0, "DK-012"), event("state", "unshaded", [1, ["agri", "dersim"]]));
+    const { state } = play(on(state0, "DK-012"), event("state", "unshaded", [1, ["agri-igdir", "bingol-tunceli"]]));
     expect(t(state, "resources.state")).toBe(16);
-    expect([pieces(state, "agri", "troops"), pieces(state, "dersim", "troops")]).toEqual([{ default: 2 }, { default: 2 }]);
+    expect([pieces(state, "agri-igdir", "troops"), pieces(state, "bingol-tunceli", "troops")]).toEqual([{ default: 2 }, { default: 2 }]);
   });
 
   it("DK-012 S: Europe +1, PKK Resources +1", () => {
@@ -135,7 +139,7 @@ describe("T-EVT: S0 cards", () => {
 describe("Event execution rules (05 s5)", () => {
   it("asks for a missing answer with the question", () => {
     const result = engine.validate(ruleset, on(state0, "DK-001"), event("state", "unshaded"));
-    expect(result.violations[0]).toMatchObject({ code: "needsAnswer", question: { kind: "option", options: ["Hakkari", "Botan"] } });
+    expect(result.violations[0]).toMatchObject({ code: "needsAnswer", question: { kind: "option", options: ["Hakkari", "Siirt"] } });
   });
 
   it("places the cylinder in the Event box; the responder may take Op + SA or Pass", () => {

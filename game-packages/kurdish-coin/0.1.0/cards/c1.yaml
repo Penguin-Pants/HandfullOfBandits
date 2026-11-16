@@ -6,23 +6,23 @@
   date: "1984-08-15"
   type: event
   unshaded:
-    text: "Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2."
+    text: "Martial law reinforcement: place 2 Troops from Available in Hakkari or Siirt. State Resources +2."
     owner: state
     tier: T1
     effects:
       - type: choice
         options:
           - {label: Hakkari, effects: [{type: placePieces, piece: troops, count: 2, space: hakkari}]}
-          - {label: Botan, effects: [{type: placePieces, piece: troops, count: 2, space: botan}]}
+          - {label: Siirt, effects: [{type: placePieces, piece: troops, count: 2, space: siirt}]}
       - {type: adjustTrack, track: resources.state, delta: 2}
   shaded:
-    text: "Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Botan. Shift Botan one level toward Opposition."
+    text: "Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Siirt. Shift Siirt one level toward Opposition."
     owner: pkk
     tier: T1
     effects:
       - {type: placePieces, piece: guerrilla, count: 2, space: hakkari, state: underground}
-      - {type: placePieces, piece: guerrilla, count: 1, space: botan, state: underground}
-      - {type: shiftLevel, space: botan, direction: opposition, steps: 1}
+      - {type: placePieces, piece: guerrilla, count: 1, space: siirt, state: underground}
+      - {type: shiftLevel, space: siirt, direction: opposition, steps: 1}
   encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true}
   eventConfidence: Moderate
   deckEligible: true
@@ -33,18 +33,18 @@
   date: "1984-08-17"
   type: event
   unshaded:
-    text: "Police alert: the State conducts a free Garrison. Its Activation must be in Botan."
+    text: "Police alert: the State conducts a free Garrison. Its Activation must be in Siirt."
     owner: state
     tier: T1
     effects:
-      - {type: freeAction, action: state.garrison, constraints: {activationSpace: botan}}
+      - {type: freeAction, action: state.garrison, constraints: {activationSpace: siirt}}
   shaded:
-    text: "Second strike: place 1 Underground Guerrilla in Botan, then the PKK conducts a free Attack in Botan with Ambush (no roll)."
+    text: "Second strike: place 1 Underground Guerrilla in Siirt, then the PKK conducts a free Attack in Siirt with Ambush (no roll)."
     owner: pkk
     tier: T1
     effects:
-      - {type: placePieces, piece: guerrilla, count: 1, space: botan, state: underground}
-      - {type: freeAction, action: pkk.attack, constraints: {spaces: [botan], sa: pkk.ambush}}
+      - {type: placePieces, piece: guerrilla, count: 1, space: siirt, state: underground}
+      - {type: freeAction, action: pkk.attack, constraints: {spaces: [siirt], sa: pkk.ambush}}
   encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); Ambush has no roll under PA-06 (accepted after the S0 playtests)"}
   eventConfidence: Moderate
   deckEligible: true
@@ -354,7 +354,7 @@
       params:
         reduction: 1
   shaded:
-    text: 'Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van-Bitlis or Ağrı.'
+    text: 'Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van hinterland or Ağrı-Iğdır.'
     owner: pkk
     tier: T0
     effects:
@@ -363,19 +363,19 @@
       delta: 2
     - type: choice
       options:
-      - label: van-bitlis
+      - label: van-rural
         effects:
         - type: placePieces
           piece: guerrilla
           count: 1
-          space: van-bitlis
+          space: van-rural
           state: underground
-      - label: agri
+      - label: agri-igdir
         effects:
         - type: placePieces
           piece: guerrilla
           count: 1
-          space: agri
+          space: agri-igdir
           state: underground
   encoding:
     status: encoded

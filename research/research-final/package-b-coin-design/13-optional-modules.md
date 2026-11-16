@@ -116,7 +116,7 @@ Design checks (Claude `faction-architectures/04-mod-3b-three-paths.md`, section 
 2. It can lose through State action (bans, arrests) or PKK action (Coerce against Protest).
 3. The PKK gains nothing from Legal Movement survival.
 
-**Start pieces** [tune]: One Office in Diyarbakır City. Activists: 2 in Diyarbakır City, 1 in Western Cities, 1 in Mardin-Batman. Resources 3. Rights 0.
+**Start pieces** [tune]: One Office in Diyarbakır City. Activists: 2 in Diyarbakır City, 1 in Western Cities, 1 in Mardin. Resources 3. Rights 0.
 
 **When the start pieces enter.** In the campaign, HEP Founded is a mandatory C3 card in the top 8 of the pile (05, section 1.1; 10, section 6.1). Under this module its Always line sets Legal Space to Open and places the start pieces. It does not run line 4 twice. Until that card is revealed, Legal Space is Absent and the Legal Movement may only Pass (design choice). Scenario B starts with Legal Space Absent (10, section 4.1), so the same card rule applies. Scenario C starts in C4 with no HEP card: use its Legal Space, Closure Case marker and 3 Offices (10, section 5.1). Activist, Resources and Rights start values for Scenario C are not yet set (open gap).
 

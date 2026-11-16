@@ -66,7 +66,7 @@ describe("P3c-01 structural switches (10 s6.2)", () => {
     const old = { ...ruleset, parameters: Object.fromEntries(Object.entries(ruleset.parameters).filter(([id]) => !id.startsWith("switch."))) };
     const legacy = (s: GameState) => engine.validate(old, s, { type: "DeclareCeasefire", faction: "pkk" }).violations.map((v) => v.message);
     expect(legacy(turnOf("pkk"))).toEqual(["Declare Ceasefire is not available in this package."]);
-    const covert = op("state", "opSa", { op: "state.sweep", locations: ["botan"], sa: { action: "state.covert-action", locations: ["hakkari"], perLocation: {}, timing: "before" } });
+    const covert = op("state", "opSa", { op: "state.sweep", locations: ["sirnak"], sa: { action: "state.covert-action", locations: ["hakkari"], perLocation: {}, timing: "before" } });
     expect(() => engine.validate(old, turnOf("state"), covert)).not.toThrow();
     expect(codes(turnOf("state"), covert)).toContain("covertCampaign");
   });

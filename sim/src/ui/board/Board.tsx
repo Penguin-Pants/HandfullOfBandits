@@ -2,7 +2,7 @@
 // Older layouts and other packages retain the schematic fallback (DEC-60).
 import { ATLAS } from "./atlas-data.ts";
 import type { AtlasSpace } from "./atlas-data.ts";
-import { atlasLayout, AtlasContext, AtlasGeography, AtlasInfo } from "./Atlas.tsx";
+import { atlasLayout, AtlasContext, AtlasGeography, AtlasInfo, CITY_ART, edgePath } from "./Atlas.tsx";
 import { Terrain } from "./Terrain.tsx";
 import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { BoardView, SpaceView } from "../api.ts";
@@ -121,7 +121,7 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, desc
   return (
     <g
       role="button"
-      aria-label={atlas?.labels.map(l => l.text).join(" ") ?? space.name}
+      aria-label={space.name}
       aria-pressed={selected}
       aria-describedby={described ? TIP_ID : undefined}
       tabIndex={0}
@@ -135,12 +135,12 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, desc
         <>
           <path d={atlas.path} fill="#fff6dd" fillOpacity={.1} fillRule="evenodd" className="atlas-area" />
           {atlas.circle !== undefined && <>
-            <defs><clipPath id="clip-city"><circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} /></clipPath></defs>
+            <defs><clipPath id={`clip-city-${space.id}`}><circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} /></clipPath></defs>
             <circle cx={atlas.circle[0]} cy={atlas.circle[1]} r={atlas.circle[2]} fill="#f2e9d6" />
-            <image href="/diyarbakir-city.png" x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.3} clipPath="url(#clip-city)" pointerEvents="none" />
+            <image href={CITY_ART[space.id] ?? "/diyarbakir-city.png"} x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.4} clipPath={`url(#clip-city-${space.id})`} pointerEvents="none" />
           </>}
-          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-edge" fill="none" vectorEffect="non-scaling-stroke" strokeLinejoin="round" pointerEvents="none" />
-          <path d={space.id === "diyarbakir-rural" ? (atlas.path.split("Z")[0] ?? "")+"Z" : atlas.path} className="atlas-outline" fill="none" stroke={outline ?? "#f4ecd6"} strokeWidth={outline === null ? 2.2 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
+          <path d={edgePath(atlas)} className="atlas-edge" fill="none" vectorEffect="non-scaling-stroke" strokeLinejoin="round" pointerEvents="none" />
+          <path d={edgePath(atlas)} className="atlas-outline" fill="none" stroke={outline ?? "#f4ecd6"} strokeWidth={outline === null ? 2.2 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
         </>
       ) : box === null ? (
         <>
@@ -388,7 +388,7 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
       {/* The selected border is drawn again above all area and country borders, so no neighbor covers it. */}
       {cells.geographic && spaces.filter(sp => selected.includes(sp.id)).map(sp => {
         const area = atlasLayout(sp);
-        const d = area === undefined ? null : sp.id === "diyarbakir-rural" ? `${area.path.split("Z")[0] ?? ""}Z` : area.path;
+        const d = area === undefined ? null : edgePath(area);
         return d === null ? null : <g key={sp.id} className="atlas-selected" data-of={sp.id} pointerEvents="none" fill="none" strokeLinejoin="round">
           <path d={d} className="casing" vectorEffect="non-scaling-stroke" /><path d={d} className="ring" vectorEffect="non-scaling-stroke" />
         </g>;

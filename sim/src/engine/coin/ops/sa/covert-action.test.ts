@@ -7,9 +7,9 @@ import { codes, engine, inCampaign, op, pieces, play, ruleset, setMarkers, setPi
 
 // T-OPS, T-VAL and T-VIC for Covert Action (11 P3b-03; research 06 s3.5, 05 s6.4 step 5, 09 s3;
 // approved text docs/prototype/28). Hakkari in S0: 2 Troops, 1 Police, 2 Underground Guerrillas,
-// State Control. Botan holds the Sweep, so the SA space need not be an Op space.
+// State Control. Şırnak holds the Sweep, so the SA space need not be an Op space.
 const c3 = (s: GameState = turnOf("state")): GameState => inCampaign(ruleset, s, "C3");
-const covert = (target = "hakkari", opAction = "state.sweep", opSpace = "botan") =>
+const covert = (target = "hakkari", opAction = "state.sweep", opSpace = "sirnak") =>
   op("state", "opSa", { op: opAction, locations: [opSpace], sa: { action: "state.covert-action", locations: [target], perLocation: {}, timing: "before" } });
 const marker = (s: GameState, id: string, m: string): number => Object.values(s.spaces[id]?.markers[m] ?? {}).reduce((a, b) => a + b, 0);
 
@@ -43,7 +43,7 @@ describe("Covert Action conditions (06 s3.5)", () => {
   });
 
   it("targets exactly 1 space with State Control, Police and an Underground Guerrilla", () => {
-    const two = op("state", "opSa", { op: "state.sweep", locations: ["botan"], sa: { action: "state.covert-action", locations: ["hakkari", "mardin-batman"], perLocation: {}, timing: "before" } });
+    const two = op("state", "opSa", { op: "state.sweep", locations: ["sirnak"], sa: { action: "state.covert-action", locations: ["hakkari", "mardin"], perLocation: {}, timing: "before" } });
     expect(codes(c3(), two)).toEqual(["covertSpaces"]);
     expect(codes(setPieces(c3(), "hakkari", "police", 0), covert())).toEqual(["covertWhere"]);
     expect(codes(setPieces(c3(), "hakkari", "guerrilla", 4), covert())).toEqual(["covertWhere"]);

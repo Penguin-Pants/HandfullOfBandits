@@ -10,8 +10,8 @@ const rally = (box: string, perLocation: Record<string, unknown>, extra: Record<
 
 describe("Rally (06 s4.1)", () => {
   it("places 1 Underground Guerrilla for 1 Resource", () => {
-    const { state } = play(start, rally("limitedOp", { dersim: { option: "place" } }));
-    expect(pieces(state, "dersim", "guerrilla")).toEqual({ underground: 1, active: 0 });
+    const { state } = play(start, rally("limitedOp", { "bingol-tunceli": { option: "place" } }));
+    expect(pieces(state, "bingol-tunceli", "guerrilla")).toEqual({ underground: 1, active: 0 });
     expect(res(state)).toBe(4);
   });
 
@@ -31,33 +31,33 @@ describe("Rally (06 s4.1)", () => {
   });
 
   it("at a Base places up to Pop + Bases (external box Pop 1) and can flip Guerrillas", () => {
-    expect(pieces(play(start, rally("limitedOp", { botan: { option: "grow" } })).state, "botan", "guerrilla")).toEqual({ underground: 5, active: 0 });
+    expect(pieces(play(start, rally("limitedOp", { sirnak: { option: "grow" } })).state, "sirnak", "guerrilla")).toEqual({ underground: 4, active: 0 });
     expect(pieces(play(start, rally("limitedOp", { "kdp-zone": { option: "grow" } })).state, "kdp-zone", "guerrilla")).toEqual({ underground: 5, active: 0 });
-    const active = setPieces(setPieces(start, "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
-    expect(pieces(play(active, rally("limitedOp", { botan: { option: "flip" } })).state, "botan", "guerrilla")).toEqual({ underground: 2, active: 0 });
+    const active = setPieces(setPieces(start, "sirnak", "guerrilla", 0), "sirnak", "guerrilla", 2, "active");
+    expect(pieces(play(active, rally("limitedOp", { sirnak: { option: "flip" } })).state, "sirnak", "guerrilla")).toEqual({ underground: 2, active: 0 });
     expect(codes(start, rally("limitedOp", { hakkari: { option: "grow" } }))).toEqual(["rallyNeedsBase"]);
   });
 
   it("flips Active Guerrillas Underground in multiple spaces without Bases", () => {
-    const empty = setPieces(setPieces(start, "hakkari", "guerrilla", 0), "mardin-batman", "guerrilla", 0);
-    const board = setPieces(setPieces(empty, "hakkari", "guerrilla", 2, "active"), "mardin-batman", "guerrilla", 1, "active");
-    const command = rally("opOnly", { hakkari: { option: "flip" }, "mardin-batman": { option: "flip" } });
+    const empty = setPieces(setPieces(start, "hakkari", "guerrilla", 0), "mardin", "guerrilla", 0);
+    const board = setPieces(setPieces(empty, "hakkari", "guerrilla", 2, "active"), "mardin", "guerrilla", 1, "active");
+    const command = rally("opOnly", { hakkari: { option: "flip" }, "mardin": { option: "flip" } });
     expect(codes(board, command)).toEqual([]);
     const { state } = play(board, command);
     expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 2, active: 0 });
-    expect(pieces(state, "mardin-batman", "guerrilla")).toEqual({ underground: 1, active: 0 });
+    expect(pieces(state, "mardin", "guerrilla")).toEqual({ underground: 1, active: 0 });
     expect(res(state)).toBe(3);
   });
 
   it("requires a Guerrilla to choose the flip option", () => {
-    const empty = setPieces(setPieces(start, "dersim", "guerrilla", 0), "dersim", "guerrilla", 0, "active");
-    const command = rally("limitedOp", { dersim: { option: "flip" } });
+    const empty = setPieces(setPieces(start, "bingol-tunceli", "guerrilla", 0), "bingol-tunceli", "guerrilla", 0, "active");
+    const command = rally("limitedOp", { "bingol-tunceli": { option: "flip" } });
     expect(codes(empty, command)).toEqual(["rallyFlipGuerrilla"]);
-    expect(codes(setPieces(empty, "dersim", "guerrilla", 1), command)).toEqual([]);
+    expect(codes(setPieces(empty, "bingol-tunceli", "guerrilla", 1), command)).toEqual([]);
   });
 
   it("rejects a Displacement space and a City at Support, except Western Cities (03 s2.1)", () => {
-    expect(codes(setMarkers(start, "dersim", "displacement", 1, "new"), rally("limitedOp", { dersim: {} }))).toEqual(["rallyDisplaced"]);
+    expect(codes(setMarkers(start, "bingol-tunceli", "displacement", 1, "new"), rally("limitedOp", { "bingol-tunceli": {} }))).toEqual(["rallyDisplaced"]);
     expect(codes(setLevel(start, "diyarbakir-city", 1), rally("limitedOp", { "diyarbakir-city": {} }))).toEqual(["rallyCity"]);
     expect(codes(start, rally("limitedOp", { "western-cities": {} }))).toEqual([]);
   });
@@ -71,12 +71,12 @@ describe("Rally (06 s4.1)", () => {
   });
 
   it("adds Agitate in one space with a PKK Base or PKK Control: 1 per shift (07 s1.3)", () => {
-    const { state } = play(start, rally("limitedOp", { botan: { option: "place" } }, { subActions: [{ action: "agitate", space: "botan", params: { shifts: 1 } }] }));
-    expect(state.spaces["botan"]?.level).toBe(-2);
+    const { state } = play(start, rally("limitedOp", { sirnak: { option: "place" } }, { subActions: [{ action: "agitate", space: "sirnak", params: { shifts: 1 } }] }));
+    expect(state.spaces["sirnak"]?.level).toBe(-2);
     expect(res(state)).toBe(3);
-    expect(codes(start, rally("limitedOp", { dersim: {} }, { subActions: [{ action: "agitate", space: "dersim", params: { shifts: 1 } }] }))).toEqual(["agitateWhere"]);
-    const harmed = setMarkers(start, "botan", "pkkHarm", 1);
-    expect(codes(harmed, rally("limitedOp", { botan: {} }, { subActions: [{ action: "agitate", space: "botan", params: { shifts: 1 } }] }))).toEqual(["agitateBlocked"]);
+    expect(codes(start, rally("limitedOp", { "bingol-tunceli": {} }, { subActions: [{ action: "agitate", space: "bingol-tunceli", params: { shifts: 1 } }] }))).toEqual(["agitateWhere"]);
+    const harmed = setMarkers(start, "sirnak", "pkkHarm", 1);
+    expect(codes(harmed, rally("limitedOp", { sirnak: {} }, { subActions: [{ action: "agitate", space: "sirnak", params: { shifts: 1 } }] }))).toEqual(["agitateBlocked"]);
   });
 });
 
@@ -84,18 +84,18 @@ describe("March (06 s4.2)", () => {
   const march = (dest: string, moves: unknown[], box = "limitedOp"): ReturnType<typeof op> => op("pkk", box, { op: "pkk.march", locations: [dest], perLocation: { [dest]: { moves } } });
 
   it("moves a group one step for 1 Resource per destination; stays Underground when not exposed", () => {
-    const { state } = play(start, march("van-bitlis", [{ from: "hakkari", count: 2 }]));
-    expect(pieces(state, "van-bitlis", "guerrilla")).toEqual({ underground: 2, active: 0 });
+    const { state } = play(start, march("van-rural", [{ from: "hakkari", count: 2 }]));
+    expect(pieces(state, "van-rural", "guerrilla")).toEqual({ underground: 2, active: 0 });
     expect(res(state)).toBe(4);
-    expect(codes(start, march("agri", [{ from: "hakkari", count: 1 }]))).toEqual(["marchAdjacent"]);
+    expect(codes(start, march("agri-igdir", [{ from: "hakkari", count: 1 }]))).toEqual(["marchAdjacent"]);
     expect(codes(start, march("western-cities", [{ from: "hakkari", count: 1 }]))).toEqual(["marchWhere"]);
   });
 
   it("activates a group entering a Support space when group + State pieces > 3", () => {
     const board = setPieces(start, "sanliurfa", "police", 2);
-    expect(pieces(play(board, march("sanliurfa", [{ from: "mardin-batman", count: 1 }])).state, "sanliurfa", "guerrilla")).toEqual({ underground: 1, active: 0 });
+    expect(pieces(play(board, march("sanliurfa", [{ from: "mardin", count: 1 }])).state, "sanliurfa", "guerrilla")).toEqual({ underground: 1, active: 0 });
     const more = setPieces(start, "sanliurfa", "police", 3);
-    expect(pieces(play(more, march("sanliurfa", [{ from: "mardin-batman", count: 1 }])).state, "sanliurfa", "guerrilla")).toEqual({ underground: 0, active: 1 });
+    expect(pieces(play(more, march("sanliurfa", [{ from: "mardin", count: 1 }])).state, "sanliurfa", "guerrilla")).toEqual({ underground: 0, active: 1 });
   });
 
   it("activates a group crossing into or out of a box when group + State pieces > 3", () => {
@@ -114,19 +114,19 @@ describe("March (06 s4.2)", () => {
 
   it("enters Syria-Bekaa at Restricted under PA-16 option allow", () => {
     const syria = setTrack(start, "posture.syria", "restricted");
-    const { entries } = play(syria, march("syria-bekaa", [{ from: "mardin-batman", count: 1 }]));
+    const { entries } = play(syria, march("syria-bekaa", [{ from: "mardin", count: 1 }]));
     expect(entries.some((e) => e.assumptionRef === "PA-16")).toBe(true);
   });
 
   it("named and unnamed faces share one supply per origin", () => {
     const moves = (face?: string): unknown[] => [{ from: "hakkari", count: 2, ...(face === undefined ? {} : { face }) }];
-    const plan = op("pkk", "opOnly", { op: "pkk.march", locations: ["van-bitlis", "botan"], perLocation: { "van-bitlis": { moves: moves("underground") }, botan: { moves: moves() } } });
+    const plan = op("pkk", "opOnly", { op: "pkk.march", locations: ["van-rural", "sirnak"], perLocation: { "van-rural": { moves: moves("underground") }, sirnak: { moves: moves() } } });
     expect(pieces(start, "hakkari", "guerrilla")).toEqual({ underground: 2, active: 0 });
     expect(codes(start, plan)).toContain("marchGuerrillas");
   });
 
   it("Limited Op: one destination", () => {
-    const plan = op("pkk", "limitedOp", { op: "pkk.march", locations: ["van-bitlis", "botan"], perLocation: { "van-bitlis": { moves: [{ from: "hakkari", count: 1 }] }, botan: { moves: [{ from: "hakkari", count: 1 }] } } });
+    const plan = op("pkk", "limitedOp", { op: "pkk.march", locations: ["van-rural", "sirnak"], perLocation: { "van-rural": { moves: [{ from: "hakkari", count: 1 }] }, sirnak: { moves: [{ from: "hakkari", count: 1 }] } } });
     expect(codes(start, plan)).toContain("limitedOneLocation");
   });
 });
@@ -172,12 +172,12 @@ describe("Attack (06 s4.3)", () => {
   });
 
   it("resolves Ambush without a roll and an ordinary Attack with one roll in the same action", () => {
-    const board = withRoll(setPieces(setPieces(start, "hakkari", "guerrilla", 4), "botan", "guerrilla", 4), 4);
-    const {state} = play(board, op("pkk", "opSa", {op: "pkk.attack", locations: ["hakkari", "botan"], sa: {action: "pkk.ambush", timing: "before", locations: ["hakkari"], perLocation: {}}}));
+    const board = withRoll(setPieces(setPieces(start, "hakkari", "guerrilla", 4), "sirnak", "guerrilla", 4), 4);
+    const {state} = play(board, op("pkk", "opSa", {op: "pkk.attack", locations: ["hakkari", "sirnak"], sa: {action: "pkk.ambush", timing: "before", locations: ["hakkari"], perLocation: {}}}));
     expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 1, underground: 3});
     expect(pieces(state, "hakkari", "troops")).toEqual({default: 1});
-    expect(pieces(state, "botan", "guerrilla")).toEqual({active: 4, underground: 0});
-    expect(pieces(state, "botan", "troops")).toEqual({default: 0});
+    expect(pieces(state, "sirnak", "guerrilla")).toEqual({active: 4, underground: 0});
+    expect(pieces(state, "sirnak", "troops")).toEqual({default: 0});
     expect(state.rng).toEqual(rollDie(board.rng).rng);
   });
 
@@ -221,7 +221,7 @@ describe("Attack (06 s4.3)", () => {
   });
 
   it("needs Guerrillas and State pieces", () => {
-    expect(codes(start, attack("dersim"))).toEqual(["attackWhere"]);
+    expect(codes(start, attack("bingol-tunceli"))).toEqual(["attackWhere"]);
   });
 });
 
@@ -229,11 +229,11 @@ describe("Coerce (06 s4.4, PA-05)", () => {
   const coerce = (loc: string): ReturnType<typeof op> => op("pkk", "limitedOp", { op: "pkk.coerce", locations: [loc] });
 
   it("in a Neutral space Activates one Guerrilla and places a Coercion marker, no shift", () => {
-    const { state } = play(start, coerce("mardin-batman"));
-    expect(pieces(state, "mardin-batman", "guerrilla")).toEqual({ underground: 0, active: 1 });
-    expect(state.spaces["mardin-batman"]?.markers["coercion"]).toEqual({ default: 1 });
-    expect(state.spaces["mardin-batman"]?.level).toBe(0);
-    expect(res(state)).toBe(3);
+    const { state } = play(start, coerce("mardin"));
+    expect(pieces(state, "mardin", "guerrilla")).toEqual({ underground: 0, active: 1 });
+    expect(state.spaces["mardin"]?.markers["coercion"]).toEqual({ default: 1 });
+    expect(state.spaces["mardin"]?.level).toBe(0);
+    expect(res(state)).toBe(4);
   });
 
   it("at Support shifts one level toward Neutral before the marker", () => {
@@ -253,7 +253,7 @@ describe("Coerce (06 s4.4, PA-05)", () => {
 
   it("rejects Opposition, no Underground Guerrilla and Displacement", () => {
     expect(codes(start, coerce("hakkari"))).toEqual(["coerceLevel"]);
-    expect(codes(start, coerce("dersim"))).toEqual(["coerceGuerrilla"]);
-    expect(codes(setMarkers(start, "mardin-batman", "displacement", 1, "old"), coerce("mardin-batman"))).toEqual(["coerceDisplaced"]);
+    expect(codes(start, coerce("bingol-tunceli"))).toEqual(["coerceGuerrilla"]);
+    expect(codes(setMarkers(start, "mardin", "displacement", 1, "old"), coerce("mardin"))).toEqual(["coerceDisplaced"]);
   });
 });

@@ -101,14 +101,15 @@
 - {id: hostPressure.kdpBackfire, value: 2, tune: false, source: "06 s3.3; s5.4"}
 - {id: hostPressure.otherBackfire, value: 1, tune: false, source: "06 s3.3; s5.4"}
 - {id: crossBorder.cost, value: 2, tune: false, source: "06 s3.2"}
+- {id: crossBorder.origins, value: [hakkari, sirnak], tune: false, source: "06 s3.2 (Troops lift from the Turkish spaces on the Iraqi border)"}
 - {id: crossBorder.maxTroops, value: 6, tune: false, source: "06 s3.2"}
 - {id: crossBorder.hotPursuitTroops, value: 3, tune: false, source: "06 s3.2"}
 - {id: clearance.legitimacyPerPop, value: 2, tune: false, source: "06 s3.4 condition 4, effect 2"}
 - {id: clearance.receptionShortfallCost, value: 1, tune: false, source: "06 s3.4 effect 5"}
 - {id: clearance.officeCost, value: 1, tune: false, source: "06 s3.4 effect 7; 07 s2 DD-10.5"}
 - {id: covert.minLegitimacy, value: 4, tune: false, source: "06 s3.5"}
-- {id: hizbullah.spaces, value: [mardin-batman, diyarbakir-city, diyarbakir-rural, botan], tune: false, source: "07 s10.1 item 2 (tie order); DK-053"}
-- {id: legal.officeOrder, value: [diyarbakir-city, western-cities, mardin-batman, van-bitlis, sanliurfa, bingol-mus, diyarbakir-rural, botan, agri, adiyaman, elazig], tune: false, source: "07 s6.4 line 4"}
+- {id: hizbullah.spaces, value: [mardin, diyarbakir-city, diyarbakir-rural, sirnak], tune: false, source: "07 s10.1 item 2 (tie order); DK-053"}
+- {id: legal.officeOrder, value: [diyarbakir-city, western-cities, mardin, van-city, sanliurfa, mus, diyarbakir-rural, bingol-tunceli, agri-igdir, adiyaman, elazig], tune: false, source: "07 s6.4 line 4"}
 - {id: legal.officeMinPop, value: 2, tune: false, source: "07 s6.4 line 4"}
 - {id: legal.limitOpen, value: 4, tune: true, source: "07 s6.4 line 3"}
 - {id: legal.limitProsecuted, value: 3, tune: true, source: "07 s6.4 line 3"}

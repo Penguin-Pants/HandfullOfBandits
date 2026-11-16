@@ -66,7 +66,7 @@ describe("observation allowlist (19 s5)", () => {
   it("is frozen: nested mutation throws and never reaches the engine state", () => {
     const o = observe(s, "pkk");
     const before = JSON.stringify(s);
-    expect(() => { (o.spaces["botan"]?.pieces["guerrilla"] as Record<string, number>)["underground"] = 99; }).toThrow(TypeError);
+    expect(() => { (o.spaces["sirnak"]?.pieces["guerrilla"] as Record<string, number>)["underground"] = 99; }).toThrow(TypeError);
     expect(() => { (o.tracks as Record<string, number>)["legitimacy"] = 0; }).toThrow(TypeError);
     expect(JSON.stringify(s)).toBe(before);
   });

@@ -37,7 +37,7 @@ it("saves, resumes, replays and undoes the rolling SA and replacement Rally as o
     expect(service.legalChoices(id)).toMatchObject({faction: "pkk", actions: [{id: "pkk.rally"}]});
     let session = service.session(id);
     expect(service.replayCheck(session.session, session.ruleset)).toBeNull();
-    const next = service.submit(id, {type: "ChooseOperation", faction: "pkk", box: "opSa", plan: {op: "pkk.rally", locations: ["botan"], sa: null}}, first.actionId, first.head.stateHash);
+    const next = service.submit(id, {type: "ChooseOperation", faction: "pkk", box: "opSa", plan: {op: "pkk.rally", locations: ["sirnak"], sa: null}}, first.actionId, first.head.stateHash);
     expect(next.actionId).toBe(first.actionId);
     expect(() => service.submit(id,{type: "Pass",faction: "state"},first.actionId,first.head.stateHash)).toThrow(/moved on/);
     expect(getAction(db, next.actionId)?.status).toBe("committed");

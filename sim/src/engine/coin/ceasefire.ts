@@ -7,7 +7,7 @@ import { param } from "../core/params.ts";
 import type { CommandHandler, Effect, FactionId, GameState, Ruleset, Violation } from "../core/types.ts";
 import type { ActionPart } from "./ops/action.ts";
 import { adjustEurope, space } from "./ops/common.ts";
-import { BINGOL_MUS, FACTION, TRACK } from "./ops/ids.ts";
+import { BINGOL_TUNCELI, FACTION, TRACK } from "./ops/ids.ts";
 import { activeFaction, BOX, legalBoxes, placeCylinder, sequenceViolations } from "./sequence/ct.ts";
 import { availableFrom, SWITCH } from "./switches.ts";
 
@@ -126,7 +126,7 @@ export function declareCeasefire(ctx: Exec): void {
  */
 export const CARD_REF = "04 s3.5";
 
-/** Place the PKK Restraint Broken marker in Bingöl-Muş unless one is on the map (DK-059, DEC-69 point 7). */
+/** Place the PKK Restraint Broken marker in Bingöl-Tunceli unless one is on the map (DK-059, DEC-69 point 7). */
 export function pkkRestraintBroken(ctx: Exec): void {
-  placeRestraintBroken(ctx, FACTION.pkk, BINGOL_MUS, CARD_REF);
+  placeRestraintBroken(ctx, FACTION.pkk, BINGOL_TUNCELI, CARD_REF);
 }

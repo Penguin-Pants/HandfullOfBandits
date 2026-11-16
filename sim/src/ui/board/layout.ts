@@ -17,8 +17,30 @@ export function presentation(space: SpaceView): SpaceLayout {
   const area = ATLAS.spaces[space.id] ?? ATLAS.insets[space.id];
   if (area === undefined) return {x:space.x-55,y:space.y-40,width:110,height:22,callout:false};
   const [x,y,width] = area.info;
-  const lines = ["diyarbakir-rural","diyarbakir-city","western-cities"].includes(space.id) ? 2 : 1;
+  const lines = area.labels.length;
   return {x,y,width,height:lines*24,callout:ATLAS.insets[space.id] !== undefined};
+}
+
+type Block = Pick<AtlasSpace, "stack"> & Partial<Pick<AtlasSpace, "info" | "scale">>;
+
+/** Centre of the information block and its stack, the fixed point of a reduced scale. */
+function blockCentre(area: Required<Pick<Block, "info" | "stack">>): readonly [number, number] {
+  const [x, y, w] = area.info;
+  return [x + w / 2, (y + area.stack[1] + area.stack[3]) / 2];
+}
+
+/** SVG transform that draws a small space's block (name, counters, stack) at its reduced scale. */
+export function blockTransform(area: Pick<AtlasSpace, "info" | "stack" | "scale">): string | undefined {
+  if (area.scale === undefined || area.scale === 1) return undefined;
+  const [cx, cy] = blockCentre(area);
+  return `translate(${String(cx)} ${String(cy)}) scale(${String(area.scale)}) translate(${String(-cx)} ${String(-cy)})`;
+}
+
+/** Board position of a point given in the unscaled block, for the containment tests against the area border. */
+export function toBoard(area: Block, p: readonly [number, number]): readonly [number, number] {
+  if (area.scale === undefined || area.scale === 1 || area.info === undefined) return p;
+  const [cx, cy] = blockCentre({ info: area.info, stack: area.stack });
+  return [cx + (p[0] - cx) * area.scale, cy + (p[1] - cy) * area.scale];
 }
 
 /** A consistent name → control/population → political alignment hierarchy. */
@@ -45,7 +67,7 @@ export interface SpreadGroup {
  * Positions for every piece of the space drawn one by one, in the order pieces then markers.
  * Null when a group does not fit inside the area border: the caller then draws piles and counts.
  */
-export function spreadPlan(space: SpaceView, area: Pick<AtlasSpace, "stack" | "rings">): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
+export function spreadPlan(space: SpaceView, area: Block & Pick<AtlasSpace, "rings">): { readonly rows: number; readonly groups: readonly SpreadGroup[] } | null {
   const [x, y, w] = area.stack;
   const units = [
     ...space.pieces.map(p => {
@@ -64,7 +86,7 @@ export function spreadPlan(space: SpaceView, area: Pick<AtlasSpace, "stack" | "r
     if (row === undefined || width + GAP + u.body + u.number > w) { rows.push([u]); width = u.body + u.number; }
     else { row.push(u); width += GAP + u.body + u.number; }
   }
-  const within = (px: number, py: number): boolean => area.rings.length === 0 || area.rings.filter(r => inside([px, py], r)).length % 2 === 1;
+  const within = (px: number, py: number): boolean => area.rings.length === 0 || area.rings.filter(r => inside(toBoard(area, [px, py]), r)).length % 2 === 1;
   // An inset box has no border ring. It holds one row.
   if (area.rings.length === 0 && rows.length > 1) return null;
   // A host area prints its posture counter below the pieces. More rows than the piles need would push it over the border.
