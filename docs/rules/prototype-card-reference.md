@@ -14,7 +14,7 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 **U:** Police alert: the State conducts a free Garrison. Its Activation must be in Botan.
 
-**S:** Second strike: place 1 Underground Guerrilla in Botan, then the PKK conducts a free Attack in Botan with Ambush (no roll).
+**S:** Second strike: place 1 Underground Guerrilla in Botan, then the PKK conducts a free Attack in Botan with Ambush.
 
 ### DK-003 · Law 3175 (Mar 1985)
 

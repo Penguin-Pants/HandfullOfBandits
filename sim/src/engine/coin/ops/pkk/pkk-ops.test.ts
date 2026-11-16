@@ -171,14 +171,14 @@ describe("Attack (06 s4.3)", () => {
     expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 4, underground: 0});
   });
 
-  it("resolves Ambush without a roll and an ordinary Attack with one roll in the same action", () => {
+  it("resolves both an Ambush Attack and an ordinary Attack with a roll in each space", () => {
     const board = withRoll(setPieces(setPieces(start, "hakkari", "guerrilla", 4), "botan", "guerrilla", 4), 4);
     const {state} = play(board, op("pkk", "opSa", {op: "pkk.attack", locations: ["hakkari", "botan"], sa: {action: "pkk.ambush", timing: "before", locations: ["hakkari"], perLocation: {}}}));
-    expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 1, underground: 3});
-    expect(pieces(state, "hakkari", "troops")).toEqual({default: 1});
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({active: 4, underground: 0});
+    expect(pieces(state, "hakkari", "troops")).toEqual({default: 0});
     expect(pieces(state, "botan", "guerrilla")).toEqual({active: 4, underground: 0});
     expect(pieces(state, "botan", "troops")).toEqual({default: 0});
-    expect(state.rng).toEqual(rollDie(board.rng).rng);
+    expect(state.rng).toEqual(rollDie(rollDie(board.rng).rng).rng);
   });
 
   it("has no attrition when only Police are removed, even if the die is less than or equal to the Troop count", () => {
