@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { codes, op, pieces, play, setLevel, setMarkers, setPieces, turnOf, withRoll } from "../../../../../test/board.ts";
+import { codes, op, pieces, play, ruleset, setLevel, setMarkers, setPieces, turnOf, withRoll } from "../../../../../test/board.ts";
+import { crossBorderOrigins } from "./cross-border.ts";
 
 // T-VAL and T-OPS for Special Activities (11 P2-08; research 06 s3.1, s5.1 to s5.3; PA-06, PA-12, PA-14).
 const stateTurn = turnOf("state");
@@ -94,5 +95,13 @@ describe("Strike Collaborators (06 s5.3)", () => {
     expect(codes(board, op("pkk", "opSa", { op: "pkk.attack", locations: ["hakkari"], sa: sa({ hakkari: {} }) }))).toContain("saNotWithOp");
     const level = setLevel(board, "hakkari", 0);
     expect(play(level, op("pkk", "opSa", { op: "pkk.rally", locations: ["bingol-tunceli"], sa: sa({ hakkari: {} }) })).state.spaces["hakkari"]?.level).toBe(0);
+  });
+});
+
+describe("Cross-Border origins in stored packages from before DD-22", () => {
+  it("uses the crossBorder.origins parameter, and Hakkari with Botan when it is absent", () => {
+    expect(crossBorderOrigins(ruleset)).toEqual(["hakkari", "sirnak"]);
+    const rest = Object.fromEntries(Object.entries(ruleset.parameters).filter(([id]) => id !== "crossBorder.origins"));
+    expect(crossBorderOrigins({ ...ruleset, parameters: rest })).toEqual(["hakkari", "botan"]);
   });
 });

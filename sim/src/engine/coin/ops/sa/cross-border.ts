@@ -4,7 +4,7 @@ import type { GameState, Ruleset } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";
 import { count, pay } from "../common.ts";
 import { postureOf } from "../common-pkk.ts";
-import { FACTION, FLAG_VACUUM, PIECE, POSTURE } from "../ids.ts";
+import { FACTION, FLAG_VACUUM, LEGACY_CROSS_BORDER_ORIGINS, PIECE, POSTURE } from "../ids.ts";
 import { asMoves } from "../plan.ts";
 import { SWITCH } from "../../switches.ts";
 
@@ -17,6 +17,11 @@ export function crossBorderOpen(r: Ruleset, s: GameState, box: string): boolean 
   return box === "kdp-zone" ? open(box) : box === "puk-zone" && open(box) && open("kdp-zone");
 }
 
+/** The Turkish spaces on the Iraqi border. A stored package from before DD-22 has no parameter and uses Hakkari and Botan. */
+export function crossBorderOrigins(r: Ruleset): readonly string[] {
+  return Object.hasOwn(r.parameters, "crossBorder.origins") ? param(r, "crossBorder.origins", "list").map(String) : LEGACY_CROSS_BORDER_ORIGINS;
+}
+
 export const crossBorder: ActionHandler = {
   id: "state.cross-border", faction: FACTION.state, kind: "sa", ruleRef: "06 s3.2", accompanies: ["state.sweep", "state.assault"], timing: "before",
   check(r, s, p, o) {
@@ -24,7 +29,7 @@ export const crossBorder: ActionHandler = {
     const fail = (code: string, message: string) => [at(box, code, message, "06 s3.2")];
     if (p.locations.length !== 1 || !["kdp-zone", "puk-zone"].includes(box) || !o.opLocations.includes(box)) return fail("crossBorderTarget", "Select one KDP or PUK Zone also selected for the Operation.");
     const moves = asMoves(p.perLocation[box]?.["moves"]);
-    const origins = param(r, "crossBorder.origins", "list").map(String);
+    const origins = crossBorderOrigins(r);
     if (moves === null || moves.some(m => !origins.includes(m.from) || m.to !== null || m.face !== null)) return fail("crossBorderMoves", "Move Troops from Hakkari or Şırnak into the selected zone.");
     const moved = moves.reduce((n, m) => n + m.count, 0);
     // Card constraint `maxLift` (DK-071) replaces the normal lift limit.

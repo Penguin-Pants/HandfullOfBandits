@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { codes, engine, inCampaign, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
+import { restraintSpace } from "./ceasefire.ts";
 
 // T-VAL and T-OPS for ceasefire declaration, restrictions and breach (11 P3b-05; research 07 s7.1,
 // s7.2; 05 s4 item 6; approved text docs/prototype/30, DEC-66).
@@ -88,5 +89,13 @@ describe("Ceasefire restrictions and breach (07 s7.2)", () => {
     const board = setPieces(withCard(at(turnOf("pkk"), "declared"), "DK-002"), "siirt", "troops", 2);
     expect(engine.validate(ruleset, board, event).warnings.map((w) => w.message)).toEqual(["This breaks the ceasefire: PKK Restraint Broken, Ceasefire to None, Europe -1."]);
     expect(engine.validate(ruleset, withCard(c3(turnOf("pkk")), "DK-002"), event).warnings).toEqual([]);
+  });
+});
+
+describe("stored packages from before DD-22", () => {
+  it("places the DK-059 restraint marker in Bingöl-Tunceli, or in Bingöl-Muş when the map has no Bingöl-Tunceli", () => {
+    expect(restraintSpace(ruleset)).toBe("bingol-tunceli");
+    const legacy = { ...ruleset, spaces: ruleset.spaces.map((s) => (s.id === "bingol-tunceli" ? { ...s, id: "bingol-mus" } : s)) };
+    expect(restraintSpace(legacy)).toBe("bingol-mus");
   });
 });
