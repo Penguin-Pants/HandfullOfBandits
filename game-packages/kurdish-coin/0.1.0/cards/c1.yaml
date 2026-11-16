@@ -39,13 +39,13 @@
     effects:
       - {type: freeAction, action: state.garrison, constraints: {activationSpace: siirt}}
   shaded:
-    text: "Second strike: place 1 Underground Guerrilla in Siirt, then the PKK conducts a free Attack in Siirt with Ambush (no roll)."
+    text: "Second strike: place 1 Underground Guerrilla in Siirt, then the PKK conducts a free Attack in Siirt with Ambush."
     owner: pkk
     tier: T1
     effects:
       - {type: placePieces, piece: guerrilla, count: 1, space: siirt, state: underground}
       - {type: freeAction, action: pkk.attack, constraints: {spaces: [siirt], sa: pkk.ambush}}
-  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: the CSV says (no roll); Ambush has no roll under PA-06 (accepted after the S0 playtests)"}
+  encoding: {status: encoded, encodedBy: claude, reviewedAgainstText: true, note: "Both sides run a free action (05 s5 item 4). Shaded: Ambush adds one guaranteed removal before the normal Attack (PA-06)"}
   eventConfidence: Moderate
   deckEligible: true
   sources: [E-0073, S-0028, S-0063]

@@ -289,7 +289,7 @@ After attrition, a roll of 1 also places one Available Underground Guerrilla.
 
 > **EXAMPLE:** Four Guerrillas attack two Troops. A roll of 1–4 succeeds. If both Troops are removed, a roll of 1–2 also removes two Guerrillas; a roll of 3–4 causes no attrition. On a roll of 1, place the bonus Underground Guerrilla afterward.
 
-**Ambush replaces this procedure in its selected spaces:** no roll, activate one Underground Guerrilla, remove one State piece, no attrition and no bonus Guerrilla (4.3.1). Other Attack spaces resolve normally.
+**Ambush adds a guaranteed removal before this procedure in its selected spaces:** activate one Underground Guerrilla and remove one State piece in Attack order. Then resolve the Attack normally, including its roll, attrition and bonus (4.3.1). The Ambush removal itself causes no attrition.
 
 ### 3.3.4 Coerce
 
@@ -415,9 +415,9 @@ When a Covert marker is revealed, by an Event, by Propaganda exposure (6.4) or b
 
 **Accompanies:** Attack. **Timing:** before. **Cost:** free.
 
-Choose up to two Attack spaces, each with an Underground Guerrilla. In each, **do not roll**. Activate exactly one Underground Guerrilla and remove one State piece in the Attack removal order: Troops or Police first, then Guards, then State Bases. No Guerrilla is lost to attrition and no roll-of-1 bonus is received. Other Guerrillas remain as they were.
+Choose up to two Attack spaces, each with an Underground Guerrilla. In each, activate one Underground Guerrilla and remove one State piece in the Attack removal order: Troops or Police first, then Guards, then State Bases. This removal causes no attrition. Then conduct the normal Attack, including its roll, possible attrition and roll-of-1 bonus, even if no State pieces remain.
 
-Ambush Momentum increases the limit to three spaces. The no-roll procedure still applies in every Ambush space.
+Ambush Momentum increases the limit to three spaces. The same procedure applies in every Ambush space.
 
 ### 4.3.2 Extort
 

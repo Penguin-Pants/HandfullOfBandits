@@ -1,9 +1,8 @@
 import { modifierLimit } from "../../../core/modifiers.ts";
 import { MOD } from "../../modifiers.ts";
-// Ambush (research 06 s5.1; PA-06): in up to 2 Attack spaces with an Underground Guerrilla, the
-// Attack there has no roll: 1 Guerrilla Activates and 1 State piece goes, with no attrition.
+// Ambush (06 s5.1; PA-06) guarantees one removal before the normal Attack.
 // The Attack handler resolves it (attack.ts).
-// Ambush is checked on the board before the Attack, so it uses timing `before` (DEC-16).
+// Ambush is checked before the Attack, so it uses timing `before` (DEC-16).
 import { param } from "../../../core/params.ts";
 import type { Violation } from "../../../core/types.ts";
 import { at, type ActionHandler } from "../action.ts";

@@ -14,10 +14,10 @@ describe("action summaries match the engine", () => {
     expect(summary("pkk.attack")).toContain("only if Troops are removed");
     expect(summary("pkk.attack")).not.toMatch(/at most|at or below/);
   });
-  it("Ambush replaces the Attack in its space: no roll, 1 Activation, 1 removal, no attrition (attack.ts, PA-06)", () => {
-    expect(summary("pkk.ambush")).toMatch(/no die roll/i);
-    expect(summary("pkk.ambush")).toMatch(/Activate only 1 Underground Guerrilla/);
-    expect(summary("pkk.ambush")).toMatch(/no Guerrilla is lost/);
+  it("Ambush adds a guaranteed removal before the normal Attack", () => {
+    expect(summary("pkk.ambush")).toMatch(/Activate 1 Underground Guerrilla/);
+    expect(summary("pkk.ambush")).toMatch(/remove 1 State piece/);
+    expect(summary("pkk.ambush")).toMatch(/normal Attack, including its roll and any attrition/);
   });
   it("Strike Collaborators warns that its PKK Harm blocks Agitation there (agitation.ts, playtest B1)", () => {
     expect(summary("pkk.strike-collaborators")).toMatch(/PKK Harm marker blocks Agitation shifts in that space until the PKK pays 2 to remove it/);

@@ -36,11 +36,11 @@ describe("T-EVT: S0 cards", () => {
     expect(codes(on(state0, "DK-002"), event("state", "unshaded", [{ locations: ["hakkari"], perLocation: {} }]))).toEqual(["eventConstraint"]);
   });
 
-  it("DK-002 S: 1 Guerrilla placed, then free Attack in Siirt with Ambush: no roll, 1 Activation, 1 removal (PA-06), no cost", () => {
+  it("DK-002 S: 1 Guerrilla placed, then free Attack in Siirt with Ambush: guaranteed removal and normal Attack, no cost", () => {
     const board = withRoll(atSiirt(on(pkk0, "DK-002")), 6);
     const { state } = play(board, event("pkk", "shaded", [{ locations: ["siirt"], perLocation: {}, sa: { locations: ["siirt"], perLocation: {} } }]));
     expect(pieces(state, "siirt", "troops")).toEqual({ default: 1 });
-    expect(pieces(state, "siirt", "guerrilla")).toEqual({ underground: 2, active: 1 });
+    expect(pieces(state, "siirt", "guerrilla")).toEqual({ underground: 0, active: 3 });
     expect(t(state, "resources.pkk")).toBe(5);
   });
 

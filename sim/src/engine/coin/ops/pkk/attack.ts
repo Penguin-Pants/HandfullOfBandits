@@ -60,12 +60,10 @@ export const attack: ActionHandler = {
   execute(ctx, part, options) {
     for (const loc of part.locations) {
       if (!options.free) pay(ctx, FACTION.pkk, param(ctx.ruleset, "attack.costPerSpace", "number"), ruleRef, loc);
-      // Ambush (06 s5.1, PA-06) replaces the Attack here: Activate 1 Underground Guerrilla, no
-      // roll, remove State pieces in the Attack order, no attrition and no bonus Guerrilla.
+      // Ambush guarantees one removal before the normal Attack.
       if (options.sa === AMBUSH && options.saLocations.includes(loc)) {
         ctx.apply({ type: "setPieceState", piece: PIECE.guerrilla, space: loc, from: FACE.underground, to: FACE.active, count: 1, ruleRef: "06 s5.1", assumptionRef: "PA-06" });
         removeInAttackOrder(ctx, loc, param(ctx.ruleset, "ambush.removal", "number"), part.perLocation[loc]?.["prefer"] === PIECE.police, "06 s5.1", "PA-06");
-        continue;
       }
       const troopsBefore = count(ctx.state, loc, PIECE.troops);
       ctx.apply({ type: "setPieceState", piece: PIECE.guerrilla, space: loc, from: FACE.underground, to: FACE.active, count: "all", ruleRef, assumptionRef: null });

@@ -12,7 +12,8 @@ The latest explicit designer decisions take precedence over older research wordi
 
 - **DD-21:** ordinary Attack reuses its die for attrition. Only if Troops are removed and the result is less than or equal to the Troop count before the Attack, remove one Guerrilla per Troop removed. No second roll. Apply the roll-of-1 bonus afterward. Ambush remains exempt.
 
-- **DD-20:** no income in the final Propaganda; Propaganda Agitation uses a PKK Base or PKK Control; Ambush has no roll, one activation and one State removal, with no attrition or bonus; five revised C1 Event sides and the Strike Collaborators warning.
+- **DD-22:** Ambush adds one guaranteed State removal before a normal Attack, including its roll, attrition and bonus.
+- **DD-20:** no income in the final Propaganda; Propaganda Agitation uses a PKK Base or PKK Control; Ambush originally replaced the Attack (superseded by DD-22); five revised C1 Event sides and the Strike Collaborators warning.
 - **DEC-53:** Reset flips all Guerrillas Underground, including Hostile/Aligned camps.
 - **DEC-54 and DEC-56:** Host Pressure interruptions retain the roll and paid cost while replanning the same Rally or March.
 - **DEC-62:** the replan also applies when the planned locations become unaffordable. With no legal, affordable replacement, the Operation ends; the roll, posture change and cost stand.
@@ -21,7 +22,7 @@ The latest explicit designer decisions take precedence over older research wordi
 - **DEC-63 to DEC-66 and DEC-74:** Village Clearance, Covert Action, Legal Politics and the ceasefire step, in the approved texts of `docs/prototype/27` to `30`. DEC-68 deleted the separate OHAL Powers flag, so Village Clearance depends on Campaign C3 and Emergency Rule only.
 - **DEC-67 and DEC-69 to DEC-73, DEC-75:** the Pivotals, the structural cards and the C3 to C5 card encodings, including the PKK Event restriction.
 - **DEC-77:** the Scenario B State threshold defaults to 48; 46 stays a session option. Archived with Scenario B.
-- **PA-01 to PA-10 and PA-13/14/16 to 18:** executing-faction choices, bounded tracks, modified die totals, Coerce order, no-roll Ambush, detection after movement, finite supply, victory ties, seeded randomness, Air Mobility's domestic-only limits, the Syria March option and the Village Clearance shift block.
+- **PA-01 to PA-10 and PA-13/14/16 to 18:** executing-faction choices, bounded tracks, modified die totals, Coerce order, Ambush before a normal Attack, detection after movement, finite supply, victory ties, seeded randomness, Air Mobility's domestic-only limits, the Syria March option and the Village Clearance shift block.
 
 The passing and eligibility procedure is the recorded DD-04 model. Passing does not automatically promote Second Eligible to First Eligible. The fixed default simulator seed of 1 is a reproducibility choice; select Random for a new game seed.
 

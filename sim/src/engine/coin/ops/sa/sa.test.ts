@@ -38,14 +38,29 @@ describe("Air Mobility (06 s3.1, PA-14)", () => {
 describe("Ambush (06 s5.1, PA-06)", () => {
   const plan = (sa: string[]): ReturnType<typeof op> => op("pkk", "opSa", { op: "pkk.attack", locations: ["hakkari"], sa: { action: "pkk.ambush", locations: sa, perLocation: {}, timing: "before" } });
 
-  it("in an Ambush space: no roll, 1 Guerrilla Activates, 1 State piece removed, no attrition (06 s5.1, PA-06)", () => {
+  it("removes one piece even on a miss, then resolves the normal Attack", () => {
     const board = setPieces(withRoll(pkkTurn, 6), "hakkari", "police", 2);
     const { state, entries } = play(board, plan(["hakkari"]));
     expect(pieces(state, "hakkari", "troops")).toEqual({ default: 1 });
     expect(pieces(state, "hakkari", "police")).toEqual({ default: 2 });
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 0, active: 2 });
+    expect(entries.some((e) => e.kind === "DieRolled" && e.data["purpose"] === "attackResult")).toBe(true);
+  });
+
+  it("adds a guaranteed removal to a successful Attack with normal attrition", () => {
+    const board = setPieces(withRoll(pkkTurn, 1), "hakkari", "police", 2);
+    const { state } = play(board, plan(["hakkari"]));
+    expect(pieces(state, "hakkari", "troops")).toEqual({ default: 0 });
+    expect(pieces(state, "hakkari", "police")).toEqual({ default: 1 });
     expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 1, active: 1 });
-    expect(entries.some((e) => e.kind === "DieRolled")).toBe(false);
-    expect(entries.some((e) => e.assumptionRef === "PA-06")).toBe(true);
+  });
+
+  it("still rolls when the Ambush removes the last State piece", () => {
+    const board = setPieces(setPieces(withRoll(pkkTurn, 1), "hakkari", "troops", 1), "hakkari", "police", 0);
+    const { state, entries } = play(board, plan(["hakkari"]));
+    expect(pieces(state, "hakkari", "troops")).toEqual({ default: 0 });
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 1, active: 2 });
+    expect(entries.some((e) => e.kind === "DieRolled" && e.data["purpose"] === "attackResult")).toBe(true);
   });
 
   it("selects only Attack spaces with an Underground Guerrilla", () => {

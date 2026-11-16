@@ -1481,7 +1481,7 @@
   text: |-
     Accompanies: Attack.
 
-    In up to 2 Attack spaces that have an Underground Guerrilla: do not roll. Activate only one Underground Guerrilla. Remove 1 State piece in the Attack order. No attrition.
+    In up to 2 Attack spaces that have an Underground Guerrilla: before the Attack, Activate one Underground Guerrilla and remove 1 State piece in the Attack order. Then resolve the Attack normally, including its die roll, attrition and bonus. The Ambush removal is guaranteed even if the Attack misses and does not itself cause attrition.
 
     Evidence: guerrilla tactics against patrols [E-0162]. Adapts CT 4.3.3.
   subsections: []
