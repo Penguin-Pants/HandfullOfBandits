@@ -124,7 +124,7 @@ Effects, in order:
 2. Legitimacy -2 x Pop of the space, at once.
 3. Place a Displacement marker, New side up. It costs Legitimacy 1 more at the next Propaganda round (05, section 6.4).
 4. Place a State Harm marker.
-5. Place a Reception marker in Diyarbakır City or Western Cities, State choice. If none is available, Legitimacy -1 instead.
+5. Place a Reception marker in Diyarbakır City, Van City, Batman City or Western Cities, State choice. If none is available, Legitimacy -1 instead.
 6. Activate all Guerrillas in the space.
 7. If the space holds an Office, Legitimacy -1 more.
 

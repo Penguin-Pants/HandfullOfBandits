@@ -322,14 +322,14 @@ describe("C3 to C5 decisions", () => {
   const c3 = (s: GameState): GameState => inCampaign(ruleset, s, "C3");
   const hasFamily = (set: CandidateSet, family: string): boolean => (set.families[family]?.retained ?? 0) > 0;
 
-  it("offers Village Clearance with Sweep and Garrison, with each Reception space, in a State Controlled Opposition space", () => {
+  it("offers Village Clearance with Sweep and Garrison, with each of the four Reception cities (DD-22), in a State Controlled Opposition space", () => {
     // Şırnak: Mountain, Passive Opposition. 6 Troops and 1 Police against 2 Guerrillas and 1 Base give State Control.
     const s = setTrack(setPieces(c3(rich(turnOf("state"))), "sirnak", "troops", 6), "emergencyRule", "ohal");
     const set = gen(s, "card", "state");
     allLegal(s, set);
     for (const op of ["state.sweep", "state.garrison"]) expect(hasFamily(set, `op:${op}+state.village-clearance@opSa`), op).toBe(true);
     const receptions = new Set(set.candidates.filter((c) => c.family.includes("village-clearance")).flatMap((c) => Object.values((c.command["plan"] as { sa: { perLocation: Record<string, { reception: string }> } }).sa.perLocation).map((p) => p.reception)));
-    expect([...receptions].sort()).toEqual(["diyarbakir-city", "western-cities"]);
+    expect([...receptions].sort()).toEqual(["batman-city", "diyarbakir-city", "van-city", "western-cities"]);
     expect(hasFamily(gen(setTrack(s, "emergencyRule", "martialLaw"), "card", "state"), "op:state.sweep+state.village-clearance@opSa")).toBe(false);
   });
 

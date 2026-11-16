@@ -6,10 +6,10 @@ spaces:
   - {id: sirnak, name: "Şırnak", kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1538, y: 887}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 1"}
   - {id: siirt, name: Siirt, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1409, y: 732}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
   - {id: batman-rural, name: Batman hinterland, kind: domestic, terrain: plain, pop: 1, hasSupportScale: true, layout: {x: 1259, y: 627}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 8"}
-  - {id: batman-city, name: Batman City, kind: domestic, terrain: city, pop: 1, hasSupportScale: true, layout: {x: 1255, y: 830}, confidence: "Pop Low", source: "03 s2, s2 note 8"}
+  - {id: batman-city, name: Batman City, kind: domestic, terrain: city, pop: 1, hasSupportScale: true, layout: {x: 1255, y: 830}, tags: [receptionTarget], confidence: "Pop Low", source: "03 s2, s2 note 8"}
   - {id: mardin, name: Mardin, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 1097, y: 943}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
   - {id: van-rural, name: Van hinterland, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1756, y: 729}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 7"}
-  - {id: van-city, name: Van City, kind: domestic, terrain: city, pop: 2, hasSupportScale: true, layout: {x: 1871, y: 601}, confidence: "Pop Low", source: "03 s2, s2 note 7"}
+  - {id: van-city, name: Van City, kind: domestic, terrain: city, pop: 2, hasSupportScale: true, layout: {x: 1871, y: 601}, tags: [receptionTarget], confidence: "Pop Low", source: "03 s2, s2 note 7"}
   - {id: bitlis, name: Bitlis, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1438, y: 607}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
   - {id: mus, name: "Muş", kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 1358, y: 475}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
   - {id: bingol-tunceli, name: "Bingöl-Tunceli", kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 709, y: 423}, confidence: "Pop Low; terrain unverified", source: "03 s2"}

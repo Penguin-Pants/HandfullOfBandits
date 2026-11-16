@@ -393,7 +393,7 @@ Apply these effects in this order:
 2. Lose Legitimacy equal to 2 × the target's Pop.
 3. Place a Displacement marker on its New side.
 4. Place a State Harm marker.
-5. Place a Reception marker in Diyarbakır City or Western Cities (State choice). If no Reception marker is available, lose one Legitimacy instead.
+5. Place a Reception marker in Diyarbakır City, Van City, Batman City or Western Cities (State choice). If no Reception marker is available, lose one Legitimacy instead.
 6. Activate all Guerrillas in the space.
 7. If the space holds an Office, lose one more Legitimacy.
 

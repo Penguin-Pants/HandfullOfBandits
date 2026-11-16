@@ -232,13 +232,14 @@ Approved by the designer on 15 November 2026 after reviewing the mockups in `doc
 1. The map has 18 domestic spaces: 14 regions and provinces and 4 Cities. Space shapes follow real province outlines of the reference map of Turkey (Natural Earth, 1:10m).
 2. Spaces: Hakkari, Şırnak, Siirt, Batman hinterland, Batman City, Mardin, Van hinterland, Van City, Bitlis, Muş, Bingöl-Tunceli, Elazığ, Diyarbakır hinterland, Diyarbakır City, Şanlıurfa, Adıyaman, Ağrı-Iğdır, Western Cities. Pop, terrain and Iğdır are in `03-map-and-spaces.md` section 2.
 3. Old spaces map to new ones: Botan to Şırnak and Siirt, Mardin-Batman to Mardin and the two Batman spaces, Van-Bitlis to Van City, Van hinterland and Bitlis, Dersim to Bingöl-Tunceli, Bingöl-Muş to Muş and Bingöl-Tunceli, Ağrı to Ağrı-Iğdır.
-4. Batman City and Van City are small Cities (Pop 1 and 2). City rules (03 section 2.1) apply. Only Diyarbakır City and Western Cities receive Reception markers.
+4. Batman City and Van City are small Cities (Pop 1 and 2). City rules (03 section 2.1) apply. Diyarbakır City, Van City, Batman City and Western Cities receive Reception markers (designer decision, 16 Nov 2026).
 5. Van City links to Van hinterland and to Hakkari. The Diyarbakır City and Batman City link only to their hinterland. The game has 31 domestic land links.
 6. Scenario setup: Botan pieces go to Şırnak and its level also applies to Siirt. Mardin-Batman pieces go to Mardin. Van-Bitlis pieces go to Van hinterland, State Base included: income counts only Mountain or Plain spaces with a State Base (05 section 6.2), so a Base in Van City would cut State income by 4. Van City starts empty. Dersim pieces go to Bingöl-Tunceli, Bingöl-Muş pieces to Muş, Ağrı pieces to Ağrı-Iğdır.
 7. Cross-Border Troops lift from Hakkari or Şırnak (parameter `crossBorder.origins`). DK-001 and DK-002 target Siirt (Eruh and the Siirt raid). DK-059 targets Bingöl-Tunceli. DK-062 targets Batman City. Rules and cards that named a region now name each of its parts where the region meant the whole.
 8. The Office placement order is Diyarbakır City, Western Cities, Mardin, Van City, Şanlıurfa, Muş, Diyarbakır hinterland, Bingöl-Tunceli, Ağrı-Iğdır, Adıyaman, Elazığ.
 9. Display only: the atlas magnifies the area around Batman, draws the rest of Turkey as faded terrain marked "OUT OF PLAY" and scales each space block to fit small spaces.
-10. Total Pop is 33 (DD-05 had 32). Victory thresholds are unchanged. Re-run the qualification set before relying on them.
+10. The State income fall at the 1984 start (19 to 16) and the State Base in Van hinterland were approved by the designer on 16 Nov 2026.
+11. Total Pop is 33 (DD-05 had 32). Victory thresholds are unchanged. Re-run the qualification set before relying on them.
 
 Reason: the reference map shows individual provinces. Splitting Mardin-Batman, Botan and Van-Bitlis fixes names that were not provinces, adds Van and Batman as Cities, and keeps Pop totals close to the DD-05 weights.
 

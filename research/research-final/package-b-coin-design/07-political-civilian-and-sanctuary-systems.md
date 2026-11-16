@@ -76,7 +76,7 @@ Legitimacy feeds the State score, State income and the Civic Action cap. It is t
 
 ### 3.2 Displacement and Reception
 
-1. Village Clearance places one Displacement marker (New side) in the cleared space and one Reception marker in Diyarbakır City or Western Cities (06, section 3.4).
+1. Village Clearance places one Displacement marker (New side) in the cleared space and one Reception marker in Diyarbakır City, Van City, Batman City or Western Cities (06, section 3.4).
 2. Displacement never lowers Pop for victory (DD-07.3). The CT Resettle Pop 0 rule is rejected (CT 4.2.1; CT lessons).
 3. While a Displacement marker is present: the PKK cannot Rally, Extort or Coerce in the space. That is the State's gain: cut logistics [F-050; F-031].
 4. The displaced space stays an obligation. It keeps the level that Village Clearance left (one level toward Neutral, DD-18.3) and scores at that level.

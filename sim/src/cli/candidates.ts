@@ -59,7 +59,6 @@ export interface GeneratorOptions {
 export const DEFAULT_OPTIONS: GeneratorOptions = { familyCap: 14, broad: false };
 
 const AUTO_PHASES = new Set(["victory", "resources", "reset"]);
-const RECEPTION = ["diyarbakir-city", "western-cities"];
 const ARGK = "DK-015";
 const ZONES = ["kdp-zone", "puk-zone"];
 const HOSTS = ["syria-bekaa", "kdp-zone", "puk-zone"];
@@ -401,9 +400,9 @@ function saVariants(r: Ruleset, s: GameState, sa: string, base: Plan): Plan[] {
       return [...locs.map((l) => withSa(sa, [l], { [l]: { guards: Math.min(2, count(s, l, "guards")) } }, "before")), ...combos(locs, 2, 2).map((pair) => withSa(sa, pair, Object.fromEntries(pair.map((l) => [l, { guards: 1 }])), "before"))];
     }
     case "state.village-clearance": {
-      // One Operation space: Mountain or Plain, Neutral or Opposition, no Displacement (rules 4.2.4). Both Reception spaces.
+      // One Operation space: Mountain or Plain, Neutral or Opposition, no Displacement (rules 4.2.4). Every Reception space (tag receptionTarget).
       const locs = base.locations.filter((l) => r.spaces.find((x) => x.id === l)?.kind === "domestic" && isTerrain(r, l, "mountain", "plain") && level(s, l) <= 0 && markers(s, l, "displacement") === 0);
-      return locs.flatMap((l) => RECEPTION.flatMap((reception) => (["after", "before"] as const).map((timing) => withSa(sa, [l], { [l]: { reception } }, timing))));
+      return locs.flatMap((l) => r.spaces.filter((x) => x.tags.includes("receptionTarget")).map((x) => x.id).flatMap((reception) => (["after", "before"] as const).map((timing) => withSa(sa, [l], { [l]: { reception } }, timing))));
     }
     case "state.covert-action": {
       // Any space with State Control, Police, an Underground Guerrilla and no Office (rules 4.2.5). It need not be an Operation space.
