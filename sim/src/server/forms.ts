@@ -1,5 +1,5 @@
 import { modifierLimit, hasModifier } from "../engine/core/modifiers.ts";
-import type { GameState } from "../engine/core/types.ts";
+import type { GameState, Ruleset } from "../engine/core/types.ts";
 import { MOD } from "../engine/coin/modifiers.ts";
 // Plan form metadata per action (11 P2-15 risk: one generic form driven by handler metadata).
 // Fields describe each location's `perLocation` choices in the ActionPlan (05 s3.1).
@@ -55,9 +55,12 @@ export const actionForms: readonly ActionForm[] = [
   { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", summary: "Needs Law 3175. In up to 2 spaces with an Underground Guerrilla and a Village Guard: remove up to 2 Guards in total, and in each space flip 1 Guerrilla Active and place PKK Harm. Europe -1. Warning: the PKK Harm marker blocks Agitation shifts in that space until the PKK pays 2 to remove it (06 s5.3, 07 s1.3).", subAction: null, fields: [{ key: "guards", label: "Guards", kind: "number", default: "1" }], timing: "before" },
 ];
 
-/** Form choices that depend on active cards. Rules still validate on the server. */
-export function formsFor(state: GameState): readonly ActionForm[] {
-  return actionForms.map(f => f.id !== "pkk.rally" || f.subAction === null ? f : {
+/** Form choices that depend on active cards and on the loaded map. Rules still validate on the server. */
+export function formsFor(ruleset: Ruleset, state: GameState): readonly ActionForm[] {
+  const reception = ruleset.spaces.filter(s => s.tags.includes("receptionTarget")).map(s => s.id);
+  return actionForms.map(f => f.id === "state.village-clearance" ? {
+    ...f, fields: f.fields.map(x => x.key === "reception" ? {...x, options: reception} : x),
+  } : f).map(f => f.id !== "pkk.rally" || f.subAction === null ? f : {
     ...f, subAction: {...f.subAction, maxSpaces: modifierLimit(state, MOD.extraAgitate, "maxSpaces", 1)},
     fields: hasModifier(state, MOD.academy) ? [...f.fields, {key: "extra", label: "Academy extra recruits", kind: "number" as const}] : f.fields,
   });

@@ -248,7 +248,7 @@ export class SessionService {
     const faction = activeFaction(state);
     if (faction === null) {
       const advance = this.engine.validate(ruleset, state, { type: "Advance" });
-      return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })), forms: formsFor(state) } as unknown as JsonValue;
+      return { faction: null, phase: state.turn.phase, advance: advance.ok, violations: advance.violations.map((v) => ({ ...v })), forms: formsFor(ruleset, state) } as unknown as JsonValue;
     }
     const open = resume === undefined ? legalBoxes(ruleset, state, faction) : [resume.box];
     // What each box leaves open to the other faction and who is First Eligible next card (05 s2.3, s2.4).
@@ -262,7 +262,7 @@ export class SessionService {
       nextFirst: first ? (ruleset.sequence.swapAfter.includes(box) ? other : faction) : null,
     }));
     const ops = legalOps(ruleset, state, faction, Number.MAX_SAFE_INTEGER).map((c) => (c["plan"] as { op: string; locations: string[] }));
-    const actions = formsFor(state)
+    const actions = formsFor(ruleset, state)
       .filter((f) => actionHandlers[f.id]?.faction === faction && (resume === undefined || f.id === resume.op))
       .map((form) => {
         const handler = actionHandlers[form.id];
@@ -272,7 +272,7 @@ export class SessionService {
         return { ...form, kind: "op", ok: where.length > 0, reason: where.length > 0 ? null : (probe.violations[0]?.message ?? "No legal location."), locations: [...new Set(where)] };
       });
     // Every form, for an Event's free action of either faction (05 s5 item 4).
-    return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions, forms: formsFor(state) } as unknown as JsonValue;
+    return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions, forms: formsFor(ruleset, state) } as unknown as JsonValue;
   }
 
   history(sessionId: string): { action: ActionRow; entries: HistoryEntry[]; notes: number }[] {
