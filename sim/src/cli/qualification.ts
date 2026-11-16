@@ -115,7 +115,7 @@ function finalPhase(phase: string): Edit {
 
 /** Opposition 27 Pop-weighted + 3 Bases = PKK 30; Support 30 + Legitimacy 10 = State 40. */
 const pkkAtThirty = compose(
-  levels({ siirt: -2, "van-rural": -2, "van-city": -2, bitlis: -2, mardin: -2, "batman-rural": -2, "batman-city": -2, sanliurfa: -2, mus: -1, "western-cities": 2, "diyarbakir-city": 2, elazig: 2, adiyaman: 2, "agri-igdir": 2, "bingol-tunceli": 1, "diyarbakir-rural": 2 }),
+  levels({ siirt: -1, "van-rural": -2, "van-city": -2, bitlis: -2, mardin: -2, "batman-rural": -2, "batman-city": -2, sanliurfa: -2, mus: -1, "western-cities": 2, "diyarbakir-city": 2, elazig: 2, adiyaman: 2, "agri-igdir": 2, "bingol-tunceli": 1, "diyarbakir-rural": 2 }),
   pieces("elazig", "pkkBase", 1), pieces("hakkari", "pkkBase", 1), pieces("hakkari", "guerrilla", 3),
 );
 
