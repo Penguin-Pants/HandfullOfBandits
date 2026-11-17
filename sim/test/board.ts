@@ -1,6 +1,6 @@
 // Test helpers for board positions on the Kurdish package. Not for production code.
 import { createEngine } from "../src/engine/index.ts";
-import { rollDie, seedRng } from "../src/engine/core/rng.ts";
+import { pickRandom, rollDie, seedRng } from "../src/engine/core/rng.ts";
 import { coinHandlers } from "../src/engine/coin/handlers.ts";
 import { PHASE } from "../src/engine/coin/phases.ts";
 import type { AnyCommand, GameState, LogEntry } from "../src/engine/core/types.ts";
@@ -83,6 +83,15 @@ export function withRoll(state: GameState, value: number): GameState {
     if (rollDie(rng).value === value) return { ...state, rng };
   }
   throw new Error(`No seed rolls ${String(value)}`);
+}
+
+/** `state` with an RNG whose next random pick from `n` items takes item `index`. */
+export function withPick(state: GameState, n: number, index: number): GameState {
+  for (let seed = 0; seed < 1000; seed++) {
+    const rng = seedRng(seed);
+    if (pickRandom(rng, Array.from({ length: n }, (_, i) => i)).value === index) return { ...state, rng };
+  }
+  throw new Error(`No seed picks item ${String(index)} of ${String(n)}`);
 }
 
 /** `state` with `card` face up and the phase set for its type (test-only shortcut past the deck). */
