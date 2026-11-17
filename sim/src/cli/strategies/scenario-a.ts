@@ -13,7 +13,7 @@
 // (4) adaptive families replace the value of the best four with the value after the opponent's best
 // static reply.
 import type { FactionId, GameState, JsonObject } from "../../engine/core/types.ts";
-import { generateCandidates, GENERATOR_VERSION, type Candidate } from "../candidates.ts";
+import { decisionPoint, generateCandidates, GENERATOR_VERSION, type Candidate } from "../candidates.ts";
 import { determinize } from "../player-observation.ts";
 import { settle, type Choice, type DecisionRequest, type ObservationPlayer, type PlayerSpec, type SearchContext } from "../players.ts";
 import { evaluate, timing, WIN_VALUE, type Weights } from "./evaluation.ts";
@@ -22,7 +22,7 @@ import { evaluate, timing, WIN_VALUE, type Weights } from "./evaluation.ts";
  * Frozen roster version per faction (dev-compare-v2, paired on the pilot seeds): State families v1,
  * PKK families v2. Other versions stay registered for paired comparison (19 s7).
  */
-export const ROSTER_VERSION: Readonly<Record<FactionId, number>> = { state: 1, pkk: 2 };
+export const ROSTER_VERSION: Readonly<Record<FactionId, number>> = { state: 4, pkk: 4 };
 /** Transitions per decision for every qualified search player (19 s7: equal budgets). */
 export const SEARCH_BUDGET = 600;
 
@@ -35,6 +35,10 @@ interface Family {
   readonly weights: Weights;
   readonly adaptive: boolean;
   readonly description: string;
+  /** Own decisions planned: 1 = one action; 2 = the action, the opponent's reply, then the next own action. */
+  readonly lookahead?: number;
+  /** Transitions per decision; default SEARCH_BUDGET. */
+  readonly budget?: number;
 }
 
 /** v1 parameters (pilot-1). Margins always count 1:1; other weights are estimates. */
@@ -84,10 +88,29 @@ const COUNTERS: readonly Family[] = [
     description: "Attribution probe: S-POL with the capped potential and a penalty on unspent Resources, so it converts instead of passing." },
 ];
 
+/**
+ * v4 (doc 37): the designer's retune for the full campaign (Bot Tuning Desk export, 17 Nov 2026).
+ * Same styles; dial and potential-model changes below; every family plans 2 moves on a 1,800-step budget.
+ * PKK families keep the v2 capped potential.
+ */
+const V4_CHANGES: Readonly<Record<string, Partial<Weights>>> = {
+  "S-POL": { legitimacy: 0.35 },
+  "S-MIL": {},
+  "S-CON": { potentialModel: "capped" },
+  "S-ADAPT": { ownPotential: 0.9, oppPotential: 1.15, pkkBases: 3, guerrillas: 1.5, legitimacy: 0.8, potentialModel: "capped" },
+  "P-POL": { potentialModel: "capped", ownPotential: 1.4, oppPotential: 0.65, legitimacy: 0.3 },
+  "P-EXP": { potentialModel: "capped", ownPotential: 0.35 },
+  "P-SURV": { potentialModel: "capped" },
+  "P-ADAPT": { potentialModel: "capped" },
+};
+/** v4 search: 2-move planning; the budget keeps the one-move breadth (600 x 3, doc 37). */
+const V4_SEARCH = { lookahead: 2, budget: 1800 };
+
 export const FAMILIES: readonly Family[] = [
   ...V1.map((f) => ({ ...f, version: 1 })),
   ...V1.map((f) => ({ ...f, version: 2, weights: { ...f.weights, potentialModel: "capped" as const } })),
   ...COUNTERS,
+  ...V1.map((f) => ({ ...f, version: 4, ...V4_SEARCH, weights: { ...f.weights, ...V4_CHANGES[f.id] } })),
 ];
 
 /** The frozen version of each family: the qualified roster. */
@@ -119,8 +142,8 @@ function solveFinal(request: DecisionRequest, ctx: SearchContext, base: GameStat
   });
 }
 
-/** Best static reply of the opponent from `s` (value from the opponent's own neutral weights). */
-function opponentReply(ctx: SearchContext, s: GameState, opponent: FactionId, limit: number): GameState {
+/** Best static card play of `faction` from `s`, valued with `weights` (the opponent's reply uses the neutral BASE). */
+function opponentReply(ctx: SearchContext, s: GameState, opponent: FactionId, limit: number, weights: Weights = BASE): GameState {
   const replies = generateCandidates(ctx.engine, ctx.ruleset, s, "card", opponent).candidates;
   // Quota per family, so the sampled replies cover every action family.
   const byFamily = new Map<string, Candidate[]>();
@@ -131,7 +154,7 @@ function opponentReply(ctx: SearchContext, s: GameState, opponent: FactionId, li
   for (const c of pool) {
     const after = outcome(ctx, s, c);
     if (after === null) continue;
-    const v = evaluate(ctx.ruleset, after, opponent, BASE).value;
+    const v = evaluate(ctx.ruleset, after, opponent, weights).value;
     if (v > best.value) best = { value: v, state: after };
   }
   return best.state;
@@ -149,6 +172,55 @@ export function roundRobin(candidates: readonly Candidate[]): Candidate[] {
 
 /** Share of the decision budget kept for re-sampling and replies after the first pass. */
 const RESERVE = 0.25;
+/** With 2-move planning: the first pass gets 35% (630 of 1,800, more than the 450 of one-move search). */
+const DEEP_RESERVE = 0.65;
+/** Leaders checked by the deep line. */
+const DEEP_LEADERS = 3;
+/** Share of a leader's deep budget for the opponent's reply; the rest is for the own next play. */
+const REPLY_SHARE = 0.75;
+
+/**
+ * Best card play of `faction` from `s` by `weights`, trying plays in family rotation until the
+ * budget falls to `floor` (doc 37). Unlike a fixed sample, a large budget share reaches every play.
+ */
+function bestPlay(ctx: SearchContext, s: GameState, faction: FactionId, weights: Weights, floor: number): GameState {
+  const plays = roundRobin(generateCandidates(ctx.engine, ctx.ruleset, s, "card", faction).candidates);
+  let best: { value: number; state: GameState } = { value: -Infinity, state: s };
+  for (const c of plays) {
+    if (ctx.budget.remaining <= floor) break;
+    const after = outcome(ctx, s, c);
+    if (after === null) continue;
+    const v = evaluate(ctx.ruleset, after, faction, weights).value;
+    if (v > best.value) best = { value: v, state: after };
+    if (v >= WIN_VALUE / 2) break;
+  }
+  return best.state;
+}
+
+/**
+ * The 2-move line after an own card play (doc 37): the opponent's best static reply when it acts
+ * next, then this faction's own best next card play, then the evaluation. It stops at the first
+ * decision that is not a card play (Propaganda, Pivotal, Event question) or when the budget runs low.
+ */
+function deepLine(ctx: SearchContext, after: GameState, faction: FactionId, w: Weights, share: number): GameState {
+  const end = Math.max(0, ctx.budget.remaining - share);
+  let s = after;
+  let replied = false;
+  for (let step = 0; step < 3 && s.ended === null; step++) { // literal-ok: reply then own move, one spare step
+    const point = decisionPoint(ctx.engine, ctx.ruleset, s);
+    if (point.kind !== "card") break;
+    if (point.faction !== faction) {
+      if (replied) break;
+      const next = bestPlay(ctx, s, point.faction, BASE, end + Math.floor(share * (1 - REPLY_SHARE)));
+      if (next === s) break;
+      s = next;
+      replied = true;
+      continue;
+    }
+    return bestPlay(ctx, s, faction, w, end);
+  }
+  return s;
+}
 
 function searchDecide(family: Family, request: DecisionRequest, ctx: SearchContext): Choice {
   const notes: string[] = [];
@@ -166,7 +238,8 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
     // First pass in family rotation until only the reserve is left; each evaluation's cost
     // (apply plus automatic phases) is charged as it happens (search-2).
     const ordered = roundRobin(request.candidates);
-    const reserve = Math.floor(ctx.budget.limit * RESERVE);
+    const deep = (family.lookahead ?? 1) > 1 && request.kind === "card";
+    const reserve = Math.floor(ctx.budget.limit * (deep ? DEEP_RESERVE : RESERVE));
     scored = [];
     for (const candidate of ordered) {
       if (ctx.budget.remaining <= reserve) break;
@@ -186,7 +259,25 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
         s.samples++;
       }
     }
-    if (family.adaptive && request.kind === "card") {
+    if (deep) {
+      let changed = 0;
+      const leaders = [...scored].sort((a, b) => b.value - a.value).slice(0, DEEP_LEADERS);
+      const checked = new Set<Scored>();
+      for (const [i, s] of leaders.entries()) {
+        const after = outcome(ctx, base, s.candidate);
+        if (after === null) continue;
+        checked.add(s);
+        if (after.ended !== null) continue;
+        const share = Math.floor(ctx.budget.remaining / (leaders.length - i));
+        const e = evaluate(ctx.ruleset, deepLine(ctx, after, request.faction, w, share), request.faction, w);
+        if (e.value !== s.value) changed++;
+        s.value = e.value;
+        s.components = { ...e.components, lookahead: 2 };
+      }
+      // Only plans with the 2-move check compete: an unchecked plan's one-move value hides the reply.
+      if (checked.size > 0) scored = scored.filter((s) => checked.has(s));
+      notes.push(`2-move line on ${String(checked.size)} leaders (${String(changed)} revalued)`);
+    } else if (family.adaptive && request.kind === "card") {
       const opponent = request.faction === "state" ? "pkk" : "state";
       for (const s of [...scored].sort((a, b) => b.value - a.value).slice(0, 4)) {
         const after = outcome(ctx, base, s.candidate);
@@ -211,7 +302,7 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
 function spec(family: Family): PlayerSpec {
   return {
     id: `${family.id}@${String(family.version)}`, family: family.id, version: family.version, faction: family.faction, role: "qualified", access: "observation",
-    params: { ...(family.weights as unknown as JsonObject), adaptive: family.adaptive }, generatorVersion: GENERATOR_VERSION, budget: SEARCH_BUDGET, description: family.description,
+    params: { ...(family.weights as unknown as JsonObject), adaptive: family.adaptive, lookahead: family.lookahead ?? 1 }, generatorVersion: GENERATOR_VERSION, budget: family.budget ?? SEARCH_BUDGET, description: family.description,
   };
 }
 

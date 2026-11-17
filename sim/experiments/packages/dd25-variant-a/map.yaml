@@ -1,0 +1,76 @@
+# Research 03 (Proposal 2 v2, docs/map-proposals/proposal-2). Pop values are design weights [design] (03 s1). Terrain tags and adjacency are
+# unverified (03 s2 note 3, s4; GAP-I09). Layout: the centre of each space information block in the atlas frame (sim/src/ui/board/atlas-data.ts).
+supportLevels: [activeOpposition, passiveOpposition, neutral, passiveSupport, activeSupport]
+spaces:
+  - {id: hakkari, name: Hakkari, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 2013, y: 856}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: sirnak, name: "Şırnak", kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1538, y: 887}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 1"}
+  - {id: siirt, name: Siirt, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1409, y: 732}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: batman-rural, name: Batman hinterland, kind: domestic, terrain: plain, pop: 1, hasSupportScale: true, layout: {x: 1259, y: 627}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 8"}
+  - {id: batman-city, name: Batman City, kind: domestic, terrain: city, pop: 1, hasSupportScale: true, layout: {x: 1255, y: 830}, tags: [receptionTarget], confidence: "Pop Low", source: "03 s2, s2 note 8"}
+  - {id: mardin, name: Mardin, kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 1097, y: 943}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: van-rural, name: Van hinterland, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1756, y: 729}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 7"}
+  - {id: van-city, name: Van City, kind: domestic, terrain: city, pop: 2, hasSupportScale: true, layout: {x: 1871, y: 601}, tags: [receptionTarget], confidence: "Pop Low", source: "03 s2, s2 note 7"}
+  - {id: bitlis, name: Bitlis, kind: domestic, terrain: mountain, pop: 1, hasSupportScale: true, layout: {x: 1438, y: 607}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: mus, name: "Muş", kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 1358, y: 475}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: bingol-tunceli, name: "Bingöl-Tunceli", kind: domestic, terrain: mountain, pop: 2, hasSupportScale: true, layout: {x: 709, y: 423}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: elazig, name: "Elazığ", kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 610, y: 580}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: diyarbakir-rural, name: "Diyarbakır hinterland", kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 1131, y: 600}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: diyarbakir-city, name: "Diyarbakır City (Amed)", kind: domestic, terrain: city, pop: 2, hasSupportScale: true, layout: {x: 954, y: 698}, tags: [receptionTarget], confidence: "Pop Low", source: "03 s2"}
+  - {id: sanliurfa, name: "Şanlıurfa", kind: domestic, terrain: plain, pop: 4, hasSupportScale: true, layout: {x: 576, y: 946}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: adiyaman, name: "Adıyaman", kind: domestic, terrain: plain, pop: 2, hasSupportScale: true, layout: {x: 387, y: 790}, confidence: "Pop Low; terrain unverified", source: "03 s2"}
+  - {id: agri-igdir, name: "Ağrı-Iğdır", kind: domestic, terrain: mountain, pop: 3, hasSupportScale: true, layout: {x: 1799, y: 279}, confidence: "Pop Low; terrain unverified", source: "03 s2, s2 note 9"}
+  - {id: western-cities, name: Western Cities, kind: domestic, terrain: city, pop: 3, hasSupportScale: true, layout: {x: 70, y: 80}, tags: [noLandLinks, receptionTarget, rallyAtSupport], confidence: "Design node, no census basis", source: "03 s2, s4.2"}
+  - {id: syria-bekaa, name: Syria-Bekaa, kind: external, pop: 0, hasSupportScale: false, layout: {x: 1019, y: 1163}, source: "03 s3"}
+  - {id: kdp-zone, name: KDP Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 1698, y: 1103}, source: "03 s3; 06 s3.2 item 3"}
+  - {id: puk-zone, name: PUK Zone, kind: external, terrain: mountain, pop: 0, hasSupportScale: false, layout: {x: 2150, y: 1188}, source: "03 s3; 06 s3.2 item 3"}
+  - {id: iran, name: Iran, kind: external, pop: 0, hasSupportScale: false, layout: {x: 2183, y: 523}, tags: [eventsOnly], confidence: "Evidence Low", source: "03 s3"}
+  - {id: europe, name: Europe, kind: external, pop: 0, hasSupportScale: false, layout: {x: 70, y: 200}, tags: [noPieces], source: "03 s3; 04 s3.6"}
+# 03 s4.1: 31 domestic land links (every shared border of the atlas, plus Van City to Hakkari by designer decision), 5 external links.
+# Iran links are events only and Europe is a track, so neither has a link. Host posture limits are rules (07 s5), not gates.
+links:
+  - {a: hakkari, b: sirnak, kind: land}
+  - {a: hakkari, b: van-rural, kind: land}
+  - {a: sirnak, b: siirt, kind: land}
+  - {a: sirnak, b: mardin, kind: land}
+  - {a: sirnak, b: van-rural, kind: land}
+  - {a: siirt, b: batman-rural, kind: land}
+  - {a: siirt, b: van-rural, kind: land}
+  - {a: siirt, b: bitlis, kind: land}
+  - {a: batman-rural, b: mardin, kind: land}
+  - {a: batman-rural, b: bitlis, kind: land}
+  - {a: batman-rural, b: mus, kind: land}
+  - {a: batman-rural, b: diyarbakir-rural, kind: land}
+  - {a: batman-rural, b: batman-city, kind: land}
+  - {a: mardin, b: diyarbakir-rural, kind: land}
+  - {a: mardin, b: sanliurfa, kind: land}
+  - {a: van-rural, b: bitlis, kind: land}
+  - {a: van-rural, b: agri-igdir, kind: land}
+  - {a: van-rural, b: van-city, kind: land}
+  - {a: bitlis, b: mus, kind: land}
+  - {a: bitlis, b: agri-igdir, kind: land}
+  - {a: mus, b: bingol-tunceli, kind: land}
+  - {a: mus, b: diyarbakir-rural, kind: land}
+  - {a: mus, b: agri-igdir, kind: land}
+  - {a: bingol-tunceli, b: elazig, kind: land}
+  - {a: bingol-tunceli, b: diyarbakir-rural, kind: land}
+  - {a: elazig, b: diyarbakir-rural, kind: land}
+  - {a: diyarbakir-rural, b: sanliurfa, kind: land}
+  - {a: diyarbakir-rural, b: adiyaman, kind: land}
+  - {a: diyarbakir-rural, b: diyarbakir-city, kind: land}
+  - {a: sanliurfa, b: adiyaman, kind: land}
+  - {a: van-city, b: hakkari, kind: land}
+  - {a: hakkari, b: kdp-zone, kind: external}
+  - {a: sirnak, b: kdp-zone, kind: external}
+  - {a: kdp-zone, b: puk-zone, kind: external}
+  - {a: mardin, b: syria-bekaa, kind: external}
+  - {a: sanliurfa, b: syria-bekaa, kind: external}
+# 03 s5. Rule 5 for Troops in the KDP and PUK Zones (Cross-Border only) is a handler rule (06 s3.2).
+stacking:
+  - {pieces: [stateBase], max: 2, spaceKind: domestic, source: "03 s5 item 1"}
+  - {pieces: [pkkBase], max: 2, source: "03 s5 items 1 and 2"}
+  - {pieces: [pkkBase], max: 0, spaces: [western-cities], source: "03 s5 item 3"}
+  - {pieces: [stateBase, police, guards], max: 0, spaceKind: external, source: "03 s5 items 3 and 5"}
+  - {pieces: [troops], max: 0, spaces: [syria-bekaa, iran, europe], source: "03 s5 item 5"}
+  - {pieces: [guerrilla, pkkBase], max: 0, spaces: [europe], source: "03 s3 (Europe: no pieces)"}
+  - {pieces: [guards], max: 3, terrain: [mountain, plain], status: tune, source: "03 s5 item 4"}
+  - {pieces: [guards], max: 0, terrain: [city], source: "03 s5 item 4; 03 s2.1"}
