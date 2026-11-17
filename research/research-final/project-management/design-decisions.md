@@ -260,6 +260,19 @@ Approved by the designer on 17 November 2026.
 3. The random pick cannot change the question or its options: one reveal always removes exactly 1 Covert marker. Tests in `sim/src/engine/coin/c5-cards.test.ts` show this for each pick.
 4. Known limit: validation stops at the first reveal, so a missing or bad answer to this question fails only when the command runs. The bots find the question after the reveal (`lateQuestion` in `sim/src/cli/candidates.ts`).
 
+## DD-25 Full campaign start setup and PKK threshold
+
+Approved by the designer on 17 November 2026 after the audit and options in `docs/prototype/35-start-setup-options-draft.md`.
+
+1. Added pieces: Siirt 1 Police and 1 Guerrilla; Batman hinterland 1 Guerrilla; Batman City 1 Police; Van City 1 Police; Van hinterland 1 Guerrilla; Bitlis 1 Police and 1 Guerrilla; Şanlıurfa 1 Guerrilla; KDP Zone 1 Guerrilla.
+2. Levels: Batman hinterland and Van hinterland start at Passive Opposition. Batman City, Van City and Bitlis stay Neutral. Siirt stays at Passive Opposition.
+3. Start Control: PKK in Batman hinterland; State in Batman City, Van City, Van hinterland and Şanlıurfa; none in Siirt and Bitlis.
+4. PKK threshold 32 (was 30). State threshold stays 49. Start scores State 21, PKK 6; start margins -28 and -26.
+5. Inventory: 20 Police and 16 Guerrillas on the map; 4 Police and 14 Guerrillas Available.
+6. Re-run the qualification set and a full-campaign experiment before relying on these values. The `dd22-pilot` records used the old setup.
+
+Reason: the attacks of 15 and 17 Aug 1984 were in Siirt, which had no pieces. The other additions are play decisions. 09 section 2.2 gives the threshold arithmetic.
+
 ## Decision record
 
 | ID | Claude input | Sol input | CT lessons | Final |

@@ -37,7 +37,7 @@ describe("manifest validation (19 s2; 20 Phase 1)", () => {
 
   it("rejects a wrong package hash, thresholds, Harm limit and options", () => {
     rejects({ ...devManifest(), package: { ...devManifest().package, hash: "0".repeat(64) } }, /Package hash/);
-    rejects({ ...devManifest(), expected: { ...devManifest().expected, thresholds: { state: 50, pkk: 30 } } }, /Threshold state/);
+    rejects({ ...devManifest(), expected: { ...devManifest().expected, thresholds: { state: 50, pkk: 32 } } }, /Threshold state/);
     rejects({ ...devManifest(), expected: { ...devManifest().expected, thresholds: { state: 49 } } }, /every faction/);
     rejects({ ...devManifest(), expected: { ...devManifest().expected, harmLimit: 7 } }, /Harm limit/);
     rejects({ ...devManifest(), conditions: [{ id: "x", options: { unknown: "allow" } }] }, /Unknown option/);

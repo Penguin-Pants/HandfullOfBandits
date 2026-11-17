@@ -4,7 +4,8 @@ import { crossBorderOrigins } from "./cross-border.ts";
 
 // T-VAL and T-OPS for Special Activities (11 P2-08; research 06 s3.1, s5.1 to s5.3; PA-06, PA-12, PA-14).
 const stateTurn = turnOf("state");
-const pkkTurn = turnOf("pkk");
+// Pinned so these tests do not follow setup changes: 3 Guerrillas in the KDP Zone.
+const pkkTurn = setPieces(turnOf("pkk"), "kdp-zone", "guerrilla", 3);
 
 describe("SA pairing (06 s1 item 2)", () => {
   it("rejects an SA with a Limited Op or Op Only, and an SA its Op does not allow", () => {

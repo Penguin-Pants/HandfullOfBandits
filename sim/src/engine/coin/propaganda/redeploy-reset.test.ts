@@ -28,7 +28,7 @@ describe("P3a-01 (research 05 s6.7, s6.8; DEC-53)", () => {
     expect(codes(start, {type: "Advance"})).toEqual([]);
   });
   it("at Reset flips even Hostile and Aligned box Guerrillas Underground, clears markers and Momentum and reveals with PKK first", () => {
-    let base = setPieces(setPieces(turnOf("state"), "kdp-zone", "guerrilla", 2, "active"), "puk-zone", "guerrilla", 1, "active");
+    let base = setPieces(setPieces(setPieces(turnOf("state"), "kdp-zone", "guerrilla", 3), "kdp-zone", "guerrilla", 2, "active"), "puk-zone", "guerrilla", 1, "active");
     base = setTrack(setTrack(setMarkers(setMarkers(base, "sirnak", "coercion", 2), "sirnak", "restraintBroken", 1, "state"), "posture.kdp", "hostile"), "posture.puk", "aligned");
     const start = at({...base, meta: {...base.meta, scenarioId: "full-campaign"}, modifiers: [{id: "cap", sourceCard: "DK-004", duration: "game", params: {}}, {id: "mom", sourceCard: "DK-007", duration: "untilReset", params: {}}], deck: {...base.deck, currentCard: "DK-016", piles: [["DK-001"]]}}, "reset");
     const {state, entries} = play(start, {type: "Advance"});

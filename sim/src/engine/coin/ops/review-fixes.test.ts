@@ -67,7 +67,7 @@ describe("operation review fixes", () => {
   });
 
   it("moves each March group one step: arrivals in a later origin stay put", () => {
-    let board = setPieces(setPieces(pkkTurn, "sirnak", "guerrilla", 2), "hakkari", "guerrilla", 0);
+    let board = setPieces(setPieces(setPieces(pkkTurn, "sirnak", "guerrilla", 2), "hakkari", "guerrilla", 0), "van-rural", "guerrilla", 0);
     board = setPieces(board, "hakkari", "guerrilla", 2, "active");
     const plan = op("pkk", "opOnly", { op: "pkk.march", locations: ["hakkari", "van-rural"], perLocation: { hakkari: { moves: [{ from: "sirnak", count: 2 }] }, "van-rural": { moves: [{ from: "hakkari", count: 2 }] } } });
     const { state } = play(board, plan);

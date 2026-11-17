@@ -25,7 +25,7 @@ describe("full campaign setup (10 s2.1, s2.2, s2.3)", () => {
 
   it("sets the 10 s2.2 levels, the Leadership and no other marker", () => {
     const levels = Object.fromEntries(Object.entries(setupState(ruleset, "full-campaign", 1).spaces).filter(([, s]) => s.level !== null && s.level !== 0).map(([id, s]) => [id, s.level]));
-    expect(levels).toEqual({ hakkari: -1, sirnak: -1, siirt: -1, sanliurfa: 1, adiyaman: 1, elazig: 1, "western-cities": 1 });
+    expect(levels).toEqual({ hakkari: -1, sirnak: -1, siirt: -1, "batman-rural": -1, "van-rural": -1, sanliurfa: 1, adiyaman: 1, elazig: 1, "western-cities": 1 });
     const markers = Object.entries(state.spaces).flatMap(([id, s]) => Object.entries(s.markers).flatMap(([m, sides]) => Object.entries(sides).filter(([, n]) => n > 0).map(([side]) => `${id}:${m}:${side}`)));
     expect(markers).toEqual(["syria-bekaa:leadership:present"]);
   });

@@ -547,7 +547,7 @@ Skip in round one. In every later round, check both scores and Harm gates as in 
 
 **PKK income:** one per domestic PKK Base + one per PKK Base in a Host or Tolerant camp + Leadership income + Europe income. Leadership Present gives 2 if Syria is Host, 1 if Tolerant and 0 otherwise. Abroad gives none. After Capture (8.1.5) subtract one more. Europe gives 0/1/2 as in 1.7. The PKK total is never below 0. Each faction stops at 50 Resources.
 
-> **EXAMPLE:** On the starting board (10.2) the State's income is 19 and PKK income is 5. Starting Resources of 12 and 5 would become 31 and 10 in a non-final round before upkeep. No such addition occurs in a final round.
+> **EXAMPLE:** On the starting board (10.2) the State's income is 16 and PKK income is 5. Starting Resources of 12 and 5 would become 28 and 10 in a non-final round before upkeep. No such addition occurs in a final round.
 
 ## 6.3 Guard Upkeep
 
@@ -613,7 +613,7 @@ Optional movements may be omitted. Required Iraqi Troop departures may not be sk
 
 Passive levels contribute Pop; Active levels contribute twice Pop. Neutral contributes none. Count only domestic Support/Opposition and domestic PKK Bases. Control, external Bases and removed enemy pieces add no points.
 
-The thresholds are **State 49** and **PKK 30**. Each faction's Harm limit is **6**. These are playtest values, not historical measures.
+The thresholds are **State 49** and **PKK 32**. Each faction's Harm limit is **6**. These are playtest values, not historical measures.
 
 ## 7.2 Victory Check
 
@@ -631,7 +631,7 @@ After final Agitation and any required Covert reveals, calculate each faction's:
 
 Excess Harm is the Harm count above six, or zero if the count is six or less. The higher final margin wins, even if both are negative. Equal margins go to the faction with less Harm; if still tied, PKK wins.
 
-> **EXAMPLE:** State score 43 with Harm 4 gives 43 − 49 = −6. PKK score 26 with Harm 7 gives 26 − 30 − 2 = −6. State wins the tied margin because its Harm is lower. Without the extra PKK Harm penalty, PKK's margin would be −4.
+> **EXAMPLE:** State score 43 with Harm 4 gives 43 − 49 = −6. PKK score 28 with Harm 7 gives 28 − 32 − 2 = −6. State wins the tied margin because its Harm is lower. Without the extra PKK Harm penalty, PKK's margin would be −4.
 
 Record a margin difference of five or less as a narrow result and six or more as a clear result. These labels describe the result; they do not change the winner.
 
@@ -802,7 +802,7 @@ The Ceasefire track has three steps: **None → Declared → Reciprocal Restrain
 
 | Scenario | Start | Piles | Final round | State / PKK thresholds |
 |:---|:---|:---|:---:|:---:|
-| Full campaign | 15 August 1984 | C1 to C5 | 5 | 49 / 30 |
+| Full campaign | 15 August 1984 | C1 to C5 | 5 | 49 / 32 |
 
 The Harm limit is six each and the PKK is First Eligible. The Pivotals held are:
 
@@ -828,25 +828,29 @@ All Guerrillas below start Underground. Unlisted spaces or piece types are empty
 |:---|:---|:---|
 | Hakkari | 2T, 1P | 2G |
 | Şırnak | 2T, 1P | 2G, 1B |
-| Siirt | — | — |
+| Siirt | 1P | 1G |
+| Batman hinterland | — | 1G |
+| Batman City | 1P | — |
 | Mardin | 1T, 1P | 1G |
 | Diyarbakır City | 3T, 2P, 1B | — |
 | Diyarbakır hinterland | 1P | — |
-| Şanlıurfa | 2P | — |
+| Şanlıurfa | 2P | 1G |
 | Adıyaman | 1P | — |
 | Elazığ | 1T, 1P, 1B | — |
 | Bingöl-Tunceli | 1T, 1P | — |
 | Muş | 1T, 1P | — |
-| Van hinterland | 2T, 1P, 1B | — |
+| Van hinterland | 2T, 1P, 1B | 1G |
+| Van City | 1P | — |
+| Bitlis | 1P | 1G |
 | Ağrı-Iğdır | 1T, 1P | — |
 | Western Cities | 2T, 2P, 1B | — |
-| KDP Zone | — | 3G, 1B |
+| KDP Zone | — | 4G, 1B |
 | PUK Zone | — | — |
 | Syria-Bekaa | — | 2G, 1B, Leadership Present |
 
-Set **Passive Opposition** in Hakkari, Şırnak and Siirt. Set **Passive Support** in Şanlıurfa, Adıyaman, Elazığ and Western Cities. All other domestic spaces are Neutral.
+Set **Passive Opposition** in Hakkari, Şırnak, Siirt, Batman hinterland and Van hinterland. Set **Passive Support** in Şanlıurfa, Adıyaman, Elazığ and Western Cities. All other domestic spaces are Neutral.
 
-Available: 14 Troops, 8 Police, 4 State Bases, 20 Guerrillas and 9 PKK Bases. All 16 Guards are Out of Play. Starting scores: State 21; PKK 4. Starting margins: −28 and −26. Harm counts: zero each. Şırnak has no Control; all other occupied domestic spaces are State-Controlled.
+Available: 14 Troops, 4 Police, 4 State Bases, 14 Guerrillas and 9 PKK Bases. All 16 Guards are Out of Play. Starting scores: State 21; PKK 6. Starting margins: −28 and −26. Harm counts: zero each. The PKK Controls Batman hinterland. Şırnak, Siirt and Bitlis have no Control. All other occupied domestic spaces are State-Controlled.
 
 ## 10.3 Build the Deck
 

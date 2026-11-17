@@ -1,7 +1,7 @@
 import { expect, it } from "vitest";
 import { codes, engine, op, play, ruleset, setPieces, turnOf } from "../../../test/board.ts";
 const ready = () => {
-  const base = setPieces(setPieces(turnOf("state"), "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 5);
+  const base = setPieces(setPieces(setPieces(turnOf("state"), "hakkari", "pkkBase", 1), "hakkari", "guerrilla", 5), "kdp-zone", "guerrilla", 3);
   return {...base, hands: {...base.hands, pkk: ["DK-015"]}, deck: {...base.deck, currentCard: null, piles: [["DK-001"]]}, turn: {...base.turn, phase: "setup"}};
 };
 it("offers ARGK to the Second Eligible before any card action and consumes the hand on play", () => {

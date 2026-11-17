@@ -31,24 +31,29 @@ Reason: the first draft measured the gap from the start score. The desk test in 
 
 Rough maximums:
 
-1. Total Support or Total Opposition: every domestic space at the Active level = 2 x 32 = 64.
-2. State: 64 + Legitimacy 20 = 84.
-3. PKK: 64 + 12 domestic Bases (all 12 PKK Bases; stacking allows 2 in each of 12 spaces, Western Cities excluded) = 76.
+1. Total Support or Total Opposition: every domestic space at the Active level = 2 x 33 = 66 (Pop 33, DD-22).
+2. State: 66 + Legitimacy 20 = 86.
+3. PKK: 66 + 12 domestic Bases (all 12 PKK Bases; Western Cities excluded) = 78.
 
 Start scores:
 
 1. State: Passive Support in Western Cities (3), Şanlıurfa (4), Elazığ (2) and Adıyaman (2) = Total Support 11. Legitimacy 10. Score 21.
-2. PKK: Passive Opposition in Şırnak (1), Siirt (1) and Hakkari (1) = Total Opposition 3. Domestic Bases 1 (Şırnak). Score 4.
+2. PKK: Passive Opposition in Şırnak (1), Siirt (1), Hakkari (1), Batman hinterland (1) and Van hinterland (1) = Total Opposition 5. Domestic Bases 1 (Şırnak). Score 6.
 
-| Faction | Start | Easy ceiling | Maximum | Headroom | Headroom / 3 | Threshold [tune] |
-|---|---:|---:|---:|---:|---:|---:|
-| State | 21 | 2 x 11 + 10 = 32 | 84 | 52 | 17 | 49 |
-| PKK | 4 | 2 x 3 + 1 = 7 | 76 | 69 | 23 | 30 |
+| Faction | Start | Easy ceiling | Maximum | Headroom | Headroom / 3 | Method value | Threshold [tune] |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| State | 21 | 2 x 11 + 10 = 32 | 86 | 54 | 18 | 50 | 49 |
+| PKK | 6 | 2 x 5 + 1 = 11 | 78 | 67 | 22 | 33 | 32 |
+
+The thresholds in use are designer decisions, not the method values:
+
+1. State 49: kept when DD-22 raised Pop from 32 to 33 (DD-22 item 11).
+2. PKK 32 (designer decision, 17 Nov 2026; `docs/prototype/35-start-setup-options-draft.md`). The method value 33 counts Batman hinterland and Van hinterland as easy ground. Van hinterland, Hakkari and Siirt are not under PKK Control and hold no PKK Base, so the PKK cannot Agitate there at the start (rules 3.6.2). Counting only the spaces where it can (Şırnak, Batman hinterland) gives 31. 32 lies between the two. Confidence: Low. Re-run the qualification set before relying on it.
 
 Example boards that reach a threshold (illustration, not prediction):
 
 1. State 49: Legitimacy 12 and Total Support 37, for example Active Support in Western Cities (6), Şanlıurfa (8), Elazığ (4) and Adıyaman (4), plus Passive Support in Mardin, Batman hinterland and Batman City (4), Diyarbakır City (2), Diyarbakır hinterland (2), Van City, Van hinterland and Bitlis (4) and Ağrı-Iğdır (3).
-2. PKK 30: Active Opposition in Şırnak and Siirt (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin, Batman hinterland and Batman City (4), Muş and Bingöl-Tunceli (4) and Van City, Van hinterland and Bitlis (4) = 22, plus 8 domestic Bases.
+2. PKK 32: Active Opposition in Şırnak and Siirt (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin, Batman hinterland and Batman City (4), Muş and Bingöl-Tunceli (4) and Van City, Van hinterland and Bitlis (4) = 22, plus 10 domestic Bases.
 
 ### 2.3 Short scenarios
 
@@ -56,7 +61,8 @@ Short scenarios use the same method on their own setups (10, sections 3 to 5).
 
 | Scenario | State start | State easy ceiling | State threshold | PKK start | PKK easy ceiling | PKK threshold |
 |---|---:|---:|---:|---:|---:|---:|
-| Campaign and A (1984-1989) | 21 | 32 | 32 + 52/3 = 49 | 4 | 7 | 7 + 69/3 = 30 |
+| Campaign (1984-1999) | 21 | 32 | 49 (method 50, section 2.2) | 6 | 11 | 32 (method 33, section 2.2) |
+| A (1984-1989, archived; old setup, Pop 32) | 21 | 32 | 32 + 52/3 = 49 | 4 | 7 | 7 + 69/3 = 30 |
 | B (1990-1995) | 20 | 2 x 11 + 9 = 31 | 31 + 53/3 = 48 | 14 | 2 x 10 + 4 = 24 | 24 + 52/3 = 41 |
 | C (1993-1999) | 16 | 2 x 9 + 7 = 25 | 25 + 59/3 = 44 | 23 | 2 x 15 + 5 = 35 | 35 + 41/3 = 48 |
 

@@ -3,7 +3,8 @@ import { codes, play, setMarkers, setPieces, turnOf, withCard, withRoll } from "
 import type { GameState } from "../core/types.ts";
 const plan = (locations: string[]) => ({locations, perLocation: {}});
 const fixture = (faction: "state" | "pkk", card: string) => {
-  let s = withRoll(withCard(turnOf(faction), card), 6);
+  // Pinned so these card fixtures do not follow setup changes: no Guerrilla in Van hinterland, 3 in the KDP Zone.
+  let s = withRoll(withCard(setPieces(setPieces(turnOf(faction), "van-rural", "guerrilla", 0), "kdp-zone", "guerrilla", 3), card), 6);
   s = {...s, flags: {...s.flags, law3175: true}, pools: {...s.pools, guards: {available: 16, outOfPlay: 0}}};
   for (const id of ["hakkari", "sirnak", "mardin"]) s = setPieces(s, id, "guards", 2);
   return setMarkers(setMarkers(s, "hakkari", "pkkHarm", 1), "sirnak", "stateHarm", 1);

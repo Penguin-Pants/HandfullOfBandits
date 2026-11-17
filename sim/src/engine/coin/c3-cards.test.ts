@@ -10,7 +10,9 @@ import { sweep } from "./ops/state/sweep.ts";
 // has 1 Police; Legitimacy is set to 5 so no side meets the track ends.
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
 const c3 = (s: GameState): GameState => setTrack(inCampaign(ruleset, s, "C3"), "legitimacy", 5);
-const board = (faction: "state" | "pkk", card: string): GameState => c3(withCard(turnOf(faction), card));
+// Pinned so these card tests do not follow setup changes: Şanlıurfa without Guerrillas, 3 in the KDP Zone.
+const pinned = (s: GameState): GameState => setPieces(setPieces(s, "sanliurfa", "guerrilla", 0), "kdp-zone", "guerrilla", 3);
+const board = (faction: "state" | "pkk", card: string): GameState => c3(withCard(pinned(turnOf(faction)), card));
 const track = (s: GameState, id: string): unknown => s.tracks[id];
 const level = (s: GameState, id: string): number | null | undefined => s.spaces[id]?.level;
 const offices = (s: GameState): string[] => ruleset.spaces.filter((x) => (s.spaces[x.id]?.markers["office"]?.["default"] ?? 0) > 0).map((x) => x.id);

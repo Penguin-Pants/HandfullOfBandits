@@ -1,7 +1,26 @@
 # 35 Start Setup Options (Draft)
 
-Status: draft for a designer decision, 17 Nov 2026. This file changes no rule, package or research file.
+Status: decided, 17 Nov 2026 (DD-25). Sections 1 to 11 are the draft as reviewed. Section 0 records the decision.
 Scope: full campaign 1984 to 1999, 18-space map (DD-22).
+
+## 0. Decision (DD-25)
+
+The designer adopted a setup that is none of H, B or T. It extends H.
+
+| Space | Added pieces | Level | Control | Part A verdict for C1 |
+|---|---|---|---|---|
+| Siirt | 1 Police, 1 Guerrilla | Passive Opposition | none | supported (Moderate) |
+| Batman hinterland | 1 Guerrilla | Passive Opposition | PKK | trace (partisan source) |
+| Batman City | 1 Police | Neutral | State | none |
+| Van City | 1 Police | Neutral | State | none |
+| Van hinterland | 1 Guerrilla | Passive Opposition | State | trace (Low) |
+| Bitlis | 1 Police, 1 Guerrilla | Neutral | none | no record |
+| Şanlıurfa | 1 Guerrilla | Passive Support | State | trace (1979 only) |
+| KDP Zone | 1 Guerrilla | n/a | n/a | consistent with KDP host (Moderate) |
+
+Thresholds: State 49, PKK 32 (method values 50 and 33; 09 section 2.2). Start scores 21 and 6, margins -28 and -26.
+
+Applied to `full-campaign.yaml`, rules 6.2, 7.1, 7.3, 10.1 and 10.2, chapters 09 and 10, the golden replays and the tests. Mechanic tests now pin the board they need, so later setup changes do not break them. The qualification fixtures were adjusted to the PKK threshold 32, so the suite hash changed: re-run qualification before the next experiment.
 
 ## 1. Bottom line
 

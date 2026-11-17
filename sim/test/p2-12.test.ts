@@ -66,11 +66,11 @@ describe("session options (04 s10.3)", () => {
     // Test fixture: the full campaign with a State threshold option, as the archived Scenario B had.
     const listed = { ...ruleset, scenarios: { ...ruleset.scenarios, "full-campaign": { ...full, options: { ...full.options, "threshold.state": 49 } } } };
     const thresholds = (r: typeof ruleset, options: Record<string, string | number>): unknown => withSessionOptions(r, "full-campaign", options).scenarios["full-campaign"]?.thresholds;
-    expect(thresholds(listed, {})).toEqual({ state: 49, pkk: 30 });
-    expect(thresholds(listed, { "threshold.state": "47" })).toEqual({ state: 47, pkk: 30 });
-    expect(thresholds(listed, { "threshold.state": 47 })).toEqual({ state: 47, pkk: 30 });
+    expect(thresholds(listed, {})).toEqual({ state: 49, pkk: 32 });
+    expect(thresholds(listed, { "threshold.state": "47" })).toEqual({ state: 47, pkk: 32 });
+    expect(thresholds(listed, { "threshold.state": 47 })).toEqual({ state: 47, pkk: 32 });
     expect(() => thresholds(listed, { "threshold.state": "x" })).toThrow(/needs an integer/);
-    expect(thresholds(ruleset, { "threshold.state": "47" })).toEqual({ state: 49, pkk: 30 });
+    expect(thresholds(ruleset, { "threshold.state": "47" })).toEqual({ state: 49, pkk: 32 });
   });
 });
 

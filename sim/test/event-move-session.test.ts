@@ -24,7 +24,11 @@ it.each(["hostile", "host"])("stores and replays chosen and legacy faces into a 
     scenario.tracks["posture.puk"] = posture;
     const source = scenario.spaces["kdp-zone"];
     if (source === undefined) throw new Error("Missing KDP setup");
+    // Keep the Guerrilla inventory whole: return what the setup has here beyond these 3 to Available.
+    const before = Number(source.pieces["guerrilla"]);
     source.pieces["guerrilla"] = { underground: 1, active: 2 };
+    const available = (scenario as unknown as { available: Record<string, number> }).available;
+    available["guerrilla"] = Number(available["guerrilla"]) + before - 3;
     writeFileSync(file, stringify(scenario));
     const loaded = loadPackage(readPackageDir(pkg));
     if (!loaded.ok) throw new Error(JSON.stringify(loaded.issues));

@@ -37,7 +37,7 @@ describe("Decision 3 (M-01): the block on State acceptance lasts until the next 
 
 describe("Decision 4 (M-03): one March group is all Guerrillas from one origin to one destination", () => {
   // T-M03: Şanlıurfa at Passive Support with 2 Police; 4 Underground Guerrillas in Mardin.
-  const board = setPieces(setPieces(turnOf("pkk"), "mardin", "guerrilla", 4), "sanliurfa", "police", 2);
+  const board = setPieces(setPieces(setPieces(turnOf("pkk"), "mardin", "guerrilla", 4), "sanliurfa", "police", 2), "sanliurfa", "guerrilla", 0);
   const march = (moves: unknown[]): AnyCommand => op("pkk", "limitedOp", { op: "pkk.march", locations: ["sanliurfa"], perLocation: { sanliurfa: { moves } } });
 
   it("four entries of 1 from the same origin are one group of 4: all arrive Active", () => {

@@ -2254,24 +2254,29 @@
   text: |-
     Rough maximums:
 
-    1. Total Support or Total Opposition: every domestic space at the Active level = 2 x 32 = 64.
-    2. State: 64 + Legitimacy 20 = 84.
-    3. PKK: 64 + 12 domestic Bases (all 12 PKK Bases; stacking allows 2 in each of 12 spaces, Western Cities excluded) = 76.
+    1. Total Support or Total Opposition: every domestic space at the Active level = 2 x 33 = 66 (Pop 33, DD-22).
+    2. State: 66 + Legitimacy 20 = 86.
+    3. PKK: 66 + 12 domestic Bases (all 12 PKK Bases; Western Cities excluded) = 78.
 
     Start scores:
 
     1. State: Passive Support in Western Cities (3), Şanlıurfa (4), Elazığ (2) and Adıyaman (2) = Total Support 11. Legitimacy 10. Score 21.
-    2. PKK: Passive Opposition in Şırnak (1), Siirt (1) and Hakkari (1) = Total Opposition 3. Domestic Bases 1 (Şırnak). Score 4.
+    2. PKK: Passive Opposition in Şırnak (1), Siirt (1), Hakkari (1), Batman hinterland (1) and Van hinterland (1) = Total Opposition 5. Domestic Bases 1 (Şırnak). Score 6.
 
-    | Faction | Start | Easy ceiling | Maximum | Headroom | Headroom / 3 | Threshold [tune] |
-    |---|---:|---:|---:|---:|---:|---:|
-    | State | 21 | 2 x 11 + 10 = 32 | 84 | 52 | 17 | 49 |
-    | PKK | 4 | 2 x 3 + 1 = 7 | 76 | 69 | 23 | 30 |
+    | Faction | Start | Easy ceiling | Maximum | Headroom | Headroom / 3 | Method value | Threshold [tune] |
+    |---|---:|---:|---:|---:|---:|---:|---:|
+    | State | 21 | 2 x 11 + 10 = 32 | 86 | 54 | 18 | 50 | 49 |
+    | PKK | 6 | 2 x 5 + 1 = 11 | 78 | 67 | 22 | 33 | 32 |
+
+    The thresholds in use are designer decisions, not the method values:
+
+    1. State 49: kept when DD-22 raised Pop from 32 to 33 (DD-22 item 11).
+    2. PKK 32 (designer decision, 17 Nov 2026; `docs/prototype/35-start-setup-options-draft.md`). The method value 33 counts Batman hinterland and Van hinterland as easy ground. Van hinterland, Hakkari and Siirt are not under PKK Control and hold no PKK Base, so the PKK cannot Agitate there at the start (rules 3.6.2). Counting only the spaces where it can (Şırnak, Batman hinterland) gives 31. 32 lies between the two. Confidence: Low. Re-run the qualification set before relying on it.
 
     Example boards that reach a threshold (illustration, not prediction):
 
     1. State 49: Legitimacy 12 and Total Support 37, for example Active Support in Western Cities (6), Şanlıurfa (8), Elazığ (4) and Adıyaman (4), plus Passive Support in Mardin, Batman hinterland and Batman City (4), Diyarbakır City (2), Diyarbakır hinterland (2), Van City, Van hinterland and Bitlis (4) and Ağrı-Iğdır (3).
-    2. PKK 30: Active Opposition in Şırnak and Siirt (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin, Batman hinterland and Batman City (4), Muş and Bingöl-Tunceli (4) and Van City, Van hinterland and Bitlis (4) = 22, plus 8 domestic Bases.
+    2. PKK 32: Active Opposition in Şırnak and Siirt (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin, Batman hinterland and Batman City (4), Muş and Bingöl-Tunceli (4) and Van City, Van hinterland and Bitlis (4) = 22, plus 10 domestic Bases.
   subsections: []
 - id: 09 s2.3
   file: 09-victory-and-scoring.md
@@ -2281,7 +2286,8 @@
 
     | Scenario | State start | State easy ceiling | State threshold | PKK start | PKK easy ceiling | PKK threshold |
     |---|---:|---:|---:|---:|---:|---:|
-    | Campaign and A (1984-1989) | 21 | 32 | 32 + 52/3 = 49 | 4 | 7 | 7 + 69/3 = 30 |
+    | Campaign (1984-1999) | 21 | 32 | 49 (method 50, section 2.2) | 6 | 11 | 32 (method 33, section 2.2) |
+    | A (1984-1989, archived; old setup, Pop 32) | 21 | 32 | 32 + 52/3 = 49 | 4 | 7 | 7 + 69/3 = 30 |
     | B (1990-1995) | 20 | 2 x 11 + 9 = 31 | 31 + 53/3 = 48 | 14 | 2 x 10 + 4 = 24 | 24 + 52/3 = 41 |
     | C (1993-1999) | 16 | 2 x 9 + 7 = 25 | 25 + 59/3 = 44 | 23 | 2 x 15 + 5 = 35 | 35 + 41/3 = 48 |
 
@@ -2434,7 +2440,7 @@
   text: |-
     | Scenario | Start | Piles | Propaganda rounds | Victory checks | Thresholds State / PKK |
     |---|---|---|---|---|---|
-    | Full campaign | 15 Aug 1984 | C1 to C5 | 5 | Rounds 2 to 5 | 49 / 30 |
+    | Full campaign | 15 Aug 1984 | C1 to C5 | 5 | Rounds 2 to 5 | 49 / 32 |
     | A: 1984-1989 | 15 Aug 1984 | C1, C2 | 2 | Round 2 (final) | 49 / 30 |
     | B: 1990-1995 | Jan 1990 | C3, C4 | 2 | Round 2 (final) | 48 / 41 |
     | C: 1993-1999 | Jan 1993 | C4, C5 | 2 | Round 2 (final) | 44 / 48 |
@@ -2483,23 +2489,23 @@
     |---|---|---|---|---|
     | Hakkari (M, 1) | 2 Troops, 1 Police | 2 Guerrillas | Passive Opposition | State (3 v 2) |
     | Şırnak (M, 1) | 2 Troops, 1 Police | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
-    | Siirt (M, 1) | none | none | Passive Opposition | none |
+    | Siirt (M, 1) | 1 Police | 1 Guerrilla | Passive Opposition | none (1 v 1) |
     | Mardin (P, 2) | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
-    | Batman hinterland (P, 1) | none | none | Neutral | none |
-    | Batman City (C, 1) | none | none | Neutral | none |
+    | Batman hinterland (P, 1) | none | 1 Guerrilla | Passive Opposition | PKK |
+    | Batman City (C, 1) | 1 Police | none | Neutral | State |
     | Diyarbakır City (C, 2) | 3 Troops, 2 Police, 1 State Base | none | Neutral | State |
     | Diyarbakır hinterland (P, 2) | 1 Police | none | Neutral | State |
-    | Şanlıurfa (P, 4) | 2 Police | none | Passive Support | State |
+    | Şanlıurfa (P, 4) | 2 Police | 1 Guerrilla | Passive Support | State (2 v 1) |
     | Adıyaman (P, 2) | 1 Police | none | Passive Support | State |
     | Elazığ (P, 2) | 1 Troop, 1 Police, 1 State Base | none | Passive Support | State |
     | Bingöl-Tunceli (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
     | Muş (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
-    | Van City (C, 2) | none | none | Neutral | none |
-    | Van hinterland (M, 1) | 2 Troops, 1 Police, 1 State Base | none | Neutral | State |
-    | Bitlis (M, 1) | none | none | Neutral | none |
+    | Van City (C, 2) | 1 Police | none | Neutral | State |
+    | Van hinterland (M, 1) | 2 Troops, 1 Police, 1 State Base | 1 Guerrilla | Passive Opposition | State (4 v 1) |
+    | Bitlis (M, 1) | 1 Police | 1 Guerrilla | Neutral | none (1 v 1) |
     | Ağrı-Iğdır (M, 3) | 1 Troop, 1 Police | none | Neutral | State |
     | Western Cities (C, 3) | 2 Troops, 2 Police, 1 State Base | none | Passive Support | State |
-    | KDP Zone | none | 3 Guerrillas, 1 Base | n/a | n/a |
+    | KDP Zone | none | 4 Guerrillas, 1 Base | n/a | n/a |
     | PUK Zone | none | none | n/a | n/a |
     | Syria-Bekaa | none | 2 Guerrillas, 1 Base, Leadership (Present) | n/a | n/a |
 
@@ -2508,13 +2514,13 @@
     | Piece | On map | Available | Out of Play | Inventory |
     |---|---:|---:|---:|---:|
     | Troops | 16 | 14 | 0 | 30 |
-    | Police | 16 | 8 | 0 | 24 |
+    | Police | 20 | 4 | 0 | 24 |
     | Village Guards | 0 | 0 | 16 | 16 |
     | State Bases | 4 | 4 | 0 | 8 |
-    | Guerrillas | 10 (5 domestic, 5 external) | 20 | 0 | 30 |
+    | Guerrillas | 16 (10 domestic, 6 external) | 14 | 0 | 30 |
     | PKK Bases | 3 (1 domestic, 2 external) | 9 | 0 | 12 |
 
-    Scores: State 11 Support + 10 Legitimacy = 21. PKK 3 Opposition + 1 domestic Base = 4. Harm counts 0 and 0.
+    Scores: State 11 Support + 10 Legitimacy = 21. PKK 5 Opposition + 1 domestic Base = 6. Harm counts 0 and 0.
 
     Basis notes:
 
@@ -2524,6 +2530,9 @@
     4. Passive Opposition in Şırnak, Siirt and Hakkari: the PKK's first operating areas. Confidence: Low.
     5. State Bases at Diyarbakır, Elazığ, Van and Western Cities: design posts. No basing data was researched.
     6. Village Guards start Out of Play until the Law 3175 card [E-0004; DD-08.1].
+    7. Pieces in Siirt: the Eruh attack (15 Aug 1984) and the raid on a police station in Siirt (17 Aug 1984) [E-0003; E-0073]. Confidence: Moderate for places, none for size.
+    8. Van hinterland Guerrilla and Passive Opposition: Çatak (Van) was a planned third target on 15 Aug 1984 that was not attacked (two press summaries, not read in full). Confidence: Low.
+    9. Batman hinterland, Bitlis, Van City and Batman City pieces, the Şanlıurfa Guerrilla and the fourth KDP Zone Guerrilla: designer decisions for play, 17 Nov 2026 (`docs/prototype/35-start-setup-options-draft.md`). The Şanlıurfa Guerrilla has a weak anchor in the 1979 fighting at Siverek [MERIP 1988]. The others have no historical anchor in the repository. Batman City stays Neutral: no evidence of PKK presence there before 1990 was found.
   subsections: []
 - id: 10 s2.3
   file: 10-scenarios-and-setup.md
@@ -2722,7 +2731,7 @@
     | Guards grow from 0 to 10 on the map by 1993 | Setups A to C | 7,933 (1985) to 45,000 (1994) [Q-184; Q-344; F-048] | Moderate for direction |
     | Legitimacy falls 10, 9, 7 across setups | Setups | Control and legitimacy diverged [F-049; F-050] | Low |
     | Hosts move from Host to Restricted or Hostile | Setups and mandatory cards | [F-020; F-022; F-051] | Moderate |
-    | PKK score rises 4, 14, 23 across setups | Setups | Peak strength early 1990s [Q-300] | Low |
+    | PKK score rises 6, 14, 23 across setups | Setups | Peak strength early 1990s [Q-300] | Low |
 
     These anchors set direction only. Piece counts and scores are not measures of the period.
   subsections: []
