@@ -82,11 +82,10 @@
   type: event
   chainAfter: [DK-079]
   unshaded:
-    text: "Dissent notes limit the report: reveal 1 Covert marker at random. The State may then pay 1 Resource to remove 1 State Harm marker."
+    text: "The State may pay 1 Resource to remove 1 State Harm marker. Then dissent notes limit the report: reveal 1 Covert marker at random."
     owner: state
     tier: T3
     effects:
-      - {type: procedure, id: covert.revealRandom}
       - type: conditional
         if: {type: trackAtLeast, track: resources.state, value: 1}
         then:
@@ -97,6 +96,8 @@
             effects:
               - {type: adjustTrack, track: resources.state, delta: -1}
               - {type: removeMarker, marker: stateHarm, space: selected}
+      # The removal comes before the random reveal, so its answer is checked before the command runs (designer, 17 Nov 2026).
+      - {type: procedure, id: covert.revealRandom}
   shaded:
     text: "Reveal up to 2 Covert markers at random. Then apply Guard Abuse (07, section 4.7)."
     owner: pkk

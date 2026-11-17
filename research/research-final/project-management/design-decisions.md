@@ -243,6 +243,14 @@ Approved by the designer on 15 November 2026 after reviewing the mockups in `doc
 
 Reason: the reference map shows individual provinces. Splitting Mardin-Batman, Botan and Van-Bitlis fixes names that were not provinces, adds Van and Batman as Cities, and keeps Pop totals close to the DD-05 weights.
 
+## DD-23 DK-080 asks for the State Harm removal before the reveal
+
+Approved by the designer on 17 November 2026.
+
+1. DK-080 unshaded: the State may pay 1 Resource to remove 1 State Harm marker first. Then 1 Covert marker is revealed at random.
+2. Reason: an Event answer is checked by a dry run that stops at the first random step. With the reveal first, a reveal that created State Harm could make a valid-looking answer fail during execution. Three games of experiment `dd22-pilot-after` stopped this way.
+3. Consequence: a State Harm marker revealed by this card cannot be removed by the same card.
+
 ## Decision record
 
 | ID | Claude input | Sol input | CT lessons | Final |

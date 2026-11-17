@@ -48,7 +48,7 @@ describe("Susurluk Car Crash (DK-079)", () => {
 describe("Susurluk Commission Report (DK-080)", () => {
   const harmed = (faction: "state" | "pkk"): GameState => setMarkers(setMarkers(board(faction, "DK-080"), "diyarbakir-city", "stateHarm", 1), "hakkari", "stateHarm", 1);
 
-  it("U: reveal 1, then the State may pay 1 Resource to remove a State Harm marker", () => {
+  it("U: the State may pay 1 Resource to remove a State Harm marker, then 1 Covert marker is revealed", () => {
     const before = harmed("state");
     const { state } = play(before, event("state", "unshaded", [["diyarbakir-city"]]));
     expect([marker(state, "diyarbakir-city", "stateHarm"), track(state, "resources.state")]).toEqual([0, Number(track(before, "resources.state")) - 1]);
@@ -62,6 +62,15 @@ describe("Susurluk Commission Report (DK-080)", () => {
     const noPolice = setPieces(harmed("state"), "hakkari", "police", 0);
     expect(codes(noPolice, event("state", "unshaded", [["hakkari"]]))).toEqual(["badAnswer"]);
     expect(codes(harmed("state"), event("state", "unshaded", [["hakkari"]]))).toEqual([]);
+  });
+
+  it("U: asks for the State Harm removal before the random reveal, so the answer is checked before the command runs (experiment dd22-pilot-after)", () => {
+    // A Covert marker in a State Controlled space with Police: the reveal turns it into State Harm there.
+    const hidden = setMarkers(harmed("state"), "van-rural", "covert", 1);
+    // The answer names that space. Before the reveal it holds no State Harm, so the answer is refused at validation, not during execution.
+    expect(codes(hidden, event("state", "unshaded", [["van-rural"]]))).toEqual(["badAnswer"]);
+    const { state } = play(hidden, event("state", "unshaded", [["diyarbakir-city"]]));
+    expect([marker(state, "diyarbakir-city", "stateHarm"), marker(state, "van-rural", "covert"), marker(state, "van-rural", "stateHarm")]).toEqual([0, 0, 1]);
   });
 
   it("comes after DK-079 in the deck (08 s8)", () => {
