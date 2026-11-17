@@ -93,11 +93,12 @@ All weights are in `FAMILIES` (`scenario-a.ts`) and are recorded in each experim
 
 | Version | Change | Status |
 |---|---|---|
-| v1 | Table above, uncapped potential | **Frozen roster for the State families** |
-| v2 | Same weights; potential capped by the remaining Propaganda Civic Action caps and Train/Rally opportunities (two shifts per action on half the expected remaining cards) | **Frozen roster for the PKK families** |
+| v1 | Table above, uncapped potential | Frozen roster for the State families until doc 37 |
+| v2 | Same weights; potential capped by the remaining Propaganda Civic Action caps and Train/Rally opportunities (two shifts per action on half the expected remaining cards) | Frozen roster for the PKK families until doc 37 |
 | P-SHIELD@3 | P-POL v2 plus Base protection: Bases with an Underground Guerrilla +1.5, Bases exposed to Troops without one −2, domestic Bases 1.5, Underground 0.15 | Qualified counter to S-MIL; confirmed |
 | S-SIEGE@3 | S-MIL plus value for exposing protected Bases (protected −2, exposed +1.5, Active Guerrillas 0.8) | Qualified counter to P-SHIELD; unsuccessful |
 | S-SPEND@3 | S-POL v2 with a −0.3 weight on unspent Resources | Development attribution probe only |
+| v4 | Designer retune for the full campaign ([37](37-bot-retune-v4.md)): S-POL Legitimacy 0.35; S-CON capped; S-ADAPT own 0.9, opponent 1.15, Bases 3, Guerrillas 1.5, Legitimacy 0.8, capped; P-POL own 1.4, opponent 0.65, Legitimacy 0.3 (against the State); P-EXP own 0.35; PKK families capped. Every family plans 2 moves on 1,800 steps | **Qualified roster, both factions** |
 
 Every version stays registered for paired comparison. Evidence: [report 23](23-scenario-a-automated-playtest-report.md).
 

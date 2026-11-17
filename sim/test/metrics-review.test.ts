@@ -176,7 +176,7 @@ describe("P4-03 CSV export and API", () => {
     const sessionB = playFullCampaign(4);
     const all = await app.inject({ method: "GET", url: "/api/metrics" });
     expect(new Set(all.json<{ rows: { session_id: string }[] }>().rows.map((r) => r.session_id))).toEqual(new Set([sessionA, sessionB]));
-  });
+  }, 60_000); // plays a full campaign: over 5 s under full-suite load on the Windows runner (PR 115 CI)
 
   it("GET /api/metrics.csv sends the CSV as a download; an unknown session is 404", async () => {
     const res = await app.inject({ method: "GET", url: `/api/metrics.csv?sessions=${sessionA}` });

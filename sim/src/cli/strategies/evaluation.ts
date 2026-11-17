@@ -173,6 +173,7 @@ export interface Weights {
   readonly external: number;
   readonly presencePop: number;
   readonly policedPop: number;
+  /** State Legitimacy: a State bot values it, a PKK bot values lowering it (doc 37). */
   readonly legitimacy: number;
   /** P-SURV: scale preservation terms by the expected cards left (conversion timing, 19 s4). */
   readonly convertBy: number;
@@ -206,7 +207,7 @@ export function evaluate(r: Ruleset, s: GameState, faction: FactionId, w: Weight
     w.resources * preserve * (f.resources[faction] ?? 0) +
     w.controlPop * (f.controlPop[faction] ?? 0) - w.oppControlPop * (f.controlPop[other] ?? 0) +
     sign * (w.pkkBases * f.pkkBases + w.protectedBases * f.protectedBases - w.exposedBases * f.exposedBases + w.guerrillas * preserve * f.guerrillas + w.underground * preserve * f.underground + w.external * preserve * f.externalGuerrillas + w.presencePop * f.presencePop) +
-    w.active * f.active + w.policedPop * f.policedPop + w.legitimacy * f.legitimacy;
+    w.active * f.active + w.policedPop * f.policedPop - sign * w.legitimacy * f.legitimacy;
   return {
     value: earned + potential + qualify + shaping,
     components: { earnedMarginDiff: earned, ownMargin: f.margin[faction] ?? 0, oppMargin: f.margin[other] ?? 0, potentialEstimate: potential, qualifyEstimate: qualify, shapingEstimate: shaping, ownHarm: f.harm[faction] ?? 0 },

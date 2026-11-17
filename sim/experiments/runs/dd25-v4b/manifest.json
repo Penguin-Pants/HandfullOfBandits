@@ -1,0 +1,125 @@
+{
+ "schemaVersion": 1,
+ "id": "dd25-v4b",
+ "stage": "pilot",
+ "description": "Roster v4 (designer retune, 2-move planning, 1,800 steps) on the DD-25 package: 4 x 4 cells x 15 development seeds, the same seeds as dd25-pilot (doc 37). Supersedes dd25-v4: the 2-move line keeps sampled means and follows two opponent plays (PR 115 review).",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "5a605bb7eee8ee3d030df879070c562017ca51a8c8bbf9c9b1dff380782ed07f"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 32
+  },
+  "harmLimit": 6,
+  "engineFingerprint": "031594a9234e6c330fa5d8e144880598ffc02e2f8b90e1cfb6cb6b06e2765c3f",
+  "playerFingerprint": "9d3763221f635757e3e6f358154939edf39351dd388ffde6065d8614e1e119c5"
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-POL@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-ADAPT@4"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 7001,
+    "count": 15
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": "dd25-v4"
+}
