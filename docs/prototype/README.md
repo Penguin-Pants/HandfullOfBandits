@@ -45,6 +45,7 @@ Status: Phases 1 and 2 complete. Phases 3a to 3c built; their designer checkpoin
 | [32-c3-cards-draft.md](32-c3-cards-draft.md), [33-c4-cards-draft.md](33-c4-cards-draft.md) | Approved P3b-07 card encoding drafts (DEC-68, DEC-69) |
 | [34-c5-cards-draft.md](34-c5-cards-draft.md) | Approved P3b-07 C5 card encoding draft (DEC-75) |
 | [35-start-setup-options-draft.md](35-start-setup-options-draft.md) | 1984 start setup audit and options; decided as DD-25 |
+| [36-dd25-balance-pilot.md](36-dd25-balance-pilot.md) | DD-25 player review, requalification and bot pilot (`dd25-pilot`) |
 
 ## Method
 

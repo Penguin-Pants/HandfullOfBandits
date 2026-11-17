@@ -1,0 +1,125 @@
+{
+ "schemaVersion": 1,
+ "id": "dd25-pilot-main-players",
+ "stage": "pilot",
+ "description": "Control for dd25-pilot: the same DD-25 package, cells and seeds with the players of main before the DD-25 review (commit ec55833). Separates the setup effect from the player fix.",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "5a605bb7eee8ee3d030df879070c562017ca51a8c8bbf9c9b1dff380782ed07f"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 32
+  },
+  "harmLimit": 6,
+  "engineFingerprint": "031594a9234e6c330fa5d8e144880598ffc02e2f8b90e1cfb6cb6b06e2765c3f",
+  "playerFingerprint": "faad9bf43c7e46863eba73d5bd24b5154af4a28b92958dd21d005afbe18dbc4b"
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-POL@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-ADAPT@2"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 7001,
+    "count": 15
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}

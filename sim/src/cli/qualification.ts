@@ -64,13 +64,14 @@ const phaseAt = (phase: string, round: number, card: string): Edit => (s, r) => 
 const C1 = ["DK-001", "DK-002", "DK-003", "DK-004", "DK-005", "DK-006", "DK-007", "DK-008", "DK-009", "DK-010", "DK-011", "DK-012", "DK-016"];
 const C2_SEEN = ["DK-017", "DK-018", "DK-019", "DK-020", "DK-022", "DK-023", "DK-024", "DK-025", "DK-026", "DK-027", "DK-028", "DK-015"];
 
-/** Last Event card of C2: the only unseen card left is the C2 Propaganda (deducible from public counts). */
+/** Last Event card of C2: the only unseen card left in C2 is its Propaganda (deducible from public counts). */
 function lastCard(actor: FactionId): Edit {
   const other = actor === "state" ? "pkk" : "state";
   return (s) => ({
     ...s,
     turn: { campaign: "C2", propagandaRound: 1, cardIndex: 25, phase: "card", step: 0 },
-    deck: { piles: [[], ["DK-035"]], currentCard: "DK-021", played: [...C1, ...C2_SEEN], setAside: [] },
+    // C3 to C5 piles stay as dealt: the full campaign continues after C2.
+    deck: { piles: [[], ["DK-035"], ...s.deck.piles.slice(2)], currentCard: "DK-021", played: [...C1, ...C2_SEEN], setAside: [] },
     hands: { state: [], pkk: [] },
     initiative: { boxes: { [actor]: null, [other]: "pass" }, firstEligible: other, secondEligible: actor, actedThisCard: [other] },
   });

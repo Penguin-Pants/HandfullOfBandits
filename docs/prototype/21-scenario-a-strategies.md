@@ -72,7 +72,7 @@ File: `sim/src/cli/strategies/evaluation.ts`.
 3. **Re-sampling.** The best six are evaluated on two more determinizations (new deck order and dice) and averaged.
 4. **Adaptive families.** The best four are re-valued after the opponent's best static reply on the same card, sampled over up to 40 opponent candidates with a quota per family.
 
-Value = own margin minus opponent margin (rules 7.3, including 2 per Harm above six) plus estimates: a share of each side's remaining **potential** (Pop per affordable shift: State 2 Resources per shift where it has Control and Police, PKK 1 per shift where it has a Base or Control, with one more income when a non-final Propaganda remains), a bonus for qualifying at a pending opening check (rules 7.2), and family shaping terms. Logged components separate the earned margin difference from these estimates.
+Value = own margin minus opponent margin (rules 7.3, including 2 per Harm above six) plus estimates: a share of each side's remaining **potential** (Pop per affordable shift: State 2 Resources per shift where it has Control and Police, PKK 1 per shift where it has a Base or Control, plus the income of every remaining non-final Propaganda round; the final round pays none), a bonus for qualifying at a pending opening check (rules 7.2), and family shaping terms. Logged components separate the earned margin difference from these estimates.
 
 ## Families (frozen v1)
 
