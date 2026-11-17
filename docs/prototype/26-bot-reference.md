@@ -85,11 +85,11 @@ PKK v2 caps the potential estimate by the remaining conversion opportunities. Co
 | Assumption | Where | Generalizes? |
 |---|---|---|
 | Cards to the final Propaganda, from scenario data (`finalRound`, piles, campaigns) | `evaluation.ts` timing | Yes, reads the scenario |
-| Potential estimate: Civic Action caps and Train/Rally chances of the remaining Propaganda rounds | `evaluation.ts` | Partly; tuned on a 2-round game |
+| Potential estimate: Civic Action caps and Train/Rally chances of the remaining Propaganda rounds | `evaluation.ts` | Partly: since DD-25 review (doc 36) it counts every income before the final round; weights still tuned on a 2-round game |
 | Strategy weights | `FAMILIES` in `scenario-a.ts` | No; tuned on Scenario A pilots |
-| Qualification fixtures (campaign C2, round 1 or 2, named cards) | `qualification.ts` | No |
+| Qualification fixtures (campaign C2, round 1 or 2, named cards) | `qualification.ts` | Partly: C2 fixtures keep the dealt C3 to C5 piles since the DD-25 review (doc 36); positions and named cards are fixed |
 | Coverage mechanics list | `experiment-coverage.ts` (`MECHANICS`) | Yes since 2026-11-13: Village Clearance, Covert Action, ceasefire, Legal Politics, the three later Pivotals, Europe Ban |
-| Space and box names (host zones, Western Cities, Diyarbakir City fallback) | `candidates.ts` | No; map-specific |
+| Space and box names (host zones, Western Cities, Diyarbakir City fallback) | `candidates.ts` | No; map-specific. Cross-Border origins read `crossBorder.origins` since the DD-25 review (doc 36) |
 | Event candidates: answers to each card's questions, 60 question nodes per side | `candidates.ts` | Yes for new cards using existing question types |
 
 ### C3 to C5 decisions (`cand-6`, 2026-11-13)
@@ -117,6 +117,7 @@ Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, 
 | ARGK fixture offered only "decline" | `cand-6` work | The fixture did not test an ARGK play | Fixed in suite 2 |
 | Later free actions of one card were planned on the board before the card | PR 106 review | Area Domination: the Assault after the Sweep was offered only against Guerrillas already Active. The same held for every Event with two free actions | Closed: `engine.questionState` gives the board at the open question, and `eventCompletions` plans each answer on it |
 | A question after a random result (DK-079 and DK-080 shaded with 2 Covert markers) had no answer | Smoke run after `cand-6` | Validation stops at the random reveal, so the generator sent no answer and `engine.apply` threw. One random-bot game failed | Closed: the generator applies a valid command on its sampled board and answers a late question |
+| Potential estimate counted at most one future income; Cross-Border origins literal; C2 fixtures without C3 to C5 piles | DD-25 review (doc 36) | Bots under-valued future income in a 5-round game | Closed: income count from the scenario, origins from `crossBorder.origins`, fixtures keep the piles |
 | Weights and potential estimate not tuned for C3 to C5 | Full campaign port | Choices in C3 to C5 are legal but not informed | Open; needs the designer's view of good play |
 
 ## Part 4: review checklist before the next simulations
@@ -136,7 +137,7 @@ Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, 
 
 ### When the campaign gets longer
 
-- Re-tune the potential estimate: it assumes a 2-round game.
+- Re-tune the potential estimate weights: the income count follows the scenario since doc 36, the weights do not.
 - Recheck P-SURV's conversion timing (expected cards to the final Propaganda).
 - Expect slower runs: game time scales with length; check the 300 s and 2,000-command limits.
 - Consider a larger search budget, since early choices matter longer.
