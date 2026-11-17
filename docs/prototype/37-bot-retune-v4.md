@@ -4,15 +4,17 @@ Date: 2026-11-17. Input: the designer's Bot Tuning Desk export (this session) an
 
 ## 1. Bottom line
 
-With the retuned bots (v4) and the test variant (State threshold 43, PKK threshold 38, +1 Police in Siirt and Bitlis), the State wins **63.3% [58.3%, 69.2%]** of bot games. That is inside the 60 to 65% target. Confidence: medium on the direction, low on the size.
+With the retuned bots (v4) and the test variant (State threshold 43, PKK threshold 38, +1 Police in Siirt and Bitlis), the State wins **58.7% [54.6%, 62.9%]** of bot games. That is just under the 60 to 65% target; the interval reaches into it. Confidence: medium on the direction, low on the size.
 
 | Run | Bots | Rules | State roster average | Early wins (before C3 Propaganda) |
 |---|---|---|---|---|
 | `dd25-pilot` | v1 State, v2 PKK | DD-25 (49/32) | 28.8% [23.8, 34.2] | 8/240 |
-| `dd25-v4` | v4 | DD-25 (49/32) | 43.8% [39.6, 47.5] | 13/240 |
-| `dd25-v4-variant-a` | v4 | variant (43/38, +2 Police) | 63.3% [58.3, 69.2] | 0/240 |
+| `dd25-v4b` | v4 | DD-25 (49/32) | 48.3% [43.8, 52.9] | 2/240 |
+| `dd25-v4b-variant-a` | v4 | variant (43/38, +2 Police) | 58.7% [54.6, 62.9] | 0/240 |
 
-Paired changes (by cell and seed, 2,000-draw seed-cluster bootstrap): v4 bots +15.0 pp [+7.9, +22.5]; variant rules on top +19.6 pp [+12.9, +25.4] (verified, `results.json` of each run).
+Paired changes (by cell and seed, 2,000-draw seed-cluster bootstrap): v4 bots +19.6 pp [+12.9, +26.2]; variant rules on top +10.4 pp [+4.6, +16.2] (verified, `results.json` of each run).
+
+`dd25-v4` (43.8%) and `dd25-v4-variant-a` (63.3%) ran with a defective 2-move line (section 3, finding 5). They stay as records, superseded by the `v4b` runs.
 
 These are bot results on 15 development seeds per cell. They are not balance proof. The variant is a test package, not the game rules: the package, research 09 and the rules text still say 49/32.
 
@@ -32,17 +34,18 @@ Qualification: 8 of 8 v4 players pass, random baselines fail (`sim/experiments/q
 
 ## 3. Findings
 
-1. **The rules variant does most of the work for the target.** On paper (doc 36 re-score with the old bots) 43/38 gave 51%. With v4 bots it gave 63.3%. The two changes stack. Verified (runs above).
-2. **With 43/38 the PKK almost never reaches its threshold.** Only 6 of 240 games end with the PKK at 38 or more, 11 with the State at 43 or more. Most games go to final scoring, where 43/38 acts as a handicap of 6 + 6 points (verified, `results.json`). The thresholds then decide little at the checks: State check wins rose to 66 of 240, PKK check wins fell to 6.
-3. **Early wins are gone in the variant** (0/240). In `dd25-v4` one cell broke the 10 s8 line: S-POL@4 vs P-EXP@4, 11 of 15 PKK wins at the C2 check (verified). P-EXP's own-potential dial fell to 0.35, so it scores now instead of building. Inferred.
-4. **P-EXP and P-SURV stay strong.** In the variant the State wins 6.7% to 46.7% against P-EXP and 26.7% to 60% against P-SURV. P-POL loses every game (100% State in all 4 cells). The roster average hides a wide spread: 6 cells at or above 93%, 4 cells at or below 33%.
-5. **2-move defect found and fixed.** The first version kept unchecked plans in the choice, so a high one-move score hid the opponent's winning reply. The test position (PKK one Rally Base from 32) failed for all four v4 State bots, then passed after the fix. The v1 bots also pass this position, so it does not prove that 2-move planning plays better. No position that separates them was found.
-6. **Cost.** v4 games take a median of 64 s (max 103 s) against 18.8 s for the `dd25-pilot` players. No decision limit was hit. The variant run stopped once at the 2-hour task limit and resumed with `--resume`; all 240 games replay identically.
+1. **Better bots help the State most.** v4 moves the State from 28.8% to 48.3% on the current rules. The variant rules add 10.4 points. Verified (runs above).
+2. **With 43/38 the thresholds decide little at the checks.** The PKK reaches 38 in 9 of 240 games, the State 43 in 5 (at game end). 178 games go to final scoring, where 43/38 acts as a handicap of 6 + 6 points. State check wins: 54; PKK check wins: 8 (verified, `results.json`).
+3. **No early sudden victory.** 0/240 in the variant, 2/240 on the current rules; the 10 s8 line is 1 in 5.
+4. **Wide spread of matchups.** In the variant, 5 cells are at or above 93% State and 5 at or below 27%. P-POL loses every game. P-SURV still beats 3 of 4 State bots. The roster average hides this.
+5. **Two 2-move defects found and fixed.** (a) Unchecked plans won the choice and hid the opponent's winning reply (own two-pass review; regression test). (b) PR 115 review: the deep value overwrote the sampled mean with one sample, and the line stopped after one opponent play although the opponent acts twice after Op Only or Op + SA (05 s2.4). Each fix has a test that fails without it. The first runs, `dd25-v4` and `dd25-v4-variant-a`, used the defective line; the defect also made S-POL lose 11 of 15 games to P-EXP at the C2 check, which is gone in `dd25-v4b`.
+6. **No position found where 2-move planning beats 1-move play.** The Rally Base test position is passed by v1 too. The gain of planning is not proven.
+7. **Cost.** v4 games take a median of 72 to 76 s against 18.8 s for the `dd25-pilot` players. No decision limit was hit.
 
 ## 4. Decide (designer)
 
-1. **Adopt 43/38 and +2 Police as rules?** Recommendation: not yet. It reaches the target, but mostly as a final-scoring handicap (finding 2). A lower PKK threshold with a setup change could give the same share with a working PKK check. Test that before a rules change.
-2. **Accept the spread of matchups?** P-POL and P-ADAPT lose most games; P-EXP and P-SURV still win most. A human PKK that plays like P-EXP or P-SURV still beats the State.
+1. **Adopt 43/38 and +2 Police as rules?** Recommendation: not yet. It gives 58.7%, just under the target, and works mostly as a final-scoring handicap (finding 2). Test a setup change that keeps a working PKK check, with a smaller threshold change.
+2. **Accept the spread of matchups?** A human PKK that plays like P-SURV still beats most State styles.
 3. **Confirm on fresh seeds.** 50 seeds per cell (800 games) before any rules change (doc 19 s7).
 
 ## 5. Two-pass review
@@ -55,12 +58,15 @@ Pass 1, correctness:
 | Fix | Reply sample of 40 missed the winning reply among 135 plays | Replaced by a budget share in family rotation |
 | Fix | PKK Legitimacy dial helped the State (designer intent was the opposite) | Side sign; test isolates the dial |
 | Fix | Test assertion survived without the sign fix (a lower Legitimacy also lowers the State margin) | Rewritten to isolate the dial |
+| Fix | PR 115 review: deep value overwrote the sampled mean | `combineDeep`; test fails without it; runs redone as `v4b` |
+| Fix | PR 115 review: line stopped after one of two consecutive opponent plays | `deepLine` follows up to 2; test fails without it |
+| Fix | PR 115 CI: `metrics-review` full-campaign API test over 5 s on Windows | Explicit 60 s timeout, as for the real-worker tests (doc 22) |
 | Drop | The 2-move reply uses neutral weights, not the opponent's own | Same rule as the existing reply check; the opponent's weights are private |
-| Drop | `dd25-v4-variant-a` resumed once | The runner design; replay of all 240 games is identical |
+| Drop | `dd25-v4-variant-a` resumed once | The runner design; replay of all 240 games is identical. Superseded by `dd25-v4b-variant-a` |
 
 Pass 2, simplicity: one new search helper (`bestPlay`) serves both the reply and the own next play. The old adaptive reply check is kept unchanged for v1 to v3. The test package is a byte copy plus 3 changed lines; git stores the identical map art once.
 
-Validation: `make check` and `make test` pass (110 files, 1,621 tests). Not run: Windows (CI covers it), a separating 2-move fixture (none found).
+Validation: `make check` and `make test` pass (110 files, 1,623 tests). Requalification after the review fixes: 8 of 8 pass. Windows: CI passes. Not run: a separating 2-move fixture (none found).
 
 ## 6. Not changed
 
