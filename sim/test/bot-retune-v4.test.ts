@@ -3,12 +3,12 @@
 import { describe, expect, it } from "vitest";
 import { resolvePlayer } from "../src/cli/player-registry.ts";
 import { evaluate } from "../src/cli/strategies/evaluation.ts";
-import { CURRENT, FAMILIES } from "../src/cli/strategies/scenario-a.ts";
+import { combineDeep, CURRENT, deepLine, FAMILIES } from "../src/cli/strategies/scenario-a.ts";
 import { decisionPoint, generateCandidates } from "../src/cli/candidates.ts";
 import { determinize, observe, SearchRng } from "../src/cli/player-observation.ts";
 import { isObservationPlayer, TransitionBudget } from "../src/cli/players.ts";
 import type { GameState } from "../src/engine/core/types.ts";
-import { engine, ruleset, setLevel, setPieces, setTrack, turnOf } from "./board.ts";
+import { engine, ruleset, setLevel, setPieces, setTrack, turnOf, withCard } from "./board.ts";
 
 const params = (id: string): Readonly<Record<string, unknown>> => resolvePlayer(id).spec.params;
 
@@ -102,5 +102,29 @@ describe("2-move planning sees the opponent's winning reply (doc 37)", () => {
     expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "card", faction: "state" });
     const reply = act(act(s, "S-MIL@4"), "P-POL@2");
     expect(reply.ended?.winner).not.toBe("pkk");
+  }, 300_000);
+});
+
+describe("2-move line review fixes (PR 115)", () => {
+  it("keeps the sampled mean and adds only what the 2-move line changed", () => {
+    // Samples 12, -12, -12 (mean -4); the 2-move line changes nothing on the base sample.
+    expect(combineDeep(-4, 12, 12)).toBe(-4);
+    expect(combineDeep(-4, 12, 6)).toBe(-10);
+  });
+
+  it("follows two opponent plays after an Op Only play to reach the next own play", () => {
+    let s = withCard(setTrack(setTrack(turnOf("state"), "resources.state", 30), "resources.pkk", 10), "DK-014");
+    const op = generateCandidates(engine, ruleset, s, "card", "state").candidates.find((c) => c.command["box"] === "opOnly");
+    if (op === undefined) throw new Error("no Op Only plan");
+    const applied = engine.apply(ruleset, s, op.command);
+    if (!applied.ok) throw new Error("illegal");
+    s = applied.transition.state;
+    const played = s.deck.played.length;
+    expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "card", faction: "pkk" });
+    const ctx = { engine, ruleset, rng: new SearchRng(1), budget: new TransitionBudget(engine, 100_000) };
+    const w = resolvePlayer("S-MIL@4").spec.params as unknown as Parameters<typeof evaluate>[3];
+    const end = deepLine(ctx, s, "state", w, 90_000);
+    // PKK ends this card; on the next card the PKK acts first and the State second, which ends it too.
+    expect(end.deck.played.length - played).toBe(2);
   }, 300_000);
 });

@@ -176,8 +176,10 @@ const RESERVE = 0.25;
 const DEEP_RESERVE = 0.65;
 /** Leaders checked by the deep line. */
 const DEEP_LEADERS = 3;
-/** Share of a leader's deep budget for the opponent's reply; the rest is for the own next play. */
+/** Share of a leader's deep budget for the opponent's replies; the rest is for the own next play. */
 const REPLY_SHARE = 0.75;
+/** Opponent plays at most before the next own play: the rest of this card and the first of the next. */
+const MAX_REPLIES = 2;
 
 /**
  * Best card play of `faction` from `s` by `weights`, trying plays in family rotation until the
@@ -202,24 +204,32 @@ function bestPlay(ctx: SearchContext, s: GameState, faction: FactionId, weights:
  * next, then this faction's own best next card play, then the evaluation. It stops at the first
  * decision that is not a card play (Propaganda, Pivotal, Event question) or when the budget runs low.
  */
-function deepLine(ctx: SearchContext, after: GameState, faction: FactionId, w: Weights, share: number): GameState {
+export function deepLine(ctx: SearchContext, after: GameState, faction: FactionId, w: Weights, share: number): GameState {
   const end = Math.max(0, ctx.budget.remaining - share);
+  const own = Math.floor(share * (1 - REPLY_SHARE));
   let s = after;
-  let replied = false;
-  for (let step = 0; step < 3 && s.ended === null; step++) { // literal-ok: reply then own move, one spare step
+  // After Op Only or Op + SA by the First Eligible, the opponent acts last on this card and first
+  // on the next (05 s2.4), so up to two opponent plays come before the next own play.
+  for (let replies = 0; replies <= MAX_REPLIES && s.ended === null; ) {
     const point = decisionPoint(ctx.engine, ctx.ruleset, s);
     if (point.kind !== "card") break;
-    if (point.faction !== faction) {
-      if (replied) break;
-      const next = bestPlay(ctx, s, point.faction, BASE, end + Math.floor(share * (1 - REPLY_SHARE)));
-      if (next === s) break;
-      s = next;
-      replied = true;
-      continue;
-    }
-    return bestPlay(ctx, s, faction, w, end);
+    if (point.faction === faction) return bestPlay(ctx, s, faction, w, end);
+    if (replies === MAX_REPLIES) break;
+    const left = Math.max(0, ctx.budget.remaining - end - own);
+    const next = bestPlay(ctx, s, point.faction, BASE, ctx.budget.remaining - Math.floor(left / (MAX_REPLIES - replies)));
+    if (next === s) break;
+    s = next;
+    replies++;
   }
   return s;
+}
+
+/**
+ * A plan's 2-move value: its sampled one-move mean plus what the 2-move line changed on the base
+ * sample. Keeps the re-sampled dice and decks in the ranking (PR 115 review).
+ */
+export function combineDeep(sampledMean: number, oneMoveOnBase: number, deepOnBase: number): number {
+  return sampledMean + (deepOnBase - oneMoveOnBase);
 }
 
 function searchDecide(family: Family, request: DecisionRequest, ctx: SearchContext): Choice {
@@ -269,9 +279,10 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
         checked.add(s);
         if (after.ended !== null) continue;
         const share = Math.floor(ctx.budget.remaining / (leaders.length - i));
+        const one = evaluate(ctx.ruleset, after, request.faction, w).value;
         const e = evaluate(ctx.ruleset, deepLine(ctx, after, request.faction, w, share), request.faction, w);
-        if (e.value !== s.value) changed++;
-        s.value = e.value;
+        if (e.value !== one) changed++;
+        s.value = combineDeep(s.value, one, e.value);
         s.components = { ...e.components, lookahead: 2 };
       }
       // Only plans with the 2-move check compete: an unchecked plan's one-move value hides the reply.
