@@ -55,10 +55,10 @@ export async function nativeChecks({chromium,base,shots,check}) {
   await page.getByRole('button',{name:'Limited Op',exact:true}).click();
   await page.getByRole('button',{name:'March',exact:true}).click();
   const centre=async name=>{const b=await page.locator('text.map-label',{hasText:name}).first().boundingBox();return {x:b.x+b.width/2,y:b.y+b.height/2};};
-  const from=await centre('Hakkari'),to=await centre('Botan');
+  const from=await centre('Hakkari'),to=await centre('Şırnak');
   await page.mouse.move(from.x,from.y);await page.mouse.down();await page.mouse.move(to.x,to.y,{steps:8});await page.mouse.up();
-  const move=page.getByLabel('Move Hakkari to Botan',{exact:true});await move.waitFor();await page.getByLabel('Preview',{exact:true}).waitFor();
-  await page.getByLabel('Find space',{exact:true}).selectOption('botan');
+  const move=page.getByLabel('Move Hakkari to Şırnak',{exact:true});await move.waitFor();await page.getByLabel('Preview',{exact:true}).waitFor();
+  await page.getByLabel('Find space',{exact:true}).selectOption('sirnak');
   await page.getByRole('button',{name:'Political',exact:true}).click();
   const camera=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox'),draft=await move.textContent();
   await page.locator('[aria-label="Cards"] > summary').click();
@@ -85,7 +85,7 @@ export async function nativeChecks({chromium,base,shots,check}) {
   await page.keyboard.press('Escape'); // Close the note, after the browser has exited.
   await page.getByRole('button',{name:'Show actions',exact:true}).click();
   check(await move.textContent()===draft&&await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')===camera,'draft and camera survive native fullscreen and sidebar changes');
-  check(await page.getByRole('button',{name:'Botan',exact:true}).getAttribute('aria-pressed')==='true'&&await page.getByRole('button',{name:'Political',exact:true}).getAttribute('aria-pressed')==='true','selection and display layer survive fullscreen');
+  check(await page.getByRole('button',{name:'Şırnak',exact:true}).getAttribute('aria-pressed')==='true'&&await page.getByRole('button',{name:'Political',exact:true}).getAttribute('aria-pressed')==='true','selection and display layer survive fullscreen');
   check(await page.getByLabel('Cards',{exact:true}).evaluate(el=>el.open),'supporting disclosure stays open through layout changes');
   await page.getByRole('button',{name:'Fullscreen',exact:true}).click();await page.waitForFunction(()=>!!document.fullscreenElement);
   await page.getByRole('button',{name:'Exit fullscreen',exact:true}).waitFor();

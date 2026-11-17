@@ -3,7 +3,7 @@ import { codes, inCampaign, op, pieces, play, ruleset, setMarkers, setPieces, se
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-EVT per side for the C5 cards (11 P3b-07; encoding docs/prototype/34, DEC-75).
-// S0 board in C5: Diyarbakır City has State Control and Police; Botan has Police but no Control;
+// S0 board in C5: Diyarbakır City has State Control and Police; Şırnak has Police but no Control;
 // Hakkari has State Control and Police, removed in tests that need a Control space without Police.
 // Legitimacy is 5 so no side meets the track ends.
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
@@ -15,7 +15,7 @@ const onMap = (s: GameState, m: string): number => ruleset.spaces.reduce((a, x) 
 const units = (s: GameState, id: string, piece: string): number => Object.values(pieces(s, id, piece)).reduce((a, n) => a + n, 0);
 const filed = (s: GameState): boolean => s.flags["closureCase"] === true;
 const legal = (s: GameState, value: string): GameState => setTrack(s, "legalSpace", value);
-const covert = (s: GameState, n: number): GameState => ["hakkari", "botan", "dersim"].slice(0, n).reduce((b, id) => setMarkers(b, id, "covert", 1), s);
+const covert = (s: GameState, n: number): GameState => ["hakkari", "sirnak", "bingol-tunceli"].slice(0, n).reduce((b, id) => setMarkers(b, id, "covert", 1), s);
 const STOP = 1;
 const SECOND = 0;
 
@@ -48,7 +48,7 @@ describe("Susurluk Car Crash (DK-079)", () => {
 describe("Susurluk Commission Report (DK-080)", () => {
   const harmed = (faction: "state" | "pkk"): GameState => setMarkers(setMarkers(board(faction, "DK-080"), "diyarbakir-city", "stateHarm", 1), "hakkari", "stateHarm", 1);
 
-  it("U: reveal 1, then the State may pay 1 Resource to remove a State Harm marker", () => {
+  it("U: the State may pay 1 Resource to remove a State Harm marker, then 1 Covert marker is revealed", () => {
     const before = harmed("state");
     const { state } = play(before, event("state", "unshaded", [["diyarbakir-city"]]));
     expect([marker(state, "diyarbakir-city", "stateHarm"), track(state, "resources.state")]).toEqual([0, Number(track(before, "resources.state")) - 1]);
@@ -57,11 +57,20 @@ describe("Susurluk Commission Report (DK-080)", () => {
   });
 
   it("U: the removal needs State Control and Police, as Civic Action (DEC-75 point 11)", () => {
-    const noControl = setMarkers(harmed("state"), "botan", "stateHarm", 1);
-    expect(codes(noControl, event("state", "unshaded", [["botan"]]))).toEqual(["badAnswer"]);
+    const noControl = setMarkers(harmed("state"), "sirnak", "stateHarm", 1);
+    expect(codes(noControl, event("state", "unshaded", [["sirnak"]]))).toEqual(["badAnswer"]);
     const noPolice = setPieces(harmed("state"), "hakkari", "police", 0);
     expect(codes(noPolice, event("state", "unshaded", [["hakkari"]]))).toEqual(["badAnswer"]);
     expect(codes(harmed("state"), event("state", "unshaded", [["hakkari"]]))).toEqual([]);
+  });
+
+  it("U: asks for the State Harm removal before the random reveal, so the answer is checked before the command runs (experiment dd22-pilot-after)", () => {
+    // A Covert marker in a State Controlled space with Police: the reveal turns it into State Harm there.
+    const hidden = setMarkers(harmed("state"), "van-rural", "covert", 1);
+    // The answer names that space. Before the reveal it holds no State Harm, so the answer is refused at validation, not during execution.
+    expect(codes(hidden, event("state", "unshaded", [["van-rural"]]))).toEqual(["badAnswer"]);
+    const { state } = play(hidden, event("state", "unshaded", [["diyarbakir-city"]]));
+    expect([marker(state, "diyarbakir-city", "stateHarm"), marker(state, "van-rural", "covert"), marker(state, "van-rural", "stateHarm")]).toEqual([0, 0, 1]);
   });
 
   it("comes after DK-079 in the deck (08 s8)", () => {
@@ -74,11 +83,11 @@ describe("Susurluk Commission Report (DK-080)", () => {
   });
 
   it("S: reveals (stop after 1 or reveal 2), then Guard Abuse in every Guard space with Harm (DEC-57)", () => {
-    const withGuards = ["hakkari", "botan", "dersim", "agri"].reduce((g, id) => setPieces(g, id, "guards", 1), covert(board("pkk", "DK-080"), 2));
-    const guarded = setTrack(setMarkers(withGuards, "dersim", "pkkHarm", 1), "legitimacy", 10);
+    const withGuards = ["hakkari", "sirnak", "bingol-tunceli", "agri-igdir"].reduce((g, id) => setPieces(g, id, "guards", 1), covert(board("pkk", "DK-080"), 2));
+    const guarded = setTrack(setMarkers(withGuards, "bingol-tunceli", "pkkHarm", 1), "legitimacy", 10);
     const { state } = play(guarded, event("pkk", "shaded", [SECOND]));
-    // Hakkari and Botan now hold State Harm from the reveals, Dersim PKK Harm; Ağrı has no Harm and keeps its Guard.
-    expect([onMap(state, "covert"), units(state, "hakkari", "guards"), units(state, "botan", "guards"), units(state, "dersim", "guards"), units(state, "agri", "guards")]).toEqual([0, 0, 0, 0, 1]);
+    // Hakkari and Şırnak now hold State Harm from the reveals, Bingöl-Tunceli PKK Harm; Ağrı-Iğdır has no Harm and keeps its Guard.
+    expect([onMap(state, "covert"), units(state, "hakkari", "guards"), units(state, "sirnak", "guards"), units(state, "bingol-tunceli", "guards"), units(state, "agri-igdir", "guards")]).toEqual([0, 0, 0, 0, 1]);
     // Two reveals at -2 each, then Guard Abuse -1 in each of 3 spaces.
     expect(track(state, "legitimacy")).toBe(10 - 2 * 2 - 3);
     const one = play(guarded, event("pkk", "shaded", [STOP])).state;
@@ -120,9 +129,9 @@ describe("HADEP Congress Flag Case (DK-085)", () => {
 
 describe("Strasbourg Judgments (DK-086)", () => {
   it("U: State Resources -3 and 1 State Harm marker removed (executor's choice)", () => {
-    const before = setTrack(setMarkers(setMarkers(board("state", "DK-086"), "hakkari", "stateHarm", 1), "botan", "stateHarm", 1), "resources.state", 10);
+    const before = setTrack(setMarkers(setMarkers(board("state", "DK-086"), "hakkari", "stateHarm", 1), "sirnak", "stateHarm", 1), "resources.state", 10);
     const { state } = play(before, event("state", "unshaded", [["hakkari"]]));
-    expect([marker(state, "hakkari", "stateHarm"), marker(state, "botan", "stateHarm"), track(state, "resources.state")]).toEqual([0, 1, 7]);
+    expect([marker(state, "hakkari", "stateHarm"), marker(state, "sirnak", "stateHarm"), track(state, "resources.state")]).toEqual([0, 1, 7]);
   });
 
   it("U: with 2 Resources, Resources stop at 0 and the removal still applies (05 s5 item 3)", () => {
@@ -138,7 +147,7 @@ describe("Strasbourg Judgments (DK-086)", () => {
 
   it("S: Legitimacy -1 per 2 State Harm markers, not Disputed, round down, maximum -3; Europe +1", () => {
     const after = (n: number): unknown => {
-      const ids = ["hakkari", "botan", "dersim", "van-bitlis", "agri", "mardin-batman", "diyarbakir-rural", "bingol-mus"].slice(0, n);
+      const ids = ["hakkari", "sirnak", "bingol-tunceli", "van-rural", "agri-igdir", "mardin", "diyarbakir-rural", "mus"].slice(0, n);
       const s = ids.reduce((b, id) => setMarkers(b, id, "stateHarm", 1), setMarkers(board("pkk", "DK-086"), "diyarbakir-city", "disputedHarm", 3));
       return track(play(s, event("pkk", "shaded")).state, "legitimacy");
     };
@@ -148,7 +157,7 @@ describe("Strasbourg Judgments (DK-086)", () => {
 });
 
 describe("Migration Commission Report (DK-087)", () => {
-  const received = (n = 1): GameState => setMarkers(setMarkers(board("state", "DK-087"), "diyarbakir-city", "reception", n), "botan", "reception", 1);
+  const received = (n = 1): GameState => setMarkers(setMarkers(board("state", "DK-087"), "diyarbakir-city", "reception", n), "sirnak", "reception", 1);
 
   it("U: Relief for up to 2 Reception markers at 1 Resource each, both from one space allowed", () => {
     const before = received(2);
@@ -159,7 +168,7 @@ describe("Migration Commission Report (DK-087)", () => {
   });
 
   it("U: Relief needs State Control and Police, as Civic Action (DEC-75 point 11)", () => {
-    expect(codes(received(), event("state", "unshaded", [["botan"], []]))).toEqual(["badAnswer"]);
+    expect(codes(received(), event("state", "unshaded", [["sirnak"], []]))).toEqual(["badAnswer"]);
     const noPolice = setPieces(setMarkers(received(), "hakkari", "reception", 1), "hakkari", "police", 0);
     expect(codes(noPolice, event("state", "unshaded", [["hakkari"], []]))).toEqual(["badAnswer"]);
   });
@@ -170,7 +179,7 @@ describe("Migration Commission Report (DK-087)", () => {
   });
 
   it("S: Legitimacy -1 per 2 Displacement markers (New and Old); 1 Reception marker in Western Cities", () => {
-    const displaced = setMarkers(setMarkers(board("pkk", "DK-087"), "hakkari", "displacement", 1, "new"), "botan", "displacement", 1, "old");
+    const displaced = setMarkers(setMarkers(board("pkk", "DK-087"), "hakkari", "displacement", 1, "new"), "sirnak", "displacement", 1, "old");
     const { state } = play(displaced, event("pkk", "shaded"));
     expect([track(state, "legitimacy"), marker(state, "western-cities", "reception")]).toEqual([4, 1]);
   });
@@ -306,7 +315,7 @@ describe("Adana Minutes (DK-091)", () => {
     const hostile = play(leader(setTrack(start, "posture.syria", "restricted"), "present"), event("state", "unshaded")).state;
     const after = play(withCard({ ...hostile, turn: start.turn, initiative: start.initiative }, "DK-091"), event("state", "unshaded")).state;
     const pkk = { ...turnOf("pkk"), spaces: after.spaces, tracks: after.tracks, pools: after.pools, modifiers: after.modifiers };
-    const pressure = op("pkk", "opSa", { op: "pkk.rally", locations: ["botan"], sa: { action: "pkk.host-pressure", timing: "after", locations: ["syria-bekaa"] } });
+    const pressure = op("pkk", "opSa", { op: "pkk.rally", locations: ["sirnak"], sa: { action: "pkk.host-pressure", timing: "after", locations: ["syria-bekaa"] } });
     expect([track(pkk, "posture.syria"), units(pkk, "syria-bekaa", "guerrilla") > 0]).toEqual(["hostile", true]);
     expect(codes(pkk, pressure)).toContain("leadershipAbroad");
   });
@@ -361,19 +370,19 @@ const zoneAssault = () => ({ locations: ["kdp-zone"], perLocation: {}, sa: { loc
 const declared = (s: GameState): boolean => s.flags["ceasefireDeclaredByPkk"] === true;
 
 describe("Suicide Attacks (DK-078)", () => {
-  it("U: PKK Harm in Dersim, Europe -1, then a free Garrison", () => {
+  it("U: PKK Harm in Bingöl-Tunceli, Europe -1, then a free Garrison", () => {
     const s = setTrack(board("state", "DK-078"), "europe", 2);
     // 2 Police in Mountain Hakkari activate 1 Guerrilla.
-    const garrison = { locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "van-bitlis", count: 1 }] } } };
+    const garrison = { locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "van-rural", count: 1 }] } } };
     const { state } = play(s, event("state", "unshaded", [garrison]));
-    expect([marker(state, "dersim", "pkkHarm"), track(state, "europe"), track(state, "resources.state")]).toEqual([1, 1, track(s, "resources.state")]);
+    expect([marker(state, "bingol-tunceli", "pkkHarm"), track(state, "europe"), track(state, "resources.state")]).toEqual([1, 1, track(s, "resources.state")]);
     expect(pieces(state, "hakkari", "guerrilla")["active"] ?? 0).toBeGreaterThan(pieces(s, "hakkari", "guerrilla")["active"] ?? 0);
   });
 
-  it("S: block only: PKK Harm in Dersim, Europe unchanged", () => {
+  it("S: block only: PKK Harm in Bingöl-Tunceli, Europe unchanged", () => {
     expect(ruleset.cards["DK-078"]?.shaded?.blockOnly).toBe(true);
     const { state } = play(board("pkk", "DK-078"), event("pkk", "shaded"));
-    expect([marker(state, "dersim", "pkkHarm"), track(state, "europe")]).toEqual([1, 1]);
+    expect([marker(state, "bingol-tunceli", "pkkHarm"), track(state, "europe")]).toEqual([1, 1]);
   });
 });
 
@@ -413,7 +422,7 @@ describe("US Designates the PKK (DK-083)", () => {
 
   it("S: a free Rally on the Europe track; at the Ban cap it is refused and may be skipped", () => {
     expect(track(play(board("pkk", "DK-083"), event("pkk", "shaded", [plan(["europe"])])).state, "europe")).toBe(2);
-    expect(codes(board("pkk", "DK-083"), event("pkk", "shaded", [plan(["botan"])]))).toContain("eventConstraint");
+    expect(codes(board("pkk", "DK-083"), event("pkk", "shaded", [plan(["sirnak"])]))).toContain("eventConstraint");
     const capped = setTrack(setMarkers(board("pkk", "DK-083"), "europe", "europeBan", 1), "europe", 3);
     expect(codes(capped, event("pkk", "shaded", [plan(["europe"])]))).toContain("rallyEuropeCap");
     expect(track(play(capped, event("pkk", "shaded", [null])).state, "europe")).toBe(3);
@@ -423,10 +432,10 @@ describe("US Designates the PKK (DK-083)", () => {
 describe("Third Unilateral Ceasefire (DK-088)", () => {
   it("U: a free Sweep in up to 2 spaces", () => {
     const s = board("state", "DK-088");
-    const { state } = play(s, event("state", "unshaded", [plan(["hakkari", "botan"])]));
+    const { state } = play(s, event("state", "unshaded", [plan(["hakkari", "sirnak"])]));
     expect(track(state, "resources.state")).toBe(track(s, "resources.state"));
     expect(pieces(state, "hakkari", "guerrilla")["active"] ?? 0).toBeGreaterThan(pieces(s, "hakkari", "guerrilla")["active"] ?? 0);
-    expect(codes(s, event("state", "unshaded", [plan(["hakkari", "botan", "dersim"])]))).toEqual(["eventConstraint"]);
+    expect(codes(s, event("state", "unshaded", [plan(["hakkari", "sirnak", "bingol-tunceli"])]))).toEqual(["eventConstraint"]);
   });
 
   it("S: a PKK declaration (Europe +1); PKK Resources +2", () => {
@@ -455,16 +464,16 @@ describe("Leader Calls for Withdrawal (DK-097)", () => {
   it("U: a space with only a PKK Base is refused (activeGuerrillas, gap C3)", () => {
     const s = setPieces(setPieces(board("state", "DK-097"), "hakkari", "guerrilla", 0), "hakkari", "pkkBase", 1);
     expect(codes(s, event("state", "unshaded", [plan(["hakkari"])]))).toEqual(["eventConstraint"]);
-    const two = setPieces(target(), "botan", "guerrilla", 1, "active");
-    expect(codes(two, event("state", "unshaded", [plan(["hakkari", "botan"])]))).toEqual(["eventConstraint"]);
+    const two = setPieces(target(), "sirnak", "guerrilla", 1, "active");
+    expect(codes(two, event("state", "unshaded", [plan(["hakkari", "sirnak"])]))).toEqual(["eventConstraint"]);
   });
 
-  // Hakkari holds only Active Guerrillas (3) to show the flip; Botan keeps its 2 Underground ones.
+  // Hakkari holds only Active Guerrillas (3) to show the flip; Şırnak keeps its 2 Underground ones.
   const domestic = (posture: string): GameState => setTrack(setPieces(setPieces(setPieces(board("pkk", "DK-097"), "hakkari", "guerrilla", 0), "hakkari", "guerrilla", 3, "active"), "kdp-zone", "guerrilla", 0), "posture.kdp", posture);
 
   it("S: a PKK declaration, then up to 4 Guerrillas from domestic spaces to one open zone, Underground", () => {
     const s = domestic("restricted");
-    const { state } = play(s, event("pkk", "shaded", [KDP, 3, ["hakkari"], ["hakkari"], ["botan"]]));
+    const { state } = play(s, event("pkk", "shaded", [KDP, 3, ["hakkari"], ["hakkari"], ["sirnak"]]));
     expect([track(state, "ceasefire"), declared(state), track(state, "europe")]).toEqual(["declared", true, 2]);
     expect([pieces(state, "kdp-zone", "guerrilla")["underground"], pieces(state, "kdp-zone", "guerrilla")["active"] ?? 0]).toEqual([3, 0]);
     expect(units(state, "hakkari", "guerrilla")).toBe(units(s, "hakkari", "guerrilla") - 2);
@@ -547,11 +556,11 @@ describe("HADEP Wins Local Offices (DK-094)", () => {
   });
 
   it("S: stops at the Office limit plus 1 (gap C4)", () => {
-    const three = offices(legal(board("pkk", "DK-094"), "prosecuted"), ["diyarbakir-city", "western-cities", "mardin-batman"]);
+    const three = offices(legal(board("pkk", "DK-094"), "prosecuted"), ["diyarbakir-city", "western-cities", "mardin"]);
     expect(onMap(play(three, event("pkk", "shaded")).state, "office")).toBe(4);
-    const four = offices(legal(board("pkk", "DK-094"), "open"), ["diyarbakir-city", "western-cities", "mardin-batman", "van-bitlis"]);
+    const four = offices(legal(board("pkk", "DK-094"), "open"), ["diyarbakir-city", "western-cities", "mardin", "van-rural"]);
     expect(onMap(play(four, event("pkk", "shaded")).state, "office")).toBe(5);
-    const five = offices(legal(board("pkk", "DK-094"), "prosecuted"), ["diyarbakir-city", "western-cities", "mardin-batman", "van-bitlis", "sanliurfa"]);
+    const five = offices(legal(board("pkk", "DK-094"), "prosecuted"), ["diyarbakir-city", "western-cities", "mardin", "van-rural", "sanliurfa"]);
     expect(onMap(play(five, event("pkk", "shaded")).state, "office")).toBe(5);
   });
 
@@ -577,8 +586,8 @@ describe("Return to Village Project (DK-095)", () => {
   });
 
   it("U: the removal needs State Control and Police, as Civic Action (DEC-75 point 11)", () => {
-    const noControl = setMarkers(displaced("state"), "botan", "displacement", 1, "old");
-    expect(codes(noControl, event("state", "unshaded", [["botan"]]))).toEqual(["badAnswer"]);
+    const noControl = setMarkers(displaced("state"), "sirnak", "displacement", 1, "old");
+    expect(codes(noControl, event("state", "unshaded", [["sirnak"]]))).toEqual(["badAnswer"]);
     const noPolice = setPieces(displaced("state"), "hakkari", "police", 0);
     expect(codes(noPolice, event("state", "unshaded", [["hakkari"]]))).toEqual(["badAnswer"]);
   });
@@ -589,24 +598,24 @@ describe("Return to Village Project (DK-095)", () => {
   });
 
   it("S: Legitimacy -1 with 3 or more Displacement markers on the map, New and Old (gap C5)", () => {
-    const three = setMarkers(displaced("pkk"), "botan", "displacement", 1, "old");
+    const three = setMarkers(displaced("pkk"), "sirnak", "displacement", 1, "old");
     expect(track(play(three, event("pkk", "shaded")).state, "legitimacy")).toBe(4);
     expect(track(play(displaced("pkk"), event("pkk", "shaded")).state, "legitimacy")).toBe(5);
   });
 });
 
 describe("Repentance Law (DK-096)", () => {
-  // Hakkari: 2 Active Guerrillas; Botan: 1 Active and its Underground ones; KDP Zone: 2 Active.
+  // Hakkari: 2 Active Guerrillas; Şırnak: 1 Active and its Underground ones; KDP Zone: 2 Active.
   const fighters = (faction: "state" | "pkk"): GameState => {
     const s = setPieces(setPieces(board(faction, "DK-096"), "hakkari", "guerrilla", 0), "hakkari", "guerrilla", 2, "active");
-    return setPieces(setPieces(setPieces(s, "botan", "guerrilla", 1, "active"), "kdp-zone", "guerrilla", 0), "kdp-zone", "guerrilla", 2, "active");
+    return setPieces(setPieces(setPieces(s, "sirnak", "guerrilla", 1, "active"), "kdp-zone", "guerrilla", 0), "kdp-zone", "guerrilla", 2, "active");
   };
   const face = (s: GameState, id: string, f: string): number => pieces(s, id, "guerrilla")[f] ?? 0;
 
   it("U: up to 3 Active Guerrillas from domestic spaces to Available; Legitimacy +1", () => {
     const s = fighters("state");
-    const { state } = play(s, event("state", "unshaded", [3, ["hakkari"], ["hakkari"], ["botan"]]));
-    expect([face(state, "hakkari", "active"), face(state, "botan", "active"), face(state, "botan", "underground"), track(state, "legitimacy")]).toEqual([0, 0, face(s, "botan", "underground"), 6]);
+    const { state } = play(s, event("state", "unshaded", [3, ["hakkari"], ["hakkari"], ["sirnak"]]));
+    expect([face(state, "hakkari", "active"), face(state, "sirnak", "active"), face(state, "sirnak", "underground"), track(state, "legitimacy")]).toEqual([0, 0, face(s, "sirnak", "underground"), 6]);
     expect(state.pools["guerrilla"]?.["available"]).toBe((s.pools["guerrilla"]?.["available"] ?? 0) + 3);
   });
 
@@ -617,9 +626,9 @@ describe("Repentance Law (DK-096)", () => {
   it("S: PKK Resources +1; all Guerrillas flip Underground in up to 2 spaces", () => {
     const s = setTrack(fighters("pkk"), "posture.kdp", "tolerant");
     const { state } = play(s, event("pkk", "shaded", [["hakkari", "kdp-zone"]]));
-    expect([face(state, "hakkari", "active"), face(state, "hakkari", "underground"), face(state, "kdp-zone", "underground"), face(state, "botan", "active")]).toEqual([0, 2, 2, 1]);
+    expect([face(state, "hakkari", "active"), face(state, "hakkari", "underground"), face(state, "kdp-zone", "underground"), face(state, "sirnak", "active")]).toEqual([0, 2, 2, 1]);
     expect(track(state, "resources.pkk")).toBe(Number(track(s, "resources.pkk")) + 1);
-    expect(codes(s, event("pkk", "shaded", [["hakkari", "botan", "kdp-zone"]]))).toEqual(["badAnswer"]);
+    expect(codes(s, event("pkk", "shaded", [["hakkari", "sirnak", "kdp-zone"]]))).toEqual(["badAnswer"]);
   });
 
   it("S: a Hostile or Aligned host box is not eligible (DEC-75 point 9)", () => {

@@ -38,7 +38,7 @@ Rough maximums:
 Start scores:
 
 1. State: Passive Support in Western Cities (3), Şanlıurfa (4), Elazığ (2) and Adıyaman (2) = Total Support 11. Legitimacy 10. Score 21.
-2. PKK: Passive Opposition in Botan (2) and Hakkari (1) = Total Opposition 3. Domestic Bases 1 (Botan). Score 4.
+2. PKK: Passive Opposition in Şırnak (1), Siirt (1) and Hakkari (1) = Total Opposition 3. Domestic Bases 1 (Şırnak). Score 4.
 
 | Faction | Start | Easy ceiling | Maximum | Headroom | Headroom / 3 | Threshold [tune] |
 |---|---:|---:|---:|---:|---:|---:|
@@ -47,8 +47,8 @@ Start scores:
 
 Example boards that reach a threshold (illustration, not prediction):
 
-1. State 49: Legitimacy 12 and Total Support 37, for example Active Support in Western Cities (6), Şanlıurfa (8), Elazığ (4) and Adıyaman (4), plus Passive Support in Mardin-Batman (4), Diyarbakır City (2), Diyarbakır Rural (2), Van-Bitlis (4) and Ağrı (2) and Dersim (1).
-2. PKK 30: Active Opposition in Botan (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin-Batman (4), Bingöl-Muş (3), Van-Bitlis (4) and Dersim (1) = 22, plus 8 domestic Bases.
+1. State 49: Legitimacy 12 and Total Support 37, for example Active Support in Western Cities (6), Şanlıurfa (8), Elazığ (4) and Adıyaman (4), plus Passive Support in Mardin, Batman hinterland and Batman City (4), Diyarbakır City (2), Diyarbakır hinterland (2), Van City, Van hinterland and Bitlis (4) and Ağrı-Iğdır (3).
+2. PKK 30: Active Opposition in Şırnak and Siirt (4), Hakkari (2) and Diyarbakır City (4), Passive Opposition in Mardin, Batman hinterland and Batman City (4), Muş and Bingöl-Tunceli (4) and Van City, Van hinterland and Bitlis (4) = 22, plus 8 domestic Bases.
 
 ### 2.3 Short scenarios
 
@@ -60,7 +60,7 @@ Short scenarios use the same method on their own setups (10, sections 3 to 5).
 | B (1990-1995) | 20 | 2 x 11 + 9 = 31 | 31 + 53/3 = 48 | 14 | 2 x 10 + 4 = 24 | 24 + 52/3 = 41 |
 | C (1993-1999) | 16 | 2 x 9 + 7 = 25 | 25 + 59/3 = 44 | 23 | 2 x 15 + 5 = 35 | 35 + 41/3 = 48 |
 
-In Scenario C, Hakkari and Botan already start at Active Opposition; the easy ceiling counts them once at the Active level. All divisions round down.
+In Scenario C, Hakkari and Şırnak already start at Active Opposition; the easy ceiling counts them once at the Active level. All divisions round down.
 
 ## 3. Victory check (each Propaganda round except the first)
 

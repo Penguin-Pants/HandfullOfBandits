@@ -41,8 +41,11 @@ export const SYRIA_BOX = "syria-bekaa";
 /** Press prosecutions Momentum space (DK-050). */
 export const PRESS_SPACE = "diyarbakir-city";
 export const EUROPE_SPACE = "europe";
-/** DK-059 places the PKK Restraint Broken marker here (doc 33 s2.2). */
-export const BINGOL_MUS = "bingol-mus";
+/** DK-059 (Bingöl Road Killings) places the PKK Restraint Broken marker here (doc 33 s2.2). */
+export const BINGOL_TUNCELI = "bingol-tunceli";
+/** Stored packages from before DD-22 (13 spaces) keep this space and the Cross-Border origins below. */
+export const LEGACY_BINGOL_MUS = "bingol-mus";
+export const LEGACY_CROSS_BORDER_ORIGINS = ["hakkari", "botan"] as const;
 export const FLAG_VACUUM = "northernIraqVacuum";
 /** Set by the Capture Always line (DK-093; 07 s5.2 item 5). */
 export const FLAG_CAPTURED = "captured";

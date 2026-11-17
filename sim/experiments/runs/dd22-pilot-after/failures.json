@@ -1,0 +1,20 @@
+[
+ {
+  "gameId": "default~S-MILv1~P-EXPv2~7008~r0",
+  "status": "failed",
+  "reason": "player P-EXP@2 failed at card: Pick 0 to 1 different spaces from: sirnak, sanliurfa.",
+  "replayablePrefix": 160
+ },
+ {
+  "gameId": "default~S-MILv1~P-SURVv2~7008~r0",
+  "status": "failed",
+  "reason": "player S-MIL@1 failed at card: Pick 0 to 1 different spaces from: sirnak, mardin.",
+  "replayablePrefix": 149
+ },
+ {
+  "gameId": "default~S-CONv1~P-EXPv2~7009~r0",
+  "status": "failed",
+  "reason": "player P-EXP@2 failed at card: Pick 0 to 1 different spaces from: sirnak.",
+  "replayablePrefix": 150
+ }
+]

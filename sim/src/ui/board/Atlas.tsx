@@ -3,7 +3,7 @@ import type { BoardView, SpaceView } from "../api.ts";
 import { ATLAS, type AtlasSpace } from "./atlas-data.ts";
 import { chipOf, levelLabel } from "./markers.tsx";
 import { PieceIcon, SPRITE } from "./PieceIcon.tsx";
-import { presentation, spreadPlan, statusLayout } from "./layout.ts";
+import { blockTransform, presentation, spreadPlan, statusLayout, toBoard } from "./layout.ts";
 import { inside } from "./region.ts";
 
 /** Older packages retain their original schematic layout. */
@@ -18,11 +18,11 @@ export function AtlasInfo({ space, view, layout }: {readonly space: SpaceView; r
   const p = presentation(space);
   const faction = view.factions.find(f => f.id === space.control);
   const level = levelLabel(space);
-  const names = space.id === "diyarbakir-rural" ? ["Diyarbakir", "hinterland"] : space.id === "diyarbakir-city" ? ["Diyarbakir","CITY"] : space.id === "western-cities" ? ["Western","Cities"] : [space.name];
+  const names = layout.labels.map(l => l.text);
   const [control, political, population] = statusLayout(space);
   const alignment = level ?? (space.level === null ? null : "Neutral");
-  return <g data-callout={p.callout ? "true" : undefined} data-info={space.id} pointerEvents="none">
-    {names.map((text,i) => <text key={text} x={p.x+p.width/2} y={p.y+(space.id === "elazig" ? 26 : 20)+i*LABEL_LINE} textAnchor="middle" className={text === "CITY" ? "atlas-subtitle" : "map-label atlas-label"}>{text}</text>)}
+  return <g data-callout={p.callout ? "true" : undefined} data-info={space.id} pointerEvents="none" transform={blockTransform(layout)}>
+    {names.map((text,i) => <text key={text} x={p.x+p.width/2} y={p.y+20+i*LABEL_LINE} textAnchor="middle" className={text === "CITY" ? "atlas-subtitle" : "map-label atlas-label"}>{text}</text>)}
     {control !== undefined && political !== undefined && population !== undefined && <>
       <g className="atlas-counter" aria-label={faction === undefined ? "No Control" : `${faction.name} Control`}>
         <rect x={control.x+1.5} y={control.y+2} width={control.width} height={control.height} rx={3} className="counter-shadow" />
@@ -89,7 +89,7 @@ function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:B
   const columns = total === 4 ? 2 : Math.min(3,total);
   const [x,y,w] = layout.stack;
   const positions = Array.from({length:Math.min(total,6)},(_,i) => ({x:x+(w-columns*CELL_W)/2+15+(i%columns)*CELL_W,y:y+8+Math.floor(i/columns)*CELL_H}));
-  const contained = (point:{x:number;y:number}): boolean => layout.rings.length === 0 || [[point.x-14,point.y-18],[point.x+29,point.y-18],[point.x-14,point.y+15],[point.x+29,point.y+15]].every(([px,py]) => layout.rings.filter(r=>inside([px ?? 0,py ?? 0],r)).length%2 === 1);
+  const contained = (point:{x:number;y:number}): boolean => layout.rings.length === 0 || [[point.x-14,point.y-18],[point.x+29,point.y-18],[point.x-14,point.y+15],[point.x+29,point.y+15]].every(([px,py]) => layout.rings.filter(r=>inside(toBoard(layout,[px ?? 0,py ?? 0]),r)).length%2 === 1);
   const capacity = positions.findIndex(p=>!contained(p));
   const available = capacity < 0 ? positions.length : capacity;
   const shown = total > available ? Math.max(0,available-1) : available;
@@ -105,22 +105,39 @@ function Stack({space, view, layout}: {readonly space:SpaceView; readonly view:B
   </g>;
 }
 
+/** Turkish provinces outside the playable area: the same terrain art, faded, with thin borders. */
 export function AtlasContext() {
+  const { mountain, plain, borders, labels } = ATLAS.outOfPlay;
+  const layer = { x: 0, y: 0, width: ATLAS.width, height: ATLAS.height, preserveAspectRatio: "none", opacity: .32 };
   return <g pointerEvents="none" aria-hidden="true" data-geography="outside-play">
-    <defs><pattern id="context-hatch" width={9} height={9} patternUnits="userSpaceOnUse" patternTransform="rotate(32)"><rect width={9} height={9} fill="#d9ddd3" /><path d="M0,0V9" stroke="#a5afa0" opacity={.55} /></pattern></defs>
-    <path d={ATLAS.context} fill="url(#context-hatch)" stroke="#9ca594" />
-    <text x={240} y={371} textAnchor="middle" className="context-name">Malatya</text><text x={240} y={390} textAnchor="middle" className="context-note">OUTSIDE PLAY</text>
+    <defs>
+      <clipPath id="clip-oop-plain"><path d={plain} clipRule="evenodd" /></clipPath>
+      <clipPath id="clip-oop-mountain"><path d={mountain} clipRule="evenodd" /></clipPath>
+    </defs>
+    <image href="/board-plains.webp" {...layer} clipPath="url(#clip-oop-plain)" />
+    <image href="/board-highland.webp" {...layer} clipPath="url(#clip-oop-mountain)" />
+    <path d={borders} className="oop-border" fill="none" />
+    {labels.map((l, i) => <text key={i} x={l.x} y={l.y} textAnchor="middle" className="country-name oop-label">{l.text}</text>)}
   </g>;
 }
 
 export function AtlasGeography() {
   return <g pointerEvents="none" aria-hidden="true">
     <path d={ATLAS.lake} className="map-lake" data-geography="lake-van" />
-    <text x={940} y={380} textAnchor="middle" className="lake-label">Lake Van</text>
     <path d={ATLAS.countryBorders} className="country-border-halo" />
     <path d={ATLAS.countryBorders} className="country-border" data-geography="country-borders" />
-    <text x={790} y={46} textAnchor="middle" className="country-name">T U R K E Y</text>
-    <text x={300} y={890} textAnchor="middle" className="country-name">S Y R I A</text>
-    <text x={930} y={923} textAnchor="middle" className="country-name">I R A Q</text>
+    {ATLAS.geoLabels.map(l => <text key={l.text} x={l.x} y={l.y} textAnchor="middle" className={l.kind === "lake" ? "lake-label" : "country-name"}>{l.text}</text>)}
   </g>;
 }
+
+/** The outline of a space. A hinterland has its city as a hole, drawn by the city: only the outer ring counts here. */
+export function edgePath(area: AtlasSpace): string {
+  return area.rings.length > 1 ? `${area.path.split("Z")[0] ?? ""}Z` : area.path;
+}
+
+/** City illustrations, drawn inside the city circle. */
+export const CITY_ART: Readonly<Record<string, string>> = {
+  "diyarbakir-city": "/diyarbakir-city.png",
+  "van-city": "/van-city.webp",
+  "batman-city": "/batman-city.webp",
+};

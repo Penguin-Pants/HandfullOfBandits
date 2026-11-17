@@ -6,7 +6,7 @@ import type { ActionOptions } from "./ops/action.ts";
 import { sweep } from "./ops/state/sweep.ts";
 
 // T-EVT per side for the C3 cards (11 P3b-07; encoding docs/prototype/32, DEC-68).
-// S0 board: Diyarbakır City and Western Cities have State Control and Police; Diyarbakır Rural
+// S0 board: Diyarbakır City and Western Cities have State Control and Police; Diyarbakır hinterland
 // has 1 Police; Legitimacy is set to 5 so no side meets the track ends.
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
 const c3 = (s: GameState): GameState => setTrack(inCampaign(ruleset, s, "C3"), "legitimacy", 5);
@@ -63,7 +63,7 @@ describe("Election Brings HEP Deputies to Parliament (DK-042)", () => {
 
   it("U: line 4 respects the line 3 limit, and Prosecuted places nothing", () => {
     let full = setTrack(board("state", "DK-042"), "legalSpace", "open");
-    for (const id of ["diyarbakir-city", "western-cities", "mardin-batman", "van-bitlis"]) full = setMarkers(full, id, "office", 1);
+    for (const id of ["diyarbakir-city", "western-cities", "mardin", "van-rural"]) full = setMarkers(full, id, "office", 1);
     expect(offices(play(full, event("state", "unshaded")).state)).toHaveLength(4);
     const prosecuted = setTrack(board("state", "DK-042"), "legalSpace", "prosecuted");
     expect(offices(play(prosecuted, event("state", "unshaded")).state)).toEqual([]);
@@ -73,11 +73,11 @@ describe("Election Brings HEP Deputies to Parliament (DK-042)", () => {
     expect(codes(setTrack(board("pkk", "DK-042"), "legalSpace", "open"), event("pkk", "unshaded"))).toEqual([]);
   });
 
-  it("S: Mardin-Batman or Diyarbakır Rural without an Office shifts toward Opposition", () => {
+  it("S: Mardin or Diyarbakır hinterland without an Office shifts toward Opposition", () => {
     const { state } = play(board("pkk", "DK-042"), event("pkk", "shaded", [["diyarbakir-rural"]]));
     expect(level(state, "diyarbakir-rural")).toBe(-1);
-    const office = setMarkers(board("pkk", "DK-042"), "mardin-batman", "office", 1);
-    expect(codes(office, event("pkk", "shaded", [["mardin-batman"]]))).toEqual(["badAnswer"]);
+    const office = setMarkers(board("pkk", "DK-042"), "mardin", "office", 1);
+    expect(codes(office, event("pkk", "shaded", [["mardin"]]))).toEqual(["badAnswer"]);
   });
 });
 
@@ -113,16 +113,16 @@ describe("Prosecutor Files to Close HEP (DK-051)", () => {
 });
 
 describe("Attack on Boğazköy Gendarme Station (DK-052)", () => {
-  it("U: places 2 Police and 1 Troop in Diyarbakır Rural", () => {
+  it("U: places 2 Police and 1 Troop in Diyarbakır hinterland", () => {
     const { state } = play(board("state", "DK-052"), event("state", "unshaded"));
     expect([pieces(state, "diyarbakir-rural", "police"), pieces(state, "diyarbakir-rural", "troops")]).toEqual([{ default: 3 }, { default: 1 }]);
   });
 
-  it("S: free Attack with Ambush in Diyarbakır Rural or an adjacent space only", () => {
+  it("S: free Attack with Ambush in Diyarbakır hinterland or an adjacent space only", () => {
     const attack = (loc: string) => event("pkk", "shaded", [{ locations: [loc], perLocation: {}, sa: { locations: [loc], perLocation: {} } }]);
-    const ready = setPieces(setPieces(board("pkk", "DK-052"), "mardin-batman", "guerrilla", 2), "hakkari", "guerrilla", 2);
-    const { state } = play(ready, attack("mardin-batman"));
-    expect(pieces(state, "mardin-batman", "troops")).toEqual({ default: 0 });
+    const ready = setPieces(setPieces(board("pkk", "DK-052"), "mardin", "guerrilla", 2), "hakkari", "guerrilla", 2);
+    const { state } = play(ready, attack("mardin"));
+    expect(pieces(state, "mardin", "troops")).toEqual({ default: 0 });
     expect(codes(ready, attack("hakkari"))).toEqual(["eventConstraint"]);
   });
 });
@@ -140,34 +140,34 @@ describe("Newroz Killings (DK-043)", () => {
   it("U is block only: 2 State Harm markers and nothing else", () => {
     expect(card("DK-043")?.unshaded?.blockOnly).toBe(true);
     const state = harmCard("DK-043", "state", "unshaded");
-    expect([marker(state, "mardin-batman", "stateHarm"), marker(state, "botan", "stateHarm")]).toEqual([1, 1]);
-    expect([track(state, "legitimacy"), track(state, "europe"), level(state, "mardin-batman")]).toEqual([5, 1, 0]);
+    expect([marker(state, "mardin", "stateHarm"), marker(state, "sirnak", "stateHarm")]).toEqual([1, 1]);
+    expect([track(state, "legitimacy"), track(state, "europe"), level(state, "mardin")]).toEqual([5, 1, 0]);
   });
 
-  it("S: the markers, Legitimacy -1, Europe +1, Mardin-Batman toward Opposition", () => {
+  it("S: the markers, Legitimacy -1, Europe +1, Mardin toward Opposition", () => {
     const state = harmCard("DK-043", "pkk", "shaded");
-    expect([marker(state, "mardin-batman", "stateHarm"), marker(state, "botan", "stateHarm")]).toEqual([1, 1]);
-    expect([track(state, "legitimacy"), track(state, "europe"), level(state, "mardin-batman")]).toEqual([4, 2, -1]);
+    expect([marker(state, "mardin", "stateHarm"), marker(state, "sirnak", "stateHarm")]).toEqual([1, 1]);
+    expect([track(state, "legitimacy"), track(state, "europe"), level(state, "mardin")]).toEqual([4, 2, -1]);
   });
 });
 
 describe("Şırnak Town Battle (DK-045)", () => {
-  it("U is block only: State Harm in Botan, Reception in Diyarbakır City", () => {
+  it("U is block only: State Harm in Şırnak, Reception in Diyarbakır City", () => {
     expect(card("DK-045")?.unshaded?.blockOnly).toBe(true);
     const state = harmCard("DK-045", "state", "unshaded");
-    expect([marker(state, "botan", "stateHarm"), marker(state, "diyarbakir-city", "reception")]).toEqual([1, 1]);
+    expect([marker(state, "sirnak", "stateHarm"), marker(state, "diyarbakir-city", "reception")]).toEqual([1, 1]);
     expect([track(state, "legitimacy"), level(state, "diyarbakir-city")]).toEqual([5, 0]);
   });
 
   it("S: the markers, Legitimacy -1, Diyarbakır City toward Opposition", () => {
     const state = harmCard("DK-045", "pkk", "shaded");
-    expect([marker(state, "botan", "stateHarm"), marker(state, "diyarbakir-city", "reception")]).toEqual([1, 1]);
+    expect([marker(state, "sirnak", "stateHarm"), marker(state, "diyarbakir-city", "reception")]).toEqual([1, 1]);
     expect([track(state, "legitimacy"), track(state, "europe"), level(state, "diyarbakir-city")]).toEqual([4, 1, -1]);
   });
 });
 
 describe("Houses Burned at Kelekçi (DK-048)", () => {
-  it("U is block only: State Harm in Diyarbakır Rural", () => {
+  it("U is block only: State Harm in Diyarbakır hinterland", () => {
     expect(card("DK-048")?.unshaded?.blockOnly).toBe(true);
     const state = harmCard("DK-048", "state", "unshaded");
     expect([marker(state, "diyarbakir-rural", "stateHarm"), track(state, "legitimacy"), track(state, "europe")]).toEqual([1, 5, 1]);
@@ -187,11 +187,11 @@ describe("Journalists and Press Staff Killed (DK-049)", () => {
   });
 
   it("S: Disputed Harm, one Covert marker revealed at random, Europe +1", () => {
-    const covert = setMarkers(setMarkers(board("pkk", "DK-049"), "hakkari", "covert", 1), "botan", "covert", 1);
+    const covert = setMarkers(setMarkers(board("pkk", "DK-049"), "hakkari", "covert", 1), "sirnak", "covert", 1);
     const { state, entries } = play(covert, event("pkk", "shaded"));
     expect(marker(state, "diyarbakir-city", "disputedHarm")).toBe(1);
-    expect(marker(state, "hakkari", "covert") + marker(state, "botan", "covert")).toBe(1);
-    expect(marker(state, "hakkari", "stateHarm") + marker(state, "botan", "stateHarm")).toBe(1);
+    expect(marker(state, "hakkari", "covert") + marker(state, "sirnak", "covert")).toBe(1);
+    expect(marker(state, "hakkari", "stateHarm") + marker(state, "sirnak", "stateHarm")).toBe(1);
     expect([track(state, "legitimacy"), track(state, "europe")]).toEqual([3, 2]);
     expect(entries.filter((e) => e.kind === "DieRolled")).toHaveLength(1);
   });
@@ -204,24 +204,24 @@ describe("Journalists and Press Staff Killed (DK-049)", () => {
 
 describe("Unattributed Killings in the Southeast (DK-053)", () => {
   it("removes an Office first, from the highest-Pop space, ties in the 07 s10.1 order", () => {
-    const tied = setMarkers(setMarkers(board("state", "DK-053"), "botan", "office", 1), "diyarbakir-city", "office", 1);
+    const tied = setMarkers(setMarkers(board("state", "DK-053"), "sirnak", "office", 1), "diyarbakir-city", "office", 1);
     const state = play(tied, event("state", "unshaded")).state;
-    expect([marker(state, "diyarbakir-city", "office"), marker(state, "botan", "office")]).toEqual([0, 1]);
+    expect([marker(state, "diyarbakir-city", "office"), marker(state, "sirnak", "office")]).toEqual([0, 1]);
     expect(marker(state, "diyarbakir-city", "disputedHarm")).toBe(1);
-    expect(pieces(state, "mardin-batman", "guerrilla")).toEqual(pieces(tied, "mardin-batman", "guerrilla"));
-    const higher = setMarkers(tied, "mardin-batman", "office", 1);
-    expect(marker(play(higher, event("state", "unshaded")).state, "mardin-batman", "office")).toBe(0);
+    expect(pieces(state, "mardin", "guerrilla")).toEqual(pieces(tied, "mardin", "guerrilla"));
+    const higher = setMarkers(tied, "mardin", "office", 1);
+    expect(marker(play(higher, event("state", "unshaded")).state, "mardin", "office")).toBe(0);
   });
 
   it("with no Office, removes an Underground Guerrilla first from the highest-Pop space", () => {
-    const mixed = setPieces(board("state", "DK-053"), "mardin-batman", "guerrilla", 1, "active");
+    const mixed = setPieces(board("state", "DK-053"), "mardin", "guerrilla", 1, "active");
     const state = play(mixed, event("state", "unshaded")).state;
-    expect(pieces(state, "mardin-batman", "guerrilla")).toEqual({ underground: 0, active: 1 });
-    expect(marker(state, "mardin-batman", "disputedHarm")).toBe(1);
+    expect(pieces(state, "mardin", "guerrilla")).toEqual({ underground: 0, active: 1 });
+    expect(marker(state, "mardin", "disputedHarm")).toBe(1);
   });
 
   it("with no target, nothing happens; S still gives Europe +1 (DEC-68)", () => {
-    const empty = setPieces(setPieces(board("pkk", "DK-053"), "mardin-batman", "guerrilla", 0), "botan", "guerrilla", 0);
+    const empty = setPieces(setPieces(board("pkk", "DK-053"), "mardin", "guerrilla", 0), "sirnak", "guerrilla", 0);
     const state = play(empty, event("pkk", "shaded")).state;
     expect(ruleset.spaces.map((x) => marker(state, x.id, "disputedHarm")).reduce((a, n) => a + n, 0)).toBe(0);
     expect(track(state, "europe")).toBe(2);
@@ -241,7 +241,7 @@ const zoneAssault = (moves: unknown[] = []) => ({ locations: ["kdp-zone"], perLo
 const guerrillas = (s: GameState, id: string): number => Object.values(pieces(s, id, "guerrilla")).reduce((a, n) => a + n, 0);
 
 describe("KHK 430 (DK-038)", () => {
-  const sweepCost = (s: GameState): number => sweep.cost(ruleset, s, { locations: ["botan"], perLocation: {} }, { free: false } as ActionOptions);
+  const sweepCost = (s: GameState): number => sweep.cost(ruleset, s, { locations: ["sirnak"], perLocation: {} }, { free: false } as ActionOptions);
   it("U: State Momentum, Sweep costs 1 per space at Martial Law; then a free Garrison", () => {
     const before = board("state", "DK-038");
     const { state } = play(before, event("state", "unshaded", [null]));
@@ -269,7 +269,7 @@ describe("Operation in Northern Iraq (DK-041)", () => {
 
   it("U: the Assault may not lift more Troops (DEC-68)", () => {
     const ready = setTrack(free(board("state", "DK-041")), "posture.kdp", "tolerant");
-    expect(codes(ready, event("state", "unshaded", [lift(2), zoneAssault([{ from: "botan", count: 2 }])]))).toEqual(["crossBorderNoLift"]);
+    expect(codes(ready, event("state", "unshaded", [lift(2), zoneAssault([{ from: "sirnak", count: 2 }])]))).toEqual(["crossBorderNoLift"]);
   });
 
   it("S: Legitimacy -1; up to 3 Guerrillas move to the PUK Zone, Underground", () => {
@@ -320,7 +320,7 @@ describe("Özgür Gündem Begins Publication (DK-050)", () => {
   const spend = { coercion: 1, pkkHarm: 0, shifts: 2 };
   it("U: State Momentum, Agitation in Diyarbakır City costs 1 more per shift", () => {
     const { state } = play(board("state", "DK-050"), event("state", "unshaded"));
-    expect([agitationCost(ruleset, state, "diyarbakir-city", spend), agitationCost(ruleset, state, "botan", spend)]).toEqual([5, 3]);
+    expect([agitationCost(ruleset, state, "diyarbakir-city", spend), agitationCost(ruleset, state, "sirnak", spend)]).toEqual([5, 3]);
     expect(state.modifiers.map((m) => m.duration)).toEqual(["untilReset"]);
   });
 

@@ -19,17 +19,17 @@ const props = (api: Partial<Api> = {}) => ({api: api as Api, sessionId: "s1", fo
 it("allocates ARGK recruits with buttons or declines only the current card", () => {
   const onCommit = vi.fn();
   const page = render(<PivotalPanel view={windowView(["decline",{card: "DK-015",maxPlace: 4}])} onCommit={onCommit} {...props()} />);
-  fireEvent.click(screen.getByRole("button",{name: "More Botan"}));
-  fireEvent.click(screen.getByRole("button",{name: "More Botan"}));
+  fireEvent.click(screen.getByRole("button",{name: "More Şırnak"}));
+  fireEvent.click(screen.getByRole("button",{name: "More Şırnak"}));
   fireEvent.click(screen.getByRole("button",{name: "Play ARGK Formed"}));
-  expect(onCommit).toHaveBeenLastCalledWith({type: "PlayPivotal",faction: "pkk",card: "DK-015",placements: {botan: 2}});
+  expect(onCommit).toHaveBeenLastCalledWith({type: "PlayPivotal",faction: "pkk",card: "DK-015",placements: {sirnak: 2}});
   fireEvent.click(screen.getByRole("button",{name: "Decline for this card"}));
   expect(onCommit).toHaveBeenLastCalledWith({type: "ResolveDecision",decisionId: "pivot-1",answer: "decline"});
   expect(page.container.querySelectorAll("input,select,textarea")).toHaveLength(0);
 });
 
 it("plays Serhildan through its space question, then commits the answered command", async () => {
-  const question = {kind: "spaces",prompt: "Pick 0 to 3 spaces",options: ["botan","hakkari"],min: 0,max: 3};
+  const question = {kind: "spaces",prompt: "Pick 0 to 3 spaces",options: ["sirnak","hakkari"],min: 0,max: 3};
   const validate = vi.fn()
     .mockResolvedValueOnce({ok: false,violations: [{code: "needsAnswer",message: "Pick",ruleRef: "x",location: null,question}],warnings: []})
     .mockResolvedValueOnce({ok: true,violations: [],warnings: []});

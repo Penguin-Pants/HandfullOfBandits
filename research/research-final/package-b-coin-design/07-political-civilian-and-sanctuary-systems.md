@@ -76,7 +76,7 @@ Legitimacy feeds the State score, State income and the Civic Action cap. It is t
 
 ### 3.2 Displacement and Reception
 
-1. Village Clearance places one Displacement marker (New side) in the cleared space and one Reception marker in Diyarbakır City or Western Cities (06, section 3.4).
+1. Village Clearance places one Displacement marker (New side) in the cleared space and one Reception marker in Diyarbakır City, Van City, Batman City or Western Cities (06, section 3.4).
 2. Displacement never lowers Pop for victory (DD-07.3). The CT Resettle Pop 0 rule is rejected (CT 4.2.1; CT lessons).
 3. While a Displacement marker is present: the PKK cannot Rally, Extort or Coerce in the space. That is the State's gain: cut logistics [F-050; F-031].
 4. The displaced space stays an obligation. It keeps the level that Village Clearance left (one level toward Neutral, DD-18.3) and scores at that level.
@@ -152,7 +152,7 @@ Run lines 1 to 6 in order in each Legal Politics phase from C3.
 | 1 | A Closure Case marker was on the track at the start of this phase | Ban: Legal Space to Banned. Place the Successor marker at the number of Offices on the map. Remove all Offices. Legitimacy -2. Europe +1. Remove the Closure Case marker. Stop. |
 | 2 | Legal Space is Banned (line 1 did not apply) | Successor: Legal Space to Prosecuted. Place Offices equal to the Successor number minus 1 (minimum 1), using the line 4 order. Remove the Successor marker. Stop. |
 | 3 | Legal Space is Open or Prosecuted | Office limit: Open 4, Prosecuted 3 [tune]. |
-| 4 | Offices on the map are fewer than the limit | Place 1 Office in the first eligible space in this order: Diyarbakır City, Western Cities, Mardin-Batman, Van-Bitlis, Şanlıurfa, Bingöl-Muş, Diyarbakır Rural, Botan, Ağrı, Adıyaman, Elazığ. Eligible: Pop 2 or more, no Office, no PKK Control, not at Active Support or Active Opposition. |
+| 4 | Offices on the map are fewer than the limit | Place 1 Office in the first eligible space in this order: Diyarbakır City, Western Cities, Mardin, Van City, Şanlıurfa, Muş, Diyarbakır hinterland, Bingöl-Tunceli, Ağrı-Iğdır, Adıyaman, Elazığ. Eligible: Pop 2 or more, no Office, no PKK Control, not at Active Support or Active Opposition. |
 | 5 | Offices on the map are more than the limit | Remove Offices from the eligible spaces latest in the line 4 order until at the limit. |
 | 6 | Offices on the map equal the limit and no Closure Case marker is on the track | The prosecutor files: place the Closure Case marker. Line 1 bans at the next phase (DD-19.1). |
 
@@ -219,7 +219,7 @@ Range 0 to 5 (04, section 3.6). Moves: PKK Rally on Europe +1; Declare Ceasefire
 Event-driven only. No player owns or orders it [M-016; F-058; F-057].
 
 1. Card titles are neutral, for example "Unattributed killings in the southeast".
-2. Effect: if any of Botan, Mardin-Batman, Diyarbakır City and Diyarbakır Rural holds an Office, remove one Office from the highest-Pop such space. Otherwise remove one Guerrilla from the highest-Pop such space with a Guerrilla. Ties go in this order: Mardin-Batman, Diyarbakır City, Diyarbakır Rural, Botan. The executing faction does not choose the target. Place a Disputed Harm marker there.
+2. Effect: if any of Şırnak, Mardin, Diyarbakır City and Diyarbakır hinterland holds an Office, remove one Office from the highest-Pop such space. Otherwise remove one Guerrilla from the highest-Pop such space with a Guerrilla. Ties go in this order: Mardin, Diyarbakır City, Diyarbakır hinterland, Şırnak. The executing faction does not choose the target. Place a Disputed Harm marker there.
 3. Attribution limit: a later event may turn a Disputed marker into a State Harm marker only if the card rests on a High or Moderate court or commission finding. Reported security-force links rest on a 1995 commission as relayed by HRW [F-058; E-0087]. No court has settled them.
 4. Never print the "2,000 murders" figure [Q-403].
 

@@ -11,7 +11,7 @@ import { Review } from "./Review.tsx";
 
 // P2-17 component tests: review table with filters, read-only state viewer with before and after.
 afterEach(cleanup);
-const row: ReviewRow = { annotationId: "N1", sessionId: "S", sessionName: "s0 try", createdAt: "2026-10-28T10:00:00Z", anchor: "executed", actionId: "S-A3", stateHash: "h2", categories: [], text: "Odd move", status: "open", faction: "pkk", cardId: "DK-001", version: "0.1.0", rulesetVersion: "R1", spaces: ["botan"] };
+const row: ReviewRow = { annotationId: "N1", sessionId: "S", sessionName: "s0 try", createdAt: "2026-10-28T10:00:00Z", anchor: "executed", actionId: "S-A3", stateHash: "h2", categories: [], text: "Odd move", status: "open", faction: "pkk", cardId: "DK-001", version: "0.1.0", rulesetVersion: "R1", spaces: ["sirnak"] };
 
 describe("Review", () => {
   it("lists notes, sends filters and opens a note's state", async () => {
@@ -20,8 +20,8 @@ describe("Review", () => {
     render(<Review api={mockApi({ review })} onOpenState={onOpenState} />);
     fireEvent.click(await screen.findByRole("button", { name: "Odd move" }));
     expect(onOpenState).toHaveBeenCalledWith("S", "h2");
-    fireEvent.change(screen.getByLabelText("space"), { target: { value: "botan" } });
-    await waitFor(() => { expect(review).toHaveBeenLastCalledWith({ space: "botan" }); });
+    fireEvent.change(screen.getByLabelText("space"), { target: { value: "sirnak" } });
+    await waitFor(() => { expect(review).toHaveBeenLastCalledWith({ space: "sirnak" }); });
   });
 });
 

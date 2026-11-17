@@ -123,9 +123,7 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
     const level = here?.level ?? null;
     return {
       id: s.id,
-      // Approved board names are presentation only; saved ruleset hashes stay unchanged.
-      name: data.manifest.packageId === "kurdish-coin" && s.id === "diyarbakir-city" ? "Diyarbakir"
-        : data.manifest.packageId === "kurdish-coin" && s.id === "diyarbakir-rural" ? "Diyarbakir hinterland" : s.name,
+      name: s.name,
       kind: s.kind,
       terrain: s.terrain ?? null,
       pop: s.pop,

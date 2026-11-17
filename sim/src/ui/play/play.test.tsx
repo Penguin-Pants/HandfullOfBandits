@@ -65,7 +65,7 @@ describe("Play branch (P4-04)", () => {
 describe("Play rule text (P4-08)", () => {
   it("looks up the research text of a Last action line for the session", async () => {
     const h = head("S-A3", "DK-012", "state");
-    const entry = { entry_id: "E1", action_id: "S-A3", n: 1, kind: "ControlChanged", state_seq: 1, rule_ref: "06 s3.2", assumption_ref: null, data: JSON.stringify({ space: "botan", before: null, after: "pkk" }), text: "", cause: null, cardTitle: null };
+    const entry = { entry_id: "E1", action_id: "S-A3", n: 1, kind: "ControlChanged", state_seq: 1, rule_ref: "06 s3.2", assumption_ref: null, data: JSON.stringify({ space: "sirnak", before: null, after: "pkk" }), text: "", cause: null, cardTitle: null };
     const item = { action: { action_id: "S-A3", summary: "Pass by pkk", status: "committed", faction: "pkk", box: "pass", phase: "card" }, entries: [entry], notes: 0 } as never;
     const rule = vi.fn(() => Promise.resolve({ ref: "06 s3.2", sections: [{ cite: "06 s3.2", file: "06.md", section: "3.2", heading: "Cross-Border", text: "Pay 2 Resources.", subsections: [] }], missing: [], other: [] }));
     const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))), history: vi.fn(() => Promise.resolve([item])), rule });
@@ -161,7 +161,7 @@ describe("Play map space (UC-4)", () => {
 
   it("hides actions without losing status, resources, forces, selection or the camera", async () => {
     await render1();
-    fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "botan" } });
+    fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "sirnak" } });
     fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
     fireEvent.click(screen.getByRole("button", { name: "Political" }));
     const camera = screen.getByRole("img", { name: "Board" }).getAttribute("viewBox");
@@ -173,7 +173,7 @@ describe("Play map space (UC-4)", () => {
     expect(restore.getAttribute("aria-expanded")).toBe("false");
     expect(screen.queryByRole("button", { name: "Clear (Esc)" })).toBeNull();
     for (const label of ["Status", "Resources and politics", "Forces"]) expect(screen.getByLabelText(label)).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "Şırnak" }).getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByRole("img", { name: "Board" }).getAttribute("viewBox")).toBe(camera);
     fireEvent.click(restore);
     expect(screen.getByRole("button", { name: "Hide actions" }).getAttribute("aria-expanded")).toBe("true");
@@ -212,14 +212,14 @@ it("opens a compact track without using Space to advance the game", async () => 
 
 describe("Play hidden markers (P4-07)", () => {
   it("shows Covert markers by default and Hide Covert removes them from the map, legend and space hover text", async () => {
-    const state = setMarkers(withCard(turnOf("state"), "DK-012"), "botan", "covert", 1);
+    const state = setMarkers(withCard(turnOf("state"), "DK-012"), "sirnak", "covert", 1);
     const h: Head = { actionId: "S-A3", stateHash: "S-A3", state, derived: null as never, view: boardView(kurdish.ruleset, kurdish.data, state) };
     const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))) });
     render(<Play api={api} sessionId="S" />);
     await screen.findByText(/DK-012/, { selector: "span" });
     fireEvent.click(screen.getByRole("button", { name: "Key" }));
-    fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "botan" } });
-    const botanText = (): string => { fireEvent.contextMenu(screen.getByRole("button", { name: "Botan" })); return screen.getByRole("tooltip").textContent; };
+    fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "sirnak" } });
+    const botanText = (): string => { fireEvent.contextMenu(screen.getByRole("button", { name: "Şırnak" })); return screen.getByRole("tooltip").textContent; };
     const covert = (): number => document.querySelectorAll("[aria-label^='Covert (face down)']").length;
     expect(covert()).toBeGreaterThan(0);
     expect(screen.getByLabelText("Legend").textContent).toContain("Covert (face down)");
@@ -232,7 +232,7 @@ describe("Play hidden markers (P4-07)", () => {
     expect(screen.getByLabelText("Legend").textContent).not.toContain("Covert");
     expect(botanText()).toContain("Pieces");
     expect(botanText()).not.toContain("Covert");
-    expect(screen.queryByLabelText("Botan detail")).toBeNull();
+    expect(screen.queryByLabelText("Şırnak detail")).toBeNull();
     fireEvent.click(toggle);
     expect(covert()).toBeGreaterThan(0);
   });

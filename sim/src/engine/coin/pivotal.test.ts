@@ -8,33 +8,33 @@ it("offers ARGK to the Second Eligible before any card action and consumes the h
   const revealed = play(ready(), {type: "Advance"}).state;
   expect(revealed.pending?.faction).toBe("pkk");
   expect(codes(revealed, op("state", "opOnly", {op: "state.train", locations: ["diyarbakir-city"]}))).toContain("notCardPlay");
-  const played = play(revealed, {type: "PlayPivotal", faction: "pkk", card: "DK-015", placements: {botan: 4}}).state;
+  const played = play(revealed, {type: "PlayPivotal", faction: "pkk", card: "DK-015", placements: {sirnak: 4}}).state;
   expect(played.hands["pkk"]).toEqual([]);
   expect(played.deck.currentCard).toBe("DK-015");
   expect(played.deck.played).toContain("DK-001");
   expect(played.initiative.firstEligible).toBe("pkk");
   expect(played.initiative.actedThisCard).toEqual(["pkk"]);
   expect(played.tracks["resources.pkk"]).toBe(8);
-  expect(played.spaces["botan"]?.pieces["guerrilla"]?.["underground"]).toBe(6);
+  expect(played.spaces["sirnak"]?.pieces["guerrilla"]?.["underground"]).toBe(6);
 });
 it("declines only this card and rejects bad placements and wrong-faction play", () => {
   const state = play(ready(), {type: "Advance"}).state;
   expect(codes(state, {type: "PlayPivotal", faction: "state", card: "DK-015", placements: {}})).toContain("pivotalPriority");
-  expect(codes(state, {type: "PlayPivotal", faction: "pkk", card: "DK-015", placements: {botan: 5}})).toContain("pivotalPlacements");
+  expect(codes(state, {type: "PlayPivotal", faction: "pkk", card: "DK-015", placements: {sirnak: 5}})).toContain("pivotalPlacements");
   const declined = play(state, {type: "ResolveDecision", decisionId: state.pending?.id, answer: "decline"}).state;
   expect(declined.pending).toBeNull();
   expect(declined.hands["pkk"]).toEqual(["DK-015"]);
   expect(declined.initiative.actedThisCard).toEqual([]);
 });
-for (const placements of [{}, {botan: 1}]) it(`ARGK flips Guerrillas at every PKK Base, with ${String(Object.keys(placements).length)} placement spaces (DEC-55)`, () => {
+for (const placements of [{}, {sirnak: 1}]) it(`ARGK flips Guerrillas at every PKK Base, with ${String(Object.keys(placements).length)} placement spaces (DEC-55)`, () => {
   let state: ReturnType<typeof turnOf> = ready();
-  for (const [id, count] of [["botan", 1], ["hakkari", 1], ["kdp-zone", 2], ["syria-bekaa", 1], ["mardin-batman", 2]] as const) state = setPieces(state, id, "guerrilla", count, "active");
+  for (const [id, count] of [["sirnak", 1], ["hakkari", 1], ["kdp-zone", 2], ["syria-bekaa", 1], ["mardin", 2]] as const) state = setPieces(state, id, "guerrilla", count, "active");
   const revealed = play(state, {type: "Advance"}).state;
   const after = play(revealed, {type: "PlayPivotal", faction: "pkk", card: "DK-015", placements}).state;
-  for (const [id, underground] of [["botan", 3 + (placements.botan ?? 0)], ["hakkari", 6], ["kdp-zone", 5], ["syria-bekaa", 3]] as const) {
+  for (const [id, underground] of [["sirnak", 3 + (placements.sirnak ?? 0)], ["hakkari", 6], ["kdp-zone", 5], ["syria-bekaa", 3]] as const) {
     expect(after.spaces[id]?.pieces["guerrilla"]).toEqual({underground, active: 0});
   }
-  expect(after.spaces["mardin-batman"]?.pieces["guerrilla"]).toEqual({underground: 1, active: 2});
+  expect(after.spaces["mardin"]?.pieces["guerrilla"]).toEqual({underground: 1, active: 2});
   expect(after.tracks["resources.pkk"]).toBe(8);
 });
 

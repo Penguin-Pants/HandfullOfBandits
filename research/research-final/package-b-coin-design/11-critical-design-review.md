@@ -2,6 +2,8 @@
 
 Status: independent adversarial review of chapters 03 to 10, the prototype deck and a sample of Package A. The reviewer did not write the package. Nobody has played the game at a table. The desk test below is one Stage 0 paper run by one person who played both sides. It finds defects in the rules text. It does not measure balance. Fixes applied after this review are listed in `../audit/revisions-after-review.md`. The findings table is in `../audit/independent-critical-review.md`.
 
+Note (DD-22, 15 Nov 2026): this review was written on the 13-space map of DD-05. Space names, Pop figures and sums below are the record of that review and do not match the 18-space map. Redo the desk test on the new map before using its numbers.
+
 ## 1. Stage 0 desk test: Scenario A, C1
 
 ### 1.1 Setup

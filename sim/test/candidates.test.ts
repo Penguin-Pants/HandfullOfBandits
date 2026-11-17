@@ -22,7 +22,7 @@ const propaganda = (s: GameState, phase: string, round = 1): GameState => ({ ...
 
 describe("card decisions (19 s5 Initiative, Operations, Special Activities)", () => {
   it("covers every State Operation, every State Special Activity and Pass for the First Eligible", () => {
-    const s = withCard(setPieces(setPieces(rich(turnOf("state")), "botan", "guerrilla", 2, "active"), "dersim", "guards", 1), "DK-014");
+    const s = withCard(setPieces(setPieces(rich(turnOf("state")), "sirnak", "guerrilla", 2, "active"), "bingol-tunceli", "guards", 1), "DK-014");
     const set = gen(s, "card", "state");
     allLegal(s, set);
     const f = families(set);
@@ -42,7 +42,7 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
   });
 
   it("covers every PKK Operation and Special Activity, Rally options and Agitate", () => {
-    const s = setPieces(setPieces(rich(turnOf("pkk")), "hakkari", "guards", 2), "botan", "guerrilla", 3);
+    const s = setPieces(setPieces(rich(turnOf("pkk")), "hakkari", "guards", 2), "sirnak", "guerrilla", 3);
     const set = gen(s, "card", "pkk");
     allLegal(s, set);
     const f = families(set);
@@ -68,19 +68,21 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
 
   it("expands Event choices, space picks and free-action plans, both sides", () => {
     const choice = gen(withCard(turnOf("state"), "DK-001"), "card", "state");
-    expect(choice.candidates.filter((c) => c.family === "event:unshaded").map((c) => c.command["answers"])).toEqual([["Hakkari"], ["Botan"]]);
+    expect(choice.candidates.filter((c) => c.family === "event:unshaded").map((c) => c.command["answers"])).toEqual([["Hakkari"], ["Siirt"]]);
     expect(choice.candidates.filter((c) => c.family === "event:shaded")).toHaveLength(1);
-    const plan = gen(withCard(turnOf("state"), "DK-002"), "card", "state");
+    // DK-002 needs the Garrison Activation in Siirt, which the 1984 setup leaves empty (DD-22).
+    const siirt = setPieces(withCard(turnOf("state"), "DK-002"), "siirt", "guerrilla", 2);
+    const plan = gen(siirt, "card", "state");
     const answers = plan.candidates.filter((c) => c.family === "event:unshaded").map((c) => JSON.stringify(c.command["answers"]));
     expect(answers).toContain("[null]");
     expect(answers.length).toBeGreaterThan(1);
-    allLegal(withCard(turnOf("state"), "DK-002"), plan);
+    allLegal(siirt, plan);
   });
 });
 
 describe("pruning keeps every option kind reachable (PR #40 review)", () => {
   it("offers Rally flip at a Base with Active Guerrillas in bounded generation", () => {
-    const s = setPieces(setPieces(rich(turnOf("pkk")), "botan", "guerrilla", 0), "botan", "guerrilla", 3, "active");
+    const s = setPieces(setPieces(rich(turnOf("pkk")), "sirnak", "guerrilla", 0), "sirnak", "guerrilla", 3, "active");
     const flips = gen(s, "card", "pkk").candidates.filter((c) => JSON.stringify(c.command).includes("\"option\":\"flip\""));
     expect(flips.length).toBeGreaterThan(0);
     allLegal(s, gen(s, "card", "pkk"));
@@ -93,15 +95,15 @@ describe("pruning keeps every option kind reachable (PR #40 review)", () => {
   });
 
   it("offers Train Guards and Base where a State Base also allows Troops and Police", () => {
-    // Van-Bitlis: Mountain with a State Base and Control; 2 Police allow a Base, Law 3175 allows Guards.
-    const s = setPieces(rich(turnOf("state")), "van-bitlis", "police", 2);
-    const train = gen(s, "card", "state").candidates.filter((c) => c.family.startsWith("op:state.train") && (c.command["plan"] as { locations: string[] }).locations.join() === "van-bitlis").map((c) => JSON.stringify(c.command));
+    // Elazığ: Plain Pop 2 with a State Base and Control; 2 Police allow a Base, Law 3175 allows Guards.
+    const s = setPieces(rich(turnOf("state")), "elazig", "police", 2);
+    const train = gen(s, "card", "state").candidates.filter((c) => c.family.startsWith("op:state.train") && (c.command["plan"] as { locations: string[] }).locations.join() === "elazig").map((c) => JSON.stringify(c.command));
     for (const option of ["guards", "base", "place"]) expect(train.some((t) => t.includes(`"option":"${option}"`)), option).toBe(true);
   });
 
   it("keeps the maximum-value Agitation allocation when the frontier exceeds the family cap", () => {
     let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 20), "agitation", 2);
-    for (const id of ["mardin-batman", "dersim", "agri", "bingol-mus", "elazig", "adiyaman", "diyarbakir-rural"]) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
+    for (const id of ["mardin", "bingol-tunceli", "agri-igdir", "mus", "elazig", "adiyaman", "diyarbakir-rural"]) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
     const shifts = (c: { command: Record<string, unknown> }): number => Object.values((c.command["choice"] as { spaces: Record<string, { shifts: number }> }).spaces).reduce((n, p) => n + p.shifts, 0);
     const narrow = Math.max(...gen(s, "agitation", "pkk").candidates.map(shifts));
     const broad = Math.max(...gen(s, "agitation", "pkk", true).candidates.map(shifts));
@@ -111,13 +113,13 @@ describe("pruning keeps every option kind reachable (PR #40 review)", () => {
 
 describe("second review round (PR #40)", () => {
   it("values Harm recovered by a combined redress and shift in the Agitation frontier", () => {
-    // Harm 8; 3 Resources. Van-Bitlis (-1, 2 Coercion, Base): remove both, shift once = +4 Pop, +4 margin from Harm 8 to 6.
+    // Harm 8; 3 Resources. Şanlıurfa (-1, 2 Coercion, Base): remove both, shift once = +4 Pop, +4 margin from Harm 8 to 6.
     let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 3), "agitation", 2);
-    s = setMarkers(setMarkers(setPieces(setLevel(s, "van-bitlis", -1), "van-bitlis", "pkkBase", 1), "van-bitlis", "coercion", 2), "dersim", "pkkHarm", 6);
-    s = setPieces(setLevel(s, "agri", 0), "agri", "pkkBase", 1);
+    s = setMarkers(setMarkers(setPieces(setLevel(s, "sanliurfa", -1), "sanliurfa", "pkkBase", 1), "sanliurfa", "coercion", 2), "bingol-tunceli", "pkkHarm", 6);
+    s = setPieces(setLevel(s, "agri-igdir", 0), "agri-igdir", "pkkBase", 1);
     const set = gen(s, "agitation", "pkk");
     allLegal(s, set);
-    expect(set.candidates.some((c) => JSON.stringify(c.command).includes("\"van-bitlis\":{\"coercion\":2,\"pkkHarm\":0,\"shifts\":1}"))).toBe(true);
+    expect(set.candidates.some((c) => JSON.stringify(c.command).includes("\"sanliurfa\":{\"coercion\":2,\"pkkHarm\":0,\"shifts\":1}"))).toBe(true);
   });
 
   it("keeps Train in a City when only one or two Troops and no Police are Available", () => {
@@ -158,7 +160,7 @@ describe("campaign procedures (19 s5 Campaign row)", () => {
   });
 
   it("removes the fewest Guards when upkeep cannot be paid", () => {
-    const s = propaganda(setTrack(setPieces(setPieces(turnOf("state"), "dersim", "guards", 3), "agri", "guards", 3), "resources.state", 1), "upkeep");
+    const s = propaganda(setTrack(setPieces(setPieces(turnOf("state"), "bingol-tunceli", "guards", 3), "agri-igdir", "guards", 3), "resources.state", 1), "upkeep");
     expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "upkeep", faction: "state" });
     const set = gen(s, "upkeep", "state");
     allLegal(s, set);
@@ -202,25 +204,25 @@ function bruteForce(spaces: readonly { pop: number; costs: readonly number[] }[]
 describe("Propaganda spending frontier contains the exact optimum (19 s5 pruning check)", () => {
   it("Civic Action: best candidate equals brute force under the Legitimacy cap and Resources", () => {
     let s = propaganda(setTrack(setTrack(turnOf("state"), "legitimacy", 12), "resources.state", 9), "civicAction", 2);
-    s = setMarkers(setLevel(s, "van-bitlis", -1), "van-bitlis", "coercion", 1);
+    s = setMarkers(setLevel(s, "van-rural", -1), "van-rural", "coercion", 1);
     const set = gen(s, "civicAction", "state");
     allLegal(s, set);
     const value = (c: (typeof set.candidates)[number]): number => Object.entries((c.command["choice"] as { spaces: Record<string, { shifts: number }> }).spaces).reduce((n, [id, p]) => n + p.shifts * (ruleset.spaces.find((x) => x.id === id)?.pop ?? 0), 0);
     // Independent oracle: State-Controlled spaces with Troops and Police (rules 6.6), costs from rules 3.6.1.
-    // Van-Bitlis (Coercion), Mardin-Batman, Diyarbakir City, Elazig (Passive Support), Dersim, Bingol-Mus, Agri, Western Cities (Passive Support), Hakkari.
-    const eligible = [{ pop: 4, costs: [3, 5] }, { pop: 4, costs: [2, 4] }, { pop: 2, costs: [2, 4] }, { pop: 2, costs: [2] }, { pop: 1, costs: [2, 4] }, { pop: 3, costs: [2, 4] }, { pop: 2, costs: [2, 4] }, { pop: 3, costs: [2] }, { pop: 1, costs: [2, 4] }];
+    // Van hinterland (Coercion), Mardin, Diyarbakir City, Elazig (Passive Support), Bingöl-Tunceli, Muş, Agri-Igdir, Western Cities (Passive Support), Hakkari.
+    const eligible = [{ pop: 1, costs: [3, 5] }, { pop: 2, costs: [2, 4] }, { pop: 2, costs: [2, 4] }, { pop: 2, costs: [2] }, { pop: 2, costs: [2, 4] }, { pop: 2, costs: [2, 4] }, { pop: 3, costs: [2, 4] }, { pop: 3, costs: [2] }, { pop: 1, costs: [2, 4] }];
     expect(Math.max(...set.candidates.map(value))).toBe(bruteForce(eligible, 6));
   });
 
   it("Agitation: best candidate equals brute force with Coercion and PKK Harm removals", () => {
     let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 7), "agitation", 2);
-    s = setMarkers(setPieces(setPieces(s, "mardin-batman", "pkkBase", 1), "mardin-batman", "guerrilla", 3), "mardin-batman", "pkkHarm", 1);
-    s = setMarkers(setPieces(s, "dersim", "pkkBase", 1), "dersim", "coercion", 1);
+    s = setMarkers(setPieces(setPieces(s, "mardin", "pkkBase", 1), "mardin", "guerrilla", 3), "mardin", "pkkHarm", 1);
+    s = setMarkers(setPieces(s, "bingol-tunceli", "pkkBase", 1), "bingol-tunceli", "coercion", 1);
     const set = gen(s, "agitation", "pkk");
     allLegal(s, set);
     const value = (c: (typeof set.candidates)[number]): number => Object.entries((c.command["choice"] as { spaces: Record<string, { shifts: number }> }).spaces).reduce((n, [id, p]) => n + p.shifts * (ruleset.spaces.find((x) => x.id === id)?.pop ?? 0), 0);
-    // Botan (Pop 2, Passive Opposition: 1 shift at 1), Mardin (Pop 4: redress 2 then 1 each), Dersim (Pop 1: Coercion 1 then 1 each).
-    expect(Math.max(...set.candidates.map(value))).toBe(bruteForce([{ pop: 2, costs: [1] }, { pop: 4, costs: [3, 4] }, { pop: 1, costs: [2, 3] }], 7));
+    // Şırnak (Pop 1, Passive Opposition: 1 shift at 1), Mardin (Pop 2: redress 2 then 1 each), Bingöl-Tunceli (Pop 2: Coercion 1 then 1 each).
+    expect(Math.max(...set.candidates.map(value))).toBe(bruteForce([{ pop: 1, costs: [1] }, { pop: 2, costs: [3, 4] }, { pop: 2, costs: [2, 3] }], 7));
   });
 });
 
@@ -228,7 +230,7 @@ describe("bounded versus broad generation (20 Phase 4)", () => {
   const fixtures: [string, GameState, string][] = [
     ["State opening", rich(turnOf("state")), "state"],
     ["PKK opening", rich(turnOf("pkk")), "pkk"],
-    ["State vs active Botan", setPieces(rich(turnOf("state")), "botan", "guerrilla", 3, "active"), "state"],
+    ["State vs active Şırnak", setPieces(rich(turnOf("state")), "sirnak", "guerrilla", 3, "active"), "state"],
   ];
   it.each(fixtures)("%s: the bounded best one-ply plan is within 1 point of the broad best", (_name, s, faction) => {
     const weights = CURRENT.find((f) => f.id === (faction === "state" ? "S-ADAPT" : "P-ADAPT"))?.weights;
@@ -255,30 +257,30 @@ describe("spending frontier, review rounds 3 and 4 (cand-4)", () => {
   const best = (s: GameState, kind: DecisionKind, faction: "state" | "pkk"): number => Math.max(...gen(s, kind, faction).candidates.map((c) => margin(s, faction, c.command)));
 
   it("caps the Harm benefit over the whole allocation, not per space", () => {
-    // Harm 7 (one above the limit): Coercion in Bingol-Mus and Van-Bitlis, 5 PKK Harm in Dersim (no Base).
+    // Harm 7 (one above the limit): Coercion in Bingol-Mus and Van hinterland, 5 PKK Harm in Bingöl-Tunceli (no Base).
     let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 5), "agitation", 2);
-    for (const id of ["agri", "bingol-mus", "van-bitlis"]) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
-    s = setMarkers(setMarkers(setMarkers(s, "bingol-mus", "coercion", 1), "van-bitlis", "coercion", 1), "dersim", "pkkHarm", 5);
-    const known = choice("agitation", { "van-bitlis": { coercion: 1, pkkHarm: 0, shifts: 2 }, agri: { coercion: 0, pkkHarm: 0, shifts: 2 } });
+    for (const id of ["agri-igdir", "mus", "van-rural"]) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
+    s = setMarkers(setMarkers(setMarkers(s, "mus", "coercion", 1), "van-rural", "coercion", 1), "bingol-tunceli", "pkkHarm", 5);
+    const known = choice("agitation", { "van-rural": { coercion: 1, pkkHarm: 0, shifts: 2 }, "agri-igdir": { coercion: 0, pkkHarm: 0, shifts: 2 } });
     expect(engine.validate(ruleset, s, known).ok).toBe(true);
     expect(best(s, "agitation", "pkk")).toBeGreaterThanOrEqual(margin(s, "pkk", known));
   });
 
   it("offers removal-only spending below the Harm limit, for tie-breaks on lower Harm", () => {
-    // Botan is the only PKK Base, at Strong Opposition, with both PKK Harm markers: no shift is possible.
+    // Şırnak is the only PKK Base, at Strong Opposition, with both PKK Harm markers: no shift is possible.
     let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 4), "agitation", 2);
-    s = setMarkers(setLevel(s, "botan", -2), "botan", "pkkHarm", 2);
-    const removal = choice("agitation", { botan: { coercion: 0, pkkHarm: 2, shifts: 0 } });
+    s = setMarkers(setLevel(s, "sirnak", -2), "sirnak", "pkkHarm", 2);
+    const removal = choice("agitation", { sirnak: { coercion: 0, pkkHarm: 2, shifts: 0 } });
     expect(engine.validate(ruleset, s, removal).ok).toBe(true);
     expect(gen(s, "agitation", "pkk").candidates.some((c) => JSON.stringify(c.command) === JSON.stringify(removal))).toBe(true);
   });
 
   it("keeps a Civic Action allocation the PKK cannot reverse by Agitation", () => {
-    // Only Van-Bitlis (Strong Opposition, PKK Base, Pop 4) and Bingol-Mus (Neutral, Pop 3) are eligible; cap 4.
+    // Only Van hinterland (Strong Opposition, PKK Base, Pop 4) and Bingol-Mus (Neutral, Pop 3) are eligible; cap 4.
     let s = propaganda(setTrack(setTrack(turnOf("state"), "legitimacy", 8), "resources.state", 10), "civicAction", 2);
-    for (const x of ruleset.spaces) if (!["van-bitlis", "bingol-mus"].includes(x.id) && (s.spaces[x.id]?.pieces["police"]?.["default"] ?? 0) > 0) s = setPieces(s, x.id, "police", 0);
-    s = setPieces(setLevel(s, "van-bitlis", -2), "van-bitlis", "pkkBase", 1);
-    const safe = choice("civicAction", { "bingol-mus": { coercion: 0, reception: 0, stateHarm: 0, displacement: 0, shifts: 2 } });
+    for (const x of ruleset.spaces) if (!["van-rural", "mus"].includes(x.id) && (s.spaces[x.id]?.pieces["police"]?.["default"] ?? 0) > 0) s = setPieces(s, x.id, "police", 0);
+    s = setPieces(setLevel(s, "van-rural", -2), "van-rural", "pkkBase", 1);
+    const safe = choice("civicAction", { "mus": { coercion: 0, reception: 0, stateHarm: 0, displacement: 0, shifts: 2 } });
     expect(engine.validate(ruleset, s, safe).ok).toBe(true);
     expect(gen(s, "civicAction", "state").candidates.some((c) => JSON.stringify(c.command) === JSON.stringify(safe))).toBe(true);
   });
@@ -286,7 +288,7 @@ describe("spending frontier, review rounds 3 and 4 (cand-4)", () => {
   it("keeps second shifts when more than nine spaces are eligible", () => {
     // Ten PKK Bases at Neutral, no Harm, 20 Resources: twenty shifts are affordable.
     let s = propaganda(setTrack(turnOf("pkk"), "resources.pkk", 20), "agitation", 2);
-    const ten = ["botan", "mardin-batman", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "dersim", "bingol-mus", "van-bitlis", "agri"];
+    const ten = ["sirnak", "mardin", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "bingol-tunceli", "mus", "van-rural", "agri-igdir"];
     for (const id of ten) s = setLevel(setPieces(s, id, "pkkBase", 1), id, 0);
     const all = choice("agitation", Object.fromEntries(ten.map((id) => [id, { coercion: 0, pkkHarm: 0, shifts: 2 }])));
     expect(engine.validate(ruleset, s, all).ok).toBe(true);
@@ -296,22 +298,22 @@ describe("spending frontier, review rounds 3 and 4 (cand-4)", () => {
 
 describe("spending ties (PR #41 review, cand-5)", () => {
   it("keeps tied Civic Action allocations that expose different spaces to the Agitation reply", () => {
-    // Four eligible spaces. Mardin-Batman x2 + Sanliurfa x1 and Sanliurfa x1 + Van-Bitlis x2 tie on cost, gain and
+    // Four eligible spaces. Mardin x2 + Sanliurfa x1 and Sanliurfa x1 + Bingöl-Tunceli x2 tie on cost, gain and
     // unexposed gain, but the PKK (5 Resources) can reverse them differently; both must reach the final-round solve.
     let s = propaganda(setTrack(setTrack(setTrack(turnOf("state"), "legitimacy", 16), "resources.state", 20), "resources.pkk", 5), "civicAction", 2);
-    const four = ["mardin-batman", "sanliurfa", "van-bitlis", "bingol-mus"];
+    const four = ["mardin", "sanliurfa", "bingol-tunceli", "mus"];
     for (const x of ruleset.spaces) if (!four.includes(x.id) && (s.spaces[x.id]?.pieces["police"]?.["default"] ?? 0) > 0) s = setPieces(s, x.id, "police", 0);
     for (const id of four) s = setPieces(setPieces(s, id, "troops", 3), id, "police", 2);
-    s = setMarkers(setPieces(setLevel(s, "mardin-batman", -1), "mardin-batman", "pkkBase", 1), "mardin-batman", "coercion", 1);
+    s = setMarkers(setPieces(setLevel(s, "mardin", -1), "mardin", "pkkBase", 1), "mardin", "coercion", 1);
     s = setMarkers(setLevel(s, "sanliurfa", 1), "sanliurfa", "coercion", 1);
-    s = setMarkers(setPieces(setLevel(s, "van-bitlis", 0), "van-bitlis", "pkkBase", 1), "van-bitlis", "coercion", 1);
-    s = setMarkers(setPieces(setLevel(s, "bingol-mus", 0), "bingol-mus", "pkkBase", 1), "bingol-mus", "stateHarm", 1);
+    s = setMarkers(setPieces(setLevel(s, "bingol-tunceli", 0), "bingol-tunceli", "pkkBase", 1), "bingol-tunceli", "coercion", 1);
+    s = setMarkers(setPieces(setLevel(s, "mus", 0), "mus", "pkkBase", 1), "mus", "stateHarm", 1);
     const shifts = (c: { command: Record<string, unknown> }): string => JSON.stringify(Object.fromEntries(Object.entries((c.command["choice"] as { spaces: Record<string, { shifts: number }> }).spaces).map(([k, v]) => [k, v.shifts]).sort()));
     const set = gen(s, "civicAction", "state");
     allLegal(s, set);
     const offered = set.candidates.map(shifts);
-    expect(offered).toContain(JSON.stringify({ "mardin-batman": 2, sanliurfa: 1 }));
-    expect(offered).toContain(JSON.stringify({ sanliurfa: 1, "van-bitlis": 2 }));
+    expect(offered).toContain(JSON.stringify({ "mardin": 2, sanliurfa: 1 }));
+    expect(offered).toContain(JSON.stringify({ "bingol-tunceli": 2, sanliurfa: 1 }));
   });
 });
 
@@ -320,19 +322,19 @@ describe("C3 to C5 decisions", () => {
   const c3 = (s: GameState): GameState => inCampaign(ruleset, s, "C3");
   const hasFamily = (set: CandidateSet, family: string): boolean => (set.families[family]?.retained ?? 0) > 0;
 
-  it("offers Village Clearance with Sweep and Garrison, with each Reception space, in a State Controlled Opposition space", () => {
-    // Botan: Mountain, Passive Opposition. 6 Troops and 1 Police against 2 Guerrillas and 1 Base give State Control.
-    const s = setTrack(setPieces(c3(rich(turnOf("state"))), "botan", "troops", 6), "emergencyRule", "ohal");
+  it("offers Village Clearance with Sweep and Garrison, with each of the four Reception cities (DD-22), in a State Controlled Opposition space", () => {
+    // Şırnak: Mountain, Passive Opposition. 6 Troops and 1 Police against 2 Guerrillas and 1 Base give State Control.
+    const s = setTrack(setPieces(c3(rich(turnOf("state"))), "sirnak", "troops", 6), "emergencyRule", "ohal");
     const set = gen(s, "card", "state");
     allLegal(s, set);
     for (const op of ["state.sweep", "state.garrison"]) expect(hasFamily(set, `op:${op}+state.village-clearance@opSa`), op).toBe(true);
     const receptions = new Set(set.candidates.filter((c) => c.family.includes("village-clearance")).flatMap((c) => Object.values((c.command["plan"] as { sa: { perLocation: Record<string, { reception: string }> } }).sa.perLocation).map((p) => p.reception)));
-    expect([...receptions].sort()).toEqual(["diyarbakir-city", "western-cities"]);
+    expect([...receptions].sort()).toEqual(["batman-city", "diyarbakir-city", "van-city", "western-cities"]);
     expect(hasFamily(gen(setTrack(s, "emergencyRule", "martialLaw"), "card", "state"), "op:state.sweep+state.village-clearance@opSa")).toBe(false);
   });
 
   it("offers Covert Action with Sweep and Garrison in a space that is not an Operation space", () => {
-    // Mardin-Batman: 1 Troop and 1 Police against 1 Underground Guerrilla gives State Control.
+    // Mardin: 1 Troop and 1 Police against 1 Underground Guerrilla gives State Control.
     const s = c3(rich(turnOf("state")));
     const set = gen(s, "card", "state");
     allLegal(s, set);
@@ -353,12 +355,12 @@ describe("C3 to C5 decisions", () => {
   });
 
   it("offers every eligible Pivotal with its answers, and decline", () => {
-    const opposed = (s: GameState): GameState => ["botan", "hakkari", "mardin-batman", "diyarbakir-rural", "sanliurfa", "van-bitlis"].reduce((b, id) => setLevel(b, id, -2), s);
+    const opposed = (s: GameState): GameState => ["sirnak", "hakkari", "mardin", "diyarbakir-rural", "sanliurfa", "van-rural"].reduce((b, id) => setLevel(b, id, -2), s);
     const reveal = (campaign: string, hands: Record<string, string[]>, prepare: (s: GameState) => GameState): GameState => {
       const base = inCampaign(ruleset, turnOf("state"), campaign);
       return play(prepare({ ...base, hands: { state: [], pkk: [], ...hands }, deck: { ...base.deck, currentCard: null, piles: [["DK-001", "DK-014"]] }, turn: { ...base.turn, phase: "setup" } }), { type: "Advance" }).state;
     };
-    const serhildan = reveal("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "botan", -1));
+    const serhildan = reveal("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "sirnak", -1));
     const pkk = gen(serhildan, "pivotal", "pkk");
     allLegal(serhildan, pkk);
     expect(hasFamily(pkk, "pivotal:decline")).toBe(true);
@@ -379,7 +381,7 @@ describe("C3 to C5 decisions", () => {
   it("answers a question that opens after a random reveal (DK-079 and DK-080 shaded with 2 Covert markers)", () => {
     // Validation stops at the first random result, so it does not see the "reveal a second" question. Apply needs its answer.
     for (const card of ["DK-079", "DK-080"]) {
-      const s = setMarkers(setMarkers(inCampaign(ruleset, withCard(turnOf("pkk"), card), "C5"), "dersim", "covert", 1), "agri", "covert", 1);
+      const s = setMarkers(setMarkers(inCampaign(ruleset, withCard(turnOf("pkk"), card), "C5"), "bingol-tunceli", "covert", 1), "agri-igdir", "covert", 1);
       const shaded = gen(s, "card", "pkk").candidates.filter((c) => c.family === "event:shaded");
       expect(shaded.length, card).toBeGreaterThan(1);
       for (const c of shaded) expect(() => engine.apply(ruleset, s, c.command), `${card} ${JSON.stringify(c.command["answers"])}`).not.toThrow();
@@ -419,7 +421,7 @@ describe("C3 to C5 decisions", () => {
     });
 
     it("with a State Restraint Broken marker only the PKK has a choice", () => {
-      const s = at(setMarkers(setTrack(setTrack(turnOf("state"), "legalSpace", "open"), "ceasefire", "declared"), "botan", "restraintBroken", 1, "state"));
+      const s = at(setMarkers(setTrack(setTrack(turnOf("state"), "legalSpace", "open"), "ceasefire", "declared"), "sirnak", "restraintBroken", 1, "state"));
       expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "legalPoliticsPkk", faction: "pkk" });
     });
 

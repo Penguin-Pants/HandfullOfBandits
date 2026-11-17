@@ -16,17 +16,18 @@ tracks:
   legalSpace: absent
 spaces:
   hakkari: {level: -1, pieces: {troops: 2, police: 1, guerrilla: 2}}
-  botan: {level: -1, pieces: {troops: 2, police: 1, guerrilla: 2, pkkBase: 1}}
-  mardin-batman: {pieces: {troops: 1, police: 1, guerrilla: 1}}
+  sirnak: {level: -1, pieces: {troops: 2, police: 1, guerrilla: 2, pkkBase: 1}}
+  siirt: {level: -1}
+  mardin: {pieces: {troops: 1, police: 1, guerrilla: 1}}
   diyarbakir-city: {pieces: {troops: 3, police: 2, stateBase: 1}}
   diyarbakir-rural: {pieces: {police: 1}}
   sanliurfa: {level: 1, pieces: {police: 2}}
   adiyaman: {level: 1, pieces: {police: 1}}
   elazig: {level: 1, pieces: {troops: 1, police: 1, stateBase: 1}}
-  dersim: {pieces: {troops: 1, police: 1}}
-  bingol-mus: {pieces: {troops: 1, police: 1}}
-  van-bitlis: {pieces: {troops: 2, police: 1, stateBase: 1}}
-  agri: {pieces: {troops: 1, police: 1}}
+  bingol-tunceli: {pieces: {troops: 1, police: 1}}
+  mus: {pieces: {troops: 1, police: 1}}
+  van-rural: {pieces: {troops: 2, police: 1, stateBase: 1}}
+  agri-igdir: {pieces: {troops: 1, police: 1}}
   western-cities: {level: 1, pieces: {troops: 2, police: 2, stateBase: 1}}
   kdp-zone: {pieces: {guerrilla: 3, pkkBase: 1}}
   syria-bekaa: {pieces: {guerrilla: 2, pkkBase: 1}, markers: {leadership: {present: 1, abroad: 0}}}

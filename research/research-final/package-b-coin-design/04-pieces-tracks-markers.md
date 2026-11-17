@@ -103,7 +103,7 @@ Absent in C1 and C2 (DD-10.1). The HEP event at the start of C3 sets it to Open 
 | Disputed Harm | 6 | Events with contested attribution, Cross-Border (07, section 4) | Events only | Counts for neither faction. 3 or more on the map drain Legitimacy 1 |
 | Coercion | 8 | Coerce | Reset (one per space), Civic Action or Agitation (1 Resource each) | Blocks shifts in both directions until removed. Counts toward PKK Harm count |
 | Displacement (New / Old, double-sided) | 10 | Village Clearance | Return (07, section 3.3) | Blocks PKK Rally, Extort and Coerce in its space. New side drains Legitimacy 1 at the next Propaganda, then flips to Old |
-| Reception | 8 | Village Clearance | Civic Action relief (1 Resource each) | Obligation in Diyarbakır City or Western Cities. 3 or more on the map drain Legitimacy 1 |
+| Reception | 8 | Village Clearance | Civic Action relief (1 Resource each) | Obligation in Diyarbakır City, Van City, Batman City or Western Cities. 3 or more on the map drain Legitimacy 1 |
 | Covert (face-down) | 6 | Covert Action | Reveal (becomes a State Harm marker) | Hidden until revealed. All are revealed before final scoring |
 | Office | 8 | Legal Politics procedure, events | Ban, events | No Control. Caps its space at Passive Support and at Passive Opposition (DD-18.4). Changes Legitimacy rules |
 | Closure Case | 1 | State filing in Propaganda | Ban resolution | Pending case against the legal party |

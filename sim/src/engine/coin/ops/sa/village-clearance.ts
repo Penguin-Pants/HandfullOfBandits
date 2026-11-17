@@ -1,7 +1,7 @@
 // Village Clearance (research 06 s3.4; 07 s3.2; approved text docs/prototype/27). With Sweep or
 // Garrison, in one Op space: four conditions, then seven effects in order. Costs Legitimacy; Resources
-// only under US Lending Conditions (DK-074). Per location: `reception`, the Diyarbakır City or
-// Western Cities space for Reception.
+// only under US Lending Conditions (DK-074). Per location: `reception`, a space tagged
+// receptionTarget (Diyarbakır City, Van City, Batman City or Western Cities) for Reception.
 import { param } from "../../../core/params.ts";
 import { SINGLE_FACE } from "../../../core/state.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";

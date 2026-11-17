@@ -5,7 +5,7 @@ import { income } from "./propaganda/resources.ts";
 import { entryText } from "../../server/text.ts";
 
 // T-EVT for the structural cards (11 P3b-06a; approved text docs/prototype/31 s5, DEC-67).
-// S0 board: Botan is the only domestic space with a PKK Base (level -1, no Office).
+// S0 board: Şırnak is the only domestic space with a PKK Base (level -1, no Office).
 const event = (faction: string, side: string, answers: unknown[] = []): AnyCommand => ({ type: "ChooseEvent", faction, side, answers });
 const c3 = (s: GameState): GameState => inCampaign(ruleset, s, "C3");
 const reveal = (card: string, s: GameState = engine.start(ruleset, "full-campaign", 1).state): GameState => c3({ ...s, deck: { ...s.deck, piles: [[card, "DK-016"]] } });
@@ -29,7 +29,7 @@ describe("HEP Founded (DK-037)", () => {
   it("Always fires once: a declined Pivotal window does not run it again", () => {
     let board = reveal("DK-037");
     board = { ...board, hands: { ...board.hands, pkk: ["DK-015"] } };
-    for (const id of ["botan", "hakkari", "dersim"]) board = setPieces(setPieces(board, id, "pkkBase", 1), id, "guerrilla", 3);
+    for (const id of ["sirnak", "hakkari", "bingol-tunceli"]) board = setPieces(setPieces(board, id, "pkkBase", 1), id, "guerrilla", 3);
     const opened = play(board, { type: "Advance" }).state;
     expect(opened.turn.phase).toBe("pivotal");
     const declined = play(opened, { type: "ResolveDecision", decisionId: opened.pending?.id, answer: "decline" }).state;
@@ -51,10 +51,10 @@ describe("HEP Founded (DK-037)", () => {
   });
 
   it("S: shifts 1 space with a PKK Base and no Office one level toward Opposition", () => {
-    const { state } = play(withCard(turnOf("pkk"), "DK-037"), event("pkk", "shaded", [["botan"]]));
-    expect(state.spaces["botan"]?.level).toBe(-2);
-    const withOffice = setMarkers(withCard(turnOf("pkk"), "DK-037"), "botan", "office", 1);
-    expect(play(withOffice, event("pkk", "shaded", [[]])).state.spaces["botan"]?.level).toBe(-1);
+    const { state } = play(withCard(turnOf("pkk"), "DK-037"), event("pkk", "shaded", [["sirnak"]]));
+    expect(state.spaces["sirnak"]?.level).toBe(-2);
+    const withOffice = setMarkers(withCard(turnOf("pkk"), "DK-037"), "sirnak", "office", 1);
+    expect(play(withOffice, event("pkk", "shaded", [[]])).state.spaces["sirnak"]?.level).toBe(-1);
   });
 });
 
@@ -108,7 +108,7 @@ describe("Capture (DK-093)", () => {
 
   it("Capture income never goes below 0", () => {
     let board: GameState = setMarkers({ ...turnOf("pkk"), flags: { ...turnOf("pkk").flags, captured: true } }, "syria-bekaa", "leadership", 0, "present");
-    for (const id of ["botan", "kdp-zone", "syria-bekaa"]) board = setPieces(board, id, "pkkBase", 0);
+    for (const id of ["sirnak", "kdp-zone", "syria-bekaa"]) board = setPieces(board, id, "pkkBase", 0);
     board = setTrack(board, "europe", 0);
     expect(income(ruleset, board).pkk).toBe(0);
   });
@@ -130,13 +130,13 @@ describe("Capture (DK-093)", () => {
 
   it("S: Europe +1 and 1 PKK Base space toward Opposition", () => {
     const board = setTrack(withCard(turnOf("pkk"), "DK-093"), "europe", 2);
-    const { state } = play(board, event("pkk", "shaded", [["botan"]]));
+    const { state } = play(board, event("pkk", "shaded", [["sirnak"]]));
     expect(state.tracks["europe"]).toBe(3);
-    expect(state.spaces["botan"]?.level).toBe(-2);
+    expect(state.spaces["sirnak"]?.level).toBe(-2);
   });
 
   it("S: the Event Europe rise stops at the Europe Ban marker cap (04 s3.6)", () => {
     const board = setMarkers(setTrack(withCard(turnOf("pkk"), "DK-093"), "europe", 3), "europe", "europeBan", 1);
-    expect(play(board, event("pkk", "shaded", [["botan"]])).state.tracks["europe"]).toBe(3);
+    expect(play(board, event("pkk", "shaded", [["sirnak"]])).state.tracks["europe"]).toBe(3);
   });
 });

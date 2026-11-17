@@ -6,6 +6,7 @@ import { kurdish } from "../../../test/kurdish-package.ts";
 import { turnOf } from "../../../test/board.ts";
 import { MapCanvas } from "./MapCanvas.tsx";
 import { Board, SpaceDetail } from "./Board.tsx";
+import { ATLAS } from "./atlas-data.ts";
 const view = boardView(kurdish.ruleset,kurdish.data,turnOf("pkk"));
 afterEach(cleanup);
 describe("map navigation and layers", () => {
@@ -25,7 +26,7 @@ describe("map navigation and layers", () => {
   });
   it("preserves selection access in every display mode and sends only supplied candidate IDs", () => {
     const select=vi.fn();
-    render(<MapCanvas view={view} selected={[]} onSelect={select} eligible={["botan"]} />);
+    render(<MapCanvas view={view} selected={[]} onSelect={select} eligible={["sirnak"]} />);
     for (const mode of ["Full","Forces","Political","Terrain"]) {
       fireEvent.click(screen.getByRole("button",{name:mode}));
       expect(screen.getByRole("img",{name:"Board"}).classList.contains(`mode-${mode.toLowerCase()}`)).toBe(true);
@@ -33,7 +34,7 @@ describe("map navigation and layers", () => {
       fireEvent.keyDown(screen.getByRole("button",{name:"Hakkari"}),{key:" "});
     }
     expect(select).toHaveBeenCalledTimes(4);
-    expect(screen.getByRole("button",{name:"Botan"}).classList.contains("eligible")).toBe(true);
+    expect(screen.getByRole("button",{name:"Şırnak"}).classList.contains("eligible")).toBe(true);
     expect(screen.getByRole("button",{name:"Hakkari"}).classList.contains("ineligible")).toBe(true);
   });
   it("finds a space by name and keeps the city independently selectable", () => {
@@ -47,13 +48,13 @@ describe("map navigation and layers", () => {
     expect(select).toHaveBeenLastCalledWith("diyarbakir-city",true);
   });
   it("retains complete dense contents in inspection while showing explicit overflow without scaling", () => {
-    const original=view.spaces.find(s=>s.id === "botan");
-    if(original === undefined) throw new Error("botan");
+    const original=view.spaces.find(s=>s.id === "sirnak");
+    if(original === undefined) throw new Error("sirnak");
     const dense={...original,markers:Array.from({length:9},(_,i)=>({marker:`test${String(i)}`,count:i+1,hidden:false,side:"old"}))};
     const {container}=render(<><Board view={{...view,spaces:view.spaces.map(s=>s.id === dense.id ? dense : s)}} selected={[]} onSelect={vi.fn()} /><SpaceDetail space={dense} /></>);
-    expect(container.querySelector('[data-info="botan"] .atlas-overflow')).not.toBeNull();
-    expect(container.querySelector('[data-info="botan"] [transform*="scale"]')).toBeNull();
-    for(const m of dense.markers) expect(screen.getByLabelText("Botan detail").textContent).toContain(`Test ${m.marker.slice(4)} (Old)`);
+    expect(container.querySelector('[data-info="sirnak"] .atlas-overflow')).not.toBeNull();
+    expect(container.querySelector('[data-info="sirnak"] [transform*="scale"]')).toBeNull();
+    for(const m of dense.markers) expect(screen.getByLabelText("Şırnak detail").textContent).toContain(`Test ${m.marker.slice(4)} (Old)`);
   });
 });
 
@@ -143,7 +144,7 @@ describe("wheel zoom and drag pan", () => {
     const before = board.getAttribute("viewBox");
     fireEvent.pointerDown(screen.getByRole("button", { name: "Hakkari" }), { button: 1, pointerId: 1, clientX: 100, clientY: 100 });
     fireEvent.pointerMove(board, { pointerId: 1, clientX: 60, clientY: 100 });
-    fireEvent.pointerUp(screen.getByRole("button", { name: "Botan" }), { button: 1, pointerId: 1 });
+    fireEvent.pointerUp(screen.getByRole("button", { name: "Şırnak" }), { button: 1, pointerId: 1 });
     expect(board.getAttribute("viewBox")).not.toBe(before);
     expect(onDrag).not.toHaveBeenCalled();
   });
@@ -155,8 +156,8 @@ describe("wheel zoom and drag pan", () => {
     const before = board.getAttribute("viewBox");
     fireEvent.pointerDown(screen.getByRole("button", { name: "Hakkari" }), { button: 0, pointerId: 1, clientX: 100, clientY: 100 });
     fireEvent.pointerMove(board, { pointerId: 1, clientX: 160, clientY: 100 });
-    fireEvent.pointerUp(screen.getByRole("button", { name: "Botan" }), { button: 0, pointerId: 1 });
-    expect(onDrag).toHaveBeenCalledWith("hakkari", "botan");
+    fireEvent.pointerUp(screen.getByRole("button", { name: "Şırnak" }), { button: 0, pointerId: 1 });
+    expect(onDrag).toHaveBeenCalledWith("hakkari", "sirnak");
     expect(board.getAttribute("viewBox")).toBe(before);
   });
   it("keeps the map inside the view when panning at a low zoom", () => {
@@ -169,6 +170,6 @@ describe("wheel zoom and drag pan", () => {
     fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
     for (let i = 0; i < 80; i++) fireEvent.keyDown(board, { key: "ArrowRight" });
     const [x = 0, , w = 0] = (board.getAttribute("viewBox") ?? "").split(" ").map(Number);
-    expect(x + w).toBeLessThanOrEqual(1280.001);
+    expect(x + w).toBeLessThanOrEqual(ATLAS.width + .001);
   });
 });

@@ -16,33 +16,33 @@ const open = (s: GameState): GameState => setTrack(s, "legalSpace", "open");
 const offices = (s: GameState, ...ids: string[]): GameState => ids.reduce((b, id) => setMarkers(b, id, "office", 1), s);
 const law = (s: GameState): GameState => ({ ...s, flags: { ...s.flags, law3175: true } });
 
-/** Botan with State Control (6 Troops, 1 Police against 2 Guerrillas and a Base), at OHAL in C3. */
-const clearance = setTrack(setPieces(c3(turnOf("state")), "botan", "troops", 6), "emergencyRule", "ohal");
+/** Şırnak with State Control (6 Troops, 1 Police against 2 Guerrillas and a Base), at OHAL in C3. */
+const clearance = setTrack(setPieces(c3(turnOf("state")), "sirnak", "troops", 6), "emergencyRule", "ohal");
 const sweepWith = (action: string, space: string, perLocation: Record<string, unknown> = {}): AnyCommand =>
-  op("state", "opSa", { op: "state.sweep", locations: ["botan"], sa: { action, locations: [space], perLocation, timing: "before" } });
+  op("state", "opSa", { op: "state.sweep", locations: ["sirnak"], sa: { action, locations: [space], perLocation, timing: "before" } });
 const pivotalWindow = (campaign: string, hands: Record<string, string[]>, prepare: (s: GameState) => GameState): GameState => {
   const base = inCampaign(ruleset, turnOf("state"), campaign);
   return play(prepare({ ...base, hands: { state: [], pkk: [], ...hands }, deck: { ...base.deck, currentCard: null, piles: [["DK-001", "DK-014"]] }, turn: { ...base.turn, phase: "setup" } }), advance).state;
 };
-const opposed = (s: GameState): GameState => ["botan", "hakkari", "mardin-batman", "diyarbakir-rural", "sanliurfa", "van-bitlis"].reduce((b, id) => setLevel(b, id, -2), s);
+const opposed = (s: GameState): GameState => ["sirnak", "hakkari", "mardin", "diyarbakir-rural", "sanliurfa", "van-rural"].reduce((b, id) => setLevel(b, id, -2), s);
 const cf = (s: GameState, step: string): GameState => setTrack(open(c3(s)), "ceasefire", step);
 
 const CASES: readonly (readonly [string, GameState, AnyCommand])[] = [
-  ["A-state.village-clearance", clearance, sweepWith("state.village-clearance", "botan", { botan: { reception: "diyarbakir-city" } })],
-  ["A-state.covert-action", c3(turnOf("state")), sweepWith("state.covert-action", "mardin-batman")],
-  ["C-covert-reveal", setMarkers(propaganda(c3(turnOf("state")), "agitation", 5), "dersim", "covert", 1), advance],
+  ["A-state.village-clearance", clearance, sweepWith("state.village-clearance", "sirnak", { sirnak: { reception: "diyarbakir-city" } })],
+  ["A-state.covert-action", c3(turnOf("state")), sweepWith("state.covert-action", "mardin")],
+  ["C-covert-reveal", setMarkers(propaganda(c3(turnOf("state")), "agitation", 5), "bingol-tunceli", "covert", 1), advance],
   ["P-ceasefire-declared", c3(turnOf("pkk")), { type: "DeclareCeasefire", faction: "pkk" }],
   ["P-ceasefire-restraint", propaganda(cf(turnOf("state"), "declared"), "legalPolitics"), legal({ ceasefire: { accept: true } })],
-  ["P-ceasefire-breach", setPieces(setPieces(cf(turnOf("state"), "reciprocalRestraint"), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active"), op("state", "limitedOp", { op: "state.assault", locations: ["botan"] })],
+  ["P-ceasefire-breach", setPieces(setPieces(cf(turnOf("state"), "reciprocalRestraint"), "sirnak", "guerrilla", 0), "sirnak", "guerrilla", 2, "active"), op("state", "limitedOp", { op: "state.assault", locations: ["sirnak"] })],
   ["P-ceasefire-left", propaganda(cf(turnOf("state"), "reciprocalRestraint"), "legalPolitics"), legal({ ceasefire: { leave: { pkk: true } } })],
   ["L-legal-open", ((s: GameState): GameState => ({ ...s, deck: { ...s.deck, currentCard: null, piles: [["DK-037", "DK-055"]] }, turn: { ...s.turn, phase: "setup" } }))(c3(turnOf("state"))), advance],
   ["L-office-placed", propaganda(open(c3(turnOf("state"))), "legalPolitics"), advance],
   ["L-state-filing", propaganda(offices(open(c3(turnOf("state"))), "diyarbakir-city"), "legalPolitics"), legal({ closureFiling: true })],
-  ["L-prosecutor-filing", propaganda(offices(open(c3(turnOf("state"))), "diyarbakir-city", "western-cities", "mardin-batman"), "legalPolitics"), advance],
+  ["L-prosecutor-filing", propaganda(offices(open(c3(turnOf("state"))), "diyarbakir-city", "western-cities", "mardin"), "legalPolitics"), advance],
   ["L-ban", propaganda({ ...offices(open(c3(turnOf("state"))), "diyarbakir-city"), flags: { ...c3(turnOf("state")).flags, closureCase: true } }, "legalPolitics"), advance],
   ["L-successor", propaganda(setTrack(setTrack(c3(turnOf("state")), "legalSpace", "banned"), "successor", 2), "legalPolitics"), advance],
   ["S-emergency-extended", propaganda(setTrack(c3(turnOf("state")), "emergencyRule", "ohal"), "legitimacy"), { type: "PropagandaChoice", phase: "legitimacy", choice: { emergencyStep: "ohalExtendedPowers" } }],
-  ["S-serhildan-play", pivotalWindow("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "botan", -1)), { type: "PlayPivotal", faction: "pkk", card: "DK-054", answers: [["botan"]] }],
+  ["S-serhildan-play", pivotalWindow("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "sirnak", -1)), { type: "PlayPivotal", faction: "pkk", card: "DK-054", answers: [["sirnak"]] }],
   ["S-coercive-diplomacy-play", pivotalWindow("C5", { state: ["DK-098"] }, (s) => setTrack(s, "posture.syria", "tolerant")), { type: "PlayPivotal", faction: "state", card: "DK-098", answers: [] }],
   ["H-europe-ban", setTrack(inCampaign(ruleset, withCard(turnOf("state"), "DK-064"), "C4"), "europe", 5), event("state", "unshaded")],
   ["C-strike-after", setPieces(setPieces(law(turnOf("pkk")), "diyarbakir-rural", "guards", 1), "diyarbakir-rural", "guerrilla", 0),
@@ -69,8 +69,8 @@ describe("coverage ledger: C3 to C5 mechanics", () => {
   });
 
   it("a State action during Declared places the marker only: it is not a breach (PR 106 review)", () => {
-    const before = setPieces(setPieces(cf(turnOf("state"), "declared"), "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
-    const command = op("state", "limitedOp", { op: "state.assault", locations: ["botan"] });
+    const before = setPieces(setPieces(cf(turnOf("state"), "declared"), "sirnak", "guerrilla", 0), "sirnak", "guerrilla", 2, "active");
+    const command = op("state", "limitedOp", { op: "state.assault", locations: ["sirnak"] });
     const result = engine.apply(ruleset, before, command);
     expect(result.ok && result.transition.state.tracks["ceasefire"]).toBe("declared");
     const seen = { entries: result.ok ? result.transition.logEntries : [], command, before };
@@ -79,8 +79,8 @@ describe("coverage ledger: C3 to C5 mechanics", () => {
   });
 
   it("the ARGK probes name ARGK only, now that the bots play every Pivotal", () => {
-    const window = pivotalWindow("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "botan", -1));
-    const command = { type: "PlayPivotal", faction: "pkk", card: "DK-054", answers: [["botan"]] };
+    const window = pivotalWindow("C3", { pkk: ["DK-054"] }, (s) => setLevel(opposed(s), "sirnak", -1));
+    const command = { type: "PlayPivotal", faction: "pkk", card: "DK-054", answers: [["sirnak"]] };
     const result = engine.apply(ruleset, window, command);
     expect(result.ok && MECHANICS.find((m) => m.id === "S-argk-play")?.probe({ entries: result.transition.logEntries, command, before: window })).toBe(false);
   });

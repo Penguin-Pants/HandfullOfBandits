@@ -22,33 +22,33 @@ const law = (s: GameState): GameState => ({ ...s, flags: { ...s.flags, law3175: 
 
 describe("Decision 3 (M-01): the block on State acceptance lasts until the next Reset", () => {
   const declared = setTrack(inCampaign(ruleset, fullTurn("state"), "C3"), "ceasefire", "declared");
-  const assault = op("state", "limitedOp", { op: "state.assault", locations: ["botan"], perLocation: {}, sa: null, subActions: [] });
+  const assault = op("state", "limitedOp", { op: "state.assault", locations: ["sirnak"], perLocation: {}, sa: null, subActions: [] });
 
   it("a State Assault during Declared places the marker and blocks acceptance; Reset removes the marker and the block", () => {
-    const active = setPieces(setPieces(declared, "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
+    const active = setPieces(setPieces(declared, "sirnak", "guerrilla", 0), "sirnak", "guerrilla", 2, "active");
     const broken = play(active, assault).state;
-    expect([broken.tracks["ceasefire"], marker(broken, "botan", "restraintBroken", "state")]).toEqual(["declared", 1]);
+    expect([broken.tracks["ceasefire"], marker(broken, "sirnak", "restraintBroken", "state")]).toEqual(["declared", 1]);
     expect(ceasefireOptions(ruleset, broken).accept).toBe(false);
     const reset = play(propaganda(broken, "reset"), { type: "Advance" }).state;
-    expect([reset.tracks["ceasefire"], marker(reset, "botan", "restraintBroken", "state")]).toEqual(["declared", 0]);
+    expect([reset.tracks["ceasefire"], marker(reset, "sirnak", "restraintBroken", "state")]).toEqual(["declared", 0]);
     expect(ceasefireOptions(ruleset, reset).accept).toBe(true);
   });
 });
 
 describe("Decision 4 (M-03): one March group is all Guerrillas from one origin to one destination", () => {
-  // T-M03: Şanlıurfa at Passive Support with 2 Police; 4 Underground Guerrillas in Mardin-Batman.
-  const board = setPieces(setPieces(turnOf("pkk"), "mardin-batman", "guerrilla", 4), "sanliurfa", "police", 2);
+  // T-M03: Şanlıurfa at Passive Support with 2 Police; 4 Underground Guerrillas in Mardin.
+  const board = setPieces(setPieces(turnOf("pkk"), "mardin", "guerrilla", 4), "sanliurfa", "police", 2);
   const march = (moves: unknown[]): AnyCommand => op("pkk", "limitedOp", { op: "pkk.march", locations: ["sanliurfa"], perLocation: { sanliurfa: { moves } } });
 
   it("four entries of 1 from the same origin are one group of 4: all arrive Active", () => {
-    const split = Array.from({ length: 4 }, () => ({ from: "mardin-batman", count: 1 }));
+    const split = Array.from({ length: 4 }, () => ({ from: "mardin", count: 1 }));
     expect(pieces(play(board, march(split)).state, "sanliurfa", "guerrilla")).toEqual({ underground: 0, active: 4 });
-    expect(pieces(play(board, march([{ from: "mardin-batman", count: 4 }])).state, "sanliurfa", "guerrilla")).toEqual({ underground: 0, active: 4 });
+    expect(pieces(play(board, march([{ from: "mardin", count: 4 }])).state, "sanliurfa", "guerrilla")).toEqual({ underground: 0, active: 4 });
   });
 
   it("two origins into one destination are two groups", () => {
-    const two = setPieces(setPieces(board, "mardin-batman", "guerrilla", 1), "adiyaman", "guerrilla", 1);
-    const moved = play(two, march([{ from: "mardin-batman", count: 1 }, { from: "adiyaman", count: 1 }])).state;
+    const two = setPieces(setPieces(board, "mardin", "guerrilla", 1), "adiyaman", "guerrilla", 1);
+    const moved = play(two, march([{ from: "mardin", count: 1 }, { from: "adiyaman", count: 1 }])).state;
     expect(pieces(moved, "sanliurfa", "guerrilla")).toEqual({ underground: 2, active: 0 });
   });
 });
@@ -60,26 +60,26 @@ describe("Decision 5 (M-07): the box follows the action", () => {
   it("First Eligible: Op Only needs two or more locations; one location is a Limited Op", () => {
     const first = turnOf("pkk");
     expect(first.initiative.firstEligible).toBe("pkk");
-    expect(codes(first, rally("opOnly", "dersim"))).toEqual(["opOnlyLocations"]);
-    expect(codes(first, rally("limitedOp", "dersim"))).toEqual([]);
-    expect(codes(first, rally("opOnly", "dersim", "mardin-batman"))).toEqual([]);
+    expect(codes(first, rally("opOnly", "bingol-tunceli"))).toEqual(["opOnlyLocations"]);
+    expect(codes(first, rally("limitedOp", "bingol-tunceli"))).toEqual([]);
+    expect(codes(first, rally("opOnly", "bingol-tunceli", "mardin"))).toEqual([]);
   });
 
   it("a Garrison that moves Police to a second destination uses two locations, so it is an Op Only", () => {
     const garrison = (box: string, moves: unknown[]): AnyCommand => op("state", box, { op: "state.garrison", locations: ["hakkari"], perLocation: { hakkari: { moves } } });
     const board = setPieces(turnOf("state"), "hakkari", "guerrilla", 3);
-    const spread = [{ from: "van-bitlis", to: "hakkari", count: 1 }, { from: "agri", to: "dersim", count: 1 }];
+    const spread = [{ from: "van-rural", to: "hakkari", count: 1 }, { from: "agri-igdir", to: "bingol-tunceli", count: 1 }];
     expect(codes(board, garrison("opOnly", spread))).toEqual([]);
-    expect(codes(board, garrison("opOnly", [{ from: "van-bitlis", to: "hakkari", count: 1 }]))).toEqual(["opOnlyLocations"]);
+    expect(codes(board, garrison("opOnly", [{ from: "van-rural", to: "hakkari", count: 1 }]))).toEqual(["opOnlyLocations"]);
   });
 
   it("a March move with a `to` field is still one location: March ignores `to` (PR 101 review)", () => {
-    const march = op("pkk", "opOnly", { op: "pkk.march", locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "botan", to: "botan", count: 1 }] } } });
+    const march = op("pkk", "opOnly", { op: "pkk.march", locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "sirnak", to: "sirnak", count: 1 }] } } });
     expect(codes(turnOf("pkk"), march)).toEqual(["opOnlyLocations"]);
   });
 
   it("the responder to a Limited Op may take Op Only in one location (research 05 s2.3 note 2)", () => {
-    const after = play(turnOf("pkk"), rally("limitedOp", "dersim")).state;
+    const after = play(turnOf("pkk"), rally("limitedOp", "bingol-tunceli")).state;
     const sweep = op("state", "opOnly", { op: "state.sweep", locations: ["hakkari"], perLocation: {}, sa: null, subActions: [] });
     expect(after.initiative.firstEligible).toBe("pkk");
     expect(codes(after, sweep)).not.toContain("opOnlyLocations");
@@ -112,7 +112,7 @@ describe("Decision 6 (M-02): the Europe cap marker is the permanent Europe Ban m
 
 describe("Decision 7 (M-08): a line 6 filing sets Legal Space to Prosecuted", () => {
   it("the prosecutor files at the limit of 4 Offices and Legal Space goes from Open to Prosecuted", () => {
-    const three = ["diyarbakir-city", "western-cities", "mardin-batman"].reduce((b, id) => setMarkers(b, id, "office", 1), setTrack(turnOf("state"), "legalSpace", "open"));
+    const three = ["diyarbakir-city", "western-cities", "mardin"].reduce((b, id) => setMarkers(b, id, "office", 1), setTrack(turnOf("state"), "legalSpace", "open"));
     const { state } = play(propaganda(three, "legalPolitics"), { type: "Advance" });
     expect([state.flags["closureCase"], state.tracks["legalSpace"]]).toEqual([true, "prosecuted"]);
   });
@@ -131,7 +131,7 @@ describe("Decision 9 (M-10): a faction may take the Event box and apply nothing"
 });
 
 describe("Decision 10 (M-04): Strike Collaborators may go before or after the Operation", () => {
-  // T-M04: Diyarbakır Rural has 1 Guard and no Guerrilla. The Rally places the Guerrilla that strikes.
+  // T-M04: Diyarbakır hinterland has 1 Guard and no Guerrilla. The Rally places the Guerrilla that strikes.
   const board = setPieces(setPieces(law(turnOf("pkk")), "diyarbakir-rural", "guards", 1), "diyarbakir-rural", "guerrilla", 0);
   const plan = (timing: string): AnyCommand =>
     op("pkk", "opSa", { op: "pkk.rally", locations: ["diyarbakir-rural"], perLocation: { "diyarbakir-rural": { option: "place" } }, sa: { action: "pkk.strike-collaborators", locations: ["diyarbakir-rural"], perLocation: { "diyarbakir-rural": { guards: 1 } }, timing } });
@@ -169,7 +169,7 @@ describe("Decision 13 (M-11): Rally places as many Guerrillas as are Available",
     const start = turnOf("pkk");
     const pool = start.pools["guerrilla"];
     const board = { ...start, pools: { ...start.pools, guerrilla: { ...pool, available: 2 } } } as GameState;
-    const spaces = ["dersim", "mardin-batman", "van-bitlis"];
+    const spaces = ["bingol-tunceli", "mardin", "van-rural"];
     const total = (s: GameState): number => spaces.reduce((n, id) => n + Object.values(pieces(s, id, "guerrilla")).reduce((a, b) => a + b, 0), 0);
     const plan = op("pkk", "opOnly", { op: "pkk.rally", locations: spaces, perLocation: Object.fromEntries(spaces.map((l) => [l, { option: "place" }])) });
     expect(codes(board, plan)).toEqual([]);

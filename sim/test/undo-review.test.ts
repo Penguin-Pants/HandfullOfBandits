@@ -42,7 +42,7 @@ describe("undo (06 s6)", () => {
     const note = service.annotations(sessionId).find((n) => n.annotation_id === noteId);
     expect(note?.state_hash).toBe(attacked.head.stateHash);
     expect(service.state(attacked.head.stateHash).state.meta.stateSeq).toBeGreaterThan(0);
-    expect(service.stateView(sessionId, revealed.head.stateHash).spaces).toHaveLength(18);
+    expect(service.stateView(sessionId, revealed.head.stateHash).spaces).toHaveLength(23);
   });
 
   it("gives the next action a new ID, and the replay check skips the undone action", () => {
@@ -61,11 +61,11 @@ describe("undo (06 s6)", () => {
 
 describe("review (07 s7, T-ANN-06)", () => {
   it("filters by space using the selected space or the action's locations, and searches text", () => {
-    service.annotate(sessionId, { anchor: "proposed", actionId: null, text: "March into Botan?", categoryIds: [], focus, proposed: { type: "ChooseOperation", faction: "state", box: "opOnly", plan: { op: "state.sweep", locations: ["botan"], perLocation: {}, sa: null, subActions: [] } } });
+    service.annotate(sessionId, { anchor: "proposed", actionId: null, text: "March into Şırnak?", categoryIds: [], focus, proposed: { type: "ChooseOperation", faction: "state", box: "opOnly", plan: { op: "state.sweep", locations: ["sirnak"], perLocation: {}, sa: null, subActions: [] } } });
     expect(service.review({ space: "hakkari" }).map((r) => r.annotationId)).toEqual([noteId]);
-    expect(service.review({ space: "botan" }).map((r) => r.text)).toEqual(["March into Botan?"]);
+    expect(service.review({ space: "sirnak" }).map((r) => r.text)).toEqual(["March into Şırnak?"]);
     expect(service.review({ q: "ODDS" }).map((r) => r.annotationId)).toEqual([noteId]);
-    expect(service.review({ category: "general" }).map((r) => r.text)).toEqual(["March into Botan?"]);
+    expect(service.review({ category: "general" }).map((r) => r.text)).toEqual(["March into Şırnak?"]);
     expect(service.review({ anchor: "executed", category: "balance" })).toHaveLength(1);
   });
 });

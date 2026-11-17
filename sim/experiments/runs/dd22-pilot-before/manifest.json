@@ -1,0 +1,125 @@
+{
+ "schemaVersion": 1,
+ "id": "dd22-pilot-before",
+ "stage": "pilot",
+ "description": "Full campaign on the 13-space map (main, before DD-22): 4 x 4 qualified cells x 15 development seeds. Comparison base for dd22-pilot-after.",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "8d268df924cb10339590b95964b67fefec4a065466721c02420b1ca4931d83f3"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 30
+  },
+  "harmLimit": 6,
+  "engineFingerprint": null,
+  "playerFingerprint": null
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-POL@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-POL@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-MIL@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-CON@1",
+   "pkk": "P-ADAPT@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-POL@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-EXP@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-SURV@2"
+  },
+  {
+   "state": "S-ADAPT@1",
+   "pkk": "P-ADAPT@2"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 7001,
+    "count": 15
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}

@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { actionForms } from "./forms.ts";
+import { kurdish } from "../../test/kurdish-package.ts";
+import { actionForms, formsFor } from "./forms.ts";
+import { turnOf } from "../../test/board.ts";
 
 // UC-6: each summary states the rule the engine runs (handler header comments cite each one).
 const summary = (id: string): string => actionForms.find((f) => f.id === id)?.summary ?? "";
@@ -71,12 +73,17 @@ describe("action summaries match the engine", () => {
     for (const f of actionForms) expect(f.summary.length).toBeGreaterThan(20);
   });
 });
-it("active card forms allow the second Agitate and Academy recruits", async () => {
-  const {formsFor} = await import("./forms.ts");
-  const {turnOf} = await import("../../test/board.ts");
+it("active card forms allow the second Agitate and Academy recruits", () => {
   const state = {...turnOf("pkk"), modifiers: [{id: "extra-agitate", sourceCard: "DK-007", duration: "untilReset" as const, params: {maxSpaces: 2}}, {id: "academy", sourceCard: "DK-009", duration: "game" as const, params: {extra: 2}}]};
-  const form = formsFor(state).find(f => f.id === "pkk.rally");
+  const form = formsFor(kurdish.ruleset, state).find(f => f.id === "pkk.rally");
   expect(form?.subAction?.maxSpaces).toBe(2);
   expect(form?.fields.some(f => f.key === "extra")).toBe(true);
-  expect(formsFor(turnOf("pkk")).find(f => f.id === "pkk.rally")?.fields.some(f => f.key === "extra")).toBe(false);
+  expect(formsFor(kurdish.ruleset, turnOf("pkk")).find(f => f.id === "pkk.rally")?.fields.some(f => f.key === "extra")).toBe(false);
+});
+
+it("offers every receptionTarget city of the loaded map for Village Clearance, not a fixed pair (DD-22)", () => {
+  const options = (rs: typeof kurdish.ruleset) => formsFor(rs, turnOf("state")).find(f => f.id === "state.village-clearance")?.fields.find(f => f.key === "reception")?.options;
+  expect(options(kurdish.ruleset)).toEqual(["batman-city", "van-city", "diyarbakir-city", "western-cities"]);
+  const fewer = { ...kurdish.ruleset, spaces: kurdish.ruleset.spaces.map(s => (s.id === "van-city" ? { ...s, tags: [] } : s)) };
+  expect(options(fewer)).toEqual(["batman-city", "diyarbakir-city", "western-cities"]);
 });

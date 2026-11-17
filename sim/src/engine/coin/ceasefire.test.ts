@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { codes, engine, inCampaign, op, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
+import { restraintSpace } from "./ceasefire.ts";
 
 // T-VAL and T-OPS for ceasefire declaration, restrictions and breach (11 P3b-05; research 07 s7.1,
 // s7.2; 05 s4 item 6; approved text docs/prototype/30, DEC-66).
@@ -10,11 +11,11 @@ const declare = (faction = "pkk"): AnyCommand => ({ type: "DeclareCeasefire", fa
 const rb = (s: GameState, side: string): number => ruleset.spaces.reduce((n, x) => n + (s.spaces[x.id]?.markers["restraintBroken"]?.[side] ?? 0), 0);
 const warnings = (s: GameState, c: AnyCommand): string[] => engine.validate(ruleset, s, c).warnings.map((w) => w.message);
 const attack = op("pkk", "limitedOp", { op: "pkk.attack", locations: ["hakkari"] });
-const coerce = op("pkk", "limitedOp", { op: "pkk.coerce", locations: ["mardin-batman"] });
+const coerce = op("pkk", "limitedOp", { op: "pkk.coerce", locations: ["mardin"] });
 const rallyBase = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "base" } } });
 const rallyPlace = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["hakkari"], perLocation: { hakkari: { option: "place" } } });
-const assault = op("state", "limitedOp", { op: "state.assault", locations: ["botan"] });
-const activeBotan = (s: GameState): GameState => setPieces(setPieces(s, "botan", "guerrilla", 0), "botan", "guerrilla", 2, "active");
+const assault = op("state", "limitedOp", { op: "state.assault", locations: ["sirnak"] });
+const activeBotan = (s: GameState): GameState => setPieces(setPieces(s, "sirnak", "guerrilla", 0), "sirnak", "guerrilla", 2, "active");
 
 describe("Declare Ceasefire (07 s7.1)", () => {
   it("from C3 in the Limited Op box: Ceasefire to Declared, Europe +1", () => {
@@ -61,7 +62,7 @@ describe("Ceasefire restrictions and breach (07 s7.2)", () => {
   });
 
   it("places at most one Restraint Broken marker per faction; no restriction applies with no ceasefire", () => {
-    const marked = setMarkers(activeBotan(at(turnOf("state"), "declared")), "dersim", "restraintBroken", 1, "state");
+    const marked = setMarkers(activeBotan(at(turnOf("state"), "declared")), "bingol-tunceli", "restraintBroken", 1, "state");
     expect(rb(play(marked, assault).state, "state")).toBe(1);
     expect(warnings(activeBotan(c3(turnOf("state"))), assault)).toEqual([]);
   });
@@ -76,16 +77,25 @@ describe("Ceasefire restrictions and breach (07 s7.2)", () => {
 
   it("checks the plan on the board after the breach: a Covert Action the -2 Legitimacy would block is refused (PR 46 review)", () => {
     const board = setTrack(at(turnOf("state"), "reciprocalRestraint"), "legitimacy", 5);
-    const plan = op("state", "opSa", { op: "state.sweep", locations: ["botan"], sa: { action: "state.covert-action", locations: ["hakkari"], perLocation: {}, timing: "before" } });
+    const plan = op("state", "opSa", { op: "state.sweep", locations: ["sirnak"], sa: { action: "state.covert-action", locations: ["hakkari"], perLocation: {}, timing: "before" } });
     expect(codes(board, plan)).toEqual(["covertLegitimacy"]);
     expect(codes(setTrack(board, "legitimacy", 6), plan)).toEqual([]);
   });
 
   it("warns before a free Event action breaks the ceasefire (PR 46 review)", () => {
-    const answer = { locations: ["botan"], perLocation: {}, sa: { locations: ["botan"], perLocation: {} } };
+    const answer = { locations: ["siirt"], perLocation: {}, sa: { locations: ["siirt"], perLocation: {} } };
     const event = { type: "ChooseEvent", faction: "pkk", side: "shaded", answers: [answer] };
-    const board = withCard(at(turnOf("pkk"), "declared"), "DK-002");
+    // DK-002 targets Siirt (DD-22); the 1984 setup leaves it empty, so give the Ambush a State piece to remove.
+    const board = setPieces(withCard(at(turnOf("pkk"), "declared"), "DK-002"), "siirt", "troops", 2);
     expect(engine.validate(ruleset, board, event).warnings.map((w) => w.message)).toEqual(["This breaks the ceasefire: PKK Restraint Broken, Ceasefire to None, Europe -1."]);
     expect(engine.validate(ruleset, withCard(c3(turnOf("pkk")), "DK-002"), event).warnings).toEqual([]);
+  });
+});
+
+describe("stored packages from before DD-22", () => {
+  it("places the DK-059 restraint marker in Bingöl-Tunceli, or in Bingöl-Muş when the map has no Bingöl-Tunceli", () => {
+    expect(restraintSpace(ruleset)).toBe("bingol-tunceli");
+    const legacy = { ...ruleset, spaces: ruleset.spaces.map((s) => (s.id === "bingol-tunceli" ? { ...s, id: "bingol-mus" } : s)) };
+    expect(restraintSpace(legacy)).toBe("bingol-mus");
   });
 });

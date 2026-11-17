@@ -17,7 +17,7 @@ export interface ActionOptions {
   readonly limited: boolean;
   /** Free action from an event: no Resources cost, no eligibility change (05 s5 item 4). */
   readonly free: boolean;
-  /** Event limits a free action must meet, for example `{spaces: [botan]}`. */
+  /** Event limits a free action must meet, for example `{spaces: [sirnak]}`. */
   readonly constraints: JsonObject;
   /** For an SA: the Op it accompanies. For an Op: null. */
   readonly op: string | null;

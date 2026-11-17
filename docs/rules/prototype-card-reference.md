@@ -6,15 +6,15 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 ### DK-001 · Eruh and Şemdinli (15 Aug 1984)
 
-**U:** Martial law reinforcement: place 2 Troops from Available in Hakkari or Botan. State Resources +2.
+**U:** Martial law reinforcement: place 2 Troops from Available in Hakkari or Siirt. State Resources +2.
 
-**S:** Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Botan. Shift Botan one level toward Opposition.
+**S:** Opening raids: place 2 Underground Guerrillas in Hakkari and 1 in Siirt. Shift Siirt one level toward Opposition.
 
 ### DK-002 · Raid in Siirt (17 Aug 1984)
 
-**U:** Police alert: the State conducts a free Garrison. Its Activation must be in Botan.
+**U:** Police alert: the State conducts a free Garrison. Its Activation must be in Siirt.
 
-**S:** Second strike: place 1 Underground Guerrilla in Botan, then the PKK conducts a free Attack in Botan with Ambush.
+**S:** Second strike: place 1 Underground Guerrilla in Siirt, then the PKK conducts a free Attack in Siirt with Ambush.
 
 ### DK-003 · Law 3175 (Mar 1985)
 
@@ -70,7 +70,7 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 **U:** Recruits divided: PKK Resources -2. State Momentum: until the next Reset, a PKK Rally in a Mountain space places 1 fewer Guerrilla (minimum 1).
 
-**S:** Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van-Bitlis or Ağrı.
+**S:** Rivals do not field a force: PKK Resources +2. Place 1 Underground Guerrilla in Van hinterland or Ağrı-Iğdır.
 
 ### DK-011 · PKK Spring Offensive (Mar 1986)
 
@@ -116,9 +116,9 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 ### DK-018 · Killings at Pınarcık (Jun 1987)
 
-**U:** Place a Disputed Harm marker in Mardin-Batman. Place up to 2 Village Guards there (needs Law 3175). Europe -1.
+**U:** Place a Disputed Harm marker in Mardin. Place up to 2 Village Guards there (needs Law 3175). Europe -1.
 
-**S:** Place a Disputed Harm marker in Mardin-Batman. The PKK may pay 2 Resources to remove 1 PKK Harm marker anywhere.
+**S:** Place a Disputed Harm marker in Mardin. The PKK may pay 2 Resources to remove 1 PKK Harm marker anywhere.
 
 ### DK-019 · Syria Security Protocol (Jul 1987)
 
@@ -142,9 +142,9 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 ### DK-021 · Attacks on Rival Newroz Gatherings (Mar 1987)
 
-**U:** Place a Disputed Harm marker in Botan or Mardin-Batman (State choice). Europe -1.
+**U:** Place a Disputed Harm marker in Şırnak or Mardin (State choice). Europe -1.
 
-**S:** Block only: place a Disputed Harm marker in Botan or Mardin-Batman (PKK choice). No other effect.
+**S:** Block only: place a Disputed Harm marker in Şırnak or Mardin (PKK choice). No other effect.
 
 ### DK-022 · Special Strike Force Planned (Jul 1987)
 
@@ -154,7 +154,7 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 ### DK-023 · Final Anfal in Badinan (Aug 1988)
 
-**U:** Border sealed: place 2 Troops in Hakkari and 1 in Botan.
+**U:** Border sealed: place 2 Troops in Hakkari and 1 in Şırnak.
 
 **S:** World attention to Kurds: Europe +1.
 
@@ -166,7 +166,7 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 ### DK-025 · Attacks on Village Schools (Nov 1988)
 
-**U:** Place a PKK Harm marker in Mardin-Batman, Elazığ or Dersim (State choice). Europe -1.
+**U:** Place a PKK Harm marker in Mardin, Elazığ or Bingöl-Tunceli (State choice). Europe -1.
 
 **S:** Block only: place a PKK Harm marker in one of those spaces (PKK choice). No other effect.
 
@@ -174,11 +174,11 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 **U:** Institutions renewed: Legitimacy +2.
 
-**S:** Opposition mayors in the southeast: shift Diyarbakır City or Mardin-Batman one level toward Opposition.
+**S:** Opposition mayors in the southeast: shift Diyarbakır City or Mardin one level toward Opposition.
 
 ### DK-027 · Regional Force Doubled (1989)
 
-**U:** Place up to 4 Troops from Available in Botan and Hakkari. The State conducts a free Sweep in Botan.
+**U:** Place up to 4 Troops from Available in Şırnak and Hakkari. The State conducts a free Sweep in Şırnak.
 
 **S:** Rising tempo: the PKK conducts a free Attack in one space with an Underground Guerrilla and Troops. State Resources -2.
 
@@ -204,7 +204,7 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 **U:** Prosecutions hold the line: place 1 Police and 1 Village Guard in Hakkari.
 
-**S:** Guards hand back weapons: remove up to 2 Village Guards from Hakkari or Botan to Available. No Harm marker. State Resources -1.
+**S:** Guards hand back weapons: remove up to 2 Village Guards from Hakkari or Şırnak to Available. No Harm marker. State Resources -1.
 
 ### DK-032 · Lawyer Access Decree (Sep 1989)
 
@@ -214,15 +214,15 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 ### DK-033 · Abuse and Killings in Custody Reported (1989)
 
-**U:** Block only: place a State Harm marker in Mardin-Batman or Hakkari (State choice). No other effect.
+**U:** Block only: place a State Harm marker in Mardin or Hakkari (State choice). No other effect.
 
-**S:** Place a State Harm marker in Mardin-Batman or Hakkari (PKK choice). Legitimacy -1. Shift that space one level toward Opposition.
+**S:** Place a State Harm marker in Mardin or Hakkari (PKK choice). Legitimacy -1. Shift that space one level toward Opposition.
 
 ### DK-034 · Governors Exile Local Party Members (Sep 1989)
 
-**U:** Emergency powers: the State conducts a free Garrison with Activation in Botan or Dersim.
+**U:** Emergency powers: the State conducts a free Garrison with Activation in Şırnak or Bingöl-Tunceli.
 
-**S:** Banishment without trial: Legitimacy -1. Shift Botan one level toward Opposition.
+**S:** Banishment without trial: Legitimacy -1. Shift Şırnak one level toward Opposition.
 
 ### DK-035 · Propaganda
 

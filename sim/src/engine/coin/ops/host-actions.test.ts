@@ -9,7 +9,7 @@ it("retains the Host Pressure backfire and cost while waiting for a legal replac
   expect(first.state.tracks["posture.kdp"]).toBe("restricted");
   expect(first.state.tracks["resources.pkk"]).toBe(3);
   expect(codes(first.state, pressure)).toContain("resumeOperation");
-  const next = play(first.state, op("pkk", "opSa", {op: "pkk.rally", locations: ["botan"]}));
+  const next = play(first.state, op("pkk", "opSa", {op: "pkk.rally", locations: ["sirnak"]}));
   expect(next.state.pending).toBeNull();
   expect(next.state.tracks["resources.pkk"]).toBe(2);
   expect(next.state.rng).toEqual(first.state.rng);
@@ -74,12 +74,12 @@ it("rejects hot pursuit overflow, forbidden boxes, extra Op entry and wrong timi
 });
 it("Host Pressure requires a PKK piece and Leadership in Syria; KDP backfires on 2", async () => {
   const {setMarkers, setPieces} = await import("../../../../test/board.ts");
-  const inSyria = op("pkk","opSa",{op: "pkk.rally",locations: ["botan"],sa: {action: "pkk.host-pressure",timing: "after",locations: ["syria-bekaa"]}});
+  const inSyria = op("pkk","opSa",{op: "pkk.rally",locations: ["sirnak"],sa: {action: "pkk.host-pressure",timing: "after",locations: ["syria-bekaa"]}});
   const abroad = setMarkers(setMarkers(turnOf("pkk"),"syria-bekaa","leadership",0,"present"),"syria-bekaa","leadership",1,"abroad");
   expect(codes(abroad,inSyria)).toContain("leadershipAbroad");
   const empty = setPieces(setPieces(turnOf("pkk"),"kdp-zone","guerrilla",0),"kdp-zone","pkkBase",0);
   expect(codes(empty,pressure)).toContain("hostPressureTarget");
-  const backfire = play(withRoll(setTrack(turnOf("pkk"),"posture.kdp","restricted"),2),op("pkk","opSa",{op: "pkk.rally",locations: ["botan"],sa: {action: "pkk.host-pressure",timing: "after",locations: ["kdp-zone"]}})).state;
+  const backfire = play(withRoll(setTrack(turnOf("pkk"),"posture.kdp","restricted"),2),op("pkk","opSa",{op: "pkk.rally",locations: ["sirnak"],sa: {action: "pkk.host-pressure",timing: "after",locations: ["kdp-zone"]}})).state;
   expect(backfire.tracks["posture.kdp"]).toBe("hostile");
   expect(backfire.spaces["kdp-zone"]?.pieces["guerrilla"]?.["active"]).toBe(3);
 });
@@ -104,10 +104,10 @@ it("replans March after Host Pressure closes its destination, retaining the roll
   expect(first.state.pending?.resume?.op).toBe("pkk.march");
   expect(first.state.tracks["posture.kdp"]).toBe("hostile");
   expect(first.state.tracks["resources.pkk"]).toBe(3);
-  const next = play(first.state,op("pkk","opSa",{op: "pkk.march",locations: ["botan"],perLocation: {botan: {moves: [{from: "hakkari",count: 1}]}}}));
+  const next = play(first.state,op("pkk","opSa",{op: "pkk.march",locations: ["sirnak"],perLocation: {sirnak: {moves: [{from: "hakkari",count: 1}]}}}));
   expect(next.state.rng).toEqual(first.state.rng);
   expect(next.state.tracks["resources.pkk"]).toBe(2);
-  expect(next.state.spaces["botan"]?.pieces["guerrilla"]?.["underground"]).toBe(3);
+  expect(next.state.spaces["sirnak"]?.pieces["guerrilla"]?.["underground"]).toBe(3);
   expect(next.entries.filter(e => e.kind === "DieRolled")).toHaveLength(0);
   expect(next.state.initiative.actedThisCard).toEqual(["pkk"]);
 });
@@ -154,20 +154,20 @@ it("ends a Rally when Host Pressure leaves no legal, affordable location, keepin
 it("offers a replacement Rally to flip Guerrillas without a Base", () => {
   let state = noGuerrillas(withRoll(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), 1));
   state = ruleset.spaces.reduce((s, x) => setPieces(s, x.id, "pkkBase", 0), state);
-  state = setPieces(setPieces(state, "kdp-zone", "guerrilla", 1, "active"), "dersim", "guerrilla", 1, "active");
+  state = setPieces(setPieces(state, "kdp-zone", "guerrilla", 1, "active"), "bingol-tunceli", "guerrilla", 1, "active");
   state = setTrack(setMarkers({...state, pools: {...state.pools, guerrilla: {available: 0, outOfPlay: 0}}}, "europe", "europeBan", 1), "europe", 3);
   const first = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone"], perLocation: {"kdp-zone": {option: "flip"}}, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
   expect(first.state.pending?.resume?.op).toBe("pkk.rally");
-  const next = play(first.state, op("pkk", "opSa", {op: "pkk.rally", locations: ["dersim"], perLocation: {dersim: {option: "flip"}}}));
+  const next = play(first.state, op("pkk", "opSa", {op: "pkk.rally", locations: ["bingol-tunceli"], perLocation: {"bingol-tunceli": {option: "flip"}}}));
   expect(next.state.pending).toBeNull();
-  expect(next.state.spaces["dersim"]?.pieces["guerrilla"]).toMatchObject({active: 0, underground: 1});
+  expect(next.state.spaces["bingol-tunceli"]?.pieces["guerrilla"]).toMatchObject({active: 0, underground: 1});
 });
 it("probes replacements without the original Agitate choices, so a legal replacement Rally still pauses (PR #43 review)", () => {
-  // Two Agitate sub-actions (extra-agitate) name Botan and Hakkari; no one-location probe contains both.
+  // Two Agitate sub-actions (extra-agitate) name Şırnak and Hakkari; no one-location probe contains both.
   const base = withRoll(setTrack(setTrack(turnOf("pkk"), "posture.kdp", "tolerant"), "resources.pkk", 10), 1);
   const state: GameState = {...setPieces(base, "hakkari", "pkkBase", 1), modifiers: [{id: "extra-agitate", params: {maxSpaces: 2}, duration: "game", sourceCard: "DK-007"}]};
-  const subs = ["botan", "hakkari"].map((space) => ({action: "agitate", space, params: {shifts: 1}}));
-  const next = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone", "botan", "hakkari"], subActions: subs, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
+  const subs = ["sirnak", "hakkari"].map((space) => ({action: "agitate", space, params: {shifts: 1}}));
+  const next = play(state, op("pkk", "opSa", {op: "pkk.rally", locations: ["kdp-zone", "sirnak", "hakkari"], subActions: subs, sa: {action: "pkk.host-pressure", timing: "before", locations: ["kdp-zone"]}}));
   expect(next.state.tracks["posture.kdp"]).toBe("restricted");
   expect(next.state.pending?.resume?.op).toBe("pkk.rally");
   expect(next.entries.some((e) => e.data["reason"] === "noLegalReplacement")).toBe(false);

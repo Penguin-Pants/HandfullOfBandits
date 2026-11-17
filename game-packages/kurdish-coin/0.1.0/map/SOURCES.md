@@ -35,3 +35,13 @@ The package coordinates and YAML are unchanged. The original 18 IDs, 25 legal li
 ## Approved on-map prototype 03
 
 The React board uses manually reshaped schematic areas approved after prototype review, with all 20 domestic borders checked against the existing land-link graph. The original package coordinates, links, country roles and Lake Van source remain unchanged. Shared-border construction is recorded in `docs/ux-overhaul/approved-map-geometry.json`. Malatya is hatched outside-play context between Adıyaman and Elazığ. The existing city asset is clipped inside the city circle at 30% opacity.
+
+## Proposal 2 v2 atlas (DD-22, 15 November 2026)
+
+The atlas in `sim/src/ui/board/atlas-data.ts` was redrawn from the 81 Natural Earth province outlines (1:10m, simplified at 0.035 degrees with shared edges kept) for the 18 spaces of DD-22. It replaces the DEC-60 and DEC-61 outlines, the printed `draft-map.svg` and the `polygon` fields of `map.yaml`. Projection: x = 150 + (lon - 37.55) * 280, y = 70 + (40.45 - lat) * 273, then a smooth 1.9 times magnification around Batman (radius 462 units) so the smallest spaces stay readable. This is a schematic display projection, not a rule.
+
+Turkish provinces outside the playable area are drawn as faded terrain marked "OUT OF PLAY". Syria-Bekaa, KDP Zone, PUK Zone and Iran are schematic clips of the Natural Earth country polygons that share their frontier edge for edge.
+
+The Van City and Batman City illustrations (`van-city.webp`, `batman-city.webp`) are sepia etching conversions of two Wikimedia Commons photos under CC BY-SA 4.0 and carry the same license: "Van Kalesi Erek Dağına karşı.jpg" by SezerBaydar and "Batman city.jpg" by Sohaip saad khalil. `diyarbakir-city.png` is unchanged. City art opacity is 40 percent.
+
+Names are the package names (the DEC-60 presentation override of `Diyarbakir` is removed).

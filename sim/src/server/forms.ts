@@ -1,5 +1,5 @@
 import { modifierLimit, hasModifier } from "../engine/core/modifiers.ts";
-import type { GameState } from "../engine/core/types.ts";
+import type { GameState, Ruleset } from "../engine/core/types.ts";
 import { MOD } from "../engine/coin/modifiers.ts";
 // Plan form metadata per action (11 P2-15 risk: one generic form driven by handler metadata).
 // Fields describe each location's `perLocation` choices in the ActionPlan (05 s3.1).
@@ -36,7 +36,7 @@ const moves: FormField = { key: "moves", label: "Moves", kind: "moves" };
 const routes: FormField = { key: "moves", label: "Police moves", kind: "moves" };
 
 export const actionForms: readonly ActionForm[] = [
-  {id: "state.cross-border", label: "Cross-Border", cost: "+2, or 0 at Aligned", summary: "Before Sweep or Assault in KDP or PUK Zone, move up to 6 Troops from Hakkari or Botan. Posture controls access; early hot pursuit allows at most 3 Troops in KDP (06 s3.2).", fields: [moves], subAction: null, timing: "before"},
+  {id: "state.cross-border", label: "Cross-Border", cost: "+2, or 0 at Aligned", summary: "Before Sweep or Assault in KDP or PUK Zone, move up to 6 Troops from Hakkari or Şırnak. Posture controls access; early hot pursuit allows at most 3 Troops in KDP (06 s3.2).", fields: [moves], subAction: null, timing: "before"},
   {id: "state.village-clearance", label: "Village Clearance", cost: "Legitimacy 2 x Pop", summary: "Forced evacuation of a village area. With Sweep or Garrison, at OHAL or OHAL Extended Powers, from C3. In one selected Mountain or Plain space with State Control, Troops and Police, at Neutral or Opposition and with no Displacement marker: shift 1 level toward Neutral, Legitimacy -2 x Pop, place Displacement (New) and State Harm, place Reception in Diyarbakır City or Western Cities and Activate all Guerrillas. An Office there costs Legitimacy 1 more. The space keeps its Pop. New Displacement costs Legitimacy 1 at the next Propaganda round (06 s3.4).", fields: [{key: "reception", label: "Reception space", kind: "select", options: ["diyarbakir-city", "western-cities"]}], subAction: null},
   {id: "state.covert-action", label: "Covert Action", cost: "0. Hidden: Legitimacy 2 when revealed", summary: "Covert Killings. With Garrison or Sweep, from C3, at Legitimacy 4 or more. In one space with State Control, Police and an Underground Guerrilla: remove 1 Underground Guerrilla without Activation and place 1 face-down Covert marker. The space need not be one the Operation selected. When the marker is revealed (by Event, Propaganda exposure or final scoring), it becomes State Harm and Legitimacy -2. Each unrevealed marker costs the State 2 at each victory check (06 s3.5, 09 s3).", fields: [], subAction: null},
   {id: "state.diplomacy", label: "Diplomacy", cost: "2", summary: "Choose one host box or Europe. Roll with Legitimacy, campaign and target modifiers (06 s3.3).", fields: [], subAction: null},
@@ -55,9 +55,12 @@ export const actionForms: readonly ActionForm[] = [
   { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", summary: "Needs Law 3175. In up to 2 spaces with an Underground Guerrilla and a Village Guard: remove up to 2 Guards in total, and in each space flip 1 Guerrilla Active and place PKK Harm. Europe -1. Warning: the PKK Harm marker blocks Agitation shifts in that space until the PKK pays 2 to remove it (06 s5.3, 07 s1.3).", subAction: null, fields: [{ key: "guards", label: "Guards", kind: "number", default: "1" }], timing: "before" },
 ];
 
-/** Form choices that depend on active cards. Rules still validate on the server. */
-export function formsFor(state: GameState): readonly ActionForm[] {
-  return actionForms.map(f => f.id !== "pkk.rally" || f.subAction === null ? f : {
+/** Form choices that depend on active cards and on the loaded map. Rules still validate on the server. */
+export function formsFor(ruleset: Ruleset, state: GameState): readonly ActionForm[] {
+  const reception = ruleset.spaces.filter(s => s.tags.includes("receptionTarget")).map(s => s.id);
+  return actionForms.map(f => f.id === "state.village-clearance" ? {
+    ...f, fields: f.fields.map(x => x.key === "reception" ? {...x, options: reception} : x),
+  } : f).map(f => f.id !== "pkk.rally" || f.subAction === null ? f : {
     ...f, subAction: {...f.subAction, maxSpaces: modifierLimit(state, MOD.extraAgitate, "maxSpaces", 1)},
     fields: hasModifier(state, MOD.academy) ? [...f.fields, {key: "extra", label: "Academy extra recruits", kind: "number" as const}] : f.fields,
   });

@@ -44,17 +44,22 @@ General setup steps for every scenario:
 | Space (terrain, Pop) | State | PKK | Level | Control |
 |---|---|---|---|---|
 | Hakkari (M, 1) | 2 Troops, 1 Police | 2 Guerrillas | Passive Opposition | State (3 v 2) |
-| Botan (M, 2) | 2 Troops, 1 Police | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
-| Mardin-Batman (P, 4) | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
+| Şırnak (M, 1) | 2 Troops, 1 Police | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
+| Siirt (M, 1) | none | none | Passive Opposition | none |
+| Mardin (P, 2) | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
+| Batman hinterland (P, 1) | none | none | Neutral | none |
+| Batman City (C, 1) | none | none | Neutral | none |
 | Diyarbakır City (C, 2) | 3 Troops, 2 Police, 1 State Base | none | Neutral | State |
-| Diyarbakır Rural (P, 2) | 1 Police | none | Neutral | State |
+| Diyarbakır hinterland (P, 2) | 1 Police | none | Neutral | State |
 | Şanlıurfa (P, 4) | 2 Police | none | Passive Support | State |
 | Adıyaman (P, 2) | 1 Police | none | Passive Support | State |
 | Elazığ (P, 2) | 1 Troop, 1 Police, 1 State Base | none | Passive Support | State |
-| Dersim (M, 1) | 1 Troop, 1 Police | none | Neutral | State |
-| Bingöl-Muş (M, 3) | 1 Troop, 1 Police | none | Neutral | State |
-| Van-Bitlis (M, 4) | 2 Troops, 1 Police, 1 State Base | none | Neutral | State |
-| Ağrı (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
+| Bingöl-Tunceli (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
+| Muş (M, 2) | 1 Troop, 1 Police | none | Neutral | State |
+| Van City (C, 2) | none | none | Neutral | none |
+| Van hinterland (M, 1) | 2 Troops, 1 Police, 1 State Base | none | Neutral | State |
+| Bitlis (M, 1) | none | none | Neutral | none |
+| Ağrı-Iğdır (M, 3) | 1 Troop, 1 Police | none | Neutral | State |
 | Western Cities (C, 3) | 2 Troops, 2 Police, 1 State Base | none | Passive Support | State |
 | KDP Zone | none | 3 Guerrillas, 1 Base | n/a | n/a |
 | PUK Zone | none | none | n/a | n/a |
@@ -75,10 +80,10 @@ Scores: State 11 Support + 10 Legitimacy = 21. PKK 3 Opposition + 1 domestic Bas
 
 Basis notes:
 
-1. PKK pieces in Hakkari and Botan: the 15 Aug 1984 attacks hit Eruh (Botan) and Şemdinli (Hakkari), with a follow-up raid in Siirt on 17 Aug [E-0003; E-0073; E-0155; F-009]. Confidence: Moderate for places, none for size.
+1. PKK pieces in Hakkari and Şırnak: the 15 Aug 1984 attacks hit Eruh (Siirt) and Şemdinli (Hakkari), with a follow-up raid in Siirt on 17 Aug [E-0003; E-0073; E-0155; F-009]. Confidence: Moderate for places, none for size.
 2. External PKK strength: fighters moved to northern Iraq in 1982 and the leadership sat in Syria [E-0048; E-0071; F-007]. The Bekaa camp is recorded from 1986 [E-0053]; the 1984 Syria-Bekaa Base is a design value. Confidence: Moderate for direction.
 3. Passive Support in Şanlıurfa and Adıyaman: state-allied landlord and tribal networks, such as the Bucak family at Siverek [E-0041; L-013; F-006; F-057]. Confidence: Low. Support is an abstraction of active minorities, not a measure of the population (DD-06.2).
-4. Passive Opposition in Botan and Hakkari: the PKK's first operating areas. Confidence: Low.
+4. Passive Opposition in Şırnak, Siirt and Hakkari: the PKK's first operating areas. Confidence: Low.
 5. State Bases at Diyarbakır, Elazığ, Van and Western Cities: design posts. No basing data was researched.
 6. Village Guards start Out of Play until the Law 3175 card [E-0004; DD-08.1].
 
@@ -122,17 +127,22 @@ Start Jan 1990. Build piles C3 and C4.
 | Space | State | PKK | Level | Control |
 |---|---|---|---|---|
 | Hakkari | 2 Troops, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | State (4 v 3) |
-| Botan | 3 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Passive Opposition | State (7 v 4) |
-| Mardin-Batman | 2 Troops, 2 Police, 1 Guard, 1 State Base | 2 Guerrillas | Passive Opposition | State |
+| Şırnak | 3 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Passive Opposition | State (7 v 4) |
+| Siirt | none | none | Passive Opposition | none |
+| Mardin | 2 Troops, 2 Police, 1 Guard, 1 State Base | 2 Guerrillas | Passive Opposition | State |
+| Batman hinterland | none | none | Neutral | none |
+| Batman City | none | none | Neutral | none |
 | Diyarbakır City | 4 Troops, 2 Police, 1 State Base | 1 Guerrilla | Neutral | State |
-| Diyarbakır Rural | 1 Troop, 1 Police, 1 Guard | 1 Guerrilla, 1 Base | Neutral | State (3 v 2) |
+| Diyarbakır hinterland | 1 Troop, 1 Police, 1 Guard | 1 Guerrilla, 1 Base | Neutral | State (3 v 2) |
 | Şanlıurfa | 1 Troop, 2 Police, 2 Guards | none | Passive Support | State |
 | Adıyaman | 1 Police | none | Passive Support | State |
 | Elazığ | 1 Troop, 1 Police, 1 State Base | none | Passive Support | State |
-| Dersim | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
-| Bingöl-Muş | 1 Troop, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
-| Van-Bitlis | 2 Troops, 1 Police, 1 State Base | 1 Guerrilla | Neutral | State |
-| Ağrı | 1 Troop, 1 Police | none | Neutral | State |
+| Bingöl-Tunceli | 1 Troop, 1 Police | 1 Guerrilla | Neutral | State (2 v 1) |
+| Muş | 1 Troop, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | none (3 v 3) |
+| Van City | none | none | Neutral | none |
+| Van hinterland | 2 Troops, 1 Police, 1 State Base | 1 Guerrilla | Neutral | State |
+| Bitlis | none | none | Neutral | none |
+| Ağrı-Iğdır | 1 Troop, 1 Police | none | Neutral | State |
 | Western Cities | 1 Troop, 1 Police, 1 State Base | none | Passive Support | State |
 | KDP Zone | none | 2 Guerrillas, 1 Base | n/a | n/a |
 | PUK Zone | none | 1 Guerrilla | n/a | n/a |
@@ -164,7 +174,7 @@ Start Jan 1993. Build piles C4 and C5.
 | Europe | 3 | Before the 1993 attacks and the German ban [E-0194; E-0064] | Low |
 | Ceasefire | None | The Mar 1993 ceasefire is a C4 pool card [E-0089] | High |
 | Legal Space | Prosecuted, Closure Case marker on the track | Prosecutor filed against HEP on 3 Jul 1992 [E-0186]; HEP dissolved 14 Jul 1993 [E-0009] | High |
-| Offices | 3: Diyarbakır City, Mardin-Batman, Western Cities | HEP local presence; SHP-HEP deputies elected 1991 [E-0178; F-016] | Low for places |
+| Offices | 3: Diyarbakır City, Mardin, Western Cities | HEP local presence; SHP-HEP deputies elected 1991 [E-0178; F-016] | Low for places |
 | Northern Iraq Vacuum | In effect | [E-0176; F-023] | Moderate |
 | Campaign | C4 | | |
 
@@ -173,17 +183,22 @@ Start Jan 1993. Build piles C4 and C5.
 | Space | State | PKK | Level | Markers | Control |
 |---|---|---|---|---|---|
 | Hakkari | 2 Troops, 1 Police, 1 Guard | 3 Guerrillas, 1 Base | Active Opposition | none | none (4 v 4) |
-| Botan | 4 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Active Opposition | Displacement (Old), State Harm | State |
-| Mardin-Batman | 2 Troops, 2 Police, 2 Guards, 1 State Base | 2 Guerrillas, 1 Base | Passive Opposition | Office, State Harm, Disputed Harm | State |
+| Şırnak | 4 Troops, 1 Police, 2 Guards, 1 State Base | 3 Guerrillas, 1 Base | Active Opposition | Displacement (Old), State Harm | State |
+| Siirt | none | none | Active Opposition | none | none |
+| Mardin | 2 Troops, 2 Police, 2 Guards, 1 State Base | 2 Guerrillas, 1 Base | Passive Opposition | Office, State Harm, Disputed Harm | State |
+| Batman hinterland | none | none | Neutral | none | none |
+| Batman City | none | none | Neutral | none | none |
 | Diyarbakır City | 3 Troops, 3 Police, 1 State Base | 1 Guerrilla | Passive Opposition | Office | State |
-| Diyarbakır Rural | 2 Troops, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | State Harm | State (4 v 3) |
+| Diyarbakır hinterland | 2 Troops, 1 Police, 1 Guard | 2 Guerrillas, 1 Base | Passive Opposition | State Harm | State (4 v 3) |
 | Şanlıurfa | 1 Troop, 2 Police, 2 Guards | none | Passive Support | none | State |
 | Adıyaman | 1 Police | none | Neutral | none | State |
 | Elazığ | 1 Troop, 1 Police, 1 State Base | none | Passive Support | none | State |
-| Dersim | 1 Troop, 1 Police | 2 Guerrillas | Passive Opposition | none | none (2 v 2) |
-| Bingöl-Muş | 1 Troop, 1 Police, 1 Guard | 3 Guerrillas, 1 Base | Passive Opposition | none | PKK (4 v 3) |
-| Van-Bitlis | 2 Troops, 1 Police, 1 Guard, 1 State Base | 2 Guerrillas | Neutral | none | State |
-| Ağrı | 1 Troop, 1 Police | 1 Guerrilla | Neutral | none | State |
+| Bingöl-Tunceli | 1 Troop, 1 Police | 2 Guerrillas | Passive Opposition | none | none (2 v 2) |
+| Muş | 1 Troop, 1 Police, 1 Guard | 3 Guerrillas, 1 Base | Passive Opposition | none | PKK (4 v 3) |
+| Van City | none | none | Neutral | none | none |
+| Van hinterland | 2 Troops, 1 Police, 1 Guard, 1 State Base | 2 Guerrillas | Neutral | none | State |
+| Bitlis | none | none | Neutral | none | none |
+| Ağrı-Iğdır | 1 Troop, 1 Police | 1 Guerrilla | Neutral | none | State |
 | Western Cities | 1 Troop, 1 Police, 1 State Base | none | Passive Support | Office, Reception | State |
 | KDP Zone | none | 2 Guerrillas, 1 Base | n/a | none | n/a |
 | PUK Zone | none | 2 Guerrillas | n/a | none | n/a |
@@ -197,9 +212,9 @@ Pivotal Events: State Area Domination, Coercive Diplomacy on Syria; PKK Serhilda
 
 Basis notes for markers:
 
-1. Botan Displacement and State Harm: destruction in Şırnak town, 18-21 Aug 1992 [E-0081; F-035]. Confidence: High for the event, design for the marker.
-2. Mardin-Batman State Harm: Newroz 1992 deaths in Cizre, Nusaybin and Şırnak, about 80 to 94 [E-0183; F-035]. Mardin-Batman Disputed Harm: the Pınarcık attack on a guard village, 1987 [E-0169]. The event is Moderate; the attribution is contested (C-045), so the marker is Disputed, as on the deck card. Confidence: Moderate.
-3. Diyarbakır Rural State Harm: houses burned at Kelekçi, accepted by the ECtHR [E-0191; E-0218; F-033; L-118]. Confidence: High for the case.
+1. Şırnak Displacement and State Harm: destruction in Şırnak town, 18-21 Aug 1992 [E-0081; F-035]. Confidence: High for the event, design for the marker.
+2. Mardin and Şırnak State Harm: Newroz 1992 deaths in Cizre, Nusaybin and Şırnak, about 80 to 94 [E-0183; F-035]. Mardin Disputed Harm: the Pınarcık attack on a guard village, 1987 [E-0169]. The event is Moderate; the attribution is contested (C-045), so the marker is Disputed, as on the deck card. Confidence: Moderate.
+3. Diyarbakır hinterland State Harm: houses burned at Kelekçi, accepted by the ECtHR [E-0191; E-0218; F-033; L-118]. Confidence: High for the case.
 4. Western Cities Reception: displacement had begun before 1993 [F-031 is Low; F-032]. Confidence: Low.
 
 ## 6. Between-Campaign structural changes

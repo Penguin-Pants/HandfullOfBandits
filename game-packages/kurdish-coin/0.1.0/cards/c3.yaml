@@ -195,12 +195,12 @@
         if: {type: trackIn, track: legalSpace, values: [open]}
         then: [{type: procedure, id: legal.officeLines}]
   shaded:
-    text: "Votes in the southeast: shift Mardin-Batman or Diyarbakır Rural one level toward Opposition if it has no Office."
+    text: "Votes in the southeast: shift Mardin, Batman or Diyarbakır hinterland one level toward Opposition if it has no Office."
     owner: pkk
     tier: T0
     effects:
       - type: forEachSpace
-        where: {type: all, of: [{type: spaceIn, spaces: [mardin-batman, diyarbakir-rural]}, {type: not, of: {type: spaceHas, markers: [office]}}]}
+        where: {type: all, of: [{type: spaceIn, spaces: [mardin, batman-rural, batman-city, diyarbakir-rural]}, {type: not, of: {type: spaceHas, markers: [office]}}]}
         min: 1
         max: 1
         effects:
@@ -215,23 +215,23 @@
   date: "1992-03-21"
   type: event
   unshaded:
-    text: "Block only: place a State Harm marker in Mardin-Batman and in Botan. No other effect."
+    text: "Block only: place a State Harm marker in Mardin and in Şırnak. No other effect."
     owner: state
     blockOnly: true
     tier: T2
     effects:
-      - {type: placeMarker, marker: stateHarm, space: mardin-batman}
-      - {type: placeMarker, marker: stateHarm, space: botan}
+      - {type: placeMarker, marker: stateHarm, space: mardin}
+      - {type: placeMarker, marker: stateHarm, space: sirnak}
   shaded:
-    text: "Place a State Harm marker in Mardin-Batman and in Botan. Legitimacy -1. Europe +1. Shift Mardin-Batman one level toward Opposition."
+    text: "Place a State Harm marker in Mardin and in Şırnak. Legitimacy -1. Europe +1. Shift Mardin one level toward Opposition."
     owner: pkk
     tier: T2
     effects:
-      - {type: placeMarker, marker: stateHarm, space: mardin-batman}
-      - {type: placeMarker, marker: stateHarm, space: botan}
+      - {type: placeMarker, marker: stateHarm, space: mardin}
+      - {type: placeMarker, marker: stateHarm, space: sirnak}
       - {type: adjustTrack, track: legitimacy, delta: -1}
       - {type: adjustTrack, track: europe, delta: 1}
-      - {type: shiftLevel, space: mardin-batman, direction: opposition, steps: 1}
+      - {type: shiftLevel, space: mardin, direction: opposition, steps: 1}
   encoding: {status: encoded, encodedBy: "P3b-07b", reviewedAgainstText: true, note: "Block-only harmer side (08 s7.2 item 3)"}
   eventConfidence: High
   deckEligible: true
@@ -251,13 +251,13 @@
         if: {type: atSpace, space: syria-bekaa, of: {type: spaceHas, pieces: [pkkBase], min: 2}}
         then: [{type: removePieces, piece: pkkBase, state: null, count: 1, space: syria-bekaa}]
   shaded:
-    text: "Leader stays: move up to 2 Guerrillas from Syria-Bekaa to Mardin-Batman or Şanlıurfa, free. State Resources -2."
+    text: "Leader stays: move up to 2 Guerrillas from Syria-Bekaa to Mardin or Şanlıurfa, free. State Resources -2."
     owner: pkk
     tier: T0
     effects:
       - type: choice
         options:
-          - {label: Mardin-Batman, effects: [{type: movePieces, piece: guerrilla, count: {min: 0, max: 2}, from: syria-bekaa, to: mardin-batman}]}
+          - {label: Mardin, effects: [{type: movePieces, piece: guerrilla, count: {min: 0, max: 2}, from: syria-bekaa, to: mardin}]}
           - {label: Şanlıurfa, effects: [{type: movePieces, piece: guerrilla, count: {min: 0, max: 2}, from: syria-bekaa, to: sanliurfa}]}
       - {type: adjustTrack, track: resources.state, delta: -2}
   encoding: {status: encoded, encodedBy: "P3b-07c", reviewedAgainstText: true, note: "Base count read after the posture step (normal Hostile entry). Shaded: one destination as DK-005 and DK-017; moved Guerrillas keep their face"}
@@ -270,19 +270,19 @@
   date: "1992-08-18"
   type: event
   unshaded:
-    text: "Block only: place a State Harm marker in Botan and 1 Reception marker in Diyarbakır City. No other effect."
+    text: "Block only: place a State Harm marker in Şırnak and 1 Reception marker in Diyarbakır City. No other effect."
     owner: state
     blockOnly: true
     tier: T2
     effects:
-      - {type: placeMarker, marker: stateHarm, space: botan}
+      - {type: placeMarker, marker: stateHarm, space: sirnak}
       - {type: placeMarker, marker: reception, space: diyarbakir-city}
   shaded:
-    text: "Place a State Harm marker in Botan and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition."
+    text: "Place a State Harm marker in Şırnak and 1 Reception marker in Diyarbakır City. Legitimacy -1. Shift Diyarbakır City one level toward Opposition."
     owner: pkk
     tier: T2
     effects:
-      - {type: placeMarker, marker: stateHarm, space: botan}
+      - {type: placeMarker, marker: stateHarm, space: sirnak}
       - {type: placeMarker, marker: reception, space: diyarbakir-city}
       - {type: adjustTrack, track: legitimacy, delta: -1}
       - {type: shiftLevel, space: diyarbakir-city, direction: opposition, steps: 1}
@@ -328,14 +328,14 @@
   date: "1992-11-10"
   type: event
   unshaded:
-    text: "Block only: place a State Harm marker in Diyarbakır Rural. No other effect."
+    text: "Block only: place a State Harm marker in Diyarbakır hinterland. No other effect."
     owner: state
     blockOnly: true
     tier: T2
     effects:
       - {type: placeMarker, marker: stateHarm, space: diyarbakir-rural}
   shaded:
-    text: "Place a State Harm marker in Diyarbakır Rural. Legitimacy -1. Europe +1."
+    text: "Place a State Harm marker in Diyarbakır hinterland. Legitimacy -1. Europe +1."
     owner: pkk
     tier: T2
     effects:
@@ -425,19 +425,19 @@
   date: "1992-11-01"
   type: event
   unshaded:
-    text: "Reinforcement: place 2 Police and 1 Troop in Diyarbakır Rural."
+    text: "Reinforcement: place 2 Police and 1 Troop in Diyarbakır hinterland."
     owner: state
     tier: T1
     effects:
       - {type: placePieces, piece: police, count: 2, space: diyarbakir-rural, state: null}
       - {type: placePieces, piece: troops, count: 1, space: diyarbakir-rural, state: null}
   shaded:
-    text: "The PKK conducts a free Attack with Ambush in Diyarbakır Rural or an adjacent space with an Underground Guerrilla."
+    text: "The PKK conducts a free Attack with Ambush in Diyarbakır hinterland or an adjacent space with an Underground Guerrilla."
     owner: pkk
     tier: T1
     effects:
-      - {type: freeAction, action: pkk.attack, constraints: {spaces: [diyarbakir-rural, diyarbakir-city, mardin-batman, sanliurfa, adiyaman, elazig, bingol-mus], maxLocations: 1, sa: pkk.ambush}}
-  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "Spaces: Diyarbakır Rural and its land neighbors (map.yaml). Ambush needs the Underground Guerrilla"}
+      - {type: freeAction, action: pkk.attack, constraints: {spaces: [diyarbakir-rural, diyarbakir-city, mardin, batman-rural, sanliurfa, adiyaman, elazig, bingol-tunceli, mus], maxLocations: 1, sa: pkk.ambush}}
+  encoding: {status: encoded, encodedBy: "P3b-07a", reviewedAgainstText: true, note: "Spaces: Diyarbakır hinterland and its land neighbors (map.yaml). Ambush needs the Underground Guerrilla"}
   eventConfidence: High
   deckEligible: true
   sources: [E-0190, S-0202]
@@ -447,7 +447,7 @@
   date: "1992"
   type: event
   unshaded:
-    text: "Apply 07, section 10.1: remove 1 Office or 1 Guerrilla, in that priority, from the highest-Pop eligible space among Botan, Mardin-Batman, Diyarbakır City and Diyarbakır Rural. Place a Disputed Harm marker there."
+    text: "Apply 07, section 10.1: remove 1 Office or 1 Guerrilla, in that priority, from the highest-Pop eligible space among Şırnak, Mardin, Diyarbakır City and Diyarbakır hinterland. Place a Disputed Harm marker there."
     owner: state
     tier: T3
     effects:

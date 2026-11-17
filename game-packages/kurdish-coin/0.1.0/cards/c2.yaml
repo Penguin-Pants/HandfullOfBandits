@@ -91,13 +91,13 @@
   type: event
   deckEligible: true
   unshaded:
-    text: Place a Disputed Harm marker in Mardin-Batman. Place up to 2 Village Guards there (needs Law 3175). Europe
+    text: Place a Disputed Harm marker in Mardin. Place up to 2 Village Guards there (needs Law 3175). Europe
       -1.
     owner: state
     effects:
     - type: placeMarker
       marker: disputedHarm
-      space: mardin-batman
+      space: mardin
     - type: conditional
       if:
         type: flag
@@ -109,7 +109,7 @@
         count:
           min: 0
           max: 2
-        space: mardin-batman
+        space: mardin
       else: []
     - type: adjustTrack
       track: europe
@@ -117,13 +117,13 @@
     tier: T2
     blockOnly: false
   shaded:
-    text: Place a Disputed Harm marker in Mardin-Batman. The PKK may pay 2 Resources to remove 1 PKK Harm marker
+    text: Place a Disputed Harm marker in Mardin. The PKK may pay 2 Resources to remove 1 PKK Harm marker
       anywhere.
     owner: pkk
     effects:
     - type: placeMarker
       marker: disputedHarm
-      space: mardin-batman
+      space: mardin
     - type: conditional
       if:
         type: trackAtLeast
@@ -271,42 +271,42 @@
   type: event
   deckEligible: true
   unshaded:
-    text: Place a Disputed Harm marker in Botan or Mardin-Batman (State choice). Europe -1.
+    text: Place a Disputed Harm marker in Şırnak or Mardin (State choice). Europe -1.
     owner: state
     effects:
     - type: choice
       options:
-      - label: botan
+      - label: sirnak
         effects:
         - type: placeMarker
           marker: disputedHarm
-          space: botan
-      - label: mardin-batman
+          space: sirnak
+      - label: mardin
         effects:
         - type: placeMarker
           marker: disputedHarm
-          space: mardin-batman
+          space: mardin
     - type: adjustTrack
       track: europe
       delta: -1
     tier: T2
     blockOnly: false
   shaded:
-    text: 'Block only: place a Disputed Harm marker in Botan or Mardin-Batman (PKK choice). No other effect.'
+    text: 'Block only: place a Disputed Harm marker in Şırnak or Mardin (PKK choice). No other effect.'
     owner: pkk
     effects:
     - type: choice
       options:
-      - label: botan
+      - label: sirnak
         effects:
         - type: placeMarker
           marker: disputedHarm
-          space: botan
-      - label: mardin-batman
+          space: sirnak
+      - label: mardin
         effects:
         - type: placeMarker
           marker: disputedHarm
-          space: mardin-batman
+          space: mardin
     tier: T2
     blockOnly: true
   encoding:
@@ -362,7 +362,7 @@
   type: event
   deckEligible: true
   unshaded:
-    text: 'Border sealed: place 2 Troops in Hakkari and 1 in Botan.'
+    text: 'Border sealed: place 2 Troops in Hakkari and 1 in Şırnak.'
     owner: state
     effects:
     - type: placePieces
@@ -372,7 +372,7 @@
     - type: placePieces
       piece: troops
       count: 1
-      space: botan
+      space: sirnak
     tier: T2
     blockOnly: false
   shaded:
@@ -447,26 +447,26 @@
   type: event
   deckEligible: true
   unshaded:
-    text: Place a PKK Harm marker in Mardin-Batman, Elazığ or Dersim (State choice). Europe -1.
+    text: Place a PKK Harm marker in Mardin, Elazığ or Bingöl-Tunceli (State choice). Europe -1.
     owner: state
     effects:
     - type: choice
       options:
-      - label: mardin-batman
+      - label: mardin
         effects:
         - type: placeMarker
           marker: pkkHarm
-          space: mardin-batman
+          space: mardin
       - label: elazig
         effects:
         - type: placeMarker
           marker: pkkHarm
           space: elazig
-      - label: dersim
+      - label: bingol-tunceli
         effects:
         - type: placeMarker
           marker: pkkHarm
-          space: dersim
+          space: bingol-tunceli
     - type: adjustTrack
       track: europe
       delta: -1
@@ -478,21 +478,21 @@
     effects:
     - type: choice
       options:
-      - label: mardin-batman
+      - label: mardin
         effects:
         - type: placeMarker
           marker: pkkHarm
-          space: mardin-batman
+          space: mardin
       - label: elazig
         effects:
         - type: placeMarker
           marker: pkkHarm
           space: elazig
-      - label: dersim
+      - label: bingol-tunceli
         effects:
         - type: placeMarker
           marker: pkkHarm
-          space: dersim
+          space: bingol-tunceli
     tier: T2
     blockOnly: true
   encoding:
@@ -520,7 +520,7 @@
     tier: T0
     blockOnly: false
   shaded:
-    text: 'Opposition mayors in the southeast: shift Diyarbakır City or Mardin-Batman one level toward Opposition.'
+    text: 'Opposition mayors in the southeast: shift Diyarbakır City or Mardin one level toward Opposition.'
     owner: pkk
     effects:
     - type: choice
@@ -531,10 +531,10 @@
           space: diyarbakir-city
           direction: opposition
           steps: 1
-      - label: mardin-batman
+      - label: mardin
         effects:
         - type: shiftLevel
-          space: mardin-batman
+          space: mardin
           direction: opposition
           steps: 1
     tier: T0
@@ -555,157 +555,157 @@
   type: event
   deckEligible: true
   unshaded:
-    text: Place up to 4 Troops from Available in Botan and Hakkari. The State conducts a free Sweep in Botan.
+    text: Place up to 4 Troops from Available in Şırnak and Hakkari. The State conducts a free Sweep in Şırnak.
     owner: state
     effects:
     - type: choice
       options:
-      - label: 0 in botan, 0 in hakkari
+      - label: 0 in sirnak, 0 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 0
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 0
           space: hakkari
-      - label: 0 in botan, 1 in hakkari
+      - label: 0 in sirnak, 1 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 0
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 1
           space: hakkari
-      - label: 0 in botan, 2 in hakkari
+      - label: 0 in sirnak, 2 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 0
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 2
           space: hakkari
-      - label: 0 in botan, 3 in hakkari
+      - label: 0 in sirnak, 3 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 0
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 3
           space: hakkari
-      - label: 0 in botan, 4 in hakkari
+      - label: 0 in sirnak, 4 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 0
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 4
           space: hakkari
-      - label: 1 in botan, 0 in hakkari
+      - label: 1 in sirnak, 0 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 1
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 0
           space: hakkari
-      - label: 1 in botan, 1 in hakkari
+      - label: 1 in sirnak, 1 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 1
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 1
           space: hakkari
-      - label: 1 in botan, 2 in hakkari
+      - label: 1 in sirnak, 2 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 1
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 2
           space: hakkari
-      - label: 1 in botan, 3 in hakkari
+      - label: 1 in sirnak, 3 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 1
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 3
           space: hakkari
-      - label: 2 in botan, 0 in hakkari
+      - label: 2 in sirnak, 0 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 2
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 0
           space: hakkari
-      - label: 2 in botan, 1 in hakkari
+      - label: 2 in sirnak, 1 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 2
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 1
           space: hakkari
-      - label: 2 in botan, 2 in hakkari
+      - label: 2 in sirnak, 2 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 2
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 2
           space: hakkari
-      - label: 3 in botan, 0 in hakkari
+      - label: 3 in sirnak, 0 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 3
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 0
           space: hakkari
-      - label: 3 in botan, 1 in hakkari
+      - label: 3 in sirnak, 1 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 3
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 1
           space: hakkari
-      - label: 4 in botan, 0 in hakkari
+      - label: 4 in sirnak, 0 in hakkari
         effects:
         - type: placePieces
           piece: troops
           count: 4
-          space: botan
+          space: sirnak
         - type: placePieces
           piece: troops
           count: 0
@@ -714,7 +714,7 @@
       action: state.sweep
       constraints:
         spaces:
-        - botan
+        - sirnak
     tier: T1
     blockOnly: false
   shaded:
@@ -906,7 +906,7 @@
     tier: T0
     blockOnly: false
   shaded:
-    text: 'Guards hand back weapons: remove up to 2 Village Guards from Hakkari or Botan to Available. No Harm marker.
+    text: 'Guards hand back weapons: remove up to 2 Village Guards from Hakkari or Şırnak to Available. No Harm marker.
       State Resources -1.'
     owner: pkk
     effects:
@@ -916,7 +916,7 @@
         type: spaceIn
         spaces:
         - hakkari
-        - botan
+        - sirnak
       min: 0
       max: 2
       effects:
@@ -979,16 +979,16 @@
   type: event
   deckEligible: true
   unshaded:
-    text: 'Block only: place a State Harm marker in Mardin-Batman or Hakkari (State choice). No other effect.'
+    text: 'Block only: place a State Harm marker in Mardin or Hakkari (State choice). No other effect.'
     owner: state
     effects:
     - type: choice
       options:
-      - label: mardin-batman
+      - label: mardin
         effects:
         - type: placeMarker
           marker: stateHarm
-          space: mardin-batman
+          space: mardin
       - label: hakkari
         effects:
         - type: placeMarker
@@ -997,22 +997,22 @@
     tier: T2
     blockOnly: true
   shaded:
-    text: Place a State Harm marker in Mardin-Batman or Hakkari (PKK choice). Legitimacy -1. Shift that space one
+    text: Place a State Harm marker in Mardin or Hakkari (PKK choice). Legitimacy -1. Shift that space one
       level toward Opposition.
     owner: pkk
     effects:
     - type: choice
       options:
-      - label: mardin-batman
+      - label: mardin
         effects:
         - type: placeMarker
           marker: stateHarm
-          space: mardin-batman
+          space: mardin
         - type: adjustTrack
           track: legitimacy
           delta: -1
         - type: shiftLevel
-          space: mardin-batman
+          space: mardin
           direction: opposition
           steps: 1
       - label: hakkari
@@ -1047,26 +1047,26 @@
   type: event
   deckEligible: true
   unshaded:
-    text: 'Emergency powers: the State conducts a free Garrison with Activation in Botan or Dersim.'
+    text: 'Emergency powers: the State conducts a free Garrison with Activation in Şırnak or Bingöl-Tunceli.'
     owner: state
     effects:
     - type: freeAction
       action: state.garrison
       constraints:
         spaces:
-        - botan
-        - dersim
+        - sirnak
+        - bingol-tunceli
     tier: T0
     blockOnly: false
   shaded:
-    text: 'Banishment without trial: Legitimacy -1. Shift Botan one level toward Opposition.'
+    text: 'Banishment without trial: Legitimacy -1. Shift Şırnak one level toward Opposition.'
     owner: pkk
     effects:
     - type: adjustTrack
       track: legitimacy
       delta: -1
     - type: shiftLevel
-      space: botan
+      space: sirnak
       direction: opposition
       steps: 1
     tier: T0

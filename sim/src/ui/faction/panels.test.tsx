@@ -32,7 +32,7 @@ const legal: LegalChoices = {
     { box: "pass", allowed: true, reason: null },
   ],
   actions: [
-    { id: "pkk.rally", label: "Rally", cost: "1 per location", summary: "", fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "flip"] }], subAction: { id: "agitate", fields: [{ key: "shifts", label: "Shifts", kind: "number" }] }, kind: "op", ok: true, reason: null, locations: ["botan"] },
+    { id: "pkk.rally", label: "Rally", cost: "1 per location", summary: "", fields: [{ key: "option", label: "Option", kind: "select", options: ["place", "flip"] }], subAction: { id: "agitate", fields: [{ key: "shifts", label: "Shifts", kind: "number" }] }, kind: "op", ok: true, reason: null, locations: ["sirnak"] },
     { id: "pkk.coerce", label: "Coerce", cost: "1 per space", summary: "", fields: [], subAction: null, kind: "op", ok: false, reason: "Coerce needs a Neutral or Support space.", locations: [] },
     { id: "pkk.extort", label: "Extort", cost: "0", summary: "", fields: [], subAction: null, kind: "sa", ok: true, reason: null, locations: [] },
     { id: "pkk.strike-collaborators", label: "Strike Collaborators", cost: "1 per space", summary: "", fields: actionForms.find((f) => f.id === "pkk.strike-collaborators")?.fields ?? [], subAction: null, timing: "before", kind: "sa", ok: true, reason: null, locations: [] },
@@ -47,9 +47,9 @@ function Faction({ api, legal: choices = legal, onCommit = vi.fn(), onDraft = vi
   const [plan, dispatch] = useReducer(planReducer, emptyPlan);
   return (
     <>
-      <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
-      <button type="button" onClick={() => { dispatch({ type: "click", id: "dersim", add: false }); }}>map dersim</button>
-      <button type="button" onClick={() => { dispatch({ type: "drag", from: "hakkari", to: "botan" }); }}>drag hakkari botan</button>
+      <button type="button" onClick={() => { dispatch({ type: "click", id: "sirnak", add: false }); }}>map sirnak</button>
+      <button type="button" onClick={() => { dispatch({ type: "click", id: "bingol-tunceli", add: false }); }}>map bingol-tunceli</button>
+      <button type="button" onClick={() => { dispatch({ type: "drag", from: "hakkari", to: "sirnak" }); }}>drag hakkari sirnak</button>
       <FactionPanel api={api} sessionId="S" view={pkkView} legal={choices} plan={plan} dispatch={dispatch} onCommit={onCommit} onDraft={onDraft} />
     </>
   );
@@ -68,10 +68,10 @@ describe("FactionPanel", () => {
   });
 
   it("names the legal spaces of an Op, and shortens a long list (UC-9)", () => {
-    const many = { ...legal, actions: (legal.actions ?? []).map((a) => (a.id === "pkk.rally" ? { ...a, locations: ["diyarbakir-city", "sanliurfa", "elazig", "van-bitlis", "botan"] } : a)) };
+    const many = { ...legal, actions: (legal.actions ?? []).map((a) => (a.id === "pkk.rally" ? { ...a, locations: ["diyarbakir-city", "sanliurfa", "elazig", "van-rural", "sirnak"] } : a)) };
     render(<Faction api={mockApi()} legal={many} />);
     click("Limited Op");
-    expect(screen.getByText("OK in Diyarbakir, Şanlıurfa, Elazığ and 2 more")).toBeTruthy();
+    expect(screen.getByText("OK in Diyarbakır City (Amed), Şanlıurfa, Elazığ and 2 more")).toBeTruthy();
   });
 
   it("E4 track: pointing at a box shows what it leaves open for the other faction and who is 1st next (UC-8)", () => {
@@ -129,11 +129,11 @@ describe("FactionPanel", () => {
     render(<Faction api={mockApi({ validate })} onCommit={onCommit} />);
     click("Limited Op");
     click("Rally");
-    click("map botan");
+    click("map sirnak");
     click("Place");
     await waitFor(() => { expect(screen.getByLabelText("Preview").textContent).toBe("PKK Resources −1"); });
     click("Commit (Enter)");
-    expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp", plan: expect.objectContaining({ perLocation: { botan: { option: "place" } } }) as unknown }));
+    expect(onCommit).toHaveBeenCalledWith(expect.objectContaining({ type: "ChooseOperation", box: "limitedOp", plan: expect.objectContaining({ perLocation: { sirnak: { option: "place" } } }) as unknown }));
   });
 
   it("builds sub-action spend and the SA's spaces and counts by clicks only (UC-5)", async () => {
@@ -141,20 +141,20 @@ describe("FactionPanel", () => {
     render(<Faction api={mockApi({ validate: vi.fn(() => Promise.resolve(ok)) })} onDraft={onDraft} />);
     click("Op + SA");
     click("Rally");
-    click("map botan");
-    click("Botan");
-    click("More Botan Shifts");
+    click("map sirnak");
+    click("Şırnak");
+    click("More Şırnak Shifts");
     click("Strike Collaborators");
     click("Strike Collaborators spaces");
-    click("map dersim");
+    click("map bingol-tunceli");
     // Strike Collaborators removes 1 Guard when unset, so the stepper starts at 1.
-    expect(screen.getByRole("group", { name: "Dersim Guards" }).querySelector("output")?.textContent).toBe("1");
-    click("More Dersim Guards");
+    expect(screen.getByRole("group", { name: "Bingöl-Tunceli Guards" }).querySelector("output")?.textContent).toBe("1");
+    click("More Bingöl-Tunceli Guards");
     await waitFor(() => {
       const plan = lastPlan(onDraft);
-      expect(plan?.["locations"]).toEqual(["botan"]);
-      expect(plan?.["sa"]).toEqual({ action: "pkk.strike-collaborators", locations: ["dersim"], perLocation: { dersim: { guards: 2 } }, timing: "before" });
-      expect(plan?.["subActions"]).toEqual([{ action: "agitate", space: "botan", params: { shifts: 1 } }]);
+      expect(plan?.["locations"]).toEqual(["sirnak"]);
+      expect(plan?.["sa"]).toEqual({ action: "pkk.strike-collaborators", locations: ["bingol-tunceli"], perLocation: { "bingol-tunceli": { guards: 2 } }, timing: "before" });
+      expect(plan?.["subActions"]).toEqual([{ action: "agitate", space: "sirnak", params: { shifts: 1 } }]);
     });
     expect(document.querySelectorAll("input, textarea, select")).toHaveLength(0);
     click("Strike Collaborators");
@@ -191,11 +191,11 @@ describe("FactionPanel", () => {
     click("March");
     expect(screen.getByText(/drag on the map/)).toBeTruthy();
     expect(screen.getByLabelText("Plan").textContent).toMatch(/Move Guerrillas 1 step/);
-    click("drag hakkari botan");
-    click("More Pieces Hakkari to Botan");
-    await waitFor(() => { expect(lastPlan(onDraft)?.["perLocation"]).toEqual({ botan: { moves: [{ from: "hakkari", count: 2 }] } }); });
-    click("Remove move Hakkari to Botan");
-    await waitFor(() => { expect(lastPlan(onDraft)?.["perLocation"]).toEqual({ botan: {} }); });
+    click("drag hakkari sirnak");
+    click("More Pieces Hakkari to Şırnak");
+    await waitFor(() => { expect(lastPlan(onDraft)?.["perLocation"]).toEqual({ sirnak: { moves: [{ from: "hakkari", count: 2 }] } }); });
+    click("Remove move Hakkari to Şırnak");
+    await waitFor(() => { expect(lastPlan(onDraft)?.["perLocation"]).toEqual({ sirnak: {} }); });
   });
 
   it("commits a valid plan with Enter and clears it with Esc", async () => {
@@ -204,7 +204,7 @@ describe("FactionPanel", () => {
     const build = async (): Promise<void> => {
       click("Limited Op");
       click("Rally");
-      click("map botan");
+      click("map sirnak");
       await waitFor(() => { expect(screen.getByLabelText("Preview")).toBeTruthy(); });
     };
     await build();
@@ -220,7 +220,7 @@ describe("FactionPanel", () => {
     expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
     await build();
     fireEvent.keyDown(screen.getByRole("button", { name: "Place" }), { key: "Enter" });
-    fireEvent.keyDown(screen.getByRole("button", { name: "map botan" }), { key: "Enter" });
+    fireEvent.keyDown(screen.getByRole("button", { name: "map sirnak" }), { key: "Enter" });
     expect(onCommit).not.toHaveBeenCalled();
     fireEvent.keyDown(screen.getByRole("button", { name: "Rally" }), { key: "Escape" });
     expect(screen.queryByRole("button", { name: "Rally" })).toBeNull();
@@ -230,12 +230,12 @@ describe("FactionPanel", () => {
   });
 
   it("shows violations of an illegal plan with their rule", async () => {
-    const validate = vi.fn(() => Promise.resolve({ ok: false, violations: [{ code: "rallyCity", message: "A City at Support cannot Rally (03 s2.1).", ruleRef: "06 s4.1", location: "botan" }], warnings: [], preview: { effects: [] } }));
+    const validate = vi.fn(() => Promise.resolve({ ok: false, violations: [{ code: "rallyCity", message: "A City at Support cannot Rally (03 s2.1).", ruleRef: "06 s4.1", location: "sirnak" }], warnings: [], preview: { effects: [] } }));
     render(<Faction api={mockApi({ validate })} />);
     click("Limited Op");
     click("Rally");
-    click("map botan");
-    await waitFor(() => { expect(screen.getByText(/^Botan: A City at Support cannot Rally/)).toBeTruthy(); });
+    click("map sirnak");
+    await waitFor(() => { expect(screen.getByText(/^Şırnak: A City at Support cannot Rally/)).toBeTruthy(); });
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Commit (Enter)" }).disabled).toBe(true);
   });
 });
@@ -261,15 +261,15 @@ describe("EventPanel", () => {
     const validate = vi.fn((_id: string, command: AnyCommand): Promise<ValidationResult> =>
       Promise.resolve(
         !Array.isArray(command["answers"]) || command["answers"].length === 0
-          ? { ok: false, violations: [{ code: "needsAnswer", message: "Choose", ruleRef: "DK-001", location: null, question: { kind: "option" as const, prompt: "Choose: Hakkari or Botan", options: ["Hakkari", "Botan"], min: 1, max: 1 } }], warnings: [], preview: { effects: [] } }
+          ? { ok: false, violations: [{ code: "needsAnswer", message: "Choose", ruleRef: "DK-001", location: null, question: { kind: "option" as const, prompt: "Choose: Hakkari or Şırnak", options: ["Hakkari", "Şırnak"], min: 1, max: 1 } }], warnings: [], preview: { effects: [] } }
           : ok,
       ),
     );
     const onCommit = vi.fn();
     render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
     fireEvent.click(screen.getByRole("button", { name: "Execute unshaded (U)" }));
-    fireEvent.click(await screen.findByRole("button", { name: "2. Botan" }));
-    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", chooseMoveFaces: true, answers: ["Botan"] }); });
+    fireEvent.click(await screen.findByRole("button", { name: "2. Şırnak" }));
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", chooseMoveFaces: true, answers: ["Şırnak"] }); });
   });
 
   it("answers a free-action plan question with a plan built by clicks (UC-5)", async () => {
@@ -284,7 +284,7 @@ describe("EventPanel", () => {
       const [plans, dispatch] = useReducer(plansReducer, { ...emptyPlans, faction: { ...emptyPlan, target: "sa" as const } });
       return (
         <>
-          <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
+          <button type="button" onClick={() => { dispatch({ type: "click", id: "sirnak", add: false }); }}>map sirnak</button>
           <EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="pkk" eventOpen onCommit={onCommit} forms={legal.actions ?? []} plan={plans.event} dispatch={(e) => { dispatch({ ...e, owner: "event" }); }} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
         </>
       );
@@ -293,16 +293,16 @@ describe("EventPanel", () => {
     click("Execute unshaded (U)");
     expect(await screen.findByText(/Plan the free Rally, or skip it/)).toBeTruthy();
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Submit plan" }).disabled).toBe(true);
-    click("map botan");
+    click("map sirnak");
     click("Place");
     click("Submit plan");
-    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "pkk", side: "unshaded", chooseMoveFaces: true, answers: [{ op: "pkk.rally", locations: ["botan"], perLocation: { botan: { option: "place" } }, sa: null }] }); });
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "pkk", side: "unshaded", chooseMoveFaces: true, answers: [{ op: "pkk.rally", locations: ["sirnak"], perLocation: { sirnak: { option: "place" } }, sa: null }] }); });
     expect(document.querySelectorAll("textarea")).toHaveLength(0);
   });
 
   it("asks for spaces by name and takes them from map clicks (UC-9)", async () => {
     const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-012"));
-    const question = { kind: "spaces" as const, prompt: "Pick 1 to 2 spaces", options: ["hakkari", "botan"], min: 1, max: 2 };
+    const question = { kind: "spaces" as const, prompt: "Pick 1 to 2 spaces", options: ["hakkari", "sirnak"], min: 1, max: 2 };
     const validate = vi.fn((_id: string, command: AnyCommand): Promise<ValidationResult> =>
       Promise.resolve(Array.isArray(command["answers"]) && command["answers"].length > 0 ? ok : { ok: false, violations: [{ code: "needsAnswer", message: "Pick", ruleRef: "DK-012", location: null, question }], warnings: [], preview: { effects: [] } }),
     );
@@ -311,7 +311,7 @@ describe("EventPanel", () => {
       const [plans, dispatch] = useReducer(plansReducer, emptyPlans);
       return (
         <>
-          <button type="button" onClick={() => { dispatch({ type: "click", id: "botan", add: false }); }}>map botan</button>
+          <button type="button" onClick={() => { dispatch({ type: "click", id: "sirnak", add: false }); }}>map sirnak</button>
           <EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} forms={[]} plan={plans.event} dispatch={(e) => { dispatch({ ...e, owner: "event" }); }} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
         </>
       );
@@ -320,11 +320,11 @@ describe("EventPanel", () => {
     click("Execute unshaded (U)");
     expect(await screen.findByText(/Click spaces on the map/)).toBeTruthy();
     expect(screen.queryByRole("checkbox")).toBeNull();
-    click("map botan");
-    expect(screen.getByRole("button", { name: "Botan" }).getAttribute("aria-pressed")).toBe("true");
+    click("map sirnak");
+    expect(screen.getByRole("button", { name: "Şırnak" }).getAttribute("aria-pressed")).toBe("true");
     click("Hakkari");
     click("Pick 2");
-    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", chooseMoveFaces: true, answers: [["botan", "hakkari"]] }); });
+    await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", chooseMoveFaces: true, answers: [["sirnak", "hakkari"]] }); });
   });
 
   it("names the space a count question is for (UC-9)", async () => {
@@ -348,8 +348,8 @@ describe("EventPanel", () => {
 describe("plan fields", () => {
   it("shows the handler default for an unset Rally grow count (UC-5)", () => {
     const view = pkkView;
-    render(<PlanForm view={view} faction="pkk" op={{ id: "pkk.rally", label: "Rally", fields: rallyFields }} plan={{ ...emptyPlan, op: { locations: ["botan"], values: {}, moves: {} } }} dispatch={vi.fn()} />);
-    expect(screen.getByRole("group", { name: "Botan Grow count" }).querySelector("output")?.textContent).toBe("max");
+    render(<PlanForm view={view} faction="pkk" op={{ id: "pkk.rally", label: "Rally", fields: rallyFields }} plan={{ ...emptyPlan, op: { locations: ["sirnak"], values: {}, moves: {} } }} dispatch={vi.fn()} />);
+    expect(screen.getByRole("group", { name: "Şırnak Grow count" }).querySelector("output")?.textContent).toBe("max");
   });
 });
 
@@ -357,9 +357,9 @@ describe("move faces", () => {
   it("offers every flip state of the moving piece, even when the origin holds one face now (UC-5)", () => {
     const hakkari = pkkView.spaces.find((x) => x.id === "hakkari");
     const onlyUnderground = { ...pkkView, spaces: pkkView.spaces.map((x) => (x === hakkari ? { ...x, pieces: x.pieces.filter((p) => p.face !== "active") } : x)) };
-    const plan = { ...emptyPlan, op: { locations: ["botan"], values: {}, moves: { botan: [{ from: "hakkari", count: 1 }] } } };
+    const plan = { ...emptyPlan, op: { locations: ["sirnak"], values: {}, moves: { sirnak: [{ from: "hakkari", count: 1 }] } } };
     render(<PlanForm view={onlyUnderground} faction="pkk" op={{ id: "pkk.march", label: "March", fields: [{ key: "moves", label: "Moves", kind: "moves" }] }} plan={plan} dispatch={vi.fn()} />);
-    const faces = screen.getByRole("group", { name: "Face Hakkari to Botan" });
+    const faces = screen.getByRole("group", { name: "Face Hakkari to Şırnak" });
     expect([...faces.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Underground", "Active"]);
   });
 });
@@ -423,19 +423,19 @@ describe("PropagandaPanel", () => {
     const probe = boardView(kurdish.ruleset, kurdish.data, base).status.propagandaPhases.indexOf("upkeep");
     const view = boardView(kurdish.ruleset, kurdish.data, { ...base, turn: { ...base.turn, phase: "propaganda", step: probe, propagandaRound: 1 } });
     const onCommit = vi.fn();
-    render(<PropagandaPanel view={view} legal={{ faction: null, phase: "propaganda", advance: false }} selected={["elazig", "botan"]} onCommit={onCommit} />);
+    render(<PropagandaPanel view={view} legal={{ faction: null, phase: "propaganda", advance: false }} selected={["elazig", "sirnak"]} onCommit={onCommit} />);
     click(/^More Elaz.+ Guards to remove$/);
     fireEvent.click(screen.getByRole("button", { name: "Remove Guards in selected spaces" }));
-    expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "upkeep", choice: { removeGuards: { elazig: 2, botan: 1 } } });
+    expect(onCommit).toHaveBeenLastCalledWith({ type: "PropagandaChoice", phase: "upkeep", choice: { removeGuards: { elazig: 2, sirnak: 1 } } });
   });
 });
 it("resumes the saved Rally without selecting another box or SA", async () => {
   const commit = vi.fn();
   const view = {...pkkView,status: {...pkkView.status,phase: "decision",pending: {id: "saved",faction: "pkk",prompt: "Choose new legal Rally locations.",answers: [],ruleRef: "DEC-54",resume: {kind: "operation" as const,op: "pkk.rally",box: "opSa"}}}};
   const choices = {...legal,phase: "decision",actions: (legal.actions ?? []).filter(a => a.id === "pkk.rally")};
-  render(<FactionPanel api={mockApi({validate: vi.fn().mockResolvedValue(ok)})} sessionId="S" view={view} legal={choices} plan={{...emptyPlan,op: {...emptyPlan.op,locations: ["botan"]}}} dispatch={vi.fn()} onCommit={commit} onDraft={vi.fn()} />);
+  render(<FactionPanel api={mockApi({validate: vi.fn().mockResolvedValue(ok)})} sessionId="S" view={view} legal={choices} plan={{...emptyPlan,op: {...emptyPlan.op,locations: ["sirnak"]}}} dispatch={vi.fn()} onCommit={commit} onDraft={vi.fn()} />);
   expect(screen.getByText("Choose new legal Rally locations.")).toBeTruthy();
   await waitFor(() => { expect(screen.getByRole<HTMLButtonElement>("button",{name: "Commit (Enter)"}).disabled).toBe(false); });
   click("Commit (Enter)");
-  expect(commit.mock.lastCall?.[0]).toMatchObject({type: "ChooseOperation",box: "opSa",plan: {op: "pkk.rally",locations: ["botan"],sa: null}});
+  expect(commit.mock.lastCall?.[0]).toMatchObject({type: "ChooseOperation",box: "opSa",plan: {op: "pkk.rally",locations: ["sirnak"],sa: null}});
 });
