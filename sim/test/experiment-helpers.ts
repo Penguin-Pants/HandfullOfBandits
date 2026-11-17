@@ -17,7 +17,7 @@ export function devManifest(overrides: Partial<Manifest> = {}): Manifest {
     description: "test",
     scenario: "full-campaign",
     package: { dir: kurdishDir, hash: kurdish.hash },
-    expected: { thresholds: { state: 49, pkk: 30 }, harmLimit: 6, engineFingerprint: null, playerFingerprint: null },
+    expected: { thresholds: { state: 49, pkk: 32 }, harmLimit: 6, engineFingerprint: null, playerFingerprint: null },
     conditions: [{ id: "baseline", options: { hotPursuit: "allow", syriaMarchRestricted: "allow" } }],
     matchups: [{ state: "S-RANDOM@1", pkk: "P-RANDOM@1" }],
     seeds: { registry: "development", blocks: [{ from: 11, count: 3 }] },

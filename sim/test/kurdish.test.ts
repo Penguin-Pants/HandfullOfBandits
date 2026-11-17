@@ -64,11 +64,11 @@ describe("kurdish-coin 0.1.0", () => {
     expect(data.assumptions?.map((a) => a.id)).toEqual(Array.from({ length: 18 }, (_, i) => `PA-${String(i + 1).padStart(2, "0")}`).filter((id) => id !== "PA-11"));
   });
 
-  it("T-SCORE: full campaign setup scores 21 and 4 with Harm 0 and 0 (09 s2.2, 10 s2.2)", () => {
+  it("T-SCORE: full campaign setup scores 21 and 6 with Harm 0 and 0 (09 s2.2, 10 s2.2)", () => {
     const view = derive(ruleset, setupState(ruleset, "full-campaign", 1));
-    expect(view.scores).toEqual({ state: 21, pkk: 4 });
+    expect(view.scores).toEqual({ state: 21, pkk: 6 });
     expect(view.harm).toEqual({ state: 0, pkk: 0 });
-    expect(view.totals).toEqual({ totalSupport: 11, totalOpposition: 3, domesticPkkBases: 1, domesticGuerrillas: 5 });
+    expect(view.totals).toEqual({ totalSupport: 11, totalOpposition: 5, domesticPkkBases: 1, domesticGuerrillas: 10 });
     expect(view.margins).toEqual({ state: -28, pkk: -26 });
   });
 
@@ -76,9 +76,9 @@ describe("kurdish-coin 0.1.0", () => {
     const view = derive(ruleset, setupState(ruleset, "full-campaign", 1));
     const state = Object.entries(view.control).filter(([, f]) => f === "state").map(([s]) => s).sort();
     expect(state).toEqual(
-      ["hakkari", "mardin", "diyarbakir-city", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "bingol-tunceli", "mus", "van-rural", "agri-igdir", "western-cities"].sort(),
+      ["hakkari", "mardin", "batman-city", "diyarbakir-city", "diyarbakir-rural", "sanliurfa", "adiyaman", "elazig", "bingol-tunceli", "mus", "van-rural", "van-city", "agri-igdir", "western-cities"].sort(),
     );
-    expect(Object.values(view.control).filter((f) => f === "pkk")).toEqual([]);
+    expect(Object.entries(view.control).filter(([, f]) => f === "pkk").map(([s]) => s)).toEqual(["batman-rural"]);
   });
 });
 
@@ -121,10 +121,10 @@ describe("kurdish-coin scenarios", () => {
   // 10 s2.2 totals table: [on map, Available, Out of Play].
   const totals: Record<string, [number, number, number]> = {
     troops: [16, 14, 0],
-    police: [16, 8, 0],
+    police: [20, 4, 0],
     guards: [0, 0, 16],
     stateBase: [4, 4, 0],
-    guerrilla: [10, 20, 0],
+    guerrilla: [16, 14, 0],
     pkkBase: [3, 9, 0],
   };
 

@@ -79,7 +79,7 @@ it("Host Pressure requires a PKK piece and Leadership in Syria; KDP backfires on
   expect(codes(abroad,inSyria)).toContain("leadershipAbroad");
   const empty = setPieces(setPieces(turnOf("pkk"),"kdp-zone","guerrilla",0),"kdp-zone","pkkBase",0);
   expect(codes(empty,pressure)).toContain("hostPressureTarget");
-  const backfire = play(withRoll(setTrack(turnOf("pkk"),"posture.kdp","restricted"),2),op("pkk","opSa",{op: "pkk.rally",locations: ["sirnak"],sa: {action: "pkk.host-pressure",timing: "after",locations: ["kdp-zone"]}})).state;
+  const backfire = play(withRoll(setTrack(setPieces(turnOf("pkk"),"kdp-zone","guerrilla",3),"posture.kdp","restricted"),2),op("pkk","opSa",{op: "pkk.rally",locations: ["sirnak"],sa: {action: "pkk.host-pressure",timing: "after",locations: ["kdp-zone"]}})).state;
   expect(backfire.tracks["posture.kdp"]).toBe("hostile");
   expect(backfire.spaces["kdp-zone"]?.pieces["guerrilla"]?.["active"]).toBe(3);
 });

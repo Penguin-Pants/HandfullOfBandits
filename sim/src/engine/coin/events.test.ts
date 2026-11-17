@@ -20,7 +20,7 @@ describe("T-EVT: S0 cards", () => {
   });
 
   it("DK-001 S: 2 Underground Guerrillas in Hakkari, 1 in Siirt, Siirt one level toward Opposition", () => {
-    const { state } = play(on(pkk0, "DK-001"), event("pkk", "shaded"));
+    const { state } = play(on(setPieces(pkk0, "siirt", "guerrilla", 0), "DK-001"), event("pkk", "shaded"));
     expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 4, active: 0 });
     expect(pieces(state, "siirt", "guerrilla")).toEqual({ underground: 1, active: 0 });
     expect(state.spaces["siirt"]?.level).toBe(-2);

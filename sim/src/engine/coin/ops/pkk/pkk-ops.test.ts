@@ -3,7 +3,8 @@ import { rollDie } from "../../../core/rng.ts";
 import { codes, op, pieces, play, setLevel, setMarkers, setPieces, setTrack, turnOf, withRoll } from "../../../../../test/board.ts";
 
 // T-VAL and T-OPS for PKK Operations: one fixture per rule line of research 06 s4 (11 P2-07).
-const start = turnOf("pkk");
+// Pinned so these operation tests do not follow setup changes: no Guerrillas in Şanlıurfa or Van hinterland, 3 in the KDP Zone.
+const start = setPieces(setPieces(setPieces(turnOf("pkk"), "sanliurfa", "guerrilla", 0), "van-rural", "guerrilla", 0), "kdp-zone", "guerrilla", 3);
 const res = (s: typeof start): unknown => s.tracks["resources.pkk"];
 const rally = (box: string, perLocation: Record<string, unknown>, extra: Record<string, unknown> = {}): ReturnType<typeof op> =>
   op("pkk", box, { op: "pkk.rally", locations: Object.keys(perLocation), perLocation, ...extra });

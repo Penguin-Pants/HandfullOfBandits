@@ -142,7 +142,7 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
     expect(state.ended).toMatchObject({ winner: "pkk", reason: "final scoring", labels: ["narrow"] });
     expect(state.ended?.recordSheet).toMatchObject({ protectedCivilianLife: "mixed", scoreChangeFromStart: { state: 0, pkk: 0 } });
     const metrics = entries.find((e) => e.kind === "RoundMetrics");
-    expect(metrics?.data).toMatchObject({ round: 5, scores: { state: 21, pkk: 4 }, harm: { state: 0, pkk: 0 } });
+    expect(metrics?.data).toMatchObject({ round: 5, scores: { state: 21, pkk: 6 }, harm: { state: 0, pkk: 0 } });
   });
 
   it("labels the result of a test-only scenario as not comparable (04 s4.10)", () => {
@@ -161,7 +161,7 @@ describe("T-PROP: Civic Action and Agitation (05 s6.6)", () => {
     board = { ...board, flags: { ...board.flags, closureCase: true }, pools: { ...board.pools, troops: { available: 7, outOfPlay: 3 } } };
     const metrics = play(at(board, "agitation"), advance).entries.find((e) => e.kind === "RoundMetrics")?.data;
     expect(metrics).toMatchObject({
-      thresholds: { state: 49, pkk: 30 },
+      thresholds: { state: 49, pkk: 32 },
       legalSpace: "prosecuted", successor: 3, closureCase: true, ceasefire: "declared",
       markers: { office: { default: 3 }, restraintBroken: { state: 0, pkk: 1 }, displacement: { new: 0, old: 2 }, coercion: { default: 1 }, covert: { default: 1 }, reception: { default: 0 } },
       available: { troops: 7 },

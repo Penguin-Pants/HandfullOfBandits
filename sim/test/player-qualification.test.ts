@@ -125,6 +125,16 @@ describe("search order (PR #40 review)", () => {
   });
 });
 
+describe("P-HARM-GATE isolates the Harm gate (rules 7.2)", () => {
+  it("starts at or above the PKK threshold with Harm six, so only the seventh Harm can stop the win", () => {
+    const fixture = FIXTURES.find((f) => f.id === "P-HARM-GATE");
+    if (fixture === undefined) throw new Error("P-HARM-GATE");
+    const st = independentStandings(ruleset, fixture.build(engine.start(ruleset, "full-campaign", 1).state, ruleset));
+    expect(st.pkk.harm).toBe(6);
+    expect(st.pkk.checkQualifies).toBe(true);
+  });
+});
+
 describe("independent score oracle (19 s6: the engine is not the only oracle)", () => {
   it("agrees with the engine derivation and final margins over positions from random games", () => {
     let checked = 0;

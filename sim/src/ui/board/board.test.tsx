@@ -16,7 +16,9 @@ import { isInset, regionCells, voronoi } from "./region.ts";
 
 // P2-14: the board draws every location from the server view model; selection and detail card.
 afterEach(cleanup);
-const view = boardView(kurdish.ruleset, kurdish.data, turnOf("pkk"));
+// Pinned so the group tests do not follow setup changes: 3 Guerrillas in the KDP Zone.
+const start = setPieces(turnOf("pkk"), "kdp-zone", "guerrilla", 3);
+const view = boardView(kurdish.ruleset, kurdish.data, start);
 
 describe("Board", () => {
   it("draws 22 selectable locations and the Europe track", () => {
@@ -112,7 +114,7 @@ describe("map geometry", () => {
 
 describe("change outline", () => {
   it("lists only the spaces an action changed and outlines them on the board", () => {
-    const after = boardView(kurdish.ruleset, kurdish.data, setPieces(turnOf("pkk"), "bingol-tunceli", "guerrilla", 1));
+    const after = boardView(kurdish.ruleset, kurdish.data, setPieces(start, "bingol-tunceli", "guerrilla", 1));
     expect(changedSpaces(view, after)).toEqual(["bingol-tunceli"]);
     render(<Board view={after} selected={[]} onSelect={vi.fn()} changed={["bingol-tunceli"]} />);
     expect(screen.getByRole("button", { name: "Bingöl-Tunceli" }).querySelector('[stroke-width="4"]')).not.toBeNull();
@@ -132,9 +134,9 @@ describe("victory track and forces", () => {
     expect(screen.getByLabelText("Victory track").querySelectorAll(".vt-cell")).toHaveLength(51);
     // A flag label near the end of the track is right-aligned so it stays on screen.
     expect(screen.getByText("State wins at 49").parentElement?.classList.contains("end")).toBe(true);
-    expect(screen.getByText("PKK wins at 30").parentElement?.classList.contains("end")).toBe(false);
+    expect(screen.getByText("PKK wins at 32").parentElement?.classList.contains("end")).toBe(false);
     expect(screen.getByText("State wins at 49")).toBeTruthy();
-    expect(screen.getByText("PKK wins at 30")).toBeTruthy();
+    expect(screen.getByText("PKK wins at 32")).toBeTruthy();
   });
 
   it("lists each piece type on the map, Available and out of play", () => {
