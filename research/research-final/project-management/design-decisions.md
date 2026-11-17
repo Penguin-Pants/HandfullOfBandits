@@ -251,6 +251,15 @@ Approved by the designer on 17 November 2026.
 2. Reason: an Event answer is checked by a dry run that stops at the first random step. With the reveal first, a reveal that created State Harm could make a valid-looking answer fail during execution. Three games of experiment `dd22-pilot-after` stopped this way.
 3. Consequence: a State Harm marker revealed by this card cannot be removed by the same card.
 
+## DD-24 DK-079 and DK-080 shaded keep the second-reveal question after the first reveal
+
+Approved by the designer on 17 November 2026.
+
+1. Audit: of all Event cards, only DK-079 shaded and DK-080 shaded ask a question after a random step. Both ask "Reveal a second Covert marker or Stop after one" after the first random reveal.
+2. The card order stays. The executor sees where the first reveal lands before deciding (this matters for DK-080 Guard Abuse).
+3. The random pick cannot change the question or its options: one reveal always removes exactly 1 Covert marker. Tests in `sim/src/engine/coin/c5-cards.test.ts` show this for each pick.
+4. Known limit: validation stops at the first reveal, so a missing or bad answer to this question fails only when the command runs. The bots find the question after the reveal (`lateQuestion` in `sim/src/cli/candidates.ts`).
+
 ## Decision record
 
 | ID | Claude input | Sol input | CT lessons | Final |
