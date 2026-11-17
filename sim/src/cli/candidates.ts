@@ -10,6 +10,7 @@ import type { AnyCommand, FactionId, GameState, JsonObject, JsonValue, Question,
 import type { Engine } from "../engine/index.ts";
 import { controlOf, count, isTerrain, markers, resources } from "../engine/coin/ops/common.ts";
 import { postureOf } from "../engine/coin/ops/common-pkk.ts";
+import { crossBorderOrigins } from "../engine/coin/ops/sa/cross-border.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
 import { AnswerNeeded } from "../engine/coin/events.ts";
 import { siteCount } from "../engine/coin/ops/choose-operation.ts";
@@ -355,13 +356,17 @@ const OP_PLANS: Readonly<Record<string, (r: Ruleset, s: GameState, limited: bool
   "pkk.rally": rallyPlans, "pkk.march": marchPlans, "pkk.attack": attackPlans, "pkk.coerce": coercePlans,
 };
 
-/** Cross-Border variants: Sweep or Assault in one Iraqi zone with a lift from Hakkari/Şırnak (rules 4.2.2). */
-function crossBorderPlans(s: GameState, op: string): Plan[] {
+/** Cross-Border variants: Sweep or Assault in one Iraqi zone with a lift from the `crossBorder.origins` spaces, in order (rules 4.2.2). */
+function crossBorderPlans(r: Ruleset, s: GameState, op: string): Plan[] {
   if (op !== "state.sweep" && op !== "state.assault") return [];
   const lift = (n: number): JsonObject[] => {
-    const h = Math.min(n, count(s, "hakkari", "troops"));
-    const b = Math.min(n - h, count(s, "sirnak", "troops"));
-    return [...(h > 0 ? [{ from: "hakkari", count: h }] : []), ...(b > 0 ? [{ from: "sirnak", count: b }] : [])];
+    const out: JsonObject[] = [];
+    let left = n;
+    for (const from of crossBorderOrigins(r)) {
+      const k = Math.min(left, count(s, from, "troops"));
+      if (k > 0) { out.push({ from, count: k }); left -= k; }
+    }
+    return out;
   };
   return ZONES.flatMap((zone) => [0, 2, 3, 6].map((n) => { // literal-ok: lift sizes (none, small, hot pursuit limit, full lift)
     const moves = lift(n);
@@ -693,7 +698,7 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
         if (box !== BOX.opSa) { byVariant(`op:${op}`); continue; }
         if (!boxes.includes(BOX.opOnly)) byVariant(`op:${op}`);
         for (const sa of Object.values(actionHandlers).filter((h) => h.kind === "sa" && h.faction === faction && (h.accompanies === "any" || h.accompanies.includes(op)))) {
-          const variants = sa.id === "state.cross-border" ? crossBorderPlans(s, op) : plans.slice(0, 6 * wide).flatMap((p) => saVariants(r, s, sa.id, p));
+          const variants = sa.id === "state.cross-border" ? crossBorderPlans(r, s, op) : plans.slice(0, 6 * wide).flatMap((p) => saVariants(r, s, sa.id, p));
           offer(`op:${op}+${sa.id}@${box}`, variants.map((p) => opCommand(faction, box, op, p)));
         }
       }

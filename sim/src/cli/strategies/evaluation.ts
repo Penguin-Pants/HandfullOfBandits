@@ -103,7 +103,8 @@ export function features(r: Ruleset, s: GameState, model: PotentialModel = "unca
   const home = r.spaces.filter((x) => x.kind === "domestic");
   const level = (id: string): number => s.spaces[id]?.level ?? 0;
   const pay = income(r, s);
-  const incomeRounds = s.turn.propagandaRound < t.finalRound - 1 ? 1 : 0;
+  // Incomes still to come: every Propaganda round before the final one (no income in the final round).
+  const incomeRounds = Math.max(0, t.finalRound - 1 - s.turn.propagandaRound);
   const res = { state: resources(r, s, "state"), pkk: resources(r, s, "pkk") };
   // State: shifts at 2 each where it has Control and Police; PKK: 1 each with a Base or Control.
   const stateShifts = home.filter((x) => view.control[x.id] === "state" && count(s, x.id, "police") > 0).flatMap((x) => Array.from({ length: Math.max(0, 2 - level(x.id)) }, () => x.pop - markers(s, x.id, "stateHarm") - markers(s, x.id, "reception") * 0.5));
