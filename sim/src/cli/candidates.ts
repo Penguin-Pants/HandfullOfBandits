@@ -12,7 +12,6 @@ import { controlOf, count, isTerrain, markers, resources } from "../engine/coin/
 import { postureOf } from "../engine/coin/ops/common-pkk.ts";
 import { crossBorderOrigins } from "../engine/coin/ops/sa/cross-border.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
-import { AnswerNeeded } from "../engine/coin/events.ts";
 import { siteCount } from "../engine/coin/ops/choose-operation.ts";
 import { asObject } from "../engine/coin/ops/plan.ts";
 import { ceasefireOptions } from "../engine/coin/propaganda/ceasefire-step.ts";
@@ -457,17 +456,6 @@ function answers(r: Ruleset, s: GameState, q: Question, wide: number): JsonValue
   }
 }
 
-/** The question a valid command still needs after a random result (DK-079, DK-080), "bad" for a refused answer, or null. */
-function lateQuestion(engine: Engine, r: Ruleset, s: GameState, command: AnyCommand): Question | "bad" | null {
-  try {
-    engine.apply(r, s, command);
-    return null;
-  } catch (e) {
-    if (!(e instanceof AnswerNeeded)) throw e;
-    return e.violation.code === "needsAnswer" && e.violation.question !== undefined ? e.violation.question : "bad";
-  }
-}
-
 /** Expand an Event command through its questions, depth first, keeping every legal completion. */
 function eventCompletions(engine: Engine, r: Ruleset, s: GameState, command: AnyCommand, wide: number, limit: number): AnyCommand[] {
   const out: AnyCommand[] = [];
@@ -477,10 +465,7 @@ function eventCompletions(engine: Engine, r: Ruleset, s: GameState, command: Any
     const [first] = engine.validate(r, s, current).violations;
     const prior = Array.isArray(current["answers"]) ? (current["answers"] as JsonValue[]) : [];
     if (first === undefined) {
-      // Validation stops at the first random result (05 s4). A question after it shows only when the command is applied.
-      const late = lateQuestion(engine, r, s, current);
-      if (late === null) out.push(current);
-      else if (late !== "bad") for (const a of answers(r, s, late, wide)) walk({ ...current, answers: [...prior, a] });
+      out.push(current);
       return;
     }
     if (first.code !== "needsAnswer" || first.question === undefined) return;

@@ -379,7 +379,7 @@ describe("C3 to C5 decisions", () => {
   });
 
   it("answers a question that opens after a random reveal (DK-079 and DK-080 shaded with 2 Covert markers)", () => {
-    // Validation stops at the first random result, so it does not see the "reveal a second" question. Apply needs its answer.
+    // The question opens after the random reveal. Validation asks it, so every completion carries its answer.
     for (const card of ["DK-079", "DK-080"]) {
       const s = setMarkers(setMarkers(inCampaign(ruleset, withCard(turnOf("pkk"), card), "C5"), "bingol-tunceli", "covert", 1), "agri-igdir", "covert", 1);
       const shaded = gen(s, "card", "pkk").candidates.filter((c) => c.family === "event:shaded");

@@ -19,6 +19,7 @@ import type {
   Ruleset,
   Transition,
   ValidationResult,
+  Violation,
 } from "./core/types.ts";
 
 export interface Engine {
@@ -27,7 +28,8 @@ export interface Engine {
   apply(ruleset: Ruleset, state: GameState, command: AnyCommand): ApplyResult;
   /**
    * The board at the open question of `command`: the state after the effects of its answers so
-   * far. Null when the command asks no question. For planning the next answer (bots, 19 s5).
+   * far. Null when the command asks no question, or when the question opens after a random result
+   * (the board there would show that result). For planning the next answer (bots, 19 s5).
    */
   questionState(ruleset: Ruleset, state: GameState, command: AnyCommand): GameState | null;
 }
@@ -47,16 +49,33 @@ function controlChanges(ruleset: Ruleset, before: GameState, after: GameState): 
   });
 }
 
-/** Effects a valid command applies, up to its first die roll (05 s4 preview). */
-function previewEffects(ruleset: Ruleset, state: GameState, handler: CommandHandler, command: AnyCommand): readonly Effect[] {
-  if (handler.execute === undefined) return handler.resolve?.(ruleset, state, command) ?? [];
+/** Effects a valid command applies, up to its first die roll (05 s4 preview). `random`: a roll stopped it. */
+function previewEffects(ruleset: Ruleset, state: GameState, handler: CommandHandler, command: AnyCommand): { readonly effects: readonly Effect[]; readonly random: boolean } {
+  if (handler.execute === undefined) return { effects: handler.resolve?.(ruleset, state, command) ?? [], random: false };
   const ctx = createExec(ruleset, state, true);
   try {
     handler.execute(ctx, command);
   } catch (e) {
     if (!(e instanceof PreviewStop)) throw e;
+    return { effects: ctx.effects, random: true };
   }
-  return ctx.effects;
+  return { effects: ctx.effects, random: false };
+}
+
+/**
+ * A question or refused answer that opens only after a random result (DK-079, DK-080 shaded).
+ * The dry run draws from the state's own RNG, so `apply` meets the same result. Only the
+ * violation leaves the run; its effects stay out of the preview.
+ */
+function lateViolation(ruleset: Ruleset, state: GameState, handler: CommandHandler, command: AnyCommand): Violation | null {
+  if (handler.execute === undefined) return null;
+  try {
+    handler.execute(createExec(ruleset, state), command);
+  } catch (e) {
+    if (e instanceof AnswerNeeded) return e.violation;
+    throw e;
+  }
+  return null;
 }
 
 export function createEngine(handlers: Readonly<Record<string, CommandHandler>>): Engine {
@@ -69,9 +88,12 @@ export function createEngine(handlers: Readonly<Record<string, CommandHandler>>)
       return { ok: false, violations: [violation], warnings: [], preview: { effects: [] } };
     }
     const violations = handler.check(ruleset, state, command);
-    const ok = violations.length === 0;
-    const warnings = ok ? handler.warnings?.(ruleset, state, command) ?? [] : [];
-    return { ok, violations, warnings, preview: { effects: ok ? previewEffects(ruleset, state, handler, command) : [] } };
+    const refuse = (list: readonly Violation[]): ValidationResult => ({ ok: false, violations: list, warnings: [], preview: { effects: [] } });
+    if (violations.length > 0) return refuse(violations);
+    const preview = previewEffects(ruleset, state, handler, command);
+    const late = preview.random ? lateViolation(ruleset, state, handler, command) : null;
+    if (late !== null) return refuse([late]);
+    return { ok: true, violations, warnings: handler.warnings?.(ruleset, state, command) ?? [], preview: { effects: preview.effects } };
   }
 
   return {
