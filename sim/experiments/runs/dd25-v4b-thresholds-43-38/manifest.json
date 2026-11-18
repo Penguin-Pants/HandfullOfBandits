@@ -1,0 +1,125 @@
+{
+ "schemaVersion": 1,
+ "id": "dd25-v4b-thresholds-43-38",
+ "stage": "pilot",
+ "description": "Roster v4 on the TEST VARIANT package dd25-thresholds-43-38 (State 43, PKK 38 only; setup unchanged): same cells and seeds as dd25-v4b (doc 41). Not the game rules.",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../packages/dd25-thresholds-43-38",
+  "hash": "5f2bfccd492460eb9694904487c00d72ddabbbd81e9deed34e870720577b15cd"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 43,
+   "pkk": 38
+  },
+  "harmLimit": 6,
+  "engineFingerprint": "031594a9234e6c330fa5d8e144880598ffc02e2f8b90e1cfb6cb6b06e2765c3f",
+  "playerFingerprint": "9d3763221f635757e3e6f358154939edf39351dd388ffde6065d8614e1e119c5"
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-POL@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-ADAPT@4"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 7001,
+    "count": 15
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}
