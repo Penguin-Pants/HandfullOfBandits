@@ -50,6 +50,7 @@ Status: Phases 1 and 2 complete. Phases 3a to 3c built; their designer checkpoin
 | [38-variant-b-test.md](38-variant-b-test.md) | Test variant B (46/35, +1 Police): no gain over the current rules |
 | [39-setup-lever-police.md](39-setup-lever-police.md) | +1 Police alone lowers the State by 12 points; corrects doc 38 |
 | [40-thresholds-46-35-alone.md](40-thresholds-46-35-alone.md) | 46/35 with the setup unchanged: 54.2% State; the doc 39 prediction missed |
+| [41-thresholds-43-38-alone.md](41-thresholds-43-38-alone.md) | 43/38 with the setup unchanged: 65.0% State, inside the target |
 
 ## Method
 
