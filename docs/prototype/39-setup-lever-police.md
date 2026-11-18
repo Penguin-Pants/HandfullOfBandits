@@ -4,6 +4,8 @@ Date: 2026-11-18. Follows [38](38-variant-b-test.md) section 4, item 1. Same bot
 
 ## 1. Bottom line
 
+**Update (doc 40, 2026-11-18):** the additive prediction below (about 61% for 46/35 alone) was tested and missed: the run gave 54.2%. The sign of the Police effect holds; the threshold-only figures of +13 and +23 are withdrawn.
+
 The +1 Police in Siirt and Bitlis **lowers** the State. With only that change and the thresholds left at 49/32, the State wins **35.8% [30.8%, 40.4%]** of bot games. The current rules give 48.3%. The paired change is **-12.5 pp [-18.3, -6.2]** (verified, `results.json` of both runs). Confidence: medium on the sign, low on the size.
 
 This corrects doc 38. The variants A (43/38) and B (46/35) both contained the Police change, so it hid part of the threshold effect. Separated, the threshold effect matches the paper re-score of doc 36:
