@@ -1,0 +1,19 @@
+# Research 04 s2. Shapes DEC-29, emblems DEC-30. Leadership is a marker (markers.yaml).
+- {id: troops, faction: state, count: 30, isBase: false, countsForControl: true, movable: true, startPool: available, shape: cube, source: "04 s2"}
+- {id: police, faction: state, count: 24, isBase: false, countsForControl: true, movable: true, startPool: available, shape: cube, colorVariant: light, source: "04 s2"}
+- {id: guards, faction: state, count: 16, isBase: false, countsForControl: true, movable: false, startPool: outOfPlay, shape: cylinder, source: "04 s2, s2.1 item 4"}
+- {id: stateBase, faction: state, count: 8, isBase: true, countsForControl: true, movable: false, startPool: available, shape: disc, emblem: crescentStar, source: "04 s2"}
+- id: guerrilla
+  faction: pkk
+  count: 30
+  isBase: false
+  states: [underground, active]
+  placedAs: underground
+  countsForControl: true
+  movable: true
+  startPool: available
+  shape: octagon
+  emblem: starCircle
+  emblemState: active
+  source: "04 s2, s2.1 item 2"
+- {id: pkkBase, faction: pkk, count: 12, isBase: true, countsForControl: true, movable: false, startPool: available, shape: disc, source: "04 s2"}
