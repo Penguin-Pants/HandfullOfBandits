@@ -48,6 +48,7 @@ Status: Phases 1 and 2 complete. Phases 3a to 3c built; their designer checkpoin
 | [36-dd25-balance-pilot.md](36-dd25-balance-pilot.md) | DD-25 player review, requalification and bot pilot (`dd25-pilot`) |
 | [37-bot-retune-v4.md](37-bot-retune-v4.md) | Roster v4 (designer retune, 2-move planning) and the 43/38 test variant |
 | [38-variant-b-test.md](38-variant-b-test.md) | Test variant B (46/35, +1 Police): no gain over the current rules |
+| [39-setup-lever-police.md](39-setup-lever-police.md) | +1 Police alone lowers the State by 12 points; corrects doc 38 |
 
 ## Method
 

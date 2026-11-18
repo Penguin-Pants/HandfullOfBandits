@@ -4,6 +4,8 @@ Date: 2026-11-17. Follows [37](37-bot-retune-v4.md) section 4, item 1. Same bots
 
 ## 1. Bottom line
 
+**Correction (doc 39, 2026-11-18):** the +1 Police in Siirt and Bitlis lowers the State by about 12 points when tested alone. In this run it cancelled the gain from the 46/35 thresholds. Findings 1, 2 and 4 below are replaced by doc 39; the numbers in the tables are unchanged.
+
 The smaller threshold change does not move the result. With State 46, PKK 35 and +1 Police in Siirt and Bitlis, the State wins **49.2% [44.2%, 54.6%]** of bot games. The current rules (49/32) give 48.3%. The 43/38 variant gives 58.7%. Confidence: medium. It is a pilot sample, so one run can be off by about 5 points either way.
 
 | Run | Rules | State roster average | Early wins (before C3) | Check wins State / PKK |
@@ -31,10 +33,10 @@ The 60 to 65% target is not reached. These are bot results, not balance proof. V
 
 ## 3. Findings
 
-1. **A 6-point shift does nothing; a 12-point shift gives about +10 points.** Variant B favors the State by 3 points on each threshold (6 in total) and moves the average by +0.8 pp. Variant A favors it by 12 in total and adds 10.4 pp over the current rules. Inferred: the effect needs a larger shift, and the pilot sample cannot tell a small effect from none.
-2. **The paper re-score overstates the gain.** Doc 36 re-scored the old-bot games and predicted 42% for 46/35 (a gain of 13 points). The real run gave 49.2% (a gain of 0.8 over the same bots' current-rules run). Games change when a check can end them, so a re-count of finished games is not a reliable guide in this range. Verified (grid in doc 36 against this run).
+1. **(Replaced by doc 39.) A 6-point shift does nothing; a 12-point shift gives about +10 points.** Variant B favors the State by 3 points on each threshold (6 in total) and moves the average by +0.8 pp. Variant A favors it by 12 in total and adds 10.4 pp over the current rules. Inferred: the effect needs a larger shift, and the pilot sample cannot tell a small effect from none.
+2. **(Withdrawn, see doc 39.) The paper re-score overstates the gain.** Doc 36 re-scored the old-bot games and predicted 42% for 46/35 (a gain of 13 points). The real run gave 49.2% (a gain of 0.8 over the same bots' current-rules run). Games change when a check can end them, so a re-count of finished games is not a reliable guide in this range. Verified (grid in doc 36 against this run).
 3. **The PKK check works again.** The PKK wins 19 games at a check, against 8 in variant A, and 26 games end with the PKK at 35 or more (variant A: 9 at 38). The State reaches 46 in 33 games. The thresholds now decide some games at the checks.
-4. **The +1 Police is not isolated.** Both variants change the Police and the thresholds together. This run does not show what the Police change does alone. Not tested.
+4. **(Answered in doc 39: it lowers the State by about 12 points.) The +1 Police is not isolated.** Both variants change the Police and the thresholds together. This run does not show what the Police change does alone. Not tested.
 5. **No early sudden victory.** 2 of 240 games end before the C3 Propaganda round (the 10 s8 line is 1 in 5).
 6. **Run time.** The median game takes 51 s, against 72 to 76 s in the earlier v4b runs. Cause unknown (unverified assumption: less load on the machine; check by rerunning one cell).
 
