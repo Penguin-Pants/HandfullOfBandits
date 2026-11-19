@@ -2,7 +2,7 @@
 // The Op Only revision of decision 5 is in decisions.test.ts, Decision 5 block.
 import { describe, expect, it } from "vitest";
 import type { AnyCommand, GameState } from "../src/engine/core/types.ts";
-import { codes, op, pieces, play, ruleset, setPieces, setTrack, turnOf } from "./board.ts";
+import { codes, op, pieces, play, ruleset, setPieces, setTrack, turnOf, withCard, withRoll } from "./board.ts";
 
 const garrison = (perLocation: Record<string, unknown>, box = "limitedOp"): AnyCommand => op("state", box, { op: "state.garrison", locations: ["mardin"], perLocation: { mardin: perLocation } });
 
@@ -57,6 +57,26 @@ describe("Decision 18 (m-17): every selected location must change, by the Operat
     expect(codes(setPieces(hidden, "mardin", "guerrilla", 0), garrison({ moves: [] }))).toEqual([NO_EFFECT]);
     expect(codes(hidden, garrison({ moves: [], activate: 0 }))).toEqual([NO_EFFECT]);
     expect(codes(hidden, garrison({ moves: [] }))).toEqual([]);
+  });
+
+  it("a ceasefire record marker is not a change: a useless Assault stays refused during Declared", () => {
+    const board = setTrack(setPieces(setPieces(setPieces(turnOf("state"), "hakkari", "guerrilla", 0), "hakkari", "guerrilla", 1, "active"), "hakkari", "troops", 1), "ceasefire", "declared");
+    expect(codes(board, op("state", "limitedOp", { op: "state.assault", locations: ["hakkari"], perLocation: {} }))).toEqual([NO_EFFECT]);
+  });
+
+  it("a free Event Operation obeys the check too (DK-011 free Sweep in Sirnak)", () => {
+    const sweep = (s: GameState): string[] => codes(withCard(s, "DK-011"), { type: "ChooseEvent", faction: "state", side: "unshaded", answers: [{ locations: ["sirnak"], perLocation: { sirnak: { moves: [] } } }] });
+    expect(sweep(turnOf("state"))).toEqual([]);
+    expect(sweep(setPieces(turnOf("state"), "sirnak", "guerrilla", 0))).toEqual([NO_EFFECT]);
+  });
+
+  it("Host Pressure replan: no-effect locations are not replacements, so the Operation ends (DEC-54)", () => {
+    let board = setTrack(setTrack(setPieces(turnOf("pkk"), "kdp-zone", "guerrilla", 1, "active"), "posture.kdp", "tolerant"), "europe", 5);
+    board = setTrack({ ...board, pools: { ...board.pools, guerrilla: { ...board.pools["guerrilla"], available: 0 }, pkkBase: { ...board.pools["pkkBase"], available: 0 } } } as GameState, "resources.pkk", 10);
+    const rally = op("pkk", "opSa", { op: "pkk.rally", locations: ["kdp-zone"], perLocation: { "kdp-zone": { option: "flip" } }, sa: { action: "pkk.host-pressure", locations: ["kdp-zone"], perLocation: {}, timing: "before" } });
+    const { state, entries } = play(withRoll(board, 1), rally);
+    expect(state.tracks["posture.kdp"]).toBe("restricted");
+    expect([state.pending, entries.some((e) => e.data["reason"] === "noLegalReplacement")]).toEqual([null, true]);
   });
 
   it("an Attack is never judged by its die: the check skips a dry run that rolls", () => {

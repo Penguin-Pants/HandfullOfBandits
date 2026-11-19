@@ -4,8 +4,8 @@ import type { AnyCommand, CommandHandler, GameState, JsonObject, Ruleset, SubAct
 import { BOX, placeCylinder, sequenceViolations } from "../sequence/ct.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "./action.ts";
 import { resources } from "./common.ts";
-import { EUROPE_SPACE, HARMFUL_ACTIONS, TRACK } from "./ids.ts";
-import { canonicalJson } from "../../core/canonical.ts";
+import { HARMFUL_ACTIONS } from "./ids.ts";
+import { NO_EFFECT, noEffectMessage, rolled, unchangedLocations } from "./no-effect.ts";
 import { applyRestraint, restraintWarnings, type ActionUse } from "../ceasefire.ts";
 import { asList, asObject, asString } from "./plan.ts";
 import { flagHarmful, notePassOnly } from "../stop-rules.ts";
@@ -145,21 +145,25 @@ function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): b
   const budget = resources(ruleset, state, plan.options.faction);
   // A replacement is a new resume command: no Special Activity and no optional sub-actions.
   const options: ActionOptions = { ...plan.options, sa: null, saLocations: [], subActions: [] };
-  return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget);
+  // Decision 18: a probe that would change nothing is not a replacement (the resume command refuses it).
+  const changes = (p: ActionPart): boolean => {
+    const ctx = createExec(ruleset, state);
+    plan.op.execute(ctx, p, options);
+    return rolled(ctx.entries) || unchangedLocations(state, ctx.state, p.locations).length === 0;
+  };
+  return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget && changes(p));
 }
 
 /**
- * Decision 18 (m-17; rules 3.1): each Operation location must change, by the Operation or by its
- * Special Activity there. One dry run of the whole command on the real board: a location changes
- * when its pieces, faces, markers or level differ afterward (Europe: the Europe track). A dry run
- * that rolls a die is not judged, so legality never shows a random result before the player commits.
+ * Decision 18 (m-17; rules 3.1): one dry run of the whole command on the real board. The baseline
+ * is the board after the ceasefire record marker (07 s7.2), so that marker is not a change.
  */
 function noEffectViolations(ruleset: Ruleset, state: GameState, command: AnyCommand, plan: ParsedPlan): Violation[] {
   const ctx = createExec(ruleset, state);
   chooseOperationHandler.execute?.(ctx, command);
-  if (ctx.entries.some((e) => e.kind === "DieRolled") || ctx.state.pending?.resume !== undefined) return [];
-  const changed = (loc: string): boolean => (loc === EUROPE_SPACE ? state.tracks[TRACK.europe] !== ctx.state.tracks[TRACK.europe] : canonicalJson(state.spaces[loc] ?? null) !== canonicalJson(ctx.state.spaces[loc] ?? null));
-  return plan.part.locations.filter((loc) => !changed(loc)).map((loc) => at(loc, "locationNoEffect", `Nothing in ${loc} would change. Select only locations that the Operation or its Special Activity changes (rules 3.1).`, "rules 3.1"));
+  if (rolled(ctx.entries) || ctx.state.pending?.resume !== undefined) return [];
+  const baseline = simulate(ruleset, state, (b) => { applyRestraint(b, plan.options.faction, uses(plan)); });
+  return unchangedLocations(baseline, ctx.state, plan.part.locations).map((loc) => at(loc, NO_EFFECT, noEffectMessage(loc), "rules 3.1"));
 }
 
 /** The Op and SA of a parsed plan, for the ceasefire table (07 s7.2). */

@@ -17,6 +17,7 @@ import type { ActionOptions, ActionPart } from "./ops/action.ts";
 import { asList, asObject, asString } from "./ops/plan.ts";
 import { actionHandlers } from "./ops/registry.ts";
 import { applyRestraint } from "./ceasefire.ts";
+import { NO_EFFECT, noEffectMessage, rolled, unchangedLocations } from "./ops/no-effect.ts";
 
 /** Stops a check run at its first missing or bad answer. */
 export class AnswerNeeded extends Error {
@@ -243,6 +244,9 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   const sa = saId === null || (constraints["saOptional"] === true && saPart === null) ? undefined : actionHandlers[saId];
   // Free Event actions count for the ceasefire table (07 s7.2).
   applyRestraint(ctx, handler.faction, [{ id: action, part }, ...(saId === null || saPart === null ? [] : [{ id: saId, part: saPart }])]);
+  // Decision 18 (rules 3.1, 5.1): a free Operation's locations must change too; compared after the ceasefire marker.
+  const before = ctx.state;
+  const mark = ctx.entries.length;
   const runSa = (): void => {
     if (sa === undefined) return;
     // `saAtCost`: the SA is not free (Area Domination Village Clearance "at normal cost", DEC-69 point 9).
@@ -262,6 +266,8 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   ctx.log("ChoiceMade", { freeAction: action, locations: [...part.locations] }, run.ruleRef);
   handler.execute(ctx, part, options);
   if (after) runSa();
+  const still = rolled(ctx.entries.slice(mark)) ? [] : unchangedLocations(before, ctx.state, part.locations);
+  if (still[0] !== undefined) ask(run, NO_EFFECT, noEffectMessage(still[0]));
   cursor.previous = part.locations;
 }
 
