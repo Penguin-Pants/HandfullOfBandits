@@ -101,7 +101,7 @@ Designer decisions recorded 2026-10-27. Rule text for each PA is in 02-rules-gap
 | PA-03 | Modified die totals used as is. No automatic results | accepted |
 | PA-04 | Track changes stop at the end. Excess lost. Legitimacy keeps its unpaid-loss rule (2 State Resources per point) | accepted |
 | PA-05 | Coerce shifts first, then places its marker. A marker already present blocks the shift. The Guerrilla still activates | accepted |
-| PA-06 | Activate 1 Underground Guerrilla and remove 1 State piece before resolving the normal Attack, including its roll, attrition and bonus (06 s5.1, DD-22). The guaranteed removal causes no attrition | accepted |
+| PA-06 | Activate 1 Underground Guerrilla and remove 1 State piece before resolving the normal Attack, including its roll, attrition and bonus (06 s5.1, DD-26). The guaranteed removal causes no attrition | accepted |
 | PA-07 | Count State pieces after the move when activating | accepted |
 | PA-08 | Assault removals beyond legal targets are lost | accepted |
 | PA-09 | Exhausted marker supply: skip placement, log "supply exhausted", warn when Harm markers run out | accepted |

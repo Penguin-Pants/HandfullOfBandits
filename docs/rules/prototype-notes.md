@@ -2,7 +2,7 @@
 
 ## B.1 Edition Boundary
 
-This is the **full game** ruleset R4, dated 8 November 2026: the full five-Campaign game. Scenarios A, B and C and the S0 test scenario are archived (`archive/README.md`, rule 10.6). The source baseline is main commit **f0e6415**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire, the four Pivotals, the structural cards and the Campaign switches. The earlier Scenario A edition was based on commit **d9a6453**.
+This is the **full game** ruleset R4, dated 19 November 2026: the full five-Campaign game. Scenarios A, B and C and the S0 test scenario are archived (`archive/README.md`, rule 10.6). The source baseline is main commit **6ade819**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire, the four Pivotals, the structural cards and the Campaign switches. It also includes DD-22 to DD-26 and the designer decisions of 12 and 19 November 2026 (`docs/audit/OPEN_QUESTIONS.md`). The earlier Scenario A edition was based on commit **d9a6453**.
 
 **Not covered in this edition:** the optional modules of research chapter 13 (including the third-player module). Appendix A reproduces every card from `game-packages/kurdish-coin/0.1.0/cards/`; its Always lines come from 5.4. The designer checkpoints IC-3a to IC-3c are still open, so the full-game systems are implemented but not yet playtested by the designer.
 
@@ -12,8 +12,8 @@ The latest explicit designer decisions take precedence over older research wordi
 
 - **DD-21:** ordinary Attack reuses its die for attrition. Only if Troops are removed and the result is less than or equal to the Troop count before the Attack, remove one Guerrilla per Troop removed. No second roll. Apply the roll-of-1 bonus afterward. Ambush remains exempt.
 
-- **DD-22:** Ambush adds one guaranteed State removal before a normal Attack, including its roll, attrition and bonus.
-- **DD-20:** no income in the final Propaganda; Propaganda Agitation uses a PKK Base or PKK Control; Ambush originally replaced the Attack (superseded by DD-22); five revised C1 Event sides and the Strike Collaborators warning.
+- **DD-26:** Ambush adds one guaranteed State removal before a normal Attack, including its roll, attrition and bonus.
+- **DD-20:** no income in the final Propaganda; Propaganda Agitation uses a PKK Base or PKK Control; Ambush originally replaced the Attack (superseded by DD-26); five revised C1 Event sides and the Strike Collaborators warning.
 - **DEC-53:** Reset flips all Guerrillas Underground, including Hostile/Aligned camps.
 - **DEC-54 and DEC-56:** Host Pressure interruptions retain the roll and paid cost while replanning the same Rally or March.
 - **DEC-62:** the replan also applies when the planned locations become unaffordable. With no legal, affordable replacement, the Operation ends; the roll, posture change and cost stand.

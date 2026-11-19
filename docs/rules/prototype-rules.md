@@ -2,7 +2,7 @@
 title: A Handful of Bandits
 subtitle: Kurdish COIN · Turkey, 1984–1999
 edition: Full game · Playable prototype · R4
-date: 8 November 2026
+date: 19 November 2026
 ---
 
 # 1.0 Introduction

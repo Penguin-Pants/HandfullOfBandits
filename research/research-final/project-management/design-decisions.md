@@ -273,6 +273,12 @@ Approved by the designer on 17 November 2026 after the audit and options in `doc
 
 Reason: the attacks of 15 and 17 Aug 1984 were in Siirt, which had no pieces. The other additions are play decisions. 09 section 2.2 gives the threshold arithmetic.
 
+## DD-26 Ambush adds a guaranteed removal
+
+Designer direction, 16 November 2026: supersedes DD-20 item 5 and DD-21 item 5. In each Ambush space, Activate one Underground Guerrilla and remove one State piece in Attack order before resolving the normal Attack. The guaranteed removal applies even if the Attack misses and causes no attrition by itself. Count Troops after the Ambush for the normal Attack. Resolve the Attack roll, attrition and bonus even if the Ambush removed the last State piece.
+
+Was the second heading with ID DD-22 until 19 November 2026. Ambush references to DD-22 before that date mean this decision.
+
 ## Decision record
 
 | ID | Claude input | Sol input | CT lessons | Final |
@@ -283,7 +289,3 @@ Reason: the attacks of 15 and 17 Aug 1984 were in Siirt, which had no pieces. Th
 | DD-04 | CT track in 2-faction mode | Ranked-choice procedure | Adopt CT pattern | CT pattern |
 | DD-05 | Concept A, 15 provinces | Concept A, 8 regions and 2 nodes | Restricted Iraqi spaces, Syria off-map | 13 domestic spaces grouped from provinces. Superseded by DD-22 (18 domestic spaces) |
 | DD-14 | System 1 primary | V-A then V-B | Define precise checkpoints | CT thresholds and margins, V-B as record |
-
-## DD-22 Ambush adds a guaranteed removal
-
-Designer direction, 16 November 2026: supersedes DD-20 item 5 and DD-21 item 5. In each Ambush space, Activate one Underground Guerrilla and remove one State piece in Attack order before resolving the normal Attack. The guaranteed removal applies even if the Attack misses and causes no attrition by itself. Count Troops after the Ambush for the normal Attack. Resolve the Attack roll, attrition and bonus even if the Ambush removed the last State piece.
