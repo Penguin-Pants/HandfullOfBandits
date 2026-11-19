@@ -207,7 +207,7 @@ export function newManifest(draftFile: string, outFile: string, runtime: Runtime
   const e = draft.expected ?? {};
   const manifest: Manifest = {
     ...draft,
-    package: { dir: relative(dirname(out), packageDir).split(sep).join("/"), hash: draft.package.hash ?? loaded.hash },
+    package: { dir: relative(dirname(out), packageDir).split(sep).join("/") || ".", hash: draft.package.hash ?? loaded.hash },
     expected: {
       thresholds: e.thresholds ?? { ...scenario.thresholds },
       harmLimit: e.harmLimit ?? param(loaded.ruleset, "harm.limit", "number"),

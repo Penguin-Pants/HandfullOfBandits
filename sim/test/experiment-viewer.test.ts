@@ -1,6 +1,6 @@
 // Audit Plan 3 A5: the app lists experiment runs, shows a run's report and opens one recorded game
 // as a session at a chosen decision, through the HTTP API.
-import { mkdirSync, rmSync } from "node:fs";
+import { cpSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -83,6 +83,15 @@ describe("experiment report viewer (audit Plan 3 A5)", () => {
     const moved: ExperimentRuns = { ...reader, game: () => ({ ...real, startHash: "0".repeat(64) }) };
     expect(() => new SessionService(db, packages, null, moved).openExperimentGame("view-run", gameId, 3)).toThrow(/starts from another position/);
   });
+
+  it("lists the recorded games of a run with no results file, and opens one (PR #129 review)", async () => {
+    cpSync(join(runs, "view-run"), join(runs, "unfinished"), { recursive: true });
+    rmSync(join(runs, "unfinished", "results.json"));
+    const steps = gameSteps(join(runs, "unfinished"), gameId, null).steps;
+    expect(reader.detail("unfinished").games).toEqual([expect.objectContaining({ gameId, status: "recorded", commands: steps.length })]);
+    expect((await open("unfinished", gameId, 3)).body).toMatchObject({ applied: 3, divergedAt: null });
+    rmSync(join(runs, "unfinished"), { recursive: true });
+  }, 60000);
 
   it("shows no runs when the server has no reader", async () => {
     const bare = buildApp(new SessionService(db, packages));

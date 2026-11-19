@@ -10,7 +10,7 @@ Every Plan 3 milestone is done. You can compare two runs paired by cell and seed
 |:--|:--|:--|
 | A1 Paired run compare | ✅ Done | `experiment compare <base> <variant> --paired`. Doc 41 means match exactly; interval ends within one bootstrap step (section 3) |
 | A2 Study without hashes | ✅ Done | `experiment new <study.json> --out <manifest.json>`; `supersedes` is optional |
-| A3 Card side coverage | ✅ Done | `experiment cards <run>... --out <file.md>`. 189 of 189 audit ledger counts match |
+| A3 Card side coverage | ✅ Done | `experiment cards <run>... --out <file.md>`. 189 of 189 run counts match the audit ledger; one ledger no-effect count corrected (section 3) |
 | A4 Probe players | ✅ Done in Plan 1 (D-04) | No new code. Evidence re-checked (section 3) |
 | A5 Report viewer | ✅ Done | Home nav "Experiment reports": open a run's report, open a game at a decision as a session |
 
@@ -29,7 +29,7 @@ Every Plan 3 milestone is done. You can compare two runs paired by cell and seed
 
 1. **A1.** `experiment compare` of `dd25-v4b-thresholds-43-38` against `dd25-v4b`, `-46-35` and `variant-a` gives +16.7 [+10.4, +23.3], +10.8 [+5.0, +16.7] and +6.2 [+1.2, +11.7] pp. Doc 41: +16.7 [+10.4, +22.9], +10.8 [+5.0, +17.1], +6.2 [+0.8, +11.7]. The means match exactly. The interval ends differ by at most 0.42 pp: with 15 seeds of 16 cells a paired mean moves in steps of 1/240. The doc 41 scratch script was not committed, so its random draws cannot be reproduced. Confidence: high. The test allows one step.
 2. **A2.** A study file with no hash, no expected values and no `supersedes` becomes a manifest that `experiment run` completes. Verified in the test through the real CLI.
-3. **A3.** The stored dd25 runs no longer replay on the current engine (rules changed since, for example decision 18). `experiment replay dd25-v4b` now gives 186 of 240 identical. So the new counting code ran in a worktree at the audit commit `c22d5ab` over `dd25-pilot`, `dd25-pilot-main-players` and `dd25-v4b` (720 games, 78 s). Result: 180 Event sides, 4 Pivotals and 5 Propaganda cards all equal `docs/audit/card-ledger.csv` `bot_runs`. 173 sides ran, 157 with an effect at least once (audit section 0: "157 sides ran"). The never-run list equals audit section 3.2. The worktree was deleted afterward.
+3. **A3.** The stored dd25 runs no longer replay on the current engine (rules changed since, for example decision 18). `experiment replay dd25-v4b` now gives 186 of 240 identical. So the new counting code ran in a worktree at the audit commit `c22d5ab` over `dd25-pilot`, `dd25-pilot-main-players` and `dd25-v4b` (720 games, 78 s). Result: the run counts of 180 Event sides, 4 Pivotals and 5 Propaganda cards all equal `docs/audit/card-ledger.csv` `bot_runs`. No-effect counts equal the ledger except DK-052 shaded: 6, not 5. The ledger, like the first version of this command, counted an effect that the next card's Always line applied in the same transition (a command that ends a card reveals the next one). The count now stops at the reveal (review of PR #129), and the ledger row is corrected. 173 sides ran, 157 with an effect at least once (audit section 0: "157 sides ran"). The never-run list equals audit section 3.2. The worktree was deleted afterward.
 4. **A4.** Coverage of `d04-probe` on the current engine (100 games) plus the roster runs: every non-Victory mechanic row has 10 or more natural games. Rows under 10 in `d04-probe` alone are covered by the roster runs: `H-puk-host` 9 (34 in `dd25-v4b`), `P-ceasefire-restraint` 1 (85), `L-state-filing` 0 (214). The four Victory outcome rows stay reviewed fixtures by designer decision (audit status block).
 5. **A5.** Real app, built UI (Playwright, 1400 x 900): Experiment reports, open `d04-probe`, report shown, "Review selection only", decision 25 of game `default~S-PROBEv1~P-PROBEv1~9005~r0`, "Open at decision". The Play screen opened at C1 card 12. No page errors. Opening a whole 159-command bot game takes about 1.1 s in this container.
 
@@ -47,10 +47,14 @@ Every Plan 3 milestone is done. You can compare two runs paired by cell and seed
 | Fix | Usage text listed `cards` between the two `compare` forms | Reordered |
 | Fix | Duplicate journal-or-archive reading in `replay.ts` and coverage | Merged into `gameSteps` (Edits 5 and 6) |
 | Fix | Duplicate JSON and schema parsing in the new study reader | `parseWith` serves `parseManifest` and `newManifest` |
+| Fix (PR #129 review) | No-effect counts included the next card's Always effects | Count stops at the next `CardRevealed`; DK-052 shaded ledger row corrected |
+| Fix (PR #129 review) | `compare --paired` kept games a manifest excludes | Each run drops its own exclusions, as `analyzeExperiment` does |
+| Fix (PR #129 review) | The viewer listed no games before `results.json` exists | Rows come from the schedule with the recorded prefix (status `recorded`) |
+| Fix (PR #129 review) | `experiment new` wrote an empty package path when the manifest sits in the package folder | Writes `.` |
 | Drop | `gameSteps` takes the start hash from the journal only (before: archive as a fallback) | A journal always starts with its start event; no reachable case |
 | Drop | A paired change of exactly 0 prints `+0.0` | Cosmetic |
 
-Validation: `make check` and `make test` pass (122 files, 1,754 tests; 110 files and 1,623 tests at the audit). `make e2e` passes. Windows: CI.
+Validation: `make check` and `make test` pass (122 files, 1,758 tests; 110 files and 1,623 tests at the audit). `make e2e` passes. Windows: CI.
 
 ## 6. Decisions still open (designer)
 

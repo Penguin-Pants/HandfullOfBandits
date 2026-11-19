@@ -196,6 +196,15 @@ export function cardRun(command: AnyCommand, before: GameState): string | null {
   return null;
 }
 
+/**
+ * True when the played card applied an effect. Only entries before the next card's reveal count:
+ * a command that ends a card reveals the next one, and its Always effects, in the same transition.
+ */
+export function playedEffects(entries: readonly LogEntry[]): boolean {
+  const reveal = entries.findIndex((e) => e.kind === "CardRevealed");
+  return (reveal < 0 ? entries : entries.slice(0, reveal)).some((e) => e.kind === "EffectApplied");
+}
+
 /** Final score components of a completed game (19 s9 report: scoring routes). */
 export interface FinalComponents { readonly winner: string | null; readonly support: number; readonly legitimacy: number; readonly opposition: number; readonly bases: number }
 
@@ -254,7 +263,7 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
       if (played !== null) {
         const c = (cards[played] ??= { runs: 0, noEffect: 0 });
         c.runs++;
-        if (!x.entries.some((entry) => entry.kind === "EffectApplied")) c.noEffect++;
+        if (!playedEffects(x.entries)) c.noEffect++;
       }
       const faction = typeof e.command["faction"] === "string" ? e.command["faction"] : null;
       if (faction !== null && ["Pass", "ChooseEvent", "ChooseOperation"].includes(e.command.type) && s.turn.phase === "card") {

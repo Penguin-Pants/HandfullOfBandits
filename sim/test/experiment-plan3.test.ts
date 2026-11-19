@@ -1,12 +1,12 @@
 // Audit Plan 3 (docs/audit/playtest-readiness-audit.md section 6.7): run-versus-run comparison (A1).
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { compareRuns, renderRunComparison } from "../src/cli/experiment-analysis.ts";
+import { comparePairedRuns, compareRuns, renderRunComparison } from "../src/cli/experiment-analysis.ts";
 import { cardRows, renderCardCoverage } from "../src/cli/experiment-cards.ts";
-import { cardRun } from "../src/cli/experiment-coverage.ts";
+import { cardRun, playedEffects } from "../src/cli/experiment-coverage.ts";
 import { readJournal } from "../src/cli/experiment-artifacts.ts";
 import { runExperiment } from "../src/cli/experiment.ts";
 import { newManifest, parseManifest, runtimeIdentity, type Manifest } from "../src/cli/experiment-manifest.ts";
@@ -83,6 +83,20 @@ describe("experiment compare --paired (audit Plan 3 A1)", () => {
     expect(run.stdout).toContain("over 16 qualified-versus-qualified cells and 15 seeds");
   }, 60000);
 
+  it("drops each run's own excluded games before pairing, as its report does (PR #129 review)", () => {
+    const run = (name: string, winner: string, exclusions: string[]): string => {
+      const dir = join(tempDir(), name);
+      mkdirSync(dir);
+      writeFileSync(join(dir, "manifest.json"), JSON.stringify(devManifest({ id: name, analysis: { ...devManifest().analysis, exclusions } })));
+      writeFileSync(join(dir, "players.json"), JSON.stringify({ "S-A@1": { role: "qualified" }, "P-A@1": { role: "qualified" } }));
+      writeFileSync(join(dir, "results.json"), JSON.stringify([1, 2, 3, 4].map((s) => game(A, s, s === 4 ? "pkk" : winner))));
+      return dir;
+    };
+    const text = comparePairedRuns(run("base", "pkk", []), run("variant", "state", [game(A, 1, null).gameId]), join(tempDir(), "out.md"));
+    expect(text).toContain("over 1 qualified-versus-qualified cells and 3 seeds");
+    expect(text).toContain("Unpaired completed games: 1 in base, 0 in variant.");
+  });
+
   it("rejects --paired with other than two directories", () => {
     const run = spawnSync(process.execPath, [main, "experiment", "compare", join(runs, "dd25-v4b"), "--paired", "--out", join(tempDir(), "x.md")], { encoding: "utf8" });
     expect(run.status).toBe(2);
@@ -133,6 +147,14 @@ describe("experiment new (audit Plan 3 A2)", () => {
     expect(() => newManifest(writeManifest(dir, { ...study(), package: { dir: kurdishDir, hash: "0".repeat(64) } }, "stale.json"), join(dir, "stale-out.json"))).toThrow(/does not match/);
   });
 
+  it("writes \".\" as the package path when the manifest sits in the package folder (PR #129 review)", () => {
+    const pkg = join(tempDir(), "pkg");
+    cpSync(kurdishDir, pkg, { recursive: true });
+    const m = newManifest(writeManifest(tempDir(), { ...study(), package: { dir: pkg } }, "study.json"), join(pkg, "m.json"));
+    expect(m.package.dir).toBe(".");
+    expect(parseManifest(readFileSync(join(pkg, "m.json"), "utf8")).package.dir).toBe(".");
+  });
+
   it("accepts a manifest with no supersedes field as null", () => {
     const m: Record<string, unknown> = { ...devManifest() };
     delete m["supersedes"];
@@ -146,6 +168,13 @@ describe("experiment cards (audit Plan 3 A3)", () => {
     expect(cardRun({ type: "ChooseEvent", faction: "pkk", side: "shaded" }, before)).toBe("DK-001 shaded");
     expect(cardRun({ type: "PlayPivotal", faction: "pkk", card: "DK-015" }, before)).toBe("DK-015 pivotal");
     expect(cardRun({ type: "Pass", faction: "pkk" }, before)).toBeNull();
+  });
+
+  it("counts only the played card's effects, not the next card's reveal and Always line (PR #129 review)", () => {
+    const entry = (kind: string): Parameters<typeof playedEffects>[0][number] => ({ kind, data: {}, ruleRef: null }) as unknown as Parameters<typeof playedEffects>[0][number];
+    expect(playedEffects([entry("ValidationPassed"), entry("CardRevealed"), entry("EffectApplied")])).toBe(false);
+    expect(playedEffects([entry("EffectApplied"), entry("CardRevealed")])).toBe(true);
+    expect(playedEffects([entry("EffectApplied")])).toBe(true);
   });
 
   it("lists every package card side once, counts Propaganda by reveal and never invents a no-effect count for a reveal", () => {

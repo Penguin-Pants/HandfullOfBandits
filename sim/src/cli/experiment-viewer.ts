@@ -34,12 +34,17 @@ export function experimentRuns(root: string) {
       const dir = dirOf(id);
       const analysis = latestAnalysis(dir);
       const review = new Set(analysis === null || !existsSync(join(analysis, "analysis.json")) ? [] : (json(join(analysis, "analysis.json")) as { review?: { all?: string[] } }).review?.all ?? []);
-      const results = existsSync(join(dir, "results.json")) ? (json(join(dir, "results.json")) as GameRecord[]) : [];
-      return {
-        ...summary(id),
-        report: analysis === null ? null : readFileSync(join(analysis, "report.md"), "utf8"),
-        games: results.map((g) => ({ gameId: g.gameId, condition: g.conditionId, state: g.state, pkk: g.pkk, seed: g.seed, status: g.status, winner: g.result?.winner ?? null, commands: g.commands, review: review.has(g.gameId) })),
-      };
+      // results.json exists only once a run finishes; before that, list each scheduled game with its recorded prefix.
+      const results = new Map((existsSync(join(dir, "results.json")) ? (json(join(dir, "results.json")) as GameRecord[]) : []).map((g) => [g.gameId, g]));
+      const archive = results.size === 0 ? readArchive(dir) : null;
+      const games = (json(join(dir, "schedule.json")) as GameJob[]).map((j) => {
+        const g = results.get(j.gameId);
+        const row = { gameId: j.gameId, condition: j.conditionId, state: j.players["state"] ?? "", pkk: j.players["pkk"] ?? "", seed: j.seed, review: review.has(j.gameId) };
+        if (g !== undefined) return { ...row, status: g.status, winner: g.result?.winner ?? null, commands: g.commands };
+        const recorded = results.size === 0 ? gameSteps(dir, j.gameId, archive) : { startHash: null, steps: [] };
+        return { ...row, status: recorded.startHash === null ? "not started" : "recorded", winner: null, commands: recorded.steps.length };
+      });
+      return { ...summary(id), report: analysis === null ? null : readFileSync(join(analysis, "report.md"), "utf8"), games };
     },
     game: (id: string, gameId: string) => {
       const dir = dirOf(id);

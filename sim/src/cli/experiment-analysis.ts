@@ -212,7 +212,9 @@ export function comparePairedRuns(baseDir: string, variantDir: string, outFile: 
   const roles = { ...(read(baseDir, "players.json") as Record<string, { role: string }>), ...(read(variantDir, "players.json") as Record<string, { role: string }>) };
   const manifest = (dir: string): Manifest => read(dir, "manifest.json") as Manifest;
   const bootstrap = manifest(baseDir).analysis.bootstrap;
-  const c = compareRuns(read(baseDir, "results.json") as GameRecord[], read(variantDir, "results.json") as GameRecord[], bootstrap.samples, bootstrap.seed, (g) => roles[g.state]?.role === "qualified" && roles[g.pkk]?.role === "qualified");
+  // Each run drops its own excluded games, as its report does (analyzeExperiment).
+  const included = (dir: string): GameRecord[] => (read(dir, "results.json") as GameRecord[]).filter((g) => !manifest(dir).analysis.exclusions.includes(g.gameId));
+  const c = compareRuns(included(baseDir), included(variantDir), bootstrap.samples, bootstrap.seed, (g) => roles[g.state]?.role === "qualified" && roles[g.pkk]?.role === "qualified");
   const text = renderRunComparison(c, manifest(baseDir).id, manifest(variantDir).id, bootstrap);
   writeFileSync(outFile, text, "utf8");
   return text;
