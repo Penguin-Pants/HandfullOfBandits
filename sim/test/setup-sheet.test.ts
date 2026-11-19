@@ -20,7 +20,8 @@ import { tempDir } from "./experiment-helpers.ts";
 import { kurdish, kurdishDir } from "./kurdish-package.ts";
 
 const main = fileURLToPath(new URL("../src/cli/main.ts", import.meta.url));
-const rules = readFileSync(fileURLToPath(new URL("../../docs/rules/prototype-rules.md", import.meta.url)), "utf8");
+// Windows checkouts may turn LF into CRLF.
+const rules = readFileSync(fileURLToPath(new URL("../../docs/rules/prototype-rules.md", import.meta.url)), "utf8").replaceAll("\r\n", "\n");
 /** Rule 10.2 paragraphs: from its heading to the next one. */
 const rule102 = (rules.split("## 10.2 Starting Position")[1] ?? "").split("\n## ")[0]?.trim().split(/\n\n/) ?? [];
 const temps: string[] = [];
