@@ -44,10 +44,10 @@ export function probeScore(c: Candidate, o: Observation): number {
     if (sa === "state.cross-border") return 45 + favored(1);
     if (sa === "state.diplomacy") {
       // One Iraqi host per game, so it reaches Hostile and Aligned; then the most advanced host.
-      // Syria to Restricted from C4, because DK-098 needs Syria at Tolerant or Restricted (rules
+      // Syria to Restricted from C3, because DK-098 needs Syria at Tolerant or Restricted (rules
       // 5.3). Decision 18 removes a host at its last step.
       const target = locations(saPart(c))[0] ?? "";
-      const late = ["C4", "C5"].includes(o.turn.campaign ?? "") && ["host", "tolerant"].includes(String(o.tracks["posture.syria"]));
+      const late = ["C3", "C4", "C5"].includes(o.turn.campaign ?? "") && ["host", "tolerant"].includes(String(o.tracks["posture.syria"]));
       const step = (track: string): number => POSTURES.indexOf(String(o.tracks[track]));
       const base = target === "syria-bekaa" ? (late ? 49 : 36) : target === "europe" ? 30 : 40 + step(BOXES[target] ?? "") * 2 + (target === focusHost(o) ? 9 : 0);
       return base + favored(2);

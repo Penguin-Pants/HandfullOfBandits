@@ -48,10 +48,10 @@ describe("State probe", () => {
     expect([1, 2, 3].map((i) => sa(pick(atCard(board, i), "state"))["action"])).toEqual(["state.cross-border", "state.diplomacy", "state.diplomacy"]);
   });
 
-  it("aims Diplomacy at the game's focus host, and at Syria in C4 and C5 while Syria is Host or Tolerant", () => {
+  it("aims Diplomacy at the game's focus host, and at Syria from C3 while Syria is Host or Tolerant", () => {
     const s = atCard(board, 2);
     expect((sa(pick(s, "state"))["locations"] as string[])[0]).toBe(focusHost(observe(s, "state")));
-    expect((sa(pick(inCampaign(ruleset, s, "C4"), "state"))["locations"] as string[])[0]).toBe("syria-bekaa");
+    expect((sa(pick(inCampaign(ruleset, s, "C3"), "state"))["locations"] as string[])[0]).toBe("syria-bekaa");
   });
 
   it("plays DK-064 unshaded (Europe Ban) when the Event is open", () => {
