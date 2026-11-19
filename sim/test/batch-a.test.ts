@@ -1,9 +1,12 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { strategy } from "../src/cli/strategies/index.ts";
 import { runBatch } from "../src/cli/batch.ts";
 import { engine, ruleset, turnOf, setPieces } from "./board.ts";
 import { asObject, asList } from "../src/engine/coin/ops/plan.ts";
 import { scriptedPolicy } from "../src/cli/play.ts";
+
+// Real full-campaign games: slow under full-suite load (Windows CI timed out at the 5 s default).
+vi.setConfig({ testTimeout: 120000 });
 it("uses faction-specific legal policies and a legal fallback when their faction is swapped", () => {
   const state = turnOf("state");
   const pkk = turnOf("pkk");

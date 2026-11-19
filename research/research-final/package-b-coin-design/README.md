@@ -9,7 +9,7 @@ Binding decisions: [../project-management/design-decisions.md](../project-manage
 1. **Players:** Turkish State and PKK. Legal Kurdish politics is a non-player system from 1990. A three-player Legal Movement module is optional for 1990-1999.
 2. **Campaign:** five Campaigns (C1 1984-1986, C2 1987-1989, C3 1990-1992, C4 1993-1995, C5 1996-1999). Structural cards switch on Village Guards, emergency rule, Legal Politics and other systems when history did.
 3. **Engine:** the Colonial Twilight initiative track. Only the first player's choice sets the next card's order.
-4. **Map:** 13 domestic spaces grouped from 1990s provinces, plus Syria-Bekaa, KDP Zone, PUK Zone, Iran and Europe.
+4. **Map:** 18 domestic spaces from the province reference (DD-22), plus Syria-Bekaa, KDP Zone, PUK Zone, Iran and Europe.
 5. **Core distinction:** Control, Support and Legitimacy stay separate. No action converts Control into Support.
 6. **Harm:** civilian harm stays on the board, gates victory and never scores points. Displacement never lowers a space's Pop.
 7. **Victory:** State = Total Support + Legitimacy. PKK = Total Opposition + domestic Bases. Thresholds are checked at each Propaganda round except the first; then margins decide.

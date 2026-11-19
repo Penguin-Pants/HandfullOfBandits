@@ -1,0 +1,65 @@
+{
+ "schemaVersion": 1,
+ "id": "d04-probe",
+ "stage": "development",
+ "description": "Audit Plan 1 D-04: S-PROBE@1 against P-PROBE@1 on the full campaign, 100 development seeds. Coverage evidence for the 21 rare action, card and host posture rows of the ledger; the probes are baselines, so the results say nothing about balance.",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "491fe1383dc18851c147abc0cb1c58d1537ea7f00f36f57fe4a6a28558819acb"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 32
+  },
+  "harmLimit": 6,
+  "engineFingerprint": "e38a4e6b77c74e066cedf5943f17c34d00c4ff8338c52451680e942c5e3d9fc4",
+  "playerFingerprint": "fce8c79270d6786462e3fbc350b24fe711ab13f39cbe3f95a098097d137fad56"
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-PROBE@1",
+   "pkk": "P-PROBE@1"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 9001,
+    "count": 100
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}

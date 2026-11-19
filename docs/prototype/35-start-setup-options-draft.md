@@ -44,7 +44,7 @@ Status labels in this file:
 |---|---|---|
 | 1 | Campaign years: C1 Aug 1984 to 1986, C2 1987 to 1989, C3 1990 to 1992, C4 1993 to 1995, C5 1996 to 1999 | verified, `08-event-deck.md` section 10 headings |
 | 2 | Inventory: Troops 30, Police 24, State Bases 8, Guerrillas 30, PKK Bases 12. Start: 16, 16, 4, 10 and 3 on the map | verified, `pieces.yaml`, `full-campaign.yaml` |
-| 3 | Start scores State 21 and PKK 4. Start income State 16 and PKK 5 | verified by count; income 16 agrees with DD-22 item 10 |
+| 3 | Start scores State 21 and PKK 4. Start income State 16 and PKK 5 | verified by count before DD-25; income 16 agrees with DD-22 item 10. DD-25 item 4 later made the PKK start score 6 |
 | 4 | The PKK is First Eligible | verified, 10 section 1 step 6 |
 | 5 | A faction Controls an empty space with 1 piece. Agitation needs a PKK Base or PKK Control. Rally then Agitate in one action is legal | verified, rules 1.5, 3.3.1, 3.6.2; `sim/src/engine/coin/ops/pkk/rally.ts:112` |
 | 6 | The E-, F- and L- registers are not in the repo. `research/research-final/data/` holds only the deck CSV and the mechanic links | verified by listing the folder |

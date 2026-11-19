@@ -1,0 +1,1990 @@
+{
+ "games": 100,
+ "finals": {
+  "default~S-PROBEv1~P-PROBEv1~9001~r0": {
+   "winner": "pkk",
+   "support": 19,
+   "legitimacy": 5,
+   "opposition": 22,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9002~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 3,
+   "opposition": 12,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9003~r0": {
+   "winner": "pkk",
+   "support": 17,
+   "legitimacy": 7,
+   "opposition": 15,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9004~r0": {
+   "winner": "pkk",
+   "support": 26,
+   "legitimacy": 1,
+   "opposition": 11,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9005~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 0,
+   "opposition": 33,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9006~r0": {
+   "winner": "pkk",
+   "support": 15,
+   "legitimacy": 8,
+   "opposition": 21,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9007~r0": {
+   "winner": "pkk",
+   "support": 19,
+   "legitimacy": 1,
+   "opposition": 11,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9008~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 5,
+   "opposition": 16,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9009~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 0,
+   "opposition": 20,
+   "bases": 0
+  },
+  "default~S-PROBEv1~P-PROBEv1~9010~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 13,
+   "opposition": 19,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9011~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 1,
+   "opposition": 23,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9012~r0": {
+   "winner": "pkk",
+   "support": 21,
+   "legitimacy": 9,
+   "opposition": 15,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9013~r0": {
+   "winner": "pkk",
+   "support": 26,
+   "legitimacy": 3,
+   "opposition": 20,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9014~r0": {
+   "winner": "state",
+   "support": 28,
+   "legitimacy": 4,
+   "opposition": 9,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9015~r0": {
+   "winner": "pkk",
+   "support": 20,
+   "legitimacy": 13,
+   "opposition": 15,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9016~r0": {
+   "winner": "pkk",
+   "support": 17,
+   "legitimacy": 1,
+   "opposition": 26,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9017~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 9,
+   "opposition": 10,
+   "bases": 0
+  },
+  "default~S-PROBEv1~P-PROBEv1~9018~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 1,
+   "opposition": 12,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9019~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 0,
+   "opposition": 23,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9020~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 1,
+   "opposition": 15,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9021~r0": {
+   "winner": "pkk",
+   "support": 8,
+   "legitimacy": 6,
+   "opposition": 16,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9022~r0": {
+   "winner": "pkk",
+   "support": 19,
+   "legitimacy": 11,
+   "opposition": 15,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9023~r0": {
+   "winner": "pkk",
+   "support": 6,
+   "legitimacy": 0,
+   "opposition": 28,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9024~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 3,
+   "opposition": 18,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9025~r0": {
+   "winner": "pkk",
+   "support": 10,
+   "legitimacy": 4,
+   "opposition": 11,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9026~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 7,
+   "opposition": 18,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9027~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 8,
+   "opposition": 17,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9028~r0": {
+   "winner": "pkk",
+   "support": 7,
+   "legitimacy": 0,
+   "opposition": 17,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9029~r0": {
+   "winner": "pkk",
+   "support": 19,
+   "legitimacy": 0,
+   "opposition": 9,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9030~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 1,
+   "opposition": 22,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9031~r0": {
+   "winner": "pkk",
+   "support": 22,
+   "legitimacy": 0,
+   "opposition": 16,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9032~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 0,
+   "opposition": 21,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9033~r0": {
+   "winner": "pkk",
+   "support": 15,
+   "legitimacy": 8,
+   "opposition": 19,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9034~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 7,
+   "opposition": 15,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9035~r0": {
+   "winner": "pkk",
+   "support": 10,
+   "legitimacy": 6,
+   "opposition": 30,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9036~r0": {
+   "winner": "state",
+   "support": 19,
+   "legitimacy": 11,
+   "opposition": 9,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9037~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 5,
+   "opposition": 20,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9038~r0": {
+   "winner": "pkk",
+   "support": 21,
+   "legitimacy": 10,
+   "opposition": 13,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9039~r0": {
+   "winner": "pkk",
+   "support": 22,
+   "legitimacy": 4,
+   "opposition": 11,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9040~r0": {
+   "winner": "pkk",
+   "support": 24,
+   "legitimacy": 2,
+   "opposition": 14,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9041~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 0,
+   "opposition": 25,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9042~r0": {
+   "winner": "pkk",
+   "support": 22,
+   "legitimacy": 1,
+   "opposition": 13,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9043~r0": {
+   "winner": "pkk",
+   "support": 22,
+   "legitimacy": 11,
+   "opposition": 18,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9044~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 1,
+   "opposition": 20,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9045~r0": {
+   "winner": "pkk",
+   "support": 23,
+   "legitimacy": 5,
+   "opposition": 9,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9046~r0": {
+   "winner": "pkk",
+   "support": 13,
+   "legitimacy": 3,
+   "opposition": 19,
+   "bases": 0
+  },
+  "default~S-PROBEv1~P-PROBEv1~9047~r0": {
+   "winner": "pkk",
+   "support": 24,
+   "legitimacy": 1,
+   "opposition": 18,
+   "bases": 5
+  },
+  "default~S-PROBEv1~P-PROBEv1~9048~r0": {
+   "winner": "pkk",
+   "support": 19,
+   "legitimacy": 1,
+   "opposition": 11,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9049~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 7,
+   "opposition": 15,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9050~r0": {
+   "winner": "pkk",
+   "support": 13,
+   "legitimacy": 0,
+   "opposition": 18,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9051~r0": {
+   "winner": "pkk",
+   "support": 21,
+   "legitimacy": 16,
+   "opposition": 19,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9052~r0": {
+   "winner": "pkk",
+   "support": 15,
+   "legitimacy": 6,
+   "opposition": 11,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9053~r0": {
+   "winner": "pkk",
+   "support": 19,
+   "legitimacy": 4,
+   "opposition": 25,
+   "bases": 0
+  },
+  "default~S-PROBEv1~P-PROBEv1~9054~r0": {
+   "winner": "pkk",
+   "support": 10,
+   "legitimacy": 11,
+   "opposition": 25,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9055~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 3,
+   "opposition": 17,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9056~r0": {
+   "winner": "pkk",
+   "support": 10,
+   "legitimacy": 2,
+   "opposition": 12,
+   "bases": 0
+  },
+  "default~S-PROBEv1~P-PROBEv1~9057~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 2,
+   "opposition": 16,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9058~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 8,
+   "opposition": 22,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9059~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 0,
+   "opposition": 18,
+   "bases": 4
+  },
+  "default~S-PROBEv1~P-PROBEv1~9060~r0": {
+   "winner": "pkk",
+   "support": 13,
+   "legitimacy": 15,
+   "opposition": 19,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9061~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 1,
+   "opposition": 23,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9062~r0": {
+   "winner": "pkk",
+   "support": 15,
+   "legitimacy": 3,
+   "opposition": 22,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9063~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 10,
+   "opposition": 27,
+   "bases": 7
+  },
+  "default~S-PROBEv1~P-PROBEv1~9064~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 0,
+   "opposition": 19,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9065~r0": {
+   "winner": "pkk",
+   "support": 21,
+   "legitimacy": 0,
+   "opposition": 15,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9066~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 0,
+   "opposition": 12,
+   "bases": 5
+  },
+  "default~S-PROBEv1~P-PROBEv1~9067~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 8,
+   "opposition": 24,
+   "bases": 5
+  },
+  "default~S-PROBEv1~P-PROBEv1~9068~r0": {
+   "winner": "pkk",
+   "support": 13,
+   "legitimacy": 1,
+   "opposition": 12,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9069~r0": {
+   "winner": "state",
+   "support": 29,
+   "legitimacy": 14,
+   "opposition": 9,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9070~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 0,
+   "opposition": 16,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9071~r0": {
+   "winner": "pkk",
+   "support": 13,
+   "legitimacy": 6,
+   "opposition": 29,
+   "bases": 7
+  },
+  "default~S-PROBEv1~P-PROBEv1~9072~r0": {
+   "winner": "pkk",
+   "support": 13,
+   "legitimacy": 6,
+   "opposition": 26,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9073~r0": {
+   "winner": "pkk",
+   "support": 6,
+   "legitimacy": 11,
+   "opposition": 21,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9074~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 0,
+   "opposition": 21,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9075~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 0,
+   "opposition": 10,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9076~r0": {
+   "winner": "pkk",
+   "support": 9,
+   "legitimacy": 1,
+   "opposition": 25,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9077~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 3,
+   "opposition": 13,
+   "bases": 0
+  },
+  "default~S-PROBEv1~P-PROBEv1~9078~r0": {
+   "winner": "pkk",
+   "support": 20,
+   "legitimacy": 1,
+   "opposition": 12,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9079~r0": {
+   "winner": "pkk",
+   "support": 17,
+   "legitimacy": 0,
+   "opposition": 15,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9080~r0": {
+   "winner": "pkk",
+   "support": 22,
+   "legitimacy": 1,
+   "opposition": 13,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9081~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 1,
+   "opposition": 21,
+   "bases": 6
+  },
+  "default~S-PROBEv1~P-PROBEv1~9082~r0": {
+   "winner": "pkk",
+   "support": 21,
+   "legitimacy": 4,
+   "opposition": 19,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9083~r0": {
+   "winner": "pkk",
+   "support": 17,
+   "legitimacy": 0,
+   "opposition": 21,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9084~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 1,
+   "opposition": 20,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9085~r0": {
+   "winner": "pkk",
+   "support": 15,
+   "legitimacy": 12,
+   "opposition": 28,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9086~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 11,
+   "opposition": 23,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9087~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 4,
+   "opposition": 21,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9088~r0": {
+   "winner": "pkk",
+   "support": 12,
+   "legitimacy": 1,
+   "opposition": 16,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9089~r0": {
+   "winner": "pkk",
+   "support": 20,
+   "legitimacy": 12,
+   "opposition": 21,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9090~r0": {
+   "winner": "pkk",
+   "support": 19,
+   "legitimacy": 6,
+   "opposition": 12,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9091~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 3,
+   "opposition": 20,
+   "bases": 0
+  },
+  "default~S-PROBEv1~P-PROBEv1~9092~r0": {
+   "winner": "pkk",
+   "support": 26,
+   "legitimacy": 13,
+   "opposition": 21,
+   "bases": 2
+  },
+  "default~S-PROBEv1~P-PROBEv1~9093~r0": {
+   "winner": "pkk",
+   "support": 14,
+   "legitimacy": 8,
+   "opposition": 26,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9094~r0": {
+   "winner": "pkk",
+   "support": 5,
+   "legitimacy": 11,
+   "opposition": 12,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9095~r0": {
+   "winner": "pkk",
+   "support": 16,
+   "legitimacy": 0,
+   "opposition": 14,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9096~r0": {
+   "winner": "pkk",
+   "support": 10,
+   "legitimacy": 4,
+   "opposition": 31,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9097~r0": {
+   "winner": "pkk",
+   "support": 11,
+   "legitimacy": 0,
+   "opposition": 28,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9098~r0": {
+   "winner": "pkk",
+   "support": 13,
+   "legitimacy": 9,
+   "opposition": 29,
+   "bases": 3
+  },
+  "default~S-PROBEv1~P-PROBEv1~9099~r0": {
+   "winner": "state",
+   "support": 28,
+   "legitimacy": 13,
+   "opposition": 12,
+   "bases": 1
+  },
+  "default~S-PROBEv1~P-PROBEv1~9100~r0": {
+   "winner": "pkk",
+   "support": 18,
+   "legitimacy": 3,
+   "opposition": 17,
+   "bases": 1
+  }
+ },
+ "ledger": [
+  {
+   "id": "V-first-check-skipped",
+   "area": "Victory",
+   "label": "First Propaganda skips the victory check",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/propaganda/multi-round.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-opening-win",
+   "area": "Victory",
+   "label": "Win at the opening check",
+   "status": "natural exposure",
+   "games": 6,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-simultaneous",
+   "area": "Victory",
+   "label": "Both factions qualify at one check",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "test/mechanics-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-harm-gate",
+   "area": "Victory",
+   "label": "Harm above six blocks an otherwise qualifying check",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-negative-win",
+   "area": "Victory",
+   "label": "Final win with a negative margin",
+   "status": "natural exposure",
+   "games": 94,
+   "fixtures": [
+    "test/mechanics-a.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-tie",
+   "area": "Victory",
+   "label": "Equal final margins decided by Harm, then PKK",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "test/mechanics-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "V-excess-harm",
+   "area": "Victory",
+   "label": "Final margin reduced by excess Harm",
+   "status": "natural exposure",
+   "games": 4,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-rally-agitate",
+   "area": "Political economy",
+   "label": "Rally Agitation",
+   "status": "natural exposure",
+   "games": 75,
+   "fixtures": [
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-train-civic",
+   "area": "Political economy",
+   "label": "Train Civic Action",
+   "status": "natural exposure",
+   "games": 90,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-propaganda-civic",
+   "area": "Political economy",
+   "label": "Propaganda Civic Action spending (Legitimacy cap)",
+   "status": "natural exposure",
+   "games": 96,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-propaganda-agitation",
+   "area": "Political economy",
+   "label": "Propaganda Agitation spending",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "E-blocker-removal",
+   "area": "Political economy",
+   "label": "Removal of blocking markers before a shift (Coercion, Harm, Reception)",
+   "status": "natural exposure",
+   "games": 67,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-state-harm",
+   "area": "Civilian effects",
+   "label": "State Harm placed",
+   "status": "natural exposure",
+   "games": 94,
+   "fixtures": [
+    "src/engine/coin/events.test.ts",
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-pkk-harm",
+   "area": "Civilian effects",
+   "label": "PKK Harm placed",
+   "status": "natural exposure",
+   "games": 94,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-disputed-harm",
+   "area": "Civilian effects",
+   "label": "Disputed Harm placed (Cross-Border Assault)",
+   "status": "natural exposure",
+   "games": 81,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-coercion",
+   "area": "Civilian effects",
+   "label": "Coerce places Coercion",
+   "status": "natural exposure",
+   "games": 84,
+   "fixtures": [
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-guard-upkeep",
+   "area": "Civilian effects",
+   "label": "Guard upkeep paid",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-upkeep-shortfall",
+   "area": "Civilian effects",
+   "label": "Guards removed for unpaid upkeep",
+   "status": "natural exposure",
+   "games": 91,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-guard-abuse",
+   "area": "Civilian effects",
+   "label": "Guard Abuse (DK-006 shaded)",
+   "status": "natural exposure",
+   "games": 63,
+   "fixtures": [
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-strike",
+   "area": "Civilian effects",
+   "label": "Strike Collaborators",
+   "status": "natural exposure",
+   "games": 89,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-europe",
+   "area": "Civilian effects",
+   "label": "Europe track change",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-marker-removal",
+   "area": "Civilian effects",
+   "label": "Harm or Coercion marker removed (Redress, Reset)",
+   "status": "natural exposure",
+   "games": 91,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-reception",
+   "area": "Civilian effects",
+   "label": "Reception marker placed",
+   "status": "natural exposure",
+   "games": 82,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-displacement",
+   "area": "Civilian effects",
+   "label": "Displacement marker placed",
+   "status": "natural exposure",
+   "games": 67,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-host",
+   "area": "Sanctuary",
+   "label": "syria posture reaches host",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-tolerant",
+   "area": "Sanctuary",
+   "label": "syria posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-restricted",
+   "area": "Sanctuary",
+   "label": "syria posture reaches restricted",
+   "status": "natural exposure",
+   "games": 19,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-hostile",
+   "area": "Sanctuary",
+   "label": "syria posture reaches hostile",
+   "status": "natural exposure",
+   "games": 38,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-syria-aligned",
+   "area": "Sanctuary",
+   "label": "syria posture reaches aligned",
+   "status": "not applicable",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": "Syria has no Aligned step (rules 8.1)"
+  },
+  {
+   "id": "H-kdp-host",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches host",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-tolerant",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-restricted",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches restricted",
+   "status": "natural exposure",
+   "games": 60,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-hostile",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches hostile",
+   "status": "natural exposure",
+   "games": 32,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-kdp-aligned",
+   "area": "Sanctuary",
+   "label": "kdp posture reaches aligned",
+   "status": "natural exposure",
+   "games": 16,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-host",
+   "area": "Sanctuary",
+   "label": "puk posture reaches host",
+   "status": "natural exposure",
+   "games": 9,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-tolerant",
+   "area": "Sanctuary",
+   "label": "puk posture reaches tolerant",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-restricted",
+   "area": "Sanctuary",
+   "label": "puk posture reaches restricted",
+   "status": "natural exposure",
+   "games": 72,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-hostile",
+   "area": "Sanctuary",
+   "label": "puk posture reaches hostile",
+   "status": "natural exposure",
+   "games": 47,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-puk-aligned",
+   "area": "Sanctuary",
+   "label": "puk posture reaches aligned",
+   "status": "natural exposure",
+   "games": 18,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-host-pressure",
+   "area": "Sanctuary",
+   "label": "Host Pressure",
+   "status": "natural exposure",
+   "games": 96,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-diplomacy",
+   "area": "Sanctuary",
+   "label": "Diplomacy",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-cross-border",
+   "area": "Sanctuary",
+   "label": "Cross-Border Sweep or Assault",
+   "status": "natural exposure",
+   "games": 83,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-hot-pursuit",
+   "area": "Sanctuary",
+   "label": "Early KDP hot pursuit (KDP Host or Tolerant)",
+   "status": "natural exposure",
+   "games": 52,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-interrupted",
+   "area": "Sanctuary",
+   "label": "Operation resumed after Host Pressure (interrupted continuation)",
+   "status": "natural exposure",
+   "games": 38,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/cli/qualification.ts fixtures"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-restricted-entry",
+   "area": "Sanctuary",
+   "label": "March into a Restricted box (+1, activates)",
+   "status": "natural exposure",
+   "games": 84,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-leadership-abroad",
+   "area": "Sanctuary",
+   "label": "Leadership flips Abroad",
+   "status": "natural exposure",
+   "games": 38,
+   "fixtures": [
+    "src/engine/coin/ops/host-actions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-always",
+   "area": "Sequence/cards",
+   "label": "Mandatory Always line on reveal (DK-003, DK-005, DK-019, DK-020)",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/events.test.ts",
+    "src/engine/coin/cards-a.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-event-unshaded",
+   "area": "Sequence/cards",
+   "label": "Unshaded Event executed",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-event-shaded",
+   "area": "Sequence/cards",
+   "label": "Shaded Event executed",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/events.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-argk-play",
+   "area": "Sequence/cards",
+   "label": "ARGK played",
+   "status": "natural exposure",
+   "games": 75,
+   "fixtures": [
+    "src/engine/coin/pivotal.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-argk-decline",
+   "area": "Sequence/cards",
+   "label": "Pivotal window declined",
+   "status": "natural exposure",
+   "games": 20,
+   "fixtures": [
+    "src/engine/coin/pivotal.test.ts",
+    "src/engine/coin/pivotals.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-serhildan-play",
+   "area": "Sequence/cards",
+   "label": "Serhildan played (DK-054, from C3)",
+   "status": "natural exposure",
+   "games": 72,
+   "fixtures": [
+    "src/engine/coin/pivotals.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-area-domination-play",
+   "area": "Sequence/cards",
+   "label": "Area Domination played (DK-076, from C4)",
+   "status": "natural exposure",
+   "games": 27,
+   "fixtures": [
+    "src/engine/coin/pivotals.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-coercive-diplomacy-play",
+   "area": "Sequence/cards",
+   "label": "Coercive Diplomacy on Syria played (DK-098, from C5)",
+   "status": "natural exposure",
+   "games": 37,
+   "fixtures": [
+    "src/engine/coin/pivotals.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-emergency-extended",
+   "area": "Sequence/cards",
+   "label": "Emergency Rule reaches OHAL Extended Powers (from C3)",
+   "status": "natural exposure",
+   "games": 42,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-covert-reveal",
+   "area": "Civilian effects",
+   "label": "Covert marker revealed",
+   "status": "natural exposure",
+   "games": 16,
+   "fixtures": [
+    "src/engine/coin/ops/sa/covert-action.test.ts",
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "C-strike-after",
+   "area": "Civilian effects",
+   "label": "Strike Collaborators after the Operation",
+   "status": "natural exposure",
+   "games": 89,
+   "fixtures": [
+    "test/decisions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "P-ceasefire-declared",
+   "area": "Political economy",
+   "label": "Ceasefire Declared (from C3)",
+   "status": "natural exposure",
+   "games": 93,
+   "fixtures": [
+    "src/engine/coin/ceasefire.test.ts",
+    "src/engine/coin/c4-cards.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "P-ceasefire-restraint",
+   "area": "Political economy",
+   "label": "Ceasefire reaches Reciprocal Restraint",
+   "status": "natural exposure",
+   "games": 1,
+   "fixtures": [
+    "src/engine/coin/propaganda/ceasefire-step.test.ts",
+    "src/engine/coin/c4-cards.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "P-ceasefire-breach",
+   "area": "Political economy",
+   "label": "Ceasefire breach (Restraint Broken marker and Ceasefire to None)",
+   "status": "natural exposure",
+   "games": 81,
+   "fixtures": [
+    "src/engine/coin/ceasefire.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "P-ceasefire-state-marker",
+   "area": "Political economy",
+   "label": "State Restraint Broken marker during Declared (no breach)",
+   "status": "natural exposure",
+   "games": 48,
+   "fixtures": [
+    "src/engine/coin/ceasefire.test.ts",
+    "test/decisions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "P-ceasefire-left",
+   "area": "Political economy",
+   "label": "Ceasefire ended at the ceasefire step",
+   "status": "natural exposure",
+   "games": 31,
+   "fixtures": [
+    "src/engine/coin/propaganda/ceasefire-step.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "L-legal-open",
+   "area": "Political economy",
+   "label": "Legal Space opens (HEP Founded)",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/structural.test.ts",
+    "src/engine/coin/propaganda/legal-politics.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "L-office-placed",
+   "area": "Political economy",
+   "label": "Office placed",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/propaganda/legal-politics.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "L-state-filing",
+   "area": "Political economy",
+   "label": "State files a closure case",
+   "status": "reviewed fixture",
+   "games": 0,
+   "fixtures": [
+    "src/engine/coin/propaganda/legal-politics.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "L-prosecutor-filing",
+   "area": "Political economy",
+   "label": "Prosecutor files at the Office limit (line 6)",
+   "status": "natural exposure",
+   "games": 68,
+   "fixtures": [
+    "src/engine/coin/propaganda/legal-politics.test.ts",
+    "test/decisions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "L-ban",
+   "area": "Political economy",
+   "label": "Legal party banned (line 1)",
+   "status": "natural exposure",
+   "games": 79,
+   "fixtures": [
+    "src/engine/coin/propaganda/legal-politics.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "L-successor",
+   "area": "Political economy",
+   "label": "Successor party returns (line 2)",
+   "status": "natural exposure",
+   "games": 32,
+   "fixtures": [
+    "src/engine/coin/propaganda/legal-politics.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "H-europe-ban",
+   "area": "Sanctuary",
+   "label": "Europe Ban marker placed (DK-064)",
+   "status": "natural exposure",
+   "games": 44,
+   "fixtures": [
+    "src/engine/coin/c4-cards.test.ts",
+    "test/decisions.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-pass",
+   "area": "Sequence/cards",
+   "label": "Pass",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-limited",
+   "area": "Sequence/cards",
+   "label": "Limited Op",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-op-only",
+   "area": "Sequence/cards",
+   "label": "Op Only",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-op-sa",
+   "area": "Sequence/cards",
+   "label": "Op + SA",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/sequence/ct.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-redeploy-moves",
+   "area": "Sequence/cards",
+   "label": "Redeploy with moves",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-reset",
+   "area": "Sequence/cards",
+   "label": "Reset (Momentum discarded or Guerrillas flipped)",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/propaganda/redeploy-reset.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-final-skips",
+   "area": "Sequence/cards",
+   "label": "Final round skips income, Redeploy and Reset",
+   "status": "natural exposure",
+   "games": 94,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts",
+    "src/engine/coin/propaganda/multi-round.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "S-emergency",
+   "area": "Sequence/cards",
+   "label": "Emergency Rule step chosen (OHAL to Normalizing or back)",
+   "status": "natural exposure",
+   "games": 99,
+   "fixtures": [
+    "src/engine/coin/propaganda/propaganda.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.train",
+   "area": "Sequence/cards",
+   "label": "Operation state.train",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.garrison",
+   "area": "Sequence/cards",
+   "label": "Operation state.garrison",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.sweep",
+   "area": "Sequence/cards",
+   "label": "Operation state.sweep",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-state.assault",
+   "area": "Sequence/cards",
+   "label": "Operation state.assault",
+   "status": "natural exposure",
+   "games": 92,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.rally",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.rally",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.march",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.march",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.attack",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.attack",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "O-pkk.coerce",
+   "area": "Sequence/cards",
+   "label": "Operation pkk.coerce",
+   "status": "natural exposure",
+   "games": 84,
+   "fixtures": [
+    "src/engine/coin/ops/state/state-ops.test.ts",
+    "src/engine/coin/ops/pkk/pkk-ops.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-state.air-mobility",
+   "area": "Sequence/cards",
+   "label": "Special Activity state.air-mobility",
+   "status": "natural exposure",
+   "games": 97,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/sa/village-clearance.test.ts",
+    "src/engine/coin/ops/sa/covert-action.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-state.village-clearance",
+   "area": "Sequence/cards",
+   "label": "Special Activity state.village-clearance",
+   "status": "natural exposure",
+   "games": 67,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/sa/village-clearance.test.ts",
+    "src/engine/coin/ops/sa/covert-action.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-state.covert-action",
+   "area": "Sequence/cards",
+   "label": "Special Activity state.covert-action",
+   "status": "natural exposure",
+   "games": 17,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/sa/village-clearance.test.ts",
+    "src/engine/coin/ops/sa/covert-action.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-pkk.ambush",
+   "area": "Sequence/cards",
+   "label": "Special Activity pkk.ambush",
+   "status": "natural exposure",
+   "games": 52,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/sa/village-clearance.test.ts",
+    "src/engine/coin/ops/sa/covert-action.test.ts"
+   ],
+   "note": null
+  },
+  {
+   "id": "A-pkk.extort",
+   "area": "Sequence/cards",
+   "label": "Special Activity pkk.extort",
+   "status": "natural exposure",
+   "games": 100,
+   "fixtures": [
+    "src/engine/coin/ops/sa/sa.test.ts",
+    "src/engine/coin/ops/sa/village-clearance.test.ts",
+    "src/engine/coin/ops/sa/covert-action.test.ts"
+   ],
+   "note": null
+  }
+ ],
+ "diagnostics": {
+  "passShare": {
+   "pkk": 0.08768419137711479,
+   "state": 0.19607843137254902
+  },
+  "maxFirstEligibleStreak": 12,
+  "meanUnusedResources": {
+   "state": 0.02,
+   "pkk": 0.32
+  },
+  "passStreak3Games": {
+   "state": 1
+  },
+  "stopRuleFlags": {
+   "rule 4": 3
+  },
+  "boxesByFaction": {
+   "state": {
+    "limitedOp": 1123,
+    "opSa": 1418,
+    "event": 1761,
+    "pass": 1120,
+    "opOnly": 290
+   },
+   "pkk": {
+    "opOnly": 621,
+    "limitedOp": 1184,
+    "event": 614,
+    "opSa": 2596,
+    "pass": 482
+   }
+  },
+  "eligibilityRows": {
+   "opOnly -> limitedOp": 445,
+   "opSa -> limitedOp": 1227,
+   "event -> opSa": 1578,
+   "opSa -> event": 517,
+   "pass -> opSa": 204,
+   "limitedOp -> opSa": 334,
+   "opOnly -> pass": 254,
+   "pass -> limitedOp": 102,
+   "pass -> pass": 41,
+   "event -> pass": 394,
+   "limitedOp -> pass": 217,
+   "opSa -> pass": 154,
+   "pass -> opOnly": 98,
+   "pass -> event": 97,
+   "limitedOp -> opOnly": 114
+  },
+  "eventSides": {
+   "DK-006 shaded": 63,
+   "DK-007 unshaded": 25,
+   "DK-012 unshaded": 25,
+   "DK-003 unshaded": 35,
+   "DK-014 shaded": 8,
+   "DK-004 unshaded": 21,
+   "DK-018 unshaded": 20,
+   "DK-031 shaded": 14,
+   "DK-019 shaded": 30,
+   "DK-027 unshaded": 29,
+   "DK-020 unshaded": 57,
+   "DK-033 shaded": 16,
+   "DK-028 shaded": 14,
+   "DK-051 unshaded": 11,
+   "DK-042 shaded": 28,
+   "DK-056 shaded": 26,
+   "DK-074 unshaded": 13,
+   "DK-079 shaded": 5,
+   "DK-093 unshaded": 14,
+   "DK-078 unshaded": 17,
+   "DK-003 shaded": 9,
+   "DK-002 shaded": 21,
+   "DK-010 shaded": 10,
+   "DK-020 shaded": 7,
+   "DK-034 unshaded": 16,
+   "DK-030 unshaded": 14,
+   "DK-040 shaded": 37,
+   "DK-041 shaded": 30,
+   "DK-037 unshaded": 18,
+   "DK-047 shaded": 33,
+   "DK-043 shaded": 23,
+   "DK-042 unshaded": 9,
+   "DK-058 shaded": 18,
+   "DK-064 unshaded": 44,
+   "DK-072 shaded": 13,
+   "DK-074 shaded": 8,
+   "DK-073 unshaded": 14,
+   "DK-066 shaded": 11,
+   "DK-088 unshaded": 18,
+   "DK-084 shaded": 31,
+   "DK-093 shaded": 30,
+   "DK-096 unshaded": 19,
+   "DK-089 shaded": 11,
+   "DK-083 unshaded": 8,
+   "DK-095 unshaded": 12,
+   "DK-079 unshaded": 16,
+   "DK-006 unshaded": 5,
+   "DK-100 shaded": 5,
+   "DK-005 shaded": 44,
+   "DK-029 unshaded": 15,
+   "DK-017 shaded": 26,
+   "DK-025 shaded": 14,
+   "DK-023 unshaded": 16,
+   "DK-022 unshaded": 9,
+   "DK-039 unshaded": 19,
+   "DK-050 shaded": 12,
+   "DK-045 shaded": 14,
+   "DK-044 shaded": 23,
+   "DK-070 shaded": 15,
+   "DK-096 shaded": 11,
+   "DK-097 shaded": 26,
+   "DK-091 unshaded": 11,
+   "DK-083 shaded": 13,
+   "DK-094 unshaded": 7,
+   "DK-008 shaded": 11,
+   "DK-023 shaded": 11,
+   "DK-018 shaded": 9,
+   "DK-032 shaded": 15,
+   "DK-043 unshaded": 7,
+   "DK-051 shaded": 16,
+   "DK-049 unshaded": 8,
+   "DK-061 unshaded": 13,
+   "DK-066 unshaded": 16,
+   "DK-060 shaded": 11,
+   "DK-067 shaded": 16,
+   "DK-090 shaded": 27,
+   "DK-080 unshaded": 15,
+   "DK-004 shaded": 5,
+   "DK-026 shaded": 16,
+   "DK-075 unshaded": 8,
+   "DK-063 shaded": 8,
+   "DK-057 shaded": 8,
+   "DK-067 unshaded": 7,
+   "DK-062 shaded": 14,
+   "DK-014 unshaded": 14,
+   "DK-001 shaded": 14,
+   "DK-040 unshaded": 11,
+   "DK-071 shaded": 29,
+   "DK-072 unshaded": 11,
+   "DK-061 shaded": 14,
+   "DK-069 shaded": 13,
+   "DK-081 shaded": 13,
+   "DK-001 unshaded": 15,
+   "DK-009 shaded": 13,
+   "DK-100 unshaded": 10,
+   "DK-027 shaded": 7,
+   "DK-019 unshaded": 13,
+   "DK-052 shaded": 23,
+   "DK-059 unshaded": 13,
+   "DK-063 unshaded": 6,
+   "DK-057 unshaded": 8,
+   "DK-068 unshaded": 11,
+   "DK-075 shaded": 18,
+   "DK-087 unshaded": 20,
+   "DK-085 shaded": 11,
+   "DK-095 shaded": 10,
+   "DK-053 unshaded": 9,
+   "DK-011 unshaded": 21,
+   "DK-002 unshaded": 7,
+   "DK-026 unshaded": 7,
+   "DK-037 shaded": 22,
+   "DK-038 shaded": 5,
+   "DK-060 unshaded": 8,
+   "DK-073 shaded": 4,
+   "DK-065 unshaded": 11,
+   "DK-086 unshaded": 11,
+   "DK-033 unshaded": 14,
+   "DK-030 shaded": 6,
+   "DK-062 unshaded": 10,
+   "DK-058 unshaded": 10,
+   "DK-081 unshaded": 10,
+   "DK-012 shaded": 2,
+   "DK-087 shaded": 8,
+   "DK-049 shaded": 11,
+   "DK-041 unshaded": 9,
+   "DK-069 unshaded": 10,
+   "DK-024 shaded": 11,
+   "DK-082 unshaded": 6,
+   "DK-089 unshaded": 8,
+   "DK-009 unshaded": 9,
+   "DK-022 shaded": 10,
+   "DK-036 unshaded": 11,
+   "DK-038 unshaded": 17,
+   "DK-064 shaded": 2,
+   "DK-082 shaded": 21,
+   "DK-032 unshaded": 9,
+   "DK-024 unshaded": 6,
+   "DK-025 unshaded": 6,
+   "DK-021 unshaded": 9,
+   "DK-068 shaded": 12,
+   "DK-097 unshaded": 4,
+   "DK-008 unshaded": 6,
+   "DK-048 unshaded": 8,
+   "DK-053 shaded": 7,
+   "DK-070 unshaded": 11,
+   "DK-088 shaded": 6,
+   "DK-031 unshaded": 7,
+   "DK-029 shaded": 6,
+   "DK-050 unshaded": 9,
+   "DK-045 unshaded": 12,
+   "DK-059 shaded": 9,
+   "DK-092 shaded": 7,
+   "DK-094 shaded": 13,
+   "DK-021 shaded": 12,
+   "DK-013 shaded": 17,
+   "DK-034 shaded": 9,
+   "DK-039 shaded": 4,
+   "DK-056 unshaded": 4,
+   "DK-028 unshaded": 11,
+   "DK-048 shaded": 7,
+   "DK-092 unshaded": 7,
+   "DK-036 shaded": 5,
+   "DK-065 shaded": 10,
+   "DK-013 unshaded": 6,
+   "DK-091 shaded": 9,
+   "DK-017 unshaded": 2,
+   "DK-085 unshaded": 5,
+   "DK-010 unshaded": 7,
+   "DK-071 unshaded": 4,
+   "DK-080 shaded": 6,
+   "DK-044 unshaded": 4,
+   "DK-047 unshaded": 4,
+   "DK-086 shaded": 6,
+   "DK-052 unshaded": 6,
+   "DK-007 shaded": 3,
+   "DK-084 unshaded": 4,
+   "DK-011 shaded": 2,
+   "DK-005 unshaded": 4,
+   "DK-090 unshaded": 4,
+   "DK-078 shaded": 2
+  }
+ }
+}
