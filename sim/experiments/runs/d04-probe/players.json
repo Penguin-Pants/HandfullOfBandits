@@ -1,0 +1,26 @@
+{
+ "S-PROBE@1": {
+  "id": "S-PROBE@1",
+  "family": "S-PROBE",
+  "version": 1,
+  "faction": "state",
+  "role": "baseline",
+  "access": "observation",
+  "params": {},
+  "generatorVersion": "cand-7",
+  "budget": 0,
+  "description": "Takes a candidate that exercises a rare system whenever one is legal; otherwise random among candidates (diagnostic baseline, audit D-04)."
+ },
+ "P-PROBE@1": {
+  "id": "P-PROBE@1",
+  "family": "P-PROBE",
+  "version": 1,
+  "faction": "pkk",
+  "role": "baseline",
+  "access": "observation",
+  "params": {},
+  "generatorVersion": "cand-7",
+  "budget": 0,
+  "description": "Takes a candidate that exercises a rare system whenever one is legal; otherwise random among candidates (diagnostic baseline, audit D-04)."
+ }
+}
