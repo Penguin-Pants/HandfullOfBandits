@@ -49,8 +49,9 @@ describe("print drift (docs/printdata.py)", () => {
     expect(missing, REBUILD).toEqual([]);
   });
 
-  it.each(["docs/card-catalogue/cards-a4.pdf", "docs/rules/handful-of-bandits-rules-a4.pdf"])("%s was built from the current inputs", (pdf) => {
-    const stamp = JSON.parse(read(`${pdf}.inputs.json`)) as { inputs: string[]; sha256: string };
+  it.each(["docs/card-catalogue/cards-a4.pdf", "docs/rules/handful-of-bandits-rules-a4.pdf"])("%s is the PDF built from the current inputs", (pdf) => {
+    const stamp = JSON.parse(read(`${pdf}.inputs.json`)) as { inputs: string[]; sha256: string; output_sha256: string };
+    expect(createHash("sha256").update(readFileSync(join(root, pdf))).digest("hex"), `${pdf} is not the PDF that the stamp records. ${REBUILD}`).toBe(stamp.output_sha256);
     for (const file of ["c1", "c2", "c3", "c4", "c5", "pivotal"]) expect(stamp.inputs).toContain(`game-packages/kurdish-coin/0.1.0/cards/${file}.yaml`);
     expect(stamp.inputs).toContain("docs/rules/prototype-rules.md");
     const hash = createHash("sha256");

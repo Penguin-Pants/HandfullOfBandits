@@ -15,5 +15,6 @@
   "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
   "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml"
  ],
- "sha256": "10c78733f1005635ae4a8bb940d98907a0506a00784bd4d9bd813879850d24c3"
+ "sha256": "2852ab4deca8b0b9a1616c58fc2b07e67e29246637ad8eec23c575739a353157",
+ "output_sha256": "968b394804e409938afc1e989e55a8171dc47a84b819f6fd6df6607660fed45f"
 }

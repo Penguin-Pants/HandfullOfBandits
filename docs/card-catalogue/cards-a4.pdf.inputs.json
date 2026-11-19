@@ -11,5 +11,6 @@
   "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml",
   "docs/rules/prototype-rules.md"
  ],
- "sha256": "b608ffd305aff229ff580b1820a40fe469f6ee4bf08f79989f5c6224f3411c51"
+ "sha256": "605b15f28a0ac3ccde9d068e01dd4c3e401c627ee330831789abe106a5e7da64",
+ "output_sha256": "ed829faca4f3ce2aea032042fa004120b571ce781e8299339fb47502fb8fd15b"
 }

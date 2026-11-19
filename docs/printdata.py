@@ -4,7 +4,7 @@
 - Always text comes from the rules 5.4 table, plus any `note` text in the card's package Always line.
 - Propaganda cards print the rule 6.0 instruction.
 
-Each generator writes a stamp file next to its PDF. The stamp lists the input files and their SHA-256.
+Each generator writes a stamp file next to its PDF. The stamp lists the input files, their SHA-256 and the PDF's SHA-256.
 `sim/test/print-drift.test.ts` recomputes the hash, so `make test` fails when an input changes and the
 PDF is not rebuilt. The hash reads text with LF line endings, so a Windows checkout gives the same hash.
 """
@@ -59,10 +59,10 @@ def cards() -> dict[str, dict]:
 
 
 def write_stamp(output: Path, inputs: list[Path]) -> None:
-    """Write `<output>.inputs.json`: the input files (repository paths) and their combined SHA-256."""
+    """Write `<output>.inputs.json`: the input files (repository paths), their combined SHA-256 and the output's SHA-256."""
     names = [p.resolve().relative_to(ROOT).as_posix() for p in inputs]
     digest = sha256()
     for name in names:
         digest.update((name + "\n" + text(ROOT / name) + "\n").encode("utf-8"))
     stamp = output.with_name(output.name + ".inputs.json")
-    stamp.write_text(json.dumps({"inputs": names, "sha256": digest.hexdigest()}, indent=1) + "\n", encoding="utf-8")
+    stamp.write_text(json.dumps({"inputs": names, "sha256": digest.hexdigest(), "output_sha256": sha256(output.read_bytes()).hexdigest()}, indent=1) + "\n", encoding="utf-8")
