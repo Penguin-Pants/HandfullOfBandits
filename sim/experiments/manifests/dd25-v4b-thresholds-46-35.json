@@ -5,7 +5,8 @@
  "description": "Roster v4 on the TEST VARIANT package dd25-thresholds-46-35 (State 46, PKK 35 only; setup unchanged): same cells and seeds as dd25-v4b (doc 40). Not the game rules.",
  "scenario": "full-campaign",
  "package": {
-  "dir": "../packages/dd25-thresholds-46-35",
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "variant": "dd25-thresholds-46-35",
   "hash": "7d1f4ab8adcdeb28ec99f9e3c050cc1d4d4147cc52b27a7f7aead23059499d96"
  },
  "expected": {

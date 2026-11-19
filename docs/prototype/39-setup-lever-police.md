@@ -25,7 +25,7 @@ These are bot results on 15 seeds per pairing, not balance proof. The Police cha
 
 | Item | Value |
 |---|---|
-| Package | `sim/experiments/packages/dd25-setup-police`, hash `49dd2e97…` |
+| Package | `sim/experiments/packages/dd25-setup-police`, hash `49dd2e97…`. Copy removed 2026-11-19 (audit Plan 4 V3): now variant `game-packages/kurdish-coin/0.1.0/variants/dd25-setup-police.yaml`; the run keeps the copy's content in `package-content.json`. |
 | Change | Siirt and Bitlis 2 Police each (was 1); Available Police 2 (was 4). Thresholds stay 49/32 |
 | Manifest | `sim/experiments/manifests/dd25-v4b-setup-police.json`; engine and player fingerprints as `dd25-v4b` |
 | Run | `sim/experiments/runs/dd25-v4b-setup-police`: 240 of 240 complete, 240/240 replay identically |

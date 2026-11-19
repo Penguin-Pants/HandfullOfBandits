@@ -60,7 +60,7 @@
 | Victory | `victory.yaml` and `scenarios/full-campaign.yaml` (`thresholds: {state: 49, pkk: 32}`) | none | research 09 s1 ("13 domestic spaces") |
 | Design intent | `research/research-final/project-management/design-decisions.md` (DD-nn), `docs/prototype/13-design-decisions.md` (DEC-nn), `assumptions.yaml` (PA-nn) | none | `docs/audit/OPEN_QUESTIONS.md` items 15 to 23 still open |
 | Experiments | `docs/prototype/36` to `41`, `sim/experiments/manifests/dd25-*.json`, `sim/experiments/runs/dd25-*` | `analysis-v2/report.md` per run | Scenario A runs (`baseline-*`, `options-*` and others) |
-| Test variants | `sim/experiments/packages/dd25-*` (full package copies) | none | none |
+| Test variants | `game-packages/kurdish-coin/0.1.0/variants/*.yaml` (overlays, Plan 4) | Resolved content and hash (`sim validate`) | `sim/experiments/packages/dd25-*` (full package copies), removed by Plan 4 V3 |
 
 **Active full-campaign package:** `game-packages/kurdish-coin/0.1.0`, hash `5a605bb7eee8…` (`npm run sim -- validate` output). The same hash is in `dd25-pilot`, `dd25-pilot-main-players` and `dd25-v4b`.
 
@@ -110,7 +110,7 @@
 ### 2.3 Where it slows playtesting
 
 - **Print material is not generated from the package** with a drift check (C-1, C-2). Physical tests can use wrong card text.
-- **Variants need full package copies** (`sim/experiments/packages/dd25-*`). Each is a byte copy with three changed lines.
+- **Variants need full package copies** (`sim/experiments/packages/dd25-*`). Each is a byte copy with three changed lines. (Fixed by Plan 4: overlays in `variants/`, copies removed.)
 - **No bot seat in sessions.** The designer must play both sides in the app.
 - **Validation stops at the first die roll** (`core/exec.ts:56`). This is correct for previews but hides later questions (D-01).
 - **Experiment set-up friction.** A manifest needs the package hash, a `supersedes` field (required, nullable) and fingerprints. Paired run comparison needs a scratch script (doc 36 s8 item 6).
@@ -517,13 +517,13 @@ Export each variant as a printable sheet in the rule 10.2 table format, plus a s
 
 ### 7.6 Milestones and acceptance
 
-Status 2026-11-19 ([doc 45](../prototype/45-setup-controls-plan4.md)): V1 ✅, V2 ✅, V3 and V4 not started.
+Status 2026-11-19 ([doc 45](../prototype/45-setup-controls-plan4.md)): V1 ✅, V2 ✅, V3 ✅, V4 not started.
 
 | ID | Content | Entry points | Effort | Acceptance | Status |
 |:--|:--|:--|:--|:--|:--|
 | V1 | Overlay loader, derived Available, hash | `package/load.ts`, `package/validate.ts`, `schema/scenario.ts` | M | `dd25-thresholds-43-38` rebuilt as a 3-line overlay gives the same package hash content | ✅ Three lines. The copies drifted from the baseline, so by decision V-3 the proof is the same compiled scenario: 5 of 5 overlays equal their stored runs |
 | V2 | Setup editor, save, reset, export, import | `ui/home`, `server/service.ts` | M | Each error in 7.3 shows inline; a saved variant starts a session | ✅ All 5 items inline (items 3 and 4 are new setup-only data rules); a saved variant starts a session (test and browser) |
-| V3 | Variant in experiment manifests | `cli/experiment-manifest.ts` | S | A study names a variant, not a package copy | Not started |
+| V3 | Variant in experiment manifests | `cli/experiment-manifest.ts` | S | A study names a variant, not a package copy | ✅ `package.variant`; a study on the 43/38 variant runs; the 7 dd25 manifests name variants; the copies are gone |
 | V4 | Printable setup sheet | `export/markdown.ts` | S | Sheet matches rule 10.2 layout for the baseline | Not started |
 
 **Decisions you need to make:** answered 2026-11-19 (`OPEN_QUESTIONS.md`, Plan 4): variants live in the repository next to the package (V-1); no requalification per variant, runs record the variant (V-2).

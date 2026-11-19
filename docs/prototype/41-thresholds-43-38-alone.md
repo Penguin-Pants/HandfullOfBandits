@@ -21,7 +21,7 @@ These are bot results on 15 seeds per pairing, not balance proof. The 43/38 pack
 
 | Item | Value |
 |---|---|
-| Package | `sim/experiments/packages/dd25-thresholds-43-38`, hash `5f2bfccd…` |
+| Package | `sim/experiments/packages/dd25-thresholds-43-38`, hash `5f2bfccd…`. Copy removed 2026-11-19 (audit Plan 4 V3): now variant `game-packages/kurdish-coin/0.1.0/variants/dd25-thresholds-43-38.yaml`; the run keeps the copy's content in `package-content.json`. |
 | Change | State threshold 43 (was 49), PKK threshold 38 (was 32). Setup unchanged |
 | Manifest | `sim/experiments/manifests/dd25-v4b-thresholds-43-38.json`; fingerprints as `dd25-v4b` |
 | Run | `sim/experiments/runs/dd25-v4b-thresholds-43-38`: 240 of 240 complete, 240/240 replay identically |

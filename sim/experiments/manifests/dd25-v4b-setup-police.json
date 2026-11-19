@@ -5,7 +5,8 @@
  "description": "Roster v4 on the TEST VARIANT package dd25-setup-police (+1 Police in Siirt and Bitlis only; thresholds stay 49/32): same cells and seeds as dd25-v4b (doc 39). Not the game rules.",
  "scenario": "full-campaign",
  "package": {
-  "dir": "../packages/dd25-setup-police",
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "variant": "dd25-setup-police",
   "hash": "49dd2e9700560d250a013e74395387c217b8bdb8df10782f350a9b1c0f4d1469"
  },
  "expected": {

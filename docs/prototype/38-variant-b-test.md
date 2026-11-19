@@ -25,7 +25,7 @@ The 60 to 65% target is not reached. These are bot results, not balance proof. V
 
 | Item | Value | Where |
 |---|---|---|
-| Package | `sim/experiments/packages/dd25-variant-b`, hash `79a01c86…` | `scenarios/full-campaign.yaml` in the copy |
+| Package | `sim/experiments/packages/dd25-variant-b`, hash `79a01c86…`. Copy removed 2026-11-19 (audit Plan 4 V3): now variant `game-packages/kurdish-coin/0.1.0/variants/dd25-variant-b.yaml`; the run keeps the copy's content in `package-content.json`. | `scenarios/full-campaign.yaml` in the copy |
 | Thresholds | State 46 (was 49), PKK 35 (was 32) | same file |
 | Setup | Siirt and Bitlis 2 Police each; Available Police 2 | same file |
 | Manifest | `sim/experiments/manifests/dd25-v4b-variant-b.json` | engine and player fingerprints as `dd25-v4b` |

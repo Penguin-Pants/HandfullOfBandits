@@ -71,8 +71,8 @@ Answers to audit section 7.6. Results: `docs/prototype/45-setup-controls-plan4.m
 | # | Question | Decision | Pending |
 |:--|:--|:--|:--|
 | V-1 | Where do variants live? | In the repository, next to the package: `game-packages/<package>/<version>/variants/<name>.yaml`. The app saves there | Done: V1 loader |
-| V-2 | Must bots be requalified per variant? | No. Sessions and runs record the variant name and hash; a study report states that the bots were qualified on the baseline package | V3 |
-| V-3 | V1 acceptance, since the package copies drifted from the baseline | Proof: the overlay compiles to the same scenario as the copy its stored run used. The 5 copies in `sim/experiments/packages/` become overlays; the 7 dd25 manifests name the overlays | Done: overlays and proof (V1). Copies and manifests: V3 |
+| V-2 | Must bots be requalified per variant? | No. Sessions and runs record the variant name and hash; a study report states that the bots were qualified on the baseline package | Done: V3 report line |
+| V-3 | V1 acceptance, since the package copies drifted from the baseline | Proof: the overlay compiles to the same scenario as the copy its stored run used. The 5 copies in `sim/experiments/packages/` become overlays; the 7 dd25 manifests name the overlays | Done: overlays and proof (V1); copies removed and manifests repointed (V3) |
 
 ## Open from Plan 3
 

@@ -17,7 +17,7 @@ These are bot results, not balance proof. The package is a test package. The gam
 
 | Item | Value |
 |---|---|
-| Package | `sim/experiments/packages/dd25-thresholds-43-38`, hash `5f2bfccd…` (State 43, PKK 38, setup unchanged) |
+| Package | `sim/experiments/packages/dd25-thresholds-43-38`, hash `5f2bfccd…` (State 43, PKK 38, setup unchanged). Copy removed 2026-11-19 (audit Plan 4 V3): now variant `game-packages/kurdish-coin/0.1.0/variants/dd25-thresholds-43-38.yaml`; the run keeps the copy's content in `package-content.json`. |
 | Manifest | `sim/experiments/manifests/dd25-v4b-confirm-43-38.json`, stage `confirmation`, fingerprints as `dd25-v4b` |
 | Run | `sim/experiments/runs/dd25-v4b-confirm-43-38`: 800 of 800 complete, 800/800 replay identically. Stopped once at the 2-hour limit (428 games) and resumed with `--resume` |
 

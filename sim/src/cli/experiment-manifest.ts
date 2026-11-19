@@ -12,7 +12,8 @@ import { canonicalHash } from "../engine/core/canonical.ts";
 import { param } from "../engine/core/params.ts";
 import type { FactionId, Ruleset } from "../engine/core/types.ts";
 import { codeFingerprint, sourceFingerprint } from "../package/fingerprint.ts";
-import { loadPackage, readPackageDir, withSessionOptions } from "../package/load.ts";
+import { loadPackage, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
+import { loadVariant } from "../package/variant.ts";
 import type { PackageData } from "../package/validate.ts";
 import { GENERATOR_VERSION } from "./candidates.ts";
 import type { GameJob } from "./game-runner.ts";
@@ -41,7 +42,8 @@ export const manifestSchema = z.strictObject({
   stage: z.enum(STAGES),
   description: z.string().min(1),
   scenario: z.literal("full-campaign"),
-  package: z.strictObject({ dir: z.string().min(1), hash: hex64 }),
+  /** `variant`: a saved variant in the package's variants folder (audit Plan 4 V3). The hash is the variant's. */
+  package: z.strictObject({ dir: z.string().min(1), hash: hex64, variant: id.optional() }),
   expected: z.strictObject({
     thresholds: z.record(z.string(), z.number().int()),
     harmLimit: z.number().int(),
@@ -70,7 +72,7 @@ export type Manifest = z.infer<typeof manifestSchema>;
 
 /** A study file for `experiment new`: a manifest whose package hash and expected values may be left out (audit Plan 3 A2). */
 const draftSchema = manifestSchema.extend({
-  package: z.strictObject({ dir: z.string().min(1), hash: hex64.optional() }),
+  package: z.strictObject({ dir: z.string().min(1), hash: hex64.optional(), variant: id.optional() }),
   expected: manifestSchema.shape.expected.partial().optional(),
 });
 
@@ -177,6 +179,13 @@ export function parseManifest(text: string): Manifest {
   return parseWith(text, manifestSchema, "Manifest");
 }
 
+/** The package a study plays: the package in `dir`, or its saved `variant` applied. */
+function studyPackage(dir: string, variant: string | undefined): Extract<LoadResult, { ok: true }> {
+  const loaded = variant === undefined ? loadPackage(readPackageDir(dir)) : loadVariant(dir, variant);
+  if (!loaded.ok) throw new ManifestError(`Package ${dir}${variant === undefined ? "" : ` variant ${variant}`} does not load`);
+  return loaded;
+}
+
 /** Ruleset for one condition: package options validated against the package manifest. */
 export function conditionRuleset(ruleset: Ruleset, data: PackageData, scenario: string, options: Readonly<Record<string, string>>): Ruleset {
   const declared = (data.manifest as { options?: Record<string, { values: string[] }> }).options ?? {};
@@ -200,14 +209,13 @@ export function newManifest(draftFile: string, outFile: string, runtime: Runtime
   if (existsSync(out)) throw new ManifestError(`${out} already exists; choose a new file`);
   const draft = parseWith(readFileSync(draftFile, "utf8"), draftSchema, "Study file");
   const packageDir = resolve(dirname(resolve(draftFile)), draft.package.dir);
-  const loaded = loadPackage(readPackageDir(packageDir));
-  if (!loaded.ok) throw new ManifestError(`Package ${packageDir} does not load`);
+  const loaded = studyPackage(packageDir, draft.package.variant);
   const scenario = loaded.ruleset.scenarios[draft.scenario];
   if (scenario === undefined) throw new ManifestError(`Scenario ${draft.scenario} is missing`);
   const e = draft.expected ?? {};
   const manifest: Manifest = {
     ...draft,
-    package: { dir: relative(dirname(out), packageDir).split(sep).join("/") || ".", hash: draft.package.hash ?? loaded.hash },
+    package: { dir: relative(dirname(out), packageDir).split(sep).join("/") || ".", hash: draft.package.hash ?? loaded.hash, ...(draft.package.variant === undefined ? {} : { variant: draft.package.variant }) },
     expected: {
       thresholds: e.thresholds ?? { ...scenario.thresholds },
       harmLimit: e.harmLimit ?? param(loaded.ruleset, "harm.limit", "number"),
@@ -226,8 +234,7 @@ export function newManifest(draftFile: string, outFile: string, runtime: Runtime
  */
 export function freezeExperiment(manifest: Manifest, manifestDir: string, runtime: RuntimeIdentity = runtimeIdentity(), registryFile = SEED_REGISTRY): FrozenExperiment & { readonly ruleset: Ruleset; readonly data: PackageData } {
   const packageDir = resolve(manifestDir, manifest.package.dir);
-  const loaded = loadPackage(readPackageDir(packageDir));
-  if (!loaded.ok) throw new ManifestError(`Package ${packageDir} does not load`);
+  const loaded = studyPackage(packageDir, manifest.package.variant);
   if (loaded.hash !== manifest.package.hash) throw new ManifestError(`Package hash ${loaded.hash} does not match manifest ${manifest.package.hash}`);
   const scenario = loaded.ruleset.scenarios[manifest.scenario];
   if (scenario === undefined || scenario.blockedBy.length > 0) throw new ManifestError(`Scenario ${manifest.scenario} is missing or blocked`);
