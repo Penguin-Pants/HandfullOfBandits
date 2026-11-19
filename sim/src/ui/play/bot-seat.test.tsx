@@ -61,6 +61,23 @@ describe("Play with a bot seat", () => {
     expect(botStep.mock.calls.map((c) => (c as unknown[])[2])).toEqual(["h-A1", "h-A1b"]);
   });
 
+  it("lets the bot act again after a branch back to a head it already stepped from (PR 128 review)", async () => {
+    let n = 0;
+    const heads = [cardHead("A"), cardHead("B"), cardHead("A")];
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-CON@4" }), head: heads[n] as Head, botToAct: n === 1 ? null : "state" }));
+    const botStep = vi.fn(() => { if (n === 0) n = 1; return Promise.resolve({ actionId: "B", partial: null, options: null, records: [record] }); });
+    const history = vi.fn(() => Promise.resolve([item("A", []), item("B", [record])]));
+    const branch = vi.fn(() => { n = 2; return Promise.resolve({ branchId: "b2", head: heads[2] as Head }); });
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const legal = vi.fn(() => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] }));
+    render(<Play api={mockApi({ session, legal, botStep, history, branch })} sessionId="S" />);
+    await waitFor(() => { expect(botStep).toHaveBeenCalledTimes(1); });
+    fireEvent.click(await screen.findByRole("button", { name: "History (H)" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Branch from here" }));
+    await waitFor(() => { expect(branch).toHaveBeenCalled(); });
+    await waitFor(() => { expect(botStep).toHaveBeenCalledTimes(2); });
+  });
+
   it("shows the bot State part of Redeploy and sends only the human PKK routes", async () => {
     const statePart = { troops: [{ from: "van", to: "hakkari", count: 2 }], police: [], guerrilla: [] };
     const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: redeployHead("R1"), botToAct: "state" }));

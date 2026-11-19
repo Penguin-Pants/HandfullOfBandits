@@ -257,6 +257,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     try {
       await api.branch(sessionId, actionId, data.head.actionId, data.head.stateHash);
       last.current = { id: null, at: null };
+      // A branch can return to a head the bot already stepped from: let it act there again.
+      stepped.current = null;
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
