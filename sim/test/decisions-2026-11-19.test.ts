@@ -26,6 +26,13 @@ describe("Decision 18 (m-17): every selected location must be able to change som
     expect(codes(setPieces(board, "hakkari", "troops", 2), assault)).toEqual([]);
   });
 
+  it("Rally flip is legal where its Special Activity acts: Extort in the same host box", () => {
+    const flip = (sa: string, timing = "after"): AnyCommand => op("pkk", "opSa", { op: "pkk.rally", locations: ["syria-bekaa"], perLocation: { "syria-bekaa": { option: "flip" } }, sa: { action: "pkk.extort", locations: [sa], perLocation: {}, timing } });
+    expect(codes(turnOf("pkk"), flip("syria-bekaa"))).toEqual([]);
+    expect(codes(turnOf("pkk"), flip("syria-bekaa", "before"))).toEqual([]);
+    expect(codes(turnOf("pkk"), flip("kdp-zone"))).toContain("rallyFlipGuerrilla");
+  });
+
   it("Assault is legal where its Special Activity acts: Air Mobility brings Troops into the Mountain space", () => {
     const board = setPieces(setPieces(setPieces(turnOf("state"), "hakkari", "guerrilla", 0), "hakkari", "guerrilla", 1, "active"), "hakkari", "troops", 1);
     const assault = (timing: string): AnyCommand => op("state", "opSa", { op: "state.assault", locations: ["hakkari"], perLocation: {}, sa: { action: "state.air-mobility", locations: ["diyarbakir-city", "hakkari"], perLocation: { hakkari: { moves: [{ from: "diyarbakir-city", count: 1 }] } }, timing } });

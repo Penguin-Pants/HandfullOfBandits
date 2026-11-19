@@ -96,8 +96,9 @@ export const rally: ActionHandler = {
         if (stackingRoom(ruleset, state, loc, PIECE.pkkBase) < 1) v("rallyBaseStacking", "PKK Base stacking limit (03 s5).");
         if (s.kind === "external" && !rallyBaseOpen(state, loc)) v("rallyBaseHost", "The host posture does not allow a Base here (07 s5.1).");
         basing += 1;
-      } else if (choice === "flip" && count(state, loc, PIECE.guerrilla, FACE.active) === 0) {
-        v("rallyFlipGuerrilla", "Flipping needs an Active Guerrilla here (decision 18: no effect otherwise).");
+      } else if (choice === "flip" && count(state, loc, PIECE.guerrilla, FACE.active) === 0 && !(options.saLocations.includes(loc) && count(state, loc, PIECE.guerrilla) > 0)) {
+        // Decision 18 (m-17): a flip needs an Active Guerrilla, unless the Special Activity acts here (Extort after the Rally activates one).
+        v("rallyFlipGuerrilla", "Flipping needs an Active Guerrilla here, or a Special Activity in this space.");
       } else if (choice === "grow" && count(state, loc, PIECE.pkkBase) === 0) {
         v("rallyNeedsBase", "This option needs a PKK Base here.");
       } else if (choice === "grow") {
