@@ -147,17 +147,23 @@ describe("Decision 12 (M-06): a PKK Harm marker blocks the Coerce shift toward N
   });
 });
 
-describe("Decision 13 (M-11): Rally places as many Guerrillas as are Available", () => {
-  it("a plan for 3 with 2 Available is legal and places 2", () => {
+describe("Decision 13 (M-11), limited by decision 18 (2026-11-19): Rally places as many Guerrillas as are Available", () => {
+  const withAvailable = (n: number): GameState => {
     const start = turnOf("pkk");
-    const pool = start.pools["guerrilla"];
-    const board = { ...start, pools: { ...start.pools, guerrilla: { ...pool, available: 2 } } } as GameState;
-    const spaces = ["bingol-tunceli", "mardin", "van-rural"];
-    const total = (s: GameState): number => spaces.reduce((n, id) => n + Object.values(pieces(s, id, "guerrilla")).reduce((a, b) => a + b, 0), 0);
-    const plan = op("pkk", "opOnly", { op: "pkk.rally", locations: spaces, perLocation: Object.fromEntries(spaces.map((l) => [l, { option: "place" }])) });
-    expect(codes(board, plan)).toEqual([]);
-    const { state } = play(board, plan);
-    expect([total(state) - total(board), state.pools["guerrilla"]?.available]).toEqual([2, 0]);
+    return { ...start, pools: { ...start.pools, guerrilla: { ...start.pools["guerrilla"], available: n } } } as GameState;
+  };
+  const place = (...spaces: string[]): AnyCommand => op("pkk", "opOnly", { op: "pkk.rally", locations: spaces, perLocation: Object.fromEntries(spaces.map((l) => [l, { option: "place" }])) });
+
+  it("a grow plan larger than Available is legal and places what is Available", () => {
+    // Sirnak: Pop 1 + 1 PKK Base allows 2; only 1 is Available.
+    const grow = op("pkk", "limitedOp", { op: "pkk.rally", locations: ["sirnak"], perLocation: { sirnak: { option: "grow", count: 2 } } });
+    expect(codes(withAvailable(1), grow)).toEqual([]);
+    expect(play(withAvailable(1), grow).state.pools["guerrilla"]?.available).toBe(0);
+  });
+
+  it("a location that would receive nothing is refused (decision 18): 3 place locations with 2 Available", () => {
+    expect(codes(withAvailable(2), place("bingol-tunceli", "mardin", "van-rural"))).toEqual(["locationNoEffect"]);
+    expect(codes(withAvailable(2), place("bingol-tunceli", "mardin"))).toEqual([]);
   });
 });
 

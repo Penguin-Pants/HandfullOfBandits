@@ -50,11 +50,11 @@ describe("Rally (06 s4.1)", () => {
     expect(res(state)).toBe(3);
   });
 
-  it("requires an Active Guerrilla to choose the flip option (decision 18: no effect otherwise)", () => {
+  it("requires a Guerrilla to choose the flip option, and an Active one to change anything (decision 18)", () => {
     const empty = setPieces(setPieces(start, "bingol-tunceli", "guerrilla", 0), "bingol-tunceli", "guerrilla", 0, "active");
     const command = rally("limitedOp", { "bingol-tunceli": { option: "flip" } });
     expect(codes(empty, command)).toEqual(["rallyFlipGuerrilla"]);
-    expect(codes(setPieces(empty, "bingol-tunceli", "guerrilla", 1), command)).toEqual(["rallyFlipGuerrilla"]);
+    expect(codes(setPieces(empty, "bingol-tunceli", "guerrilla", 1), command)).toEqual(["locationNoEffect"]);
     expect(codes(setPieces(empty, "bingol-tunceli", "guerrilla", 1, "active"), command)).toEqual([]);
   });
 

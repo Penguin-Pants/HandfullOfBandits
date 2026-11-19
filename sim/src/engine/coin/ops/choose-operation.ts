@@ -4,7 +4,8 @@ import type { AnyCommand, CommandHandler, GameState, JsonObject, Ruleset, SubAct
 import { BOX, placeCylinder, sequenceViolations } from "../sequence/ct.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "./action.ts";
 import { resources } from "./common.ts";
-import { HARMFUL_ACTIONS } from "./ids.ts";
+import { EUROPE_SPACE, HARMFUL_ACTIONS, TRACK } from "./ids.ts";
+import { canonicalJson } from "../../core/canonical.ts";
 import { applyRestraint, restraintWarnings, type ActionUse } from "../ceasefire.ts";
 import { asList, asObject, asString } from "./plan.ts";
 import { flagHarmful, notePassOnly } from "../stop-rules.ts";
@@ -147,6 +148,20 @@ function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): b
   return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget);
 }
 
+/**
+ * Decision 18 (m-17; rules 3.1): each Operation location must change, by the Operation or by its
+ * Special Activity there. One dry run of the whole command on the real board: a location changes
+ * when its pieces, faces, markers or level differ afterward (Europe: the Europe track). A dry run
+ * that rolls a die is not judged, so legality never shows a random result before the player commits.
+ */
+function noEffectViolations(ruleset: Ruleset, state: GameState, command: AnyCommand, plan: ParsedPlan): Violation[] {
+  const ctx = createExec(ruleset, state);
+  chooseOperationHandler.execute?.(ctx, command);
+  if (ctx.entries.some((e) => e.kind === "DieRolled") || ctx.state.pending?.resume !== undefined) return [];
+  const changed = (loc: string): boolean => (loc === EUROPE_SPACE ? state.tracks[TRACK.europe] !== ctx.state.tracks[TRACK.europe] : canonicalJson(state.spaces[loc] ?? null) !== canonicalJson(ctx.state.spaces[loc] ?? null));
+  return plan.part.locations.filter((loc) => !changed(loc)).map((loc) => at(loc, "locationNoEffect", `Nothing in ${loc} would change. Select only locations that the Operation or its Special Activity changes (rules 3.1).`, "rules 3.1"));
+}
+
 /** The Op and SA of a parsed plan, for the ceasefire table (07 s7.2). */
 function uses(plan: ParsedPlan): ActionUse[] {
   return [{ id: plan.op.id, part: plan.part }, ...(plan.sa === null ? [] : [{ id: plan.sa.handler.id, part: plan.sa.part }])];
@@ -154,7 +169,10 @@ function uses(plan: ParsedPlan): ActionUse[] {
 
 export const chooseOperationHandler: CommandHandler = {
   ruleRef,
-  check: (ruleset, state, command) => parse(ruleset, state, command).violations,
+  check(ruleset, state, command) {
+    const { violations, plan } = parse(ruleset, state, command);
+    return plan === null ? violations : noEffectViolations(ruleset, state, command, plan);
+  },
   warnings(ruleset, state, command) {
     const { plan } = parse(ruleset, state, command);
     return plan === null ? [] : restraintWarnings(ruleset, state, plan.options.faction, uses(plan));
