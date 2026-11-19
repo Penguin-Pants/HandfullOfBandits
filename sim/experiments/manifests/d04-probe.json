@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "id": "d04-probe",
- "stage": "pilot",
+ "stage": "development",
  "description": "Audit Plan 1 D-04: S-PROBE@1 against P-PROBE@1 on the full campaign, 60 development seeds. Coverage evidence for the 21 rare action, card and host posture rows of the ledger; the probes are baselines, so the results say nothing about balance.",
  "scenario": "full-campaign",
  "package": {
