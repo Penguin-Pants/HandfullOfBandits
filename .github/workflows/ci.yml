@@ -1,17 +1,27 @@
 name: CI
 
-# Root Markdown changes do not start a build: `make check` and `make test` read no root Markdown
-# file. docs/ stays in: `make test` checks the print set against the rules and cards
-# (sim/test/print-drift.test.ts). research/ stays in: `make test` compares the package rules.yaml
-# with the research documents.
+# Docs-only changes do not start a build. The filter runs CI for every path except root Markdown
+# files and docs/, then adds back the docs files that `make test` reads: the print sources and
+# outputs checked by sim/test/print-drift.test.ts. research/ stays in: `make test` compares the
+# package rules.yaml with the research documents. Later patterns override earlier ones.
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '*.md'
+    paths:
+      - '**'
+      - '!*.md'
+      - '!docs/**'
+      - 'docs/rules/**'
+      - 'docs/card-catalogue/**'
+      - 'docs/printdata.py'
   pull_request:
-    paths-ignore:
-      - '*.md'
+    paths:
+      - '**'
+      - '!*.md'
+      - '!docs/**'
+      - 'docs/rules/**'
+      - 'docs/card-catalogue/**'
+      - 'docs/printdata.py'
 
 jobs:
   sim:
