@@ -1,4 +1,4 @@
-.PHONY: install test check start schema validate rules e2e ux rulebook
+.PHONY: install test check start schema validate rules e2e ux rulebook cards print
 
 install:
 	cd sim && npm ci
@@ -34,3 +34,10 @@ ux:
 # A4 portrait reading edition of the current playable prototype.
 rulebook:
 	python3 docs/rules/build-rulebook.py
+
+# Card catalogue PDF and HTML from the package card text (docs/printdata.py).
+cards:
+	python3 docs/card-catalogue/generate.py
+
+# Whole print set. `make test` fails until this runs after a card, rules or print source change.
+print: cards rulebook

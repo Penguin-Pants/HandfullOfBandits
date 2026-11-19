@@ -2,49 +2,46 @@
 """Build the A4 reading edition and derive the Event appendix from package data."""
 from pathlib import Path
 import subprocess
+import sys
+
 import yaml
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent
-PACKAGE = ROOT / "game-packages/kurdish-coin/0.1.0"
+sys.path.insert(0, str(HERE.parent))
+import printdata  # noqa: E402
+
+PACKAGE = printdata.PACKAGE
+SOURCES = ["prototype-rules.md", "prototype-card-reference.md", "prototype-notes.md", "rulebook-layout.tex", "rulebook-tables.lua"]
+
+
+CAMPAIGNS = [("C1", "1984–1986"), ("C2", "1987–1989"), ("C3", "1990–1992"), ("C4", "1993–1995"), ("C5", "1996–1999")]
 
 
 def card_reference() -> str:
+    """Appendix A from docs/printdata.py: package card text and the rules 5.4 Always lines."""
+    cards = list(printdata.cards().values())
     lines = [
-        "# A.0 C1/C2 Card Reference", "",
+        "# A.0 Card Reference", "",
         "Current package text is reproduced below for reading beside the rules. "
         "Original card cross-references use research chapter numbers (Appendix B). "
-        "U means unshaded and S shaded; either faction may choose either side unless restricted. "
-        "Always instructions apply on reveal. A card need not be drawn in every game.", "",
+        "U means unshaded and S shaded; either faction may choose either side unless restricted (5.1). "
+        "Always instructions apply on reveal (5.4). A card need not be drawn in every game.", "",
     ]
-    always = {
-        "DK-003": "Move all Guards from Out of Play to Available; Law 3175 is in effect.",
-        "DK-005": "If KDP is Host, set its posture to Tolerant. The date of the KDP break is disputed (1985, 1987 or 1988). October 1985 is a design assumption. Evidence: Low.",
-        "DK-019": "If Syria is Host, set its posture to Tolerant.",
-        "DK-020": "If Emergency Rule is Martial Law, set it to OHAL.",
-    }
-    for campaign, title in [("c1", "A.1 Campaign C1: 1984–1986"), ("c2", "A.2 Campaign C2: 1987–1989")]:
-        lines += ["## " + title, ""]
-        cards = yaml.safe_load((PACKAGE / "cards" / f"{campaign}.yaml").read_text(encoding="utf-8"))
-        for card in cards:
+    for n, (campaign, years) in enumerate(CAMPAIGNS, start=1):
+        lines += [f"## A.{n} Campaign {campaign}: {years}", ""]
+        for card in (c for c in cards if c["campaign"] == campaign and c["type"] != "pivotal"):
             lines += [f"### {card['id']} · {card['title']}", ""]
             if card["type"] == "propaganda":
-                lines += ["**Propaganda:** conduct 6.0. No player Event choice.", ""]
+                lines += ["**Propaganda:** " + card["unshaded"], ""]
                 continue
-            if card.get("mandatory"):
+            if card["mandatory"]:
                 lines += ["**Mandatory structural card.**", ""]
-            if card["id"] in always:
-                lines += ["**Always:** " + always[card["id"]], ""]
-            for side, label in [("unshaded", "U"), ("shaded", "S")]:
-                text = " ".join(card[side]["text"].split())
-                lines += [f"**{label}:** {text}", ""]
-    lines += [
-        "## A.3 PKK Pivotal in Hand", "", "### DK-015 · ARGK Formed", "",
-        "At least eight domestic Guerrillas and two domestic PKK Bases. "
-        "Place up to four Available Guerrillas at PKK Bases, flip all Guerrillas "
-        "in every space with a PKK Base Underground and gain three PKK Resources. "
-        "DEC-55 clarifies the original card's phrase ‘in those spaces’. See 5.3 for timing and initiative.", "",
-    ]
+            if card["always"]:
+                lines += ["**Always:** " + card["always"], ""]
+            lines += [f"**U:** {card['unshaded']}", "", f"**S:** {card['shaded']}", ""]
+    lines += [f"## A.{len(CAMPAIGNS) + 1} Pivotal Events in Hand", "", "See 5.3 for the window, timing and initiative.", ""]
+    for card in (c for c in cards if c["type"] == "pivotal"):
+        lines += [f"### {card['id']} · {card['title']}", "", card["unshaded"], ""]
     return "\n".join(lines)
 
 
@@ -52,14 +49,16 @@ def main() -> None:
     (HERE / "prototype-card-reference.md").write_text(card_reference(), encoding="utf-8")
     manifest = yaml.safe_load((PACKAGE / "manifest.yaml").read_text(encoding="utf-8"))
     subprocess.run([
-        "pandoc", "prototype-rules.md", "prototype-card-reference.md", "prototype-notes.md",
+        "pandoc", *SOURCES[:3],
         "--from=markdown+raw_tex", "--pdf-engine=xelatex",
         "--template=rulebook-layout.tex", "--lua-filter=rulebook-tables.lua",
         "--toc", "--toc-depth=1", "--standalone",
         "--metadata=ruleset:" + manifest["rulesetVersion"],
         "--output=handful-of-bandits-rules-a4.pdf",
     ], cwd=HERE, check=True)
-    print(HERE / "handful-of-bandits-rules-a4.pdf")
+    pdf = HERE / "handful-of-bandits-rules-a4.pdf"
+    printdata.write_stamp(pdf, [printdata.ROOT / "docs/printdata.py", Path(__file__), *(HERE / f for f in SOURCES), PACKAGE / "manifest.yaml", PACKAGE / "map/atlas-terrain.png", *printdata.CARD_FILES])
+    print(pdf)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 
 This is the **full game** ruleset R4, dated 8 November 2026: the full five-Campaign game. Scenarios A, B and C and the S0 test scenario are archived (`archive/README.md`, rule 10.6). The source baseline is main commit **f0e6415**. The rules text follows the engine and the approved decisions DEC-63 to DEC-75, which added Village Clearance, Covert Action, Legal Politics, ceasefire, the four Pivotals, the structural cards and the Campaign switches. The earlier Scenario A edition was based on commit **d9a6453**.
 
-**Not covered in this edition:** the optional modules of research chapter 13 (including the third-player module) and the card appendix for Campaigns C3 to C5. Appendix A still reproduces C1 and C2 only. The C3 to C5 card text is in `game-packages/kurdish-coin/0.1.0/cards/`. The designer checkpoints IC-3a to IC-3c are still open, so the full-game systems are implemented but not yet playtested by the designer.
+**Not covered in this edition:** the optional modules of research chapter 13 (including the third-player module). Appendix A reproduces every card from `game-packages/kurdish-coin/0.1.0/cards/`; its Always lines come from 5.4. The designer checkpoints IC-3a to IC-3c are still open, so the full-game systems are implemented but not yet playtested by the designer.
 
 ## B.2 Rule Precedence and Consolidation
 

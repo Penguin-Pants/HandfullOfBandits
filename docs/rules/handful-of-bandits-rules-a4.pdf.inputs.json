@@ -1,0 +1,21 @@
+{
+ "inputs": [
+  "docs/printdata.py",
+  "docs/rules/build-rulebook.py",
+  "docs/rules/prototype-rules.md",
+  "docs/rules/prototype-card-reference.md",
+  "docs/rules/prototype-notes.md",
+  "docs/rules/rulebook-layout.tex",
+  "docs/rules/rulebook-tables.lua",
+  "game-packages/kurdish-coin/0.1.0/manifest.yaml",
+  "game-packages/kurdish-coin/0.1.0/map/atlas-terrain.png",
+  "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml"
+ ],
+ "sha256": "67384c45a64593ad880bcfc3017a18befc326f70c41fe4debad1372ba427f558",
+ "output_sha256": "cf300c76a5751529cebe9783f923ce6601c69cec0467d4a49e17495c01186a47"
+}

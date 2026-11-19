@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Regenerate the review PDF and offline HTML from catalogue.json."""
-import json,html,os,math
+"""Regenerate the review PDF and offline HTML. Card text comes from the game package and rules 5.4
+(docs/printdata.py); catalogue.json holds only flavor, images, sources and open questions."""
+import json,html,os,sys
+from pathlib import Path
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
@@ -9,7 +11,10 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.colors import HexColor,white
 from reportlab.lib.utils import simpleSplit
 D=os.path.dirname(os.path.abspath(__file__))
-cards=json.load(open(D+'/catalogue.json',encoding='utf8'))['cards']
+sys.path.insert(0,os.path.dirname(D))
+import printdata
+package=printdata.cards()
+cards=[{**package[c['id']],**c,'printed':{**c['printed'],**{k:package[c['id']][k] for k in ('always','unshaded','shaded')}}} for c in json.load(open(D+'/catalogue.json',encoding='utf8'))['cards']]
 pdfmetrics.registerFont(TTFont('DejaVu','/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
 pdfmetrics.registerFont(TTFont('DejaVuItalic','/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf'))
 pdfmetrics.registerFont(TTFont('DejaVuBold','/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
@@ -37,10 +42,9 @@ for i,card in enumerate(cards):
  c.setFillColor(HexColor('#55615e'));c.setFont('DejaVuBold',8);c.drawCentredString(x+W/2,top-7.5*mm,'IMAGE PLACEHOLDER')
  blocks=[]; p=card['printed']
  if p['flavor']:blocks.append(('FLAVOR',p['flavor']))
- if p['always']:blocks.append(('ALWAYS · SOURCE NOTE',p['always']))
+ if p['always']:blocks.append(('ALWAYS',p['always']))
  if p['unshaded']:blocks.append(('PROPAGANDA' if card['type']=='propaganda' else ('PIVOTAL' if card['type']=='pivotal' else 'UNSHADED'),p['unshaded']))
  if p['shaded']:blocks.append(('SHADED',p['shaded']))
- if card['id']=='DK-016':blocks.append(('TEXT MISSING','No printed instruction in package. See reference report.'))
  avail=H-39*mm; width=W-10*mm
  for size in [9,8.5,8,7.5,7,6.5,6]:
   h=sum((len(lines(t,'DejaVuItalic' if label=='FLAVOR' else 'DejaVu',size,width))*(size*1.2)+size*1.7+3) for label,t in blocks)
@@ -56,19 +60,20 @@ for i,card in enumerate(cards):
   for line in lines(t,font,size,width):c.drawString(x+5*mm,yy,line);yy-=size*1.2
   yy-=3
 c.save()
+printdata.write_stamp(Path(D)/'cards-a4.pdf',[printdata.ROOT/'docs/printdata.py',Path(D)/'generate.py',Path(D)/'catalogue.json',*printdata.CARD_FILES,printdata.RULES])
 # Digital reference uses identical text from the catalogue and adds the structured data.
 esc=lambda s:html.escape(str(s))
-parts=['<!doctype html><html lang="en"><meta charset="utf-8"><title>Card catalogue</title><style>body{font:16px system-ui;background:#e7ebe7;color:#172421;max-width:1100px;margin:auto;padding:2rem}input{font:inherit;padding:.6rem;width:90%}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1rem}article{background:white;border:1px solid #adbab3;padding:1rem;border-radius:.4rem}h2{font-size:1.1rem}small{color:#42625b}.img{background:#e4e8e3;text-align:center;color:#53635e;margin:0;overflow:hidden}.img img{width:100%;height:190px;object-fit:contain;display:block}.img figcaption{font-size:.75rem;line-height:1.35;padding:.45rem;background:#f2f4f1}.placeholder{padding:2.5rem}h3{font-size:.8rem;letter-spacing:.06em;color:#376057;margin-bottom:.3rem}.shade{color:#984733}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.75rem}p{line-height:1.45}</style><h1>Card catalogue</h1><p>99 cards · package wording · image captions distinguish contextual illustrations from event photographs. Search by title, ID or text.</p><input id="q" placeholder="Search cards" oninput="for(const a of document.querySelectorAll(\'article\'))a.hidden=!a.textContent.toLowerCase().includes(this.value.toLowerCase())"><p></p><main class="grid">']
+parts=['<!doctype html><html lang="en"><meta charset="utf-8"><title>Card catalogue</title><style>body{font:16px system-ui;background:#e7ebe7;color:#172421;max-width:1100px;margin:auto;padding:2rem}input{font:inherit;padding:.6rem;width:90%}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1rem}article{background:white;border:1px solid #adbab3;padding:1rem;border-radius:.4rem}h2{font-size:1.1rem}small{color:#42625b}.img{background:#e4e8e3;text-align:center;color:#53635e;margin:0;overflow:hidden}.img img{width:100%;height:190px;object-fit:contain;display:block}.img figcaption{font-size:.75rem;line-height:1.35;padding:.45rem;background:#f2f4f1}.placeholder{padding:2.5rem}h3{font-size:.8rem;letter-spacing:.06em;color:#376057;margin-bottom:.3rem}.shade{color:#984733}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.75rem}p{line-height:1.45}</style><h1>Card catalogue</h1><p>'+str(len(cards))+' cards · package wording · image captions distinguish contextual illustrations from event photographs. Search by title, ID or text.</p><input id="q" placeholder="Search cards" oninput="for(const a of document.querySelectorAll(\'article\'))a.hidden=!a.textContent.toLowerCase().includes(this.value.toLowerCase())"><p></p><main class="grid">']
 for a in cards:
  parts.append('<article><small>'+esc(a['id']+' / '+a['campaign']+' / '+a['type'])+'</small><h2>'+esc(a['title'])+'</h2>')
  img=a['image']
  if img.get('path'):
   parts.append('<figure class="img"><img src="'+esc(img['path'])+'" alt="'+esc(img['caption'])+'"><figcaption>'+esc(img['caption'])+' <a href="'+esc(img['source_page'])+'">Source</a> · '+esc(img['creator'])+' · <a href="'+esc(img['license_url'])+'">'+esc(img['license'])+'</a></figcaption></figure>')
  else:parts.append('<div class="img placeholder">IMAGE PLACEHOLDER</div>')
- for key,label in [('flavor','Flavor'),('always','Always · Source note'),('unshaded','Propaganda' if a['type']=='propaganda' else 'Pivotal' if a['type']=='pivotal' else 'Unshaded'),('shaded','Shaded')]:
+ for key,label in [('flavor','Flavor'),('always','Always'),('unshaded','Propaganda' if a['type']=='propaganda' else 'Pivotal' if a['type']=='pivotal' else 'Unshaded'),('shaded','Shaded')]:
   if a['printed'][key]:parts.append('<h3 class="'+('shade' if key=='shaded' else '')+'">'+label.upper()+'</h3><p'+(' style="font-style:italic"' if key=='flavor' else '')+'>'+esc(a['printed'][key])+'</p>')
  if a['unresolved_questions']:parts.append('<h3>UNRESOLVED</h3><p>'+esc(' '.join(a['unresolved_questions']))+'</p>')
- parts.append('<details><summary>Implementation and sources</summary><pre>'+esc(json.dumps({'implementation':a['implementation'],'sources':a['source_references']},ensure_ascii=False,indent=2))+'</pre></details></article>')
+ parts.append('<details><summary>Sources</summary><pre>'+esc(json.dumps(a['source_references'],ensure_ascii=False,indent=2))+'</pre></details></article>')
 parts.append('</main></html>');open(D+'/index.html','w',encoding='utf8').write(''.join(parts))
 print('Generated',len(cards),'cards; minimum body font:',minfont,'pt; overflow:',overflow)
 if overflow:raise SystemExit(1)
