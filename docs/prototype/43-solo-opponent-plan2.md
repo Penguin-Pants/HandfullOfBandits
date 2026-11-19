@@ -56,6 +56,7 @@ You can now play a full campaign against a bot in the app. The bot takes the Sta
 | S-SEARCH@1 (4-ply, S-CON@5 weights) | 12/40 | 3.2% | 1.51 / 3.90 / 6.42 s |
 
 Search adds 5 wins over the same weights (+12.5 points) but stays 13 wins below S-CON@4. Time is inside the B-2 budget here (p95 ≤ 5 s, max ≤ 15 s); Windows is not measured.
+- **Default opponent (decision B-7):** `S-CON@4` stays the Home default: strength over the B-5 Pass target. The S2 target is met only by weaker bots; S3 is a working search player that has not yet beaten v4.
 
 ## 4. Decide (designer)
 

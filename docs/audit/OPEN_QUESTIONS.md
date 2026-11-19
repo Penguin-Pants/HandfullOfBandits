@@ -61,7 +61,8 @@ Answers to audit section 5.7 and the S5 input. Results: `docs/prototype/43-solo-
 Open from Plan 2 (doc 43 section 4):
 
 - **B-5 S2 Pass target.** Answered 2026-11-19: voluntary Pass (Resources for the cheapest base Operation) ≤ 5%. Only `S-CON@5` (−0.3 on unspent Resources) meets it (3.0%); it wins fewer games than `S-CON@4` (15.6%). Run diagnostic `voluntaryPassShare` (`experiment-coverage.ts`).
-- **B-6 S3 scope.** Answered 2026-11-19: a 10-seed first check (`dev-s3-search-10`, in progress).
+- **B-6 S3 scope.** Answered 2026-11-19: a 10-seed first check. Done (`dev-s3-search-10`): S-SEARCH@1 12/40, S-CON@5 7/40, S-CON@4 25/40.
+- **B-7 Default State opponent.** Answered 2026-11-19: keep `S-CON@4`, the strongest bot, although it misses the B-5 target. `S-SEARCH@1` stays registered for later tuning.
 
 ## Original questions
 
