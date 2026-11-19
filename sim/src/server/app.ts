@@ -4,7 +4,7 @@ import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import Fastify, { type FastifyInstance } from "fastify";
 import type { UiFocus } from "../annotate/types.ts";
-import type { AnyCommand } from "../engine/core/types.ts";
+import type { AnyCommand, JsonObject } from "../engine/core/types.ts";
 import { getSession } from "../store/repos/sessions.ts";
 import { NOTE_STATUSES, type Anchor, type NoteStatus } from "../store/repos/annotations.ts";
 import { exportCsv, metricsCsv } from "../export/csv.ts";
@@ -74,21 +74,33 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   });
 
   app.get("/api/sessions", () => service.listSessions());
+  app.get("/api/seat-players", () => service.seatPlayers());
   app.post("/api/sessions", (request, reply) => {
-    const b = body<{ dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number> }>(request.body);
+    const b = body<{ dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number>; seats: unknown }>(request.body);
     if (typeof b.dir !== "string" || typeof b.scenarioId !== "string" || typeof b.seed !== "number") throw new ServiceError(400, "dir, scenarioId and seed are required.");
-    const created = service.createSession({ dir: b.dir, scenarioId: b.scenarioId, seed: b.seed, name: typeof b.name === "string" && b.name !== "" ? b.name : b.scenarioId, ...(b.options === undefined ? {} : { options: b.options }) });
+    if (b.seats !== undefined && (typeof b.seats !== "object" || b.seats === null || Array.isArray(b.seats))) throw new ServiceError(400, "seats must be an object of faction to player ID.");
+    const created = service.createSession({
+      dir: b.dir, scenarioId: b.scenarioId, seed: b.seed, name: typeof b.name === "string" && b.name !== "" ? b.name : b.scenarioId,
+      ...(b.options === undefined ? {} : { options: b.options }), ...(b.seats === undefined ? {} : { seats: b.seats as Record<string, unknown> }),
+    });
     return reply.status(201).send(created);
   });
   app.get<{ Params: Id }>("/api/sessions/:id", (request) => {
     const { session, head } = service.session(request.params.id);
-    return { session, head };
+    return { session, head, botToAct: service.botToAct(request.params.id), botExtends: service.botExtends(request.params.id) };
   });
   app.post<{ Params: Id }>("/api/sessions/:id/validate", (request) => service.validateCommand(request.params.id, command(body<{ command: unknown }>(request.body).command)));
   app.post<{ Params: Id }>("/api/sessions/:id/commands", (request) => {
     const b = body<{ command: unknown; headActionId: string; headStateHash?: string }>(request.body);
     if (typeof b.headActionId !== "string") throw new ServiceError(400, "headActionId is required.");
     return service.submit(request.params.id, command(b.command), b.headActionId, b.headStateHash);
+  });
+  app.post<{ Params: Id }>("/api/sessions/:id/bot-step", (request) => {
+    const b = body<{ headActionId: string; headStateHash?: string; partial?: unknown }>(request.body);
+    if (typeof b.headActionId !== "string") throw new ServiceError(400, "headActionId is required.");
+    const partial = b.partial ?? null;
+    if (partial !== null && (typeof partial !== "object" || Array.isArray(partial))) throw new ServiceError(400, "partial must be an object.");
+    return service.botStep(request.params.id, b.headActionId, b.headStateHash, partial as JsonObject | null);
   });
   app.get<{ Params: Id; Querystring: { ref?: string } }>("/api/sessions/:id/rules", (request) => {
     const ref = request.query.ref;

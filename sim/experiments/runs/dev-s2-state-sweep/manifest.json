@@ -1,0 +1,125 @@
+{
+ "schemaVersion": 1,
+ "id": "dev-s2-state-sweep",
+ "stage": "development",
+ "description": "Audit Plan 2 S2 after decision B-5 (voluntary Pass <= 5%): milder spending weights for the two strongest State families, S-CON and S-ADAPT at -0.1 (v6) and -0.2 (v7), against the v4 PKK roster on the dev-s2-state-v5 seeds (7001 to 7004). Compare with v4 and v5 in dev-s2-state-v5.",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "491fe1383dc18851c147abc0cb1c58d1537ea7f00f36f57fe4a6a28558819acb"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 32
+  },
+  "harmLimit": 6,
+  "engineFingerprint": null,
+  "playerFingerprint": null
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-CON@6",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@6",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@6",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@6",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-ADAPT@6",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-ADAPT@6",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-ADAPT@6",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-ADAPT@6",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-CON@7",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@7",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@7",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@7",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-ADAPT@7",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-ADAPT@7",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-ADAPT@7",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-ADAPT@7",
+   "pkk": "P-ADAPT@4"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 7001,
+    "count": 4
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}

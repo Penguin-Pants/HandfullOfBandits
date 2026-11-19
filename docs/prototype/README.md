@@ -52,6 +52,7 @@ Status: Phases 1 and 2 complete. Phases 3a to 3c built; their designer checkpoin
 | [40-thresholds-46-35-alone.md](40-thresholds-46-35-alone.md) | 46/35 with the setup unchanged: 54.2% State; the doc 39 prediction missed |
 | [41-thresholds-43-38-alone.md](41-thresholds-43-38-alone.md) | 43/38 with the setup unchanged: 65.0% State, inside the target |
 | [42-confirm-43-38.md](42-confirm-43-38.md) | 43/38 on 50 fresh seeds per pairing: 68.9% State, above the target |
+| [43-solo-opponent-plan2.md](43-solo-opponent-plan2.md) | Audit Plan 2: bot seat, decision review and C3 to C5 positions done; State retune blocked on forced passes |
 
 ## Method
 

@@ -11,6 +11,7 @@ import { listEntries } from "../store/repos/log-entries.ts";
 import { listMetrics } from "../store/repos/metrics.ts";
 import { loadPackageContent } from "../store/repos/packages.ts";
 import { getSession } from "../store/repos/sessions.ts";
+import { botDecisionsOf } from "../store/repos/bot-decisions.ts";
 import { loadState } from "../store/repos/states.ts";
 
 export const EXPORT_SCHEMA = "coin-sim-export/1";
@@ -58,7 +59,7 @@ export function exportJson(db: Db, options: ExportOptions): CoinSimExport {
     packageHashes.add(s.package_hash);
     const notes = listAnnotations(db, id);
     const debrief = notes.find((n) => n.anchor === "debrief")?.annotation_id ?? null;
-    sessions.push({ ...s, options: parse(s.options), modules: parse(s.modules), excluded_cards: parse(s.excluded_cards), result: parse(s.result), debrief_annotation_id: debrief });
+    sessions.push({ ...s, options: parse(s.options), modules: parse(s.modules), excluded_cards: parse(s.excluded_cards), seats: parse(s.seats), result: parse(s.result), debrief_annotation_id: debrief });
     branches.push(...(db.prepare("SELECT * FROM branches WHERE session_id = ?").all(id) as Row[]));
     const flags: Row[] = [];
     for (const a of db.prepare("SELECT branch_id FROM branches WHERE session_id = ?").all(id) as { branch_id: string }[]) {
@@ -71,6 +72,7 @@ export function exportJson(db: Db, options: ExportOptions): CoinSimExport {
           commands: listCommands(db, action.action_id).map((c) => ({ ...c, payload: parse(c.payload), validation: parse(c.validation), rng_before: parse(c.rng_before) })),
           entries,
           undoneAfterRandom: undo === undefined ? null : ((undo.data as Row)["undoneAfterRandom"] ?? false),
+          botDecisions: botDecisionsOf(db, action.action_id),
         });
         if (action.state_hash_before !== null) hashes.add(action.state_hash_before);
         hashes.add(action.state_hash_after);

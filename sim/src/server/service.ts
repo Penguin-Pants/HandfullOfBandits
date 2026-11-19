@@ -13,8 +13,9 @@ import { coinHandlers } from "../engine/coin/handlers.ts";
 import { activeFaction, legalBoxes, responderBoxes } from "../engine/coin/sequence/ct.ts";
 import { legalOps } from "../engine/coin/stop-rules.ts";
 import { canonicalJson } from "../engine/core/canonical.ts";
-import type { AnyCommand, GameState, JsonValue, Ruleset, ValidationResult } from "../engine/core/types.ts";
-import { createEngine } from "../engine/index.ts";
+import type { AnyCommand, GameState, JsonObject, JsonValue, Ruleset, ValidationResult } from "../engine/core/types.ts";
+import { createEngine, type Engine } from "../engine/index.ts";
+import { botDecisionsOf, saveBotDecisions } from "../store/repos/bot-decisions.ts";
 import { replaySteps } from "../engine/replay.ts";
 import { loadPackage, packageContent, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
 import type { PackageData, PackageIssue } from "../package/validate.ts";
@@ -96,16 +97,52 @@ function summarize(data: PackageData, dir: string, result: LoadResult): PackageS
   };
 }
 
+/** A player a bot seat may name; `recommended` is the Home screen default. */
+export interface SeatPlayer {
+  readonly id: string;
+  readonly faction: string;
+  readonly description: string;
+  readonly recommended?: boolean;
+}
+
+/**
+ * Bot seat players (audit Plan 2 S1). The app entry passes the cli implementation (`cli/seat.ts`);
+ * without it a session cannot name a seat.
+ */
+export interface SeatBots {
+  /** Checked seats; throws RangeError for an unknown player, faction or a full-state control. */
+  check(seats: Readonly<Record<string, unknown>>): Readonly<Record<string, string>>;
+  players(): readonly SeatPlayer[];
+  toAct(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>): string | null;
+  /** A human State decides a joint phase whose PKK part a bot adds. */
+  extendsState(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>): boolean;
+  /** The joint command from a bot State part and a human PKK command; throws RangeError for another command. */
+  join(phase: string, statePart: JsonObject, human: AnyCommand): AnyCommand;
+  step(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>, partial: JsonObject | null): { readonly command: AnyCommand | null; readonly partial: JsonObject | null; readonly options: readonly JsonObject[] | null; readonly records: readonly unknown[] };
+}
+
+/** Bot player ID per faction of a session row; {} for hotseat play. */
+const seatsOf = (row: SessionRow): Readonly<Record<string, string>> => JSON.parse(row.seats) as Record<string, string>;
+
 export class SessionService {
   private readonly engine = createEngine(coinHandlers);
+  private readonly bots: SeatBots | null;
+  /** Records of a bot State part shown to a human PKK, by session and head, until that head moves. */
+  private readonly partials = new Map<string, { readonly phase: string; readonly statePart: JsonObject; readonly records: readonly unknown[] }>();
   private readonly rulesets = new Map<string, { ruleset: Ruleset; data: PackageData }>();
   private readonly checked = new Set<string>();
   readonly db: Db;
   readonly packagesRoot: string;
 
-  constructor(db: Db, packagesRoot: string) {
+  constructor(db: Db, packagesRoot: string, bots: SeatBots | null = null) {
     this.db = db;
     this.packagesRoot = packagesRoot;
+    this.bots = bots;
+  }
+
+  /** Players a bot seat may name; empty when the server has no bots. */
+  seatPlayers(): readonly SeatPlayer[] {
+    return this.bots?.players() ?? [];
   }
 
   /** Package folders `<root>/<packageId>/<version>/` with their validation result. */
@@ -130,7 +167,7 @@ export class SessionService {
   }
 
   /** Start a session: store the package content, run `start`, commit the setup action. */
-  createSession(input: { dir: string; scenarioId: string; seed: number; name: string; options?: Readonly<Record<string, string | number>> }): { sessionId: string; head: Head } {
+  createSession(input: { dir: string; scenarioId: string; seed: number; name: string; options?: Readonly<Record<string, string | number>>; seats?: Readonly<Record<string, unknown>> }): { sessionId: string; head: Head } {
     const loaded = loadPackage(readPackageDir(input.dir));
     if (!loaded.ok) throw new ServiceError(422, "The package has errors.", loaded.issues);
     const scenario = loaded.ruleset.scenarios[input.scenarioId];
@@ -141,6 +178,15 @@ export class SessionService {
     for (const [key, value] of Object.entries(input.options ?? {})) {
       // A Home screen pick arrives as text, so compare as text.
       if (!(declared[key]?.values.map(String).includes(String(value)) ?? false)) throw new ServiceError(400, `Option "${key}" cannot be "${String(value)}".`);
+    }
+    let seats: Readonly<Record<string, string>> = {};
+    if (input.seats !== undefined && Object.keys(input.seats).length > 0) {
+      if (this.bots === null) throw new ServiceError(400, "This server has no bot players.");
+      try {
+        seats = this.bots.check(input.seats);
+      } catch (e) {
+        throw new ServiceError(400, e instanceof Error ? e.message : String(e));
+      }
     }
     backupStore(this.db);
     const m = loaded.data.manifest;
@@ -157,7 +203,7 @@ export class SessionService {
       this.db,
       {
         name: input.name, packageHash: loaded.hash, scenarioId: input.scenarioId, seed: input.seed, options,
-        appVersion: APP_VERSION, codeFingerprint: codeFingerprint(), modules: m.modules, excludedCards: scenario.excludedCards,
+        appVersion: APP_VERSION, codeFingerprint: codeFingerprint(), modules: m.modules, excludedCards: scenario.excludedCards, seats,
       },
       {
         faction: null, cardId: null, campaign: turn.campaign, propagandaRound: turn.propagandaRound, cardIndex: turn.cardIndex, phase: turn.phase, box: null,
@@ -214,6 +260,33 @@ export class SessionService {
    * a stale writer (a second tab) is rejected (11 P2-11 risk).
    */
   submit(sessionId: string, command: AnyCommand, headActionId: string, headStateHash?: string): { actionId: string; head: Head; entries: readonly LogEntryRow[] } {
+    // A seated bot owns its decisions; a human may only add the PKK part to a bot State part it was shown.
+    const { session, head, ruleset } = this.session(sessionId);
+    const seats = seatsOf(session);
+    if (this.bots === null || Object.keys(seats).length === 0) return this.commitCommand(sessionId, command, headActionId, headStateHash);
+    const shown = this.partials.get(`${sessionId}:${head.actionId}`);
+    if (shown === undefined) {
+      const bot = this.bots.toAct(this.engine, ruleset, head.state, seats);
+      if (bot !== null) throw new ServiceError(409, `The ${bot} bot acts now.`);
+      if (this.bots.extendsState(this.engine, ruleset, head.state, seats)) throw new ServiceError(409, "The PKK bot adds its part: send the State part as a bot step.");
+      return this.commitCommand(sessionId, command, headActionId, headStateHash);
+    }
+    // The bot State part is kept as chosen: only the human PKK answers are taken from the command.
+    let joined: AnyCommand;
+    try {
+      joined = this.bots.join(shown.phase, shown.statePart, command);
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(409, e.message);
+      throw e;
+    }
+    const result = this.commitCommand(sessionId, joined, headActionId, headStateHash);
+    saveBotDecisions(this.db, result.actionId, shown.records.map((r) => ({ ...(r as object), humanJoined: true })));
+    this.partials.delete(`${sessionId}:${head.actionId}`);
+    return result;
+  }
+
+  /** Apply a command and commit it as one action (no seat check). */
+  private commitCommand(sessionId: string, command: AnyCommand, headActionId: string, headStateHash?: string): { actionId: string; head: Head; entries: readonly LogEntryRow[] } {
     const { session, head, ruleset } = this.session(sessionId);
     if (session.status === "readOnly") throw new ServiceError(409, "The session is read-only: rules code changed since it was played.");
     this.checkHead(head, headActionId, headStateHash);
@@ -235,6 +308,50 @@ export class SessionService {
     }
     if (t.state.ended !== null) this.db.prepare("UPDATE sessions SET status = 'ended', result = ? WHERE session_id = ?").run(JSON.stringify(t.state.ended), sessionId);
     return { actionId: commit.actionId, head: this.head(sessionId), entries: listEntries(this.db, commit.actionId) };
+  }
+
+  /** True when the human State's part of the open joint phase goes to the PKK bot (`botStep` with `partial`). */
+  botExtends(sessionId: string): boolean {
+    const { session, head, ruleset } = this.session(sessionId);
+    const seats = seatsOf(session);
+    return this.bots !== null && session.status !== "readOnly" && this.bots.extendsState(this.engine, ruleset, head.state, seats);
+  }
+
+  /** The faction whose bot acts at the head, or null (a human acts, no seat, or the session cannot move). */
+  botToAct(sessionId: string): string | null {
+    const { session, head, ruleset } = this.session(sessionId);
+    const seats = seatsOf(session);
+    // The bot may act wherever a human may (submit refuses only read-only sessions; an abandoned one resumes).
+    if (this.bots === null || session.status === "readOnly" || Object.keys(seats).length === 0) return null;
+    return this.bots.toAct(this.engine, ruleset, head.state, seats);
+  }
+
+  /**
+   * Let the seated bot act at the head (audit Plan 2 S1) and commit its command with its decision
+   * records. `partial`: a human State part of Redeploy or Legal Politics for the PKK bot to extend.
+   * When the bot State part needs a human PKK answer, nothing is committed and `partial` returns.
+   */
+  botStep(sessionId: string, headActionId: string, headStateHash: string | undefined, partial: JsonObject | null): { actionId: string | null; partial: JsonObject | null; options: readonly JsonObject[] | null; records: readonly unknown[] } {
+    const { session, head, ruleset } = this.session(sessionId);
+    if (session.status === "readOnly") throw new ServiceError(409, "The session is read-only.");
+    this.checkHead(head, headActionId, headStateHash);
+    const seats = seatsOf(session);
+    if (this.bots === null || Object.keys(seats).length === 0) throw new ServiceError(409, "The session has no bot seat.");
+    let step;
+    try {
+      step = this.bots.step(this.engine, ruleset, head.state, seats, partial);
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(409, e.message);
+      throw new ServiceError(500, `The bot failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    if (step.command === null) {
+      const phase = ruleset.sequence.propagandaPhases[head.state.turn.step] ?? "";
+      this.partials.set(`${sessionId}:${head.actionId}`, { phase, statePart: step.partial ?? {}, records: step.records });
+      return { actionId: null, partial: step.partial, options: step.options, records: step.records };
+    }
+    const committed = this.commitCommand(sessionId, step.command, head.actionId, head.stateHash);
+    saveBotDecisions(this.db, committed.actionId, step.records);
+    return { actionId: committed.actionId, partial: null, options: null, records: step.records };
   }
 
   /**
@@ -275,11 +392,11 @@ export class SessionService {
     return { faction, phase: state.turn.phase, first, other, placed: state.initiative.boxes, boxes, actions, forms: formsFor(ruleset, state) } as unknown as JsonValue;
   }
 
-  history(sessionId: string): { action: ActionRow; entries: HistoryEntry[]; notes: number }[] {
+  history(sessionId: string): { action: ActionRow; entries: HistoryEntry[]; notes: number; bot: unknown[] }[] {
     const { session, ruleset } = this.session(sessionId);
     const notes = listAnnotations(this.db, sessionId);
     const enrich = (e: LogEntryRow): HistoryEntry => ({ ...e, cause: causeOf(ruleset, e.rule_ref), cardTitle: cardTitle(ruleset, (JSON.parse(e.data) as Record<string, unknown>)["card"]) });
-    return branchHistory(this.db, session.current_branch_id).map((action) => ({ action, entries: listEntries(this.db, action.action_id).map(enrich), notes: notes.filter((n) => n.action_id === action.action_id).length }));
+    return branchHistory(this.db, session.current_branch_id).map((action) => ({ action, entries: listEntries(this.db, action.action_id).map(enrich), notes: notes.filter((n) => n.action_id === action.action_id).length, bot: botDecisionsOf(this.db, action.action_id) }));
   }
 
   /** A state's board view in a session's rules (08 s2 state viewer). */

@@ -10,6 +10,7 @@ import { createEngine } from "../engine/index.ts";
 import { loadPackage, withSessionOptions } from "../package/load.ts";
 import { readArchive, readJournal } from "./experiment-artifacts.ts";
 import { derive } from "../engine/coin/derive.ts";
+import { param } from "../engine/core/params.ts";
 import type { GameJob } from "./game-runner.ts";
 
 export interface Mechanic {
@@ -151,8 +152,26 @@ export interface LedgerEntry {
   readonly note: string | null;
 }
 
+export interface PlayerDiagnostics {
+  readonly choices: number;
+  readonly passShare: number;
+  readonly voluntaryPassShare: number;
+  readonly meanUnusedResources: number;
+}
+
+/** Cost of the faction's cheapest base Operation at `s` (State Sweep costs less under OHAL Extended Powers, 8.2). */
+export function cheapestOperation(r: Ruleset, s: GameState, faction: string): number {
+  const p = (id: string): number => param(r, id, "number");
+  if (faction === "state") return Math.min(p("train.costPerSpace"), p("garrison.cost"), p("assault.costPerSpace"), s.tracks["emergencyRule"] === "ohalExtendedPowers" ? p("sweep.costOhalExtended") : p("sweep.costPerSpace"));
+  return Math.min(p("rally.costPerLocation"), p("march.costPerDestination"), p("attack.costPerSpace"), p("coerce.costPerSpace"));
+}
+
 export interface Diagnostics {
   readonly passShare: Readonly<Record<string, number>>;
+  /** Passes with Resources for the cheapest base Operation, per card choice (audit Plan 2 S2, decision B-5). */
+  readonly voluntaryPassShare: Readonly<Record<string, number>>;
+  /** Per player ID: card choices, Pass share, voluntary Pass share, mean unused Resources at the end. */
+  readonly byPlayer: Readonly<Record<string, PlayerDiagnostics>>;
   readonly maxFirstEligibleStreak: number;
   readonly meanUnusedResources: Readonly<Record<string, number>>;
   readonly passStreak3Games: Readonly<Record<string, number>>;
@@ -185,6 +204,8 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
   const jobs = JSON.parse(readFileSync(join(dir, "schedule.json"), "utf8")) as GameJob[];
   const hits = new Map<string, number>();
   const passes: Record<string, number> = {};
+  const voluntary: Record<string, number> = {};
+  const perPlayer: Record<string, { choices: number; passes: number; voluntary: number; unused: number[] }> = {};
   const choices: Record<string, number> = {};
   const unused: Record<string, number[]> = { state: [], pkk: [] };
   const streakGames: Record<string, number> = {};
@@ -221,7 +242,17 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
         const mine = boxes[faction] ?? {};
         mine[box] = (mine[box] ?? 0) + 1;
         boxes[faction] = mine;
-        if (e.command.type === "Pass") { passes[faction] = (passes[faction] ?? 0) + 1; passRun[faction] = (passRun[faction] ?? 0) + 1; } else passRun[faction] = 0;
+        const who = (perPlayer[job.players[faction] ?? faction] ??= { choices: 0, passes: 0, voluntary: 0, unused: [] });
+        who.choices++;
+        if (e.command.type === "Pass") {
+          passes[faction] = (passes[faction] ?? 0) + 1;
+          passRun[faction] = (passRun[faction] ?? 0) + 1;
+          who.passes++;
+          if (Number(s.tracks[`resources.${faction}`]) >= cheapestOperation(r, s, faction)) {
+            voluntary[faction] = (voluntary[faction] ?? 0) + 1;
+            who.voluntary++;
+          }
+        } else passRun[faction] = 0;
         if ((passRun[faction] ?? 0) >= 3) streaked.add(faction);
       }
       for (const entry of x.entries) {
@@ -244,7 +275,11 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
     for (const id of seen) hits.set(id, (hits.get(id) ?? 0) + 1);
     for (const f of streaked) streakGames[f] = (streakGames[f] ?? 0) + 1;
     if (s.ended !== null) {
-      for (const f of ["state", "pkk"]) unused[f]?.push(Number(s.tracks[`resources.${f}`]));
+      for (const f of ["state", "pkk"]) {
+        unused[f]?.push(Number(s.tracks[`resources.${f}`]));
+        const who = job.players[f];
+        if (who !== undefined) (perPlayer[who] ??= { choices: 0, passes: 0, voluntary: 0, unused: [] }).unused.push(Number(s.tracks[`resources.${f}`]));
+      }
       const totals = derive(r, s).totals;
       finals[job.gameId] = { winner: s.ended.winner, support: totals["totalSupport"] ?? 0, legitimacy: Number(s.tracks["legitimacy"]), opposition: totals["totalOpposition"] ?? 0, bases: totals["domesticPkkBases"] ?? 0 };
     }
@@ -261,6 +296,8 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
     ledger,
     diagnostics: {
       passShare: Object.fromEntries(Object.keys(choices).map((f) => [f, (passes[f] ?? 0) / (choices[f] ?? 1)])),
+      voluntaryPassShare: Object.fromEntries(Object.keys(choices).map((f) => [f, (voluntary[f] ?? 0) / (choices[f] ?? 1)])),
+      byPlayer: Object.fromEntries(Object.entries(perPlayer).sort(([a], [b]) => a.localeCompare(b)).map(([id, x]) => [id, { choices: x.choices, passShare: x.passes / Math.max(1, x.choices), voluntaryPassShare: x.voluntary / Math.max(1, x.choices), meanUnusedResources: mean(x.unused) }])),
       maxFirstEligibleStreak: maxStreak,
       meanUnusedResources: { state: mean(unused["state"] ?? []), pkk: mean(unused["pkk"] ?? []) },
       passStreak3Games: streakGames,

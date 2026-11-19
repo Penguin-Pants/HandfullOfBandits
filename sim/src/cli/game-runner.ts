@@ -9,9 +9,9 @@ import type { Engine } from "../engine/index.ts";
 import { checkStandings } from "../engine/coin/victory.ts";
 import { derive } from "../engine/coin/derive.ts";
 import { count, markers, resources } from "../engine/coin/ops/common.ts";
-import { decisionPoint, generateCandidates, type CandidateSet, type DecisionKind } from "./candidates.ts";
+import { decisionPoint, generateCandidates, type Candidate, type CandidateSet, type DecisionKind } from "./candidates.ts";
 import { determinize, observe, SearchRng } from "./player-observation.ts";
-import { isObservationPlayer, TransitionBudget, type Player } from "./players.ts";
+import { isObservationPlayer, TransitionBudget, type Choice, type ObservationPlayer, type Player } from "./players.ts";
 
 export interface GameJob {
   readonly gameId: string;
@@ -50,6 +50,10 @@ export interface DecisionRecord {
   readonly value: number | null;
   readonly components: Readonly<Record<string, number>>;
   readonly topAlternative: { readonly id: string; readonly value: number } | null;
+  /** Search players: the best candidates, best first (audit Plan 2 S4). */
+  readonly ranked?: Choice["ranked"];
+  /** 2-move search: the sampled line after the chosen play (audit Plan 2 S4). */
+  readonly line?: Choice["line"];
   readonly transitions: number;
   readonly ms: number;
   readonly notes: readonly string[];
@@ -123,6 +127,37 @@ function result(r: Ruleset, s: GameState): GameResultRecord | null {
   };
 }
 
+/** Who decides and where: the fields of a DecisionRecord known before the player is asked. */
+export type DecisionCommon = Pick<DecisionRecord, "id" | "kind" | "faction" | "player" | "card" | "phase" | "round" | "firstEligible">;
+
+/**
+ * One decision of an observation player (19 s5): observation, candidates on a determinized
+ * projection, live validation, player choice. Shared by experiment games and session bot seats.
+ * Throws when no candidate survives or the player fails or picks an unknown candidate.
+ */
+export function decideObserved(engine: Engine, ruleset: Ruleset, state: GameState, player: ObservationPlayer, kind: DecisionKind, extra: { stateRedeploy?: JsonObject; stateLegalPolitics?: JsonObject }, rng: SearchRng, common: DecisionCommon, clock: () => number = () => performance.now()): { command: AnyCommand; record: DecisionRecord; candidates: readonly Candidate[] } {
+  const t = clock();
+  const { faction } = common;
+  const observation = observe(state, faction);
+  const projection = determinize(ruleset, observation, new SearchRng(0));
+  const generated = generateCandidates(engine, ruleset, projection, kind, faction, { familyCap: 14, broad: false, ...extra });
+  const live = generated.candidates.filter((c) => engine.validate(ruleset, state, c.command).ok);
+  const base = { ...common, observationHash: canonicalHash(observation), candidates: live.length, families: generated.families, rejectedSample: generated.rejected, liveRejected: generated.candidates.length - live.length };
+  if (live.length === 0) throw new Error(`empty candidate set for ${kind} (${faction}); families ${JSON.stringify(generated.families)}`);
+  const budget = new TransitionBudget(engine, player.spec.budget);
+  let choice;
+  try {
+    choice = player.decide({ decisionId: common.id, kind, faction, observation, candidates: live }, { engine, ruleset, rng, budget });
+  } catch (e) {
+    throw new Error(`player ${player.spec.id} failed at ${kind}: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
+  }
+  const ms = clock() - t;
+  const picked = live.find((c) => c.id === choice.candidateId);
+  if (picked === undefined) throw new Error(`player ${player.spec.id} chose unknown candidate ${choice.candidateId}`);
+  const record: DecisionRecord = { ...base, selected: picked.id, family: picked.family, value: choice.value, components: choice.components, topAlternative: choice.topAlternative, ...(choice.ranked === undefined ? {} : { ranked: choice.ranked }), ...(choice.line === undefined ? {} : { line: choice.line }), transitions: budget.used, ms, notes: choice.notes };
+  return { command: picked.command, record, candidates: live };
+}
+
 /**
  * Play one game and emit journal events. `resolve` maps a player ID to a Player; it must give a
  * player of the seat's faction (no cross-faction substitution, 19 s7). Never throws for game
@@ -149,32 +184,22 @@ export function runGame(engine: Engine, ruleset: Ruleset, scenario: string, job:
     if (player === undefined) throw new GameFailure("failed", `no player for ${faction}`);
     const id = `${job.gameId}:d${String(decisionCount++)}`;
     const common = { id, kind, faction, player: player.spec.id, card: state.deck.currentCard, phase: state.turn.phase, round: state.turn.propagandaRound, firstEligible: state.initiative.firstEligible };
-    const t = clock();
     if (!isObservationPlayer(player)) {
       // Legacy control: reads the live state (labeled unqualified, 19 s4).
+      const t = clock();
       const command = player.act(engine, ruleset, state);
       const elapsed = clock() - t;
       if (limits.decisionMs !== null && elapsed > limits.decisionMs) throw new GameFailure("decisionTimeLimit", `decision ${id} took ${elapsed.toFixed(0)} ms`);
       return { command, record: { ...common, observationHash: null, candidates: 0, families: null, rejectedSample: [], liveRejected: 0, selected: null, family: null, value: null, components: {}, topAlternative: null, transitions: 0, ms: elapsed, notes: ["full-state control"] } };
     }
-    const observation = observe(state, faction);
-    const projection = determinize(ruleset, observation, new SearchRng(0));
-    const generated = generateCandidates(engine, ruleset, projection, kind, faction, { familyCap: 14, broad: false, ...extra });
-    const live = generated.candidates.filter((c) => engine.validate(ruleset, state, c.command).ok);
-    const base = { ...common, observationHash: canonicalHash(observation), candidates: live.length, families: generated.families, rejectedSample: generated.rejected, liveRejected: generated.candidates.length - live.length };
-    if (live.length === 0) throw new GameFailure("failed", `empty candidate set for ${kind} (${faction}); families ${JSON.stringify(generated.families)}`);
-    const budget = new TransitionBudget(engine, player.spec.budget);
-    let choice;
+    let decided;
     try {
-      choice = player.decide({ decisionId: id, kind, faction, observation, candidates: live }, { engine, ruleset, rng: rngs[faction] ?? new SearchRng(0), budget });
+      decided = decideObserved(engine, ruleset, state, player, kind, extra, rngs[faction] ?? new SearchRng(0), common, clock);
     } catch (e) {
-      throw new GameFailure("failed", `player ${player.spec.id} failed at ${kind}: ${e instanceof Error ? e.message : String(e)}`);
+      throw new GameFailure("failed", e instanceof Error ? e.message : String(e));
     }
-    const ms = clock() - t;
-    const picked = live.find((c) => c.id === choice.candidateId);
-    if (picked === undefined) throw new GameFailure("failed", `player ${player.spec.id} chose unknown candidate ${choice.candidateId}`);
-    if (limits.decisionMs !== null && ms > limits.decisionMs) throw new GameFailure("decisionTimeLimit", `decision ${id} took ${ms.toFixed(0)} ms`);
-    return { command: picked.command, record: { ...base, selected: picked.id, family: picked.family, value: choice.value, components: choice.components, topAlternative: choice.topAlternative, transitions: budget.used, ms, notes: choice.notes } };
+    if (limits.decisionMs !== null && decided.record.ms > limits.decisionMs) throw new GameFailure("decisionTimeLimit", `decision ${id} took ${decided.record.ms.toFixed(0)} ms`);
+    return { command: decided.command, record: decided.record };
   };
 
   try {

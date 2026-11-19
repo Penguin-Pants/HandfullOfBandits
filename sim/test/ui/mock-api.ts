@@ -37,6 +37,8 @@ export function mockApi(overrides: Partial<Api> = {}): Api {
     endSession: never,
     undo: never,
     branch: never,
+    seatPlayers: () => Promise.resolve([]),
+    botStep: never,
     rule: never,
     review: () => Promise.resolve([]),
     setNoteStatus: never,

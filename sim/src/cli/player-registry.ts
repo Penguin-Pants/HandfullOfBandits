@@ -5,6 +5,7 @@ import type { FactionId } from "../engine/core/types.ts";
 import { fullStateControl, randomLegal, type Player } from "./players.ts";
 import { probePlayer } from "./strategies/probe.ts";
 import { scenarioAPlayer } from "./strategies/scenario-a.ts";
+import { searchPlayer } from "./strategies/search.ts";
 import { strategyNames } from "./strategies/index.ts";
 
 /** Faction-specific legacy controls (19 s4). */
@@ -21,6 +22,7 @@ export function resolvePlayer(id: string): Player {
   let player: Player | null;
   if (family.endsWith("-RANDOM")) player = randomLegal(faction);
   else if (family.endsWith("-PROBE")) player = probePlayer(faction);
+  else if (family.endsWith("-SEARCH")) player = searchPlayer(family, Number(version));
   else if (control !== undefined && (strategyNames as readonly string[]).includes(control) && (control === "scripted" || (CONTROLS[faction] ?? []).includes(control))) player = fullStateControl(control, faction);
   else player = scenarioAPlayer(family, Number(version));
   if (player?.spec.id !== id || player.spec.faction !== faction || String(player.spec.version) !== version) throw new RangeError(`Unknown player ${id}`);

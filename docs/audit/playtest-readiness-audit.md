@@ -6,7 +6,7 @@
 - **Companion file:** `card-ledger.csv` (193 rows, one per card side, with `path:line` evidence).
 - **Effort scale:** S = one focused pull request with tests. M = two to four pull requests. L = five or more. (Project rule: no time estimates.)
 
-> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. The designer answered every Plan 1 decision on 2026-11-19; see `docs/audit/OPEN_QUESTIONS.md`, section "Decisions (2026-11-19)". Plan 1 is complete ([#127](https://github.com/Penguin-Pants/HandfullOfBandits/pull/127)): D-06 fixes C-5 to C-9 (the Ambush decision is now DD-26). M1: `sim/test/no-crash.test.ts` applies every candidate from 50 random states in C1 to C5 (about 5,400) with no throw. D-03 and M3: a recount found 46 of 160 codes untested (the grep in section 2.5 missed codes made with `at(location, "code", ...)`); `sim/test/rejection-codes.test.ts` tests each one and fails if any engine code has no asserting test. D-04: probe players `S-PROBE@1` and `P-PROBE@1` (`sim/src/cli/strategies/probe.ts`); the generator now offers Strike Collaborators after the Operation (decision 10). In run `sim/experiments/runs/d04-probe` (100 games) each of the 21 non-Victory rows below 10 in `dd25-v4b` reaches 16 or more games. By designer decision, the four Victory outcome rows (V-simultaneous, V-harm-gate, V-tie, V-excess-harm) stay reviewed fixtures: a player cannot force them. Next milestone: Plan 2, S1 (bot seat, bot plays PKK).
+> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. The designer answered every Plan 1 decision on 2026-11-19; see `docs/audit/OPEN_QUESTIONS.md`, section "Decisions (2026-11-19)". Plan 1 is complete ([#127](https://github.com/Penguin-Pants/HandfullOfBandits/pull/127)): D-06 fixes C-5 to C-9 (the Ambush decision is now DD-26). M1: `sim/test/no-crash.test.ts` applies every candidate from 50 random states in C1 to C5 (about 5,400) with no throw. D-03 and M3: a recount found 46 of 160 codes untested (the grep in section 2.5 missed codes made with `at(location, "code", ...)`); `sim/test/rejection-codes.test.ts` tests each one and fails if any engine code has no asserting test. D-04: probe players `S-PROBE@1` and `P-PROBE@1` (`sim/src/cli/strategies/probe.ts`); the generator now offers Strike Collaborators after the Operation (decision 10). In run `sim/experiments/runs/d04-probe` (100 games) each of the 21 non-Victory rows below 10 in `dd25-v4b` reaches 16 or more games. By designer decision, the four Victory outcome rows (V-simultaneous, V-harm-gate, V-tie, V-excess-harm) stay reviewed fixtures: a player cannot force them. Plan 2 ([doc 43](../prototype/43-solo-opponent-plan2.md)): the designer chose the bot as the State. S1, S4 and S5 are done: the Home screen seats a bot (default `S-CON@4`), each bot action shows "Why?" with the top 3 plays and the sampled line, and 10 new C3 to C5 positions pass for every qualified bot. S2 is blocked on a design decision: most State passes are forced by Resources, so the 20% Pass target needs an economy change or a new target (`OPEN_QUESTIONS.md` B-5). S3 is not started (B-6). Next milestone: answer B-5 and B-6.
 
 ---
 
@@ -39,7 +39,7 @@
 
 1. ✅ Done (#120). **Fix D-01** (engine accepts a command and then throws): S.
 2. ✅ Done (#122). **Regenerate the print set from the package** and add a drift check: M. This unblocks physical playtests of C3 to C5.
-3. **Add a bot seat to the app** (bot plays PKK first): M. This is the first playable solo milestone.
+3. ✅ Done (doc 43). **Add a bot seat to the app** (designer chose: bot plays the State first): M. This is the first playable solo milestone.
 4. **Add setup variant overlays** with derived Available pools: M. This removes full package copies for every variant.
 5. **Add a paired run-versus-run compare** to `experiment`: S.
 
@@ -376,6 +376,8 @@ Reasons for PKK first:
 - **Time budget on Windows 11:** anytime search with iterative deepening. Targets: p95 ≤ 5 s, max ≤ 15 s per decision on your reference laptop. The current v4 p95 is 1.3 s on Linux, so there is room.
 
 ### 5.5 Milestones
+
+Status 2026-11-19 (doc 43): S1 ✅, S2 ⚠️ blocked (B-5), S3 not started (B-6), S4 ✅, S5 ✅. The bot plays the State first (designer decision B-1), so S1 seats either faction and S2 targets the default seat.
 
 | ID | Content | Entry points | Effort |
 |:--|:--|:--|:--|

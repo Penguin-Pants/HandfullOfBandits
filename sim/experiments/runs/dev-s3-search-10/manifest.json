@@ -1,0 +1,109 @@
+{
+ "schemaVersion": 1,
+ "id": "dev-s3-search-10",
+ "stage": "development",
+ "description": "Audit Plan 2 S3 first check (decision B-6: 10 seeds): S-SEARCH@1 (4-ply determinized search, S-CON@5 leaf weights) against the v4 PKK roster, with controls S-CON@5 (same weights, v4 search) and S-CON@4 (v4). New development seeds 7101 to 7110, paired by seed.",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "491fe1383dc18851c147abc0cb1c58d1537ea7f00f36f57fe4a6a28558819acb"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 32
+  },
+  "harmLimit": 6,
+  "engineFingerprint": null,
+  "playerFingerprint": null
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-SEARCH@1",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-SEARCH@1",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-SEARCH@1",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-SEARCH@1",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-ADAPT@4"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 7101,
+    "count": 10
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}

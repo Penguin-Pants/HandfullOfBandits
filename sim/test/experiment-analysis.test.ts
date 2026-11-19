@@ -6,7 +6,7 @@ import { archiveExperiment, gameFile, readJournal } from "../src/cli/experiment-
 import { replayExperiment } from "../src/cli/replay.ts";
 import { cpSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { gunzipSync, gzipSync } from "node:zlib";
-import { experimentCoverage, MECHANICS } from "../src/cli/experiment-coverage.ts";
+import { cheapestOperation, experimentCoverage, MECHANICS } from "../src/cli/experiment-coverage.ts";
 import { runExperiment, type GameRecord } from "../src/cli/experiment.ts";
 import { snapshot } from "../src/cli/game-runner.ts";
 import { engine, ruleset } from "./board.ts";
@@ -146,6 +146,20 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
     expect(analyzeExperiment(dir, experimentCoverage(dir))).toEqual(a);
   });
 
+  it("splits Pass into voluntary and forced, per faction and per player (audit Plan 2 S2)", () => {
+    const d = experimentCoverage(dir).diagnostics;
+    for (const f of ["state", "pkk"]) {
+      expect(d.voluntaryPassShare[f]).toBeGreaterThanOrEqual(0);
+      expect(d.voluntaryPassShare[f]).toBeLessThanOrEqual(d.passShare[f] ?? 0);
+    }
+    const ids = Object.keys(d.byPlayer);
+    expect(ids.length).toBeGreaterThan(0);
+    for (const x of Object.values(d.byPlayer)) {
+      expect(x.choices).toBeGreaterThan(0);
+      expect(x.voluntaryPassShare).toBeLessThanOrEqual(x.passShare);
+    }
+  });
+
   it("writes the report once and refuses to overwrite it", () => {
     const { path } = writeAnalysis(dir, experimentCoverage(dir));
     expect(path).toContain("analysis-v2");
@@ -216,5 +230,14 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
     const again = experimentCoverage(copy);
     expect(again.ledger).toEqual(coverage.ledger);
     expect(again.finals).toEqual(coverage.finals);
+  });
+});
+
+describe("cheapest Operation (voluntary Pass, decision B-5)", () => {
+  it("is 2 for the State, 1 under OHAL Extended Powers, and 1 for the PKK", () => {
+    const s = engine.start(ruleset, "full-campaign", 1).state;
+    expect(cheapestOperation(ruleset, s, "state")).toBe(2);
+    expect(cheapestOperation(ruleset, { ...s, tracks: { ...s.tracks, emergencyRule: "ohalExtendedPowers" } }, "state")).toBe(1);
+    expect(cheapestOperation(ruleset, s, "pkk")).toBe(1);
   });
 });

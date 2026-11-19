@@ -1,0 +1,24 @@
+{
+ "artifactVersion": 1,
+ "experimentHash": "1405552ba39e1880599140aab9515f75be66360cbba55134874209eb48d4c56c",
+ "runtime": {
+  "engineFingerprint": "e38a4e6b77c74e066cedf5943f17c34d00c4ff8338c52451680e942c5e3d9fc4",
+  "playerFingerprint": "65bb788c12c8f1ac5971b4ab65a4de62b111a4fc135bf7f756cd013540f8055b",
+  "gitCommit": "a41a26510d93af2b45711737e352bbd0282a8970",
+  "gitDirty": true,
+  "dirtyDigest": "6cd98ebcffd5c868d168640f1d44f1686fdf8f82adbd9380d4617d541d6d9d07",
+  "lockHash": "33090d20003d17479bee4c20384cc1a1fb82887734f5c03626d86cd6a9b14819",
+  "node": "v24.22.3",
+  "platform": "linux-x64",
+  "cpus": 4,
+  "generatorVersion": "cand-7",
+  "observationVersion": 1,
+  "rngVersion": "xoshiro128**-1.1"
+ },
+ "packageHash": "491fe1383dc18851c147abc0cb1c58d1537ea7f00f36f57fe4a6a28558819acb",
+ "scenario": "full-campaign",
+ "conditions": {
+  "default": {}
+ },
+ "started": "2026-11-19T15:11:47.438Z"
+}

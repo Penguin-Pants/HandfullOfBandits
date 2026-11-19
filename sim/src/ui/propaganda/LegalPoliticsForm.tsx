@@ -5,29 +5,31 @@ import type { BoardView } from "../api.ts";
 
 type Answers = Record<string, unknown>;
 
-export function LegalPoliticsForm({ view, onChoose }: { readonly view: BoardView; readonly onChoose: (choice: Answers) => void }) {
+/** `only`: the faction this player answers for (a bot seat answers the other); null for both. */
+export function LegalPoliticsForm({ view, onChoose, only = null }: { readonly view: BoardView; readonly onChoose: (choice: Answers) => void; readonly only?: string | null }) {
+  const mine = (faction: string): boolean => only === null || only === faction;
   const o = view.status.ceasefireStep;
   const [a, setA] = useState<Answers>({});
   const leaves = (faction: string): boolean => (a["leave"] as Answers | undefined)?.[faction] === true;
   const toggle = (label: string, on: boolean, flip: () => void) => <button type="button" aria-pressed={on} onClick={flip}>{label}</button>;
   return (
     <div aria-label="Legal Politics choices">
-      {view.status.closureFiling && (
+      {view.status.closureFiling && mine("state") && (
         <div className="row" aria-label="Closure filing">
           <button type="button" onClick={() => { onChoose({ closureFiling: true, ceasefire: a }); }}>File a closure case</button>
         </div>
       )}
       {(o.accept || o.declared || o.leave) && (
         <div aria-label="Ceasefire step">
-          {o.accept && <div className="row"><strong>State:</strong>{toggle("Accept the ceasefire", a["accept"] === true, () => { setA({ ...a, accept: a["accept"] !== true }); })}</div>}
-          {o.declared && (
+          {o.accept && mine("state") && <div className="row"><strong>State:</strong>{toggle("Accept the ceasefire", a["accept"] === true, () => { setA({ ...a, accept: a["accept"] !== true }); })}</div>}
+          {o.declared && mine("pkk") && (
             <div className="row">
               <strong>PKK:</strong>
               {toggle("Keep the ceasefire declared", a["pkkEnd"] !== true, () => { setA({ ...a, pkkEnd: false }); })}
               {toggle("End the ceasefire (Europe -1)", a["pkkEnd"] === true, () => { setA({ ...a, pkkEnd: true }); })}
             </div>
           )}
-          {o.leave && ["state", "pkk"].map((f) => (
+          {o.leave && ["state", "pkk"].filter(mine).map((f) => (
             <div key={f} className="row"><strong>{f === "state" ? "State:" : "PKK:"}</strong>
               {toggle("Leave Reciprocal Restraint", leaves(f), () => { setA({ ...a, leave: { ...(a["leave"] as Answers | undefined), [f]: !leaves(f) } }); })}
             </div>

@@ -2,7 +2,7 @@
 import type { AnnotationRow } from "../store/repos/annotations.ts";
 import type { CategoryRow } from "../store/repos/categories.ts";
 import type { SessionRow } from "../store/repos/sessions.ts";
-import type { Head, HistoryEntry, PackageSummary } from "../server/service.ts";
+import type { Head, HistoryEntry, PackageSummary, SeatPlayer } from "../server/service.ts";
 import type { BoardView, ForceView, PieceView, SpaceView } from "../server/view.ts";
 import type { ReviewRow } from "../server/review.ts";
 import type { Cell as MetricsCell, MetricsTable } from "../export/metrics.ts";
@@ -13,13 +13,44 @@ import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
 
 export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
+export type { SeatPlayer };
 export type { HistoryEntry, MetricsCell, MetricsTable, ReviewRow, RuleLookup };
 export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
+
+/** One reviewed candidate of a bot decision (cli/seat.ts `ReviewedCandidate`). */
+export interface BotCandidate {
+  readonly id: string;
+  readonly family: string;
+  readonly value: number | null;
+  readonly components: Readonly<Record<string, number>>;
+  readonly command: AnyCommand;
+}
+
+/** The decision record of a bot command (cli/seat.ts `SeatRecord`); the chosen candidate is first in `review`. */
+export interface BotRecord {
+  readonly id: string;
+  readonly kind: string;
+  readonly faction: string;
+  readonly player: string;
+  readonly candidates: number;
+  readonly selected: string | null;
+  readonly value: number | null;
+  readonly notes: readonly string[];
+  readonly ms: number;
+  readonly review: readonly BotCandidate[];
+  /** A bot State part that the human PKK completed: the action holds a human decision too. */
+  readonly humanJoined?: boolean;
+  /** The sampled plays after the chosen one (S4): opponent replies, then the bot's next play. Absent for one-move players. */
+  readonly line?: readonly { readonly faction: string; readonly command: AnyCommand }[];
+}
+
 
 export interface HistoryItem {
   readonly action: ActionRow;
   readonly entries: readonly HistoryEntry[];
   readonly notes: number;
+  /** Bot decisions behind this action; empty or absent for a human action. */
+  readonly bot?: readonly BotRecord[];
 }
 
 export interface ActionChoice extends ActionForm {
@@ -85,9 +116,14 @@ export const metricsQuery = (sessionIds: readonly string[]): string => (sessionI
 export const api = {
   packages: () => call<PackageSummary[]>("GET", "/packages"),
   sessions: () => call<SessionRow[]>("GET", "/sessions"),
-  createSession: (body: { dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number> }) =>
+  createSession: (body: { dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number>; seats?: Record<string, string> }) =>
     call<{ sessionId: string; head: Head }>("POST", "/sessions", body),
-  session: (id: string) => call<{ session: SessionRow; head: Head }>("GET", `/sessions/${id}`),
+  /** The faction whose bot acts at the head, or null (audit Plan 2 S1). */
+  session: (id: string) => call<{ session: SessionRow; head: Head; botToAct?: string | null; botExtends?: boolean }>("GET", `/sessions/${id}`),
+  seatPlayers: () => call<SeatPlayer[]>("GET", "/seat-players"),
+  /** Let the seated bot act. `partial`: a human State part of Redeploy or Legal Politics for a PKK bot. */
+  botStep: (id: string, headActionId: string, headStateHash: string, partial: Record<string, unknown> | null = null) =>
+    call<{ actionId: string | null; partial: Record<string, unknown> | null; options: Record<string, unknown>[] | null; records: BotRecord[] }>("POST", `/sessions/${id}/bot-step`, { headActionId, headStateHash, partial }),
   validate: (id: string, command: AnyCommand) => call<ValidationResult>("POST", `/sessions/${id}/validate`, { command }),
   submit: (id: string, command: AnyCommand, headActionId: string, headStateHash?: string) => call<{ actionId: string; head: Head; entries: LogEntryRow[] }>("POST", `/sessions/${id}/commands`, { command, headActionId, headStateHash }),
   legal: (id: string) => call<LegalChoices>("GET", `/sessions/${id}/legal`),
@@ -97,7 +133,7 @@ export const api = {
   categories: () => call<CategoryRow[]>("GET", "/categories"),
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
-  undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
+  undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean; state?: Head }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
   /** Branch from a past action (P4-04). */
   branch: (id: string, actionId: string, headActionId: string, headStateHash?: string) => call<{ branchId: string; head: Head }>("POST", `/sessions/${id}/branches`, { actionId, headActionId, headStateHash }),
   review: (filter: Readonly<Record<string, string>>) => call<ReviewRow[]>("GET", `/review?${new URLSearchParams(filter).toString()}`),

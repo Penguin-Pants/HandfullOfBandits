@@ -10,7 +10,7 @@ import { decisionPoint, generateCandidates, type DecisionKind } from "./candidat
 import { determinize, observe, SearchRng } from "./player-observation.ts";
 import { isObservationPlayer, TransitionBudget, type Player } from "./players.ts";
 
-export const SUITE_VERSION = 2;
+export const SUITE_VERSION = 3;
 /** Full campaign values from rules 7.1, written here independently of the package. */
 const THRESHOLD: Readonly<Record<string, number>> = { state: 49, pkk: 32 };
 const HARM_LIMIT = 6;
@@ -24,11 +24,13 @@ export function independentStandings(r: Ruleset, s: GameState): Readonly<Record<
   let bases = 0;
   let stateHarm = 0;
   let pkkHarm = 0;
+  let covert = 0;
   for (const space of r.spaces) {
     const here = s.spaces[space.id];
     if (here === undefined) continue;
     const sum = (o: Readonly<Record<string, number>> | undefined): number => Object.values(o ?? {}).reduce((a, n) => a + n, 0);
     stateHarm += sum(here.markers["stateHarm"]);
+    covert += sum(here.markers["covert"]);
     pkkHarm += sum(here.markers["pkkHarm"]) + sum(here.markers["coercion"]);
     if (space.kind !== "domestic") continue;
     const level = here.level ?? 0;
@@ -36,8 +38,9 @@ export function independentStandings(r: Ruleset, s: GameState): Readonly<Record<
     if (level < 0) opposition += space.pop * -level;
     bases += sum(here.pieces["pkkBase"]);
   }
-  const make = (score: number, harm: number, f: string): Standing => ({ score, harm, checkQualifies: score >= (THRESHOLD[f] ?? 0) && harm <= HARM_LIMIT, finalMargin: score - (THRESHOLD[f] ?? 0) - 2 * Math.max(0, harm - HARM_LIMIT) });
-  return { state: make(support + Number(s.tracks["legitimacy"]), stateHarm, "state"), pkk: make(opposition + bases, pkkHarm, "pkk") };
+  // At a check each face-down Covert marker counts as 2 fewer State score and 1 more State Harm (7.2).
+  const make = (score: number, harm: number, f: string, hidden = 0): Standing => ({ score, harm, checkQualifies: score - 2 * hidden >= (THRESHOLD[f] ?? 0) && harm + hidden <= HARM_LIMIT, finalMargin: score - (THRESHOLD[f] ?? 0) - 2 * Math.max(0, harm - HARM_LIMIT) });
+  return { state: make(support + Number(s.tracks["legitimacy"]), stateHarm, "state", covert), pkk: make(opposition + bases, pkkHarm, "pkk") };
 }
 
 // ---------------------------------------------------------------- board builders
@@ -83,6 +86,29 @@ const inCampaign = (campaign: string): Edit => (s, r) => ({ ...s, turn: { ...s.t
 /** The actor answers `card` in `campaign` after the other faction passed. */
 function laterCard(actor: FactionId, campaign: string, card: string): Edit {
   return compose(lastCard(actor), inCampaign(campaign), (s) => ({ ...s, deck: { ...s.deck, currentCard: card } }));
+}
+
+/**
+ * The last Event card of `campaign` (C2 to C5), after the other faction passed: only that
+ * Campaign's Propaganda card is left in its pile, so the next reveal starts a Propaganda round
+ * with a victory check (7.2). Earlier piles are played as dealt; later piles stay as dealt.
+ */
+function checkCard(actor: FactionId, campaign: string, card: string): Edit {
+  const other = actor === "state" ? "pkk" : "state";
+  return (s, r) => {
+    const order = r.scenarios[s.meta.scenarioId]?.campaigns ?? [];
+    const i = order.indexOf(campaign);
+    const propaganda = Object.values(r.cards).find((c) => c.campaign === campaign && c.type === "propaganda")?.id;
+    if (i < 1 || propaganda === undefined) throw new RangeError(`checkCard needs a campaign after C1 with a Propaganda card: ${campaign}`);
+    const played = s.deck.piles.slice(0, i + 1).flat().filter((c) => c !== propaganda && c !== card);
+    return {
+      ...inCampaign(campaign)(s, r),
+      turn: { campaign, propagandaRound: i, cardIndex: 13 * (i + 1) - 1, phase: "card", step: 0 }, // literal-ok: 13 cards per pile (12 + Propaganda)
+      deck: { piles: s.deck.piles.map((p, j) => (j < i ? [] : j === i ? [propaganda] : p.filter((c) => c !== card))), currentCard: card, played, setAside: [] },
+      hands: { state: [], pkk: [] },
+      initiative: { boxes: { [actor]: null, [other]: "pass" }, firstEligible: other, secondEligible: actor, actedThisCard: [other] },
+    };
+  };
 }
 
 /** One marker with a named side (Restraint Broken). */
@@ -185,6 +211,37 @@ export const FIXTURES: readonly Fixture[] = [
   { id: "S-HARM-FINAL", benchmark: "costs and Harm", faction: "state", source: "rules 3.6.1, 6.6, 7.3", kind: "civicAction",
     alternatives: "State -9 with Harm 8, PKK -8, 3 Resources: redressing one State Harm gives -7 and wins; shifting Batman City (Pop 1) ties at -8 and loses on Harm; Bingöl-Tunceli has no Troops, so no Pop 2 shift is eligible", accepts: "State wins at final scoring",
     build: compose(levels({ "western-cities": 2, "diyarbakir-city": 2, elazig: 2, "van-rural": 2, "van-city": 2, bitlis: 2, mus: 2, "agri-igdir": 2, sirnak: -2, siirt: -2, sanliurfa: -2, adiyaman: -2, "diyarbakir-rural": -2, hakkari: -2 }), pieces("mardin", "troops", 0), pieces("bingol-tunceli", "troops", 0), pieces("batman-city", "troops", 1), pieces("batman-city", "police", 1), pieces("hakkari", "pkkBase", 1), marker("agri-igdir", "stateHarm", 4), marker("van-rural", "stateHarm", 4), track("legitimacy", 12), track("resources.state", 3), track("resources.pkk", 0), finalPhase("civicAction")), accept: finalWinner("state") },
+  // C3 to C5 positions with a clear best move (audit Plan 2 S5, section 5.6 item 2).
+  { id: "S-C3-CLEARANCE-DEFEND", benchmark: "preventable loss", faction: "state", source: "rules 4.2.4, 7.2 (Village Clearance, from C3 at OHAL)", kind: "card",
+    alternatives: "PKK 32 with every Base guarded by an Underground Guerrilla, 2 Resources: Sweep or Garrison + Village Clearance in Van Rural, Mardin or Muş shifts Opposition toward Neutral; no DK-044 Event side helps, Assault cannot reach a Base, Train cannot add Civic Action, Pass does nothing", accepts: "PKK does not win at the opening check",
+    build: compose(pkkAtThreshold, pieces("elazig", "guerrilla", 1), track("emergencyRule", "ohal"), track("resources.state", 2), checkCard("state", "C3", "DK-044")), accept: notWon("pkk") },
+  { id: "S-C3-CLEARANCE-HARM", benchmark: "costs and Harm", faction: "state", source: "rules 4.2.4, 4.2.5, 7.2 (Village Clearance and a face-down Covert marker each add State Harm)", kind: "card",
+    alternatives: "State 50 with Harm 6, PKK 32: both qualify and the State margin is higher; Village Clearance (Harm 7, Legitimacy -2 x Pop) or Covert Action (counts as Harm 7 and -2 score) hands the check to the PKK; other plays keep the win", accepts: "State wins at the opening check",
+    build: compose(pkkAtThreshold, track("legitimacy", 20), marker("western-cities", "stateHarm", 3), marker("elazig", "stateHarm", 3), track("emergencyRule", "ohal"), track("resources.state", 10), checkCard("state", "C3", "DK-039")), accept: wins("state") },
+  { id: "S-C3-COVERT-CHECK", benchmark: "scoring", faction: "state", source: "rules 4.2.5, 7.2 (each face-down Covert marker counts -2 at a check)", kind: "card",
+    alternatives: "State 50: Covert Action in Mardin, Şanlıurfa or Van Rural counts 48 at the check; any play that keeps 50 wins", accepts: "State wins at the opening check",
+    build: compose(levels({ "western-cities": 2, "diyarbakir-city": 1, elazig: 2, adiyaman: 2, sanliurfa: 2, "van-rural": 1, "van-city": 1, bitlis: 1, mus: 1, "agri-igdir": 1 }), track("legitimacy", 17), track("resources.state", 10), checkCard("state", "C3", "DK-039")), accept: wins("state") },
+  { id: "S-C4-WIN-CHECK", benchmark: "available win", faction: "state", source: "rules 3.2.1, 3.6.1, 7.2 (C4)", kind: "card",
+    alternatives: "State 47 in C4: Train + Civic Action in Diyarbakır City or Van City (one shift) or Batman City (two shifts) reaches 49; other Operations, Event, Pass do not", accepts: "State wins at the opening check",
+    build: compose(levels({ "western-cities": 2, "diyarbakir-city": 1, elazig: 2, adiyaman: 2, sanliurfa: 2, "van-rural": 1, "van-city": 1, bitlis: 1, mus: 1, "agri-igdir": 1 }), track("legitimacy", 14), track("resources.state", 10), checkCard("state", "C4", "DK-063")), accept: wins("state") },
+  { id: "P-C4-WIN-CHECK", benchmark: "available win", faction: "pkk", source: "rules 3.3.1, 3.6.2, 7.2 (C4)", kind: "card",
+    alternatives: "PKK 30 in C4: Rally + Agitate at the Hakkari or Şırnak Base reaches 32; other Operations, Pass do not", accepts: "PKK wins at the opening check",
+    build: compose(levels({ "van-rural": -2, "van-city": -2, bitlis: -2, mardin: -2, "batman-rural": -2, "batman-city": -2, sanliurfa: -2, sirnak: -1, siirt: -1, mus: -1 }), pieces("hakkari", "pkkBase", 1), track("resources.pkk", 4), checkCard("pkk", "C4", "DK-071")), accept: wins("pkk") },
+  { id: "P-C4-SCORE-BASE", benchmark: "scoring", faction: "pkk", source: "rules 3.3.1, 7.1 (C4: domestic Bases score; external do not)", kind: "card",
+    alternatives: "PKK 31, 1 Resource: a Rally Base in Mardin (domestic) reaches 32; a Base in KDP or Syria (external), other Operations or Pass do not", accepts: "PKK wins at the opening check",
+    build: compose(levels({ "van-rural": -2, "van-city": -2, bitlis: -2, sanliurfa: -2, mus: -2, sirnak: -1, siirt: -2, "bingol-tunceli": -1, hakkari: -2 }), pieces("mardin", "guerrilla", 3), pieces("sirnak", "pkkBase", 2), pieces("hakkari", "pkkBase", 2), pieces("kdp-zone", "guerrilla", 3), track("resources.pkk", 1), checkCard("pkk", "C4", "DK-071")), accept: wins("pkk") },
+  { id: "P-C4-HARM-GATE", benchmark: "costs and Harm", faction: "pkk", source: "rules 1.8, 3.3.4, 7.2 (C4)", kind: "card",
+    alternatives: "PKK at its threshold with Harm 6: Coerce (a seventh Harm) loses the win; other Operations, Pass keep it", accepts: "PKK wins at the opening check (Harm stays at most six)",
+    build: compose(levels({ "van-rural": -2, "van-city": -2, bitlis: -2, mardin: -2, "batman-rural": -2, "batman-city": -2, sanliurfa: -2, sirnak: -2, siirt: -2, hakkari: -2, mus: -1, "western-cities": 2, adiyaman: 1, "bingol-tunceli": 1 }), marker("van-rural", "coercion", 3), marker("mardin", "coercion", 3), pieces("bingol-tunceli", "guerrilla", 2), pieces("adiyaman", "guerrilla", 2), track("resources.pkk", 4), checkCard("pkk", "C4", "DK-071")), accept: wins("pkk") },
+  { id: "S-C5-DEFEND-CHECK", benchmark: "preventable loss", faction: "state", source: "rules 3.2.4, 3.6.1, 7.2 (C5, check before the final round)", kind: "card",
+    alternatives: "PKK at 32 in C5: Assault the exposed Elazığ Base, Civic Action in an Opposition space; other Operations, Pass do not", accepts: "PKK does not win at the opening check",
+    build: compose(pkkAtThreshold, track("resources.state", 10), checkCard("state", "C5", "DK-083")), accept: notWon("pkk") },
+  { id: "P-C5-DEFEND-CHECK", benchmark: "preventable loss", faction: "pkk", source: "rules 3.3.4, 7.2 (C5, check before the final round)", kind: "card",
+    alternatives: "State 49 in C5: Coerce Şanlıurfa or Adıyaman, or Rally + Agitate in Adıyaman or Bitlis, drops it below; other Operations or Pass do not", accepts: "State does not win at the opening check",
+    build: compose(levels({ "western-cities": 2, "diyarbakir-city": 2, elazig: 2, adiyaman: 2, sanliurfa: 2, "van-rural": 0, "van-city": 1, bitlis: 1, mus: 1, "agri-igdir": 2 }), pieces("sanliurfa", "guerrilla", 1), pieces("adiyaman", "guerrilla", 1), track("legitimacy", 12), track("resources.pkk", 3), checkCard("pkk", "C5", "DK-083")), accept: notWon("state") },
+  { id: "P-C3-BREACH-DEFEND", benchmark: "preventable loss", faction: "pkk", source: "rules 3.3.4, 7.2, 8.6 (a breach of Reciprocal Restraint is legal and costs Europe)", kind: "card",
+    alternatives: "State 49 under Reciprocal Restraint, 1 Resource: Coerce Adıyaman (a breach: Europe -1) drops it below; Rally + Agitate is unaffordable; keeping the ceasefire with other plays or Pass loses", accepts: "State does not win at the opening check",
+    build: compose(levels({ "western-cities": 2, "diyarbakir-city": 2, elazig: 2, adiyaman: 2, sanliurfa: 2, "van-rural": 0, "van-city": 1, bitlis: 1, mus: 1, "agri-igdir": 2 }), pieces("sanliurfa", "guerrilla", 1), pieces("adiyaman", "guerrilla", 1), track("legitimacy", 12), track("resources.pkk", 1), track("ceasefire", "reciprocalRestraint"), track("europe", 3), checkCard("pkk", "C3", "DK-044")), accept: notWon("state") },
   // Procedures: any legal resolution passes; failures and illegal submissions do not.
   { id: "S-PROC-EVENT", benchmark: "procedures", faction: "state", source: "rules 5.1 (choices, free action plan)", kind: "card", alternatives: "Event sides with questions, Operations, Pass", accepts: "a legal command", build: compose(lastCard("state"), (s) => ({ ...s, deck: { ...s.deck, currentCard: "DK-002" }, initiative: { ...s.initiative, firstEligible: "state", secondEligible: "pkk", actedThisCard: [], boxes: { state: null, pkk: null } } })), accept: legal },
   { id: "P-PROC-ARGK", benchmark: "procedures", faction: "pkk", source: "rules 5.3", kind: "pivotal", alternatives: "Play ARGK with placements or decline", accepts: "a legal command",
