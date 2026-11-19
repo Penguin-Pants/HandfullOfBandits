@@ -8,6 +8,7 @@ import { decisionPoint, generateCandidates, type DecisionKind } from "../src/cli
 import { SearchRng } from "../src/cli/player-observation.ts";
 import type { AnyCommand, FactionId, GameState, JsonObject, Ruleset } from "../src/engine/core/types.ts";
 import { seatBots } from "../src/main.ts";
+import { joinStatePart, seatStep } from "../src/cli/seat.ts";
 import { buildApp } from "../src/server/app.ts";
 import { ServiceError, SessionService } from "../src/server/service.ts";
 import { openStore } from "../src/store/migrate.ts";
@@ -197,4 +198,102 @@ describe("bot seat: decision review (audit Plan 2 S4)", () => {
     const last = service.history(sessionId).at(-1);
     expect(last?.bot).toEqual(step.records);
   }, 120_000);
+});
+
+describe("bot seat: joint phases (PR 128 review)", () => {
+  /** Drive a State-bot session until the bot shows a State part of `phase` to the human PKK. */
+  function toPartial(phase: string, seed: number): { sessionId: string; head: ReturnType<typeof service.session>["head"]; partial: JsonObject; options: readonly JsonObject[] | null } {
+    const created = start({ state: "S-RANDOM@1" }, seed);
+    const { sessionId } = created;
+    const rng = new SearchRng(seed);
+    let head = created.head;
+    for (let i = 0; i < 3000 && head.state.ended === null; i++) {
+      const { ruleset } = service.session(sessionId);
+      const point = decisionPoint(engine, ruleset, head.state);
+      if (service.botToAct(sessionId) !== null) {
+        const step = service.botStep(sessionId, head.actionId, head.stateHash, null);
+        const now = service.session(sessionId).head;
+        if (step.actionId === null && ruleset.sequence.propagandaPhases[now.state.turn.step] === phase) return { sessionId, head: now, partial: step.partial ?? {}, options: step.options };
+        if (step.actionId === null) head = service.submit(sessionId, { type: "Advance" }, head.actionId, head.stateHash).head;
+        else head = now;
+        continue;
+      }
+      if (point.kind === "none") throw new Error(point.reason);
+      const command = point.kind === "auto" ? point.command : human(ruleset, head.state, point.kind, point.faction, rng, point.kind === "legalPoliticsPkk" ? { stateLegalPolitics: {} } : {});
+      head = service.submit(sessionId, command, head.actionId, head.stateHash).head;
+    }
+    throw new Error(`no ${phase} partial`);
+  }
+
+  it("keeps the bot State part of Redeploy when the human PKK sends Advance, and refuses another command", () => {
+    const { sessionId, head, partial } = toPartial("redeploy", 21);
+    expect(() => service.submit(sessionId, { type: "Pass", faction: "pkk" }, head.actionId, head.stateHash)).toThrow("Add the PKK part of redeploy");
+    const done = service.submit(sessionId, { type: "Advance" }, head.actionId, head.stateHash);
+    const committed = JSON.parse((db.prepare("SELECT payload FROM commands WHERE action_id = ?").get(done.actionId) as { payload: string }).payload) as { type: string; choice: JsonObject };
+    expect(committed.type).toBe("PropagandaChoice");
+    expect(committed.choice["troops"]).toEqual(partial["troops"] ?? []);
+    expect(committed.choice["police"]).toEqual(partial["police"] ?? []);
+    expect(committed.choice["guerrilla"]).toEqual([]);
+    const records = service.history(sessionId).find((h) => h.action.action_id === done.actionId)?.bot as { humanJoined?: boolean }[];
+    expect(records.length).toBeGreaterThan(0);
+    expect(records.every((r) => r.humanJoined === true)).toBe(true);
+  }, 240_000);
+
+  it("always lets the human PKK route its own Redeploy after a State bot part", () => {
+    const { ruleset } = service.session(start({}).sessionId);
+    const s = engine.start(ruleset, "full-campaign", 1).state;
+    const redeploy = { ...s, turn: { ...s.turn, phase: "propaganda", step: ruleset.sequence.propagandaPhases.indexOf("redeploy") } };
+    const step = seatStep(engine, ruleset, redeploy, { state: "S-RANDOM@1" }, null);
+    expect(step.command).toBeNull();
+    expect(step.partial).not.toBeNull();
+    expect(step.options).toBeNull();
+  });
+
+  it("joins only the PKK answers from the human command", () => {
+    expect(joinStatePart("legalPolitics", { closureFiling: true, ceasefire: { accept: true } }, { type: "PropagandaChoice", phase: "legalPolitics", choice: { closureFiling: false, ceasefire: { accept: false, leave: { pkk: true, state: true } } } }))
+      .toEqual({ type: "PropagandaChoice", phase: "legalPolitics", choice: { closureFiling: true, ceasefire: { accept: true, leave: { pkk: true } } } });
+    expect(joinStatePart("legalPolitics", {}, { type: "Advance" })).toEqual({ type: "Advance" });
+    expect(joinStatePart("legalPolitics", {}, { type: "PropagandaChoice", phase: "legalPolitics", choice: { ceasefire: { pkkEnd: true } } })).toEqual({ type: "PropagandaChoice", phase: "legalPolitics", choice: { ceasefire: { pkkEnd: true } } });
+    expect(joinStatePart("redeploy", { troops: [{ from: "a", to: "b", count: 1 }], police: [] }, { type: "PropagandaChoice", phase: "redeploy", choice: { troops: [{ from: "x", to: "y", count: 9 }], guerrilla: [{ from: "c", to: "d", count: 2 }] } }))
+      .toEqual({ type: "PropagandaChoice", phase: "redeploy", choice: { troops: [{ from: "a", to: "b", count: 1 }], police: [], guerrilla: [{ from: "c", to: "d", count: 2 }] } });
+    expect(() => joinStatePart("redeploy", {}, { type: "PropagandaChoice", phase: "legalPolitics", choice: {} })).toThrow(RangeError);
+  });
+
+  it("sends a human State part to the PKK bot only when that decision is open", () => {
+    const created = start({ pkk: "P-RANDOM@1" }, 31);
+    const { sessionId } = created;
+    const rng = new SearchRng(31);
+    let head = created.head;
+    let joint = 0;
+    let autoLegal = 0;
+    for (let i = 0; i < 3000 && head.state.ended === null; i++) {
+      const { ruleset } = service.session(sessionId);
+      const point = decisionPoint(engine, ruleset, head.state);
+      const phase = ruleset.sequence.propagandaPhases[head.state.turn.step];
+      if (head.state.turn.phase === "propaganda" && phase === "legalPolitics" && point.kind === "auto") {
+        autoLegal++;
+        expect(service.botExtends(sessionId)).toBe(false);
+      }
+      if (service.botToAct(sessionId) !== null) {
+        service.botStep(sessionId, head.actionId, head.stateHash, null);
+        head = service.session(sessionId).head;
+        continue;
+      }
+      if (point.kind === "redeployState" || point.kind === "legalPoliticsState") {
+        expect(service.botExtends(sessionId)).toBe(true);
+        // A human State command sent straight to submit would skip the PKK bot.
+        expect(() => service.submit(sessionId, { type: "Advance" }, head.actionId, head.stateHash)).toThrow("The PKK bot adds its part");
+        joint++;
+        const own = human(ruleset, head.state, point.kind, "state", rng);
+        service.botStep(sessionId, head.actionId, head.stateHash, (own["choice"] ?? {}) as JsonObject);
+        head = service.session(sessionId).head;
+        continue;
+      }
+      if (point.kind === "none") throw new Error(point.reason);
+      const command = point.kind === "auto" ? point.command : human(ruleset, head.state, point.kind, point.faction, rng);
+      head = service.submit(sessionId, command, head.actionId, head.stateHash).head;
+    }
+    expect(joint).toBeGreaterThan(0);
+    expect(autoLegal).toBeGreaterThan(0);
+  }, 240_000);
 });

@@ -34,6 +34,8 @@ export interface SeatStep {
   readonly command: AnyCommand | null;
   /** The bot's State part of a joint choice, for the human PKK to extend. */
   readonly partial: JsonObject | null;
+  /** Legal Politics: every joined choice the human PKK may submit (rules 8.6); null for Redeploy. */
+  readonly options: readonly JsonObject[] | null;
   readonly records: readonly SeatRecord[];
 }
 
@@ -72,6 +74,31 @@ export function seatPlayers(): { readonly id: string; readonly faction: FactionI
     const id = `${f.id}@${String(f.version)}`;
     return { id, faction: f.faction, description: f.description, recommended: id === RECOMMENDED_SEAT };
   });
+}
+
+/** True when a human State decides a joint phase whose PKK part a bot adds (send it to `seatStep` as `partial`). */
+export function botExtendsState(engine: Engine, ruleset: Ruleset, state: GameState, seats: Seats): boolean {
+  const point = decisionPoint(engine, ruleset, state);
+  return JOINT_STATE.has(point.kind as DecisionKind) && seats["state"] === undefined && seats["pkk"] !== undefined;
+}
+
+const obj = (v: unknown): JsonObject => (typeof v === "object" && v !== null && !Array.isArray(v) ? (v as JsonObject) : {});
+
+/**
+ * The joint command from the bot State part and a human PKK command of the same phase (Advance:
+ * no PKK choice). Only PKK answers are taken from the human: Guerrilla routes, ending a Declared
+ * ceasefire, leaving Reciprocal Restraint (rules 6.8, 8.6). Throws RangeError for another command.
+ */
+export function joinStatePart(phase: string, part: JsonObject, human: AnyCommand): AnyCommand {
+  if (human.type !== "Advance" && !(human.type === "PropagandaChoice" && human["phase"] === phase)) throw new RangeError(`Add the PKK part of ${phase}, or Advance for none.`);
+  const pkk = obj(human["choice"]);
+  if (phase === "redeploy") return { type: "PropagandaChoice", phase, choice: { troops: part["troops"] ?? [], police: part["police"] ?? [], guerrilla: pkk["guerrilla"] ?? [] } };
+  const state = obj(part["ceasefire"]);
+  const mine = obj(pkk["ceasefire"]);
+  const leave = { ...obj(state["leave"]), ...(obj(mine["leave"])["pkk"] === true ? { pkk: true } : {}) };
+  const ceasefire = { ...state, ...(mine["pkkEnd"] === true ? { pkkEnd: true } : {}), ...(Object.keys(leave).length > 0 ? { leave } : {}) };
+  const choice = { ...part, ...(Object.keys(ceasefire).length > 0 ? { ceasefire } : {}) };
+  return Object.keys(choice).length === 0 ? { type: "Advance" } : { type: "PropagandaChoice", phase, choice };
 }
 
 /** The faction whose bot must act now, or null (a human acts, or no player decision is open). */
@@ -125,20 +152,22 @@ export function seatStep(engine: Engine, ruleset: Ruleset, state: GameState, sea
   if (partial !== null) {
     if (!JOINT_STATE.has(point.kind) || seats["state"] !== undefined) throw new RangeError("Only a human State part of Redeploy or Legal Politics takes a partial choice.");
     const second = decide(pkkKind, "pkk", statePart(point.kind, partial));
-    return { command: second.command, partial: null, records: [second.record] };
+    return { command: second.command, partial: null, options: null, records: [second.record] };
   }
   if (!JOINT_STATE.has(point.kind)) {
     const d = decide(point.kind, point.faction, point.kind === "legalPoliticsPkk" ? { stateLegalPolitics: {} } : {});
-    return { command: d.command, partial: null, records: [d.record] };
+    return { command: d.command, partial: null, options: null, records: [d.record] };
   }
   const first = decide(point.kind, "state", {});
   const extra = statePart(point.kind, choiceOf(first.command));
   if (seats["pkk"] !== undefined) {
     const second = decide(pkkKind, "pkk", extra);
-    return { command: second.command, partial: null, records: [first.record, second.record] };
+    return { command: second.command, partial: null, options: null, records: [first.record, second.record] };
   }
-  // A human PKK with one possible answer has nothing to add.
+  // A human PKK always routes its own Redeploy (generated routes are a pruned sample). Legal
+  // Politics answers are few and complete (pkkLegalChoices): with one, the human has nothing to add.
+  if (point.kind === "redeployState") return { command: null, partial: choiceOf(first.command), options: null, records: [first.record] };
   const pkkOptions = generateCandidates(engine, ruleset, state, pkkKind, "pkk", { familyCap: 14, broad: false, ...extra }).candidates;
-  if (pkkOptions.length <= 1) return { command: pkkOptions[0]?.command ?? first.command, partial: null, records: [first.record] };
-  return { command: null, partial: choiceOf(first.command), records: [first.record] };
+  if (pkkOptions.length <= 1) return { command: pkkOptions[0]?.command ?? first.command, partial: null, options: null, records: [first.record] };
+  return { command: null, partial: choiceOf(first.command), options: pkkOptions.map((c) => choiceOf(c.command)), records: [first.record] };
 }

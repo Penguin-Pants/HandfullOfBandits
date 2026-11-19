@@ -3,13 +3,13 @@
 import { fileURLToPath } from "node:url";
 import { buildApp } from "./server/app.ts";
 import { SessionService, type SeatBots } from "./server/service.ts";
-import { botToAct, checkSeats, seatPlayers, seatStep } from "./cli/seat.ts";
+import { botExtendsState, botToAct, checkSeats, joinStatePart, seatPlayers, seatStep } from "./cli/seat.ts";
 import { openStore } from "./store/migrate.ts";
 
 export const appName = "handful-of-bandits-sim";
 
 /** Bot seats for play sessions (audit Plan 2 S1). */
-export const seatBots: SeatBots = { check: checkSeats, players: seatPlayers, toAct: botToAct, step: seatStep };
+export const seatBots: SeatBots = { check: checkSeats, players: seatPlayers, toAct: botToAct, extendsState: botExtendsState, join: joinStatePart, step: seatStep };
 
 if (import.meta.main) {
   const db = openStore(process.env["HOB_DB"] ?? fileURLToPath(new URL("../playtest.sqlite", import.meta.url)));

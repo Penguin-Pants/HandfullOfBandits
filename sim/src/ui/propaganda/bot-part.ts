@@ -1,19 +1,17 @@
 // Joint Propaganda choices with a bot seat (audit Plan 2 S1). Redeploy and Legal Politics take one
 // command, State part first (rules 6.8, 8.6). When a bot holds the State seat, its part arrives
-// first and the human PKK answers are added here; the server checks the joined command.
+// first; the server joins it with the human PKK answers (cli/seat.ts `joinStatePart`).
 
 type Choice = Readonly<Record<string, unknown>>;
 
 const obj = (v: unknown): Choice => (typeof v === "object" && v !== null && !Array.isArray(v) ? (v as Choice) : {});
 
-/** The bot State part joined with the human PKK answers of the same phase. */
-export function withStatePart(phase: string, statePart: Choice, pkk: Choice): Choice {
-  if (phase === "redeploy") return { ...pkk, troops: statePart["troops"] ?? [], police: statePart["police"] ?? [] };
-  const state = obj(statePart["ceasefire"]);
-  const mine = obj(pkk["ceasefire"]);
-  const leave = { ...obj(state["leave"]), ...(obj(mine["leave"])["pkk"] === true ? { pkk: true } : {}) };
-  const ceasefire = { ...state, ...(mine["pkkEnd"] === true ? { pkkEnd: true } : {}), ...(Object.keys(leave).length > 0 ? { leave } : {}) };
-  return { ...statePart, ...(Object.keys(ceasefire).length > 0 ? { ceasefire } : {}) };
+/** One Legal Politics choice the human PKK may submit, in plain words (rules 8.6). */
+export function pkkOptionText(option: Choice): string {
+  const c = obj(option["ceasefire"]);
+  if (c["pkkEnd"] === true) return "End the ceasefire (Europe -1)";
+  if (obj(c["leave"])["pkk"] === true) return "Leave Reciprocal Restraint (Europe -1)";
+  return "No PKK choice";
 }
 
 /** The State part in plain words, for the human PKK. */

@@ -54,9 +54,6 @@ function LastAction({ item, view, onRule }: { readonly item: HistoryItem | undef
   );
 }
 
-/** Joint Propaganda phases: one command, State part first (rules 6.8, 8.6). */
-const JOINT = new Set(["redeploy", "legalPolitics"]);
-
 /** Bot player ID per faction from the session row; {} for hotseat play. */
 function seatsOf(session: SessionRow): Readonly<Record<string, string>> {
   try {
@@ -77,10 +74,11 @@ function humanOf(seats: Readonly<Record<string, string>>): string | null {
 const SPACE_INSPECTOR: boolean = false;
 
 export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
-  const [data, setData] = useState<{ session: SessionRow; head: Head; botToAct?: string | null } | null>(null);
+  const [data, setData] = useState<{ session: SessionRow; head: Head; botToAct?: string | null; botExtends?: boolean } | null>(null);
   // Bot seat (audit Plan 2 S1): the bot State part a human PKK extends, the head the bot last
   // stepped from (one request per head) and a pause while Undo walks back past bot actions.
   const [statePart, setStatePart] = useState<Readonly<Record<string, unknown>> | null>(null);
+  const [pkkOptions, setPkkOptions] = useState<readonly Readonly<Record<string, unknown>>[] | null>(null);
   const [botError, setBotError] = useState<string | null>(null);
   const stepped = useRef<string | null>(null);
   const undoing = useRef(false);
@@ -134,6 +132,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       if (prev === null || prev.actionId !== s.head.actionId) {
         setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
         setStatePart(null);
+        setPkkOptions(null);
       }
       shown.current = s.head;
       setData(s);
@@ -156,7 +155,10 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     stepped.current = data.head.actionId;
     setBotError(null);
     api.botStep(sessionId, data.head.actionId, data.head.stateHash).then((r) => {
-      if (r.partial !== null) setStatePart(r.partial);
+      if (r.partial !== null) {
+        setStatePart(r.partial);
+        setPkkOptions(r.options);
+      }
       else void load();
     }).catch((e: unknown) => {
       stepped.current = null;
@@ -168,11 +170,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     if (data === null) return;
     setError(null);
     try {
-      const seats = seatsOf(data.session);
-      const status = data.head.view.status;
-      const phase = status.phase === "propaganda" ? (status.propagandaPhases[status.propagandaStep] ?? "") : "";
       // A human State part of a joint phase goes to the PKK bot, which extends and commits it.
-      const toPkkBot = JOINT.has(phase) && seats["pkk"] !== undefined && seats["state"] === undefined && (command.type === "PropagandaChoice" || command.type === "Advance");
+      const toPkkBot = data.botExtends === true && (command.type === "PropagandaChoice" || command.type === "Advance");
       const result = toPkkBot
         ? await api.botStep(sessionId, data.head.actionId, data.head.stateHash, command.type === "Advance" ? {} : ((command["choice"] ?? {}) as Record<string, unknown>))
         : await api.submit(sessionId, command, data.head.actionId, data.head.stateHash);
@@ -223,7 +222,9 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const undo = async (): Promise<void> => {
     // With a bot seat, Undo goes back past the bot's actions to the human's last action.
     const committed = history.filter((h) => h.action.status !== "undone").reverse();
-    let steps = humanOf(seatsOf(data.session)) === null ? 1 : committed.findIndex((h) => (h.bot ?? []).length === 0) + 1;
+    // A bot-only action has bot records and no human part; a joint action the human completed stops the walk.
+    const botOnly = (h: HistoryItem): boolean => (h.bot ?? []).length > 0 && !(h.bot ?? []).some((r) => r.humanJoined === true);
+    let steps = humanOf(seatsOf(data.session)) === null ? 1 : committed.findIndex((h) => !botOnly(h)) + 1;
     if (steps <= 0) steps = committed.length;
     if (!window.confirm(steps > 1 ? `Undo your last action and the ${String(steps - 1)} bot action(s) after it?` : "Undo the last action?")) return;
     setError(null);
@@ -345,7 +346,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           {botTurn ? null : view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} api={api} sessionId={sessionId} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onTargets={setEventTargets} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} /> : view.status.phase === "propaganda" ? (
             <>
               {signalEnabled() && <SignalPrompt api={api} sessionId={sessionId} view={view} headActionId={data.head.actionId} pathIds={pathIds} focus={focusStore.get()} />}
-              <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} human={human} statePart={statePart} />
+              <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} human={human} statePart={statePart} pkkOptions={pkkOptions} />
             </>
           ) : (
             <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />

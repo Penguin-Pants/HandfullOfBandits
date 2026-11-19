@@ -114,7 +114,11 @@ export interface SeatBots {
   check(seats: Readonly<Record<string, unknown>>): Readonly<Record<string, string>>;
   players(): readonly SeatPlayer[];
   toAct(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>): string | null;
-  step(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>, partial: JsonObject | null): { readonly command: AnyCommand | null; readonly partial: JsonObject | null; readonly records: readonly unknown[] };
+  /** A human State decides a joint phase whose PKK part a bot adds. */
+  extendsState(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>): boolean;
+  /** The joint command from a bot State part and a human PKK command; throws RangeError for another command. */
+  join(phase: string, statePart: JsonObject, human: AnyCommand): AnyCommand;
+  step(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>, partial: JsonObject | null): { readonly command: AnyCommand | null; readonly partial: JsonObject | null; readonly options: readonly JsonObject[] | null; readonly records: readonly unknown[] };
 }
 
 /** Bot player ID per faction of a session row; {} for hotseat play. */
@@ -124,7 +128,7 @@ export class SessionService {
   private readonly engine = createEngine(coinHandlers);
   private readonly bots: SeatBots | null;
   /** Records of a bot State part shown to a human PKK, by session and head, until that head moves. */
-  private readonly partials = new Map<string, readonly unknown[]>();
+  private readonly partials = new Map<string, { readonly phase: string; readonly statePart: JsonObject; readonly records: readonly unknown[] }>();
   private readonly rulesets = new Map<string, { ruleset: Ruleset; data: PackageData }>();
   private readonly checked = new Set<string>();
   readonly db: Db;
@@ -259,11 +263,26 @@ export class SessionService {
     // A seated bot owns its decisions; a human may only add the PKK part to a bot State part it was shown.
     const { session, head, ruleset } = this.session(sessionId);
     const seats = seatsOf(session);
-    if (this.bots !== null && Object.keys(seats).length > 0 && !this.partials.has(`${sessionId}:${head.actionId}`)) {
+    if (this.bots === null || Object.keys(seats).length === 0) return this.commitCommand(sessionId, command, headActionId, headStateHash);
+    const shown = this.partials.get(`${sessionId}:${head.actionId}`);
+    if (shown === undefined) {
       const bot = this.bots.toAct(this.engine, ruleset, head.state, seats);
       if (bot !== null) throw new ServiceError(409, `The ${bot} bot acts now.`);
+      if (this.bots.extendsState(this.engine, ruleset, head.state, seats)) throw new ServiceError(409, "The PKK bot adds its part: send the State part as a bot step.");
+      return this.commitCommand(sessionId, command, headActionId, headStateHash);
     }
-    return this.commitCommand(sessionId, command, headActionId, headStateHash);
+    // The bot State part is kept as chosen: only the human PKK answers are taken from the command.
+    let joined: AnyCommand;
+    try {
+      joined = this.bots.join(shown.phase, shown.statePart, command);
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(409, e.message);
+      throw e;
+    }
+    const result = this.commitCommand(sessionId, joined, headActionId, headStateHash);
+    saveBotDecisions(this.db, result.actionId, shown.records.map((r) => ({ ...(r as object), humanJoined: true })));
+    this.partials.delete(`${sessionId}:${head.actionId}`);
+    return result;
   }
 
   /** Apply a command and commit it as one action (no seat check). */
@@ -284,14 +303,18 @@ export class SessionService {
       status: t.state.pending?.resume?.kind === "operation" ? "pending" : "committed", commands: [{ type: command.type, payload: command, validation: result.validation, rngBefore: head.state.rng }],
       entries: t.logEntries.map((e) => ({ ...e, text: entryText(e) })),
     });
-    const shown = this.partials.get(`${sessionId}:${head.actionId}`);
-    if (shown !== undefined) saveBotDecisions(this.db, commit.actionId, shown);
-    this.partials.delete(`${sessionId}:${head.actionId}`);
     for (const e of t.logEntries.filter((x) => x.kind === "RoundMetrics")) {
       saveMetrics(this.db, { sessionId, branchId: session.current_branch_id, round: Number(e.data["round"]), actionId: commit.actionId, data: e.data });
     }
     if (t.state.ended !== null) this.db.prepare("UPDATE sessions SET status = 'ended', result = ? WHERE session_id = ?").run(JSON.stringify(t.state.ended), sessionId);
     return { actionId: commit.actionId, head: this.head(sessionId), entries: listEntries(this.db, commit.actionId) };
+  }
+
+  /** True when the human State's part of the open joint phase goes to the PKK bot (`botStep` with `partial`). */
+  botExtends(sessionId: string): boolean {
+    const { session, head, ruleset } = this.session(sessionId);
+    const seats = seatsOf(session);
+    return this.bots !== null && session.status === "active" && this.bots.extendsState(this.engine, ruleset, head.state, seats);
   }
 
   /** The faction whose bot acts at the head, or null (a human acts, no seat, or the session cannot move). */
@@ -307,7 +330,7 @@ export class SessionService {
    * records. `partial`: a human State part of Redeploy or Legal Politics for the PKK bot to extend.
    * When the bot State part needs a human PKK answer, nothing is committed and `partial` returns.
    */
-  botStep(sessionId: string, headActionId: string, headStateHash: string | undefined, partial: JsonObject | null): { actionId: string | null; partial: JsonObject | null; records: readonly unknown[] } {
+  botStep(sessionId: string, headActionId: string, headStateHash: string | undefined, partial: JsonObject | null): { actionId: string | null; partial: JsonObject | null; options: readonly JsonObject[] | null; records: readonly unknown[] } {
     const { session, head, ruleset } = this.session(sessionId);
     if (session.status !== "active") throw new ServiceError(409, `The session is ${session.status}.`);
     this.checkHead(head, headActionId, headStateHash);
@@ -321,12 +344,13 @@ export class SessionService {
       throw new ServiceError(500, `The bot failed: ${e instanceof Error ? e.message : String(e)}`);
     }
     if (step.command === null) {
-      this.partials.set(`${sessionId}:${head.actionId}`, step.records);
-      return { actionId: null, partial: step.partial, records: step.records };
+      const phase = ruleset.sequence.propagandaPhases[head.state.turn.step] ?? "";
+      this.partials.set(`${sessionId}:${head.actionId}`, { phase, statePart: step.partial ?? {}, records: step.records });
+      return { actionId: null, partial: step.partial, options: step.options, records: step.records };
     }
     const committed = this.commitCommand(sessionId, step.command, head.actionId, head.stateHash);
     saveBotDecisions(this.db, committed.actionId, step.records);
-    return { actionId: committed.actionId, partial: null, records: step.records };
+    return { actionId: committed.actionId, partial: null, options: null, records: step.records };
   }
 
   /**

@@ -40,7 +40,7 @@ describe("Play with a bot seat", () => {
     let n = 0;
     const heads = [cardHead("A1"), cardHead("A2")];
     const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: heads[n] as Head, botToAct: n === 0 ? "state" : null }));
-    const botStep = vi.fn(() => { n = 1; return Promise.resolve({ actionId: "A2", partial: null, records: [record] }); });
+    const botStep = vi.fn(() => { n = 1; return Promise.resolve({ actionId: "A2", partial: null, options: null, records: [record] }); });
     const legal = vi.fn(() => Promise.resolve<LegalChoices>({ faction: n === 0 ? "state" : "pkk", phase: "card", first: true, boxes: [], actions: [] }));
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     expect(await screen.findByText(/State bot \(S-ADAPT@5\) is choosing/)).toBeTruthy();
@@ -50,25 +50,24 @@ describe("Play with a bot seat", () => {
     expect(screen.queryByText(/is choosing/)).toBeNull();
   });
 
-  it("joins the bot State part of Redeploy with the human PKK routes", async () => {
+  it("shows the bot State part of Redeploy and sends only the human PKK routes", async () => {
     const statePart = { troops: [{ from: "van", to: "hakkari", count: 2 }], police: [], guerrilla: [] };
     const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: redeployHead("R1"), botToAct: "state" }));
-    const botStep = vi.fn(() => Promise.resolve({ actionId: null, partial: statePart, records: [record] }));
+    const botStep = vi.fn(() => Promise.resolve({ actionId: null, partial: statePart, options: null, records: [record] }));
     const submit = vi.fn(() => Promise.resolve({ actionId: "R2", head: redeployHead("R2"), entries: [] }));
     render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), botStep, submit })} sessionId="S" />);
     expect(await screen.findByLabelText("State bot part")).toBeTruthy();
     expect(screen.getByLabelText("State bot part").textContent).toMatch(/moves 2 Troops from Van/);
-    // The human PKK routes Guerrillas only; Advance is closed while the bot part waits.
+    // The human PKK routes Guerrillas only; the server keeps the bot's Troops and Police.
     expect(screen.queryByRole("button", { name: "Troops" })).toBeNull();
-    expect(screen.getByRole<HTMLButtonElement>("button", { name: /Advance|Skip/ }).disabled).toBe(true);
     fireEvent.click(screen.getByRole("button", { name: "Redeploy pieces" }));
     await waitFor(() => { expect(submit).toHaveBeenCalled(); });
-    expect(submit).toHaveBeenCalledWith("S", { type: "PropagandaChoice", phase: "redeploy", choice: { troops: statePart.troops, police: [], guerrilla: [] } }, "R1", "h-R1");
+    expect(submit).toHaveBeenCalledWith("S", { type: "PropagandaChoice", phase: "redeploy", choice: { troops: [], police: [], guerrilla: [] } }, "R1", "h-R1");
   });
 
   it("sends a human State part of a joint phase to the PKK bot", async () => {
-    const session = vi.fn(() => Promise.resolve({ session: row({ pkk: "P-SURV@4" }), head: redeployHead("R1"), botToAct: null }));
-    const botStep = vi.fn(() => Promise.resolve({ actionId: "R2", partial: null, records: [] }));
+    const session = vi.fn(() => Promise.resolve({ session: row({ pkk: "P-SURV@4" }), head: redeployHead("R1"), botToAct: null, botExtends: true }));
+    const botStep = vi.fn(() => Promise.resolve({ actionId: "R2", partial: null, options: null, records: [] }));
     const submit = vi.fn();
     render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), botStep, submit })} sessionId="S" />);
     fireEvent.click(await screen.findByRole("button", { name: "Redeploy pieces" }));
@@ -77,6 +76,45 @@ describe("Play with a bot seat", () => {
     expect(submit).not.toHaveBeenCalled();
     // The human State routes Troops and Police only.
     expect(screen.queryByRole("button", { name: "Guerrilla" })).toBeNull();
+  });
+
+  it("submits an automatic Advance normally when no State decision is open for the PKK bot", async () => {
+    const s = turnOf("state");
+    const head = headOf("L1", { ...s, turn: { ...s.turn, phase: "propaganda", step: kurdish.ruleset.sequence.propagandaPhases.indexOf("legalPolitics") } });
+    const session = vi.fn(() => Promise.resolve({ session: row({ pkk: "P-SURV@4" }), head, botToAct: null, botExtends: false }));
+    const submit = vi.fn(() => Promise.resolve({ actionId: "L2", head, entries: [] }));
+    const botStep = vi.fn();
+    render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), submit, botStep })} sessionId="S" />);
+    fireEvent.click(await screen.findByRole("button", { name: /Advance|Skip/ }));
+    await waitFor(() => { expect(submit).toHaveBeenCalledWith("S", { type: "Advance" }, "L1", "h-L1"); });
+    expect(botStep).not.toHaveBeenCalled();
+  });
+
+  it("offers the PKK Legal Politics options the server sends after the bot State part", async () => {
+    const s = turnOf("state");
+    const head = headOf("L1", { ...s, turn: { ...s.turn, phase: "propaganda", step: kurdish.ruleset.sequence.propagandaPhases.indexOf("legalPolitics") } });
+    const options = [{ ceasefire: { accept: true } }, { ceasefire: { accept: true, leave: { pkk: true } } }];
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-CON@4" }), head, botToAct: "state" }));
+    const botStep = vi.fn(() => Promise.resolve({ actionId: null, partial: { ceasefire: { accept: true } }, options, records: [record] }));
+    const submit = vi.fn(() => Promise.resolve({ actionId: "L2", head, entries: [] }));
+    render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), botStep, submit })} sessionId="S" />);
+    expect((await screen.findByLabelText("State bot part")).textContent).toMatch(/accepts the ceasefire/);
+    // Not "End the ceasefire": acceptance made it Reciprocal Restraint.
+    expect(screen.queryByRole("button", { name: /End the ceasefire/ })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Leave Reciprocal Restraint (Europe -1)" }));
+    await waitFor(() => { expect(submit).toHaveBeenCalledWith("S", { type: "PropagandaChoice", phase: "legalPolitics", choice: options[1] }, "L1", "h-L1"); });
+  });
+
+  it("stops the Undo walk at a joint action the human completed", async () => {
+    const joined = { ...record, humanJoined: true };
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: cardHead("A3"), botToAct: null }));
+    const history = vi.fn(() => Promise.resolve([item("A1", []), item("A2", [joined]), item("A3", [record])]));
+    const undo = vi.fn((_: string, at: string) => Promise.resolve({ undone: at, head: "x", undoneAfterRandom: false, state: cardHead(at === "A3" ? "A2" : "A1") }));
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, history, undo, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Undo (Ctrl+Z)" }));
+    await waitFor(() => { expect(undo).toHaveBeenCalledTimes(2); });
+    expect(undo.mock.calls.map((c) => c[1])).toEqual(["A3", "A2"]);
   });
 
   it("undoes the bot actions after the human's last action, then that action", async () => {

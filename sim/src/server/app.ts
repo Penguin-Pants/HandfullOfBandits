@@ -87,7 +87,7 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   });
   app.get<{ Params: Id }>("/api/sessions/:id", (request) => {
     const { session, head } = service.session(request.params.id);
-    return { session, head, botToAct: service.botToAct(request.params.id) };
+    return { session, head, botToAct: service.botToAct(request.params.id), botExtends: service.botExtends(request.params.id) };
   });
   app.post<{ Params: Id }>("/api/sessions/:id/validate", (request) => service.validateCommand(request.params.id, command(body<{ command: unknown }>(request.body).command)));
   app.post<{ Params: Id }>("/api/sessions/:id/commands", (request) => {

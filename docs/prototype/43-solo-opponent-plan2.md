@@ -18,7 +18,7 @@ You can now play a full campaign against a bot in the app. The bot takes the Sta
 
 | Item | Change | Evidence |
 |:--|:--|:--|
-| Seat logic | `cli/seat.ts`: seat check, `botToAct`, `seatStep`. Joint phases (Redeploy, Legal Politics): a bot State part goes to a human PKK as `partial`; a human State part goes to a PKK bot | `sim/test/bot-seat.test.ts` |
+| Seat logic | `cli/seat.ts`: seat check, `botToAct`, `botExtendsState`, `seatStep`, `joinStatePart`. Joint phases (Redeploy, Legal Politics): a bot State part goes to a human PKK as `partial` (with the exact PKK options for Legal Politics) and the server joins the human's PKK answers; a human State part goes to a PKK bot | `sim/test/bot-seat.test.ts` |
 | Shared decision | `decideObserved` in `cli/game-runner.ts` serves experiment games and seats (one pipeline) | experiment tests unchanged and passing |
 | Server | `SessionService(db, packages, seatBots)`; `GET /api/seat-players`; `POST /api/sessions/:id/bot-step`; `botToAct` in `GET /api/sessions/:id`; a human command at the bot's decision is refused (409) | `bot-seat.test.ts` |
 | Store | Migration 4 (`store/bots.sql`): `sessions.seats`, table `bot_decisions`; JSON export carries `botDecisions` per action | `store.test.ts` |
@@ -58,9 +58,14 @@ You can now play a full campaign against a bot in the app. The bot takes the Sta
 | Class | Finding | Outcome |
 |:--|:--|:--|
 | Fix | A human (stale tab or API) could submit a command at the bot's own decision | `submit` refuses with 409; test fails without the guard |
-| Fix | Bot State records of a joint phase were lost when the human PKK committed | Kept per head and attached on commit; test fails without it |
+| Fix | Bot State records of a joint phase were lost when the human PKK committed | Kept per head and attached on commit (marked `humanJoined`); test fails without it |
 | Fix | Undo of one action let the bot redo its move at once | Undo walks back past bot actions to the human's last action; UI test |
 | Fix | A test faked a version 1 store but kept the new column | The fake now drops `seats` and `bot_decisions` |
+| Fix (PR 128 review, P1) | With a PKK bot, Advance at an automatic Legal Politics step went to the bot and was refused | The server reports `botExtends`; the UI sends a State part to the bot only then. Test |
+| Fix (PR 128 review) | A pending bot State part could be dropped by Advance (Space key) or another command | The server keeps the State part and joins only the PKK answers (`joinStatePart`); other commands get 409. Test |
+| Fix (PR 128 review) | Redeploy skipped a human PKK whose legal routes the pruned generator missed | Redeploy always waits for the human PKK; test fails without the fix |
+| Fix (PR 128 review) | After a bot ceasefire acceptance the human PKK saw "End the ceasefire" | The server sends the PKK options for the bot's State part; UI test |
+| Fix (PR 128 review) | Undo treated a joint action the human completed as bot-only | Records joined by a human carry `humanJoined`; the Undo walk stops there. UI test |
 | Drop | Two tabs on one bot session: the second bot request gets 409 | The existing stale-tab guard; the UI shows the error and Retry |
 | Drop | The joint-phase State part is held in server memory | A reload asks the bot again; the search RNG is seeded from the state hash, so the choice repeats |
 

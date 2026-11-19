@@ -38,6 +38,8 @@ export interface BotRecord {
   readonly notes: readonly string[];
   readonly ms: number;
   readonly review: readonly BotCandidate[];
+  /** A bot State part that the human PKK completed: the action holds a human decision too. */
+  readonly humanJoined?: boolean;
   /** The sampled plays after the chosen one (S4): opponent replies, then the bot's next play. Absent for one-move players. */
   readonly line?: readonly { readonly faction: string; readonly command: AnyCommand }[];
 }
@@ -117,11 +119,11 @@ export const api = {
   createSession: (body: { dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number>; seats?: Record<string, string> }) =>
     call<{ sessionId: string; head: Head }>("POST", "/sessions", body),
   /** The faction whose bot acts at the head, or null (audit Plan 2 S1). */
-  session: (id: string) => call<{ session: SessionRow; head: Head; botToAct?: string | null }>("GET", `/sessions/${id}`),
+  session: (id: string) => call<{ session: SessionRow; head: Head; botToAct?: string | null; botExtends?: boolean }>("GET", `/sessions/${id}`),
   seatPlayers: () => call<SeatPlayer[]>("GET", "/seat-players"),
   /** Let the seated bot act. `partial`: a human State part of Redeploy or Legal Politics for a PKK bot. */
   botStep: (id: string, headActionId: string, headStateHash: string, partial: Record<string, unknown> | null = null) =>
-    call<{ actionId: string | null; partial: Record<string, unknown> | null; records: BotRecord[] }>("POST", `/sessions/${id}/bot-step`, { headActionId, headStateHash, partial }),
+    call<{ actionId: string | null; partial: Record<string, unknown> | null; options: Record<string, unknown>[] | null; records: BotRecord[] }>("POST", `/sessions/${id}/bot-step`, { headActionId, headStateHash, partial }),
   validate: (id: string, command: AnyCommand) => call<ValidationResult>("POST", `/sessions/${id}/validate`, { command }),
   submit: (id: string, command: AnyCommand, headActionId: string, headStateHash?: string) => call<{ actionId: string; head: Head; entries: LogEntryRow[] }>("POST", `/sessions/${id}/commands`, { command, headActionId, headStateHash }),
   legal: (id: string) => call<LegalChoices>("GET", `/sessions/${id}/legal`),
