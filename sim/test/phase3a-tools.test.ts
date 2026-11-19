@@ -32,7 +32,8 @@ it("backs up committed WAL rows, restores independently and keeps the last ten",
   expect(restored.prepare("SELECT session_id FROM sessions").get()).toMatchObject({session_id: sessionId});
   expect(restored.pragma("integrity_check", {simple: true})).toBe("ok");
   restored.close();
-});
+  // 12 full-database copies one after another: a slow Windows runner disk passed the default 5 s (PR #130 CI).
+}, 30_000);
 it("exports session metadata, assumptions, debrief first, action references and unattached notes", () => {
   service.annotate(sessionId, {anchor: "state", actionId: null, text: "State note *literal*", categoryIds: [], focus});
   service.endSession(sessionId, "Debrief text");
