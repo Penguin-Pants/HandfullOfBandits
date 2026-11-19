@@ -143,15 +143,17 @@ function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): b
     ? ids.flatMap((to) => ids.filter((from) => from !== to).map((from) => ({ locations: [to], perLocation: { [to]: { moves: [{ from, count: 1 }] } } })))
     : ids.flatMap((loc) => ["place", "base", "grow", "flip"].map((option) => ({ locations: [loc], perLocation: { [loc]: { option } } })));
   const budget = resources(ruleset, state, plan.options.faction);
-  // A replacement is a new resume command: no Special Activity and no optional sub-actions.
-  const options: ActionOptions = { ...plan.options, sa: null, saLocations: [], subActions: [] };
+  // A replacement is a new resume command: no Special Activity. It may Agitate in a Rally space
+  // (sub-actions), so each Rally probe is also tried with one Agitation shift there.
+  const base: ActionOptions = { ...plan.options, sa: null, saLocations: [], subActions: [] };
+  const variants = (p: ActionPart): ActionOptions[] => (plan.op.id === "pkk.rally" ? [base, ...p.locations.map((space) => ({ ...base, subActions: [{ action: "agitate", space, params: { shifts: 1 } }] }))] : [base]);
   // Decision 18: a probe that would change nothing is not a replacement (the resume command refuses it).
-  const changes = (p: ActionPart): boolean => {
+  const changes = (p: ActionPart, o: ActionOptions): boolean => {
     const ctx = createExec(ruleset, state);
-    plan.op.execute(ctx, p, options);
+    plan.op.execute(ctx, p, o);
     return rolled(ctx.entries) || unchangedLocations(state, ctx.state, p.locations).length === 0;
   };
-  return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget && changes(p));
+  return probes.some((p) => variants(p).some((o) => plan.op.check(ruleset, state, p, o).length === 0 && plan.op.cost(ruleset, state, p, o) <= budget && changes(p, o)));
 }
 
 /**

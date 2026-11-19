@@ -70,13 +70,23 @@ describe("Decision 18 (m-17): every selected location must change, by the Operat
     expect(sweep(setPieces(turnOf("state"), "sirnak", "guerrilla", 0))).toEqual([NO_EFFECT]);
   });
 
-  it("Host Pressure replan: no-effect locations are not replacements, so the Operation ends (DEC-54)", () => {
-    let board = setTrack(setTrack(setPieces(turnOf("pkk"), "kdp-zone", "guerrilla", 1, "active"), "posture.kdp", "tolerant"), "europe", 5);
-    board = setTrack({ ...board, pools: { ...board.pools, guerrilla: { ...board.pools["guerrilla"], available: 0 }, pkkBase: { ...board.pools["pkkBase"], available: 0 } } } as GameState, "resources.pkk", 10);
+  it("Host Pressure replan counts only replacements that change something, Agitation included (DEC-54)", () => {
+    // Host Pressure closes the KDP Zone. Nothing is Available and Europe is capped, so a flip of
+    // Underground-only Guerrillas changes nothing; a flip plus Agitation in Sirnak (PKK Base) does.
+    const board = (pkk: number): GameState => {
+      const s = setTrack(setTrack(setPieces(turnOf("pkk"), "kdp-zone", "guerrilla", 1, "active"), "posture.kdp", "tolerant"), "europe", 5);
+      return setTrack({ ...s, pools: { ...s.pools, guerrilla: { ...s.pools["guerrilla"], available: 0 }, pkkBase: { ...s.pools["pkkBase"], available: 0 } } } as GameState, "resources.pkk", pkk);
+    };
     const rally = op("pkk", "opSa", { op: "pkk.rally", locations: ["kdp-zone"], perLocation: { "kdp-zone": { option: "flip" } }, sa: { action: "pkk.host-pressure", locations: ["kdp-zone"], perLocation: {}, timing: "before" } });
-    const { state, entries } = play(withRoll(board, 1), rally);
-    expect(state.tracks["posture.kdp"]).toBe("restricted");
-    expect([state.pending, entries.some((e) => e.data["reason"] === "noLegalReplacement")]).toEqual([null, true]);
+    // 3 Resources: Host Pressure costs 2, so 1 is left and flip plus Agitation (2) is unaffordable: the Operation ends.
+    const poor = play(withRoll(board(3), 1), rally);
+    expect(poor.state.tracks["posture.kdp"]).toBe("restricted");
+    expect([poor.state.pending, poor.entries.some((e) => e.data["reason"] === "noLegalReplacement")]).toEqual([null, true]);
+    // 10 Resources: flip plus Agitation in Sirnak is a legal replacement, so the decision opens and accepts it.
+    const rich = play(withRoll(board(10), 1), rally).state;
+    expect(rich.pending?.resume?.kind).toBe("operation");
+    const replace = op("pkk", "opSa", { op: "pkk.rally", locations: ["sirnak"], perLocation: { sirnak: { option: "flip" } }, subActions: [{ action: "agitate", space: "sirnak", params: { shifts: 1 } }] });
+    expect(codes(rich, replace)).toEqual([]);
   });
 
   it("an Attack is never judged by its die: the check skips a dry run that rolls", () => {
