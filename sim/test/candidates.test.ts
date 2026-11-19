@@ -27,9 +27,9 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
     allLegal(s, set);
     const f = families(set);
     for (const op of ["state.train", "state.garrison", "state.sweep", "state.assault"]) expect(f).toContain(`op:${op}@limitedOp`);
-    // Decision 5 (M-07): the First Eligible's Op Only has two or more locations.
+    // Decision 5 as revised 2026-11-19: the First Eligible's Op Only may use one location.
     const opOnly = set.candidates.filter((c) => c.command["box"] === "opOnly").map((c) => (c.command["plan"] as { locations: string[] }).locations.length);
-    expect([opOnly.length > 0, Math.min(...opOnly) >= 2]).toEqual([true, true]);
+    expect([opOnly.length > 0, Math.min(...opOnly)]).toEqual([true, 1]);
     for (const sa of ["state.air-mobility", "state.diplomacy"]) expect(f).toContain(`op:state.train+${sa}@opSa`);
     expect(f).toContain("op:state.sweep+state.cross-border@opSa");
     expect(f).toContain("pass");
@@ -49,7 +49,6 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
     for (const op of ["pkk.rally", "pkk.march", "pkk.attack", "pkk.coerce"]) expect(f).toContain(`op:${op}@limitedOp`);
     for (const v of ["pkk.rally/multi", "pkk.rally/multi+agitate", "pkk.march/multi", "pkk.attack/multi"]) expect(f).toContain(`op:${v}@opOnly`);
     for (const v of ["pkk.rally/grow+agitate", "pkk.rally/europe", "pkk.rally/base"]) expect(f).toContain(`op:${v}@limitedOp`);
-    expect(set.candidates.filter((c) => c.command["box"] === "opOnly").every((c) => (c.command["plan"] as { locations: string[] }).locations.length >= 2)).toBe(true);
     for (const pair of ["pkk.attack+pkk.ambush", "pkk.rally+pkk.extort", "pkk.march+pkk.host-pressure", "pkk.rally+pkk.strike-collaborators", "pkk.coerce+pkk.extort"]) expect(f).toContain(`op:${pair}@opSa`);
     const rally = set.candidates.filter((c) => c.family.startsWith("op:pkk.rally")).map((c) => JSON.stringify(c.command));
     for (const needle of ["\"grow\"", "\"base\"", "\"place\"", "\"agitate\"", "\"europe\""]) expect(rally.some((t) => t.includes(needle)), needle).toBe(true);
@@ -171,6 +170,14 @@ describe("campaign procedures (19 s5 Campaign row)", () => {
     const s = propaganda(setTrack(turnOf("state"), "emergencyRule", "ohal"), "legitimacy");
     expect(decisionPoint(engine, ruleset, s)).toEqual({ kind: "legitimacy", faction: "state" });
     expect(gen(s, "legitimacy", "state").candidates.map((c) => c.command)).toEqual([{ type: "Advance" }, { type: "PropagandaChoice", phase: "legitimacy", choice: { emergencyStep: "normalizing" } }]);
+  });
+
+  it("Redeploy: the PKK part offers the Western Cities exit to a domestic PKK Base (decision 22)", () => {
+    const s = propaganda(setPieces(turnOf("state"), "western-cities", "guerrilla", 2), "redeploy");
+    const part = (gen(s, "redeployState", "state").candidates[0]?.command["choice"] ?? {}) as Record<string, unknown>;
+    const pkk = generateCandidates(engine, ruleset, s, "redeployPkk", "pkk", { familyCap: 14, broad: false, stateRedeploy: { troops: part["troops"] as never, police: part["police"] as never } });
+    allLegal(s, pkk);
+    expect(pkk.candidates.some((c) => JSON.stringify(c.command).includes("\"from\":\"western-cities\""))).toBe(true);
   });
 
   it("Redeploy: the State part always moves Iraqi Troops out; the PKK part extends the chosen State part", () => {

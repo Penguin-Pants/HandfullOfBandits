@@ -19,6 +19,14 @@ describe("Help", () => {
   });
 });
 
+describe("Help: Op Only (decision 5, revised 2026-11-19)", () => {
+  it("says Op Only may use one location and the box sets next-card order", () => {
+    render(<Help onClose={vi.fn()} />);
+    expect(screen.queryByText(/Op Only needs two or more locations/)).toBeNull();
+    expect(screen.getByText(/Op Only may use any number of locations, including one/)).toBeTruthy();
+  });
+});
+
 describe("Help: rule text (P4-08)", () => {
   it("says what the Rule button next to a log line shows", () => {
     render(<Help onClose={vi.fn()} />);

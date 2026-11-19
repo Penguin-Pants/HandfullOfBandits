@@ -1,7 +1,7 @@
 # Prototype assumptions (04 s7). Rule text: docs/prototype/02-rules-gap-analysis.md s4 and s5.
 # Status: docs/prototype/13-design-decisions.md s2.
 - {id: PA-01, gap: GAP-B01, status: accepted, appliesTo: [events.choice], text: "The executing faction makes every choice that the card does not assign"}
-- {id: PA-02, gap: GAP-B02, status: accepted, appliesTo: [state.diplomacy], text: "Diplomacy moves a posture one step along Host, Tolerant, Restricted, Hostile, Aligned. Hostile to Aligned needs modified 6 or more. Syria at Hostile is no effect"}
+- {id: PA-02, gap: GAP-B02, status: accepted, appliesTo: [state.diplomacy], text: "Diplomacy moves a posture one step along Host, Tolerant, Restricted, Hostile, Aligned. Hostile to Aligned needs modified 6 or more. Syria at Hostile cannot be targeted (decision 18, 2026-11-19)"}
 - {id: PA-03, gap: GAP-B03, status: accepted, appliesTo: [dice], text: "Use the modified die total as is. No automatic success or failure on a natural roll"}
 - {id: PA-04, gap: GAP-B04, status: accepted, appliesTo: [tracks], text: "A track or posture change that passes an end stops at the end. The excess is lost. Legitimacy keeps its own overflow rule"}
 - {id: PA-05, gap: GAP-B05, status: accepted, appliesTo: [pkk.coerce], text: "Coerce resolves its shift before it places a marker. A Coercion marker already present blocks the shift. Activation still happens"}

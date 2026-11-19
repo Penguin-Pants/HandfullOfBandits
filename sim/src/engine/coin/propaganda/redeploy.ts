@@ -2,7 +2,8 @@
 import type { Effect, GameState, JsonObject, Ruleset, Violation } from "../../core/types.ts";
 import { param } from "../../core/params.ts";
 import { control } from "../derive.ts";
-import { adjacent, count, pay, resources, space } from "../ops/common.ts";
+import { adjacent, count, hasTag, pay, resources, space } from "../ops/common.ts";
+import { TAG } from "../ops/ids.ts";
 import { entryToBox } from "../ops/common-pkk.ts";
 import { asMoves } from "../ops/plan.ts";
 import type { PropagandaPhase } from "./phase.ts";
@@ -31,8 +32,9 @@ function plan(ruleset: Ruleset, state: GameState, choice: JsonObject | null): {e
       const entry = entryToBox(ruleset, state, to);
       const allowed = piece === "troops" ? dest.kind === "domestic" && (dest.terrain === "city" || count(state, to, "stateBase") > 0)
         : piece === "police" ? before[to] === "state"
-        : adjacent(ruleset, m.from, to) && count(state, to, "pkkBase") > 0 && entry !== "closed";
-      if (!allowed) fail("redeployWhere", "Troops need a City or State Base, Police need State Control and Guerrillas need an adjacent PKK Base with host access.");
+        // Decision 22 (m-24): Guerrillas leave Western Cities (no land links) for any domestic space with a PKK Base.
+        : (adjacent(ruleset, m.from, to) || (hasTag(ruleset, m.from, TAG.noLandLinks) && dest.kind === "domestic")) && count(state, to, "pkkBase") > 0 && entry !== "closed";
+      if (!allowed) fail("redeployWhere", "Troops need a City or State Base, Police need State Control and Guerrillas need an adjacent PKK Base with host access (from Western Cities: any domestic PKK Base).");
       if (piece === "guerrilla" && entry === "restricted") restricted.add(to);
       let left = m.count;
       const faces = piece === "guerrilla" ? m.face === null ? ["underground", "active"] : [m.face] : ["default"];

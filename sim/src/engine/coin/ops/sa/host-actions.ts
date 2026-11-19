@@ -2,7 +2,7 @@
 import type { Exec } from "../../../core/exec.ts";
 import { param } from "../../../core/params.ts";
 import { at, type ActionHandler } from "../action.ts";
-import { activate, count, pay } from "../common.ts";
+import { activate, atLastStep, count, pay, trackEnd } from "../common.ts";
 import { postureOf } from "../common-pkk.ts";
 import { FACTION, HOST_OF, MARKER, PIECE, POSTURE, SYRIA_BOX, TRACK } from "../ids.ts";
 
@@ -20,7 +20,14 @@ export function shiftHost(ctx: Exec, box: string, delta: number, ruleRef: string
 
 export const diplomacy: ActionHandler = {
   id: "state.diplomacy", faction: FACTION.state, kind: "sa", ruleRef: "06 s3.3", accompanies: "any",
-  check: (_r, _s, p) => p.locations.length === 1 && (p.locations[0] === "europe" || HOST_OF[p.locations[0] ?? ""] !== undefined) ? [] : [at(null, "diplomacyTarget", "Choose one host box or Europe.", "06 s3.3")],
+  check(r, s, p) {
+    const target = p.locations[0] ?? "";
+    const track = target === "europe" ? TRACK.europe : HOST_OF[target];
+    if (p.locations.length !== 1 || track === undefined) return [at(null, "diplomacyTarget", "Choose one host box or Europe.", "06 s3.3")];
+    // Decision 18 (m-17): Diplomacy moves Europe down or a host toward its last step; at that end it can change nothing.
+    const atEnd = target === "europe" ? Number(s.tracks[track]) <= trackEnd(r, track, "min") : atLastStep(r, s, track);
+    return atEnd ? [at(target, "diplomacyNoEffect", "This target is already at the end of its track: Diplomacy can change nothing.", "06 s3.3")] : [];
+  },
   cost: (r, _s, _p, o) => o.free ? 0 : param(r, "diplomacy.cost", "number"),
   execute(ctx, part, options) {
     const ruleRef = "06 s3.3";

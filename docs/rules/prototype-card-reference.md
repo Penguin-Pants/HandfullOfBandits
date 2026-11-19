@@ -66,7 +66,7 @@ Current package text is reproduced below for reading beside the rules. Original 
 
 **S:** PKK Capability (Academy): while Syria is Host or Tolerant, a Rally in Syria-Bekaa places up to 2 extra Guerrillas there.
 
-### DK-010 · Rival Groups Form the TSK (1986)
+### DK-010 · Rival Kurdish Groups (1986)
 
 **U:** Recruits divided: PKK Resources -2. State Momentum: until the next Reset, a PKK Rally in a Mountain space places 1 fewer Guerrilla (minimum 1).
 

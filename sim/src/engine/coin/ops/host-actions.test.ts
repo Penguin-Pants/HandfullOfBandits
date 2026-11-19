@@ -20,8 +20,9 @@ it("Diplomacy uses modified totals, the Syria cap and posture consequences", () 
   const command = (loc: string) => op("state", "opSa", {op: "state.train", locations: ["diyarbakir-city"], perLocation: {"diyarbakir-city": {option: "place", police: 1}}, sa: {action: "state.diplomacy", timing: "after", locations: [loc]}});
   const state = withRoll(setTrack(turnOf("state"), "legitimacy", 5), 6);
   expect(play(state, command("syria-bekaa")).state.tracks["posture.syria"]).toBe("host");
+  // Decision 18 (m-17): Syria at Hostile is the end of its track, so Diplomacy cannot target it.
   const hostile = withRoll(setTrack(setTrack(turnOf("state"), "posture.syria", "hostile"), "legitimacy", 12), 6);
-  expect(play(hostile, command("syria-bekaa")).state.tracks["posture.syria"]).toBe("hostile");
+  expect(codes(hostile, command("syria-bekaa"))).toEqual(["diplomacyNoEffect"]);
   const aligned = withRoll(setTrack(setTrack(turnOf("state"), "posture.kdp", "hostile"), "legitimacy", 12), 5);
   expect(play(aligned, command("kdp-zone")).state.tracks["posture.kdp"]).toBe("aligned");
 });

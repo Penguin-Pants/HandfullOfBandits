@@ -34,6 +34,9 @@ export const assault: ActionHandler = {
     for (const loc of part.locations) {
       if (space(ruleset, loc)?.kind !== "domestic" && !(options.sa === "state.cross-border" && options.saLocations.includes(loc) && ["kdp-zone", "puk-zone"].includes(loc))) out.push(at(loc, "assaultWhere", "Assault selects domestic spaces or its Cross-Border zone.", ruleRef));
       else if (count(state, loc, PIECE.troops) === 0 && assaultRemovals(ruleset, state, loc) === 0) out.push(at(loc, "assaultTroops", "Assault needs Troops (Police count in a City).", ruleRef));
+      // Decision 18 (m-17): a Mountain needs 2 Troops per removal, so 1 Troop removes nothing, unless the
+      // Special Activity acts here (Air Mobility can bring Troops). Cross-Border zones are judged after the lift.
+      else if (space(ruleset, loc)?.kind === "domestic" && !options.saLocations.includes(loc) && options.constraints["ignoreMountain"] !== true && assaultRemovals(ruleset, state, loc) === 0) out.push(at(loc, "assaultNoEffect", "Assault removes nothing here: a Mountain needs 2 Troops per removal.", ruleRef));
       else if (targets(state, loc) === 0) out.push(at(loc, "assaultTargets", "No Active PKK piece is here. Underground Guerrillas protect Bases.", ruleRef));
     }
     return out;
