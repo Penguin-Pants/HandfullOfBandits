@@ -21,6 +21,7 @@ import { resolvePlayer } from "./player-registry.ts";
 import { CURRENT } from "./strategies/scenario-a.ts";
 import { validateCommand } from "./validate.ts";
 import { diffCommand } from "./diff.ts";
+import { setupSheetCommand } from "./setup-sheet.ts";
 import { ruleCommand } from "./rule.ts";
 import { rulesCommand } from "./rules.ts";
 import { compareCommand, createCommand, listCommand, runCommand } from "./regression.ts";
@@ -28,6 +29,7 @@ import { compareCommand, createCommand, listCommand, runCommand } from "./regres
 const usage = [
   "Usage: sim validate <package-dir>",
   "       sim diff <old-package-dir> <new-package-dir>",
+  "       sim setup-sheet <package-dir> [--variant <name>] [--scenario <id>] [--out <new-file.md>]",
   "       sim rule \"<rule ref>\" [--package <dir>]",
   "       sim rules <package-dir> [--check]",
   "       sim replay <file.json> [--package <dir>]",
@@ -66,6 +68,17 @@ if (command === "validate" && target !== undefined) {
   print(validateCommand(target));
 } else if (command === "diff" && target !== undefined && args[2] !== undefined) {
   print(diffCommand(target, args[2]));
+} else if (command === "setup-sheet" && target !== undefined && !target.startsWith("--")) {
+  const valueFlags = ["--variant", "--scenario", "--out"];
+  const bad = args.slice(2).some((a, i, all) => (a.startsWith("--") ? !valueFlags.includes(a) || all[i + 1] === undefined || (all[i + 1] ?? "").startsWith("--") : !valueFlags.includes(all[i - 1] ?? "")));
+  if (bad) print({ exitCode: 2, lines: [usage] });
+  else {
+    try {
+      print(setupSheetCommand(target, args.includes("--variant") ? flag("--variant", "") : null, flag("--scenario", "full-campaign"), args.includes("--out") ? flag("--out", "") : null));
+    } catch (e) {
+      print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
+    }
+  }
 } else if (command === "replay" && target !== undefined) {
   print(target.endsWith(".json") ? replayFile(target, flag("--package", kurdish)) : replaySession(target, flag("--db", fileURLToPath(new URL("../../playtest.sqlite", import.meta.url)))));
 } else if (command === "rules" && target !== undefined && !target.startsWith("--")) {

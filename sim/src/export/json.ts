@@ -10,6 +10,7 @@ import { listCommands } from "../store/repos/commands.ts";
 import { listEntries } from "../store/repos/log-entries.ts";
 import { listMetrics } from "../store/repos/metrics.ts";
 import { loadPackageContent } from "../store/repos/packages.ts";
+import { variantsOf } from "./setup-sheet.ts";
 import { getSession } from "../store/repos/sessions.ts";
 import { botDecisionsOf } from "../store/repos/bot-decisions.ts";
 import { loadState } from "../store/repos/states.ts";
@@ -99,7 +100,8 @@ export function exportJson(db: Db, options: ExportOptions): CoinSimExport {
   const packages = [...packageHashes].sort().map((hash) => {
     const content = parse(loadPackageContent(db, hash)) as Record<string, unknown> | null;
     const manifest = content?.["manifest.yaml"] ?? null;
-    return { package_hash: hash, manifest, parameters: content?.["parameters.yaml"] ?? null, assumptions: content?.["assumptions.yaml"] ?? [], ruleIndex: ruleIndexOfPackage(hash, content) };
+    // Setup variant of each scenario, with the change text of its setup sheet (audit Plan 4 V4).
+    return { package_hash: hash, manifest, parameters: content?.["parameters.yaml"] ?? null, assumptions: content?.["assumptions.yaml"] ?? [], ruleIndex: ruleIndexOfPackage(hash, content), variants: content === null ? [] : variantsOf(content) };
   });
   const states = [...hashes].sort().map((hash) => {
     const s = loadState(db, hash);
