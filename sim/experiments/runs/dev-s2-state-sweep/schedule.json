@@ -1,0 +1,898 @@
+[
+ {
+  "gameId": "default~S-CONv6~P-POLv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 68377992,
+   "pkk": 4189132613
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-POLv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 2928641289,
+   "pkk": 3949217808
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-POLv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 1136420468,
+   "pkk": 194649759
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-POLv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 3818627001,
+   "pkk": 921618353
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-EXPv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 512353056,
+   "pkk": 670551089
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-EXPv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 2260376566,
+   "pkk": 4073857539
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-EXPv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 1652650042,
+   "pkk": 2142912076
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-EXPv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 2861288841,
+   "pkk": 424057563
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-SURVv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 3941564862,
+   "pkk": 3233842149
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-SURVv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 3200825864,
+   "pkk": 2214220265
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-SURVv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 2743461655,
+   "pkk": 2929535616
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-SURVv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 2234597269,
+   "pkk": 2815248609
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-ADAPTv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 2191741804,
+   "pkk": 2115402020
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-ADAPTv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 4107413440,
+   "pkk": 454050458
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-ADAPTv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 4257269452,
+   "pkk": 2980202632
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv6~P-ADAPTv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1344826303,
+   "pkk": 2568083373
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-POLv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 2364545980,
+   "pkk": 2566943086
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-POLv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 858987690,
+   "pkk": 3645720920
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-POLv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 2331632087,
+   "pkk": 2631902513
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-POLv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 549176756,
+   "pkk": 3368624978
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-EXPv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 4049108526,
+   "pkk": 3557328043
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-EXPv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 2486500123,
+   "pkk": 980082751
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-EXPv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 2195443908,
+   "pkk": 1033222831
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-EXPv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 1528656170,
+   "pkk": 1006618673
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-SURVv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 3334413837,
+   "pkk": 559912430
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-SURVv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 294767717,
+   "pkk": 283928682
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-SURVv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 1634944545,
+   "pkk": 3875170141
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-SURVv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 3141937589,
+   "pkk": 495160716
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-ADAPTv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 418721715,
+   "pkk": 155502068
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-ADAPTv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1860836426,
+   "pkk": 2072379340
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-ADAPTv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1503981598,
+   "pkk": 3517794808
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv6~P-ADAPTv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@6",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1834706520,
+   "pkk": 3073565837
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-POLv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 487530602,
+   "pkk": 1409982844
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-POLv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 1404447076,
+   "pkk": 2864228252
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-POLv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 1457618302,
+   "pkk": 3210462579
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-POLv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 1746656640,
+   "pkk": 2374881345
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-EXPv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 1460238006,
+   "pkk": 3495961392
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-EXPv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 4272413143,
+   "pkk": 3451517176
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-EXPv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 2551856347,
+   "pkk": 231592780
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-EXPv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 647986156,
+   "pkk": 126593124
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-SURVv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 3299377624,
+   "pkk": 480853519
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-SURVv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 1019308823,
+   "pkk": 1990757533
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-SURVv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 413114945,
+   "pkk": 2677485557
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-SURVv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 591166023,
+   "pkk": 2869519940
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-ADAPTv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1837682420,
+   "pkk": 666176817
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-ADAPTv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 3713335939,
+   "pkk": 331087870
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-ADAPTv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 2900756765,
+   "pkk": 2470713496
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-CONv7~P-ADAPTv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-CON@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1894576522,
+   "pkk": 988356184
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-POLv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 2814376957,
+   "pkk": 2091553921
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-POLv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 1678588365,
+   "pkk": 1461439326
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-POLv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 1469769782,
+   "pkk": 2486488213
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-POLv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-POL@4"
+  },
+  "playerSeeds": {
+   "state": 2657862560,
+   "pkk": 3684061271
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-EXPv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 3607205269,
+   "pkk": 580210646
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-EXPv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 3895172047,
+   "pkk": 3198169943
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-EXPv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 2129686673,
+   "pkk": 650124038
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-EXPv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-EXP@4"
+  },
+  "playerSeeds": {
+   "state": 1310336374,
+   "pkk": 2648502396
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-SURVv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 2168910759,
+   "pkk": 399469793
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-SURVv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 4094817812,
+   "pkk": 3903529695
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-SURVv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 3119733525,
+   "pkk": 3004834065
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-SURVv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-SURV@4"
+  },
+  "playerSeeds": {
+   "state": 1914955222,
+   "pkk": 3629148869
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-ADAPTv4~7001~r0",
+  "seed": 7001,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1081451077,
+   "pkk": 705332678
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-ADAPTv4~7002~r0",
+  "seed": 7002,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 1096095337,
+   "pkk": 3739248090
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-ADAPTv4~7003~r0",
+  "seed": 7003,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 3698014580,
+   "pkk": 155783011
+  },
+  "repeat": 0
+ },
+ {
+  "gameId": "default~S-ADAPTv7~P-ADAPTv4~7004~r0",
+  "seed": 7004,
+  "conditionId": "default",
+  "players": {
+   "state": "S-ADAPT@7",
+   "pkk": "P-ADAPT@4"
+  },
+  "playerSeeds": {
+   "state": 3851397701,
+   "pkk": 1135958961
+  },
+  "repeat": 0
+ }
+]

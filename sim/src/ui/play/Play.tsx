@@ -129,7 +129,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       const [s, l, h, c] = await Promise.all([api.session(sessionId), api.legal(sessionId), api.history(sessionId), api.categories()]);
       if (version !== loadVersion.current) return;
       const prev = shown.current;
-      if (prev === null || prev.actionId !== s.head.actionId) {
+      // An Operation that pauses for a question continues the same action: compare the state too.
+      if (prev === null || prev.actionId !== s.head.actionId || prev.stateHash !== s.head.stateHash) {
         setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
         setStatePart(null);
         setPkkOptions(null);
@@ -151,8 +152,11 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   // The seated bot acts as soon as the head is its decision.
   const botToAct = data?.botToAct ?? null;
   useEffect(() => {
-    if (data === null || botToAct === null || undoing.current || stepped.current === data.head.actionId) return;
-    stepped.current = data.head.actionId;
+    // One request per head state: a continued Operation keeps its action ID but changes the state.
+    if (data === null || botToAct === null || undoing.current) return;
+    const at = `${data.head.actionId}:${data.head.stateHash}`;
+    if (stepped.current === at) return;
+    stepped.current = at;
     setBotError(null);
     api.botStep(sessionId, data.head.actionId, data.head.stateHash).then((r) => {
       if (r.partial !== null) {
