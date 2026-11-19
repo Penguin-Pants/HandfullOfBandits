@@ -11,7 +11,7 @@ date: 8 November 2026
 
 This edition covers the **full game, 1984–1999**: five Campaigns (C1 to C5). The **full campaign** plays all five Campaigns and is the only scenario in this edition. Section 10 gives its setup. The shorter Scenarios A, B and C are archived (10.6). The edition includes the designer decisions implemented in ruleset R4. It is not a balanced or final published game.
 
-**Reading the rules.** Numbered rules give the procedures. Italic examples explain them. Card text can modify a procedure (5.1). Section 10 gives the complete setups. Appendix A reproduces the Event text for Campaigns C1 and C2 only. The text of the C3 to C5 cards is not yet reproduced; read it in the simulator or in the card package. Appendix B identifies implementation differences and systems outside this edition.
+**Reading the rules.** Numbered rules give the procedures. Italic examples explain them. Card text can modify a procedure (5.1). Section 10 gives the complete setups. Appendix A reproduces the text of every card, C1 to C5, and the four Pivotals. Appendix B identifies implementation differences and systems outside this edition.
 
 **Campaign gates.** Some systems start in a later Campaign: Village Clearance, Covert Action, Declare Ceasefire and Legal Politics from C3, and Return by Civic Action in C5 (10.8). A rule that names a Campaign applies only from that Campaign.
 

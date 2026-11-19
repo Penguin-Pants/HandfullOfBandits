@@ -1,0 +1,19 @@
+{
+ "inputs": [
+  "docs/printdata.py",
+  "docs/rules/build-rulebook.py",
+  "docs/rules/prototype-rules.md",
+  "docs/rules/prototype-card-reference.md",
+  "docs/rules/prototype-notes.md",
+  "docs/rules/rulebook-layout.tex",
+  "docs/rules/rulebook-tables.lua",
+  "game-packages/kurdish-coin/0.1.0/manifest.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml"
+ ],
+ "sha256": "10c78733f1005635ae4a8bb940d98907a0506a00784bd4d9bd813879850d24c3"
+}

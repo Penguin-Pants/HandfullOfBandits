@@ -38,4 +38,4 @@ The simulator uses the illustrated atlas with live counted pieces, linked panels
 
 ## Printed rules
 
-[Download the rulebook (A4 portrait PDF)](docs/rules/handful-of-bandits-rules-a4.pdf). The PDF is stale: it was built before the decisions of 2026-11-12. The current rules are in [prototype-rules.md](docs/rules/prototype-rules.md). Print at 100% / Actual size. Rebuild with `make rulebook`; editable sources and requirements are in [docs/rules](docs/rules/README.md).
+[Download the rulebook (A4 portrait PDF)](docs/rules/handful-of-bandits-rules-a4.pdf) and the [card sheets (A4 PDF)](docs/card-catalogue/cards-a4.pdf). Both are built from [prototype-rules.md](docs/rules/prototype-rules.md) and the package card text. Print at 100% / Actual size. Rebuild both with `make print` after a change to the rules, the cards or a print source; `make test` fails until you do. Editable sources and requirements are in [docs/rules](docs/rules/README.md) and [docs/card-catalogue](docs/card-catalogue/README.md).

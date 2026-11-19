@@ -1,0 +1,15 @@
+{
+ "inputs": [
+  "docs/printdata.py",
+  "docs/card-catalogue/generate.py",
+  "docs/card-catalogue/catalogue.json",
+  "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c4.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
+  "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml",
+  "docs/rules/prototype-rules.md"
+ ],
+ "sha256": "b608ffd305aff229ff580b1820a40fe469f6ee4bf08f79989f5c6224f3411c51"
+}
