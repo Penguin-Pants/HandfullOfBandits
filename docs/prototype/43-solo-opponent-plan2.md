@@ -47,7 +47,15 @@ You can now play a full campaign against a bot in the app. The bot takes the Sta
 | S-CON@7 | −0.2 | 8.2% | 0.8 | 6/16 |
 | S-CON@5 | −0.3 | 3.0% ✅ | 0.1 ✅ | 4/16 |
 
-- **S3:** `S-SEARCH@1` (4-ply determinized search, successive halving, `cli/strategies/search.ts`) uses S-CON@5 leaf weights so it meets B-5. The 10-seed check compares it with S-CON@5 and S-CON@4 (`dev-s3-search-10`). Result pending.
+- **S3:** `S-SEARCH@1` (4-ply determinized search, successive halving, `cli/strategies/search.ts`) uses S-CON@5 leaf weights so it meets B-5. The 10-seed check compares it with S-CON@5 and S-CON@4 (`dev-s3-search-10`, seeds 7101 to 7110, 40 games each against the v4 PKK roster; 120/120 complete and replay identically):
+
+| State bot | Wins | Voluntary Pass | Decision time median / p95 / max (Linux, 4 games at once) |
+|:--|--:|--:|:--|
+| S-CON@4 (v4) | 25/40 | 15.9% | 0.44 / 1.44 / 2.55 s |
+| S-CON@5 (spends) | 7/40 | 4.2% | 0.28 / 1.32 / 2.73 s |
+| S-SEARCH@1 (4-ply, S-CON@5 weights) | 12/40 | 3.2% | 1.51 / 3.90 / 6.42 s |
+
+Search adds 5 wins over the same weights (+12.5 points) but stays 13 wins below S-CON@4. Time is inside the B-2 budget here (p95 ≤ 5 s, max ≤ 15 s); Windows is not measured.
 
 ## 4. Decide (designer)
 
