@@ -2,11 +2,13 @@
 
 - Card titles, types and side text come from the game package card files.
 - Always text comes from the rules 5.4 table, plus any `note` text in the card's package Always line.
+- Pivotals print their rules 5.3 table row (Campaign, condition) and effect paragraph.
 - Propaganda cards print the rule 6.0 instruction.
 
 Each generator writes a stamp file next to its PDF. The stamp lists the input files, their SHA-256 and the PDF's SHA-256.
 `sim/test/print-drift.test.ts` recomputes the hash, so `make test` fails when an input changes and the
-PDF is not rebuilt. The hash reads text with LF line endings, so a Windows checkout gives the same hash.
+PDF is not rebuilt. The hash reads UTF-8 text with LF line endings, so a Windows checkout gives the same
+hash; other files (images) are hashed as raw bytes.
 """
 from hashlib import sha256
 from pathlib import Path
@@ -21,6 +23,7 @@ RULES = ROOT / "docs/rules/prototype-rules.md"
 CARD_FILES = [PACKAGE / "cards" / f"{name}.yaml" for name in ("c1", "c2", "c3", "c4", "c5", "pivotal")]
 PROPAGANDA_TEXT = "Conduct a Propaganda round (6.0). No player Event choice."
 ALWAYS_ROW = re.compile(r"^\| C\d: (DK-\d{3}) [^|]+\| (.+?) \|$")
+PIVOTAL_ROW = re.compile(r"^\| (?:PKK|State) \| (DK-\d{3}) ([^|]+?) \| (C\d) \| (.+?) \|$")
 
 
 def text(path: Path) -> str:
@@ -37,9 +40,25 @@ def always_table() -> dict[str, str]:
     return rows
 
 
+def pivotal_table() -> dict[str, str]:
+    """Pivotal print text by card ID, from rules 5.3: "Earliest C, Condition: ..., effect paragraph"."""
+    rules = text(RULES)
+    rows = {}
+    for line in rules.split("\n"):
+        match = PIVOTAL_ROW.match(line)
+        if match:
+            card, title, campaign, condition = match.groups()
+            effect = re.search(r"^\*\*" + re.escape(title) + r"\.\*\* (.+)$", rules, re.M)
+            if effect is None:
+                raise SystemExit(f"{card} has no effect paragraph in rules 5.3")
+            rows[card] = f"Earliest {campaign}. Condition: {condition}. {effect.group(1).replace('**', '')}"
+    return rows
+
+
 def cards() -> dict[str, dict]:
     """Printed fields of every package card by ID: id, campaign, type, title, mandatory, always, unshaded, shaded."""
     table = always_table()
+    pivotals = pivotal_table()
     out = {}
     for path in CARD_FILES:
         for card in yaml.safe_load(text(path)):
@@ -52,10 +71,19 @@ def cards() -> dict[str, dict]:
             out[card["id"]] = {
                 "id": card["id"], "campaign": card["campaign"], "type": card["type"], "title": card["title"],
                 "mandatory": bool(card.get("mandatory")), "always": always,
-                "unshaded": PROPAGANDA_TEXT if card["type"] == "propaganda" else side("unshaded"),
+                "unshaded": PROPAGANDA_TEXT if card["type"] == "propaganda" else pivotals[card["id"]] if pivotal else side("unshaded"),
                 "shaded": None if pivotal else side("shaded"),
             }
     return out
+
+
+def stamp_bytes(path: Path) -> bytes:
+    """UTF-8 text with LF line endings; any other file as raw bytes."""
+    data = path.read_bytes()
+    try:
+        return data.decode("utf-8").replace("\r\n", "\n").encode("utf-8")
+    except UnicodeDecodeError:
+        return data
 
 
 def write_stamp(output: Path, inputs: list[Path]) -> None:
@@ -63,6 +91,6 @@ def write_stamp(output: Path, inputs: list[Path]) -> None:
     names = [p.resolve().relative_to(ROOT).as_posix() for p in inputs]
     digest = sha256()
     for name in names:
-        digest.update((name + "\n" + text(ROOT / name) + "\n").encode("utf-8"))
+        digest.update((name + "\n").encode("utf-8") + stamp_bytes(ROOT / name) + b"\n")
     stamp = output.with_name(output.name + ".inputs.json")
     stamp.write_text(json.dumps({"inputs": names, "sha256": digest.hexdigest(), "output_sha256": sha256(output.read_bytes()).hexdigest()}, indent=1) + "\n", encoding="utf-8")

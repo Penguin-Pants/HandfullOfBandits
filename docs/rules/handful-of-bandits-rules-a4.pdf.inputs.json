@@ -8,6 +8,7 @@
   "docs/rules/rulebook-layout.tex",
   "docs/rules/rulebook-tables.lua",
   "game-packages/kurdish-coin/0.1.0/manifest.yaml",
+  "game-packages/kurdish-coin/0.1.0/map/atlas-terrain.png",
   "game-packages/kurdish-coin/0.1.0/cards/c1.yaml",
   "game-packages/kurdish-coin/0.1.0/cards/c2.yaml",
   "game-packages/kurdish-coin/0.1.0/cards/c3.yaml",
@@ -15,6 +16,6 @@
   "game-packages/kurdish-coin/0.1.0/cards/c5.yaml",
   "game-packages/kurdish-coin/0.1.0/cards/pivotal.yaml"
  ],
- "sha256": "2852ab4deca8b0b9a1616c58fc2b07e67e29246637ad8eec23c575739a353157",
- "output_sha256": "968b394804e409938afc1e989e55a8171dc47a84b819f6fd6df6607660fed45f"
+ "sha256": "67384c45a64593ad880bcfc3017a18befc326f70c41fe4debad1372ba427f558",
+ "output_sha256": "cf300c76a5751529cebe9783f923ce6601c69cec0467d4a49e17495c01186a47"
 }

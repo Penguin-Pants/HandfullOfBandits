@@ -606,16 +606,16 @@ See 5.3 for the window, timing and initiative.
 
 ### DK-015 · ARGK Formed
 
-Earliest C1. Precondition: 8 or more Guerrillas in domestic spaces and at least 2 domestic PKK Bases. Effect: place up to 4 Guerrillas in spaces with PKK Bases, flip all Guerrillas in those spaces Underground, PKK +3 Resources.
+Earliest C1. Condition: At least eight Guerrillas and two PKK Bases in domestic spaces. Place up to four Available Guerrillas among spaces with PKK Bases. Then flip all Guerrillas Underground in every space with a PKK Base, including spaces receiving no placement. Gain three PKK Resources.
 
 ### DK-054 · Serhildan
 
-Earliest C3. Precondition: Total Opposition is 14 or more and Mardin, Batman, Şırnak or Siirt is at Opposition. Effect: shift up to 3 spaces with PKK pieces and no Office one level toward Opposition (Diyarbakır City may be one). Europe +1.
+Earliest C3. Condition: Total Opposition 14 or more, and Mardin, Batman, Şırnak or Siirt at Passive or Active Opposition. Shift up to three domestic spaces that hold a PKK piece and no Office one level toward Opposition. Diyarbakır City may be one. Europe +1 (the Ban cap applies). The normal shift rule applies: a PKK Harm or Coercion marker blocks a shift toward Opposition.
 
 ### DK-076 · Area Domination
 
-Earliest C4. Precondition: Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more. Effect: free Sweep, then free Assault, in up to 3 Mountain spaces. Village Clearance may accompany one of them at normal cost.
+Earliest C4. Condition: Emergency Rule is OHAL Extended Powers and Total Opposition is 12 or more. Make a free Sweep in up to three Mountain spaces. Village Clearance may follow the Sweep in one of those spaces, at normal cost and with all four of its conditions (4.2.4). Then make a free Assault in the spaces that the Sweep selected. Under a ceasefire (8.6) the Assault and Village Clearance count as State actions, with the breach warning.
 
 ### DK-098 · Coercive Diplomacy on Syria
 
-Earliest C5. Precondition: Syria posture is Tolerant or Restricted and Legitimacy is 5 or more. Effect: Syria posture to Hostile. Leadership flips to Abroad. PKK pieces in Syria-Bekaa stay but earn nothing.
+Earliest C5. Condition: Syria is Tolerant or Restricted and Legitimacy is 5 or more. Move Syria to Hostile with the normal Hostile entry: Guerrillas in Syria-Bekaa Activate and the Leadership goes Abroad (8.1). PKK pieces there stay but earn no income.

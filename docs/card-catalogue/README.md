@@ -4,7 +4,7 @@ The catalogue covers all 99 unique card records in `game-packages/kurdish-coin/0
 
 ## Files and printing
 
-- **Card text has one source.** Titles, types and side text come from the package card files. Always lines come from the rules 5.4 table, plus the package note on DK-005 (evidence grade). Propaganda cards print “Conduct a Propaganda round (6.0). No player Event choice.” `docs/printdata.py` reads all of these for both this catalogue and rules Appendix A.
+- **Card text has one source.** Titles, types and side text come from the package card files. Always lines come from the rules 5.4 table, plus the package note on DK-005 (evidence grade). Pivotals print their rules 5.3 condition row and effect paragraph. Propaganda cards print “Conduct a Propaganda round (6.0). No player Event choice.” `docs/printdata.py` reads all of these for both this catalogue and rules Appendix A.
 - `catalogue.json` holds only editorial data: flavor text, images, source references and open questions. Italic flavor text has no game effect. It is new editorial historical context and is not part of the implemented package; Propaganda flavor summarizes its campaign rather than a single event. A null value indicates absent text.
 - `cards-a4.pdf` is 25 A4 pages with four 95 × 140 mm cards per sheet. Print at **actual size / 100%**, with scaling and fit-to-page disabled. Card outlines are cutting lines; short corner guides are provided. The sheet has 10 mm side and 8.5 mm top and bottom margins. All body text is at least 9 pt. Use a test sheet to confirm the printer does not scale.
 - `index.html` is an offline searchable reference. Cards DK-001–DK-035 have contextual images, captions and linked credits. Expand a card to see its sources.

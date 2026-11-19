@@ -57,7 +57,7 @@ def main() -> None:
         "--output=handful-of-bandits-rules-a4.pdf",
     ], cwd=HERE, check=True)
     pdf = HERE / "handful-of-bandits-rules-a4.pdf"
-    printdata.write_stamp(pdf, [printdata.ROOT / "docs/printdata.py", Path(__file__), *(HERE / f for f in SOURCES), PACKAGE / "manifest.yaml", *printdata.CARD_FILES])
+    printdata.write_stamp(pdf, [printdata.ROOT / "docs/printdata.py", Path(__file__), *(HERE / f for f in SOURCES), PACKAGE / "manifest.yaml", PACKAGE / "map/atlas-terrain.png", *printdata.CARD_FILES])
     print(pdf)
 
 
