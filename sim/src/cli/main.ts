@@ -9,12 +9,14 @@ import { exportCommand } from "./export.ts";
 import { fuzz } from "./fuzz.ts";
 import { replayExperiment, replayFile, replaySession } from "./replay.ts";
 import { runExperiment } from "./experiment.ts";
+import { newManifest } from "./experiment-manifest.ts";
 import { qualify } from "./qualification.ts";
-import { ANALYSIS_VERSION, compareVersions, pct, renderComparisons, writeAnalysis } from "./experiment-analysis.ts";
+import { ANALYSIS_VERSION, comparePairedRuns, compareVersions, pct, renderComparisons, writeAnalysis } from "./experiment-analysis.ts";
 import type { GameRecord } from "./experiment.ts";
 import { archiveExperiment } from "./experiment-artifacts.ts";
 import { join } from "node:path";
 import { experimentCoverage } from "./experiment-coverage.ts";
+import { cardsCommand } from "./experiment-cards.ts";
 import { resolvePlayer } from "./player-registry.ts";
 import { CURRENT } from "./strategies/scenario-a.ts";
 import { validateCommand } from "./validate.ts";
@@ -32,11 +34,14 @@ const usage = [
   "       sim replay <sessionId> [--db <file>]",
   "       sim fuzz [--seeds N] [--package <dir>]",
   "       sim batch --games N --strategy <state>,<pkk> [--swap-seats] [--seed N] [--scenario full-campaign] [--package <dir>] [--out <csv>]",
+  "       sim experiment new <study.json> --out <new-manifest.json>",
   "       sim experiment run <manifest.json> --out <new-dir> | --out <interrupted-dir> --resume",
   "       sim experiment replay <experiment-dir> [--game <gameId>]",
   "       sim experiment analyze <experiment-dir>",
   "       sim experiment archive <experiment-dir>",
   "       sim experiment compare <experiment-dir> <experiment-dir>... --out <file.md>",
+  "       sim experiment compare <base-dir> <variant-dir> --paired --out <file.md>",
+  "       sim experiment cards <experiment-dir>... --out <file.md>",
   "       sim experiment qualify <out.json> [--players <id,id>] [--package <dir>]",
   "       sim regression create <annotationId> [--label <text>] [--db <file>]",
   "       sim regression run <caseId> --package <dir> [--db <file>]",
@@ -106,9 +111,16 @@ if (command === "validate" && target !== undefined) {
 } else if (command === "experiment") {
   const [, action, path] = args;
   const known = new Set(["--out", "--game", "--players", "--package"]);
-  const bad = action === "compare" ? args.slice(3).filter((a) => a.startsWith("--") && !known.has(a)) : args.slice(3).filter((a, i, all) => a.startsWith("--") ? !known.has(a) && a !== "--resume" : !known.has(all[i - 1] ?? ""));
+  const bad = action === "compare" || action === "cards" ? args.slice(3).filter((a) => a.startsWith("--") && !known.has(a) && !(action === "compare" && a === "--paired")) : args.slice(3).filter((a, i, all) => a.startsWith("--") ? !known.has(a) && a !== "--resume" : !known.has(all[i - 1] ?? ""));
   if (bad.length > 0 || path === undefined) print({ exitCode: 2, lines: [usage] });
-  else if (action === "run" && args.includes("--out")) {
+  else if (action === "new" && args.includes("--out")) {
+    try {
+      const m = newManifest(path, flag("--out", ""));
+      print({ exitCode: 0, lines: [`wrote ${flag("--out", "")} (package ${m.package.hash})`] });
+    } catch (e) {
+      print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
+    }
+  } else if (action === "run" && args.includes("--out")) {
     runExperiment(path, flag("--out", ""), { log: (line) => { console.log(line); }, resume: args.includes("--resume") })
       .then((o) => { print({ exitCode: 0, lines: [`experiment ${o.experimentHash} in ${o.dir}: ${JSON.stringify(o.byStatus)}`] }); })
       .catch((e: unknown) => { print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] }); });
@@ -127,11 +139,30 @@ if (command === "validate" && target !== undefined) {
       print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
     }
   } else if (action === "compare" && args.includes("--out")) {
-    const dirs = args.slice(2).filter((a, i, all) => a !== "--out" && all[i - 1] !== "--out");
-    const results = dirs.flatMap((d) => JSON.parse(readFileSync(join(d, "results.json"), "utf8")) as GameRecord[]);
-    const rows = compareVersions(results, 2000, 1);
-    writeFileSync(flag("--out", "compare.md"), `# Paired player-version comparison\n\nSources: ${dirs.join(", ")}. Pairs share condition, opponent and game seed; bootstrap over seeds (2,000 draws, seed 1).\n\n${renderComparisons(rows)}`, "utf8");
-    print({ exitCode: 0, lines: [renderComparisons(rows)] });
+    const dirs = args.slice(2).filter((a, i, all) => a !== "--out" && a !== "--paired" && all[i - 1] !== "--out");
+    const [base, variant] = dirs;
+    if (!args.includes("--paired")) {
+      const results = dirs.flatMap((d) => JSON.parse(readFileSync(join(d, "results.json"), "utf8")) as GameRecord[]);
+      const rows = compareVersions(results, 2000, 1);
+      writeFileSync(flag("--out", "compare.md"), `# Paired player-version comparison\n\nSources: ${dirs.join(", ")}. Pairs share condition, opponent and game seed; bootstrap over seeds (2,000 draws, seed 1).\n\n${renderComparisons(rows)}`, "utf8");
+      print({ exitCode: 0, lines: [renderComparisons(rows)] });
+    } else if (dirs.length !== 2 || base === undefined || variant === undefined) print({ exitCode: 2, lines: [usage] });
+    else {
+      try {
+        print({ exitCode: 0, lines: [comparePairedRuns(base, variant, flag("--out", "compare.md"))] });
+      } catch (e) {
+        print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
+      }
+    }
+  } else if (action === "cards" && args.includes("--out")) {
+    try {
+      const dirs = args.slice(2).filter((a, i, all) => a !== "--out" && all[i - 1] !== "--out");
+      const { rows } = cardsCommand(dirs, flag("--out", "cards.md"));
+      const events = rows.filter((r) => r.side === "unshaded" || r.side === "shaded");
+      print({ exitCode: 0, lines: [`wrote ${flag("--out", "cards.md")}: ${String(events.filter((r) => r.runs > 0).length)} of ${String(events.length)} Event sides ran`] });
+    } catch (e) {
+      print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
+    }
   } else if (action === "archive") {
     try {
       const ids = (JSON.parse(readFileSync(join(path, "schedule.json"), "utf8")) as { gameId: string }[]).map((j) => j.gameId);

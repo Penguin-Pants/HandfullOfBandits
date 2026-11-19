@@ -130,6 +130,94 @@ export function pairedDifference(results: readonly GameRecord[], a: string, b: s
   return { pairs: diffs.length, mean: mean(diffs), low: quantile(draws, 0.025), high: quantile(draws, 0.975) };
 }
 
+export interface RunComparison {
+  /** Per cell: first plays completed in both runs at the same seed, and the State win rates over them. */
+  readonly cells: readonly { readonly condition: string; readonly state: string; readonly pkk: string; readonly pairs: number; readonly base: number; readonly variant: number; readonly diff: number }[];
+  /** Equal-weight roster average over the included cells, variant minus base, with a seed-cluster bootstrap interval. */
+  readonly roster: { readonly cells: number; readonly seeds: number; readonly base: number; readonly variant: number; readonly mean: number; readonly low: number; readonly high: number };
+  /** Completed first plays with no partner in the other run. */
+  readonly unpaired: { readonly base: number; readonly variant: number };
+}
+
+/**
+ * Run-versus-run comparison for a rules or setup change (audit Plan 3 A1). Games pair by cell
+ * (condition, State player, PKK player) and game seed; only completed first plays in both runs
+ * count. Each bootstrap draw resamples game seeds once and applies them to every cell of both runs,
+ * so the interval is for the paired change. `include` selects the roster cells (19 s4).
+ */
+export function compareRuns(base: readonly GameRecord[], variant: readonly GameRecord[], samples: number, seed: number, include: (g: GameRecord) => boolean = () => true): RunComparison {
+  const plays = (rs: readonly GameRecord[]): Map<string, GameRecord> => new Map(rs.filter((g) => g.status === "complete" && g.repeat === 0).map((g) => [`${cellKey(g)}#${String(g.seed)}`, g]));
+  const pb = plays(base);
+  const pv = plays(variant);
+  const win = (g: GameRecord | undefined): number => (g?.result?.winner === "state" ? 1 : 0);
+  // cell -> seed -> [base win, variant win]
+  const cells = new Map<string, { first: GameRecord; bySeed: Map<number, [number, number]> }>();
+  for (const [k, g] of pb) {
+    const v = pv.get(k);
+    if (v === undefined) continue;
+    const c = cells.get(cellKey(g)) ?? { first: g, bySeed: new Map() };
+    c.bySeed.set(g.seed, [win(g), win(v)]);
+    cells.set(cellKey(g), c);
+  }
+  const paired = [...cells.values()].reduce((n, c) => n + c.bySeed.size, 0);
+  const rates = (bySeed: Map<number, [number, number]>, draw: readonly number[]): [number, number] | null => {
+    let n = 0, wb = 0, wv = 0;
+    for (const s of draw) { const x = bySeed.get(s); if (x === undefined) continue; n++; wb += x[0]; wv += x[1]; }
+    return n === 0 ? null : [wb / n, wv / n];
+  };
+  const sorted = [...cells.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([, c]) => c);
+  const roster = sorted.filter((c) => include(c.first));
+  const seeds = [...new Set(roster.flatMap((c) => [...c.bySeed.keys()]))].sort((a, b) => a - b);
+  const average = (draw: readonly number[]): [number, number] => {
+    const rs = roster.flatMap((c) => { const r = rates(c.bySeed, draw); return r === null ? [] : [r]; });
+    const mean = (i: 0 | 1): number => (rs.length === 0 ? Number.NaN : rs.reduce((a, r) => a + r[i], 0) / rs.length);
+    return [mean(0), mean(1)];
+  };
+  const [b, v] = average(seeds);
+  const rng = new SearchRng(seed);
+  const draws = seeds.length === 0 ? [] : Array.from({ length: samples }, () => { const [x, y] = average(seeds.map(() => seeds[rng.int(seeds.length)] ?? 0)); return y - x; }).sort((x, y) => x - y);
+  return {
+    cells: sorted.map((c) => {
+      const [rb, rv] = rates(c.bySeed, [...c.bySeed.keys()]) ?? [Number.NaN, Number.NaN];
+      return { condition: c.first.conditionId, state: c.first.state, pkk: c.first.pkk, pairs: c.bySeed.size, base: rb, variant: rv, diff: rv - rb };
+    }),
+    roster: { cells: roster.length, seeds: seeds.length, base: b, variant: v, mean: v - b, low: quantile(draws, 0.025), high: quantile(draws, 0.975) },
+    unpaired: { base: pb.size - paired, variant: pv.size - paired },
+  };
+}
+
+/** Signed percentage points with one decimal; "n/a" for an unavailable estimate. */
+const pp = (x: number): string => (Number.isNaN(x) ? "n/a" : `${x >= 0 ? "+" : ""}${(100 * x).toFixed(1)}`);
+
+/** Markdown report of a run-versus-run comparison. */
+export function renderRunComparison(c: RunComparison, base: string, variant: string, bootstrap: { readonly samples: number; readonly seed: number }): string {
+  const r = c.roster;
+  const out = [
+    `# Paired run comparison: ${variant} against ${base}`, "",
+    `Pairs: same cell (condition, State player, PKK player) and game seed; completed first plays only. Bootstrap: ${String(bootstrap.samples)} draws, seed ${String(bootstrap.seed)}, game seeds resampled as clusters across cells.`, "",
+    `State roster average over ${String(r.cells)} qualified-versus-qualified cells and ${String(r.seeds)} seeds: ${base} ${pct(r.base)}, ${variant} ${pct(r.variant)}. Paired change: **${pp(r.mean)} pp [${pp(r.low)}, ${pp(r.high)}]**.`, "",
+    `Unpaired completed games: ${String(c.unpaired.base)} in ${base}, ${String(c.unpaired.variant)} in ${variant}.`, "",
+    "| Condition | State | PKK | Pairs | Base State wins | Variant State wins | Change (pp) |", "|---|---|---|--:|--:|--:|--:|",
+    ...c.cells.map((x) => `| ${x.condition} | ${x.state} | ${x.pkk} | ${String(x.pairs)} | ${pct(x.base)} | ${pct(x.variant)} | ${pp(x.diff)} |`),
+  ];
+  return `${out.join("\n")}\n`;
+}
+
+/**
+ * Compare two experiment directories with `compareRuns`, write the Markdown report to `outFile` and
+ * return it. Bootstrap settings come from the base manifest; roster cells are qualified-versus-qualified.
+ */
+export function comparePairedRuns(baseDir: string, variantDir: string, outFile: string): string {
+  const read = (dir: string, name: string): unknown => JSON.parse(readFileSync(join(dir, name), "utf8"));
+  const roles = { ...(read(baseDir, "players.json") as Record<string, { role: string }>), ...(read(variantDir, "players.json") as Record<string, { role: string }>) };
+  const manifest = (dir: string): Manifest => read(dir, "manifest.json") as Manifest;
+  const bootstrap = manifest(baseDir).analysis.bootstrap;
+  const c = compareRuns(read(baseDir, "results.json") as GameRecord[], read(variantDir, "results.json") as GameRecord[], bootstrap.samples, bootstrap.seed, (g) => roles[g.state]?.role === "qualified" && roles[g.pkk]?.role === "qualified");
+  const text = renderRunComparison(c, manifest(baseDir).id, manifest(variantDir).id, bootstrap);
+  writeFileSync(outFile, text, "utf8");
+  return text;
+}
+
 export interface Warnings { readonly cell: readonly string[]; readonly roster: readonly string[]; readonly margin: readonly string[] }
 
 /** Review triggers (19 s10): a cell at the cell level for either faction, a roster average above the level, recurring large margin gaps. */

@@ -56,6 +56,10 @@ input, select, textarea { font: inherit; padding: 4px 6px; border: 1px solid var
 /* Metrics review (P4-03): the wide round table scrolls inside the screen, not the page. */
 .metrics { min-width: 0; }
 .metrics .table-scroll { overflow-x: auto; }
+/* Experiment reports (audit Plan 3 A5): the Markdown report and the game table scroll inside the screen. */
+.experiments { min-width: 0; }
+.experiments .table-scroll { overflow-x: auto; }
+.experiments pre { white-space: pre; overflow-x: auto; max-height: 60vh; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .muted { color: var(--muted); }

@@ -8,7 +8,7 @@ import { coinHandlers } from "../engine/coin/handlers.ts";
 import type { AnyCommand, GameState, JsonObject, LogEntry, Ruleset } from "../engine/core/types.ts";
 import { createEngine } from "../engine/index.ts";
 import { loadPackage, withSessionOptions } from "../package/load.ts";
-import { readArchive, readJournal } from "./experiment-artifacts.ts";
+import { gameSteps, readArchive } from "./experiment-artifacts.ts";
 import { derive } from "../engine/coin/derive.ts";
 import { param } from "../engine/core/params.ts";
 import type { GameJob } from "./game-runner.ts";
@@ -178,7 +178,22 @@ export interface Diagnostics {
   readonly stopRuleFlags: Readonly<Record<string, number>>;
   readonly boxesByFaction: Readonly<Record<string, Readonly<Record<string, number>>>>;
   readonly eligibilityRows: Readonly<Record<string, number>>;
-  readonly eventSides: Readonly<Record<string, number>>;
+  /** Card plays by `cardRun` key, and the plays that applied no effect (audit Plan 3 A3). */
+  readonly cards: Readonly<Record<string, CardRuns>>;
+  /** Propaganda card reveals by card ID. */
+  readonly propagandaReveals: Readonly<Record<string, number>>;
+}
+
+export interface CardRuns { readonly runs: number; readonly noEffect: number }
+
+/**
+ * The card a command plays: "<card> <side>" for an Event side of the current card, "<card> pivotal"
+ * for a Pivotal, null otherwise. The audit card ledger counts plays this way (section 3).
+ */
+export function cardRun(command: AnyCommand, before: GameState): string | null {
+  if (command.type === "ChooseEvent") return `${str(before.deck.currentCard)} ${str(command["side"])}`;
+  if (command.type === "PlayPivotal") return `${str(command["card"])} pivotal`;
+  return null;
 }
 
 /** Final score components of a completed game (19 s9 report: scoring routes). */
@@ -191,15 +206,17 @@ export interface Coverage {
   readonly diagnostics: Diagnostics;
 }
 
+/** The ruleset of the package an experiment captured at its start. */
+export function capturedRuleset(dir: string): Ruleset {
+  const loaded = loadPackage({ files: JSON.parse(readFileSync(join(dir, "package-content.json"), "utf8")) as Record<string, unknown>, issues: [] });
+  if (!loaded.ok) throw new Error("captured package does not load");
+  return loaded.ruleset;
+}
+
 /** Replay every scheduled game (complete or prefix) and build the ledger and diagnostics. */
 export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
   const identity = JSON.parse(readFileSync(join(dir, "identity.json"), "utf8")) as { scenario: string; conditions: Record<string, Record<string, string>> };
-  let base = ruleset;
-  if (base === undefined) {
-    const loaded = loadPackage({ files: JSON.parse(readFileSync(join(dir, "package-content.json"), "utf8")) as Record<string, unknown>, issues: [] });
-    if (!loaded.ok) throw new Error("captured package does not load");
-    base = loaded.ruleset;
-  }
+  const base = ruleset ?? capturedRuleset(dir);
   const engine = createEngine(coinHandlers);
   const jobs = JSON.parse(readFileSync(join(dir, "schedule.json"), "utf8")) as GameJob[];
   const hits = new Map<string, number>();
@@ -212,29 +229,33 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
   const flags: Record<string, number> = {};
   const boxes: Record<string, Record<string, number>> = { state: {}, pkk: {} };
   const rows: Record<string, number> = {};
-  const sides: Record<string, number> = {};
+  const cards: Record<string, { runs: number; noEffect: number }> = {};
+  const reveals: Record<string, number> = {};
   let maxStreak = 0;
   const archive = readArchive(dir);
   const finals: Record<string, FinalComponents> = {};
   for (const job of jobs) {
     const r = withSessionOptions(base, identity.scenario, identity.conditions[job.conditionId] ?? {});
-    const journal = readJournal(dir, job.gameId);
-    const archived = archive?.get(job.gameId);
-    const events = journal.length > 0 ? journal : (archived?.commands ?? []).map((command, i) => ({ t: "step" as const, i, command: command as AnyCommand, hash: archived?.hashes[i] ?? "", auto: null, decisions: [], checkpoints: [] }));
+    const events = gameSteps(dir, job.gameId, archive).steps;
     let s = engine.start(r, identity.scenario, job.seed).state;
     const seen = new Set<string>();
     let lastFirst: string | null = null;
     let streak = 0;
     const passRun: Record<string, number> = {};
     const streaked = new Set<string>();
-    for (const e of events) {
-      if (e.t !== "step") continue;
+    for (const [i, e] of events.entries()) {
       // Analysis derived from a different play would misreport the recorded games: every step
       // must reproduce its recorded hash.
       const result = engine.apply(r, s, e.command);
-      if (!result.ok || result.transition.stateHash !== e.hash) throw new Error(`${job.gameId}: replay diverges at step ${String(e.i + 1)}; run \`experiment replay\``);
+      if (!result.ok || result.transition.stateHash !== e.hash) throw new Error(`${job.gameId}: replay diverges at step ${String(i + 1)}; run \`experiment replay\``);
       const x: Seen = { entries: result.transition.logEntries, command: e.command, before: s };
       for (const m of MECHANICS) if (!seen.has(m.id) && m.probe(x)) seen.add(m.id);
+      const played = cardRun(e.command, s);
+      if (played !== null) {
+        const c = (cards[played] ??= { runs: 0, noEffect: 0 });
+        c.runs++;
+        if (!x.entries.some((entry) => entry.kind === "EffectApplied")) c.noEffect++;
+      }
       const faction = typeof e.command["faction"] === "string" ? e.command["faction"] : null;
       if (faction !== null && ["Pass", "ChooseEvent", "ChooseOperation"].includes(e.command.type) && s.turn.phase === "card") {
         choices[faction] = (choices[faction] ?? 0) + 1;
@@ -268,7 +289,7 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
           lastFirst = next;
           maxStreak = Math.max(maxStreak, streak);
         }
-        if (entry.kind === "ChoiceMade" && typeof entry.data["side"] === "string") sides[`${str(entry.data["card"])} ${entry.data["side"]}`] = (sides[`${str(entry.data["card"])} ${entry.data["side"]}`] ?? 0) + 1;
+        if (entry.kind === "CardRevealed" && entry.data["type"] === "propaganda") reveals[str(entry.data["card"])] = (reveals[str(entry.data["card"])] ?? 0) + 1;
       }
       s = result.transition.state;
     }
@@ -304,7 +325,8 @@ export function experimentCoverage(dir: string, ruleset?: Ruleset): Coverage {
       stopRuleFlags: flags,
       boxesByFaction: boxes,
       eligibilityRows: rows,
-      eventSides: sides,
+      cards: Object.fromEntries(Object.entries(cards).sort(([a], [b]) => a.localeCompare(b))),
+      propagandaReveals: Object.fromEntries(Object.entries(reveals).sort(([a], [b]) => a.localeCompare(b))),
     },
   };
 }

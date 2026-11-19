@@ -43,6 +43,9 @@ export function mockApi(overrides: Partial<Api> = {}): Api {
     review: () => Promise.resolve([]),
     setNoteStatus: never,
     metrics: () => Promise.resolve({ columns: [], rows: [] }),
+    experiments: () => Promise.resolve([]),
+    experiment: never,
+    openExperimentGame: never,
     ...overrides,
   };
 }

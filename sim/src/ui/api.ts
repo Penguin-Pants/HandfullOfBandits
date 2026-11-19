@@ -2,7 +2,7 @@
 import type { AnnotationRow } from "../store/repos/annotations.ts";
 import type { CategoryRow } from "../store/repos/categories.ts";
 import type { SessionRow } from "../store/repos/sessions.ts";
-import type { Head, HistoryEntry, PackageSummary, SeatPlayer } from "../server/service.ts";
+import type { ExperimentDetail, ExperimentGameRow, ExperimentSummary, Head, HistoryEntry, PackageSummary, SeatPlayer } from "../server/service.ts";
 import type { BoardView, ForceView, PieceView, SpaceView } from "../server/view.ts";
 import type { ReviewRow } from "../server/review.ts";
 import type { Cell as MetricsCell, MetricsTable } from "../export/metrics.ts";
@@ -13,7 +13,7 @@ import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
 
 export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
-export type { SeatPlayer };
+export type { ExperimentDetail, ExperimentGameRow, ExperimentSummary, SeatPlayer };
 export type { HistoryEntry, MetricsCell, MetricsTable, ReviewRow, RuleLookup };
 export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
@@ -142,6 +142,12 @@ export const api = {
   metrics: (sessionIds: readonly string[]) => call<MetricsTable>("GET", `/metrics${metricsQuery(sessionIds)}`),
   /** Research text a log rule ref cites (P4-08). */
   rule: (id: string, ref: string) => call<RuleLookup>("GET", `/sessions/${id}/rules?${new URLSearchParams({ ref }).toString()}`),
+  /** Experiment reports (audit Plan 3 A5). */
+  experiments: () => call<ExperimentSummary[]>("GET", "/experiments"),
+  experiment: (id: string) => call<ExperimentDetail>("GET", `/experiments/${encodeURIComponent(id)}`),
+  /** Open a recorded game as a new session after its first `decisions` commands (null: all). */
+  openExperimentGame: (id: string, gameId: string, decisions: number | null) =>
+    call<{ sessionId: string; applied: number; total: number; divergedAt: number | null }>("POST", `/experiments/${encodeURIComponent(id)}/games/${encodeURIComponent(gameId)}/open`, { decisions }),
   endSession: (id: string, debrief: string | null) => call<{ debriefId: string | null }>("POST", `/sessions/${id}/end`, { debrief }),
 };
 

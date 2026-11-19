@@ -6,7 +6,7 @@
 - **Companion file:** `card-ledger.csv` (193 rows, one per card side, with `path:line` evidence).
 - **Effort scale:** S = one focused pull request with tests. M = two to four pull requests. L = five or more. (Project rule: no time estimates.)
 
-> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. The designer answered every Plan 1 decision on 2026-11-19; see `docs/audit/OPEN_QUESTIONS.md`, section "Decisions (2026-11-19)". Plan 1 is complete ([#127](https://github.com/Penguin-Pants/HandfullOfBandits/pull/127)): D-06 fixes C-5 to C-9 (the Ambush decision is now DD-26). M1: `sim/test/no-crash.test.ts` applies every candidate from 50 random states in C1 to C5 (about 5,400) with no throw. D-03 and M3: a recount found 46 of 160 codes untested (the grep in section 2.5 missed codes made with `at(location, "code", ...)`); `sim/test/rejection-codes.test.ts` tests each one and fails if any engine code has no asserting test. D-04: probe players `S-PROBE@1` and `P-PROBE@1` (`sim/src/cli/strategies/probe.ts`); the generator now offers Strike Collaborators after the Operation (decision 10). In run `sim/experiments/runs/d04-probe` (100 games) each of the 21 non-Victory rows below 10 in `dd25-v4b` reaches 16 or more games. By designer decision, the four Victory outcome rows (V-simultaneous, V-harm-gate, V-tie, V-excess-harm) stay reviewed fixtures: a player cannot force them. Plan 2 ([doc 43](../prototype/43-solo-opponent-plan2.md)): the designer chose the bot as the State. S1, S4 and S5 are done: the Home screen seats a bot (default `S-CON@4`), each bot action shows "Why?" with the top 3 plays and the sampled line, and 10 new C3 to C5 positions pass for every qualified bot. S2 is blocked on a design decision: most State passes are forced by Resources, so the 20% Pass target needs an economy change or a new target (`OPEN_QUESTIONS.md` B-5). S3 is not started (B-6). Next milestone: answer B-5 and B-6.
+> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. The designer answered every Plan 1 decision on 2026-11-19; see `docs/audit/OPEN_QUESTIONS.md`, section "Decisions (2026-11-19)". Plan 1 is complete ([#127](https://github.com/Penguin-Pants/HandfullOfBandits/pull/127)): D-06 fixes C-5 to C-9 (the Ambush decision is now DD-26). M1: `sim/test/no-crash.test.ts` applies every candidate from 50 random states in C1 to C5 (about 5,400) with no throw. D-03 and M3: a recount found 46 of 160 codes untested (the grep in section 2.5 missed codes made with `at(location, "code", ...)`); `sim/test/rejection-codes.test.ts` tests each one and fails if any engine code has no asserting test. D-04: probe players `S-PROBE@1` and `P-PROBE@1` (`sim/src/cli/strategies/probe.ts`); the generator now offers Strike Collaborators after the Operation (decision 10). In run `sim/experiments/runs/d04-probe` (100 games) each of the 21 non-Victory rows below 10 in `dd25-v4b` reaches 16 or more games. By designer decision, the four Victory outcome rows (V-simultaneous, V-harm-gate, V-tie, V-excess-harm) stay reviewed fixtures: a player cannot force them. Plan 2 ([doc 43](../prototype/43-solo-opponent-plan2.md)): the designer chose the bot as the State. S1, S4 and S5 are done: the Home screen seats a bot (default `S-CON@4`), each bot action shows "Why?" with the top 3 plays and the sampled line, and 10 new C3 to C5 positions pass for every qualified bot. S2 is blocked on a design decision: most State passes are forced by Resources, so the 20% Pass target needs an economy change or a new target (`OPEN_QUESTIONS.md` B-5). S3 is not started (B-6). Next milestone: answer B-5 and B-6. Plan 3 ([doc 44](../prototype/44-simulation-analysis-plan3.md)) is complete: A1 `experiment compare <base> <variant> --paired` (doc 41 means exact, interval ends within one bootstrap step), A2 `experiment new` (no manual hash; `supersedes` optional), A3 `experiment cards` (189 of 189 ledger counts match at `c22d5ab`), A4 done in Plan 1, A5 app screen "Experiment reports" (open a report, open a game at a decision). Open: target band and seed count (section 6.7).
 
 ---
 
@@ -41,7 +41,7 @@
 2. ✅ Done (#122). **Regenerate the print set from the package** and add a drift check: M. This unblocks physical playtests of C3 to C5.
 3. ✅ Done (doc 43). **Add a bot seat to the app** (designer chose: bot plays the State first): M. This is the first playable solo milestone.
 4. **Add setup variant overlays** with derived Available pools: M. This removes full package copies for every variant.
-5. **Add a paired run-versus-run compare** to `experiment`: S.
+5. ✅ Done (doc 44). **Add a paired run-versus-run compare** to `experiment`: S.
 
 ---
 
@@ -453,13 +453,15 @@ Status 2026-11-19 (doc 43): S1 ✅, S2 ⚠️ blocked (B-5), S3 not started (B-6
 
 ### 6.7 Milestones and acceptance
 
-| ID | Content | Entry points | Effort | Acceptance |
-|:--|:--|:--|:--|:--|
-| A1 | `experiment compare --paired` | `cli/experiment.ts`, `experiment-analysis.ts` | S | Reproduces doc 41 paired numbers from the stored runs |
-| A2 | `experiment new` fills hashes; `supersedes` optional | `cli/experiment-manifest.ts:66` | S | A study runs with no manual hash |
-| A3 | Card side coverage command | new `cli/experiment-cards.ts` | S | Same counts as this audit's ledger |
-| A4 | Probe players for rare systems | `cli/candidates.ts`, `player-registry.ts` | M | Every coverage row natural in ≥ 10 games |
-| A5 | Report viewer in the app | `server/review.ts`, `ui/metrics` | M | Open a report and jump to a game decision |
+Status 2026-11-19 ([doc 44](../prototype/44-simulation-analysis-plan3.md)): A1 to A5 ✅.
+
+| ID | Content | Entry points | Effort | Acceptance | Status |
+|:--|:--|:--|:--|:--|:--|
+| A1 | `experiment compare --paired` | `cli/experiment.ts`, `experiment-analysis.ts` | S | Reproduces doc 41 paired numbers from the stored runs | ✅ Means exact; interval ends within one step (1/240) of doc 41, whose scratch script RNG was not recorded |
+| A2 | `experiment new` fills hashes; `supersedes` optional | `cli/experiment-manifest.ts:66` | S | A study runs with no manual hash | ✅ |
+| A3 | Card side coverage command | new `cli/experiment-cards.ts` | S | Same counts as this audit's ledger | ✅ 189 of 189, run at `c22d5ab` (stored runs diverge on today's engine) |
+| A4 | Probe players for rare systems | `cli/candidates.ts`, `player-registry.ts` | M | Every coverage row natural in ≥ 10 games | ✅ Plan 1 D-04; Victory outcome rows stay fixtures by decision |
+| A5 | Report viewer in the app | `server/service.ts`, `cli/experiment-viewer.ts`, `ui/experiments` | M | Open a report and jump to a game decision | ✅ |
 
 **Decisions you need to make:** the target band (today 60 to 65% State in bot games) and the seed count before a rules change (docs 37 to 41 propose 50 per cell).
 
