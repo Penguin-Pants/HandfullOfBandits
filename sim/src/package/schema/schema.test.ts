@@ -173,6 +173,15 @@ const valid: Record<PackageFile, unknown> = {
   ],
   assumptions: [{ id: "PA-01", gap: "GAP-B01", text: "Executing faction chooses", appliesTo: ["events.choice"], status: "accepted" }],
   rules: [{ id: "06 s3.2", file: "06-operations.md", heading: "Cross-Border", text: "Pay 2 Resources.", subsections: ["3.2.1 Access"] }],
+  variant: {
+    base: "a".repeat(64),
+    scenario: "start",
+    thresholds: { blue: 9 },
+    tracks: { "cash.blue": 4, mood: "calm" },
+    spaces: { city: { level: 1, pieces: { soldier: 3 } }, farm: {} },
+    pieces: { soldier: 6 },
+    outOfPlay: { camp: 0 },
+  },
 };
 
 const DELETE = Symbol("delete");
@@ -253,6 +262,8 @@ const invalid: [PackageFile, string, string, unknown, string][] = [
   ["rules", "unknown key", "0.extra", 1, "0"],
   ["assumptions", "empty appliesTo", "0.appliesTo", [], "0.appliesTo"],
   ["scenario", "excluded card without reason", "excludedCards.0.reason", DELETE, "excludedCards.0.reason"],
+  ["variant", "short base hash", "base", "abc", "base"],
+  ["variant", "piece total of zero", "pieces.soldier", 0, "pieces.soldier"],
 ];
 
 describe("package schemas", () => {

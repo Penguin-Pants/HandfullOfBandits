@@ -43,9 +43,13 @@ game-packages/
       assumptions.yaml
       rules.yaml
       CHANGELOG.md
+      variants/
+        dd25-thresholds-43-38.yaml
 ```
 
 One folder per version. Old version folders stay in the repository. The database also keeps a content copy of each version used by a session (section 10.3).
+
+`variants/` is not package content: it does not change the package hash. Section 4.11 describes it.
 
 ## 3. manifest.yaml
 
@@ -206,13 +210,28 @@ Thresholds live in scenario files, because they differ per scenario.
 | `finalRound` | Propaganda round that ends the game |
 | `tracks` | Start values |
 | `spaces` | Pieces, levels and markers per space. Counts per flip state or side, for example `guerrilla: {underground: 2}`. A bare count places pieces on their `placedAs` face. A marker with sides always needs counts per side (DEC-40) |
-| `available`, `outOfPlay` | Pools. A piece type not listed has 0 in that pool. Validation checks totals against `pieces.yaml` |
+| `available`, `outOfPlay` | Pools. A piece type not listed has 0 in that pool. Validation checks totals against `pieces.yaml`. Omit `available` to derive it: piece total minus the map minus Out of Play (audit Plan 4 V1) |
 | `pivotals` | Per faction |
 | `flags` | For example `law3175: true`, `northernIraqVacuum: true` |
 | `thresholds` | Per faction |
 | `options` | Values for every competing option in `manifest.options`. An option `threshold.<faction>` replaces that faction's threshold, only in a scenario that sets it (P3b-08, DEC-24) |
 | `excludedCards` | Optional list with reason |
 | `testOnly` | true for designer test scenarios not taken from research |
+| `variant` | Written by the loader only: the variant name, the base package hash and each setup change (section 4.11) |
+
+### 4.11 variants/*.yaml (audit Plan 4 V1)
+
+A variant names one scenario of the package in the same folder and only the setup fields it changes. The file name is the variant name (lowercase letters, digits and `-`).
+
+| Field | Meaning |
+|---|---|
+| `base` | Hash of the package the variant was made on. Another hash gives warning V-VARIANT |
+| `scenario` | Scenario ID |
+| `thresholds`, `tracks`, `outOfPlay` | Merge by key into the scenario |
+| `spaces` | Each entry replaces the whole entry of that space. `{}` empties it |
+| `pieces` | Piece totals (`pieces.yaml` `count`) by piece ID |
+
+Available is always derived. The loader applies the variant and validates the result like any package. The result has its own content hash; its scenario records `variant: {name, base, changes}`, so a stored session or run names its variant. An issue the variant causes names the variant file. `sim validate <dir>` checks each variant and prints its hash.
 
 ## 5. Effect primitives (card and module output)
 
@@ -342,6 +361,7 @@ Validation runs on load, before a session starts, and in the CLI (`sim validate 
 | V-MISSING | A reachable rule has `status: missing` | error |
 | V-PROVISIONAL | A rule uses a PA | warning |
 | V-SCORE-CHECK | Computed start scores equal the scenario's stated start scores | warning |
+| V-VARIANT | A variant's `base` is not the hash of its package (section 4.11) | warning |
 
 Each message gives file, path inside the file, the ID and a plain sentence. Example: `scenarios/scenario-b.yaml spaces.botan.pieces.guards: 2 Guards exceed the limit of 3 when added to 2 from events.flags`.
 

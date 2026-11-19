@@ -64,6 +64,16 @@ Open from Plan 2 (doc 43 section 4):
 - **B-6 S3 scope.** Answered 2026-11-19: a 10-seed first check. Done (`dev-s3-search-10`): S-SEARCH@1 12/40, S-CON@5 7/40, S-CON@4 25/40.
 - **B-7 Default State opponent.** Answered 2026-11-19: keep `S-CON@4`, the strongest bot, although it misses the B-5 target. `S-SEARCH@1` stays registered for later tuning.
 
+## Decisions (2026-11-19, Plan 4)
+
+Answers to audit section 7.6. Results: `docs/prototype/45-setup-controls-plan4.md`.
+
+| # | Question | Decision | Pending |
+|:--|:--|:--|:--|
+| V-1 | Where do variants live? | In the repository, next to the package: `game-packages/<package>/<version>/variants/<name>.yaml`. The app saves there | Done: V1 loader |
+| V-2 | Must bots be requalified per variant? | No. Sessions and runs record the variant name and hash; a study report states that the bots were qualified on the baseline package | V3 |
+| V-3 | V1 acceptance, since the package copies drifted from the baseline | Proof: the overlay compiles to the same scenario as the copy its stored run used. The 5 copies in `sim/experiments/packages/` become overlays; the 7 dd25 manifests name the overlays | Done: overlays and proof (V1). Copies and manifests: V3 |
+
 ## Open from Plan 3
 
 Audit section 6.7. The tools are built (doc 44); these choices set how to read their results.

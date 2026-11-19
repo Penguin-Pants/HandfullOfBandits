@@ -1,0 +1,7 @@
+# TEST VARIANT (doc 37), not the game rules: thresholds State 43 and PKK 38; +1 Police in Siirt and Bitlis.
+base: ed517d2c6fb171c74290d0d5a9ce00e581bc730db058829856cf48cc50a2a512
+scenario: full-campaign
+thresholds: {state: 43, pkk: 38}
+spaces:
+  siirt: {level: -1, pieces: {police: 2, guerrilla: 1}}
+  bitlis: {pieces: {police: 2, guerrilla: 1}}

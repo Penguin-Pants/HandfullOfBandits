@@ -1,7 +1,7 @@
 // `sim diff <old-dir> <new-dir>` (04 s10.1 item 3; 11 P4-05). Changed parameters, cards, handlers
 // and modules between two package versions, then other changed files. Exit 1 when one does not load.
 import { loadPackage, readPackageDir } from "../package/load.ts";
-import { diffPackages, type Changes } from "../package/diff.ts";
+import { diffPackages, type Changes, type SetupChange } from "../package/diff.ts";
 import type { PackageData } from "../package/validate.ts";
 import { formatIssue } from "./validate.ts";
 
@@ -18,6 +18,9 @@ function section<Item, Changed>(title: string, c: Changes<Item, Changed>, item: 
     ...c.changed.map((i) => `  ~ ${change(i)}`),
   ];
 }
+
+/** One setup change as `kind space id face: from to to`, for example `piece siirt police: 1 to 2`. */
+const setupLine = (c: SetupChange): string => `${[c.kind, c.space, c.id, c.face].filter((x) => x !== null).join(" ")}: ${value(c.from)} to ${value(c.to)}`;
 
 const label = (d: PackageData): string => `${d.manifest.packageId} ${d.manifest.version} ${d.manifest.rulesetVersion}`;
 
@@ -49,6 +52,7 @@ export function diffCommand(oldDir: string, newDir: string): { readonly exitCode
       ...section("Handlers", d.handlers, (h) => `${h.id} (${h.where})`, (h) => `${h.id}: ${h.from} to ${h.to}`),
       ...section("Modules", d.modules, (m) => m, (m) => `${m.id}: @${m.from} to @${m.to}`),
       ...(d.otherFiles.length === 0 ? [] : [`Other files changed: ${d.otherFiles.join(", ")}`]),
+      ...Object.entries(d.setup).flatMap(([scenario, changes]) => [`Setup ${scenario}: ${String(changes.length)} changed`, ...changes.map((c) => `  ~ ${setupLine(c)}`)]),
     ],
   };
 }

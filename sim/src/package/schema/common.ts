@@ -9,6 +9,9 @@ export const id = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "IDs use lett
 
 export const text = z.string().min(1);
 
+/** Package content hash (04 s10.2): 64 lowercase hex digits. */
+export const packageHash = z.string().regex(/^[0-9a-f]{64}$/, "Use the 64-digit package hash");
+
 export const count = z.int().min(0);
 
 /** Value of a competing option (04 s3 `options`, s4.10 `options`). */

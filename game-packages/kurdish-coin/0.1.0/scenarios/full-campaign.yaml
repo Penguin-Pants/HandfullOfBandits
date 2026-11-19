@@ -36,7 +36,8 @@ spaces:
   western-cities: {level: 1, pieces: {troops: 2, police: 2, stateBase: 1}}
   kdp-zone: {pieces: {guerrilla: 4, pkkBase: 1}}
   syria-bekaa: {pieces: {guerrilla: 2, pkkBase: 1}, markers: {leadership: {present: 1, abroad: 0}}}
-available: {troops: 14, police: 4, stateBase: 4, guerrilla: 14, pkkBase: 9}
+# Available is derived: piece total minus the map minus Out of Play (audit Plan 4 V1). Rule 10.2:
+# 14 Troops, 4 Police, 4 State Bases, 14 Guerrillas, 9 PKK Bases.
 outOfPlay: {guards: 16}
 flags: {law3175: false}
 thresholds: {state: 49, pkk: 32}

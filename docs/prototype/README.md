@@ -54,6 +54,7 @@ Status: Phases 1 and 2 complete. Phases 3a to 3c built; their designer checkpoin
 | [42-confirm-43-38.md](42-confirm-43-38.md) | 43/38 on 50 fresh seeds per pairing: 68.9% State, above the target |
 | [43-solo-opponent-plan2.md](43-solo-opponent-plan2.md) | Audit Plan 2: bot seat, decision review and C3 to C5 positions done; State retune blocked on forced passes |
 | [44-simulation-analysis-plan3.md](44-simulation-analysis-plan3.md) | Audit Plan 3: paired run compare, studies without hashes, card side counts, report viewer in the app |
+| [45-setup-controls-plan4.md](45-setup-controls-plan4.md) | Audit Plan 4: variant overlays with derived Available, setup editor, variants in studies, setup sheet |
 
 ## Method
 
