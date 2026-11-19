@@ -3,8 +3,8 @@
 // fingerprint forces a replay check on first load (DEC-19): identical resumes, else read-only.
 import { searchAnnotations } from "../store/search.ts";
 import { backupStore } from "../store/backup.ts";
-import { readdirSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync, realpathSync, statSync } from "node:fs";
+import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { buildContext } from "../annotate/context.ts";
 import { lookupRule, ruleIndexOf, ruleSource, type RuleLookup } from "../annotate/rule-index.ts";
 import type { UiFocus } from "../annotate/types.ts";
@@ -17,7 +17,10 @@ import type { AnyCommand, GameState, JsonObject, JsonValue, Ruleset, ValidationR
 import { createEngine, type Engine } from "../engine/index.ts";
 import { botDecisionsOf, saveBotDecisions } from "../store/repos/bot-decisions.ts";
 import { replaySteps } from "../engine/replay.ts";
-import { loadPackage, packageContent, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
+import { loadPackage, packageContent, parseYaml, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
+import { loadSavedVariant, readVariant, resolveVariant, VARIANT_NAME, variantNames, writeVariant } from "../package/variant.ts";
+import { parsePackageFile } from "../package/schema/index.ts";
+import { checkVariant, editorYaml, variantSummary, type VariantCheck, type VariantSummary } from "./variants.ts";
 import type { PackageData, PackageIssue } from "../package/validate.ts";
 import type { Db } from "../store/migrate.ts";
 import { branchHistory, continueAction, commitAction, getAction, storedSteps, type ActionKind, type ActionRow } from "../store/repos/actions.ts";
@@ -68,6 +71,8 @@ export interface PackageSummary {
   /** Prototype assumptions listed at session start (02 s3 item 4). */
   readonly assumptions: readonly { readonly id: string; readonly text: string; readonly status: string }[];
   readonly options: Readonly<Record<string, readonly (string | number)[]>>;
+  /** Saved variants in the package's variants folder (audit Plan 4 V2). */
+  readonly variants: readonly VariantSummary[];
 }
 
 export interface Head {
@@ -83,6 +88,7 @@ const KIND: Readonly<Record<string, ActionKind>> = { ChooseEvent: "cardChoice", 
 
 function summarize(data: PackageData, dir: string, result: LoadResult): PackageSummary {
   const ruleset = result.ok ? result.ruleset : null;
+  const variants = result.ok ? variantNames(dir).map((name) => variantSummary(name, loadSavedVariant(result, dir, name))) : [];
   return {
     dir,
     packageId: data.manifest.packageId,
@@ -94,6 +100,7 @@ function summarize(data: PackageData, dir: string, result: LoadResult): PackageS
     scenarios: Object.values(data.scenarios).map((s) => ({ id: s.id, title: s.title, blockedBy: ruleset?.scenarios[s.id]?.blockedBy ?? [], testOnly: s.testOnly ?? false })),
     assumptions: (data.assumptions ?? []).map((a) => ({ id: a.id, text: a.text, status: a.status })),
     options: Object.fromEntries(Object.entries(data.manifest.options ?? {}).map(([k, o]) => [k, o.values])),
+    variants,
   };
 }
 
@@ -263,13 +270,65 @@ export class SessionService {
   validate(dir: string): PackageSummary {
     const raw = readPackageDir(dir);
     const result = loadPackage(raw);
-    if (!result.ok) return { dir, packageId: null, version: null, title: null, hash: null, ok: false, issues: result.issues, scenarios: [], assumptions: [], options: {} };
+    if (!result.ok) return { dir, packageId: null, version: null, title: null, hash: null, ok: false, issues: result.issues, scenarios: [], assumptions: [], options: {}, variants: [] };
     return summarize(result.data, dir, result);
   }
 
-  /** Start a session: store the package content, run `start`, commit the setup action. */
-  createSession(input: { dir: string; scenarioId: string; seed: number; name: string; options?: Readonly<Record<string, string | number>>; seats?: Readonly<Record<string, unknown>> }): { sessionId: string; head: Head } {
-    return this.startSession(loadPackage(readPackageDir(input.dir)), input);
+  /**
+   * Start a session: store the package content, run `start`, commit the setup action. With
+   * `variant`, the content is the package with that saved variant applied (audit Plan 4 V2).
+   */
+  createSession(input: { dir: string; scenarioId: string; seed: number; name: string; options?: Readonly<Record<string, string | number>>; seats?: Readonly<Record<string, unknown>>; variant?: string }): { sessionId: string; head: Head } {
+    const base = loadPackage(readPackageDir(input.dir));
+    if (input.variant === undefined || !base.ok) return this.startSession(base, input);
+    const read = readVariant(input.dir, input.variant);
+    if ("issues" in read) throw new ServiceError(404, `Variant "${input.variant}" cannot be read.`, read.issues);
+    const loaded = resolveVariant(base, input.variant, read.data);
+    if (!loaded.ok) throw new ServiceError(422, `Variant "${input.variant}" has errors.`, loaded.issues);
+    return this.startSession(loaded, input);
+  }
+
+  /**
+   * Check one overlay for the setup editor (audit Plan 4 V2). Its source is exactly one of: the
+   * overlay itself, YAML text (import) or the name of a saved variant (open).
+   */
+  checkVariant(input: { dir: string; name?: string; overlay?: unknown; text?: string }): VariantCheck {
+    const sources = [input.name, input.overlay, input.text].filter((x) => x !== undefined).length;
+    if (sources !== 1) throw new ServiceError(400, "Give exactly one of name, overlay and text.");
+    const base = loadPackage(readPackageDir(input.dir));
+    if (!base.ok) throw new ServiceError(422, "The package has errors.", base.issues);
+    const name = input.name ?? "draft";
+    if (input.text !== undefined) {
+      const parsed = parseYaml(input.text);
+      if ("message" in parsed) throw new ServiceError(400, parsed.message);
+      return checkVariant(base, name, parsed.data);
+    }
+    if (input.name !== undefined) {
+      const read = readVariant(input.dir, input.name);
+      if ("issues" in read) throw new ServiceError(404, `Variant "${input.name}" cannot be read.`, read.issues);
+      return checkVariant(base, name, read.data);
+    }
+    return checkVariant(base, name, input.overlay);
+  }
+
+  /**
+   * Save an overlay as `variants/<name>.yaml` of a package under the packages root (audit Plan 4 V2).
+   * `base` becomes the package hash. Refuses errors, and an existing name unless `replace`.
+   */
+  saveVariant(input: { dir: string; name: string; overlay: unknown; replace: boolean }): VariantSummary {
+    if (!VARIANT_NAME.test(input.name)) throw new ServiceError(400, "A variant name uses lowercase letters, digits and '-' (at most 64).");
+    const dir = resolve(input.dir);
+    const inside = relative(realpathSync(this.packagesRoot), existsSync(dir) ? realpathSync(dir) : dir);
+    if (inside === "" || inside === ".." || inside.startsWith(`..${sep}`) || isAbsolute(inside)) throw new ServiceError(403, "Variants are saved only in package folders under the packages root.");
+    const base = loadPackage(readPackageDir(dir));
+    if (!base.ok) throw new ServiceError(422, "The package has errors.", base.issues);
+    const overlay = typeof input.overlay === "object" && input.overlay !== null && !Array.isArray(input.overlay) ? { ...input.overlay, base: base.hash } : input.overlay;
+    const parsed = parsePackageFile("variant", overlay);
+    if (!parsed.ok) throw new ServiceError(422, `Variant "${input.name}" does not match the variant schema.`, parsed.issues);
+    const result = resolveVariant(base, input.name, parsed.value);
+    if (!result.ok) throw new ServiceError(422, `Variant "${input.name}" has errors.`, result.issues);
+    if (!writeVariant(dir, input.name, editorYaml(input.name, parsed.value), input.replace)) throw new ServiceError(409, `Variant "${input.name}" exists. Replace it or choose another name.`);
+    return variantSummary(input.name, result);
   }
 
   private startSession(loaded: LoadResult, input: { scenarioId: string; seed: number; name: string; options?: Readonly<Record<string, string | number>>; seats?: Readonly<Record<string, unknown>> }): { sessionId: string; head: Head } {

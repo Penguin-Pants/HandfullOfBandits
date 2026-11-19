@@ -2,19 +2,20 @@
 // setup fields it changes (schema/variant.ts). Applying it gives new package content with its own
 // hash. The resolved scenario records the variant name, the base package hash and each change
 // (schema/scenario.ts `variant`), so a stored session or run names its variant.
-import { readdirSync, readFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { Document, isMap } from "yaml";
 import { own } from "../engine/core/state.ts";
 import { setupChanges } from "./diff.ts";
 import { loadPackage, packageContent, parseYaml, readError, readPackageDir, VARIANT_DIR, type LoadResult, type RawPackage } from "./load.ts";
 import { parsePackageFile, type PackageFileData } from "./schema/index.ts";
 import type { PackageData, PackageIssue } from "./validate.ts";
 
-type Overlay = PackageFileData<"variant">;
+export type Overlay = PackageFileData<"variant">;
 type Loaded = Extract<LoadResult, { ok: true }>;
 
 /** Variant names: lowercase letters, digits and '-', as experiment IDs. */
-const VARIANT_NAME = /^[a-z0-9][a-z0-9-]{0,63}$/;
+export const VARIANT_NAME = /^[a-z0-9][a-z0-9-]{0,63}$/;
 
 /** Package path of a variant file. */
 export const variantFile = (name: string): string => `${VARIANT_DIR}/${name}.yaml`;
@@ -107,10 +108,50 @@ export function resolveVariant(base: Loaded, name: string, data: unknown): LoadR
   return loaded.ok ? { ...loaded, issues } : { ok: false, issues };
 }
 
+/** Saved variant `name` of the package in `dir`, applied to that package once loaded. */
+export function loadSavedVariant(base: Loaded, dir: string, name: string): LoadResult {
+  const read = readVariant(dir, name);
+  return "issues" in read ? { ok: false, issues: read.issues } : resolveVariant(base, name, read.data);
+}
+
 /** The package in `dir` with its variant `name` applied. */
 export function loadVariant(dir: string, name: string): LoadResult {
   const base = loadPackage(readPackageDir(dir));
-  if (!base.ok) return base;
-  const read = readVariant(dir, name);
-  return "issues" in read ? { ok: false, issues: read.issues } : resolveVariant(base, name, read.data);
+  return base.ok ? loadSavedVariant(base, dir, name) : base;
+}
+
+/** Overlay fields in file order. */
+const FIELDS = ["base", "scenario", "thresholds", "tracks", "spaces", "pieces", "outOfPlay"] as const;
+
+/**
+ * YAML text of an overlay in the hand-written style (audit Plan 4 V2): one line per field, one line
+ * per space. Fields it does not know are dropped.
+ */
+export function variantYaml(overlay: Overlay, comment: string): string {
+  const ordered = Object.fromEntries(FIELDS.flatMap((f) => (overlay[f] === undefined ? [] : [[f, overlay[f]] as const])));
+  const doc = new Document(ordered);
+  if (isMap(doc.contents)) {
+    for (const pair of doc.contents.items) {
+      if (!isMap(pair.value)) continue;
+      if ((pair.key as { value?: unknown }).value !== "spaces") pair.value.flow = true;
+      else for (const space of pair.value.items) if (isMap(space.value)) space.value.flow = true;
+    }
+  }
+  return `# ${comment}\n${doc.toString({ lineWidth: 0 })}`;
+}
+
+/**
+ * Write `variants/<name>.yaml`. Refuses an existing file unless `replace`. Returns false when the
+ * file exists and `replace` is false.
+ */
+export function writeVariant(dir: string, name: string, text: string, replace: boolean): boolean {
+  if (!VARIANT_NAME.test(name)) throw new RangeError("A variant name uses lowercase letters, digits and '-' (at most 64).");
+  mkdirSync(join(dir, VARIANT_DIR), { recursive: true });
+  try {
+    writeFileSync(join(dir, VARIANT_DIR, `${name}.yaml`), text, { flag: replace ? "w" : "wx" });
+    return true;
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "EEXIST") return false;
+    throw e;
+  }
 }

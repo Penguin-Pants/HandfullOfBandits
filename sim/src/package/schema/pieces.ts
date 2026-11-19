@@ -16,6 +16,8 @@ export const piecesSchema = elementList(
       countsForControl: z.boolean(),
       movable: z.boolean(),
       startPool: z.enum(["available", "outOfPlay"]),
+      /** Flag that brings the type into play, for example `law3175`. Setup warns on a piece in play without it (audit Plan 4 V2). */
+      requiresFlag: id.optional(),
       shape: z.enum(["cube", "cylinder", "disc", "octagon"]),
       colorVariant: z.enum(["base", "light"]).optional(),
       emblem: z.enum(["crescentStar", "starCircle"]).optional(),

@@ -535,6 +535,16 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
         error("V-PIECES", file, "", piece.id, `${String(map)} on the map + ${String(available)} available + ${String(outOfPlay)} out of play = ${String(map + available + outOfPlay)}, but pieces.yaml has ${String(piece.count)}.`);
       }
     }
+    // A piece type that needs a flag (for example Guards and Law 3175) is in play at setup without it.
+    for (const piece of pkg.pieces) {
+      if (piece.requiresFlag === undefined || own(scenario.flags, piece.requiresFlag) === true) continue;
+      const map = onMap.get(piece.id) ?? 0;
+      const outOfPlay = own(scenario.outOfPlay, piece.id) ?? 0;
+      const inPlay = map + (scenario.available === undefined ? Math.max(0, piece.count - map - outOfPlay) : (own(scenario.available, piece.id) ?? 0));
+      if (inPlay > 0) {
+        issues.push({ level: "warning", code: "V-PIECES", file, path: "", id: piece.id, message: `${String(inPlay)} ${piece.id} on the map or Available, but flag ${piece.requiresFlag} is not set (pieces.yaml requiresFlag).` });
+      }
+    }
     for (const marker of pkg.markers) {
       const used = markersOnMap.get(marker.id) ?? 0;
       if (used > marker.count) error("V-PIECES", file, "", marker.id, `${String(used)} on the map, but markers.yaml has ${String(marker.count)}.`);
@@ -547,7 +557,8 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       if (rule.terrain !== undefined && (space.terrain === undefined || !rule.terrain.includes(space.terrain))) return;
       if (rule.spaces !== undefined && !rule.spaces.includes(space.id)) return;
       const count = rule.pieces.reduce((sum, p) => sum + total(own(placed, p) ?? 0), 0);
-      if (count > rule.max) report(`${String(count)} of ${rule.pieces.join(", ")} exceed the limit of ${String(rule.max)} (map.yaml stacking.${String(i)}).`);
+      const source = rule.source === undefined ? "" : `, ${rule.source}`;
+      if (count > rule.max) report(`${String(count)} of ${rule.pieces.join(", ")} exceed the limit of ${String(rule.max)} (map.yaml stacking.${String(i)}${source}).`);
     });
   }
 

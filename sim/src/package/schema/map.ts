@@ -41,6 +41,8 @@ const stackingRule = z.strictObject({
   spaceKind: spaceKind.optional(),
   terrain: uniqueList(terrain, 1).optional(),
   spaces: idList(1).optional(),
+  /** Checked on scenario setup only, not in play: for example no Troops in an Iraqi zone before Cross-Border (audit Plan 4 V2). */
+  setupOnly: z.boolean().optional(),
   ...ruleMeta,
 });
 

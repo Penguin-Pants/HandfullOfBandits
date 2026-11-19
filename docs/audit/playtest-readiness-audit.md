@@ -517,12 +517,12 @@ Export each variant as a printable sheet in the rule 10.2 table format, plus a s
 
 ### 7.6 Milestones and acceptance
 
-Status 2026-11-19 ([doc 45](../prototype/45-setup-controls-plan4.md)): V1 ✅, V2 to V4 not started.
+Status 2026-11-19 ([doc 45](../prototype/45-setup-controls-plan4.md)): V1 ✅, V2 ✅, V3 and V4 not started.
 
 | ID | Content | Entry points | Effort | Acceptance | Status |
 |:--|:--|:--|:--|:--|:--|
 | V1 | Overlay loader, derived Available, hash | `package/load.ts`, `package/validate.ts`, `schema/scenario.ts` | M | `dd25-thresholds-43-38` rebuilt as a 3-line overlay gives the same package hash content | ✅ Three lines. The copies drifted from the baseline, so by decision V-3 the proof is the same compiled scenario: 5 of 5 overlays equal their stored runs |
-| V2 | Setup editor, save, reset, export, import | `ui/home`, `server/service.ts` | M | Each error in 7.3 shows inline; a saved variant starts a session | Not started |
+| V2 | Setup editor, save, reset, export, import | `ui/home`, `server/service.ts` | M | Each error in 7.3 shows inline; a saved variant starts a session | ✅ All 5 items inline (items 3 and 4 are new setup-only data rules); a saved variant starts a session (test and browser) |
 | V3 | Variant in experiment manifests | `cli/experiment-manifest.ts` | S | A study names a variant, not a package copy | Not started |
 | V4 | Printable setup sheet | `export/markdown.ts` | S | Sheet matches rule 10.2 layout for the baseline | Not started |
 

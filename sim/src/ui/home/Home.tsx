@@ -8,9 +8,11 @@ export interface HomeProps {
   readonly api: Api;
   readonly onOpen: (sessionId: string) => void;
   readonly onCheck: (pkg: PackageSummary) => void;
+  /** Open the setup editor for a package scenario (audit Plan 4 V2). */
+  readonly onSetup: (pkg: PackageSummary, scenarioId: string) => void;
 }
 
-export function Home({ api, onOpen, onCheck }: HomeProps) {
+export function Home({ api, onOpen, onCheck, onSetup }: HomeProps) {
   const [packages, setPackages] = useState<PackageSummary[]>([]);
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [dir, setDir] = useState("");
@@ -22,6 +24,8 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
   // Bot seat (audit Plan 2 S1): "" is hotseat play; otherwise the bot player ID.
   const [players, setPlayers] = useState<readonly SeatPlayer[]>([]);
   const [bot, setBot] = useState("");
+  // Saved setup variant (audit Plan 4 V2): "" is the package setup.
+  const [variant, setVariant] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,6 +45,7 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
   }, [api]);
 
   const pkg = packages.find((p) => p.dir === dir);
+  const placeholder = `${scenarioId}${variant === "" ? "" : `-${variant}`}-seed${seed}`;
   const blockers = startBlockers(pkg, scenarioId, seed);
   const warnings = pkg?.issues.filter((i) => i.level === "warning") ?? [];
 
@@ -48,7 +53,10 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
     setError(null);
     try {
       const seat = players.find((p) => p.id === bot);
-      const created = await api.createSession({ dir, scenarioId, seed: Number(seed), name: name === "" ? `${scenarioId}-seed${seed}` : name, options, ...(seat === undefined ? {} : { seats: { [seat.faction]: seat.id } }) });
+      const created = await api.createSession({
+        dir, scenarioId, seed: Number(seed), name: name === "" ? placeholder : name, options,
+        ...(seat === undefined ? {} : { seats: { [seat.faction]: seat.id } }), ...(variant === "" ? {} : { variant }),
+      });
       onOpen(created.sessionId);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -61,7 +69,7 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
         <div className="row">
           <label>
             Package{" "}
-            <select value={dir} onChange={(e) => { setDir(e.target.value); }}>
+            <select value={dir} onChange={(e) => { setDir(e.target.value); setVariant(""); }}>
               {packages.map((p) => (
                 <option key={p.dir} value={p.dir}>
                   {p.packageId ?? p.dir} {p.version ?? ""}
@@ -87,6 +95,22 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
               ))}
             </select>
           </label>
+          <label>
+            Setup{" "}
+            <select aria-label="Setup variant" value={variant} onChange={(e) => { setVariant(e.target.value); }}>
+              <option value="">Package setup</option>
+              {pkg?.variants.map((v) => (
+                <option key={v.name} value={v.name} disabled={!v.ok}>
+                  Variant {v.name}{v.ok ? "" : " (errors)"}
+                </option>
+              ))}
+            </select>
+          </label>
+          {pkg !== undefined && (
+            <button type="button" onClick={() => { onSetup(pkg, scenarioId); }}>
+              Setup editor
+            </button>
+          )}
           {Object.entries(pkg?.options ?? {}).map(([key, values]) => (
             <label key={key}>
               {key}{" "}
@@ -128,7 +152,7 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
             Random
           </button>
           <label>
-            Name <input value={name} placeholder={`${scenarioId}-seed${seed}`} onChange={(e) => { setName(e.target.value); }} />
+            Name <input value={name} placeholder={placeholder} onChange={(e) => { setName(e.target.value); }} />
           </label>
           <button type="button" disabled={blockers.length > 0} title={blockers.join(" ")} onClick={() => void start()}>
             Start

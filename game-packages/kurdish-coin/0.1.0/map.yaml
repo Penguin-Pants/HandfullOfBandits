@@ -74,3 +74,5 @@ stacking:
   - {pieces: [guerrilla, pkkBase], max: 0, spaces: [europe], source: "03 s3 (Europe: no pieces)"}
   - {pieces: [guards], max: 3, terrain: [mountain, plain], status: tune, source: "03 s5 item 4"}
   - {pieces: [guards], max: 0, terrain: [city], source: "03 s5 item 4; 03 s2.1"}
+  - {pieces: [troops], max: 0, spaceKind: external, setupOnly: true, source: "rules 1.4.4: Troops enter KDP or PUK only through Cross-Border"}
+  - {pieces: [guerrilla, pkkBase], max: 0, spaces: [iran], setupOnly: true, source: "rules 1.3.3: Iran is Event-only"}

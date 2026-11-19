@@ -218,7 +218,7 @@ export function compileRuleset(data: PackageData, packageHash: string, issues: r
       return { id: t.id, kind: t.kind, min: t.min, max: t.max, overflow };
     }),
     markers: data.markers.map((m) => ({ id: m.id, count: m.count, sides: m.sides ?? [], blocks: m.blocks ?? [], capsLevel: m.capsLevel ?? null })),
-    stacking: data.map.stacking.map((r) => ({
+    stacking: data.map.stacking.filter((r) => r.setupOnly !== true).map((r) => ({
       pieces: r.pieces,
       max: r.max,
       spaceKind: r.spaceKind ?? null,

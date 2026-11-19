@@ -2,7 +2,7 @@
 // Each variant in the package's variants folder is checked too (audit Plan 4 V1).
 import { loadPackage, readPackageDir } from "../package/load.ts";
 import type { PackageIssue } from "../package/validate.ts";
-import { readVariant, resolveVariant, variantFile, variantNames } from "../package/variant.ts";
+import { loadSavedVariant, variantFile, variantNames } from "../package/variant.ts";
 
 export function formatIssue(issue: PackageIssue): string {
   const where = issue.path === "" ? issue.file : `${issue.file} ${issue.path}`;
@@ -22,8 +22,7 @@ export function validateCommand(dir: string): { readonly exitCode: number; reado
   lines.push(`ok ${dir} hash ${result.hash}`);
   let exitCode = 0;
   for (const name of variantNames(dir)) {
-    const read = readVariant(dir, name);
-    const variant = "issues" in read ? { ok: false as const, issues: read.issues } : resolveVariant(result, name, read.data);
+    const variant = loadSavedVariant(result, dir, name);
     lines.push(...variant.issues.filter((i) => i.file === variantFile(name)).map(formatIssue));
     if (variant.ok) lines.push(`ok variant ${name} hash ${variant.hash}`);
     else {

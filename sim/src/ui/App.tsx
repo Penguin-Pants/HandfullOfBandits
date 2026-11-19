@@ -7,6 +7,7 @@ import { Home } from "./home/Home.tsx";
 import { Metrics } from "./metrics/Metrics.tsx";
 import { Play } from "./play/Play.tsx";
 import { Review } from "./review/Review.tsx";
+import { Setup } from "./setup/Setup.tsx";
 import { StateViewer } from "./state-viewer/StateViewer.tsx";
 
 type Screen =
@@ -16,6 +17,7 @@ type Screen =
   | { readonly name: "review" }
   | { readonly name: "metrics" }
   | { readonly name: "experiments" }
+  | { readonly name: "setup"; readonly pkg: PackageSummary; readonly scenarioId: string }
   | { readonly name: "state"; readonly sessionId: string; readonly before: string | null; readonly after: string; readonly back: Screen };
 
 export function App({ api }: { readonly api: Api }) {
@@ -39,7 +41,8 @@ export function App({ api }: { readonly api: Api }) {
         </button>
         </nav>
       )}
-      {screen.name === "home" && <Home api={api} onOpen={(sessionId) => { setScreen({ name: "play", sessionId }); }} onCheck={(pkg) => { setScreen({ name: "check", pkg }); }} />}
+      {screen.name === "home" && <Home api={api} onOpen={(sessionId) => { setScreen({ name: "play", sessionId }); }} onCheck={(pkg) => { setScreen({ name: "check", pkg }); }} onSetup={(pkg, scenarioId) => { setScreen({ name: "setup", pkg, scenarioId }); }} />}
+      {screen.name === "setup" && <Setup api={api} pkg={screen.pkg} scenarioId={screen.scenarioId} onBack={home} />}
       {screen.name === "check" && <PackageCheck pkg={screen.pkg} onBack={home} />}
       {screen.name === "play" && (
         <Play api={api} sessionId={screen.sessionId} onExit={home} onReview={() => { setScreen({ name: "review" }); }} onOpenState={(before, after) => { setScreen({ name: "state", sessionId: screen.sessionId, before, after, back: screen }); }} />

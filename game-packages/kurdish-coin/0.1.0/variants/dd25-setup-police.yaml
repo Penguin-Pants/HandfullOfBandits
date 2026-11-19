@@ -1,5 +1,5 @@
 # TEST VARIANT (doc 39), not the game rules: +1 Police in Siirt and Bitlis only. Thresholds stay 49/32.
-base: ed517d2c6fb171c74290d0d5a9ce00e581bc730db058829856cf48cc50a2a512
+base: c0eb06493fbb18572e309bc5c9e29325dd97ea15a0491b6d8b3a430c24b2aff9
 scenario: full-campaign
 spaces:
   siirt: {level: -1, pieces: {police: 2, guerrilla: 1}}

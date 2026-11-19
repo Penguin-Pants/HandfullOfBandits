@@ -96,6 +96,7 @@ Two, three or four `player` factions are legal. The selected `SequenceModel` dec
 | `countsForControl` | true or false |
 | `movable` | false for Guards and Bases |
 | `startPool` | `available` or `outOfPlay` |
+| `requiresFlag` | Optional flag that brings the type into play, for example Guards and `law3175`. A setup with the type on the map or Available and the flag unset gets a V-PIECES warning (audit Plan 4 V2) |
 | `shape` | Board icon: `cube`, `cylinder`, `disc` or `octagon`. Unknown value fails V-SCHEMA |
 | `colorVariant` | Optional. `base` (default) or `light`: lighter shade of the faction color |
 | `emblem` | Optional. `crescentStar` or `starCircle`. Unknown value fails V-SCHEMA |
@@ -121,7 +122,7 @@ Default emblems (DEC-30): State Bases `crescentStar`; Guerrillas `starCircle` wi
 | `links[]` | `{a, b, kind}` where kind is `land` or `external` |
 | `links[].gate` | Optional posture gate `{track, steps}`: the link is open only while the track is at one of the steps |
 | `supportLevels` | Level IDs from Opposition to Support, odd length, middle item is Neutral. Range is ±(length - 1) / 2 (DEC-39). Example: `[activeOpposition, passiveOpposition, neutral, passiveSupport, activeSupport]`. Optional, but required when a space has a support scale (V-RANGE) |
-| `stacking[]` | `{pieces, max}` plus optional filters `spaceKind`, `terrain[]`, `spaces[]`. At most `max` of the listed piece types in each space that matches every filter. Example: `{pieces: [guards], max: 3, terrain: [mountain, plain]}` |
+| `stacking[]` | `{pieces, max}` plus optional filters `spaceKind`, `terrain[]`, `spaces[]`. At most `max` of the listed piece types in each space that matches every filter. Example: `{pieces: [guards], max: 3, terrain: [mountain, plain]}`. `setupOnly: true` checks the rule on scenario setup only (audit Plan 4 V2) |
 
 ### 4.4 tracks.yaml and markers.yaml
 
@@ -350,7 +351,7 @@ Validation runs on load, before a session starts, and in the CLI (`sim validate 
 | V-FACTIONS | 2 to 4 player factions (s4.1). The match with the sequence model comes with P2-03 | error |
 | V-PIECES | Scenario pieces plus pools equal totals. Markers on the map do not exceed their count | error |
 | V-RANGE | Scenario track values within `min` and `max`. Levels within the `supportLevels` range and only on spaces with a support scale. A space with a support scale needs `supportLevels` (DEC-39, DEC-40) | error |
-| V-STACK | Scenario setup obeys stacking | error |
+| V-STACK | Scenario setup obeys stacking. A rule with `setupOnly: true` (map.yaml) applies to setup only, never in play: no Troops in an external box, no PKK piece in Iran (audit Plan 4 V2) | error |
 | V-LINKS | Adjacency is symmetric. No link to an unknown space | error |
 | V-CARDS | Each pile has enough eligible cards and one Propaganda card (scenario-scoped, DEC-51). Card IDs are unique. Chain pairs refer to real cards | error |
 | V-ENCODE | Each card a scenario can draw is encoded or excluded | error, scenario-scoped: blocks that scenario only (DEC-51) |
