@@ -1,7 +1,9 @@
 // Player IDs for experiments (19 s4). Qualified families come from strategies/scenario-a.ts;
-// controls wrap the legacy research 12 s7 policies; baselines are random-legal and scripted.
+// controls wrap the legacy research 12 s7 policies; baselines are random-legal, scripted and the
+// rare-system probes (strategies/probe.ts).
 import type { FactionId } from "../engine/core/types.ts";
 import { fullStateControl, randomLegal, type Player } from "./players.ts";
+import { probePlayer } from "./strategies/probe.ts";
 import { scenarioAPlayer } from "./strategies/scenario-a.ts";
 import { strategyNames } from "./strategies/index.ts";
 
@@ -18,6 +20,7 @@ export function resolvePlayer(id: string): Player {
   const control = /^[SP]-CTRL-(.+)$/.exec(family)?.[1];
   let player: Player | null;
   if (family.endsWith("-RANDOM")) player = randomLegal(faction);
+  else if (family.endsWith("-PROBE")) player = probePlayer(faction);
   else if (control !== undefined && (strategyNames as readonly string[]).includes(control) && (control === "scripted" || (CONTROLS[faction] ?? []).includes(control))) player = fullStateControl(control, faction);
   else player = scenarioAPlayer(family, Number(version));
   if (player?.spec.id !== id || player.spec.faction !== faction || String(player.spec.version) !== version) throw new RangeError(`Unknown player ${id}`);

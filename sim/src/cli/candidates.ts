@@ -18,7 +18,7 @@ import { closureViolations } from "../engine/coin/propaganda/legal-politics.ts";
 import { emergencyMoves } from "../engine/coin/propaganda/legitimacy.ts";
 import { activeFaction, BOX, legalBoxes } from "../engine/coin/sequence/ct.ts";
 
-export const GENERATOR_VERSION = "cand-6";
+export const GENERATOR_VERSION = "cand-7";
 
 export type DecisionKind = "card" | "pivotal" | "resume" | "upkeep" | "legitimacy" | "legalPoliticsState" | "legalPoliticsPkk" | "civicAction" | "agitation" | "redeployState" | "redeployPkk";
 
@@ -401,7 +401,9 @@ function saVariants(r: Ruleset, s: GameState, sa: string, base: Plan): Plan[] {
     case "pkk.strike-collaborators": {
       if (s.flags["law3175"] !== true) return [];
       const locs = domestic(r).filter((l) => count(s, l, "guards") > 0 && count(s, l, "guerrilla", "underground") > 0).sort((a, b) => count(s, b, "guards") - count(s, a, "guards"));
-      return [...locs.map((l) => withSa(sa, [l], { [l]: { guards: Math.min(2, count(s, l, "guards")) } }, "before")), ...combos(locs, 2, 2).map((pair) => withSa(sa, pair, Object.fromEntries(pair.map((l) => [l, { guards: 1 }])), "before"))];
+      // Decision 10 (M-04): Strike Collaborators may go before or after the Operation.
+      const one = (timing: "before" | "after"): Plan[] => locs.map((l) => withSa(sa, [l], { [l]: { guards: Math.min(2, count(s, l, "guards")) } }, timing));
+      return [...one("before"), ...combos(locs, 2, 2).map((pair) => withSa(sa, pair, Object.fromEntries(pair.map((l) => [l, { guards: 1 }])), "before")), ...one("after")];
     }
     case "state.village-clearance": {
       // One Operation space: Mountain or Plain, Neutral or Opposition, no Displacement (rules 4.2.4). Every Reception space (tag receptionTarget).
