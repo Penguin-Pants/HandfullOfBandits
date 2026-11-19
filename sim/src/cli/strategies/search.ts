@@ -38,7 +38,7 @@ interface SearchFamily {
 }
 
 const SEARCH: readonly SearchFamily[] = [
-  { id: "S-SEARCH", version: 1, faction: "state", base: { id: "S-CON", version: 4 }, description: "Determinized 4-ply search (audit Plan 2 S3) with S-CON@4 weights at the leaves." },
+  { id: "S-SEARCH", version: 1, faction: "state", base: { id: "S-CON", version: 5 }, description: "Determinized 4-ply search (audit Plan 2 S3) with S-CON@5 weights at the leaves (spends Resources: decision B-5)." },
   { id: "P-SEARCH", version: 1, faction: "pkk", base: { id: "P-SURV", version: 4 }, description: "Determinized 4-ply search (audit Plan 2 S3) with P-SURV@4 weights at the leaves." },
 ];
 
