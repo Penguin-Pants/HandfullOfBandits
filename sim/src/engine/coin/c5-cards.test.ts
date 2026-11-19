@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codes, inCampaign, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withPick, withRoll } from "../../../test/board.ts";
-import { AnswerNeeded } from "./events.ts";
+import { codes, engine, inCampaign, op, pieces, play, ruleset, setMarkers, setPieces, setTrack, turnOf, withCard, withPick, withRoll } from "../../../test/board.ts";
 import type { AnyCommand, GameState } from "../core/types.ts";
 
 // T-EVT per side for the C5 cards (11 P3b-07; encoding docs/prototype/34, DEC-75).
@@ -42,7 +41,6 @@ describe("Susurluk Car Crash (DK-079)", () => {
     // Validation does not preview random reveals, so these apply the command with no answers.
     expect(onMap(play(board("pkk", "DK-079"), event("pkk", "shaded")).state, "stateHarm")).toBe(0);
     expect(onMap(play(covert(board("pkk", "DK-079"), 1), event("pkk", "shaded")).state, "stateHarm")).toBe(1);
-    expect(() => play(covert(board("pkk", "DK-079"), 2), event("pkk", "shaded"))).toThrow("Reveal a second Covert marker");
   });
 });
 
@@ -97,12 +95,28 @@ describe("Susurluk Commission Report (DK-080)", () => {
 
   it("S: no \"reveal a second\" question once no Covert marker is left (markersAtLeast, P3b-07k)", () => {
     expect(onMap(play(covert(board("pkk", "DK-080"), 1), event("pkk", "shaded")).state, "stateHarm")).toBe(1);
-    expect(() => play(covert(board("pkk", "DK-080"), 2), event("pkk", "shaded"))).toThrow("Reveal a second Covert marker");
   });
 });
 
 // DD-24: these sides keep the question after the reveal. Validation stops at the reveal (05 s4),
 // so this shows that the random pick cannot change the question or the answers it accepts.
+describe.each(["DK-079", "DK-080"])("%s shaded: validation asks the question that opens after the random reveal", (card) => {
+  const two = (): GameState => covert(board("pkk", card), 2);
+
+  it("refuses the command with no answers: validate gives the question, apply changes nothing", () => {
+    const v = engine.validate(ruleset, two(), event("pkk", "shaded"));
+    expect(v.ok).toBe(false);
+    expect(v.violations[0]).toMatchObject({ code: "needsAnswer", question: { kind: "option", options: ["Reveal a second Covert marker", "Stop after one"] } });
+    expect(engine.apply(ruleset, two(), event("pkk", "shaded")).ok).toBe(false);
+  });
+
+  it("accepts the answered command, and its preview still stops before the random reveal", () => {
+    const v = engine.validate(ruleset, two(), event("pkk", "shaded", [STOP]));
+    expect(v.ok).toBe(true);
+    expect(v.preview.effects.some((e) => e.type === "placeMarker" && e.marker === "stateHarm")).toBe(false);
+  });
+});
+
 describe.each(["DK-079", "DK-080"])("%s shaded: the random reveal cannot invalidate the \"reveal a second\" answer (DD-24)", (card) => {
   const PICKS = [0, 1, 2];
   const start = (pick: number): GameState => withPick(covert(board("pkk", card), 3), 3, pick);
@@ -113,14 +127,7 @@ describe.each(["DK-079", "DK-080"])("%s shaded: the random reveal cannot invalid
   });
 
   it("each pick asks the same question with the same options", () => {
-    const asked = PICKS.map((p) => {
-      try {
-        play(start(p), event("pkk", "shaded"));
-        return null;
-      } catch (e) {
-        return e instanceof AnswerNeeded ? e.violation.question : e;
-      }
-    });
+    const asked = PICKS.map((p) => engine.validate(ruleset, start(p), event("pkk", "shaded")).violations[0]?.question);
     expect(asked[0]).toMatchObject({ kind: "option", options: ["Reveal a second Covert marker", "Stop after one"] });
     expect(asked).toEqual(PICKS.map(() => asked[0]));
   });
