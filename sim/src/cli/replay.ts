@@ -3,9 +3,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { codeFingerprint } from "../package/fingerprint.ts";
-import { readArchive, readJournal } from "./experiment-artifacts.ts";
+import { gameSteps, readArchive } from "./experiment-artifacts.ts";
 import type { GameJob } from "./game-runner.ts";
-import type { AnyCommand } from "../engine/core/types.ts";
 import { coinHandlers } from "../engine/coin/handlers.ts";
 import { createEngine } from "../engine/index.ts";
 import { loadPackage, readPackageDir, withSessionOptions } from "../package/load.ts";
@@ -64,12 +63,10 @@ export function replayExperiment(dir: string, only: string | null = null): { exi
   const archive = readArchive(dir);
   const recorded = new Map((existsSync(join(dir, "results.json")) ? (JSON.parse(readFileSync(join(dir, "results.json"), "utf8")) as { gameId: string; commands: number; finalHash: string }[]) : []).map((r) => [r.gameId, r]));
   for (const job of schedule) {
-    const events = readJournal(dir, job.gameId);
-    const archived = archive?.get(job.gameId);
-    const fromJournal = events.find((e) => e.t === "start");
-    const startHash = fromJournal?.t === "start" ? fromJournal.startHash : archived?.startHash;
-    const steps = events.length > 0 ? events.flatMap((e) => (e.t === "step" ? [{ id: String(e.i + 1), commands: [e.command], hashAfter: e.hash }] : [])) : (archived?.commands ?? []).map((c, i) => ({ id: String(i + 1), commands: [c as AnyCommand], hashAfter: archived?.hashes[i] ?? "" }));
-    if (startHash === undefined) { lines.push(`${job.gameId}: no journal or archive entry`); failed++; continue; }
+    const game = gameSteps(dir, job.gameId, archive);
+    const startHash = game.startHash;
+    const steps = game.steps.map((x, i) => ({ id: String(i + 1), commands: [x.command], hashAfter: x.hash }));
+    if (startHash === null) { lines.push(`${job.gameId}: no journal or archive entry`); failed++; continue; }
     const ruleset = withSessionOptions(loaded.ruleset, identity.scenario, identity.conditions[job.conditionId] ?? {});
     const diff = replaySteps(engine, ruleset, identity.scenario, job.seed, startHash, steps);
     if (diff !== null) { lines.push(`${job.gameId}: differs at step ${diff.id}: expected ${diff.expected}, got ${diff.actual}`); failed++; continue; }

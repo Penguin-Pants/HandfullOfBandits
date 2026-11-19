@@ -5,6 +5,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
+import type { AnyCommand } from "../engine/core/types.ts";
 import type { JournalEvent } from "./game-runner.ts";
 
 /** File operations, injectable so tests can simulate a failing disk. */
@@ -141,4 +142,21 @@ export function readArchive(dir: string): Map<string, ArchivedGame> | null {
     out.set(g.gameId, g);
   }
   return out;
+}
+
+/** One recorded game: its start hash (null: no record) and each command with the state hash after it. */
+export interface GameSteps {
+  readonly startHash: string | null;
+  readonly steps: readonly { readonly command: AnyCommand; readonly hash: string }[];
+}
+
+/** The steps of one game from its journal, or from the replay archive when the journal is gone. */
+export function gameSteps(dir: string, gameId: string, archive: Map<string, ArchivedGame> | null): GameSteps {
+  const events = readJournal(dir, gameId);
+  if (events.length > 0) {
+    const start = events.find((e) => e.t === "start");
+    return { startHash: start?.t === "start" ? start.startHash : null, steps: events.flatMap((e) => (e.t === "step" ? [{ command: e.command, hash: e.hash }] : [])) };
+  }
+  const archived = archive?.get(gameId);
+  return { startHash: archived?.startHash ?? null, steps: (archived?.commands ?? []).map((c, i) => ({ command: c as AnyCommand, hash: archived?.hashes[i] ?? "" })) };
 }

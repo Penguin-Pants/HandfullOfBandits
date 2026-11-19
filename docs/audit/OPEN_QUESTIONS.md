@@ -64,6 +64,13 @@ Open from Plan 2 (doc 43 section 4):
 - **B-6 S3 scope.** Answered 2026-11-19: a 10-seed first check. Done (`dev-s3-search-10`): S-SEARCH@1 12/40, S-CON@5 7/40, S-CON@4 25/40.
 - **B-7 Default State opponent.** Answered 2026-11-19: keep `S-CON@4`, the strongest bot, although it misses the B-5 target. `S-SEARCH@1` stays registered for later tuning.
 
+## Open from Plan 3
+
+Audit section 6.7. The tools are built (doc 44); these choices set how to read their results.
+
+- **A-1 Target band.** What State share of bot games is the balance target? Today 60 to 65%.
+- **A-2 Seed count.** How many seeds per cell before a rules change? Docs 37 to 41 propose 50.
+
 ## Original questions
 
 ## Decide first

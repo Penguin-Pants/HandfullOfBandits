@@ -161,6 +161,14 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   };
   app.get<{ Querystring: { sessions?: string } }>("/api/metrics", (request) => metricsTable(metricsExport(request.query.sessions)));
   app.get<{ Querystring: { sessions?: string } }>("/api/metrics.csv", (request, reply) => reply.type("text/csv; charset=utf-8").header("content-disposition", 'attachment; filename="metrics.csv"').send(metricsCsv(metricsExport(request.query.sessions))));
+  // Experiment reports (audit Plan 3 A5): list runs, read one, open a game at a decision as a session.
+  app.get("/api/experiments", () => service.experiments());
+  app.get<{ Params: Id }>("/api/experiments/:id", (request) => service.experiment(request.params.id));
+  app.post<{ Params: { id: string; gameId: string } }>("/api/experiments/:id/games/:gameId/open", (request, reply) => {
+    const { decisions } = body<{ decisions: number | null }>(request.body);
+    if (decisions !== undefined && decisions !== null && typeof decisions !== "number") throw new ServiceError(400, "decisions must be a number or null.");
+    return reply.status(201).send(service.openExperimentGame(request.params.id, request.params.gameId, decisions ?? null));
+  });
   app.get("/api/categories", () => service.categories());
   app.get<{ Params: Id }>("/api/sessions/:id/annotations", (request) => service.annotations(request.params.id));
   app.post<{ Params: Id }>("/api/sessions/:id/annotations", (request, reply) => {

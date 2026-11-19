@@ -121,12 +121,63 @@ export interface SeatBots {
   step(engine: Engine, ruleset: Ruleset, state: GameState, seats: Readonly<Record<string, string>>, partial: JsonObject | null): { readonly command: AnyCommand | null; readonly partial: JsonObject | null; readonly options: readonly JsonObject[] | null; readonly records: readonly unknown[] };
 }
 
+/** One experiment run in a list (audit Plan 3 A5). */
+export interface ExperimentSummary {
+  readonly id: string;
+  readonly stage: string;
+  readonly description: string;
+  /** Run state from status.json: running, complete or aborted. */
+  readonly state: string;
+  readonly scheduled: number;
+  readonly hasReport: boolean;
+}
+
+export interface ExperimentGameRow {
+  readonly gameId: string;
+  readonly condition: string;
+  readonly state: string;
+  readonly pkk: string;
+  readonly seed: number;
+  readonly status: string;
+  readonly winner: string | null;
+  readonly commands: number;
+  /** In the report's review selection (closest, largest, random, failures). */
+  readonly review: boolean;
+}
+
+export interface ExperimentDetail extends ExperimentSummary {
+  /** The latest analysis report (Markdown), or null before `experiment analyze`. */
+  readonly report: string | null;
+  readonly games: readonly ExperimentGameRow[];
+}
+
+/** What a session needs to replay one recorded game. */
+export interface ExperimentGame {
+  readonly packageFiles: Record<string, unknown>;
+  readonly scenario: string;
+  readonly options: Readonly<Record<string, string>>;
+  readonly seed: number;
+  readonly startHash: string;
+  readonly steps: readonly { readonly command: AnyCommand; readonly hash: string }[];
+}
+
+/**
+ * Experiment run reader (audit Plan 3 A5). The app entry passes the cli implementation
+ * (`cli/experiment-viewer.ts`). Each method throws RangeError for an unknown run or game.
+ */
+export interface ExperimentRuns {
+  list(): readonly ExperimentSummary[];
+  detail(id: string): ExperimentDetail;
+  game(id: string, gameId: string): ExperimentGame;
+}
+
 /** Bot player ID per faction of a session row; {} for hotseat play. */
 const seatsOf = (row: SessionRow): Readonly<Record<string, string>> => JSON.parse(row.seats) as Record<string, string>;
 
 export class SessionService {
   private readonly engine = createEngine(coinHandlers);
   private readonly bots: SeatBots | null;
+  private readonly runs: ExperimentRuns | null;
   /** Records of a bot State part shown to a human PKK, by session and head, until that head moves. */
   private readonly partials = new Map<string, { readonly phase: string; readonly statePart: JsonObject; readonly records: readonly unknown[] }>();
   private readonly rulesets = new Map<string, { ruleset: Ruleset; data: PackageData }>();
@@ -134,10 +185,60 @@ export class SessionService {
   readonly db: Db;
   readonly packagesRoot: string;
 
-  constructor(db: Db, packagesRoot: string, bots: SeatBots | null = null) {
+  constructor(db: Db, packagesRoot: string, bots: SeatBots | null = null, experiments: ExperimentRuns | null = null) {
     this.db = db;
     this.packagesRoot = packagesRoot;
     this.bots = bots;
+    this.runs = experiments;
+  }
+
+  /** Experiment runs the server can show; empty when it has no reader (audit Plan 3 A5). */
+  experiments(): readonly ExperimentSummary[] {
+    return this.runs?.list() ?? [];
+  }
+
+  /** One run: its latest report and its games. */
+  experiment(id: string): ExperimentDetail {
+    if (this.runs === null) throw new ServiceError(404, "This server has no experiment runs.");
+    try {
+      return this.runs.detail(id);
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(404, e.message);
+      throw e;
+    }
+  }
+
+  /**
+   * Open one experiment game as a new hotseat session at a decision (audit Plan 3 A5): replay its
+   * first `decisions` recorded commands (null: all) from the captured package and commit them. A
+   * run made with other rules code can diverge: the session then stops before the first command
+   * whose replay differs from its recorded hash, and `divergedAt` names that command.
+   */
+  openExperimentGame(id: string, gameId: string, decisions: number | null): { sessionId: string; applied: number; total: number; divergedAt: number | null } {
+    if (this.runs === null) throw new ServiceError(404, "This server has no experiment runs.");
+    let game: ExperimentGame;
+    try {
+      game = this.runs.game(id, gameId);
+    } catch (e) {
+      if (e instanceof RangeError) throw new ServiceError(404, e.message);
+      throw e;
+    }
+    const total = game.steps.length;
+    if (decisions !== null && (!Number.isSafeInteger(decisions) || decisions < 0 || decisions > total)) throw new ServiceError(400, `decisions must be 0 to ${String(total)}.`);
+    const loaded = loadPackage({ files: game.packageFiles, issues: [] });
+    if (!loaded.ok) throw new ServiceError(422, "The captured package has errors.", loaded.issues);
+    const wanted = game.steps.slice(0, decisions ?? total);
+    const ruleset = withSessionOptions(loaded.ruleset, game.scenario, game.options);
+    const diff = replaySteps(this.engine, ruleset, game.scenario, game.seed, game.startHash, wanted.map((x, i) => ({ id: String(i + 1), commands: [x.command], hashAfter: x.hash })));
+    if (diff?.id === "start") throw new ServiceError(409, `Game ${gameId} starts from another position on this engine; it cannot be opened.`);
+    const divergedAt = diff === null ? null : Number(diff.id);
+    const { sessionId } = this.startSession(loaded, { scenarioId: game.scenario, seed: game.seed, name: `${id} ${gameId}`, options: game.options });
+    const valid = divergedAt === null ? wanted : wanted.slice(0, divergedAt - 1);
+    for (const x of valid) {
+      const head = this.head(sessionId);
+      this.commitCommand(sessionId, x.command, head.actionId, head.stateHash);
+    }
+    return { sessionId, applied: valid.length, total, divergedAt };
   }
 
   /** Players a bot seat may name; empty when the server has no bots. */
@@ -168,7 +269,10 @@ export class SessionService {
 
   /** Start a session: store the package content, run `start`, commit the setup action. */
   createSession(input: { dir: string; scenarioId: string; seed: number; name: string; options?: Readonly<Record<string, string | number>>; seats?: Readonly<Record<string, unknown>> }): { sessionId: string; head: Head } {
-    const loaded = loadPackage(readPackageDir(input.dir));
+    return this.startSession(loadPackage(readPackageDir(input.dir)), input);
+  }
+
+  private startSession(loaded: LoadResult, input: { scenarioId: string; seed: number; name: string; options?: Readonly<Record<string, string | number>>; seats?: Readonly<Record<string, unknown>> }): { sessionId: string; head: Head } {
     if (!loaded.ok) throw new ServiceError(422, "The package has errors.", loaded.issues);
     const scenario = loaded.ruleset.scenarios[input.scenarioId];
     if (scenario === undefined) throw new ServiceError(404, `Unknown scenario "${input.scenarioId}".`);

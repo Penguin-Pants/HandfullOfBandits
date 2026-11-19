@@ -3,9 +3,9 @@
 // keeps development and evaluation seeds disjoint.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { cpus } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { canonicalHash } from "../engine/core/canonical.ts";
@@ -62,11 +62,17 @@ export const manifestSchema = z.strictObject({
     warnings: z.strictObject({ cellWinPercent: z.number().int().min(0).max(100), rosterAveragePercent: z.number().int().min(0).max(100), marginGap: z.number().int().min(0) }),
     exclusions: z.array(z.string()),
   }),
-  /** Earlier attempt whose failed games this run repeats (20 cross-cutting: reruns are new linked attempts). */
-  supersedes: id.nullable(),
+  /** Earlier attempt whose failed games this run repeats (20 cross-cutting: reruns are new linked attempts). Null when omitted. */
+  supersedes: id.nullable().default(null),
 });
 
 export type Manifest = z.infer<typeof manifestSchema>;
+
+/** A study file for `experiment new`: a manifest whose package hash and expected values may be left out (audit Plan 3 A2). */
+const draftSchema = manifestSchema.extend({
+  package: z.strictObject({ dir: z.string().min(1), hash: hex64.optional() }),
+  expected: manifestSchema.shape.expected.partial().optional(),
+});
 
 const registrySchema = z.strictObject({ development: z.array(block), evaluation: z.array(block) });
 
@@ -153,17 +159,22 @@ export function runtimeIdentity(): RuntimeIdentity {
   };
 }
 
-/** Parse JSON text into a manifest, or throw ManifestError listing every schema issue. */
-export function parseManifest(text: string): Manifest {
+/** Parse JSON text with `schema`, or throw ManifestError listing every schema issue. */
+function parseWith<T extends z.ZodType>(text: string, schema: T, label: string): z.infer<T> {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
   } catch (e) {
-    throw new ManifestError(`Manifest is not JSON: ${e instanceof Error ? e.message : String(e)}`);
+    throw new ManifestError(`${label} is not JSON: ${e instanceof Error ? e.message : String(e)}`);
   }
-  const parsed = manifestSchema.safeParse(raw);
-  if (!parsed.success) throw new ManifestError(`Manifest schema: ${parsed.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; ")}`);
+  const parsed = schema.safeParse(raw);
+  if (!parsed.success) throw new ManifestError(`${label} schema: ${parsed.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; ")}`);
   return parsed.data;
+}
+
+/** Parse JSON text into a manifest, or throw ManifestError listing every schema issue. */
+export function parseManifest(text: string): Manifest {
+  return parseWith(text, manifestSchema, "Manifest");
 }
 
 /** Ruleset for one condition: package options validated against the package manifest. */
@@ -175,6 +186,38 @@ export function conditionRuleset(ruleset: Ruleset, data: PackageData, scenario: 
     if (!allowed.includes(value)) throw new ManifestError(`Option ${key} must be one of ${allowed.join(", ")}`);
   }
   return withSessionOptions(ruleset, scenario, options);
+}
+
+/**
+ * Write the manifest for the study file `draftFile` to the new file `outFile` (audit Plan 3 A2).
+ * Fills each missing value from the package and the runtime: package hash, thresholds, Harm limit
+ * and both code fingerprints. A value given in the study file is kept, so `null` fingerprints
+ * still let a development run follow code changes. Rewrites the package directory relative to
+ * `outFile`. Validates the result like `experiment run` before it writes anything.
+ */
+export function newManifest(draftFile: string, outFile: string, runtime: RuntimeIdentity = runtimeIdentity(), registryFile = SEED_REGISTRY): Manifest {
+  const out = resolve(outFile);
+  if (existsSync(out)) throw new ManifestError(`${out} already exists; choose a new file`);
+  const draft = parseWith(readFileSync(draftFile, "utf8"), draftSchema, "Study file");
+  const packageDir = resolve(dirname(resolve(draftFile)), draft.package.dir);
+  const loaded = loadPackage(readPackageDir(packageDir));
+  if (!loaded.ok) throw new ManifestError(`Package ${packageDir} does not load`);
+  const scenario = loaded.ruleset.scenarios[draft.scenario];
+  if (scenario === undefined) throw new ManifestError(`Scenario ${draft.scenario} is missing`);
+  const e = draft.expected ?? {};
+  const manifest: Manifest = {
+    ...draft,
+    package: { dir: relative(dirname(out), packageDir).split(sep).join("/") || ".", hash: draft.package.hash ?? loaded.hash },
+    expected: {
+      thresholds: e.thresholds ?? { ...scenario.thresholds },
+      harmLimit: e.harmLimit ?? param(loaded.ruleset, "harm.limit", "number"),
+      engineFingerprint: e.engineFingerprint !== undefined ? e.engineFingerprint : runtime.engineFingerprint,
+      playerFingerprint: e.playerFingerprint !== undefined ? e.playerFingerprint : runtime.playerFingerprint,
+    },
+  };
+  freezeExperiment(manifest, dirname(out), runtime, registryFile);
+  writeFileSync(out, `${JSON.stringify(manifest, null, 1)}\n`, { flag: "wx" });
+  return manifest;
 }
 
 /**
