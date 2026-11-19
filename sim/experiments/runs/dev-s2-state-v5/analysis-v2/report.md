@@ -214,7 +214,22 @@ Failures: none
 
 ## Diagnostics
 
-Pass share: State 31.8%, PKK 12.9%. Longest First Eligible streak: 51 cards. Mean unused Resources at the end: State 2.7, PKK 5.1. Games with a 3-Pass streak: {"state":55,"pkk":28}. Stop-rule flags: {"rule 4":1}.
+Pass share: State 31.8%, PKK 12.9%. Voluntary Pass share (Resources for the cheapest Operation): State 12.1%, PKK 5.2%. Longest First Eligible streak: 51 cards. Mean unused Resources at the end: State 2.7, PKK 5.1. Games with a 3-Pass streak: {"state":55,"pkk":28}. Stop-rule flags: {"rule 4":1}.
 
 Boxes by faction: {"state":{"limitedOp":1493,"opSa":1680,"event":748,"pass":2128,"opOnly":650},"pkk":{"opOnly":841,"limitedOp":2038,"opSa":1651,"pass":849,"event":1179}}
+
+| Player | Card choices | Pass | Voluntary Pass | Unused Resources at the end |
+|:--|--:|--:|--:|--:|
+| P-ADAPT@4 | 1641 | 14.3% | 6.9% | 7.4 |
+| P-EXP@4 | 1472 | 10.1% | 0.1% | 0.8 |
+| P-POL@4 | 1742 | 17.2% | 9.8% | 11.3 |
+| P-SURV@4 | 1703 | 9.7% | 3.5% | 0.8 |
+| S-ADAPT@4 | 910 | 33.4% | 22.7% | 0.9 |
+| S-ADAPT@5 | 864 | 28.5% | 5.4% | 0.4 |
+| S-CON@4 | 884 | 34.7% | 15.6% | 0.7 |
+| S-CON@5 | 805 | 29.3% | 3.0% | 0.1 |
+| S-MIL@4 | 815 | 33.4% | 11.7% | 0.5 |
+| S-MIL@5 | 829 | 29.0% | 3.1% | 0.4 |
+| S-POL@4 | 887 | 33.4% | 23.9% | 16.9 |
+| S-POL@5 | 705 | 32.2% | 8.8% | 2.1 |
 

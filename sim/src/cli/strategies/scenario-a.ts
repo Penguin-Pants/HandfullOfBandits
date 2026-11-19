@@ -26,7 +26,7 @@ export const ROSTER_VERSION: Readonly<Record<FactionId, number>> = { state: 4, p
 /** Transitions per decision for every qualified search player (19 s7: equal budgets). */
 export const SEARCH_BUDGET = 600;
 
-const BASE: Weights = { ownPotential: 0.5, oppPotential: 0.5, qualify: 6, resources: 0.05, controlPop: 0, oppControlPop: 0, pkkBases: 0, guerrillas: 0, underground: 0, active: 0, external: 0, presencePop: 0, policedPop: 0, legitimacy: 0, convertBy: 0, potentialModel: "uncapped", protectedBases: 0, exposedBases: 0 };
+export const BASE: Weights = { ownPotential: 0.5, oppPotential: 0.5, qualify: 6, resources: 0.05, controlPop: 0, oppControlPop: 0, pkkBases: 0, guerrillas: 0, underground: 0, active: 0, external: 0, presencePop: 0, policedPop: 0, legitimacy: 0, convertBy: 0, potentialModel: "uncapped", protectedBases: 0, exposedBases: 0 };
 
 interface Family {
   readonly id: string;
@@ -116,7 +116,9 @@ const V4: readonly Family[] = V1.map((f) => ({ ...f, version: 4, ...V4_SEARCH, w
  * on 29% of card choices (most passes at 0 to 1 Resources) and won 19 of 64 games against 31 for v4.
  */
 export const V5_RESOURCES = -0.3;
-const V5: readonly Family[] = V4.filter((f) => f.faction === "state").map((f) => ({ ...f, version: 5, weights: { ...f.weights, resources: V5_RESOURCES } }));
+/** State v4 with `resources` set to `weight`, as version `version` (S2 spending sweep: v5 -0.3, v6 -0.1, v7 -0.2). */
+const spending = (version: number, weight: number): Family[] => V4.filter((f) => f.faction === "state").map((f) => ({ ...f, version, weights: { ...f.weights, resources: weight } }));
+const V5: readonly Family[] = [...spending(5, V5_RESOURCES), ...spending(6, -0.1), ...spending(7, -0.2)];
 
 export const FAMILIES: readonly Family[] = [
   ...V1.map((f) => ({ ...f, version: 1 })),
@@ -132,7 +134,7 @@ export const CURRENT: readonly Family[] = FAMILIES.filter((f) => f.version === R
 interface Scored { readonly candidate: Candidate; value: number; samples: number; components: Readonly<Record<string, number>>; line?: readonly LinePlay[] }
 
 /** One sampled outcome of a candidate: apply on a determinized state, then automatic phases. */
-function outcome(ctx: SearchContext, base: GameState, candidate: Candidate): GameState | null {
+export function outcome(ctx: SearchContext, base: GameState, candidate: Candidate): GameState | null {
   const result = ctx.budget.apply(ctx.ruleset, base, candidate.command);
   return result === null || !result.ok ? null : settle(ctx, result.transition.state);
 }
@@ -334,6 +336,11 @@ function spec(family: Family): PlayerSpec {
     id: `${family.id}@${String(family.version)}`, family: family.id, version: family.version, faction: family.faction, role: "qualified", access: "observation",
     params: { ...(family.weights as unknown as JsonObject), adaptive: family.adaptive, lookahead: family.lookahead ?? 1 }, generatorVersion: GENERATOR_VERSION, budget: family.budget ?? SEARCH_BUDGET, description: family.description,
   };
+}
+
+/** Weights of a registered family version, or null. */
+export function familyWeights(id: string, version: number): Weights | null {
+  return FAMILIES.find((f) => f.id === id && f.version === version)?.weights ?? null;
 }
 
 /** Players by family ID and version. */

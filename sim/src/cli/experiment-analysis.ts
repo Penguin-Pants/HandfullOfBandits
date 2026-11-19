@@ -243,7 +243,9 @@ export function renderReport(a: Analysis, coverage: Coverage | null): string {
     out.push("## Coverage ledger", "", `${String(by("natural exposure"))} natural, ${String(by("reviewed fixture"))} fixture only, ${String(by("not applicable"))} not applicable, ${String(by("unresolved"))} unresolved.`, "", "| Mechanic | Area | Status | Games |", "|---|---|---|---|");
     for (const l of coverage.ledger) out.push(`| ${l.label} | ${l.area} | ${l.status} | ${String(l.games)} |`);
     const d = coverage.diagnostics;
-    out.push("", "## Diagnostics", "", `Pass share: State ${pct(d.passShare["state"] ?? 0)}, PKK ${pct(d.passShare["pkk"] ?? 0)}. Longest First Eligible streak: ${String(d.maxFirstEligibleStreak)} cards. Mean unused Resources at the end: State ${(d.meanUnusedResources["state"] ?? 0).toFixed(1)}, PKK ${(d.meanUnusedResources["pkk"] ?? 0).toFixed(1)}. Games with a 3-Pass streak: ${JSON.stringify(d.passStreak3Games)}. Stop-rule flags: ${JSON.stringify(d.stopRuleFlags)}.`, "", `Boxes by faction: ${JSON.stringify(d.boxesByFaction)}`, "");
+    out.push("", "## Diagnostics", "", `Pass share: State ${pct(d.passShare["state"] ?? 0)}, PKK ${pct(d.passShare["pkk"] ?? 0)}. Voluntary Pass share (Resources for the cheapest Operation): State ${pct(d.voluntaryPassShare["state"] ?? 0)}, PKK ${pct(d.voluntaryPassShare["pkk"] ?? 0)}. Longest First Eligible streak: ${String(d.maxFirstEligibleStreak)} cards. Mean unused Resources at the end: State ${(d.meanUnusedResources["state"] ?? 0).toFixed(1)}, PKK ${(d.meanUnusedResources["pkk"] ?? 0).toFixed(1)}. Games with a 3-Pass streak: ${JSON.stringify(d.passStreak3Games)}. Stop-rule flags: ${JSON.stringify(d.stopRuleFlags)}.`, "", `Boxes by faction: ${JSON.stringify(d.boxesByFaction)}`, "");
+    const players = Object.entries(d.byPlayer);
+    if (players.length > 0) out.push("| Player | Card choices | Pass | Voluntary Pass | Unused Resources at the end |", "|:--|--:|--:|--:|--:|", ...players.map(([id, x]) => `| ${id} | ${String(x.choices)} | ${pct(x.passShare)} | ${pct(x.voluntaryPassShare)} | ${x.meanUnusedResources.toFixed(1)} |`), "");
   }
   return `${out.join("\n")}\n`;
 }

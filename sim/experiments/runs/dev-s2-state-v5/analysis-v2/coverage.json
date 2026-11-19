@@ -1956,6 +1956,84 @@
    "pkk": 0.12946020128087832,
    "state": 0.3176593521421108
   },
+  "voluntaryPassShare": {
+   "pkk": 0.052455016773406526,
+   "state": 0.12106284520077623
+  },
+  "byPlayer": {
+   "P-ADAPT@4": {
+    "choices": 1641,
+    "passShare": 0.14320536258379038,
+    "voluntaryPassShare": 0.06886045094454601,
+    "meanUnusedResources": 7.375
+   },
+   "P-EXP@4": {
+    "choices": 1472,
+    "passShare": 0.10122282608695653,
+    "voluntaryPassShare": 0.0006793478260869565,
+    "meanUnusedResources": 0.8125
+   },
+   "P-POL@4": {
+    "choices": 1742,
+    "passShare": 0.17221584385763491,
+    "voluntaryPassShare": 0.09758897818599312,
+    "meanUnusedResources": 11.25
+   },
+   "P-SURV@4": {
+    "choices": 1703,
+    "passShare": 0.09688784497944804,
+    "voluntaryPassShare": 0.03523194362889019,
+    "meanUnusedResources": 0.84375
+   },
+   "S-ADAPT@4": {
+    "choices": 910,
+    "passShare": 0.33406593406593404,
+    "voluntaryPassShare": 0.22747252747252747,
+    "meanUnusedResources": 0.875
+   },
+   "S-ADAPT@5": {
+    "choices": 864,
+    "passShare": 0.2847222222222222,
+    "voluntaryPassShare": 0.05439814814814815,
+    "meanUnusedResources": 0.375
+   },
+   "S-CON@4": {
+    "choices": 884,
+    "passShare": 0.34728506787330315,
+    "voluntaryPassShare": 0.15610859728506787,
+    "meanUnusedResources": 0.6875
+   },
+   "S-CON@5": {
+    "choices": 805,
+    "passShare": 0.29316770186335406,
+    "voluntaryPassShare": 0.02981366459627329,
+    "meanUnusedResources": 0.0625
+   },
+   "S-MIL@4": {
+    "choices": 815,
+    "passShare": 0.3337423312883436,
+    "voluntaryPassShare": 0.1165644171779141,
+    "meanUnusedResources": 0.5
+   },
+   "S-MIL@5": {
+    "choices": 829,
+    "passShare": 0.28950542822677927,
+    "voluntaryPassShare": 0.031363088057901084,
+    "meanUnusedResources": 0.4375
+   },
+   "S-POL@4": {
+    "choices": 887,
+    "passShare": 0.3337091319052988,
+    "voluntaryPassShare": 0.23900789177001128,
+    "meanUnusedResources": 16.875
+   },
+   "S-POL@5": {
+    "choices": 705,
+    "passShare": 0.3219858156028369,
+    "voluntaryPassShare": 0.08794326241134752,
+    "meanUnusedResources": 2.125
+   }
+  },
   "maxFirstEligibleStreak": 51,
   "meanUnusedResources": {
    "state": 2.7421875,
