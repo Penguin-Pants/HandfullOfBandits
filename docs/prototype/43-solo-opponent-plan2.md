@@ -35,6 +35,20 @@ You can now play a full campaign against a bot in the app. The bot takes the Sta
 4. **The roster passes every new C3 to C5 position.** All 8 State (v4, v5) and 4 PKK v4 players pass the 10 positions; S-RANDOM and P-RANDOM fail the decisive ones. Village Clearance, Covert Action, Reciprocal Restraint breach and C4/C5 checks are handled. No S5 retune was needed.
 5. **Default opponent.** S-CON@4 won the most v4 State games on the DD-25 rules (`dd25-v4b` 38 of 60) and tied S-ADAPT@4 in `dev-s2-state-v5` (9 of 16 each). On the 43/38 test package S-ADAPT led (doc 42: 162 against 159 of 200). The difference is small.
 
+## 3a. After decisions B-5 and B-6
+
+- **New metric:** run reports split Pass into voluntary (Resources for the cheapest base Operation; Sweep costs 1 under OHAL Extended Powers) and forced, per player.
+- **Spending sweep** (`dev-s2-state-v5`, `dev-s2-state-sweep`; 16 games per bot, 4 seeds):
+
+| State bot | `resources` weight | Voluntary Pass | Unused Resources | Wins |
+|:--|--:|--:|--:|--:|
+| S-CON@4 | 0.05 (v4) | 15.6% | 0.7 | 9/16 |
+| S-CON@6 | −0.1 | 9.4% | 0.6 | 8/16 |
+| S-CON@7 | −0.2 | 8.2% | 0.8 | 6/16 |
+| S-CON@5 | −0.3 | 3.0% ✅ | 0.1 ✅ | 4/16 |
+
+- **S3:** `S-SEARCH@1` (4-ply determinized search, successive halving, `cli/strategies/search.ts`) uses S-CON@5 leaf weights so it meets B-5. The 10-seed check compares it with S-CON@5 and S-CON@4 (`dev-s3-search-10`). Result pending.
+
 ## 4. Decide (designer)
 
 1. **S2 Pass target.** Keep "Pass share ≤ 20%" and change the State economy (for example a cheaper Limited Op, more income), or replace the target with "voluntary Pass (2 or more Resources) ≤ 5%", which v4 S-CON nearly meets (13%) and v5 meets (2%)?
