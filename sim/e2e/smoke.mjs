@@ -47,6 +47,8 @@ try {
   await start.waitFor();
   for (let i = 0; i < 50 && !(await start.isEnabled()); i++) await page.waitForTimeout(100);
   check(await start.isEnabled(), "Home: Start is enabled for the first unblocked scenario");
+  // Hotseat: both sides human (the bot seat has its own check below).
+  await page.getByLabel("Opponent", {exact: true}).selectOption("");
   await start.click();
   await page.getByRole("button", { name: /Reveal first card/ }).click();
   await page.getByText(/^Card 1$/).waitFor();
@@ -251,6 +253,7 @@ try {
   await page.getByRole("button", {name: "Home",exact: true}).click();
   await page.getByLabel("Scenario", {exact: true}).selectOption("full-campaign");
   await page.getByLabel("Seed", {exact: true}).fill("7");
+  await page.getByLabel("Opponent", {exact: true}).selectOption("");
   check(await page.getByRole("button", {name: "Start",exact: true}).isEnabled(), "Home: the full campaign starts without exclusions");
   // P4-12: the Home row links to every export format; each link downloads a file.
   const row = page.getByRole("row").filter({hasText: sessions[0].name});
@@ -285,6 +288,26 @@ try {
   await page.getByRole("status").filter({hasText: /Saved/}).waitFor();
   const aExport = await (await fetch(`${base}/api/sessions/${created.sessionId}/export`)).json();
   check(aExport.sessions[0].scenario_id === "full-campaign" && aExport.annotations.length === 1 && aExport.metrics.filter(m => m.propaganda_round !== undefined).length === 5, "Full campaign export contains the session, five round metrics and UI note");
+  // Audit Plan 2 S1: a State bot seat. The human PKK passes on card 1; the bot then acts by itself and says why.
+  await page.getByRole("button", {name: "Home",exact: true}).click();
+  await page.getByLabel("Seed", {exact: true}).fill("8");
+  await page.getByLabel("Name", {exact: true}).fill("bot-seat");
+  const opponent = page.getByLabel("Opponent", {exact: true});
+  check((await opponent.inputValue()).startsWith("S-"), "Home: a State bot is the default opponent");
+  const botCreation = page.waitForResponse(r => r.url().endsWith("/api/sessions") && r.request().method() === "POST");
+  await page.getByRole("button", {name: "Start",exact: true}).click();
+  const botSession = await (await botCreation).json();
+  await page.getByRole("button", { name: /Reveal first card/ }).click();
+  await page.getByText(/^Card 1$/).waitFor();
+  const now = await (await fetch(`${base}/api/sessions/${botSession.sessionId}`)).json();
+  const pass = await fetch(`${base}/api/sessions/${botSession.sessionId}/commands`, {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify({command: {type: "Pass", faction: "pkk"}, headActionId: now.head.actionId, headStateHash: now.head.stateHash})});
+  check(pass.ok, "the human PKK passes on card 1");
+  await page.reload();
+  await page.getByRole("row").filter({hasText: "bot-seat"}).getByRole("button", {name: "Resume",exact: true}).click();
+  await page.getByLabel("Last action").getByText(/^Last action: State /).waitFor({timeout: 60_000});
+  await page.getByLabel("Last action").locator("summary").first().click();
+  await page.getByText("Why?", {exact: true}).click();
+  check(await page.getByText(/^Chosen: /).count() === 1, "the State bot acted on its own and the Last action shows why");
 } finally {
   await browser?.close();
   // Windows holds the SQLite file open until the server exits; rmSync before that throws EPERM.

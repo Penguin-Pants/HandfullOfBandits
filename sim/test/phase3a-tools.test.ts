@@ -95,7 +95,7 @@ it("rebuilds the search index for pre-migration notes and removes deleted notes"
   const file = backupStore(db);
   if (file === null) throw new Error("No backup");
   const old = new Database(file);
-  old.exec("DROP TRIGGER annotations_fts_insert; DROP TRIGGER annotations_fts_update; DROP TRIGGER annotations_fts_delete; DROP TABLE annotations_fts; PRAGMA user_version = 1;");
+  old.exec("DROP TRIGGER annotations_fts_insert; DROP TRIGGER annotations_fts_update; DROP TRIGGER annotations_fts_delete; DROP TABLE annotations_fts; DROP TABLE bot_decisions; ALTER TABLE sessions DROP COLUMN seats; PRAGMA user_version = 1;");
   old.close();
   const migrated = openStore(file);
   const matches = searchAnnotations(migrated, "Changed target");

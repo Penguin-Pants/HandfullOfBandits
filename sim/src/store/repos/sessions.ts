@@ -16,6 +16,8 @@ export interface SessionInput {
   /** `id@semver` and source hash per module. */
   readonly modules: unknown;
   readonly excludedCards: unknown;
+  /** Bot player ID per faction (audit Plan 2 S1); empty for hotseat play. */
+  readonly seats?: Readonly<Record<string, string>>;
 }
 
 export interface SessionRow {
@@ -36,6 +38,8 @@ export interface SessionRow {
   readonly head_action_id: string | null;
   readonly result: string | null;
   readonly notes: string;
+  /** JSON object: bot player ID per faction. */
+  readonly seats: string;
 }
 
 export interface CreatedSession extends CommitResult {
@@ -51,10 +55,10 @@ export function createSession(db: Db, input: SessionInput, setup: Omit<ActionInp
     const at = now();
     db.prepare(
       `INSERT INTO sessions (session_id, name, package_hash, scenario_id, seed, options, app_version, code_fingerprint, modules,
-         excluded_cards, created_at, updated_at, status, current_branch_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)`,
+         excluded_cards, created_at, updated_at, status, current_branch_id, seats) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)`,
     ).run(
       sessionId, input.name, input.packageHash, input.scenarioId, input.seed, json(input.options), input.appVersion,
-      input.codeFingerprint, json(input.modules), json(input.excludedCards), at, at, branchId,
+      input.codeFingerprint, json(input.modules), json(input.excludedCards), at, at, branchId, json(input.seats ?? {}),
     );
     db.prepare("INSERT INTO branches (branch_id, session_id, forked_from_action_id, label, created_at) VALUES (?, ?, NULL, 'main', ?)").run(branchId, sessionId, at);
     const commit = commitAction(db, { ...setup, sessionId, kind: "setup", stateHashBefore: null });

@@ -1,6 +1,6 @@
 // Home screen (08 s6): package, scenario, options, seed, name, saved sessions.
 import { useEffect, useState } from "react";
-import type { Api, PackageSummary, SessionRow } from "../api.ts";
+import type { Api, PackageSummary, SeatPlayer, SessionRow } from "../api.ts";
 import { SIGNAL_QUESTION, SIGNAL_SETTING, signalEnabled } from "../propaganda/SignalPrompt.tsx";
 import { startBlockers } from "./start-rule.ts";
 
@@ -19,6 +19,9 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
   const [seed, setSeed] = useState("1");
   const [name, setName] = useState("");
   const [signal, setSignal] = useState(signalEnabled());
+  // Bot seat (audit Plan 2 S1): "" is hotseat play; otherwise the bot player ID.
+  const [players, setPlayers] = useState<readonly SeatPlayer[]>([]);
+  const [bot, setBot] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,6 +34,10 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
       }
     });
     void api.sessions().then(setSessions);
+    void api.seatPlayers().then((list) => {
+      setPlayers(list);
+      setBot(list.find((p) => p.recommended === true)?.id ?? "");
+    });
   }, [api]);
 
   const pkg = packages.find((p) => p.dir === dir);
@@ -40,7 +47,8 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
   const start = async (): Promise<void> => {
     setError(null);
     try {
-      const created = await api.createSession({ dir, scenarioId, seed: Number(seed), name: name === "" ? `${scenarioId}-seed${seed}` : name, options });
+      const seat = players.find((p) => p.id === bot);
+      const created = await api.createSession({ dir, scenarioId, seed: Number(seed), name: name === "" ? `${scenarioId}-seed${seed}` : name, options, ...(seat === undefined ? {} : { seats: { [seat.faction]: seat.id } }) });
       onOpen(created.sessionId);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -92,6 +100,21 @@ export function Home({ api, onOpen, onCheck }: HomeProps) {
             </label>
           ))}
         </div>
+        {players.length > 0 && (
+          <div className="row">
+            <label>
+              Opponent{" "}
+              <select aria-label="Opponent" value={bot} onChange={(e) => { setBot(e.target.value); }}>
+                <option value="">None: I play both sides</option>
+                {players.map((p) => (
+                  <option key={p.id} value={p.id} title={p.description}>
+                    {p.faction === "state" ? "State" : "PKK"} bot: {p.id}{p.recommended === true ? " (recommended)" : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        )}
         <div className="row">
           <label>
             <input type="checkbox" checked={signal} onChange={(e) => { setSignal(e.target.checked); localStorage.setItem(SIGNAL_SETTING, e.target.checked ? "on" : "off"); }} /> Ask each Propaganda round: {SIGNAL_QUESTION}

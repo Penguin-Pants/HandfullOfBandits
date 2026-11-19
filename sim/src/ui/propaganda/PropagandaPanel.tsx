@@ -7,6 +7,7 @@ import { words } from "../common/names.ts";
 import { Stepper } from "../common/Stepper.tsx";
 import { LegalPoliticsForm } from "./LegalPoliticsForm.tsx";
 import { RedeployForm } from "./RedeployForm.tsx";
+import { statePartText, withStatePart } from "./bot-part.ts";
 import { guideOf, skipQuestion, stepName } from "./phases.ts";
 
 export interface PropagandaPanelProps {
@@ -14,6 +15,9 @@ export interface PropagandaPanelProps {
   readonly legal: LegalChoices;
   readonly selected: readonly string[];
   readonly onCommit: (command: AnyCommand) => void;
+  /** With a bot seat: the human's faction (null in hotseat play) and the bot State part to extend. */
+  readonly human?: string | null;
+  readonly statePart?: Readonly<Record<string, unknown>> | null;
 }
 
 const SPEND_KEYS: Readonly<Record<string, readonly string[]>> = {
@@ -21,7 +25,7 @@ const SPEND_KEYS: Readonly<Record<string, readonly string[]>> = {
   agitation: ["shifts", "coercion", "pkkHarm"],
 };
 
-export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaPanelProps) {
+export function PropagandaPanel({ view, legal, selected, onCommit, human = null, statePart = null }: PropagandaPanelProps) {
   const { propagandaPhases, propagandaStep } = view.status;
   const phase = propagandaPhases[propagandaStep] ?? "";
   const [spend, setSpend] = useState<Record<string, Record<string, string>>>({});
@@ -29,7 +33,9 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
   const skip = skipQuestion(phase, view.status.emergencyMoves);
   const name = (id: string): string => view.spaces.find((x) => x.id === id)?.name ?? words(id);
   const set = (s: string, k: string, v: string): void => { setSpend({ ...spend, [s]: { ...spend[s], [k]: v } }); };
-  const choose = (choice: unknown): void => { onCommit({ type: "PropagandaChoice", phase, choice }); };
+  const choose = (choice: unknown): void => {
+    onCommit({ type: "PropagandaChoice", phase, choice: statePart === null ? choice : withStatePart(phase, statePart, (choice ?? {}) as Readonly<Record<string, unknown>>) });
+  };
   const spends = (): Record<string, Record<string, number>> =>
     Object.fromEntries(selected.map((s) => [s, Object.fromEntries(Object.entries(spend[s] ?? {}).filter(([, v]) => v !== "").map(([k, v]) => [k, Number(v)]))]));
   return (
@@ -56,12 +62,13 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           {v.message}
         </p>
       ))}
+      {statePart !== null && <p aria-label="State bot part">{statePartText(phase, statePart, name)} Add your PKK choices, or submit none.</p>}
       <div className="row">
-        <button type="button" disabled={legal.advance !== true} onClick={() => { if (skip === null || window.confirm(skip)) onCommit({ type: "Advance" }); }}>
+        <button type="button" disabled={legal.advance !== true || statePart !== null} onClick={() => { if (skip === null || window.confirm(skip)) onCommit({ type: "Advance" }); }}>
           {skip === null ? "Advance (Space)" : `Skip ${stepName(phase)} (Space)`}
         </button>
       </div>
-      {phase === "redeploy" && <RedeployForm view={view} selected={selected} onChoose={choose} />}
+      {phase === "redeploy" && <RedeployForm view={view} selected={selected} onChoose={choose} pieces={human === "pkk" ? ["guerrilla"] : human === "state" ? ["troops", "police"] : undefined} />}
       {phase === "legitimacy" && view.status.emergencyMoves.length > 0 && (
         <div className="row" aria-label="Emergency Rule step">
           <span>Move Emergency Rule to:</span>
@@ -72,7 +79,7 @@ export function PropagandaPanel({ view, legal, selected, onCommit }: PropagandaP
           ))}
         </div>
       )}
-      {phase === "legalPolitics" && <LegalPoliticsForm view={view} onChoose={choose} />}
+      {phase === "legalPolitics" && <LegalPoliticsForm view={view} onChoose={choose} only={human} />}
       {phase === "upkeep" && (
         <div aria-label="Upkeep">
           {selected.map((s) => (

@@ -47,6 +47,22 @@ Items 15 to 23 and three print-set approvals. Rule text is in `prototype-rules.m
 
 Open from these decisions: none.
 
+## Decisions (2026-11-19, Plan 2)
+
+Answers to audit section 5.7 and the S5 input. Results: `docs/prototype/43-solo-opponent-plan2.md`.
+
+| # | Question | Decision | Pending |
+|:--|:--|:--|:--|
+| B-1 | Which faction does the bot play first? | The State. The human plays the PKK | Done: Home default `S-CON@4`; either seat works |
+| B-2 | Windows response-time budget | p95 5 s, max 15 s per decision | S3; measure on the designer's laptop |
+| B-3 | May the bot see the opponent's Pivotal hand? | Yes: it is public (10.1) | None (bots already rebuild it from setup) |
+| B-4 | Source of the C3 to C5 good-play positions | The audit 5.6 examples | Done: 10 positions, suite v3 |
+
+Open from Plan 2 (doc 43 section 4):
+
+- **B-5 S2 Pass target.** 85 to 95% of State passes are forced (0 or 1 Resources; every State Operation costs 2). Change the State economy, or replace "Pass share ≤ 20%" with "voluntary Pass ≤ 5%"?
+- **B-6 S3 scope.** Full acceptance (50 seeds per opponent, several hours) or a 10-seed first check?
+
 ## Original questions
 
 ## Decide first

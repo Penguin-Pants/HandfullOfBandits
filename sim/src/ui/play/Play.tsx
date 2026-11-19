@@ -25,6 +25,7 @@ import { StatusBar } from "../status/StatusBar.tsx";
 import { TrackCard } from "../status/TrackCard.tsx";
 import { skipQuestion } from "../propaganda/phases.ts";
 import { FullscreenButton } from "./FullscreenButton.tsx";
+import { BotWhy } from "../history/BotWhy.tsx";
 
 export interface PlayProps {
   readonly api: Api;
@@ -41,22 +42,48 @@ export function changedSpaces(before: BoardView, after: BoardView): string[] {
   return after.spaces.filter((s) => was.get(s.id) !== key(s)).map((s) => s.id);
 }
 
-/** What the last committed action did, from its log entries. */
+/** What the last committed action did, from its log entries, and why when a bot chose it. */
 function LastAction({ item, view, onRule }: { readonly item: HistoryItem | undefined; readonly view: BoardView; readonly onRule: (ref: string) => Promise<RuleLookup> }) {
   if (item === undefined) return null;
   return (
     <details className="panel last-action supporting-details" aria-label="Last action">
       <summary>Last action: {actionTitle(item.action, view)}</summary>
       <LogLines item={item} view={view} playerOnly limit={12} onRule={onRule} />
+      <BotWhy records={item.bot ?? []} view={view} />
     </details>
   );
+}
+
+/** Joint Propaganda phases: one command, State part first (rules 6.8, 8.6). */
+const JOINT = new Set(["redeploy", "legalPolitics"]);
+
+/** Bot player ID per faction from the session row; {} for hotseat play. */
+function seatsOf(session: SessionRow): Readonly<Record<string, string>> {
+  try {
+    return JSON.parse(session.seats) as Record<string, string>;
+  } catch {
+    return {};
+  }
+}
+
+/** The human's faction when exactly one seat is a bot; null otherwise (hotseat or bot-only). */
+function humanOf(seats: Readonly<Record<string, string>>): string | null {
+  const bots = Object.keys(seats);
+  if (bots.length !== 1) return null;
+  return bots[0] === "state" ? "pkk" : "state";
 }
 
 /** The click-to-open space detail panel. Off: the map hover text gives the same data (see spaceTooltip). */
 const SPACE_INSPECTOR: boolean = false;
 
 export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
-  const [data, setData] = useState<{ session: SessionRow; head: Head } | null>(null);
+  const [data, setData] = useState<{ session: SessionRow; head: Head; botToAct?: string | null } | null>(null);
+  // Bot seat (audit Plan 2 S1): the bot State part a human PKK extends, the head the bot last
+  // stepped from (one request per head) and a pause while Undo walks back past bot actions.
+  const [statePart, setStatePart] = useState<Readonly<Record<string, unknown>> | null>(null);
+  const [botError, setBotError] = useState<string | null>(null);
+  const stepped = useRef<string | null>(null);
+  const undoing = useRef(false);
   const [legal, setLegal] = useState<LegalChoices | null>(null);
   // The map-built plans (UC-5): one for the Faction panel, one for an Event's free action. Map
   // clicks and drags build the active one.
@@ -104,7 +131,10 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       const [s, l, h, c] = await Promise.all([api.session(sessionId), api.legal(sessionId), api.history(sessionId), api.categories()]);
       if (version !== loadVersion.current) return;
       const prev = shown.current;
-      if (prev === null || prev.actionId !== s.head.actionId) setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
+      if (prev === null || prev.actionId !== s.head.actionId) {
+        setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
+        setStatePart(null);
+      }
       shown.current = s.head;
       setData(s);
       setLegal(l);
@@ -119,11 +149,33 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     return () => { loadVersion.current++; };
   }, [load]);
 
+  // The seated bot acts as soon as the head is its decision.
+  const botToAct = data?.botToAct ?? null;
+  useEffect(() => {
+    if (data === null || botToAct === null || undoing.current || stepped.current === data.head.actionId) return;
+    stepped.current = data.head.actionId;
+    setBotError(null);
+    api.botStep(sessionId, data.head.actionId, data.head.stateHash).then((r) => {
+      if (r.partial !== null) setStatePart(r.partial);
+      else void load();
+    }).catch((e: unknown) => {
+      stepped.current = null;
+      setBotError(e instanceof Error ? e.message : String(e));
+    });
+  }, [api, sessionId, data, botToAct, load]);
+
   const commit = async (command: AnyCommand): Promise<void> => {
     if (data === null) return;
     setError(null);
     try {
-      const result = await api.submit(sessionId, command, data.head.actionId, data.head.stateHash);
+      const seats = seatsOf(data.session);
+      const status = data.head.view.status;
+      const phase = status.phase === "propaganda" ? (status.propagandaPhases[status.propagandaStep] ?? "") : "";
+      // A human State part of a joint phase goes to the PKK bot, which extends and commits it.
+      const toPkkBot = JOINT.has(phase) && seats["pkk"] !== undefined && seats["state"] === undefined && (command.type === "PropagandaChoice" || command.type === "Advance");
+      const result = toPkkBot
+        ? await api.botStep(sessionId, data.head.actionId, data.head.stateHash, command.type === "Advance" ? {} : ((command["choice"] ?? {}) as Record<string, unknown>))
+        : await api.submit(sessionId, command, data.head.actionId, data.head.stateHash);
       last.current = { id: result.actionId, at: Date.now() };
       draft.current = null;
       dispatch({ type: "resetAll" });
@@ -169,15 +221,29 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const anchor = (): ReturnType<typeof defaultAnchor> =>
     defaultAnchor({ lastActionId: last.current.id, lastActionAt: last.current.at, now: Date.now(), draft: draft.current, selectedSpace: focusStore.get().selectedSpace });
   const undo = async (): Promise<void> => {
-    if (!window.confirm("Undo the last action?")) return;
+    // With a bot seat, Undo goes back past the bot's actions to the human's last action.
+    const committed = history.filter((h) => h.action.status !== "undone").reverse();
+    let steps = humanOf(seatsOf(data.session)) === null ? 1 : committed.findIndex((h) => (h.bot ?? []).length === 0) + 1;
+    if (steps <= 0) steps = committed.length;
+    if (!window.confirm(steps > 1 ? `Undo your last action and the ${String(steps - 1)} bot action(s) after it?` : "Undo the last action?")) return;
     setError(null);
+    undoing.current = true;
     try {
-      const result = await api.undo(sessionId, data.head.actionId, data.head.stateHash);
-      if (result.undoneAfterRandom) setError(`Undid ${result.undone}. It used a random result; the undo is flagged.`);
+      let at = { actionId: data.head.actionId, stateHash: data.head.stateHash };
+      for (let i = 0; i < steps; i++) {
+        const result = await api.undo(sessionId, at.actionId, at.stateHash);
+        if (result.undoneAfterRandom) setError(`Undid ${result.undone}. It used a random result; the undo is flagged.`);
+        const head = result.state;
+        if (head === undefined) break;
+        at = { actionId: head.actionId, stateHash: head.stateHash };
+      }
       last.current = { id: null, at: null };
-      await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      undoing.current = false;
+      stepped.current = null;
+      await load();
     }
   };
   const branch = async (actionId: string): Promise<void> => {
@@ -196,6 +262,9 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     setEnding(false);
     onExit?.();
   };
+  const seats = seatsOf(data.session);
+  const human = humanOf(seats);
+  const botTurn = botToAct !== null && statePart === null;
   const board = hideCovert ? withoutHidden(view) : view;
   const detail = board.spaces.find((s) => s.id === focused);
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
@@ -260,12 +329,23 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
             <h2>{view.status.pending?.prompt ?? (view.status.ended !== null ? "Game complete" : view.status.phase === "setup" ? "Reveal the first card" : legal.advance === true ? "Advance the sequence" : "Choose your action")}</h2>
             <p>{legal.faction === null ? "Follow the card or phase instructions below." : "Choose an eligibility box, build a plan on the map and check its preview."}</p>
           </section>
-          {legal.faction !== null && <FactionPanel onTargets={setFactionTargets} api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
+          {botTurn && (
+            <section className="panel" aria-label="Bot turn">
+              <p>{words(botToAct)} bot ({seats[botToAct] ?? ""}) is choosing…</p>
+              {botError !== null && (
+                <>
+                  <p className="bad">{botError}</p>
+                  <button type="button" onClick={() => void load()}>Retry</button>
+                </>
+              )}
+            </section>
+          )}
+          {!botTurn && legal.faction !== null && <FactionPanel onTargets={setFactionTargets} api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
           <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
-          {view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} api={api} sessionId={sessionId} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onTargets={setEventTargets} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} /> : view.status.phase === "propaganda" ? (
+          {botTurn ? null : view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} api={api} sessionId={sessionId} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onTargets={setEventTargets} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} /> : view.status.phase === "propaganda" ? (
             <>
               {signalEnabled() && <SignalPrompt api={api} sessionId={sessionId} view={view} headActionId={data.head.actionId} pathIds={pathIds} focus={focusStore.get()} />}
-              <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} />
+              <PropagandaPanel view={view} legal={legal} selected={plans.faction.op.locations} onCommit={(c) => void commit(c)} human={human} statePart={statePart} />
             </>
           ) : (
             <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />

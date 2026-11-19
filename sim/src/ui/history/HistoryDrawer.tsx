@@ -4,6 +4,7 @@
 import type { BoardView, HistoryItem, RuleLookup } from "../api.ts";
 import { LogLines } from "../log/LogLines.tsx";
 import { actionTitle } from "../log/plain.ts";
+import { BotWhy } from "./BotWhy.tsx";
 
 export function HistoryDrawer({ items, view, limit = 10, onOpen, onClose, onBranch, onRule, headActionId }: { readonly items: readonly HistoryItem[]; readonly view: BoardView; readonly limit?: number; readonly onOpen?: (item: HistoryItem) => void; readonly onClose?: () => void; readonly onBranch?: (item: HistoryItem) => void; readonly onRule?: (ref: string) => Promise<RuleLookup>; readonly headActionId?: string }) {
   return (
@@ -36,6 +37,7 @@ export function HistoryDrawer({ items, view, limit = 10, onOpen, onClose, onBran
             )}
             <div className="muted">
               <LogLines item={item} view={view} playerOnly={false} {...(onRule === undefined ? {} : { onRule })} />
+              <BotWhy records={item.bot ?? []} view={view} />
             </div>
           </li>
           );

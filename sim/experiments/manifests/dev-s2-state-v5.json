@@ -1,0 +1,189 @@
+{
+ "schemaVersion": 1,
+ "id": "dev-s2-state-v5",
+ "stage": "development",
+ "description": "Audit Plan 2 S2: State v5 (v4 plus -0.3 on unspent Resources) and State v4 against the v4 PKK roster on the current package, 4 development seeds (7001 to 7004), paired by seed. Targets for v5: State Pass share <= 20%, mean unused State Resources <= 2 at game end.",
+ "scenario": "full-campaign",
+ "package": {
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "hash": "491fe1383dc18851c147abc0cb1c58d1537ea7f00f36f57fe4a6a28558819acb"
+ },
+ "expected": {
+  "thresholds": {
+   "state": 49,
+   "pkk": 32
+  },
+  "harmLimit": 6,
+  "engineFingerprint": null,
+  "playerFingerprint": null
+ },
+ "conditions": [
+  {
+   "id": "default",
+   "options": {}
+  }
+ ],
+ "matchups": [
+  {
+   "state": "S-POL@5",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-POL@5",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-POL@5",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-POL@5",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-MIL@5",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-MIL@5",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-MIL@5",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-MIL@5",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@5",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-ADAPT@5",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-ADAPT@5",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-ADAPT@5",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-ADAPT@5",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-POL@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-MIL@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-CON@4",
+   "pkk": "P-ADAPT@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-POL@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-EXP@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-SURV@4"
+  },
+  {
+   "state": "S-ADAPT@4",
+   "pkk": "P-ADAPT@4"
+  }
+ ],
+ "seeds": {
+  "registry": "development",
+  "blocks": [
+   {
+    "from": 7001,
+    "count": 4
+   }
+  ]
+ },
+ "repeats": {
+  "perGame": 1,
+  "subset": 0
+ },
+ "limits": {
+  "commands": 4000,
+  "decisionMs": null,
+  "gameMs": 1800000
+ },
+ "concurrency": 4,
+ "analysis": {
+  "reportVersion": 1,
+  "bootstrap": {
+   "samples": 2000,
+   "seed": 1
+  },
+  "warnings": {
+   "cellWinPercent": 80,
+   "rosterAveragePercent": 60,
+   "marginGap": 10
+  },
+  "exclusions": []
+ },
+ "supersedes": null
+}

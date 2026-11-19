@@ -44,6 +44,22 @@ export interface Choice {
   /** Best other generated candidate; not proof of the best legal move (19 s9). */
   readonly topAlternative: { readonly id: string; readonly value: number } | null;
   readonly notes: readonly string[];
+  /** Search players: the best candidates, best first, with value and components (audit Plan 2 S4). */
+  readonly ranked?: readonly RankedCandidate[];
+  /** 2-move search: the sampled plays after the chosen one (opponent replies, then own next play). */
+  readonly line?: readonly LinePlay[];
+}
+
+/** One play of a sampled line: a guess on a determinized state, not a forecast of the real game. */
+export interface LinePlay {
+  readonly faction: FactionId;
+  readonly command: AnyCommand;
+}
+
+export interface RankedCandidate {
+  readonly id: string;
+  readonly value: number;
+  readonly components: Readonly<Record<string, number>>;
 }
 
 /** Counts engine transitions for one decision. `apply` returns null once the budget is spent. */

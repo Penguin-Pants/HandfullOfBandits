@@ -12,10 +12,10 @@
 // (3) the best six are re-sampled on further determinizations (new deck order and dice);
 // (4) adaptive families replace the value of the best four with the value after the opponent's best
 // static reply.
-import type { FactionId, GameState, JsonObject } from "../../engine/core/types.ts";
+import type { AnyCommand, FactionId, GameState, JsonObject } from "../../engine/core/types.ts";
 import { decisionPoint, generateCandidates, GENERATOR_VERSION, type Candidate } from "../candidates.ts";
 import { determinize } from "../player-observation.ts";
-import { settle, type Choice, type DecisionRequest, type ObservationPlayer, type PlayerSpec, type SearchContext } from "../players.ts";
+import { settle, type Choice, type LinePlay, type DecisionRequest, type ObservationPlayer, type PlayerSpec, type SearchContext } from "../players.ts";
 import { evaluate, timing, WIN_VALUE, type Weights } from "./evaluation.ts";
 
 /**
@@ -106,17 +106,30 @@ const V4_CHANGES: Readonly<Record<string, Partial<Weights>>> = {
 /** v4 search: 2-move planning; the budget keeps the one-move breadth (600 x 3, doc 37). */
 const V4_SEARCH = { lookahead: 2, budget: 1800 };
 
+const V4: readonly Family[] = V1.map((f) => ({ ...f, version: 4, ...V4_SEARCH, weights: { ...f.weights, ...V4_CHANGES[f.id] } }));
+
+/**
+ * v5 State (audit Plan 2 S2): v4 plus a weight on unspent Resources against State passivity
+ * (`dd25-v4b`: 36% Pass, about 5 Resources left at the end). The S-SPEND@3 probe cut unused
+ * Resources from 4.3 to 0.8 with -0.3 (doc 23). Search and other dials stay as v4.
+ * Development probe, not the roster: in `dev-s2-state-v5` it spent its Resources but still passed
+ * on 29% of card choices (most passes at 0 to 1 Resources) and won 19 of 64 games against 31 for v4.
+ */
+export const V5_RESOURCES = -0.3;
+const V5: readonly Family[] = V4.filter((f) => f.faction === "state").map((f) => ({ ...f, version: 5, weights: { ...f.weights, resources: V5_RESOURCES } }));
+
 export const FAMILIES: readonly Family[] = [
   ...V1.map((f) => ({ ...f, version: 1 })),
   ...V1.map((f) => ({ ...f, version: 2, weights: { ...f.weights, potentialModel: "capped" as const } })),
   ...COUNTERS,
-  ...V1.map((f) => ({ ...f, version: 4, ...V4_SEARCH, weights: { ...f.weights, ...V4_CHANGES[f.id] } })),
+  ...V4,
+  ...V5,
 ];
 
 /** The frozen version of each family: the qualified roster. */
 export const CURRENT: readonly Family[] = FAMILIES.filter((f) => f.version === ROSTER_VERSION[f.faction]);
 
-interface Scored { readonly candidate: Candidate; value: number; samples: number; components: Readonly<Record<string, number>> }
+interface Scored { readonly candidate: Candidate; value: number; samples: number; components: Readonly<Record<string, number>>; line?: readonly LinePlay[] }
 
 /** One sampled outcome of a candidate: apply on a determinized state, then automatic phases. */
 function outcome(ctx: SearchContext, base: GameState, candidate: Candidate): GameState | null {
@@ -170,6 +183,8 @@ export function roundRobin(candidates: readonly Candidate[]): Candidate[] {
   return out;
 }
 
+/** Candidates kept in a decision's review list (audit Plan 2 S4: top 3). */
+const RANKED = 3;
 /** Share of the decision budget kept for re-sampling and replies after the first pass. */
 const RESERVE = 0.25;
 /** With 2-move planning: the first pass gets 35% (630 of 1,800, more than the 450 of one-move search). */
@@ -185,17 +200,18 @@ const MAX_REPLIES = 2;
  * Best card play of `faction` from `s` by `weights`, trying plays in family rotation until the
  * budget falls to `floor` (doc 37). Unlike a fixed sample, a large budget share reaches every play.
  */
-function bestPlay(ctx: SearchContext, s: GameState, faction: FactionId, weights: Weights, floor: number): GameState {
+function bestPlay(ctx: SearchContext, s: GameState, faction: FactionId, weights: Weights, floor: number, line?: LinePlay[]): GameState {
   const plays = roundRobin(generateCandidates(ctx.engine, ctx.ruleset, s, "card", faction).candidates);
-  let best: { value: number; state: GameState } = { value: -Infinity, state: s };
+  let best: { value: number; state: GameState; command: AnyCommand | null } = { value: -Infinity, state: s, command: null };
   for (const c of plays) {
     if (ctx.budget.remaining <= floor) break;
     const after = outcome(ctx, s, c);
     if (after === null) continue;
     const v = evaluate(ctx.ruleset, after, faction, weights).value;
-    if (v > best.value) best = { value: v, state: after };
+    if (v > best.value) best = { value: v, state: after, command: c.command };
     if (v >= WIN_VALUE / 2) break;
   }
+  if (best.command !== null) line?.push({ faction, command: best.command });
   return best.state;
 }
 
@@ -204,7 +220,7 @@ function bestPlay(ctx: SearchContext, s: GameState, faction: FactionId, weights:
  * next, then this faction's own best next card play, then the evaluation. It stops at the first
  * decision that is not a card play (Propaganda, Pivotal, Event question) or when the budget runs low.
  */
-export function deepLine(ctx: SearchContext, after: GameState, faction: FactionId, w: Weights, share: number): GameState {
+export function deepLine(ctx: SearchContext, after: GameState, faction: FactionId, w: Weights, share: number, line?: LinePlay[]): GameState {
   const end = Math.max(0, ctx.budget.remaining - share);
   const own = Math.floor(share * (1 - REPLY_SHARE));
   let s = after;
@@ -213,10 +229,10 @@ export function deepLine(ctx: SearchContext, after: GameState, faction: FactionI
   for (let replies = 0; replies <= MAX_REPLIES && s.ended === null; ) {
     const point = decisionPoint(ctx.engine, ctx.ruleset, s);
     if (point.kind !== "card") break;
-    if (point.faction === faction) return bestPlay(ctx, s, faction, w, end);
+    if (point.faction === faction) return bestPlay(ctx, s, faction, w, end, line);
     if (replies === MAX_REPLIES) break;
     const left = Math.max(0, ctx.budget.remaining - end - own);
-    const next = bestPlay(ctx, s, point.faction, BASE, ctx.budget.remaining - Math.floor(left / (MAX_REPLIES - replies)));
+    const next = bestPlay(ctx, s, point.faction, BASE, ctx.budget.remaining - Math.floor(left / (MAX_REPLIES - replies)), line);
     if (next === s) break;
     s = next;
     replies++;
@@ -280,7 +296,9 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
         if (after.ended !== null) continue;
         const share = Math.floor(ctx.budget.remaining / (leaders.length - i));
         const one = evaluate(ctx.ruleset, after, request.faction, w).value;
-        const e = evaluate(ctx.ruleset, deepLine(ctx, after, request.faction, w, share), request.faction, w);
+        const line: LinePlay[] = [];
+        const e = evaluate(ctx.ruleset, deepLine(ctx, after, request.faction, w, share, line), request.faction, w);
+        s.line = line;
         if (e.value !== one) changed++;
         s.value = combineDeep(s.value, one, e.value);
         s.components = { ...e.components, lookahead: 2 };
@@ -307,7 +325,8 @@ function searchDecide(family: Family, request: DecisionRequest, ctx: SearchConte
   const [best, second] = scored;
   if (best === undefined || best.value === -Infinity) throw new Error(`${family.id}: no candidate could be evaluated within the budget`);
   if (best.value >= WIN_VALUE / 2) notes.push("forced or sampled win");
-  return { candidateId: best.candidate.id, value: best.value, components: best.components, topAlternative: second === undefined ? null : { id: second.candidate.id, value: second.value }, notes };
+  const ranked = scored.slice(0, RANKED).filter((x) => x.value !== -Infinity).map((x) => ({ id: x.candidate.id, value: x.value, components: x.components }));
+  return { candidateId: best.candidate.id, value: best.value, components: best.components, topAlternative: second === undefined ? null : { id: second.candidate.id, value: second.value }, notes, ranked, ...(best.line === undefined ? {} : { line: best.line }) };
 }
 
 function spec(family: Family): PlayerSpec {

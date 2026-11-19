@@ -109,7 +109,7 @@ Check run on 2026-11-13 (6 games, S-POL against P-POL and S-MIL against P-SURV, 
 | Gap | Found | Effect | Status |
 |---|---|---|---|
 | One-step planning | Phase 8 counters, PR #40 | P-SHIELD may only beat the bots | Open; option A (three-step beam search) proposed |
-| State passivity (about 39% Pass, about 4.8 Resources left) | Pilot, every baseline | State results likely low | Open; S-SPEND probe showed a partial player cause |
+| State passivity (about 39% Pass, about 4.8 Resources left) | Pilot, every baseline | State results likely low | Mostly forced: 85 to 95% of v5 State passes come at 0 or 1 Resources (doc 43). Target decision open (OPEN_QUESTIONS B-5) |
 | Sanctuary play beyond Restricted, Cross-Border, hot pursuit not chosen naturally | Coverage ledgers | Options look harmless only because unused | Open; fixtures cover legality |
 | Hand-set weights | Design | Results depend on these families | Open; review per program |
 | Pruning gaps in candidate generation | PR #40 and #41 reviews (cand-2 to cand-5) | Missed best moves in rare positions | Fixed as found; broad-mode audit exists |

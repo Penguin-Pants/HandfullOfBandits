@@ -160,3 +160,83 @@ describe("independent score oracle (19 s6: the engine is not the only oracle)", 
     expect(checked).toBeGreaterThan(150);
   });
 });
+
+// Audit Plan 2 S5: C3 to C5 positions with a clear best move.
+describe("C3 to C5 qualification positions (audit Plan 2 S5)", () => {
+  const start = engine.start(ruleset, "full-campaign", 1).state;
+  const built = (id: string): GameState => {
+    const f = FIXTURES.find((x) => x.id === id);
+    if (f === undefined) throw new Error(id);
+    return f.build(start, ruleset);
+  };
+  /** Accept outcome of every generated candidate, by family. */
+  const outcomes = (id: string): { family: string; ok: boolean }[] => {
+    const f = FIXTURES.find((x) => x.id === id);
+    if (f === undefined) throw new Error(id);
+    const s = f.build(start, ruleset);
+    return generateCandidates(engine, ruleset, s, f.kind, f.faction).candidates.map((c) => {
+      const applied = engine.apply(ruleset, s, c.command);
+      if (!applied.ok) return { family: c.family, ok: false };
+      let st = applied.transition.state;
+      for (let i = 0; i < 16 && st.ended === null; i++) {
+        const next = decisionPoint(engine, ruleset, st);
+        if (next.kind !== "auto") break;
+        const r = engine.apply(ruleset, st, next.command);
+        if (!r.ok) break;
+        st = r.transition.state;
+      }
+      return { family: c.family, ok: f.accept(ruleset, st, c.command) };
+    });
+  };
+
+  it("has at least 10 new decisive positions in C3 to C5, 16 with the final-round ones", () => {
+    const late = FIXTURES.filter((f) => f.benchmark !== "procedures" && ["C3", "C4", "C5"].includes(f.build(start, ruleset).turn.campaign ?? ""));
+    expect(late.filter((f) => /-C[345]-/.test(f.id)).length).toBeGreaterThanOrEqual(10);
+    expect(late.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("checkCard positions are the last Event card of their Campaign, with its Propaganda card next", () => {
+    for (const [id, campaign, round] of [["S-C3-CLEARANCE-DEFEND", "C3", 2], ["P-C4-WIN-CHECK", "C4", 3], ["S-C5-DEFEND-CHECK", "C5", 4]] as const) {
+      const s = built(id);
+      expect(s.turn.campaign, id).toBe(campaign);
+      expect(s.turn.propagandaRound, id).toBe(round);
+      const next = s.deck.piles.find((p) => p.length > 0)?.[0] ?? "";
+      expect(ruleset.cards[next]?.type, id).toBe("propaganda");
+      expect(ruleset.cards[next]?.campaign, id).toBe(campaign);
+    }
+  });
+
+  it("only Village Clearance stops the PKK check win in S-C3-CLEARANCE-DEFEND", () => {
+    const passing = outcomes("S-C3-CLEARANCE-DEFEND").filter((o) => o.ok);
+    expect(passing.length).toBeGreaterThan(0);
+    expect(passing.every((o) => o.family.includes("village-clearance"))).toBe(true);
+  });
+
+  it("every Village Clearance and Covert Action play loses S-C3-CLEARANCE-HARM, and every Covert Action play loses S-C3-COVERT-CHECK", () => {
+    const harm = outcomes("S-C3-CLEARANCE-HARM").filter((o) => o.family.includes("village-clearance") || o.family.includes("covert-action"));
+    expect(harm.length).toBeGreaterThan(0);
+    expect(harm.every((o) => !o.ok)).toBe(true);
+    const covert = outcomes("S-C3-COVERT-CHECK").filter((o) => o.family.includes("covert-action"));
+    expect(covert.length).toBeGreaterThan(0);
+    expect(covert.every((o) => !o.ok)).toBe(true);
+  });
+
+  it("only a breach (Coerce under Reciprocal Restraint) stops the State in P-C3-BREACH-DEFEND", () => {
+    const passing = outcomes("P-C3-BREACH-DEFEND").filter((o) => o.ok);
+    expect(passing.length).toBeGreaterThan(0);
+    expect(passing.every((o) => o.family.includes("pkk.coerce"))).toBe(true);
+  });
+
+  it("the independent oracle counts a face-down Covert marker at a check as the engine does (rules 7.2)", () => {
+    const s = built("S-C3-COVERT-CHECK");
+    expect(independentStandings(ruleset, s).state.checkQualifies).toBe(true);
+    const space = s.spaces["mardin"];
+    if (space === undefined) throw new Error("mardin");
+    const covert = { ...s, spaces: { ...s.spaces, mardin: { ...space, markers: { ...space.markers, covert: { default: 1 } } } } };
+    const independent = independentStandings(ruleset, covert).state;
+    const engineView = checkStandings(ruleset, covert, false).find((x) => x.faction === "state");
+    expect(independent.checkQualifies).toBe(false);
+    expect(engineView?.score).toBe(48);
+    expect(engineView?.harm).toBe(1);
+  });
+});
