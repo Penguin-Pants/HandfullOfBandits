@@ -5,6 +5,7 @@ import { BOX, placeCylinder, sequenceViolations } from "../sequence/ct.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "./action.ts";
 import { resources } from "./common.ts";
 import { HARMFUL_ACTIONS } from "./ids.ts";
+import { NO_EFFECT, noEffectMessage, rolled, unchangedLocations } from "./no-effect.ts";
 import { applyRestraint, restraintWarnings, type ActionUse } from "../ceasefire.ts";
 import { asList, asObject, asString } from "./plan.ts";
 import { flagHarmful, notePassOnly } from "../stop-rules.ts";
@@ -142,9 +143,29 @@ function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): b
     ? ids.flatMap((to) => ids.filter((from) => from !== to).map((from) => ({ locations: [to], perLocation: { [to]: { moves: [{ from, count: 1 }] } } })))
     : ids.flatMap((loc) => ["place", "base", "grow", "flip"].map((option) => ({ locations: [loc], perLocation: { [loc]: { option } } })));
   const budget = resources(ruleset, state, plan.options.faction);
-  // A replacement is a new resume command: no Special Activity and no optional sub-actions.
-  const options: ActionOptions = { ...plan.options, sa: null, saLocations: [], subActions: [] };
-  return probes.some((p) => plan.op.check(ruleset, state, p, options).length === 0 && plan.op.cost(ruleset, state, p, options) <= budget);
+  // A replacement is a new resume command: no Special Activity. It may Agitate in a Rally space
+  // (sub-actions), so each Rally probe is also tried with one Agitation shift there.
+  const base: ActionOptions = { ...plan.options, sa: null, saLocations: [], subActions: [] };
+  const variants = (p: ActionPart): ActionOptions[] => (plan.op.id === "pkk.rally" ? [base, ...p.locations.map((space) => ({ ...base, subActions: [{ action: "agitate", space, params: { shifts: 1 } }] }))] : [base]);
+  // Decision 18: a probe that would change nothing is not a replacement (the resume command refuses it).
+  const changes = (p: ActionPart, o: ActionOptions): boolean => {
+    const ctx = createExec(ruleset, state);
+    plan.op.execute(ctx, p, o);
+    return rolled(ctx.entries) || unchangedLocations(state, ctx.state, p.locations).length === 0;
+  };
+  return probes.some((p) => variants(p).some((o) => plan.op.check(ruleset, state, p, o).length === 0 && plan.op.cost(ruleset, state, p, o) <= budget && changes(p, o)));
+}
+
+/**
+ * Decision 18 (m-17; rules 3.1): one dry run of the whole command on the real board. The baseline
+ * is the board after the ceasefire record marker (07 s7.2), so that marker is not a change.
+ */
+function noEffectViolations(ruleset: Ruleset, state: GameState, command: AnyCommand, plan: ParsedPlan): Violation[] {
+  const ctx = createExec(ruleset, state);
+  chooseOperationHandler.execute?.(ctx, command);
+  if (rolled(ctx.entries) || ctx.state.pending?.resume !== undefined) return [];
+  const baseline = simulate(ruleset, state, (b) => { applyRestraint(b, plan.options.faction, uses(plan)); });
+  return unchangedLocations(baseline, ctx.state, plan.part.locations).map((loc) => at(loc, NO_EFFECT, noEffectMessage(loc), "rules 3.1"));
 }
 
 /** The Op and SA of a parsed plan, for the ceasefire table (07 s7.2). */
@@ -154,7 +175,10 @@ function uses(plan: ParsedPlan): ActionUse[] {
 
 export const chooseOperationHandler: CommandHandler = {
   ruleRef,
-  check: (ruleset, state, command) => parse(ruleset, state, command).violations,
+  check(ruleset, state, command) {
+    const { violations, plan } = parse(ruleset, state, command);
+    return plan === null ? violations : noEffectViolations(ruleset, state, command, plan);
+  },
   warnings(ruleset, state, command) {
     const { plan } = parse(ruleset, state, command);
     return plan === null ? [] : restraintWarnings(ruleset, state, plan.options.faction, uses(plan));

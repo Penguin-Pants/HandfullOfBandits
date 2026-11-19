@@ -5,7 +5,7 @@ import { param } from "../../../core/params.ts";
 import type { Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionPart } from "../action.ts";
 import { activate, count, hasTag, pay, space, terrainRate } from "../common.ts";
-import { FACE, FACTION, PIECE, TAG } from "../ids.ts";
+import { FACTION, PIECE, TAG } from "../ids.ts";
 import { asCount, asMoves, asString, type Move } from "../plan.ts";
 
 const ruleRef = "06 s2.2";
@@ -50,8 +50,6 @@ export const garrison: ActionHandler = {
     const most = terrainRate(ruleset, target, police + count(state, target, PIECE.guards));
     const chosen = asCount(part.perLocation[target]?.["activate"], most);
     if (chosen === null || chosen > most) out.push(at(target, "garrisonActivate", `Activate 0 to ${String(most)} Guerrillas.`, ruleRef));
-    // Decision 18 (m-17): a Garrison that moves no Police must activate a Guerrilla, unless its Special Activity acts here.
-    else if (moved === 0 && !options.saLocations.includes(target) && Math.min(chosen, count(state, target, PIECE.guerrilla, FACE.underground)) === 0) out.push(at(target, "garrisonNoEffect", "This Garrison moves no Police and activates no Guerrilla.", ruleRef));
     return out;
   },
   cost: (ruleset, _state, _part, options) => (options.free ? 0 : param(ruleset, "garrison.cost", "number")),

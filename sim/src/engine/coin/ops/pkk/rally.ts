@@ -8,7 +8,7 @@ import { createExec, type Exec } from "../../../core/exec.ts";
 import { param } from "../../../core/params.ts";
 import type { GameState, Ruleset, Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionOptions, type ActionPart } from "../action.ts";
-import { adjustEurope, count, europeCap, hasTag, trackEnd, isTerrain, markers, pay, space } from "../common.ts";
+import { adjustEurope, count, europeCap, hasTag, isTerrain, markers, pay, space } from "../common.ts";
 import { rallyBaseOpen, rallyGuerrillasOpen } from "../common-pkk.ts";
 import { EUROPE_SPACE, FACE, FACTION, MARKER, PIECE, TAG, TERRAIN, TRACK } from "../ids.ts";
 import { asCount, asString } from "../plan.ts";
@@ -65,9 +65,8 @@ export const rally: ActionHandler = {
       const v = (code: string, message: string): void => { out.push(at(loc, code, message, ruleRef)); };
       const s = space(ruleset, loc);
       if (loc === EUROPE_SPACE) {
-        // Decision 18 (m-17): a location must be able to change something. Europe stops at its track end or the Ban cap.
-        const cap = Math.min(europeCap(ruleset, state), trackEnd(ruleset, TRACK.europe, "max"));
-        if (Number(state.tracks[TRACK.europe]) >= cap) v("rallyEuropeCap", `Europe is at its cap of ${String(cap)}: a Rally there changes nothing (04 s3.6).`);
+        const cap = europeCap(ruleset, state);
+        if (Number(state.tracks[TRACK.europe]) >= cap) v("rallyEuropeCap", `The Europe Ban marker caps Europe at ${String(cap)} (04 s3.6).`);
         continue;
       }
       if (s === undefined || hasTag(ruleset, loc, TAG.noPieces) || hasTag(ruleset, loc, TAG.eventsOnly)) {
@@ -96,9 +95,8 @@ export const rally: ActionHandler = {
         if (stackingRoom(ruleset, state, loc, PIECE.pkkBase) < 1) v("rallyBaseStacking", "PKK Base stacking limit (03 s5).");
         if (s.kind === "external" && !rallyBaseOpen(state, loc)) v("rallyBaseHost", "The host posture does not allow a Base here (07 s5.1).");
         basing += 1;
-      } else if (choice === "flip" && count(state, loc, PIECE.guerrilla, FACE.active) === 0 && !(options.saLocations.includes(loc) && count(state, loc, PIECE.guerrilla) > 0)) {
-        // Decision 18 (m-17): a flip needs an Active Guerrilla, unless the Special Activity acts here (Extort after the Rally activates one).
-        v("rallyFlipGuerrilla", "Flipping needs an Active Guerrilla here, or a Special Activity in this space.");
+      } else if (choice === "flip" && count(state, loc, PIECE.guerrilla) === 0) {
+        v("rallyFlipGuerrilla", "Flipping needs a Guerrilla here.");
       } else if (choice === "grow" && count(state, loc, PIECE.pkkBase) === 0) {
         v("rallyNeedsBase", "This option needs a PKK Base here.");
       } else if (choice === "grow") {

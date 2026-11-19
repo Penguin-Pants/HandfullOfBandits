@@ -258,7 +258,7 @@ Choose one option in each selected space or camp:
 - At a PKK Base, place up to **Pop + PKK Bases there** Guerrillas from Available. An external box counts as Pop 1. This is a placement allowance, not a ceiling on the total Guerrillas present.
 - Flip all Guerrillas there Underground. No PKK Base is required.
 
-If a Rally plans more Guerrillas than are Available, place all that are Available.
+If a Rally plans more Guerrillas than are Available, place all that are Available. Each selected location must still receive or change something (3.1).
 
 In **Europe**, pay the Rally cost and raise Europe by one instead of placing pieces. If the Europe Ban marker is present, Europe Rally costs 2 and Europe cannot exceed 3.
 

@@ -20,7 +20,7 @@ Items 1 to 14 are decided. Rule text is updated in `prototype-rules.md`. The Pen
 | 10 | M-04 | Strike Collaborators may go before or after. | 2.7, 4.3.3 | None (engine already allows it). Test: `decisions.test.ts` |
 | 11 | M-05 | Reception blocks every shift toward Support. | 8.4 | Done: `markers.yaml`, test in `decisions.test.ts` |
 | 12 | M-06 | PKK Harm blocks the Coerce shift toward Neutral. | 3.3.4 | None (engine already does it). Test: `decisions.test.ts` |
-| 13 | M-11 | Rally places as many Guerrillas as are Available. | 1.4.2, 3.3.1 | None (engine already does it). Test: `decisions.test.ts` |
+| 13 | M-11 | Rally places as many Guerrillas as are Available. Limited 2026-11-19 by decision 18: each selected location must still change. | 1.4.2, 3.3.1 | None (engine already does it). Test: `decisions.test.ts` |
 | 14 | M-12 | Keep DK-005 in C1 and print the evidence grade. | 5.4 | Done: note in the Always line of DK-005 (`cards/c1.yaml`), test in `decisions.test.ts` |
 
 Open from these decisions: none. Item 1 replaced the earlier "shorten one step" answer.
@@ -35,7 +35,7 @@ Items 15 to 23 and three print-set approvals. Rule text is in `prototype-rules.m
 | 15 | m-16 | Guard Abuse counts every Harm marker, PKK Harm included. | 5.5 | None (engine already does it) |
 | 16 | m-26 (c) | Moot: Talks were removed (item 1). | none | None |
 | 17 | m-26 (a) | The PKK Restraint Broken marker is a record only. | 8.6 | None (engine already does it) |
-| 18 | m-17 | Each selected location must be able to change something. | 3.1, 4.1 | Done: Rally Europe at cap, Rally flip, Assault, Sweep, Garrison, Diplomacy |
+| 18 | m-17 | Each selected location must change, by the Operation or its Special Activity there. It wins over decision 13 when supply runs out (2026-11-19). | 3.1, 3.3.1, 4.1 | Done: one generic dry-run check for every Operation (`locationNoEffect`; skipped when the dry run rolls a die), plus the Diplomacy track-end check |
 | 19 | m-13 | The Leadership never returns to Present. | 8.1.5 | None (engine already does it) |
 | 20 | m-11 | Police move any distance. The State chooses how many Guerrillas Garrison activates, up to the maximum. | 3.2.2 | Done: plan field `activate`; bots still activate the maximum |
 | 21 | m-10 | No decision needed: rule 3.3.3 already reads "choose Troops or Police first", as the engine does. | 3.3.3 | None |
