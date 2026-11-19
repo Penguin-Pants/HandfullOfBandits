@@ -28,7 +28,7 @@ const setup: SetupBase = {
 };
 const police = setup.pieces[0] ?? (() => { throw new Error("fixture"); })();
 const guerrilla = setup.pieces[1] ?? (() => { throw new Error("fixture"); })();
-const pkg = { ...okPackage, variants: [{ name: "saved", ok: true, hash: "c".repeat(64), issues: [] }] };
+const pkg = { ...okPackage, variants: [{ name: "saved", ok: true, hash: "c".repeat(64), issues: [], scenario: "short" }] };
 
 const result = (overlay: unknown, issues: PackageIssue[] = []): VariantCheck => ({ overlay, yaml: "scenario: short\n", ok: !issues.some((i) => i.level === "error"), hash: "b".repeat(64), issues, changes: [], setup });
 const issue = (path: string, id: string, message: string): PackageIssue => ({ level: "error", code: path === "" ? "V-PIECES" : "V-STACK", file: "variants/draft.yaml", path, id, message });
@@ -105,6 +105,17 @@ describe("Setup editor", () => {
     expect(saveVariant).toHaveBeenLastCalledWith({ dir: pkg.dir, name: "mine", overlay: { scenario: "short", spaces: { town: { level: 1, pieces: { police: 3 } } } }, replace: true });
     fireEvent.click(screen.getByRole("button", { name: "Reset to package setup" }));
     expect(checkVariant).toHaveBeenLastCalledWith({ dir: pkg.dir, overlay: { scenario: "short" } });
+  });
+
+  it("keeps an imported file that fails the schema out of the editor (PR #130 review)", async () => {
+    const bad = { overlay: { scenario: "short", spaces: { town: null } }, yaml: null, ok: false, hash: null, issues: [{ level: "error" as const, code: "V-SCHEMA" as const, file: "variants/draft.yaml", path: "spaces.town", id: "draft", message: "Invalid input: expected object, received null" }], changes: [], setup: null };
+    const checkVariant = vi.fn((body: { overlay?: unknown; text?: string }) => Promise.resolve(body.text === undefined ? result(body.overlay) : bad));
+    renderSetup(checkVariant);
+    await screen.findByLabelText("Town Police");
+    fireEvent.change(screen.getByLabelText("Import YAML"), { target: { files: [new File(["x"], "bad.yaml")] } });
+    await screen.findByText(/does not match the variant schema/);
+    expect(screen.getByText(/spaces.town: Invalid input/)).toBeTruthy();
+    expect(screen.getByText("Police: 2 on map + 3 Available + 0 Out of Play = 5 of 5")).toBeTruthy();
   });
 
   it("opens a saved variant, imports YAML and exports the overlay", async () => {

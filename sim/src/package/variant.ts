@@ -54,7 +54,8 @@ function merged<T>(key: string, a: Readonly<Record<string, T>> | undefined, b: R
 /**
  * Apply the overlay `data` (parsed YAML of `variants/<name>.yaml`) to a loaded package: the content
  * to load, with the overlay's own issues. Thresholds, tracks, pools and piece totals merge by key; a
- * space entry replaces the scenario's whole entry. Available is always derived.
+ * space entry replaces the scenario's whole entry. Available is always derived. The result holds
+ * only the variant's scenario.
  */
 function applyVariant(base: Loaded, name: string, data: unknown): RawPackage {
   const file = variantFile(name);
@@ -88,7 +89,8 @@ function applyVariant(base: Loaded, name: string, data: unknown): RawPackage {
       const count = own(v.pieces, p.id);
       return count === undefined ? p : { ...p, count };
     }),
-    scenarios: { ...base.data.scenarios, [path]: resolved },
+    // Only the variant's scenario: a changed piece total must not break another scenario's pools.
+    scenarios: { [path]: resolved },
   };
   const variant = { name, base: base.hash, changes: setupChanges(base.data, next, v.scenario) };
   return { files: packageContent({ ...next, scenarios: { ...next.scenarios, [path]: { ...resolved, variant } } }), issues };

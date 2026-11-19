@@ -86,7 +86,7 @@ export function Home({ api, onOpen, onCheck, onSetup }: HomeProps) {
         <div className="row">
           <label>
             Scenario{" "}
-            <select value={scenarioId} onChange={(e) => { setScenarioId(e.target.value); }}>
+            <select value={scenarioId} onChange={(e) => { setScenarioId(e.target.value); setVariant(""); }}>
               {pkg?.scenarios.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.title}
@@ -99,7 +99,7 @@ export function Home({ api, onOpen, onCheck, onSetup }: HomeProps) {
             Setup{" "}
             <select aria-label="Setup variant" value={variant} onChange={(e) => { setVariant(e.target.value); }}>
               <option value="">Package setup</option>
-              {pkg?.variants.map((v) => (
+              {pkg?.variants.filter((v) => v.scenario === null || v.scenario === scenarioId).map((v) => (
                 <option key={v.name} value={v.name} disabled={!v.ok}>
                   Variant {v.name}{v.ok ? "" : " (errors)"}
                 </option>

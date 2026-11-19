@@ -285,6 +285,8 @@ export class SessionService {
     if ("issues" in read) throw new ServiceError(404, `Variant "${input.variant}" cannot be read.`, read.issues);
     const loaded = resolveVariant(base, input.variant, read.data);
     if (!loaded.ok) throw new ServiceError(422, `Variant "${input.variant}" has errors.`, loaded.issues);
+    const changes = Object.values(loaded.data.scenarios)[0]?.id;
+    if (changes !== input.scenarioId) throw new ServiceError(400, `Variant "${input.variant}" changes scenario "${String(changes)}", not "${input.scenarioId}".`);
     return this.startSession(loaded, input);
   }
 

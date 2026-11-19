@@ -110,6 +110,17 @@ describe("variant overlays (audit Plan 4 V1)", () => {
     expect(variant.ruleset.scenarios["full-campaign"]?.outOfPlay).toEqual({ guards: 16, guerrilla: 4 });
   });
 
+  it("holds only its own scenario, so a piece total does not break another scenario (PR #130 review)", () => {
+    const dir = packageCopy();
+    const scenarioPath = join(dir, "scenarios", "full-campaign.yaml");
+    const second = readFileSync(scenarioPath, "utf8").replace("id: full-campaign", "id: second").replace("thresholds:", "available: {troops: 14, police: 4, stateBase: 4, guerrilla: 14, pkkBase: 9}\nthresholds:");
+    writeFileSync(join(dir, "scenarios", "second.yaml"), second);
+    const base = ok(loadPackage(readPackageDir(dir)));
+    const variant = ok(resolveVariant(base, "more-police", { base: base.hash, scenario: "full-campaign", pieces: { police: 25 } }));
+    expect(Object.keys(variant.ruleset.scenarios)).toEqual(["full-campaign"]);
+    expect(variant.ruleset.scenarios["full-campaign"]?.available).toMatchObject({ police: 5 });
+  });
+
   it("does not change the base hash or warn about the variants folder", () => {
     const dir = packageCopy();
     rmSync(join(dir, "variants"), { recursive: true });

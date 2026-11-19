@@ -46,11 +46,13 @@ describe("Home", () => {
   it("starts a session on a saved variant and opens the setup editor", async () => {
     const createSession = vi.fn(() => Promise.resolve({ sessionId: "S2", head: {} as never }));
     const onSetup = vi.fn();
-    const pkg = { ...okPackage, variants: [{ name: "thresholds-43-38", ok: true, hash: "c".repeat(64), issues: [] }, { name: "broken", ok: false, hash: null, issues: [] }] };
+    const pkg = { ...okPackage, variants: [{ name: "thresholds-43-38", ok: true, hash: "c".repeat(64), issues: [], scenario: "short" }, { name: "broken", ok: false, hash: null, issues: [], scenario: null }, { name: "other", ok: true, hash: "e".repeat(64), issues: [], scenario: "full-campaign" }] };
     render(<Home api={mockApi({ createSession, packages: () => Promise.resolve([pkg]) })} onOpen={vi.fn()} onCheck={vi.fn()} onSetup={onSetup} />);
     const start = await screen.findByRole("button", { name: "Start" });
     await waitFor(() => { expect((start as HTMLButtonElement).disabled).toBe(false); });
     expect(screen.getByRole<HTMLOptionElement>("option", { name: "Variant broken (errors)" }).disabled).toBe(true);
+    // A variant of another scenario is not offered (PR #130 review).
+    expect(screen.queryByRole("option", { name: "Variant other" })).toBeNull();
     fireEvent.change(screen.getByLabelText("Setup variant"), { target: { value: "thresholds-43-38" } });
     fireEvent.click(start);
     await waitFor(() => { expect(createSession).toHaveBeenCalledWith({ dir: okPackage.dir, scenarioId: "short", seed: 1, name: "short-thresholds-43-38-seed1", options: {}, variant: "thresholds-43-38" }); });

@@ -59,11 +59,14 @@ Every Plan 4 milestone is done. A variant is a short overlay file next to the pa
 | Drop (V3) | The 7 repointed dd25 manifests no longer freeze (their hash is the old copy's) | By design: they record what ran; their fingerprints are frozen to old code as well, like every stored manifest |
 | Fix (V4) | An empty Available pool printed "Available: ." | "Available: none."; test fails without the fix |
 | Fix (V4) | A space listed with only zero counts counted as occupied, so the Control sentence named it | Occupied means at least one piece; same test |
+| Fix (PR #130 review) | A changed piece total broke V-PIECES on another scenario that stores its Available pool | The resolved variant holds only its scenario; test fails without the fix |
+| Fix (PR #130 review) | A session could start scenario B on a variant of scenario A, with B unchanged | `createSession` refuses the mismatch (400); `VariantSummary.scenario`; Home lists only the variants of the chosen scenario |
+| Fix (PR #130 review) | Importing a file that fails the schema (for example `siirt: null`) crashed the editor | The file stays out of the editor; its schema errors show; test fails without the fix |
 | Drop (V4) | `export/setup-sheet.ts` has its own `words` and piece names beside `ui/common/names.ts` | The layer rules forbid that import; the sheet uses rule 10.2 wording ("Guards", not the UI's "Village Guard") |
 | Propose (V4) | Rule 10.2 names "Diyarbakır City"; rule 1.3 and the package name "Diyarbakır City (Amed)" | One-line rules edit plus `make print`; outside Plan 4, proposed to the designer |
 | Propose (V4) | Rule 10.2 is hand-written; the sheet now derives the same text from the package | Generate rule 10.2 from the package with a drift check (design learning 1); outside Plan 4 |
 
-Validation: `make check` and `make test` pass (127 files, 1,840 tests). `make e2e` passes.
+Validation: `make check` and `make test` pass (127 files, 1,843 tests, after the PR #130 review fixes). `make e2e` passes.
 
 ## 5. Not built
 

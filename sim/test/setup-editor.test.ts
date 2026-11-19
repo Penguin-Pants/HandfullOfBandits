@@ -165,6 +165,13 @@ describe("saveVariant and sessions on a variant (V2)", () => {
   it("refuses a session on an unknown or broken variant", () => {
     expect(thrown(() => service.createSession({ dir, scenarioId: "full-campaign", seed: 1, name: "x", variant: "nothing-here" })).status).toBe(404);
   });
+
+  it("refuses a variant of another scenario and lists each variant's scenario (PR #130 review)", () => {
+    const e = thrown(() => service.createSession({ dir, scenarioId: "short", seed: 1, name: "x", variant: "dd25-thresholds-43-38" }));
+    expect(e.status).toBe(400);
+    expect(e.message).toBe('Variant "dd25-thresholds-43-38" changes scenario "full-campaign", not "short".');
+    expect(service.listPackages().find((p) => p.dir === dir)?.variants.find((v) => v.name === "dd25-thresholds-43-38")?.scenario).toBe("full-campaign");
+  });
 });
 
 describe("variant routes (V2)", () => {

@@ -232,7 +232,7 @@ A variant names one scenario of the package in the same folder and only the setu
 | `spaces` | Each entry replaces the whole entry of that space. `{}` empties it |
 | `pieces` | Piece totals (`pieces.yaml` `count`) by piece ID |
 
-Available is always derived. The loader applies the variant and validates the result like any package. The result has its own content hash; its scenario records `variant: {name, base, changes}`, so a stored session or run names its variant. An issue the variant causes names the variant file. `sim validate <dir>` checks each variant and prints its hash.
+Available is always derived. The loader applies the variant and validates the result like any package. The result holds only the variant's scenario, so a session on a variant must name that scenario. The result has its own content hash; its scenario records `variant: {name, base, changes}`, so a stored session or run names its variant. An issue the variant causes names the variant file. `sim validate <dir>` checks each variant and prints its hash.
 
 ## 5. Effect primitives (card and module output)
 

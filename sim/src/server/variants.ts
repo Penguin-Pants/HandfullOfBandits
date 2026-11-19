@@ -11,6 +11,8 @@ type Loaded = Extract<LoadResult, { ok: true }>;
 /** A saved variant of a package and its check. `issues` are those of its own file. */
 export interface VariantSummary {
   readonly name: string;
+  /** The scenario it changes; null when it does not load. */
+  readonly scenario: string | null;
   readonly ok: boolean;
   readonly hash: string | null;
   readonly issues: readonly PackageIssue[];
@@ -88,5 +90,6 @@ export function checkVariant(base: Loaded, name: string, data: unknown): Variant
 
 /** Check result as a list row: only the issues of the variant's own file. */
 export function variantSummary(name: string, result: LoadResult): VariantSummary {
-  return { name, ok: result.ok, hash: result.ok ? result.hash : null, issues: result.issues.filter((i) => i.file === variantFile(name)) };
+  const scenario = result.ok ? (Object.values(result.data.scenarios)[0]?.id ?? null) : null;
+  return { name, scenario, ok: result.ok, hash: result.ok ? result.hash : null, issues: result.issues.filter((i) => i.file === variantFile(name)) };
 }

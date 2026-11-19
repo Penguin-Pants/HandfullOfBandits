@@ -155,6 +155,11 @@ export function Setup({ api, pkg, scenarioId, onBack }: SetupProps) {
   const load = (request: Promise<VariantCheck>, loadedName: string | null): void => {
     setMessage(null);
     request.then((r) => {
+      // A file that fails the schema never enters the editor: its values may not be counts at all.
+      if (r.yaml === null) {
+        setMessage({ text: `The file does not match the variant schema: ${r.issues.filter((i) => i.level === "error").map((i) => `${i.path}: ${i.message}`).join("; ")}`, bad: true });
+        return;
+      }
       setOverlay(record(r.overlay));
       if (loadedName !== null) setName(loadedName);
     }).catch((e: unknown) => { setMessage({ text: e instanceof Error ? e.message : String(e), bad: true }); });
