@@ -170,6 +170,15 @@ describe("input shape (05 s3.1)", () => {
     expect(codes(withCard(state0, "DK-001"), { type: "ChooseEvent", faction: "state", side: "middle", answers: [] })).toContain("badSide");
   });
 
+  it("refuses an Event whose card is not encoded", () => {
+    const card = ruleset.cards["DK-001"];
+    if (card === undefined) throw new Error("DK-001 must exist");
+    const draft: Ruleset = { ...ruleset, cards: { ...ruleset.cards, "DK-001": { ...card, encoded: false } } };
+    const event: AnyCommand = { type: "ChooseEvent", faction: "state", side: "unshaded", answers: [] };
+    expect(codesIn(draft, withCard(state0, "DK-001"), event)).toContain("notEncoded");
+    expect(codesIn(ruleset, withCard(state0, "DK-001"), event)).not.toContain("notEncoded");
+  });
+
   it("rejects malformed moves and choices", () => {
     expect(codes(pkk0, op("pkk", "limitedOp", { op: "pkk.march", locations: ["mardin"], perLocation: { mardin: { moves: "all" } } }))).toContain("badMoves");
     expect(codes(propaganda(state0, "upkeep"), choice("upkeep", { removeGuards: "all" }))).toContain("badChoice");
@@ -200,10 +209,11 @@ function engineCodes(): Set<string> {
 }
 
 describe("M3: every engine violation code has an asserting test", () => {
-  it("finds each code as a quoted string in a test file", () => {
+  it("finds each code as a quoted string on an assertion line of a test file", () => {
+    // Only lines with expect( or a matcher count, so a code used as fixture input does not (Codex review on #127).
     // This block holds no code literal, so this file counts like any other test file.
     const tests = [...files(join(process.cwd(), "src")), ...files(join(process.cwd(), "test"))].filter((f) => /\.test\.tsx?$/.test(f));
-    const corpus = tests.map((f) => readFileSync(f, "utf8")).join("\n");
+    const corpus = tests.flatMap((f) => readFileSync(f, "utf8").split("\n")).filter((line) => /\bexpect\(|\.to[A-Z]\w*\(/.test(line)).join("\n");
     const all = engineCodes();
     expect(all.size).toBeGreaterThan(150);
     expect([...all].filter((c) => !new RegExp(`["'\x60]${c}["'\x60]`).test(corpus)).sort()).toEqual([]);
