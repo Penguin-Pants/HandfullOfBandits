@@ -5,8 +5,8 @@ import { param } from "../../../core/params.ts";
 import type { Violation } from "../../../core/types.ts";
 import { at, type ActionHandler, type ActionPart } from "../action.ts";
 import { activate, count, hasTag, pay, space, terrainRate } from "../common.ts";
-import { FACTION, PIECE, TAG } from "../ids.ts";
-import { asMoves, asString, type Move } from "../plan.ts";
+import { FACE, FACTION, PIECE, TAG } from "../ids.ts";
+import { asCount, asMoves, asString, type Move } from "../plan.ts";
 
 const ruleRef = "06 s2.2";
 
@@ -17,7 +17,6 @@ function moves(part: ActionPart): Move[] | null {
 
 export const garrison: ActionHandler = {
   id: "state.garrison",
-  moveDestinations: true,
   faction: FACTION.state,
   kind: "op",
   ruleRef,
@@ -45,7 +44,14 @@ export const garrison: ActionHandler = {
     for (const [from, n] of leaving) if (n > count(state, from, PIECE.police)) out.push(at(from, "garrisonPolice", `Only ${String(count(state, from, PIECE.police))} Police are here.`, ruleRef));
     const max = param(ruleset, "garrison.maxPolice", "number");
     if (moved > max) out.push(at(null, "garrisonMax", `Move at most ${String(max)} Police.`, ruleRef));
-    if (count(state, target, PIECE.police) - (leaving.get(target) ?? 0) + arriving === 0) out.push(at(target, "garrisonNeedsPolice", "Activation needs a space with Police.", ruleRef));
+    const police = count(state, target, PIECE.police) - (leaving.get(target) ?? 0) + arriving;
+    if (police === 0) out.push(at(target, "garrisonNeedsPolice", "Activation needs a space with Police.", ruleRef));
+    // Decision 20 (m-11): the State activates up to the maximum; `activate` absent means the maximum.
+    const most = terrainRate(ruleset, target, police + count(state, target, PIECE.guards));
+    const chosen = asCount(part.perLocation[target]?.["activate"], most);
+    if (chosen === null || chosen > most) out.push(at(target, "garrisonActivate", `Activate 0 to ${String(most)} Guerrillas.`, ruleRef));
+    // Decision 18 (m-17): a Garrison that moves no Police must activate a Guerrilla, unless its Special Activity acts here.
+    else if (moved === 0 && !options.saLocations.includes(target) && Math.min(chosen, count(state, target, PIECE.guerrilla, FACE.underground)) === 0) out.push(at(target, "garrisonNoEffect", "This Garrison moves no Police and activates no Guerrilla.", ruleRef));
     return out;
   },
   cost: (ruleset, _state, _part, options) => (options.free ? 0 : param(ruleset, "garrison.cost", "number")),
@@ -56,7 +62,7 @@ export const garrison: ActionHandler = {
       ctx.apply({ type: "movePieces", piece: PIECE.police, state: null, toState: null, count: m.count, from: m.from, to: m.to ?? target, ruleRef, assumptionRef: null });
     }
     // PA-07: count pieces after the moves.
-    const detectors = count(ctx.state, target, PIECE.police) + count(ctx.state, target, PIECE.guards);
-    activate(ctx, target, terrainRate(ctx.ruleset, target, detectors), ruleRef, "PA-07");
+    const most = terrainRate(ctx.ruleset, target, count(ctx.state, target, PIECE.police) + count(ctx.state, target, PIECE.guards));
+    activate(ctx, target, Math.min(most, asCount(part.perLocation[target]?.["activate"], most) ?? most), ruleRef, "PA-07");
   },
 };

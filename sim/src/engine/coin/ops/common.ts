@@ -65,6 +65,20 @@ export function adjacent(ruleset: Ruleset, a: SpaceId, b: SpaceId): boolean {
 }
 
 /** Highest Europe value now: the Europe Ban marker caps it at `europe.banCap` (04 s3.6). */
+/** A numeric track's lowest or highest value. */
+export function trackEnd(ruleset: Ruleset, id: string, bound: "min" | "max"): number {
+  const track = ruleset.tracks.find((t) => t.id === id);
+  if (track?.kind !== "numeric") throw new RangeError(`Not a numeric track: ${id}`);
+  return bound === "min" ? track.min : track.max;
+}
+
+/** True when an ordinal track stands on its last step. */
+export function atLastStep(ruleset: Ruleset, state: GameState, id: string): boolean {
+  const track = ruleset.tracks.find((t) => t.id === id);
+  if (track?.kind !== "ordinal") throw new RangeError(`Not an ordinal track: ${id}`);
+  return track.steps.at(-1) === String(state.tracks[id]);
+}
+
 export function europeCap(ruleset: Ruleset, state: GameState): number {
   return markers(state, EUROPE_SPACE, MARKER.europeBan) > 0 ? param(ruleset, "europe.banCap", "number") : Infinity;
 }

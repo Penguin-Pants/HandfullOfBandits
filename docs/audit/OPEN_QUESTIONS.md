@@ -12,7 +12,7 @@ Items 1 to 14 are decided. Rule text is updated in `prototype-rules.md`. The Pen
 | 2 | B-01 | Moot. The Outcome and its removals no longer exist. | 8.6 | None |
 | 3 | M-01 | Block lasts until the next Reset. | 8.6 | None. Test: `sim/test/decisions.test.ts` |
 | 4 | M-03 | One group is all Guerrillas from one origin to one destination. | 3.3.2 | Done: `march.ts`, test in `decisions.test.ts` |
-| 5 | M-07 | The box follows the action. Op Only needs two or more locations. | 2.3, B.3 | Done: `choose-operation.ts` (First Eligible only, research 05 §2.3), test in `decisions.test.ts` |
+| 5 | M-07 | Replaced 2026-11-19: Op Only takes any number of locations, including one. Was: Op Only needs two or more locations. | 2.3, B.3 | Done: `choose-operation.ts` (First Eligible only, research 05 §2.3), test in `decisions.test.ts` |
 | 6 | M-02 | The cap marker is permanent and is renamed "Europe Ban marker". | 1.7, 3.3.1, 8.4 | Done: marker id `europeBan`, card DK-064 text, UI name, test in `decisions.test.ts` |
 | 7 | M-08 | Keep the line 6 timer. A line 6 filing sets Legal Space to Prosecuted. | 8.5 | Done: `legal-politics.ts`, test in `decisions.test.ts` |
 | 8 | M-09 | Capture is not certain. Say so. | 8.1.5 | None. Test: `sim/src/engine/coin/structural.test.ts` (Capture, Leadership Present) |
@@ -24,6 +24,28 @@ Items 1 to 14 are decided. Rule text is updated in `prototype-rules.md`. The Pen
 | 14 | M-12 | Keep DK-005 in C1 and print the evidence grade. | 5.4 | Done: note in the Always line of DK-005 (`cards/c1.yaml`), test in `decisions.test.ts` |
 
 Open from these decisions: none. Item 1 replaced the earlier "shorten one step" answer.
+
+## Decisions (2026-11-19)
+
+Items 15 to 23 and three print-set approvals. Rule text is in `prototype-rules.md`. Tests: `sim/test/decisions-2026-11-19.test.ts` and the Decision 5 block of `sim/test/decisions.test.ts`.
+
+| # | Finding | Decision | Rules text | Pending |
+|:--|:--|:--|:--|:--|
+| 5 (revised) | M-07 | Op Only takes any number of locations, including one, for both factions. A Limited Op takes one location. | 2.3, B.3 | Done: engine check and bot filter removed |
+| 15 | m-16 | Guard Abuse counts every Harm marker, PKK Harm included. | 5.5 | None (engine already does it) |
+| 16 | m-26 (c) | Moot: Talks were removed (item 1). | none | None |
+| 17 | m-26 (a) | The PKK Restraint Broken marker is a record only. | 8.6 | None (engine already does it) |
+| 18 | m-17 | Each selected location must be able to change something. | 3.1, 4.1 | Done: Rally Europe at cap, Rally flip, Assault, Sweep, Garrison, Diplomacy |
+| 19 | m-13 | The Leadership never returns to Present. | 8.1.5 | None (engine already does it) |
+| 20 | m-11 | Police move any distance. The State chooses how many Guerrillas Garrison activates, up to the maximum. | 3.2.2 | Done: plan field `activate`; bots still activate the maximum |
+| 21 | m-10 | No decision needed: rule 3.3.3 already reads "choose Troops or Police first", as the engine does. | 3.3.3 | None |
+| 22 | m-24 | At Redeploy, Guerrillas in Western Cities may move to any domestic space with a PKK Base. | 1.3.4, 6.8 | Done: engine |
+| 23 | m-27 | DK-010 gets a neutral title: "Rival Kurdish Groups (1986)". | Appendix A | Done: package title, print set. Research 08 keeps the old title as history |
+| P-1 | #122 | Approved: DK-037, DK-040 and DK-093 print the rule 5.4 Always text; DK-016 prints the standard Propaganda line. | 5.4 | None |
+| P-2 | #122 | Approved: Pivotals print the rule 5.3 text. | 5.3 | None |
+| T-1 | docs 41, 42 | Keep thresholds 49/32 until human games test 43/38. | 7.1 | A human 43/38 game needs a selectable variant (audit Plan 4) |
+
+Open from these decisions: none.
 
 ## Original questions
 

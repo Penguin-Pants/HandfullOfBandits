@@ -6,7 +6,7 @@
 - **Companion file:** `card-ledger.csv` (193 rows, one per card side, with `path:line` evidence).
 - **Effort scale:** S = one focused pull request with tests. M = two to four pull requests. L = five or more. (Project rule: no time estimates.)
 
-> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. Next open item: Plan 2, milestone S1 (bot seat, bot plays PKK).
+> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. The designer answered every Plan 1 decision on 2026-11-19; see `docs/audit/OPEN_QUESTIONS.md`, section "Decisions (2026-11-19)". Still open in Plan 1: D-03, D-04, D-06 and the M1 property test. Next milestone: Plan 2, S1 (bot seat, bot plays PKK).
 
 ---
 

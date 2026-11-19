@@ -8,11 +8,10 @@ import { param } from "../engine/core/params.ts";
 import { neighbors } from "../engine/core/terms.ts";
 import type { AnyCommand, FactionId, GameState, JsonObject, JsonValue, Question, Ruleset } from "../engine/core/types.ts";
 import type { Engine } from "../engine/index.ts";
-import { controlOf, count, isTerrain, markers, resources } from "../engine/coin/ops/common.ts";
+import { controlOf, count, isTerrain, markers, resources, terrainRate } from "../engine/coin/ops/common.ts";
 import { postureOf } from "../engine/coin/ops/common-pkk.ts";
 import { crossBorderOrigins } from "../engine/coin/ops/sa/cross-border.ts";
 import { actionHandlers } from "../engine/coin/ops/registry.ts";
-import { siteCount } from "../engine/coin/ops/choose-operation.ts";
 import { asObject } from "../engine/coin/ops/plan.ts";
 import { ceasefireOptions } from "../engine/coin/propaganda/ceasefire-step.ts";
 import { closureViolations } from "../engine/coin/propaganda/legal-politics.ts";
@@ -199,7 +198,8 @@ function garrisonPlans(r: Ruleset, s: GameState, limited: boolean, wide: number)
   const sources = domestic(r).filter((l) => landLinked(r, l) && count(s, l, "police") > 1);
   return interleave(targets.map((t) => {
     const need = count(s, t, "guerrilla", "underground") * (isTerrain(r, t, "mountain") ? 2 : 1) - count(s, t, "police") - count(s, t, "guards");
-    const out = [plan([t], { [t]: { moves: [] } })];
+    // A plan that moves no Police must activate something (decision 18); else the engine refuses it.
+    const out = terrainRate(r, t, count(s, t, "police") + count(s, t, "guards")) > 0 ? [plan([t], { [t]: { moves: [] } })] : [];
     const moves: JsonObject[] = [];
     let moved = 0;
     for (const from of sources.filter((x) => x !== t)) {
@@ -675,8 +675,7 @@ export function generateCandidates(engine: Engine, r: Ruleset, s: GameState, kin
     for (const box of [BOX.limitedOp, BOX.opOnly, BOX.opSa]) {
       if (!boxes.includes(box)) continue;
       for (const op of Object.keys(OP_PLANS).filter((id) => actionHandlers[id]?.faction === faction)) {
-        // The box follows the action (rules 2.3): the First Eligible's Op Only has two or more locations.
-        const plans = (OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? []).filter((p) => box !== BOX.opOnly || faction !== s.initiative.firstEligible || siteCount(op, p) > 1);
+        const plans = OP_PLANS[op]?.(r, s, box === BOX.limitedOp, wide) ?? [];
         const byVariant = (prefix: string): void => {
           for (const variant of new Set(plans.map((p) => p.variant))) offer(`${prefix}${variant === undefined ? "" : `/${variant}`}@${box}`, plans.filter((p) => p.variant === variant).map((p) => opCommand(faction, box, op, p)));
         };

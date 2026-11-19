@@ -88,7 +88,7 @@ Support and Opposition are levels on the space, not markers (1.6). Events and la
 
 **1.3.3 External boxes.** Syria-Bekaa, KDP Zone, PUK Zone, Iran and Europe are external. They have no Support, Opposition or Control and do not contribute Bases to the PKK victory score. Syria-Bekaa, KDP and PUK hold camps subject to host posture (8.1). KDP and PUK are Mountain for combat. Iran is Event-only. Europe holds a track and **no pieces**.
 
-**1.3.4 Western Cities.** This domestic City is an abstract political node with no land adjacency. No Garrison, Sweep or March enters or leaves it. State pieces can enter or leave by Air Mobility or Redeploy, or be placed by Train or Events. The PKK can Rally there; its Guerrillas cannot March out. No PKK Base or Village Guard may be placed there.
+**1.3.4 Western Cities.** This domestic City is an abstract political node with no land adjacency. No Garrison, Sweep or March enters or leaves it. State pieces can enter or leave by Air Mobility or Redeploy, or be placed by Train or Events. The PKK can Rally there; its Guerrillas cannot March out. At Redeploy they may move to any domestic space with a PKK Base (6.8). No PKK Base or Village Guard may be placed there.
 
 ## 1.4 Pieces and Supply
 
@@ -150,7 +150,7 @@ First Eligible selects one box and resolves its choice completely:
 
 - **Event:** execute either side of the current card (5.0).
 - **Limited Op:** one Operation in one location, without a Special Activity.
-- **Op Only:** one Operation without a Special Activity, in two or more locations. An Operation in one location without a Special Activity is a Limited Op.
+- **Op Only:** one Operation without a Special Activity, in any number of locations, including one. The box, not the location count, sets next-card order (2.4).
 - **Op + SA:** one Operation with one permitted Special Activity.
 - **Pass:** take no Operation or Event; gain Pass Resources (2.5).
 
@@ -201,7 +201,7 @@ The simulator uses a stored random seed. The same scenario, options and seed rep
 
 ## 3.1 General Procedure
 
-Choose one Operation type and its locations. Pay its cost for each selected location unless it has a total cost. A piece cannot move more than once during the same movement Operation. Operations must satisfy their conditions and use only available pieces. A Special Activity has its own cost and limits (4.0).
+Choose one Operation type and its locations. Pay its cost for each selected location unless it has a total cost. A piece cannot move more than once during the same movement Operation. Operations must satisfy their conditions and use only available pieces. Each selected location must be able to change something, by the Operation or by its Special Activity in that location: for example, no Rally in Europe at its cap, no Rally flip without an Active Guerrilla, no Assault that can remove nothing and no Sweep or Garrison that moves no pieces and can activate nothing. A Special Activity has its own cost and limits (4.0).
 
 **Mountains:** Sweep and Garrison activate one Underground Guerrilla per two eligible State pieces, rounded down. Assault removes one PKK piece per two Troops, rounded down. KDP and PUK count as Mountains. Guards assist detection, not Assault. In Cities, Police assist Assault.
 
@@ -221,7 +221,7 @@ After placement, the State may conduct Civic Action in **one selected space** (3
 
 **Cost:** 2 Resources total.
 
-Move up to six Police among domestic spaces, excluding movement into or out of Western Cities. Then select one space with Police and activate Underground Guerrillas there, up to the number of Police plus Guards. In a Mountain, halve that number and round down. Count pieces after movement. Troops do not contribute to Garrison activation.
+Move up to six Police among domestic spaces, excluding movement into or out of Western Cities. Police may move any distance. Then select one space with Police and activate Underground Guerrillas there, up to the number of Police plus Guards. The State chooses how many, up to that number. In a Mountain, halve that number and round down. Count pieces after movement. Troops do not contribute to Garrison activation.
 
 For a Limited Op, all moved Police go to one destination and activation occurs there. Garrison does not move Guards or Troops.
 
@@ -337,7 +337,7 @@ Maximum two Opposition shifts per space per action or phase. Remove every Coerci
 
 ## 4.1 General Rules
 
-Take at most one Special Activity with an Op + SA choice. It may accompany only the Operations listed for it. No SA accompanies Op Only or Limited Op. Its spaces may differ from the Operation unless its rule requires an overlap. Pay its cost in addition to the Operation cost. Timing is before or after, subject to 2.7.
+Take at most one Special Activity with an Op + SA choice. It may accompany only the Operations listed for it. No SA accompanies Op Only or Limited Op. Its spaces may differ from the Operation unless its rule requires an overlap. Like an Operation, it may not select a target it cannot change: no Diplomacy against Europe at 0 or a host at its last posture step. Pay its cost in addition to the Operation cost. Timing is before or after, subject to 2.7.
 
 ## 4.2 State Special Activities
 
@@ -372,7 +372,7 @@ Target one of Syria, KDP, PUK or Europe. Roll one die, adding or subtracting:
 - +1 for KDP from C3.
 - Any bonus printed by the granting Event.
 
-A modified result of 5 or more moves the host one step toward Hostile, or lowers Europe by one. Moving a host from Hostile to Aligned requires 6 or more. Syria has no Aligned step; a further move at Hostile has no posture effect. A posture change may activate Guerrillas and flip the Leadership Abroad (8.1).
+A modified result of 5 or more moves the host one step toward Hostile, or lowers Europe by one. Moving a host from Hostile to Aligned requires 6 or more. Syria has no Aligned step, so Diplomacy cannot target Syria at Hostile (3.1). A posture change may activate Guerrillas and flip the Leadership Abroad (8.1).
 
 > **EXAMPLE:** At Legitimacy 12, Diplomacy against Syria in C2 has +1 for Legitimacy and −1 for early Syria: net zero. A die roll of 5 moves Syria one step toward Hostile. A natural 6 does not bypass the modified-total requirement for another target.
 
@@ -521,7 +521,7 @@ The unshaded side of HEP Founded files a closure case if no Closure Case marker 
 
 ## 5.5 Guard Abuse and Attribution
 
-When Guard Abuse is executed, in **every qualifying space** with a Guard and any Harm marker, lose one Legitimacy and remove one Guard. Apply once per qualifying space. Coercion alone is not a Harm marker for this instruction, although it counts toward PKK Harm for victory.
+When Guard Abuse is executed, in **every qualifying space** with a Guard and any Harm marker, lose one Legitimacy and remove one Guard. Apply once per qualifying space. Coercion alone is not a Harm marker for this instruction, although it counts toward PKK Harm for victory. PKK Harm counts too: Guards serve in violent areas, whoever caused the violence.
 
 Use the Harm attribution printed on the card. Disputed Harm remains Disputed unless a specific rule changes it. Do not assign it to a faction by inference from a card title or historical assumption. A later Event may turn a Disputed marker into State Harm only if the card rests on a High or Moderate court or commission finding.
 
@@ -590,7 +590,7 @@ In a non-final round, use Control and the piece inventory from **before** Redepl
 
 - State may move Troops to any domestic City or domestic space with a State Base. **All Troops in KDP and PUK must leave** this way.
 - State may move Police to any space it Controlled before Redeploy. Guards never move. Bases never move.
-- PKK may move Guerrillas to an adjacent space or box with a PKK Base. Host entry limits apply. A Restricted camp costs one Resource per destination and activates arrivals. No entry into a Hostile or Aligned camp.
+- PKK may move Guerrillas to an adjacent space or box with a PKK Base. Guerrillas in Western Cities may move to any domestic space with a PKK Base. Host entry limits apply. A Restricted camp costs one Resource per destination and activates arrivals. No entry into a Hostile or Aligned camp.
 
 Optional movements may be omitted. Required Iraqi Troop departures may not be skipped. Recompute Control after both factions finish.
 
@@ -661,7 +661,7 @@ Syria stops at Hostile. Postures never reset automatically and one host's change
 
 **8.1.4 Hostile or Aligned.** No Rally, March entry or Base income. A posture shift reaching either state activates Guerrillas in that box. Reset later flips them Underground (6.9); the exception does not reopen the box. Normal Cross-Border access to KDP/PUK is permitted. Aligned removes the extra Cross-Border cost and the Assault Mountain divisor.
 
-**8.1.5 Leadership.** The marker starts Present in Syria-Bekaa. Present gives income only while Syria is Host or Tolerant. When Syria reaches Hostile, flip it Abroad. Abroad gives no income and prevents Host Pressure against Syria. Returning Syria to a more open posture does not by itself flip Leadership back.
+**8.1.5 Leadership.** The marker starts Present in Syria-Bekaa. Present gives income only while Syria is Host or Tolerant. When Syria reaches Hostile, flip it Abroad. Abroad gives no income and prevents Host Pressure against Syria. The Leadership never returns to Present.
 
 **Capture.** Capture happens only through the C5 card DK-093 and only if the Leadership is Abroad. Capture is not certain: if DK-093 is revealed while the Leadership is Present, nothing happens and there is no Capture in that game. Remove the Leadership marker. From then on the PKK income is one lower at each Resources phase (never below 0). The PKK keeps its pieces and the game does not end.
 
@@ -742,7 +742,7 @@ The Ceasefire track has three steps: **None → Declared → Reciprocal Restrain
 | Declared | Attack, Ambush, Strike Collaborators | Nothing. Each State Assault, Village Clearance, Cross-Border or Covert Action places the State Restraint Broken marker. |
 | Reciprocal Restraint | Attack, Ambush, Strike Collaborators, Coerce, place a domestic Base | Assault, Village Clearance, Cross-Border, Covert Action |
 
-**Breach.** A forbidden action stays legal, but the game shows a warning before you confirm it. The acting faction places its Restraint Broken marker in the first location of the action and Ceasefire goes to None. Free actions from Events count. A PKK breach lowers Europe by one. A State breach during Reciprocal Restraint costs two Legitimacy. A State action during Declared only places the marker. The State cannot accept at that round's ceasefire step. Reset removes the marker (6.9), so the State may accept at a later round if the PKK keeps Declared.
+**Breach.** A forbidden action stays legal, but the game shows a warning before you confirm it. The acting faction places its Restraint Broken marker in the first location of the action and Ceasefire goes to None. Free actions from Events count. A PKK breach lowers Europe by one. A State breach during Reciprocal Restraint costs two Legitimacy. A State action during Declared only places the marker. The State cannot accept at that round's ceasefire step. Reset removes the marker (6.9), so the State may accept at a later round if the PKK keeps Declared. The PKK marker is a record only; no rule reads it.
 
 **Ceasefire step** (in the Legal Politics phase, after the procedure table). Resolve in this order. At each sub-step the State acts first, then the PKK.
 

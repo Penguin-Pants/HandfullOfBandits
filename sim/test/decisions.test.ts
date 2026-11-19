@@ -53,36 +53,19 @@ describe("Decision 4 (M-03): one March group is all Guerrillas from one origin t
   });
 });
 
-describe("Decision 5 (M-07): the box follows the action", () => {
+describe("Decision 5 (M-07), revised 2026-11-19: Op Only takes any number of locations", () => {
   const rally = (box: string, ...locations: string[]): AnyCommand =>
     op("pkk", box, { op: "pkk.rally", locations, perLocation: Object.fromEntries(locations.map((l) => [l, { option: "place" }])) });
 
-  it("First Eligible: Op Only needs two or more locations; one location is a Limited Op", () => {
+  it("First Eligible may take Op Only in one location; the box, not the count, sets next-card order", () => {
     const first = turnOf("pkk");
     expect(first.initiative.firstEligible).toBe("pkk");
-    expect(codes(first, rally("opOnly", "bingol-tunceli"))).toEqual(["opOnlyLocations"]);
-    expect(codes(first, rally("limitedOp", "bingol-tunceli"))).toEqual([]);
-    expect(codes(first, rally("opOnly", "bingol-tunceli", "mardin"))).toEqual([]);
+    expect(codes(first, rally("opOnly", "bingol-tunceli"))).toEqual([]);
+    expect(play(first, rally("opOnly", "bingol-tunceli")).state.initiative.boxes["pkk"]).toBe("opOnly");
   });
 
-  it("a Garrison that moves Police to a second destination uses two locations, so it is an Op Only", () => {
-    const garrison = (box: string, moves: unknown[]): AnyCommand => op("state", box, { op: "state.garrison", locations: ["hakkari"], perLocation: { hakkari: { moves } } });
-    const board = setPieces(turnOf("state"), "hakkari", "guerrilla", 3);
-    const spread = [{ from: "van-rural", to: "hakkari", count: 1 }, { from: "agri-igdir", to: "bingol-tunceli", count: 1 }];
-    expect(codes(board, garrison("opOnly", spread))).toEqual([]);
-    expect(codes(board, garrison("opOnly", [{ from: "van-rural", to: "hakkari", count: 1 }]))).toEqual(["opOnlyLocations"]);
-  });
-
-  it("a March move with a `to` field is still one location: March ignores `to` (PR 101 review)", () => {
-    const march = op("pkk", "opOnly", { op: "pkk.march", locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "sirnak", to: "sirnak", count: 1 }] } } });
-    expect(codes(turnOf("pkk"), march)).toEqual(["opOnlyLocations"]);
-  });
-
-  it("the responder to a Limited Op may take Op Only in one location (research 05 s2.3 note 2)", () => {
-    const after = play(turnOf("pkk"), rally("limitedOp", "bingol-tunceli")).state;
-    const sweep = op("state", "opOnly", { op: "state.sweep", locations: ["hakkari"], perLocation: {}, sa: null, subActions: [] });
-    expect(after.initiative.firstEligible).toBe("pkk");
-    expect(codes(after, sweep)).not.toContain("opOnlyLocations");
+  it("a Limited Op still selects one location", () => {
+    expect(codes(turnOf("pkk"), rally("limitedOp", "bingol-tunceli", "mardin"))).toEqual(["limitedOneLocation"]);
   });
 });
 

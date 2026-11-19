@@ -7,7 +7,7 @@ import { at, type ActionHandler } from "../action.ts";
 import { activate, adjacent, count, hasTag, pay, space, terrainRate } from "../common.ts";
 import { hasModifier } from "../../../core/modifiers.ts";
 import { MOD } from "../../modifiers.ts";
-import { EMERGENCY, FACTION, PIECE, TAG, TRACK } from "../ids.ts";
+import { EMERGENCY, FACE, FACTION, PIECE, TAG, TRACK } from "../ids.ts";
 import { asMoves } from "../plan.ts";
 
 const ruleRef = "06 s2.3";
@@ -38,6 +38,11 @@ export const sweep: ActionHandler = {
         continue;
       }
       if (border && list.length > 0) out.push(at(loc, "crossBorderMoves", "Use only the Cross-Border lift for zone entry.", ruleRef));
+      // Decision 18 (m-17): with no Troops moving in, the Sweep must be able to activate a Guerrilla,
+      // unless its Special Activity acts in this space (Village Clearance needs a selected space).
+      const detectors = count(state, loc, PIECE.troops) + count(state, loc, PIECE.police) + count(state, loc, PIECE.guards);
+      const rate = options.constraints["ignoreMountain"] === true ? detectors : terrainRate(ruleset, loc, detectors);
+      if (!border && !options.saLocations.includes(loc) && list.every((m) => m.count === 0) && (rate === 0 || count(state, loc, PIECE.guerrilla, FACE.underground) === 0)) out.push(at(loc, "sweepNoEffect", "This Sweep moves no Troops in and can activate no Guerrilla.", ruleRef));
       for (const m of list) {
         if (!adjacent(ruleset, m.from, loc)) out.push(at(loc, "sweepAdjacent", `Troops move one step only: ${m.from} is not adjacent.`, ruleRef));
         leaving.set(m.from, (leaving.get(m.from) ?? 0) + m.count);
