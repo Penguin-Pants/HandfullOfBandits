@@ -26,6 +26,13 @@ describe("Decision 18 (m-17): every selected location must be able to change som
     expect(codes(setPieces(board, "hakkari", "troops", 2), assault)).toEqual([]);
   });
 
+  it("Assault is legal where its Special Activity acts: Air Mobility brings Troops into the Mountain space", () => {
+    const board = setPieces(setPieces(setPieces(turnOf("state"), "hakkari", "guerrilla", 0), "hakkari", "guerrilla", 1, "active"), "hakkari", "troops", 1);
+    const assault = (timing: string): AnyCommand => op("state", "opSa", { op: "state.assault", locations: ["hakkari"], perLocation: {}, sa: { action: "state.air-mobility", locations: ["diyarbakir-city", "hakkari"], perLocation: { hakkari: { moves: [{ from: "diyarbakir-city", count: 1 }] } }, timing } });
+    expect(codes(board, assault("before"))).toEqual([]);
+    expect(codes(board, assault("after"))).toEqual([]);
+  });
+
   it("Sweep with no Troops moving in and nothing to activate is refused", () => {
     const sweep = (moves: unknown[]): AnyCommand => op("state", "limitedOp", { op: "state.sweep", locations: ["elazig"], perLocation: { elazig: { moves } } });
     expect(codes(turnOf("state"), sweep([]))).toContain("sweepNoEffect");

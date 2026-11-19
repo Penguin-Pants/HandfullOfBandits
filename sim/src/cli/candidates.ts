@@ -611,7 +611,10 @@ function pkkRedeployChoices(r: Ruleset, s: GameState): JsonValue[] {
     return bases.flatMap((b) => neighbors(r, b).filter((f) => !used.has(f) && count(s, f, "pkkBase") === 0 && count(s, f, "guerrilla") > 0 && only(f)).map((f) => { used.add(f); return { from: f, to: b, count: count(s, f, "guerrilla") }; }));
   };
   const external = (f: string): boolean => r.spaces.find((x) => x.id === f)?.kind === "external";
-  return [[], moves(() => true), moves(external), moves((f) => !external(f))];
+  // Decision 22 (m-24): Guerrillas in a space with no land links go to any domestic Base, here the first one.
+  const home = bases.find((b) => r.spaces.find((x) => x.id === b)?.kind === "domestic");
+  const exits: JsonObject[] = home === undefined ? [] : domestic(r).filter((f) => !landLinked(r, f) && count(s, f, "guerrilla") > 0).map((f) => ({ from: f, to: home, count: count(s, f, "guerrilla") }));
+  return [[], moves(() => true), moves(external), moves((f) => !external(f)), ...(exits.length > 0 ? [[...moves(() => true), ...exits], exits] : [])];
 }
 
 /** Legal Politics, State answers (rules 8.5, 8.6): nothing, a closure filing, accepting or leaving a ceasefire. Empty when the phase does nothing. */

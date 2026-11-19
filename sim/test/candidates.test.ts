@@ -172,6 +172,14 @@ describe("campaign procedures (19 s5 Campaign row)", () => {
     expect(gen(s, "legitimacy", "state").candidates.map((c) => c.command)).toEqual([{ type: "Advance" }, { type: "PropagandaChoice", phase: "legitimacy", choice: { emergencyStep: "normalizing" } }]);
   });
 
+  it("Redeploy: the PKK part offers the Western Cities exit to a domestic PKK Base (decision 22)", () => {
+    const s = propaganda(setPieces(turnOf("state"), "western-cities", "guerrilla", 2), "redeploy");
+    const part = (gen(s, "redeployState", "state").candidates[0]?.command["choice"] ?? {}) as Record<string, unknown>;
+    const pkk = generateCandidates(engine, ruleset, s, "redeployPkk", "pkk", { familyCap: 14, broad: false, stateRedeploy: { troops: part["troops"] as never, police: part["police"] as never } });
+    allLegal(s, pkk);
+    expect(pkk.candidates.some((c) => JSON.stringify(c.command).includes("\"from\":\"western-cities\""))).toBe(true);
+  });
+
   it("Redeploy: the State part always moves Iraqi Troops out; the PKK part extends the chosen State part", () => {
     const s = propaganda(setPieces(turnOf("state"), "kdp-zone", "troops", 3), "redeploy");
     const state = gen(s, "redeployState", "state");
