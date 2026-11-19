@@ -314,14 +314,15 @@ export class SessionService {
   botExtends(sessionId: string): boolean {
     const { session, head, ruleset } = this.session(sessionId);
     const seats = seatsOf(session);
-    return this.bots !== null && session.status === "active" && this.bots.extendsState(this.engine, ruleset, head.state, seats);
+    return this.bots !== null && session.status !== "readOnly" && this.bots.extendsState(this.engine, ruleset, head.state, seats);
   }
 
   /** The faction whose bot acts at the head, or null (a human acts, no seat, or the session cannot move). */
   botToAct(sessionId: string): string | null {
     const { session, head, ruleset } = this.session(sessionId);
     const seats = seatsOf(session);
-    if (this.bots === null || session.status !== "active" || Object.keys(seats).length === 0) return null;
+    // The bot may act wherever a human may (submit refuses only read-only sessions; an abandoned one resumes).
+    if (this.bots === null || session.status === "readOnly" || Object.keys(seats).length === 0) return null;
     return this.bots.toAct(this.engine, ruleset, head.state, seats);
   }
 
@@ -332,7 +333,7 @@ export class SessionService {
    */
   botStep(sessionId: string, headActionId: string, headStateHash: string | undefined, partial: JsonObject | null): { actionId: string | null; partial: JsonObject | null; options: readonly JsonObject[] | null; records: readonly unknown[] } {
     const { session, head, ruleset } = this.session(sessionId);
-    if (session.status !== "active") throw new ServiceError(409, `The session is ${session.status}.`);
+    if (session.status === "readOnly") throw new ServiceError(409, "The session is read-only.");
     this.checkHead(head, headActionId, headStateHash);
     const seats = seatsOf(session);
     if (this.bots === null || Object.keys(seats).length === 0) throw new ServiceError(409, "The session has no bot seat.");

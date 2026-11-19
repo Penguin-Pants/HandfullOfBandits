@@ -117,6 +117,15 @@ describe("bot seat: session set-up", () => {
     expect(moved.head.state.turn.phase).toBe("card");
   });
 
+  it("lets the bot act in a resumed abandoned session, as a human may (PR 128 review)", () => {
+    const { sessionId, head } = start({ pkk: "P-RANDOM@1" });
+    const card = service.submit(sessionId, { type: "Advance" }, head.actionId, head.stateHash).head;
+    service.endSession(sessionId, null);
+    expect(service.session(sessionId).session.status).toBe("abandoned");
+    expect(service.botToAct(sessionId)).toBe("pkk");
+    expect(service.botStep(sessionId, card.actionId, card.stateHash, null).actionId).not.toBeNull();
+  });
+
   it("refuses a human command at the bot's decision", () => {
     const { sessionId, head } = start({ pkk: "P-RANDOM@1" });
     // The PKK is First Eligible on card 1 (sequence.yaml firstEligibleAtStart).
