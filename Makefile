@@ -1,4 +1,4 @@
-.PHONY: install test check start schema validate rules e2e ux rulebook cards print
+.PHONY: install test check start schema validate rules e2e ux rulebook cards setup-rule print
 
 install:
 	cd sim && npm ci
@@ -39,5 +39,9 @@ rulebook:
 cards:
 	python3 docs/card-catalogue/generate.py
 
-# Whole print set. `make test` fails until this runs after a card, rules or print source change.
-print: cards rulebook
+# Rule 10.2 Starting Position from the package full-campaign scenario (sim setup-sheet --rules).
+setup-rule:
+	cd sim && npm run --silent sim -- setup-sheet "$(abspath game-packages/kurdish-coin/0.1.0)" --rules "$(abspath docs/rules/prototype-rules.md)"
+
+# Whole print set. `make test` fails until this runs after a card, scenario, rules or print source change.
+print: setup-rule cards rulebook

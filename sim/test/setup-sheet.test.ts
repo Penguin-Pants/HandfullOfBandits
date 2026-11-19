@@ -1,7 +1,7 @@
 // Audit Plan 4 V4: printable setup sheet. Acceptance: the sheet matches the rule 10.2 layout for
 // the baseline. A variant sheet adds its change list; the session export prints the same text.
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
@@ -36,34 +36,51 @@ const sheet = (variant: string | null): string => {
 };
 /** Paragraphs of the sheet's Starting Position section. */
 const section = (text: string): string[] => (text.split("## Starting Position")[1] ?? "").trim().split(/\n\n/);
-const tableRows = (paragraph: string): string[] => paragraph.split("\n").filter((l) => l.startsWith("| ")).slice(1);
 
-describe("setup sheet against rule 10.2 (audit Plan 4 V4)", () => {
-  const baseline = section(sheet(null));
-  const [tracks, legend, table, levels, closing] = baseline;
-  const [ruleTracks, ruleLegend, ruleTable, ruleLevels, ruleClosing] = rule102;
-
-  it("has the rule 10.2 sections in the same order", () => {
-    expect(baseline).toHaveLength(5);
-    expect(rule102).toHaveLength(5);
+describe("rule 10.2 is the package start position (P4-2)", () => {
+  it("prints the generated Starting Position word for word. Rebuild with make print", () => {
+    expect(rule102.join("\n\n")).toBe(section(sheet(null)).join("\n\n"));
   });
 
-  it("writes the same tracks sentence and Campaign", () => {
-    expect(tracks?.split(". ")[0]).toBe(ruleTracks?.split(". ")[0]);
-    expect(tracks?.split(". ")[0]).toBe("Set State Resources 12, PKK Resources 5, Legitimacy 10, Europe 1 and Campaign C1");
+  it("joins ordinal tracks in runs, drops shared name words and lists absent start markers", () => {
+    const [tracks] = section(sheet(null));
+    expect(tracks).toBe("Set State Resources 12, PKK Resources 5, Legitimacy 10, Europe 1 and Campaign C1. Emergency Rule is Martial Law. Syria is Host, KDP Host and PUK Tolerant. Legal Space is Absent and Ceasefire None. There are no Harm, Coercion, Reception, Displacement, Covert or Office markers.");
   });
 
-  it("writes the same legend, levels and closing paragraph", () => {
-    expect(legend).toBe(ruleLegend);
-    expect(levels).toBe(ruleLevels);
-    expect(closing).toBe(ruleClosing);
+  it("drops a marker type from the absent list when the scenario places one, and writes short space names", () => {
+    const content = structuredClone(packageContent(kurdish.data)) as Record<string, { spaces?: Record<string, { markers?: Record<string, number> }> }>;
+    const spaces = content["scenarios/full-campaign.yaml"]?.spaces;
+    if (spaces?.["hakkari"] === undefined) throw new Error("no scenario");
+    spaces["hakkari"].markers = { coercion: 1, pkkHarm: 1 };
+    const start = { available: {}, scores: {}, margins: {}, harm: {}, control: {} };
+    const text = setupSheet(content, kurdish.hash, "full-campaign", start);
+    expect(text).toContain("There are no Reception, Displacement, Covert or Office markers.");
+    expect(text).toContain("| Hakkari | 2T, 1P | 2G, Coercion, Pkk Harm |");
+    expect(text).toContain("| Diyarbakır City | 3T, 2P, 1B | — |");
+  });
+});
+
+describe("sim setup-sheet --rules (P4-2)", () => {
+  it("rewrites only the rule 10.2 body, keeps CRLF, and a second run changes nothing", () => {
+    const file = join(tempDir(), "rules.md");
+    const stale = rules.replace("| Hakkari | 2T, 1P | 2G |", "| Hakkari | 9T | 2G |").replaceAll("\n", "\r\n");
+    writeFileSync(file, stale);
+    expect(setupSheetCommand(kurdishDir, null, "full-campaign", null, file)).toEqual({ exitCode: 0, lines: [`wrote ${file}`] });
+    const after = readFileSync(file, "utf8");
+    expect(after.replaceAll("\r\n", "")).not.toContain("\n");
+    // Outside rule 10.2 nothing changes; inside it is the sheet's Starting Position.
+    const [head, rest] = after.replaceAll("\r\n", "\n").split("## 10.2 Starting Position\n\n");
+    expect(head).toBe(rules.split("## 10.2 Starting Position")[0]);
+    expect(rest?.slice(rest.indexOf("\n## "))).toBe(rules.split("## 10.2 Starting Position")[1]?.slice(rules.split("## 10.2 Starting Position")[1]?.indexOf("\n## ")));
+    expect(rest?.slice(0, rest.indexOf("\n## ")).trim()).toBe(section(sheet(null)).join("\n\n"));
+    expect(setupSheetCommand(kurdishDir, null, "full-campaign", null, file)).toEqual({ exitCode: 0, lines: [`${file} is up to date`] });
   });
 
-  it("writes the same table header and the same row for every space", () => {
-    expect(table?.split("\n").slice(0, 2)).toEqual(ruleTable?.split("\n").slice(0, 2));
-    // Rule 10.2 shortens "Diyarbakır City (Amed)", the name of the map table (rule 1.3) and the package.
-    const ours = tableRows(table ?? "").map((r) => r.replace("Diyarbakır City (Amed)", "Diyarbakır City"));
-    expect([...ours].sort()).toEqual([...tableRows(ruleTable ?? "")].sort());
+  it("refuses a file without rule 10.2, and a variant", () => {
+    const file = join(tempDir(), "other.md");
+    writeFileSync(file, "# Other\n");
+    expect(setupSheetCommand(kurdishDir, null, "full-campaign", null, file)).toEqual({ exitCode: 1, lines: [`error: ${file} has no "## 10.2 Starting Position" section`] });
+    expect(spawnSync(process.execPath, [main, "setup-sheet", kurdishDir, "--variant", "dd25-variant-a", "--rules", file], { encoding: "utf8" }).status).toBe(2);
   });
 });
 

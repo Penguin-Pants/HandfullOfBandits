@@ -34,6 +34,19 @@ const PIECES: Readonly<Record<string, { readonly abbr: string; readonly legend: 
   pkkBase: { abbr: "B", legend: "PKK Base", one: "PKK Base", many: "PKK Bases" },
 };
 
+/**
+ * Marker types rule 10.2 names as absent at the start, by printed name. A type leaves the sentence
+ * when the scenario places one. IDs the package does not define are skipped.
+ */
+const START_MARKERS: readonly (readonly [string, readonly string[]])[] = [
+  ["Harm", ["stateHarm", "pkkHarm", "disputedHarm"]],
+  ["Coercion", ["coercion"]],
+  ["Reception", ["reception"]],
+  ["Displacement", ["displacement"]],
+  ["Covert", ["covert"]],
+  ["Office", ["office"]],
+];
+
 /** "martialLaw" or "posture.kdp" as words in title case. */
 const words = (id: string): string => id.split(/[.\-_]/).map((p) => p.replace(/([a-z])([A-Z0-9])/g, "$1 $2")).map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
 /** "a, b and c". */
@@ -56,7 +69,8 @@ function namesOf(content: Json) {
   const piece = (id: string) => PIECES[id] ?? { abbr: id, legend: words(id), one: words(id), many: words(id) };
   return {
     spaces,
-    space: (id: string): string => str(spaces.find((s) => s["id"] === id)?.["name"]) || words(id),
+    // Rule 10.2 writes a space without its other name: "Diyarbakır City (Amed)" is "Diyarbakır City" (P4-1).
+    space: (id: string): string => str(spaces.find((s) => s["id"] === id)?.["name"]).replace(/ \([^)]*\)$/, "") || words(id),
     faction: (id: string): string => factions.get(id) ?? words(id),
     track: (id: string): string => tracks.get(id) ?? words(id),
     level: (n: number | null): string => words(levels[(n ?? 0) + mid] ?? String(n)),
@@ -147,7 +161,34 @@ export function setupSheet(content: Json, hash: string, scenarioId: string, star
   const rows = [...listed, ...open].map((id) => `| ${names.space(id)} | ${factions.map((f, i) => cell(obj(setups[id]), pieces, f, i === factions.length - 1, names)).join(" | ")} |`);
 
   const numeric = Object.entries(tracks).filter(([id]) => trackKinds.get(id) === "numeric").map(([id, v]) => `${names.track(id)} ${str(v)}`);
-  const ordinal = Object.entries(tracks).filter(([id]) => trackKinds.get(id) === "ordinal").map(([id, v]) => `${names.track(id)} is ${words(str(v))}.`);
+  // Ordinal tracks in runs, in scenario order, one sentence each: "Legal Space is Absent and Ceasefire
+  // None." Tracks that share an ID prefix (posture.) form their own run and drop the name words they
+  // share: "Syria is Host, KDP Host and PUK Tolerant." A numeric track ends a run.
+  const runs: string[][] = [];
+  let runKey: string | null = null;
+  for (const id of Object.keys(tracks)) {
+    if (trackKinds.get(id) !== "ordinal") {
+      runKey = null;
+      continue;
+    }
+    const key = id.includes(".") ? (id.split(".")[0] ?? "") : "";
+    const last = runs[runs.length - 1];
+    if (last !== undefined && key === runKey) last.push(id);
+    else runs.push([id]);
+    runKey = key;
+  }
+  const ordinal = runs.map((run) => {
+    const split = run.map((id) => names.track(id).split(" "));
+    const tail = (w: readonly string[], n: number): string | undefined => w[w.length - 1 - n];
+    let shared = 0;
+    while (run.length > 1 && split.every((w) => w.length > shared + 1 && tail(w, shared) === tail(split[0] ?? [], shared))) shared += 1;
+    const items = run.map((id, i) => `${(split[i] ?? []).slice(0, (split[i]?.length ?? 0) - shared).join(" ")}${i === 0 ? " is" : ""} ${words(str(tracks[id]))}`);
+    return `${list(items)}.`;
+  });
+  const placed = new Set(Object.values(setups).flatMap((x) => Object.entries(obj(obj(x)["markers"])).filter(([, v]) => (typeof v === "number" ? v : Object.values(obj(v)).reduce<number>((a, b) => a + Number(b), 0)) > 0).map(([id]) => id)));
+  const known = new Set(arr(content["markers.yaml"]).map((m) => str(m["id"])));
+  const absent = START_MARKERS.filter(([, ids]) => ids.some((id) => known.has(id)) && !ids.some((id) => placed.has(id))).map(([name]) => name);
+  const noMarkers = absent.length === 0 ? [] : [`There are no ${list(absent).replace(/ and (?=[^,]*$)/, " or ")} markers.`];
   const present = new Set(Object.values(setups).flatMap((x) => Object.keys(obj(obj(x)["pieces"]))));
   const legend = factions.map((f, i) => {
     const used = pieces.filter((p) => p["faction"] === f && present.has(str(p["id"]))).map((p) => `${names.piece(str(p["id"])).abbr} = ${names.piece(str(p["id"])).legend}`);
@@ -194,7 +235,7 @@ export function setupSheet(content: Json, hash: string, scenarioId: string, star
     ...(variant === null ? [] : ["## Changes from the package setup", "", ...(changes.length === 0 ? ["None."] : changes.map((l) => `- ${l}`)), ""]),
     "## Starting Position",
     "",
-    [`Set ${list([...numeric, `Campaign ${campaigns[0] ?? ""}`])}.`, ...ordinal].join(" "),
+    [`Set ${list([...numeric, `Campaign ${campaigns[0] ?? ""}`])}.`, ...ordinal, ...noMarkers].join(" "),
     "",
     [...faces, "Unlisted spaces or piece types are empty.", ...legend].join(" "),
     "",
