@@ -72,3 +72,7 @@ Not run: `make rulebook`. This machine has no Pandoc or XeLaTeX, so the PDF was 
 - Scenarios A, B and C and the S0 test are archived. Sections 10.1, 10.2, 10.6 and 10.7 changed. Section numbers are kept.
 
 Not run: `make rulebook` (no Pandoc or XeLaTeX on this machine). Rebuild the PDF where the toolchain exists.
+
+## Status (2026-11-20)
+
+The two stale-PDF notes above are closed. Commits `cc49e61` (#122) and `1ecb0d9` (#131) rebuilt the PDF from the package and rules. `sim/test/print-drift.test.ts` fails when any input changed after the last build, and it passes at commit `d04a5ec`.

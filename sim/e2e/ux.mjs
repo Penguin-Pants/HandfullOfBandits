@@ -8,7 +8,7 @@ import {join} from 'node:path';
 import {nativeChecks} from './native.mjs';
 const {chromium}=createRequire(import.meta.url)('playwright');
 const temp=mkdtempSync(join(tmpdir(),'hob-ux-'));
-const shots=process.env.HOB_SCREENSHOTS ?? '../docs/ux-overhaul/screenshots';
+const shots=process.env.HOB_SCREENSHOTS ?? '../docs/ui/ux-overhaul/screenshots';
 mkdirSync(shots,{recursive:true});
 const base='http://127.0.0.1:5200';
 const server=spawn(process.execPath,['src/main.ts'],{env:{...process.env,HOB_DB:join(temp,'test.sqlite'),PORT:'5200'},stdio:'inherit'});

@@ -1,5 +1,6 @@
 # A Handful of Bandits: Turkey and the PKK, 1984-1999
 
+A two-player COIN-series board game prototype about the conflict in southeastern Turkey, with a local playtest simulator. The State plays against the PKK over five Campaigns (C1 to C5). This repository holds the rules, the card text, the game package data, the simulator and the playtest records.
 
 ## Development
 
@@ -28,15 +29,38 @@ Scenarios A, B and C and the S0 test scenario are archived in [archive/](archive
 
 Setup variants: on Home, **Setup editor** edits the start position, thresholds, tracks and piece pools, checks each change and saves the result as `game-packages/kurdish-coin/0.1.0/variants/<name>.yaml`. Pick it under **Setup** to start a session on it. A variant file names only what it changes; Available is derived. `npm run sim -- validate <package-dir>` checks every variant and prints its hash; a study names one with `"package": {"dir": ..., "variant": "<name>"}`. Print a setup sheet in the rule 10.2 layout, with the variant's change list, with `npm run sim -- setup-sheet <package-dir> [--variant <name>] --out <file.md>`; a session export names the same variant with the same change text ([doc 45](docs/prototype/45-setup-controls-plan4.md)).
 
-Run a paired policy screen with `cd sim` then `npm run sim -- batch --games 10 --strategy concentration,sanctuary --swap-seats --out metrics.csv`. Each adjacent pair uses the same seed with the policies assigned to opposite factions. A faction-specific policy uses the scripted legal fallback as its other faction. Use `--seed N` or `--package <dir>` when needed.
+### Paired policy screens (batch)
+
+Run `cd sim` then `npm run sim -- batch --games 10 --strategy concentration,sanctuary --swap-seats --out metrics.csv`. Each adjacent pair uses the same seed with the policies assigned to opposite factions. A faction-specific policy uses the scripted legal fallback as its other faction. Use `--seed N` or `--package <dir>` when needed.
 
 These batch policies are legacy screens, not qualified players: they read the full game state and fall back to the scripted policy for decisions they do not cover.
 
-Run an automated playtest experiment with `cd sim` then `npm run sim -- experiment run <manifest.json> --out <new-dir>`. The manifests and runs in `sim/experiments/` are records of Scenario A experiments. They name `scenario-a` and an older package hash, so they do not run again. A new manifest names `full-campaign` and the current package hash. The manifest freezes rules, options, players, seeds and limits; the output directory holds every game journal, results and failures. `experiment replay <dir>` checks every state hash, `experiment analyze <dir>` writes the report, coverage ledger and statistics, `experiment qualify <out.json>` runs the player qualification fixtures, `experiment new <study.json> --out <manifest.json>` fills the package hash and fingerprints, `experiment compare <base> <variant> --paired --out <file.md>` compares two runs by cell and seed, and `experiment cards <run>... --out <file.md>` counts card side plays. In the app, "Experiment reports" shows each run's report and opens any game at a chosen decision ([doc 44](docs/prototype/44-simulation-analysis-plan3.md)). See [the Scenario A automated playtest status](docs/prototype/22-scenario-a-automated-playtest-status.md). The first full-campaign records are `dd22-pilot-before` (13-space map, main) and `dd22-pilot-after` (18-space map, DD-22): the same 16 qualified cells and 15 development seeds on the same engine. Their reports are in each run's `analysis-v2/report.md`. The current record is `dd25-pilot` (DD-25 setup, PKK threshold 32), with the control `dd25-pilot-main-players`; see [doc 36](docs/prototype/36-dd25-balance-pilot.md). The players were tuned and qualified on Scenario A, not on C3 to C5.
-
 Policies from research 12 section 7: State `concentration` (no Civic Action), `civic-action` (least security first) and `emergency-rule`; PKK `sanctuary`, `concealment` and `coerce-only`. `scripted` is also available. Village Clearance and Legal Politics policies wait for their later-phase rules. CSV holds round scores, margins, Harm, income, Resources and political tracks. The report flags an 80% faction win rate across at least ten games. These runs screen for exploits; they do not establish balance.
 
-The simulator uses the illustrated atlas with live counted pieces, linked panels for narrow regions and map navigation. Older saved layouts retain the schematic fallback. See [UX design and validation](docs/ux-overhaul.md). The printed-board look, wooden piece sprites and board-first layout are described in [the implemented visual system](docs/coin-visual-redesign-design.md).
+### Automated playtest experiments
+
+Run `cd sim` then `npm run sim -- experiment run <manifest.json> --out <new-dir>`. The manifest freezes rules, options, players, seeds and limits. The output directory holds every game journal, results and failures. Other `experiment` commands:
+
+- `experiment new <study.json> --out <manifest.json>` fills the package hash and fingerprints.
+- `experiment replay <dir>` checks every state hash.
+- `experiment analyze <dir>` writes the report, coverage ledger and statistics.
+- `experiment qualify <out.json>` runs the player qualification fixtures.
+- `experiment compare <base> <variant> --paired --out <file.md>` compares two runs by cell and seed.
+- `experiment cards <run>... --out <file.md>` counts card side plays.
+
+In the app, **Experiment reports** shows each run's report and opens any game at a chosen decision ([doc 44](docs/prototype/44-simulation-analysis-plan3.md)).
+
+Records in `sim/experiments/`: the first full-campaign records are `dd22-pilot-before` (13-space map, main) and `dd22-pilot-after` (18-space map, DD-22): the same 16 qualified cells and 15 development seeds on the same engine. Their reports are in each run's `analysis-v2/report.md`. The current record is `dd25-pilot` (DD-25 setup, PKK threshold 32), with the control `dd25-pilot-main-players`; see [doc 36](docs/prototype/36-dd25-balance-pilot.md). The Scenario A records were removed from the tree on 2026-11-20 (see `archive/README.md`). The players were tuned and qualified on Scenario A, not on C3 to C5.
+
+Bot-against-bot studies are paused. The designer plays against the bot seat, which the Home screen offers.
+
+### Other commands
+
+- `npm run sim -- diff <old-package-dir> <new-package-dir>` lists parameter, card and handler changes between two packages.
+- `npm run sim -- replay <file.json | sessionId>` replays a saved game.
+- `npm run sim -- fuzz [--seeds N]` plays random legal games to find crashes.
+
+The simulator uses the illustrated atlas with live counted pieces, linked panels for narrow regions and map navigation. Older saved layouts retain the schematic fallback. See [UX design and validation](docs/ui/ux-overhaul.md). The printed-board look, wooden piece sprites and board-first layout are described in [the implemented visual system](docs/ui/coin-visual-redesign-design.md).
 
 ## Printed rules
 

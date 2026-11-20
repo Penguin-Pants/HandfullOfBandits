@@ -1,6 +1,6 @@
 # Automated players: reference and review checklist
 
-Date: 2026-11-13 (was 2026-11-04). State of the code: generator `cand-6`, qualification suite 2, search `search-2`, observation version 1, roster v4 for both factions with 2-move planning (doc 37, 2026-11-17), engine with DEC-62. Use this file before each new simulation program, and update it whenever the bots change. Details: [21](21-scenario-a-strategies.md) (players), [19](19-scenario-a-automated-playtest-spec.md) (requirements), [23](23-scenario-a-automated-playtest-report.md) (results).
+Date: 2026-11-13 (was 2026-11-04). State of the code: generator `cand-6`, qualification suite 2, search `search-2`, observation version 1, roster v4 for both factions with 2-move planning (doc 37, 2026-11-17), engine with DEC-62. Use this file before each new simulation program, and update it whenever the bots change. Details: [21](21-scenario-a-strategies.md) (players), [19](19-scenario-a-automated-playtest-spec.md) (requirements), 23 (removed) (results).
 
 ## Part 1: summary
 
@@ -20,7 +20,7 @@ Date: 2026-11-13 (was 2026-11-04). State of the code: generator `cand-6`, qualif
 
 ### Weaknesses
 
-- **Two moves ahead, on 3 leaders only (v4).** The top 3 plans are checked against the opponent's best reply and the bot's own next play (doc 37). Other plans are not checked, and the reply uses neutral weights. Versions 1 to 3 look one action ahead (see P-SHIELD, [25](25-p-shield-designer-notes.md)).
+- **Two moves ahead, on 3 leaders only (v4).** The top 3 plans are checked against the opponent's best reply and the bot's own next play (doc 37). Other plans are not checked, and the reply uses neutral weights. Versions 1 to 3 look one action ahead (see P-SHIELD, 25 (removed)).
 - **Bounded choice lists.** At most 14 candidates per action family. Four review rounds found pruning gaps; more may exist.
 - **Hand-set weights.** Each strategy is a guess about good play, not a learned or optimal policy.
 - **Passive State.** The State passes on about 39% of its card choices and ends with about 4.8 unused Resources.
@@ -50,11 +50,11 @@ Human IC-3a play is still needed for every right-hand item.
 | 1. Observe | Allowlisted, deep-frozen view: board, tracks, visible cards; deck order and future dice hidden | `sim/src/cli/player-observation.ts` | Observation version 1 |
 | 2. Generate | Legal candidates per decision kind and action family, engine-validated | `sim/src/cli/candidates.ts` | Family cap 14; broad mode ×4 for audits |
 | 3. Determinize | Sample a legal deck order and dice with the player's own seed | `player-observation.ts` (`determinize`, `SearchRng`) | Player seed from experiment, game and faction |
-| 4. Simulate | Apply a candidate, run automatic phases and any victory check | `sim/src/cli/strategies/scenario-a.ts` | 600 engine steps per decision (`SEARCH_BUDGET`) |
+| 4. Simulate | Apply a candidate, run automatic phases and any victory check | `sim/src/cli/strategies/roster.ts` | 600 engine steps per decision (`SEARCH_BUDGET`) |
 | 5. Score | Margin difference (rules 7.3, Harm penalty) + potential estimate + strategy weights | `sim/src/cli/strategies/evaluation.ts` | Weights in `FAMILIES` |
-| 6. Search | Family round-robin until 25% of the budget is left (65% for v4); best 6 re-scored on 2 more samples | `scenario-a.ts` (`searchDecide`, `roundRobin`) | `search-2` |
-| 6a. 2-move line (v4) | Top 3 plans: opponent's best reply (neutral weights), then own best next play, tried in family rotation within a budget share; only checked plans compete | `scenario-a.ts` (`deepLine`, `bestPlay`) | 1,800 steps per decision |
-| 7. Reply check | Adaptive bots only: best 4 re-scored against the opponent's best reply, up to 40 sampled | `scenario-a.ts` | S-ADAPT, P-ADAPT |
+| 6. Search | Family round-robin until 25% of the budget is left (65% for v4); best 6 re-scored on 2 more samples | `roster.ts` (`searchDecide`, `roundRobin`) | `search-2` |
+| 6a. 2-move line (v4) | Top 3 plans: opponent's best reply (neutral weights), then own best next play, tried in family rotation within a budget share; only checked plans compete | `roster.ts` (`deepLine`, `bestPlay`) | 1,800 steps per decision |
+| 7. Reply check | Adaptive bots only: best 4 re-scored against the opponent's best reply, up to 40 sampled | `roster.ts` | S-ADAPT, P-ADAPT |
 | 8. Final round | Civic Action solved against the best Agitation reply; Agitation solved exactly over generated allocations | `evaluation.ts`, `candidates.ts` | Exact search with ties kept (`cand-5`) |
 
 ### Player roster
@@ -87,7 +87,7 @@ PKK v2 caps the potential estimate by the remaining conversion opportunities. Co
 |---|---|---|
 | Cards to the final Propaganda, from scenario data (`finalRound`, piles, campaigns) | `evaluation.ts` timing | Yes, reads the scenario |
 | Potential estimate: Civic Action caps and Train/Rally chances of the remaining Propaganda rounds | `evaluation.ts` | Partly: since DD-25 review (doc 36) it counts every income before the final round; weights still tuned on a 2-round game |
-| Strategy weights | `FAMILIES` in `scenario-a.ts` | No; tuned on Scenario A pilots |
+| Strategy weights | `FAMILIES` in `roster.ts` | No; tuned on Scenario A pilots |
 | Qualification fixtures (campaign C2, round 1 or 2, named cards) | `qualification.ts` | Partly: C2 fixtures keep the dealt C3 to C5 piles since the DD-25 review (doc 36); positions and named cards are fixed |
 | Coverage mechanics list | `experiment-coverage.ts` (`MECHANICS`) | Yes since 2026-11-13: Village Clearance, Covert Action, ceasefire, Legal Politics, the three later Pivotals, Europe Ban |
 | Space and box names (host zones, Western Cities, Diyarbakir City fallback) | `candidates.ts` | No; map-specific. Cross-Border origins read `crossBorder.origins` since the DD-25 review (doc 36) |

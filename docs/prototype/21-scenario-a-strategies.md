@@ -1,6 +1,6 @@
 # Scenario A automated players and candidate generation
 
-Status: implemented for [the automated playtest plan](20-scenario-a-automated-playtest-build-plan.md), Phases 3 to 5. Requirements: [19 s3 to s6](19-scenario-a-automated-playtest-spec.md).
+Status: implemented for the automated playtest plan (removed), Phases 3 to 5. Requirements: [19 s3 to s6](19-scenario-a-automated-playtest-spec.md).
 
 These strategies are hypotheses about scoring routes. They are not proven strong play. Results apply only to this roster.
 
@@ -10,7 +10,7 @@ These strategies are hypotheses about scoring routes. They are not proven strong
 |---|---|---|
 | Public observation (allowlist, frozen copy) | Trusted runner | `sim/src/cli/player-observation.ts` |
 | Candidates on a public projection, then live validation | Trusted runner | `sim/src/cli/candidates.ts`, `game-runner.ts` |
-| Choice of one candidate ID | Player | `sim/src/cli/strategies/scenario-a.ts` |
+| Choice of one candidate ID | Player | `sim/src/cli/strategies/roster.ts` |
 | Apply, hash, journal | Trusted runner | `sim/src/cli/game-runner.ts` |
 
 - The observation omits the seed, RNG, pile contents and order, set-aside identities and opponent hand identities. It keeps played cards, pile counts and all board state (rules 2.2).
@@ -87,7 +87,7 @@ Value = own margin minus opponent margin (rules 7.3, including 2 per Harm above 
 | P-SURV | Guerrillas, Resources and camps, then conversion | Underground 0.5, Resources 0.4, external 0.15, preservation scaled down as the expected cards before the final Propaganda fall | Converts when the expected cards left fall below half the top part; margins override survival |
 | P-ADAPT | Balanced | Potential 0.7/0.6, Bases 1 | Sampled opponent reply on the best four plans |
 
-All weights are in `FAMILIES` (`scenario-a.ts`) and are recorded in each experiment's `players.json`. No parameter variant was tuned on evaluation seeds.
+All weights are in `FAMILIES` (`roster.ts`) and are recorded in each experiment's `players.json`. No parameter variant was tuned on evaluation seeds.
 
 ## Versions, frozen roster and counters
 
@@ -100,7 +100,7 @@ All weights are in `FAMILIES` (`scenario-a.ts`) and are recorded in each experim
 | S-SPEND@3 | S-POL v2 with a −0.3 weight on unspent Resources | Development attribution probe only |
 | v4 | Designer retune for the full campaign ([37](37-bot-retune-v4.md)): S-POL Legitimacy 0.35; S-CON capped; S-ADAPT own 0.9, opponent 1.15, Bases 3, Guerrillas 1.5, Legitimacy 0.8, capped; P-POL own 1.4, opponent 0.65, Legitimacy 0.3 (against the State); P-EXP own 0.35; PKK families capped. Every family plans 2 moves on 1,800 steps | **Qualified roster, both factions** |
 
-Every version stays registered for paired comparison. Evidence: [report 23](23-scenario-a-automated-playtest-report.md).
+Every version stays registered for paired comparison. Evidence: report 23 (removed).
 
 ## Controls and baselines
 

@@ -34,7 +34,7 @@ The package coordinates and YAML are unchanged. The original 18 IDs, 25 legal li
 
 ## Approved on-map prototype 03
 
-The React board uses manually reshaped schematic areas approved after prototype review, with all 20 domestic borders checked against the existing land-link graph. The original package coordinates, links, country roles and Lake Van source remain unchanged. Shared-border construction is recorded in `docs/ux-overhaul/approved-map-geometry.json`. Malatya is hatched outside-play context between Adıyaman and Elazığ. The existing city asset is clipped inside the city circle at 30% opacity.
+The React board uses manually reshaped schematic areas approved after prototype review, with all 20 domestic borders checked against the existing land-link graph. The original package coordinates, links, country roles and Lake Van source remain unchanged. Shared-border construction is recorded in `docs/ui/ux-overhaul/approved-map-geometry.json`. Malatya is hatched outside-play context between Adıyaman and Elazığ. The existing city asset is clipped inside the city circle at 30% opacity.
 
 ## Proposal 2 v2 atlas (DD-22, 15 November 2026)
 

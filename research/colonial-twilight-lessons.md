@@ -10,7 +10,7 @@
 
 There is also a significant qualification: the earlier comparison missed *The Guerrilla Generation*, published in 2026. Its Peru game addresses emergency institutions, local self-defence forces and leadership vulnerability. It is a serious competing reference. Its final rulebook was inaccessible during this review, so its detailed mechanisms remain unverified. See [GMT's publisher description](https://www.gmtgames.com/p-1032-the-guerrilla-generation.aspx).
 
-Below, **historical findings** refer to the [consolidated claim registry](research/research-final/sources/claim-registry.csv); **proposals** are untested design judgments. Mechanical citations refer to the official [May 2018 rules](https://s3-us-west-2.amazonaws.com/gmtwebsiteassets/colonialtwilight/ColTwi-RULES-LR-May2018.pdf) and [October 2018 playbook](https://s3-us-west-2.amazonaws.com/gmtwebsiteassets/colonialtwilight/ColTwi-PLAYBOOK-Oct2018.pdf).
+Below, **historical findings** refer to the consolidated claim registry (not in this repository); **proposals** are untested design judgments. Mechanical citations refer to the official [May 2018 rules](https://s3-us-west-2.amazonaws.com/gmtwebsiteassets/colonialtwilight/ColTwi-RULES-LR-May2018.pdf) and [October 2018 playbook](https://s3-us-west-2.amazonaws.com/gmtwebsiteassets/colonialtwilight/ColTwi-PLAYBOOK-Oct2018.pdf).
 
 Confidence is High for the checked rule descriptions, Moderate for the adaptation judgments and Low for a definitive ranking of every published COIN game.
 
@@ -71,7 +71,7 @@ Our draft instead ranks **both players' choices**, awards priority to the smalle
 Those differences can change the entire game. They also expose a wording problem: our operations chapter says passing sacrifices initiative, although our initiative procedure can reward passing with priority.
 
 **Recommendation:** build a CT-derived comparison aid and test it against the current procedure. Do not replace the engine, combat ratios and victory system simultaneously. The test must isolate what initiative changes.
-*CT rules 2.3.2–2.3.5; our [operations chapter](research/research-final/package-b-coin-design/08-operations-special-activities.md) and [prototype specification](research/research-final/package-b-coin-design/15-preliminary-design-spec.md).*
+*CT rules 2.3.2–2.3.5; our operations chapter (not in this repository) and prototype specification (not in this repository).*
 
 ## Three worked examples
 
@@ -117,7 +117,7 @@ This would combine assumed ethnic allegiance, automatic recruitment and the remo
 
 ## Where other COIN games offer stronger guidance
 
-The following mechanical references were checked in the repository's [official rules library](research/rules/md/). They are game-design precedents, not historical evidence about Turkey.
+The following mechanical references were checked in the repository's official rules library (not in this repository). They are game-design precedents, not historical evidence about Turkey.
 
 | Reference | Best contribution |
 |---|---|

@@ -1,6 +1,6 @@
 # Scenario A automated playtest specification
 
-Status: implemented and run 2026-11-03 ([report](23-scenario-a-automated-playtest-report.md)). Requested 2026-11-02.
+Status: implemented and run 2026-11-03 (report (removed)). Requested 2026-11-02.
 
 ## 1. Purpose and authority
 
@@ -18,7 +18,7 @@ rules, options and player population.
 | [Game package](../../game-packages/kurdish-coin/0.1.0/) | Exact setup, parameters, cards and formulas |
 | [Build plan](11-build-plan.md), Phase 3a and IC-3a | Existing implementation and human checkpoint |
 | [Research playtest plan](../../research/research-final/package-b-coin-design/12-playtest-plan.md), sections 5, 7 and 9 | Mechanic questions and adversarial screens |
-| [Phase 3a review](15-phase3a-review.md) | Existing evidence and limitations |
+| Phase 3a review (removed) | Existing evidence and limitations |
 
 Current rules govern where older research differs. Harm above six blocks an
 opening victory check but does not forbid a final-margin win. Do not implement
