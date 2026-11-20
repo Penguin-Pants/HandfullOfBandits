@@ -74,7 +74,7 @@ describe("FactionPanel", () => {
     expect(screen.getByText("OK in Diyarbakır City (Amed), Şanlıurfa, Elazığ and 2 more")).toBeTruthy();
   });
 
-  it("E4 track: pointing at a box shows what it leaves open for the other faction and who is 1st next (UC-8)", () => {
+  it("C track: pointing at a box marks the boxes it leaves open for the other faction in its color and names who is 1st next (UC-8)", () => {
     const track: LegalChoices = { ...legal, other: "state", placed: { pkk: null, state: null }, boxes: [
       { box: "event", allowed: true, reason: null, otherMay: ["opSa", "pass"], nextFirst: "pkk" },
       { box: "limitedOp", allowed: true, reason: null, otherMay: ["opOnly", "opSa", "pass"], nextFirst: "pkk" },
@@ -83,24 +83,36 @@ describe("FactionPanel", () => {
       { box: "pass", allowed: true, reason: null, otherMay: ["event", "limitedOp", "opOnly", "opSa", "pass"], nextFirst: "pkk" },
     ] };
     render(<Faction api={mockApi()} legal={track} />);
+    expect(screen.getAllByRole("group", { name: "Eligibility boxes" })).toHaveLength(1);
+    const state = pkkView.factions.find((f) => f.id === "state")?.color ?? "";
+    expect(screen.getByLabelText("Eligibility track").style.getPropertyValue("--next-color")).toBe(state);
     const effect = screen.getByLabelText("Choice effect");
     expect(effect.textContent).toMatch(/Point at a box/);
+    expect(document.querySelectorAll(".open-next")).toHaveLength(0);
     fireEvent.mouseEnter(screen.getByRole("button", { name: "Op Only" }));
     expect(effect.textContent).toBe("If PKK takes Op Only: State may take Limited Op or Pass. Next card State is 1st Eligible.");
-    const theirs = screen.getByRole("group", { name: "State (2nd) boxes" });
-    expect(theirs.querySelector('[aria-label="State Limited Op: open"]')).not.toBeNull();
-    expect(theirs.querySelector('[aria-label="State Event: closed"]')).not.toBeNull();
+    expect(screen.getByLabelText("Limited Op box: open to State").classList.contains("open-next")).toBe(true);
+    expect(screen.getByLabelText("Event box: closed to State").classList.contains("open-next")).toBe(false);
+    expect(screen.getByLabelText("Op Only box: closed to State").textContent).toContain("PKK");
     fireEvent.mouseLeave(screen.getByRole("button", { name: "Op Only" }));
     fireEvent.focus(screen.getByRole("button", { name: "Op + SA" }));
     expect(effect.textContent).toContain("State may take Event, Limited Op or Pass");
-    // The Event box previews its effect from the keyboard too; the Event itself runs from the card panel.
-    const event = screen.getByRole("button", { name: "Event" });
-    expect(event.getAttribute("aria-disabled")).toBe("true");
-    fireEvent.focus(event);
+    fireEvent.focus(screen.getByRole("button", { name: "Event" }));
     expect(effect.textContent).toContain("If PKK takes Event: State may take Op + SA or Pass");
   });
 
-  it("E4 track for the Second Eligible: the 1st faction's cylinder in its box, own boxes as buttons (UC-8)", () => {
+  it("C track: the Event box moves focus to the face-up card, where the Event runs", () => {
+    const card = document.createElement("section");
+    card.id = "event-panel";
+    card.tabIndex = -1;
+    document.body.append(card);
+    render(<Faction api={mockApi()} />);
+    click("Event");
+    expect(document.activeElement).toBe(card);
+    card.remove();
+  });
+
+  it("C track for the Second Eligible: the 1st faction's cylinder in its box, own open boxes in its own color (UC-8)", () => {
     const second: LegalChoices = { ...legal, first: false, other: "pkk", placed: { pkk: "opSa", state: null }, boxes: [
       { box: "event", allowed: true, reason: null, otherMay: null, nextFirst: null },
       { box: "limitedOp", allowed: true, reason: null, otherMay: null, nextFirst: null },
@@ -109,11 +121,25 @@ describe("FactionPanel", () => {
       { box: "pass", allowed: true, reason: null, otherMay: null, nextFirst: null },
     ] };
     render(<Faction api={mockApi()} legal={{ ...second, faction: "state" }} />);
-    const firstRow = screen.getByRole("group", { name: "PKK (1st) boxes" });
-    expect(firstRow.querySelector('[aria-label="PKK Op + SA: taken"]')?.textContent).toContain("PKK");
+    expect(screen.getByLabelText("Op + SA box: closed to State, PKK took it").textContent).toContain("PKK");
+    expect(screen.getByLabelText("Limited Op box: open to State").classList.contains("open-next")).toBe(true);
+    const state = pkkView.factions.find((f) => f.id === "state")?.color ?? "";
+    expect(screen.getByLabelText("Eligibility track").style.getPropertyValue("--next-color")).toBe(state);
     expect(screen.getByLabelText("Choice effect").textContent).toBe("PKK took Op + SA: State may take Event, Limited Op or Pass.");
     expect(screen.getByRole("button", { name: "Op Only" }).getAttribute("aria-disabled")).toBe("true");
     expect(screen.getByRole("button", { name: "Limited Op" }).getAttribute("aria-disabled")).toBeNull();
+  });
+
+  it("PKK as 2nd Eligible gets the bars in PKK color", () => {
+    const second: LegalChoices = { ...legal, first: false, other: "state", placed: { state: "limitedOp", pkk: null } };
+    render(<Faction api={mockApi()} legal={second} />);
+    const pkk = pkkView.factions.find((f) => f.id === "pkk")?.color ?? "";
+    expect(screen.getByLabelText("Eligibility track").style.getPropertyValue("--next-color")).toBe(pkk);
+  });
+
+  it("has one Pass control: the Pass box", () => {
+    render(<Faction api={mockApi()} />);
+    expect(screen.getAllByRole("button", { name: "Pass" })).toHaveLength(1);
   });
 
   it("keeps an Op open in Op + SA, since a preceding SA may make it legal", () => {
@@ -247,7 +273,7 @@ describe("EventPanel", () => {
     const validate = vi.fn((_id: string, command: AnyCommand) => Promise.resolve(engine.validate(kurdish.ruleset, state, command)));
     const onCommit = vi.fn();
     render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="pkk" eventOpen onCommit={onCommit} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
-    click("Execute shaded (S)");
+    click("Execute shaded");
     fireEvent.click(await screen.findByRole("button", { name: "1. KDP Zone to PUK Zone" }));
     fireEvent.click(await screen.findByRole("button", { name: "2" }));
     expect(await screen.findByText(/underground.*guerrilla/)).toBeTruthy();
@@ -267,7 +293,7 @@ describe("EventPanel", () => {
     );
     const onCommit = vi.fn();
     render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={onCommit} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
-    fireEvent.click(screen.getByRole("button", { name: "Execute unshaded (U)" }));
+    fireEvent.click(screen.getByRole("button", { name: "Execute unshaded" }));
     fireEvent.click(await screen.findByRole("button", { name: "2. Şırnak" }));
     await waitFor(() => { expect(onCommit).toHaveBeenCalledWith({ type: "ChooseEvent", faction: "state", side: "unshaded", chooseMoveFaces: true, answers: ["Şırnak"] }); });
   });
@@ -290,7 +316,7 @@ describe("EventPanel", () => {
       );
     }
     render(<Harness />);
-    click("Execute unshaded (U)");
+    click("Execute unshaded");
     expect(await screen.findByText(/Plan the free Rally, or skip it/)).toBeTruthy();
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Submit plan" }).disabled).toBe(true);
     click("map sirnak");
@@ -317,7 +343,7 @@ describe("EventPanel", () => {
       );
     }
     render(<Harness />);
-    click("Execute unshaded (U)");
+    click("Execute unshaded");
     expect(await screen.findByText(/Click spaces on the map/)).toBeTruthy();
     expect(screen.queryByRole("checkbox")).toBeNull();
     click("map sirnak");
@@ -332,14 +358,14 @@ describe("EventPanel", () => {
     const question = { kind: "count" as const, prompt: "How many guards? (0 to 2)", options: [], min: 0, max: 2, space: "hakkari" };
     const validate = vi.fn((): Promise<ValidationResult> => Promise.resolve({ ok: false, violations: [{ code: "needsAnswer", message: "How many", ruleRef: "DK-003", location: null, question }], warnings: [], preview: { effects: [] } }));
     render(<EventPanel api={mockApi({ validate })} sessionId="S" view={view} faction="state" eventOpen onCommit={vi.fn()} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
-    click("Execute unshaded (U)");
+    click("Execute unshaded");
     expect(await screen.findByText(/Hakkari: How many guards/)).toBeTruthy();
   });
 
   it("greys Execute with a reason when the Event box is closed", () => {
     const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("state"), "DK-014"));
     render(<EventPanel api={mockApi()} sessionId="S" view={view} faction="state" eventOpen={false} onCommit={vi.fn()} forms={[]} plan={emptyPlan} dispatch={vi.fn()} />);
-    const button = screen.getByRole("button", { name: "Execute unshaded (U)" });
+    const button = screen.getByRole("button", { name: "Execute unshaded" });
     expect((button as HTMLButtonElement).disabled).toBe(true);
     expect(button.getAttribute("title")).toMatch(/not open/);
   });

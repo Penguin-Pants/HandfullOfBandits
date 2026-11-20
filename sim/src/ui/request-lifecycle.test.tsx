@@ -4,6 +4,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { turnOf } from "../../test/board.ts";
 import { kurdish } from "../../test/kurdish-package.ts";
 import { mockApi } from "../../test/ui/mock-api.ts";
+import { menu } from "../../test/ui/menu.ts";
 import { boardView } from "../server/view.ts";
 import type { BoardView, Head, NoteInput, ReviewRow, SessionRow } from "./api.ts";
 import { NoteBar } from "./notes/NoteBar.tsx";
@@ -31,7 +32,7 @@ it("preserves edits during a note save and refuses overlapping submissions", asy
   const pending = deferred<string>();
   const onSave = vi.fn(() => pending.promise);
   render(<NoteBar categories={[]} anchor={anchor} focus={focus} onSave={onSave} />);
-  fireEvent.click(screen.getByRole("button", { name: "Note (N)" }));
+  fireEvent.keyDown(window, { key: "n" });
   const box = screen.getByLabelText<HTMLTextAreaElement>("Note text");
   fireEvent.change(box, { target: { value: "submitted draft" } });
   fireEvent.keyDown(box, { key: "Enter" });
@@ -45,12 +46,12 @@ it("preserves edits during a note save and refuses overlapping submissions", asy
 it("does not clear a reopened note when an earlier save completes", async () => {
   const pending = deferred<string>();
   render(<NoteBar categories={[]} anchor={anchor} focus={focus} onSave={() => pending.promise} />);
-  fireEvent.click(screen.getByRole("button", { name: "Note (N)" }));
+  fireEvent.keyDown(window, { key: "n" });
   const box = screen.getByLabelText("Note text");
   fireEvent.change(box, { target: { value: "first" } });
   fireEvent.keyDown(box, { key: "Enter" });
   fireEvent.keyDown(box, { key: "Escape" });
-  fireEvent.click(screen.getByRole("button", { name: "Note (N)" }));
+  fireEvent.keyDown(window, { key: "n" });
   fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "second" } });
   await act(async () => { pending.resolve("N1"); await pending.promise; });
   expect(screen.getByLabelText<HTMLTextAreaElement>("Note text").value).toBe("second");
@@ -59,7 +60,7 @@ it("does not clear a reopened note when an earlier save completes", async () => 
 it("shows a note save error, retains the draft and permits retry", async () => {
   const onSave = vi.fn().mockRejectedValueOnce(new Error("save unavailable")).mockResolvedValue("N1");
   render(<NoteBar categories={[]} anchor={anchor} focus={focus} onSave={onSave} />);
-  fireEvent.click(screen.getByRole("button", { name: "Note (N)" }));
+  fireEvent.keyDown(window, { key: "n" });
   const box = screen.getByLabelText<HTMLTextAreaElement>("Note text");
   fireEvent.change(box, { target: { value: "keep me" } });
   fireEvent.keyDown(box, { key: "Enter" });
@@ -79,7 +80,7 @@ it.each(["legal", "categories"] as const)("recovers a failed %s load and offers 
   fireEvent.click(screen.getByRole("button", { name: "Home" }));
   expect(onExit).toHaveBeenCalledOnce();
   fireEvent.click(screen.getByRole("button", { name: "Retry" }));
-  await screen.findByRole("button", { name: "Note (N)" });
+  await screen.findByRole("menuitem", { name: "Game" });
   expect(failing).toHaveBeenCalledTimes(2);
 });
 
@@ -113,10 +114,10 @@ it("never shows an old board under the current state hash", async () => {
   const stateView = vi.fn().mockImplementationOnce(() => old.promise).mockResolvedValue({ ...view, status: { ...view.status, cardIndex: 99 } });
   render(<StateViewer api={mockApi({ stateView })} sessionId="S" before="before" after="after" onBack={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "Before" }));
-  await screen.findByText("Card 99");
+  await screen.findByText(/Card 99\b/);
   await act(async () => { old.resolve(view); await old.promise; });
-  expect(screen.getByText("Card 99")).toBeTruthy();
-  expect(screen.queryByText("Card 0")).toBeNull();
+  expect(screen.getByText(/Card 99\b/)).toBeTruthy();
+  expect(screen.queryByText(/Card 0\b/)).toBeNull();
 });
 
 it("can retry a failed state view", async () => {
@@ -124,14 +125,15 @@ it("can retry a failed state view", async () => {
   render(<StateViewer api={mockApi({ stateView })} sessionId="S" before={null} after="after" onBack={vi.fn()} />);
   expect((await screen.findByRole("alert")).textContent).toContain("view unavailable");
   fireEvent.click(screen.getByRole("button", { name: "Retry" }));
-  await waitFor(() => { expect(screen.getByText("Card 0")).toBeTruthy(); });
+  await waitFor(() => { expect(screen.getByText(/Card 0\b/)).toBeTruthy(); });
 });
 
 it("keeps a new note draft when the post-save refresh fails", async () => {
   const saved = deferred<{ annotationId: string }>();
   const history = vi.fn().mockResolvedValueOnce([]).mockRejectedValue(new Error("refresh unavailable"));
   render(<Play api={mockApi({ session, legal, history, annotate: () => saved.promise })} sessionId="S" />);
-  fireEvent.click(await screen.findByRole("button", { name: "Note (N)" }));
+  await screen.findByRole("menuitem", { name: "Game" });
+    menu("Game", "Note");
   const box = screen.getByLabelText("Note text");
   fireEvent.change(box, { target: { value: "first" } });
   fireEvent.keyDown(box, { key: "Enter" });

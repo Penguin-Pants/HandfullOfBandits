@@ -1,7 +1,8 @@
 // Note bar (07 s2 to s5): `N` opens it anywhere outside a text field; type text, `#category` or
 // Alt+1 to Alt+9; Enter saves; Esc cancels; Tab cycles the anchor. It captures keys only while
-// focused, so plan entry keeps its keys (11 P2-16 risk). Closed, it is one button (UC-4).
-import { useEffect, useRef, useState } from "react";
+// focused, so plan entry keeps its keys (11 P2-16 risk). Closed, it shows only save status; the
+// Game menu opens it through `handle`.
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import type { CategoryRow, NoteInput } from "../api.ts";
 import { hashCategories, type defaultAnchor } from "./anchor.ts";
 
@@ -13,9 +14,11 @@ export interface NoteBarProps {
   readonly anchor: () => ReturnType<typeof defaultAnchor>;
   readonly focus: () => NoteInput["focus"];
   readonly onSave: (note: NoteInput) => Promise<string>;
+  /** `open()` does what N does: open at the current anchor, or focus the open note. */
+  readonly handle?: Ref<{ readonly open: () => void }>;
 }
 
-export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
+export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarProps) {
   const input = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState<{ anchor: ReturnType<typeof defaultAnchor>; focus: NoteInput["focus"]; executedId: string | null } | null>(null);
   const [text, setText] = useState("");
@@ -34,21 +37,26 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
     setOpen({ anchor: at, focus: focus(), executedId: at.actionId });
   };
 
+  /** Already open: take focus back; just opened: the effect focuses it. */
+  const openNote = (): void => {
+    start();
+    input.current?.focus();
+  };
+  useImperativeHandle(handle, () => ({ open: openNote }));
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       const t = e.target as HTMLElement | null;
       if (t !== null && ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName)) return;
       if (e.key === "n" || e.key === "N") {
         e.preventDefault();
-        start();
-        input.current?.focus(); // already open: take focus back; just opened: the effect focuses it
+        openNote();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => { window.removeEventListener("keydown", onKey); };
   }, [anchor, focus]);
 
-  // Collapsed to a button while closed (UC-4); focus the text box once it renders.
+  // Focus the text box once it renders.
   const isOpen = open !== null;
   useEffect(() => {
     if (isOpen) input.current?.focus();
@@ -108,14 +116,12 @@ export function NoteBar({ categories, anchor, focus, onSave }: NoteBarProps) {
   };
 
   if (open === null) {
+    if (saved === null && !saving && error === null) return null;
     return (
       <footer className="note-closed" aria-label="Note bar">
         {saved !== null && <strong role="status">{saved}</strong>}
         {saving && <p role="status">Saving note…</p>}
         {error !== null && <p role="alert">Note not saved: {error}</p>}
-        <button type="button" onClick={start}>
-          Note (N)
-        </button>
       </footer>
     );
   }

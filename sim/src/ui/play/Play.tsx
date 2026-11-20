@@ -1,5 +1,7 @@
-// Play screen (08 s3): status bar, board, event or Propaganda panel, faction panel.
+// Play screen (08 s3; UI simplification): menu bar with the status line, the tracks and forces
+// strip, the board, and the side panel with the game actions (faction, event or Propaganda panel).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import { MenuBar, type Menu } from "../common/MenuBar.tsx";
 import type { AnyCommand, Api, BoardView, CategoryRow, Head, HistoryItem, LegalChoices, RuleLookup, SessionRow } from "../api.ts";
 import { createFocusStore } from "../focus-store.ts";
 import { Help } from "../help/Help.tsx";
@@ -10,29 +12,31 @@ import { defaultAnchor } from "../notes/anchor.ts";
 import { EndSession } from "../notes/EndSession.tsx";
 import { NoteBar } from "../notes/NoteBar.tsx";
 import { Legend, SpaceDetail } from "../board/Board.tsx";
-import { MapCanvas } from "../board/MapCanvas.tsx";
+import { MAP_MODES, MapCanvas, type MapControls, type MapMode } from "../board/MapCanvas.tsx";
 import { withoutHidden } from "../board/markers.tsx";
 import { words } from "../common/names.ts";
-import { CardTable } from "../cards/CardTable.tsx";
-import { EventPanel } from "../event/EventPanel.tsx";
+import { ActiveCards } from "../cards/ActiveCards.tsx";
+import { CardFace, EventPanel } from "../event/EventPanel.tsx";
 import { PivotalPanel } from "../pivotal/PivotalPanel.tsx";
 import { FactionPanel } from "../faction/FactionPanel.tsx";
 import { arrowsOf, emptyPlans, plansReducer, type PlanEvent } from "../faction/plan.ts";
 import { PropagandaPanel } from "../propaganda/PropagandaPanel.tsx";
 import { SignalPrompt, signalEnabled } from "../propaganda/SignalPrompt.tsx";
-import { ForcesBar } from "../status/Forces.tsx";
+import { Forces, ForcesBar } from "../status/Forces.tsx";
 import { StatusBar } from "../status/StatusBar.tsx";
 import { TrackCard } from "../status/TrackCard.tsx";
 import { skipQuestion } from "../propaganda/phases.ts";
-import { FullscreenButton } from "./FullscreenButton.tsx";
+import { useFullscreen } from "./fullscreen.ts";
 import { BotWhy } from "../history/BotWhy.tsx";
-import { BOT_DELAYS, BotSpeed, botMoves, savedBotSpeed } from "./BotSpeed.tsx";
+import { BOT_DELAYS, BOT_SPEED_LABELS, BOT_SPEEDS, botMoves, saveBotSpeed, savedBotSpeed } from "./bot-speed.ts";
 
 export interface PlayProps {
   readonly api: Api;
   readonly sessionId: string;
+  /** Screen items (Home, Feedback review, ...) at the top of the Game menu. */
+  readonly screens?: Menu["items"];
+  /** After End session. */
   readonly onExit?: () => void;
-  readonly onReview?: () => void;
   readonly onOpenState?: (before: string | null, after: string) => void;
 }
 
@@ -74,7 +78,7 @@ function humanOf(seats: Readonly<Record<string, string>>): string | null {
 /** The click-to-open space detail panel. Off: the map hover text gives the same data (see spaceTooltip). */
 const SPACE_INSPECTOR: boolean = false;
 
-export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
+export function Play({ api, sessionId, screens = [], onExit, onOpenState }: PlayProps) {
   const [data, setData] = useState<{ session: SessionRow; head: Head; botToAct?: string | null; botExtends?: boolean } | null>(null);
   // Bot seat (audit Plan 2 S1): the bot State part a human PKK extends, the head the bot last
   // stepped from (one request per head) and a stop while Undo or a branch changes the head.
@@ -110,15 +114,20 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const [showHelp, setShowHelp] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [showTracks, setShowTracks] = useState(true);
+  const [showForces, setShowForces] = useState(false);
   const [mapOnly, setMapOnly] = useState(false);
-  const [actionsHidden, setActionsHidden] = useState(false);
-  const actionToggle = useRef<HTMLButtonElement>(null);
-  const panelsToggle = useRef<HTMLButtonElement>(null);
+  const [mode, setMode] = useState<MapMode>("full");
+  const mapControls = useRef<MapControls>(null);
+  const noteBar = useRef<{ readonly open: () => void }>(null);
+  const fullscreen = useFullscreen();
   const sidebar = useRef<HTMLElement>(null);
+  /** Map only hides the side panel; focus inside it moves to the page so keys keep working. */
   const toggleMapOnly = (): void => {
-    if (!mapOnly && sidebar.current?.contains(document.activeElement)) panelsToggle.current?.focus();
+    if (!mapOnly && sidebar.current?.contains(document.activeElement)) (document.activeElement as HTMLElement).blur();
     setMapOnly(!mapOnly);
   };
+  /** The setup head the UI last revealed the first card from, so it sends one Advance per head. */
+  const revealed = useRef<string | null>(null);
   // Face-down markers show by default in solo play (DEC-23); the toggle hides them (P4-07).
   const [hideCovert, setHideCovert] = useState(false);
   const [ending, setEnding] = useState(false);
@@ -181,6 +190,15 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     return () => { clearTimeout(timer); };
   }, [api, sessionId, data, botToAct, load, speed, botError]);
 
+  // The first card is revealed without a click, like every later card (engine turn.ts). Undo never
+  // goes back past it (see `undoable`), so a reveal happens once per setup head.
+  const setupHead = data !== null && legal !== null && data.head.view.status.phase === "setup" && legal.faction === null && legal.advance === true ? `${data.head.actionId}:${data.head.stateHash}` : null;
+  useEffect(() => {
+    if (setupHead === null || revealed.current === setupHead) return;
+    revealed.current = setupHead;
+    void commit({ type: "Advance" });
+  }, [setupHead]);
+
   const commit = async (command: AnyCommand): Promise<void> => {
     if (data === null) return;
     setError(null);
@@ -222,6 +240,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     return () => { window.removeEventListener("keydown", onKey); };
   });
 
+  // The session start and the first card reveal are both setup actions: nothing before play to undo.
+  const undoable = history.some((h) => h.action.status !== "undone" && h.action.phase !== "setup");
   const pathIds = useMemo(() => history.filter((h) => h.action.status !== "undone").map((h) => h.action.action_id), [history]);
   const loadFailure = loadError === null ? null : <div><p role="alert">Could not load session: {loadError}</p><button type="button" onClick={() => void load()}>Retry</button><button type="button" onClick={onExit}>Home</button></div>;
   if (data === null || legal === null) return <div className="screen">{loadFailure ?? <p>Loading…</p>}</div>;
@@ -239,8 +259,10 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const anchor = (): ReturnType<typeof defaultAnchor> =>
     defaultAnchor({ lastActionId: last.current.id, lastActionAt: last.current.at, now: Date.now(), draft: draft.current, selectedSpace: focusStore.get().selectedSpace });
   const undo = async (): Promise<void> => {
+    if (!undoable) return;
     // With a bot seat, Undo goes back past the bot's actions to the human's last action.
-    const committed = history.filter((h) => h.action.status !== "undone").reverse();
+    // Setup actions (session start, first card reveal) are never undone: the walk stops before them.
+    const committed = history.filter((h) => h.action.status !== "undone" && h.action.phase !== "setup").reverse();
     // A bot-only action has bot records and no human part; a joint action the human completed stops the walk.
     const botOnly = (h: HistoryItem): boolean => (h.bot ?? []).length > 0 && !(h.bot ?? []).some((r) => r.humanJoined === true);
     let steps = humanOf(seatsOf(data.session)) === null ? 1 : committed.findIndex((h) => !botOnly(h)) + 1;
@@ -279,8 +301,10 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
       setError(e instanceof Error ? e.message : String(e));
     } finally {
       rewinding.current = false;
-      // A branch can return to a head the bot already stepped from: let it act there again.
+      // A branch can return to a head the bot already stepped from, or to the setup head the UI
+      // already revealed from: let each act there again.
       stepped.current = null;
+      revealed.current = null;
       await load();
     }
   };
@@ -295,47 +319,63 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const board = hideCovert ? withoutHidden(view) : view;
   const detail = board.spaces.find((s) => s.id === focused);
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
-  const mapTools = (
-              <div className="row">
-              {Object.keys(seats).length > 0 && <BotSpeed value={speed} onChange={setSpeed} />}
-              <button type="button" aria-pressed={showKey} onClick={() => { setShowKey(!showKey); }}>
-                Key
-              </button>
-              <button type="button" aria-pressed={showTracks} onClick={() => { setShowTracks(!showTracks); }}>
-                Tracks
-              </button>
-              <button type="button" aria-pressed={hideCovert} onClick={() => { setHideCovert(!hideCovert); }}>
-                Hide Covert
-              </button>
-              <button ref={actionToggle} type="button" aria-controls="action-panels" aria-expanded={!actionsHidden && !mapOnly} onClick={() => {
-                actionToggle.current?.focus();
-                setActionsHidden(!actionsHidden && !mapOnly);
-                if (mapOnly) setMapOnly(false);
-              }}>{actionsHidden || mapOnly ? "Show actions" : "Hide actions"}</button>
-              <FullscreenButton />
-              <button ref={panelsToggle} type="button" aria-pressed={mapOnly} onClick={toggleMapOnly}>
-                {mapOnly ? "Show panels (M)" : "Map only (M)"}
-              </button>
-              </div>
-  );
-  // One view (UC-3, UC-4): map with the forces bar below it on the left, status at the top of
-  // the scrolling right column, note bar at the bottom. Help, History and End session
-  // overlay. Map focus mode (M) hides the status bar and the right column.
+  const check = (label: string, checked: boolean, toggle: () => void, shortcut?: string): Menu["items"][number] => ({ label, checked, onSelect: toggle, ...(shortcut === undefined ? {} : { shortcut }) });
+  const menus: Menu[] = [
+    { label: "Game", items: [
+      ...screens,
+      ...(screens.length > 0 ? ["separator" as const] : []),
+      { label: "Undo", shortcut: "Ctrl+Z", disabled: !undoable, onSelect: () => void undo() },
+      { label: "History", shortcut: "H", onSelect: () => { setShowHistory(!showHistory); } },
+      { label: "Note", shortcut: "N", onSelect: () => { noteBar.current?.open(); } },
+      "separator",
+      { label: "End session", onSelect: () => { setEnding(true); } },
+    ] },
+    { label: "View", items: [
+      check("Map only", mapOnly, toggleMapOnly, "M"),
+      { label: fullscreen.active ? "Exit fullscreen" : "Fullscreen", disabled: fullscreen.pending, onSelect: () => void fullscreen.toggle() },
+      "separator",
+      check("Tracks", showTracks, () => { setShowTracks(!showTracks); }),
+      check("Forces table", showForces, () => { setShowForces(!showForces); }),
+      check("Key", showKey, () => { setShowKey(!showKey); }),
+    ] },
+    { label: "Map", items: [
+      ...MAP_MODES.map((m) => ({ label: words(m), radio: true, checked: mode === m, onSelect: () => { setMode(m); } })),
+      "separator",
+      { label: "Zoom in", onSelect: () => { mapControls.current?.zoomIn(); } },
+      { label: "Zoom out", onSelect: () => { mapControls.current?.zoomOut(); } },
+      { label: "Fit map", onSelect: () => { mapControls.current?.fit(); } },
+      "separator",
+      check("Hide Covert", hideCovert, () => { setHideCovert(!hideCovert); }),
+    ] },
+    ...(Object.keys(seats).length > 0 ? [{ label: "Bot", items: BOT_SPEEDS.map((b) => ({ label: BOT_SPEED_LABELS[b], radio: true, checked: speed === b, onSelect: () => { saveBotSpeed(b); setSpeed(b); } })) }] : []),
+    { label: "Help", items: [{ label: "Help and keys", shortcut: "?", onSelect: () => { setShowHelp(!showHelp); } }] },
+  ];
+  // One view (UC-3, UC-4): menu bar with the status line, the tracks and forces strip, the map and
+  // the side panel with the game actions. Help, History and End session overlay. Map only (M)
+  // hides the side panel and the forces.
   return (
-    <div className={`screen play-screen${mapOnly ? " map-only" : ""}${actionsHidden ? " actions-hidden" : ""}`}>
+    <div className={`screen play-screen${mapOnly ? " map-only" : ""}`}>
+      <MenuBar menus={menus} status={<StatusBar view={view} />} />
+      {fullscreen.message !== null && <p className="fullscreen-message" role="status">{fullscreen.message}</p>}
       {showHelp && (
         <div className="overlay">
           <Help onClose={() => { setShowHelp(false); }} view={view} forms={legal.forms ?? []} />
         </div>
       )}
+      {(showTracks || !mapOnly) && (
+        <div className="status-strip">
+          {showTracks && <TrackCard view={view} />}
+          {!mapOnly && <ForcesBar view={view} />}
+        </div>
+      )}
+      {showForces && <div className="forces-row"><Forces view={view} /></div>}
       <div className="play">
         <div className="play-main">
           {loadFailure}
           {error !== null && <p className="bad">{error}</p>}
           <div className="panel map-panel">
-            {showTracks && <TrackCard view={view} />}
             <div className="map-body">
-            <MapCanvas tools={mapTools} eligible={plans.active === "event" ? eventTargets : factionTargets} view={board} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={planArrows} lastMoves={lastMoves} />
+            <MapCanvas controls={mapControls} mode={mode} eligible={plans.active === "event" ? eventTargets : factionTargets} view={board} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={planArrows} lastMoves={lastMoves} />
             </div>
             {SPACE_INSPECTOR && detail !== undefined && <div className="space-inspector" aria-live="polite"><button type="button" aria-label="Close space details" onClick={() => {setFocused(null);}}>×</button><SpaceDetail space={detail} tracks={view.status.tracks} /><p className="hint">{(legal.actions ?? []).filter(a => a.locations.includes(detail.id)).map(a => a.label).join(" · ") || "No standalone operation target listed for the acting faction."} Complete plans are checked by the rules engine.</p></div>}
             {showKey && (
@@ -344,19 +384,16 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
               </div>
             )}
           </div>
-          {!mapOnly && <ForcesBar view={view} />}
         </div>
         <aside ref={sidebar} className="side" aria-label="Side panel" hidden={mapOnly}>
-          {!mapOnly && <StatusBar view={view}>
-            <button type="button" onClick={onExit}>Home</button>
-            <button type="button" onClick={onReview}>Feedback review</button>
-          </StatusBar>}
-          <div id="action-panels" className="action-panels" hidden={actionsHidden}>
-          <section className="panel next-task" aria-label="Next action">
-            <span className="eyebrow">{legal.faction === null ? words(view.status.phase) : `${words(legal.faction)} · ${legal.first === true ? "First" : "Second"} Eligible`}</span>
-            <h2>{view.status.pending?.prompt ?? (view.status.ended !== null ? "Game complete" : view.status.phase === "setup" ? "Reveal the first card" : legal.advance === true ? "Advance the sequence" : "Choose your action")}</h2>
-            <p>{legal.faction === null ? "Follow the card or phase instructions below." : "Choose an eligibility box, build a plan on the map and check its preview."}</p>
-          </section>
+          {legal.faction === null && (
+            <section className="panel next-task" aria-label="Next action">
+              <span className="eyebrow">{words(view.status.phase)}</span>
+              <h2>{view.status.pending?.prompt ?? (view.status.ended !== null ? "Game complete" : view.status.phase === "setup" ? "Revealing the first card" : legal.advance === true ? "Advance the sequence" : "Follow the card or phase instructions below")}</h2>
+              {/* The automatic reveal runs once per head; after a failure the player starts it again. */}
+              {view.status.phase === "setup" && error !== null && <button type="button" onClick={() => void commit({ type: "Advance" })}>Retry the first card</button>}
+            </section>
+          )}
           {botTurn && (
             <section className="panel" aria-label="Bot turn">
               <p>{words(botToAct)} bot ({seats[botToAct] ?? ""}) is choosing…</p>
@@ -369,7 +406,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
             </section>
           )}
           {!botTurn && legal.faction !== null && <FactionPanel onTargets={setFactionTargets} api={api} sessionId={sessionId} view={view} legal={legal} plan={plans.faction} dispatch={toFaction} onCommit={(c) => void commit(c)} onDraft={(c) => { draft.current = c; }} />}
-          <CardTable view={view} onReveal={legal.faction === null && view.status.phase === "setup" ? () => void commit({ type: "Advance" }) : null} />
+          {(botTurn || view.status.phase === "pivotal" || view.status.phase === "propaganda") && <CardFace view={view} />}
           {botTurn ? null : view.status.phase === "pivotal" ? <PivotalPanel key={view.status.pending?.id} view={view} onCommit={c => void commit(c)} api={api} sessionId={sessionId} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onTargets={setEventTargets} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} /> : view.status.phase === "propaganda" ? (
             <>
               {signalEnabled() && <SignalPrompt api={api} sessionId={sessionId} view={view} headActionId={data.head.actionId} pathIds={pathIds} focus={focusStore.get()} />}
@@ -378,22 +415,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           ) : (
             <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
           )}
+          <ActiveCards view={view} />
           <LastAction item={lastItem} view={view} onRule={onRule} />
-          <div className="row">
-            <button type="button" onClick={() => { setShowHelp(!showHelp); }}>
-              Help (?)
-            </button>
-            <button type="button" onClick={() => { setShowHistory(!showHistory); }}>
-              History (H)
-            </button>
-            <button type="button" onClick={() => void undo()}>
-              Undo (Ctrl+Z)
-            </button>
-            <button type="button" onClick={() => { setEnding(true); }}>
-              End session
-            </button>
-          </div>
-          </div>
         </aside>
       </div>
       {ending && (
@@ -402,6 +425,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
         </div>
       )}
       <NoteBar
+        handle={noteBar}
         categories={categories}
         anchor={anchor}
         focus={() => focusStore.get()}

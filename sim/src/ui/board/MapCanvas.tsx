@@ -1,5 +1,5 @@
 import { ATLAS } from "./atlas-data.ts";
-import { useState, type ReactNode } from "react";
+import { useImperativeHandle, useState, type Ref } from "react";
 import { presentation } from "./layout.ts";
 import { usesAtlas } from "./region.ts";
 import { Board, type BoardProps } from "./Board.tsx";
@@ -7,8 +7,14 @@ import { isEuropeTrack } from "../status/tracks.ts";
 
 const MAX_ZOOM = 4;
 
-/** Local camera and layer controls never alter game state or operation plans. */
-export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: ReactNode}) {
+export type MapMode = "full" | "forces" | "political" | "terrain";
+export const MAP_MODES: readonly MapMode[] = ["full", "forces", "political", "terrain"];
+/** Camera commands for the Map menu. */
+export interface MapControls { readonly zoomIn: () => void; readonly zoomOut: () => void; readonly fit: () => void }
+
+/** Local camera and layer controls never alter game state or operation plans. The display mode
+ * comes from the Map menu; the zoom group on the map and `controls` move the camera. */
+export function MapCanvas({mode = "full", controls, ...props}: BoardProps & {readonly mode?: MapMode; readonly controls?: Ref<MapControls>}) {
   const geographic = usesAtlas(props.view.spaces);
   const centreX = geographic ? ATLAS.width / 2 : 500;
   const centreY = geographic ? ATLAS.height / 2 : 350;
@@ -20,7 +26,6 @@ export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: Reac
     const scale = Math.min((window.innerWidth - side - 14) / (2*centreX), (window.innerHeight - 200) / (2*centreY));
     return {zoom:Math.min(MAX_ZOOM,Math.max(1,Math.ceil(4 / scale) / 4)),x:0,y:0};
   });
-  const [mode, setMode] = useState<"full" | "forces" | "political" | "terrain">("full");
   // The view never shows more than the board: the centre may move only while zoomed in.
   const keep = (c: {zoom: number; x: number; y: number}): typeof c => {
     const room = 1 - 1 / c.zoom;
@@ -32,13 +37,13 @@ export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: Reac
     const k = 1 - c.zoom / next;
     return next === c.zoom ? c : keep({zoom:next,x:c.x+at.x*k,y:c.y+at.y*k});
   });};
+  const fit = (): void => {setCamera({zoom:1,x:0,y:0});};
+  useImperativeHandle(controls, () => ({zoomIn: () => {zoom(.25);}, zoomOut: () => {zoom(-.25);}, fit}));
   return <>
-    <div className="map-navigation" aria-label="Map navigation">
-      <strong className="board-title">SOUTHEASTERN TURKEY <span>1984–1999</span></strong>
-      <div className="row" role="group" aria-label="Display mode">
-        {(["full","forces","political","terrain"] as const).map(m => <button key={m} type="button" aria-pressed={mode === m} onClick={() => {setMode(m);}}>{m[0]?.toUpperCase()}{m.slice(1)}</button>)}
-      </div>
-      <div className="row">
+    <div className="map-window">
+      <Board {...props} onReveal={id => {const space=props.view.spaces.find(s => s.id === id); if (space !== undefined) setCamera(c => c.zoom <= 1 ? c : keep({...c,x:anchor(space).x+anchor(space).width/2-centreX,y:anchor(space).y+anchor(space).height/2-centreY}));}} mode={mode} camera={camera} onZoom={(dir,at) => {zoom(dir*.25,at);}} onPan={(dx,dy) => {setCamera(c => keep({...c,x:c.x+dx,y:c.y+dy}));}} />
+      {props.eligible != null && <strong className="map-targets" role="status">{props.eligible.length} candidate targets · Outlined on map · Validate the full plan</strong>}
+      <div className="map-zoom" role="group" aria-label="Map navigation">
         <label className="find-space"><span>Find space</span> <select aria-label="Find space" value="" onChange={e => {
           const space = props.view.spaces.find(s => s.id === e.target.value);
           if (space === undefined) return;
@@ -48,13 +53,8 @@ export function MapCanvas({tools, ...props}: BoardProps & {readonly tools?: Reac
         <button type="button" aria-label="Zoom out" disabled={camera.zoom <= 1} onClick={() => {zoom(-.25);}}>−</button>
         <output aria-label="Map zoom">{Math.round(camera.zoom*100)}%</output>
         <button type="button" aria-label="Zoom in" disabled={camera.zoom >= MAX_ZOOM} onClick={() => {zoom(.25);}}>+</button>
-        <button type="button" onClick={() => {setCamera({zoom:1,x:0,y:0});}}>Fit map</button>
+        <button type="button" onClick={fit}>Fit map</button>
       </div>
-      {tools}
     </div>
-    <div className="map-window">
-      <Board {...props} onReveal={id => {const space=props.view.spaces.find(s => s.id === id); if (space !== undefined) setCamera(c => c.zoom <= 1 ? c : keep({...c,x:anchor(space).x+anchor(space).width/2-centreX,y:anchor(space).y+anchor(space).height/2-centreY}));}} mode={mode} camera={camera} onZoom={(dir,at) => {zoom(dir*.25,at);}} onPan={(dx,dy) => {setCamera(c => keep({...c,x:c.x+dx,y:c.y+dy}));}} />
-    </div>
-    <div className="map-caption">{props.eligible != null && <strong>{props.eligible.length} candidate targets · Outlined on map · Validate the full plan</strong>}{mode === "terrain" ? "Terrain view · Select any space to inspect its live state." : "Right-click or long press for space details · Shift-click to add · Drag pieces to plan a move"}<span>Wheel to zoom · Drag to pan · Arrow keys pan</span></div>
   </>;
 }

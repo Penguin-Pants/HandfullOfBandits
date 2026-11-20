@@ -1,8 +1,9 @@
-// Eligibility track, design E4 (UC-8): the 1st Eligible faction's row of boxes over the 2nd's,
-// each faction's cylinder in the box it took. The 1st Eligible points at a box (hover or focus) to
-// see which boxes stay open to the other faction and who is 1st on the next card (05 s2.3, s2.4);
-// one line says the effect in words. The 2nd Eligible sees the box the 1st took and its own choices.
-import { useState, type ReactNode } from "react";
+// Eligibility track, design C (UI simplification; UC-8): one shared row of the five boxes, as on
+// the printed board. Each faction's cylinder sits in the box it took or is pointing at. A bar in the
+// 2nd Eligible faction's color marks each box open to it: for the 1st Eligible, the boxes its
+// pointed or picked choice leaves open (05 s2.3); for the 2nd, its own open boxes. One line says
+// the effect in words and names the 1st Eligible on the next card (05 s2.4), so no cue is color only.
+import { useState, type CSSProperties } from "react";
 import type { BoardView, LegalChoices } from "../api.ts";
 import { words } from "../common/names.ts";
 
@@ -24,57 +25,13 @@ export function EligibilityTrack({ legal, view, picked, onPick }: EligibilityTra
   const other = legal.other ?? "";
   const first = legal.first === true;
   const name = (id: string): string => view.factions.find((f) => f.id === id)?.name ?? words(id);
-  const cylinder = (id: string) => (
-    <span className="elig-cylinder" style={{ background: view.factions.find((f) => f.id === id)?.color }}>
-      {name(id)}
-    </span>
-  );
+  const color = (id: string): string | undefined => view.factions.find((f) => f.id === id)?.color;
+  const cylinder = (id: string) => <span className="elig-cylinder" style={{ background: color(id) }}>{name(id)}</span>;
   const [firstId, secondId] = first ? [me, other] : [other, me];
   const taken = legal.placed?.[firstId] ?? null;
   const focus = boxes.find((b) => b.box === (pointed ?? picked));
+  /** Open to the 2nd Eligible: true, false, or null while the 1st points at nothing. */
   const open = (box: string): boolean | null => (first ? (focus?.otherMay?.includes(box) ?? null) : (boxes.find((b) => b.box === box)?.allowed ?? false));
-
-  /** This faction's own boxes: buttons, with the hover preview on the 1st Eligible's row. */
-  const mine = boxes.map((b) => (
-    <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}${focus?.box === b.box && first ? " pointed" : ""}`} aria-label={`${words(b.box)} box`}>
-      <button
-        type="button"
-        // aria-disabled, not disabled: a closed box and the Event box still take focus and hover,
-        // so their effect can be previewed; the Event itself runs from the card panel.
-        aria-disabled={!b.allowed || b.box === "event" ? true : undefined}
-        title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")}
-        aria-pressed={picked === b.box}
-        onClick={() => { if (b.allowed && b.box !== "event") onPick(b.box); }}
-        onMouseEnter={() => { setPointed(b.box); }}
-        onMouseLeave={() => { setPointed(null); }}
-        onFocus={() => { setPointed(b.box); }}
-        onBlur={() => { setPointed(null); }}
-      >
-        {words(b.box)}
-      </button>
-      {!b.allowed && <span className="elig-note">Closed</span>}
-    </div>
-  ));
-  /** The other faction's boxes: open or closed by the pointed choice (1st), or where the 1st went (2nd). */
-  const theirs = (id: string) =>
-    boxes.map((b) => {
-      const state = !first ? (taken === b.box ? "taken" : "") : open(b.box) === null ? "" : open(b.box) === true ? "open" : "closed";
-      return (
-        <div key={b.box} className={`elig-box ${state === "closed" ? "closed dim" : state}`} aria-label={state === "" ? `${name(id)} ${words(b.box)}` : `${name(id)} ${words(b.box)}: ${state}`}>
-          <b>{words(b.box)}</b>
-          {state === "taken" ? cylinder(id) : state !== "" && <span className="elig-note">{state}</span>}
-        </div>
-      );
-    });
-  const row = (id: string, place: string, cells: ReactNode) => (
-    <div className="elig-row" role="group" aria-label={`${name(id)} (${place}) boxes`}>
-      <div className="elig-who">
-        <span className="elig-note">{place}</span>
-        {cylinder(id)}
-      </div>
-      {cells}
-    </div>
-  );
 
   let effect: string;
   if (!first) {
@@ -87,12 +44,38 @@ export function EligibilityTrack({ legal, view, picked, onPick }: EligibilityTra
   }
 
   return (
-    <div className="elig-track" aria-label="Eligibility track">
-      {row(firstId, "1st", first ? mine : theirs(firstId))}
-      {row(secondId, "2nd", first ? theirs(secondId) : mine)}
-      <p className="elig-effect" aria-label="Choice effect" aria-live="polite">
-        {effect}
-      </p>
+    <div className="elig-track" aria-label="Eligibility track" style={{ "--next-color": color(secondId) } as CSSProperties}>
+      <div className="elig-row" role="group" aria-label="Eligibility boxes">
+        {boxes.map((b) => {
+          const state = open(b.box);
+          const here = first ? (focus?.box === b.box ? me : null) : taken === b.box ? firstId : null;
+          const label = `${words(b.box)} box${state === null ? "" : state ? `: open to ${name(secondId)}` : `: closed to ${name(secondId)}`}${here === null || here === me ? "" : `, ${name(here)} took it`}`;
+          return (
+            <div key={b.box} className={`elig-box${b.allowed ? "" : " closed"}${state === true ? " open-next" : ""}${focus?.box === b.box && first ? " pointed" : ""}`} aria-label={label}>
+              <button
+                type="button"
+                // aria-disabled, not disabled: a closed box still takes focus and hover, so its
+                // reason shows. The Event box moves focus to the face-up card, where the Event runs.
+                aria-disabled={!b.allowed ? true : undefined}
+                title={b.reason ?? (b.box === "event" ? "Use the event panel." : "")}
+                aria-pressed={picked === b.box}
+                onClick={() => { if (b.allowed) onPick(b.box); }}
+                onMouseEnter={() => { setPointed(b.box); }}
+                onMouseLeave={() => { setPointed(null); }}
+                onFocus={() => { setPointed(b.box); }}
+                onBlur={() => { setPointed(null); }}
+              >
+                {words(b.box)}
+              </button>
+              <span className="elig-slot">{here !== null && cylinder(here)}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="elig-legend">
+        {boxes.some((b) => open(b.box) === true) && <span className="elig-swatch" aria-hidden="true" />}
+        <p className="elig-effect" aria-label="Choice effect" aria-live="polite">{effect}</p>
+      </div>
     </div>
   );
 }

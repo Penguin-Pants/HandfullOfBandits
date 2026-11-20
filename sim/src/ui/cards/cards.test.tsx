@@ -1,38 +1,33 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { turnOf, withCard } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
+import { mockApi } from "../../../test/ui/mock-api.ts";
 import { boardView } from "../../server/view.ts";
-import { CardTable } from "./CardTable.tsx";
+import { emptyPlans } from "../faction/plan.ts";
+import { EventPanel } from "../event/EventPanel.tsx";
 
-// Card table: deck face down with its count; the current card face up beside it.
+// One card on the table: the current card face up in the event panel; no deck and no repeat.
 afterEach(cleanup);
 
-describe("CardTable", () => {
-  it("in setup shows the deck as the reveal button and an empty card slot", () => {
-    const view = boardView(kurdish.ruleset, kurdish.data, { ...turnOf("pkk"), deck: { ...turnOf("pkk").deck, currentCard: null } });
-    const onReveal = vi.fn();
-    render(<CardTable view={view} onReveal={onReveal} />);
-    expect(screen.getByText("No card yet")).toBeTruthy();
-    expect(screen.getByText(`${String(view.status.deckCount)} cards left`)).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Reveal first card (Space)" }));
-    expect(onReveal).toHaveBeenCalled();
+const panel = (state: ReturnType<typeof turnOf>) => (
+  <EventPanel api={mockApi()} sessionId="S" view={boardView(kurdish.ruleset, kurdish.data, state)} faction="pkk" eventOpen onCommit={vi.fn()} forms={[]} plan={emptyPlans.event} dispatch={vi.fn()} />
+);
+
+describe("current card", () => {
+  it("shows the current card face up once, with its ID, type, title and both sides", () => {
+    render(panel(withCard(turnOf("pkk"), "DK-001")));
+    const face = screen.getByLabelText("Current card DK-001");
+    expect(face.textContent).toContain("Eruh");
+    expect(screen.getAllByText(/Eruh/)).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Execute unshaded" })).toBeTruthy();
+    expect(screen.queryByText(/Card presentation|cards left|Deck/)).toBeNull();
   });
 
-  it("shows the current card face up and the deck without a button", () => {
-    const view = boardView(kurdish.ruleset, kurdish.data, withCard(turnOf("pkk"), "DK-001"));
-    render(<CardTable view={view} onReveal={null} />);
-    expect(screen.getByLabelText("Current card DK-001").textContent).toContain("Eruh");
-    const presentation = screen.getByLabelText<HTMLDetailsElement>("Cards");
-    expect(presentation.tagName).toBe("DETAILS");
-    expect(presentation.open).toBe(false);
-    fireEvent.click(screen.getByText(/Card presentation/));
-    expect(presentation.open).toBe(true);
-    const face = screen.getByLabelText("Current card DK-001");
-    fireEvent.click(screen.getByText(/Card presentation/));
-    expect(presentation.open).toBe(false);
-    expect(screen.getByLabelText("Current card DK-001")).toBe(face);
-    expect(screen.queryByRole("button")).toBeNull();
+  it("shows no card before the first card is revealed", () => {
+    const state = turnOf("pkk");
+    const { container } = render(panel({ ...state, deck: { ...state.deck, currentCard: null } }));
+    expect(container.textContent).toBe("");
   });
 });

@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { boardView } from "../../server/view.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { turnOf } from "../../../test/board.ts";
-import { MapCanvas } from "./MapCanvas.tsx";
+import { MAP_MODES, MapCanvas } from "./MapCanvas.tsx";
 import { Board, SpaceDetail } from "./Board.tsx";
 import { ATLAS } from "./atlas-data.ts";
 const view = boardView(kurdish.ruleset,kurdish.data,turnOf("pkk"));
@@ -26,10 +26,10 @@ describe("map navigation and layers", () => {
   });
   it("preserves selection access in every display mode and sends only supplied candidate IDs", () => {
     const select=vi.fn();
-    render(<MapCanvas view={view} selected={[]} onSelect={select} eligible={["sirnak"]} />);
-    for (const mode of ["Full","Forces","Political","Terrain"]) {
-      fireEvent.click(screen.getByRole("button",{name:mode}));
-      expect(screen.getByRole("img",{name:"Board"}).classList.contains(`mode-${mode.toLowerCase()}`)).toBe(true);
+    const {rerender}=render(<MapCanvas view={view} selected={[]} onSelect={select} eligible={["sirnak"]} />);
+    for (const mode of MAP_MODES) {
+      rerender(<MapCanvas mode={mode} view={view} selected={[]} onSelect={select} eligible={["sirnak"]} />);
+      expect(screen.getByRole("img",{name:"Board"}).classList.contains(`mode-${mode}`)).toBe(true);
       expect(screen.getByRole("meter", {name:"Europe track"})).toBeTruthy();
       fireEvent.keyDown(screen.getByRole("button",{name:"Hakkari"}),{key:" "});
     }

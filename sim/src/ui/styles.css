@@ -18,7 +18,7 @@
   --changed: #f2a900;
   --token-line: #00000055;
   font-family: system-ui, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--fg);
   background: var(--bg);
 }
@@ -42,7 +42,7 @@
 }
 body { margin: 0; background: var(--bg); }
 h2, h3 { margin: 0 0 6px; }
-h3 { font-size: 15px; }
+h3 { font-size: 16px; }
 button {
   min-height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 6px;
   background: var(--panel); color: var(--fg); font: inherit; cursor: pointer;
@@ -66,19 +66,17 @@ input, select, textarea { font: inherit; padding: 4px 6px; border: 1px solid var
 .bad { color: var(--bad); }
 .warn { color: var(--bad); font-weight: 600; }
 .good { color: var(--good); }
-.hint { color: var(--muted); font-size: 13px; margin: 4px 0 8px; }
+.hint { color: var(--muted); font-size: 16px; margin: 4px 0 8px; }
 table { border-collapse: collapse; width: 100%; }
 /* Setup editor counts (audit Plan 4 V2): narrow, so every piece column fits. */
 input.count { width: 4.5em; }
 th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 4px 8px; vertical-align: top; }
-nav { display: flex; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
 
 /* Play screen */
 .play { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 12px; align-items: start; }
 .side { display: grid; gap: 10px; align-content: start; }
 @media (max-width: 1000px) { .play { grid-template-columns: 1fr; } }
-.status-grid { display: grid; gap: 6px; }
-.chip { display: inline-block; padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; }
+.chip { display: inline-block; padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 16px; }
 .chip.acting { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
 .last-action { border-left: 4px solid var(--changed); }
 .last-action ul { margin: 4px 0 0; padding-left: 18px; }
@@ -90,7 +88,7 @@ nav { display: flex; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(-
 .map-label { font-size: 13px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 4px; }
 .map-count { font-size: 13px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 3px; }
 .map-marker { font-size: 11px; fill: var(--muted); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; padding: 8px 4px 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 16px; padding: 8px 4px 0; }
 .legend-item { display: inline-flex; align-items: center; gap: 4px; }
 .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; box-sizing: border-box; }
 
@@ -100,31 +98,12 @@ nav { display: flex; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(-
 table.forces td, table.forces th { text-align: center; padding: 3px 6px; }
 table.forces td:first-child, table.forces th:first-child { text-align: left; }
 
-/* Card table */
-.card-table { display: flex; gap: 16px; align-items: flex-start; }
-.card-slot { display: grid; gap: 4px; justify-items: center; font-size:inherit; text-align: center; }
-.card { width: 110px; height: 154px; border-radius: 8px; box-sizing: border-box; display: flex; flex-direction: column; padding: 8px; }
-.card-back {
-  align-items: center; justify-content: center; color: #f3e9d2; font-weight: 700; letter-spacing: 1px;
-  background: repeating-linear-gradient(45deg, #5a3d2b 0 6px, #6b4a35 6px 12px); border: 3px solid #f3e9d2;
-  box-shadow: 3px 3px 0 #3b281c, 6px 6px 0 #2a1c14;
-}
-.card-face { background: #fffaf0; color: #1d1d1b; border: 2px solid #1d1d1b; gap: 6px; text-align: left; }
-.card-propaganda { background: #f4e2b8; }
-.card-id { font-size:inherit; font-weight: 700; }
-.card-title { font-size:inherit; font-weight: 700; line-height: 1.25; flex: 1; }
-.card-type { font-size: 11px; text-transform: uppercase; color: #62625e; }
-.card-empty { border: 2px dashed var(--line); color: var(--muted); align-items: center; justify-content: center; }
-.card-button { padding: 0; border: none; background: none; min-height: 0; }
-.card-button:hover .card-back { filter: brightness(1.15); }
 
 /* Eligibility track */
 .elig-box button { white-space: normal; overflow-wrap: anywhere; }
 .side > * { min-width: 0; overflow-wrap: anywhere; }
-.elig-box { display: grid; gap: 3px; align-content: start; padding: 4px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
-.elig-box button { padding: 0 4px; font-size: 12px; min-height: 28px; }
+.elig-box { display: grid; gap: 3px; align-content: start; padding: 4px; border: 1px solid var(--line); border-radius: 6px; font-size: 16px; }
 .elig-box.closed { background: repeating-linear-gradient(45deg, transparent 0 5px, var(--inset) 5px 10px); }
-.elig-note { color: var(--muted); line-height: 1.25; }
 .elig-cylinder { justify-self: center; padding: 1px 6px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 600; }
 .level-marker { font-size: 11px; font-weight: 700; }
 .chip-code { font-size: 9px; font-weight: 700; fill: #fff; pointer-events: none; }
@@ -132,28 +111,27 @@ table.forces td:first-child, table.forces th:first-child { text-align: left; }
 .chip-side { font-size: 9px; fill: var(--muted); paint-order: stroke; stroke: var(--cell); stroke-width: 3px; }
 .phase-guide { border-left: 4px solid var(--accent); padding: 4px 10px; margin: 8px 0; }
 .phase-guide p { margin: 4px 0; font-size:inherit; }
-.help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 14px; }
+.help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 16px; }
 @media (max-width: 900px) { .help-grid { grid-template-columns: 1fr; } }
 .help ol, .help ul { padding-left: 20px; margin: 4px 0 10px; }
-kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font: 12px ui-monospace, monospace; background: var(--bg); }
-.tip { background: var(--fg); color: var(--bg); padding: 10px 14px; border-radius: 6px; font-size: 14px; line-height: 1.5; max-width: 380px; z-index: 10; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35); }
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font: 16px ui-monospace, monospace; background: var(--bg); }
+.tip { background: var(--fg); color: var(--bg); padding: 10px 14px; border-radius: 6px; font-size: 16px; line-height: 1.5; max-width: 380px; z-index: 10; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35); }
 .tip-target { display: inline-block; }
 .tip p { margin: 0 0 8px; }
 .tip p:last-of-type { margin-bottom: 0; }
-.tip-heading { display: block; font-size: 15px; margin-bottom: 6px; }
-.tip-cite { display: block; margin-top: 8px; padding-top: 6px; border-top: 1px solid currentColor; opacity: 0.75; font-size: 12px; }
+.tip-heading { display: block; font-size: 17px; margin-bottom: 6px; }
+.tip-cite { display: block; margin-top: 8px; padding-top: 6px; border-top: 1px solid currentColor; opacity: 0.75; font-size: 16px; }
 .log-line { cursor: default; }
 .log-line[tabindex] { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
 
 .faction-mark { width: 1.35em; height: 1.35em; vertical-align: -0.28em; margin-right: 0.3em; flex: none; }
 .mini-track { display: inline-flex; flex-wrap: wrap; gap: 1px; }
-.mini-box, .mini-step { border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 10px; line-height: 14px; }
+.mini-box, .mini-step { border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 16px; line-height: 20px; }
 .mini-box { min-width: 14px; text-align: center; }
 .mini-step { padding: 0 4px; }
 .mini-box.on, .mini-step.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
 
 /* One-view play layout (UC-3) */
-nav { height: 50px; box-sizing: border-box; }
 .play-main { display: flex; flex-direction: column; gap: 8px; min-height: 0; height: 100%; }
 .map-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 8px; }
 .map-panel .map { flex: 1; min-height: 0; height: 100%; }
@@ -176,8 +154,7 @@ nav { height: 50px; box-sizing: border-box; }
 .play-screen .map-key { bottom: 12px; left: 140px; }
 .map-key { position: absolute; left: 12px; bottom: 12px; max-width: 60%; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px 8px; z-index: 2; }
 .forces-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; padding: 4px 10px; }
-.forces-bar > button { margin-left: auto; min-height: 28px; }
-.forces-group { display: inline-flex; gap: 10px; align-items: center; font-size: 13px; flex-wrap: wrap; }
+.forces-group { display: inline-flex; gap: 10px; align-items: center; font-size: 16px; flex-wrap: wrap; }
 .map-only .side[hidden] { display: none; }
 .map-label { font-size: 18px; stroke-width: 5px; }
 .map-count { font-size: 18px; stroke-width: 4px; }
@@ -233,36 +210,31 @@ nav { height: 50px; box-sizing: border-box; }
 .map-body { flex: 1; min-height: 0; display: flex; gap: 8px; }
 .map-body .map { flex: 1; min-width: 0; min-height: 0; height: 100%; }
 .track-card { flex: none; align-self: flex-start; max-height: 100%; overflow-y: auto; box-sizing: border-box; width: 240px; display: grid; gap: 6px; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 10px #0003; }
-.track-card h4 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
-.track-row { display: grid; gap: 3px; font-size: 12px; }
+.track-row { display: grid; gap: 3px; font-size: 16px; }
 .track-name { color: var(--muted); }
 .track-name b { color: var(--fg); }
 .track-row .mini-track { flex-wrap: wrap; }
-.track-row .mini-box { min-width: 12px; font-size: 10px; }
+.track-row .mini-box { min-width: 12px; font-size: 16px; }
 .track-bar { position: relative; display: block; height: 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); overflow: hidden; }
 .track-fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
 @media (max-width: 1000px) { .map-body { flex-direction: column; } .track-card { width: auto; } }
 /* Victory track (UC-8): readable numbered cells, labeled markers and flags */
 .victory-track { position: relative; display: grid; gap: 1px; margin: 22px 0; }
-.vt-cell { min-width: 0; overflow: hidden; font-size: 11px; font-weight: 600; text-align: center; line-height: 22px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
+.vt-cell { min-width: 0; overflow: hidden; font-size: 16px; font-weight: 600; text-align: center; line-height: 22px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
 .vt-cell.five { background: var(--track-five); color: var(--fg); }
-.vt-marker { position: absolute; top: -21px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: #fff; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+.vt-marker { position: absolute; top: -21px; transform: translateX(-50%); font-size: 16px; font-weight: 700; color: #fff; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
 .vt-marker.below { top: auto; bottom: -21px; }
 .vt-flag { position: absolute; top: 0; bottom: 0; width: 3px; transform: translateX(-50%); }
-.vt-flag-label { position: absolute; top: -20px; transform: translateX(-50%); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.vt-flag-label { position: absolute; top: -20px; transform: translateX(-50%); font-size: 16px; font-weight: 700; white-space: nowrap; }
 .vt-flag-label.below { top: auto; bottom: -20px; }
 .vt-flag-label.end { transform: translateX(calc(-100% + 8px)); }
 .vt-flag-label.start { transform: translateX(-8px); }
 /* Eligibility track E4 (UC-8) */
 .elig-track { display: grid; gap: 4px; margin-bottom: 8px; }
 .elig-row { display: grid; grid-template-columns: 64px repeat(5, minmax(0, 1fr)); gap: 4px; }
-.elig-who { display: grid; gap: 2px; align-content: start; font-size:inherit; }
 .elig-box.pointed { outline: 3px solid var(--changed); }
-.elig-box.dim { opacity: 0.4; }
-.elig-box.open { border-color: var(--good); }
-.elig-box b { font-size:inherit; }
 .elig-effect { margin: 2px 0 0; padding: 4px 8px; border-left: 4px solid var(--changed); font-size:inherit; }
-@media (max-width: 1000px) { .vt-cell { font-size: 8px; } }
+@media (max-width: 1000px) { .vt-cell { font-size: 16px; } }
 /* Approved atlas board, DEC-60. Explicit light ink/paper keep counters legible in dark mode. */
 .atlas-label { fill: #403b30; stroke: #f5eedc; stroke-width: 2.2px; letter-spacing: 0; font-weight: 700; }
 .atlas-population rect { fill: #faf6e9; stroke: #756b59; stroke-width: .55; }
@@ -276,36 +248,30 @@ nav { height: 50px; box-sizing: border-box; }
 .country-name { fill: #403b30; stroke: #f5eedc; stroke-width: 2px; paint-order: stroke; font: 20px Georgia, "Times New Roman", serif; }
 
 /* Atlas UX system: readable fixed-size information and a dedicated map workspace. */
-:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --link:#7ebacb; --label-font:"Crimson Pro", Georgia, "Times New Roman", serif; --bad:#ff9a9a; --good:#a4cda5; --state:#bd1f2c; --pkk:#26734e; font-size:15px; }
+:root { --bg:#1f2527; --fg:#ecebe6; --muted:#b7bab7; --line:#465051; --panel:#2c3335; --accent:#406b7b; --link:#7ebacb; --label-font:"Crimson Pro", Georgia, "Times New Roman", serif; --bad:#ff9a9a; --good:#a4cda5; --state:#bd1f2c; --pkk:#26734e; font-size:16px; }
 a { color:var(--link); }
 button { min-height:36px; border-radius:4px; }
 button:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline:3px solid #7ebacb; outline-offset:3px; }
 button:disabled, button[aria-disabled="true"] { opacity:.65; }
 h3 {font-size:16px;}
 .victory-track {margin:21px 0;}
-.vt-cell {font-size:12px;}
+.vt-cell {font-size:16px;}
 .map-panel {padding:0; overflow:hidden; background:#ede4cf; color:#403b30; border-color:#95856c; gap:0;}
-.board-title {font:600 15px Georgia,serif; letter-spacing:1px;}
-.board-title span {color:#706450; font:13px system-ui,sans-serif; margin-left:10px;}
 .map-body {display:flex; flex:1; min-height:0; flex-direction:column; gap:0;}
 .map-window {flex:1; min-height:0; display:flex; overflow:hidden;}
 .map-window .map {width:100%; height:100%; border:0; border-radius:0; background:#eee3c8;}
-.map-caption {display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 14px; flex:none; padding:6px 12px; font-size:12px; background:#f4eddf; color:#615640; border-top:1px solid #c7b99e;}
 .track-card {display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; width:100%; max-height:150px; padding:8px 12px; border:0; border-radius:0; box-shadow:none; background:#e8dfcb; color:#403b30; flex:none; overflow:visible; align-self:stretch;}
-.track-card h4 {display:none;}
-.track-row {font-size:13px; min-width:0; align-content:start;}
+.track-row {font-size:16px; min-width:0; align-content:start;}
 .track-name {color:#615640;}
-.track-name b {display:block; color:#332e24; font-size:15px; font-weight:650;}
+.track-name b {display:block; color:#332e24; font-size:16px; font-weight:650;}
 .track-card .mini-track {display:none;}
 .track-card .track-bar {height:5px; background:#d3c7ac; border:0;}
 .track-card .track-fill {background:#315e73;}
 .next-task {border-left:4px solid #a1b8b9;}
 .event-side {padding:10px 0; border-top:1px solid var(--line); margin-top:10px;}
 .event-side.shaded {background:#e4d8ba; padding:10px; border-radius:4px;}
-[aria-label="Event panel"] > strong {display:block; font:600 19px Georgia,serif; line-height:1.35;}
 .elig-row {grid-template-columns:48px repeat(5,minmax(0,1fr)); gap:3px;}
-.elig-box {padding:3px; font-size:12px;}
-.elig-box button {font-size:13px; min-height:42px; padding:0 2px;}
+.elig-box {padding:3px; font-size:16px;}
 .operation-list {list-style:none; padding:0; display:grid; gap:8px;}
 .operation-list li {padding:8px; border:1px solid var(--line); border-radius:4px; font-size:inherit;}
 .operation-list button {margin:0 6px 4px 0;}
@@ -315,9 +281,8 @@ h3 {font-size:16px;}
 .space-inspector h3 {font-size:18px;}
 .space-inspector .muted, .space-inspector .hint {color:#625944;}
 .space-inspector ul {display:flex; gap:4px 24px; flex-wrap:wrap; padding-left:18px; margin:6px 0;}
-.forces-wrap {max-height:30vh; overflow:auto; flex:none;}
 .forces-bar {gap:8px 16px; padding:8px 12px;}
-.forces-group {font-size:14px;}
+.forces-group {font-size:16px;}
 .forces-group strong {background:#f8f2e5; padding:2px 5px; border-radius:3px;}
 .map-key {left:12px!important; bottom:34px!important; background:#fbf5e9; color:#403b30; max-width:80%; max-height:40%; overflow:auto;}
 .atlas-label {font:600 16px var(--label-font); fill:#342f25; stroke:#f5eedc; stroke-width:4px; paint-order:stroke;}
@@ -346,15 +311,13 @@ h3 {font-size:16px;}
 }
 @media (max-width:600px) { .map-window {overflow:auto;} .map-window .map {min-width:860px;} }
 /* Integrated review: protect map height and show action choices before supporting cards. */
-.score-details {font-size:13px; color:var(--muted);}
+.score-details {font-size:16px; color:var(--muted);}
 .score-details summary {cursor:pointer; width:max-content; max-width:100%;}
 .score-details[open] {padding-top:4px;}
 .score-details .victory-track {color:var(--fg);}
 .vt-cell.five {background:#3c4443; color:#fff;}
 .vt-flag-label span {background:#f6efdf; padding:1px 4px; border-radius:3px;}
 .track-card {padding:6px 12px;}
-.map-caption {padding:4px 12px;}
-.play-screen .card-type {display:none;}
 .atlas-counter text {font-family:system-ui,sans-serif;}
 .box-track rect {fill:#f5eedf; stroke:#8b7b5e;}
 .box-track text {font:600 11px system-ui,sans-serif; fill:#403b30;}
@@ -363,13 +326,13 @@ h3 {font-size:16px;}
 .track-scale summary {cursor:pointer; color:#514735; list-style:none; padding:0 4px;}
 .track-scale-content {position:absolute; right:0; top:26px; width:220px; padding:10px; background:#fbf5e9; border:1px solid #9b8d73; box-shadow:0 4px 12px #0003; z-index:8; border-radius:4px;}
 .track-card .track-scale-content .mini-track {display:flex;}
-.track-scale-content .mini-box, .track-scale-content .mini-step {color:#403b30; background:#e6dcc6; border-color:#b4a588; font-size:13px; line-height:20px;}
+.track-scale-content .mini-box, .track-scale-content .mini-step {color:#403b30; background:#e6dcc6; border-color:#b4a588; font-size:16px; line-height:22px;}
 .track-scale-content .mini-box.on, .track-scale-content .mini-step.on {background:#315e73; color:white;}
 .track-name b {padding-right:4px;}
 .atlas-counter text {font-size:12px;}
 .atlas-political .level-marker {font-size:12px;}
 .mode-political .force-layer, .mode-terrain .force-layer, .mode-terrain .political-layer, .mode-forces .political-layer {display:none;}
-.elig-box button, .elig-box b {overflow-wrap:normal; word-break:normal;}
+.elig-box button {overflow-wrap:normal; word-break:normal;}
 .elig-row {grid-template-columns:40px repeat(5,minmax(0,1fr));}
 /* Map layer filters and track labels. */
 .track-name b {display:inline; margin-left:6px;}
@@ -381,7 +344,6 @@ h3 {font-size:16px;}
 .piece-code {font:700 9px system-ui,sans-serif; pointer-events:none;}
 .help strong[style*="color"], .forces-row h3[style*="color"] {background:#f6efdf; padding:2px 5px; border-radius:3px;}
 .track-scale summary {min-width:24px; min-height:24px; display:grid; place-items:center;}
-.map-navigation button[aria-pressed="true"] {background:#315e73; color:#fff; border-color:#315e73;}
 
 /* Approved on-map layout. Only the two remote spaces use the left column. */
 .atlas-label {font-size:22px;}
@@ -426,10 +388,6 @@ h3 {font-size:16px;}
 .political-track .mini-step.on::before {content:"\2713";}
 
 /* Session information shares the sidebar so the map starts at the top of the screen. */
-.status-heading {justify-content:space-between; gap:4px 8px;}
-.status-heading .row {gap:5px;}
-.status-meta, .status-eligibility {gap:4px 6px;}
-.status-grid .score-details {min-width:0;}
 .status-victory-scroll {overflow-x:auto; width:100%; min-width:0;}
 .status-victory-scroll .victory-track {min-width:720px;}
 
@@ -440,59 +398,33 @@ h3 {font-size:16px;}
 /* Play typography and layout: compact spacing, readable text, independently hidden actions. */
 .play-screen {
   --play-text:16px; --play-heading:18px; --play-secondary:36px; --play-action:44px;
-  --sidebar-width:clamp(340px, 23vw, 420px);
+  --sidebar-width:clamp(340px, 24vw, 420px);
   height:100dvh; box-sizing:border-box; padding:4px; gap:4px;
   display:grid; grid-template-rows:minmax(0,1fr); overflow:hidden;
   font-size:var(--play-text); line-height:1.4;
 }
-.play-screen:has(footer.panel) {grid-template-rows:minmax(0,1fr) auto;}
 .play-screen .play {grid-template-columns:minmax(0,1fr) var(--sidebar-width); min-height:0; height:100%; gap:6px;}
-.play-screen.actions-hidden {--sidebar-width:280px;}
 .play-screen.map-only .play {grid-template-columns:minmax(0,1fr);}
-.play-screen .side {height:calc(100% - 48px); min-height:0; overflow-y:auto; padding-bottom:0; gap:8px; scrollbar-gutter:stable;}
+.play-screen .side {height:100%; min-height:0; overflow-y:auto; padding-bottom:0; gap:8px; scrollbar-gutter:stable;}
 .play-screen .side .panel {padding:8px 10px;}
-.play-screen .status-grid {gap:6px; min-width:0;}
-.action-panels {display:grid; gap:8px; min-width:0;}
-.action-panels[hidden] {display:none;}
 .play-screen button, .play-screen select {font-size:var(--play-text); min-height:var(--play-secondary);}
-.play-screen .action-panels button {min-height:var(--play-action);}
-.play-screen .action-panels .elig-box button {font-size:var(--play-text); padding:4px; overflow-wrap:normal;}
-.play-screen .hint, .play-screen .elig-who, .play-screen .elig-box, .play-screen .phase-guide p,
+.play-screen .side button {min-height:var(--play-action);}
+.play-screen .elig-box button {font-size:var(--play-text); padding:4px; overflow-wrap:normal;}
+.play-screen .hint, .play-screen .elig-box, .play-screen .phase-guide p,
 .play-screen .help-grid, .play-screen .legend, .play-screen .forces-group, .play-screen .score-details {font-size:var(--play-text);}
 .play-screen h3, .play-screen .phase-guide h3 {font-size:var(--play-heading);}
-.play-screen .status-heading h3 {font-size:16px;}
-.play-screen .status-grid .chip {font-size:16px; padding:1px 6px;}
-.play-screen .status-card-title {font-size:16px; font-weight:600; line-height:1.3; overflow-wrap:anywhere;}
-.play-screen .status-heading button {min-height:36px; padding:3px 7px;}
 .next-task h2 {font-size:22px; line-height:1.2; margin:4px 0;}
-.next-task p {font-size:18px; line-height:1.4; margin:0; color:var(--muted);}
 .eyebrow {font-size:16px; color:var(--accent); font-weight:650;}
 .play-screen [aria-label="Event panel"] p {font-size:16px; line-height:1.45; margin:0 0 8px;}
-.play-screen .card {height:auto; min-height:110px; width:120px; padding:6px;}
-.play-screen .card-title {font-size:16px; line-height:1.3;}
-.play-screen .card-table {gap:12px; flex-wrap:wrap; margin-top:8px;}
 .play-screen .elig-row {grid-template-columns:repeat(5,minmax(0,1fr));}
-.play-screen .elig-who {grid-column:1/-1; display:flex; align-items:center; gap:6px;}
-.play-screen .elig-cylinder {font-size:14px; padding:2px 4px;}
+.play-screen .elig-cylinder {font-size:16px; padding:2px 4px;}
 .supporting-details > summary {cursor:pointer; font-weight:600; font-size:16px; overflow-wrap:anywhere;}
 .supporting-details[open] > summary {margin-bottom:8px;}
-.play-screen .map-navigation {display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-start; gap:4px 6px; padding:4px 6px; background:var(--panel); border-bottom:1px solid var(--line); flex:none;}
-.play-screen .map-navigation .row {flex-wrap:wrap; gap:5px;}
-.play-screen .map-navigation > .row:not([role="group"]) {display:contents;}
-.play-screen .map-navigation .board-title {font-size:16px; margin-right:auto; letter-spacing:.3px;}
-/* With a bot seat the speed select takes the title's room, so the tools stay one row at 1920 px (make ux). */
-.play-screen .map-navigation:has(select[aria-label="Bot speed"]) .board-title {display:none;}
-.play-screen .map-navigation .board-title span {font-size:14px; margin-left:4px;}
-.play-screen .map-navigation button {background:#fffbf2; color:#453c2d; border-color:#b6a88c; padding:4px 8px;}
-.play-screen .map-navigation button[aria-pressed="true"] {background:#315e73; color:#fff; border-color:#315e73;}
 .find-space {display:flex; flex-wrap:wrap; align-items:center; gap:5px; font-size:16px;}
 .find-space select {max-width:185px; background:#fffbf2; color:#403b30; border-color:#b6a88c;}
-.fullscreen-control {display:flex; flex-wrap:wrap; align-items:center; gap:6px;}
-.fullscreen-control [role="status"] {font-size:16px; max-width:32em; color:#453c2d;}
-.play-screen .map-caption {font-size:14px; padding:3px 8px;}
 .play-screen .forces-bar {padding:4px 8px; gap:4px 12px;}
-.play-screen .forces-bar > button {min-height:36px;}
-.play-screen .overlay {top:12px; right:12px; width:min(850px,calc(100vw - 24px)); max-height:calc(100dvh - 24px);}
+/* Overlays open below the menu bar (40 px), so their headings and Close buttons stay clear. */
+.play-screen .overlay {top:48px; right:12px; width:min(850px,calc(100vw - 24px)); max-height:calc(100dvh - 60px);}
 body:has(.play-screen) .tip {font-size:16px;}
 @media (max-width:1600px) {
   .track-card.expanded .political-track .mini-track {display:grid; grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -554,39 +486,21 @@ body:has(.play-screen) .tip {font-size:16px;}
   --accent:#315e73; --link:#315e73; --bad:#9b1c2e; --good:#2c6a33; --track-five:#e4d9bd;
   background:var(--table); color:var(--fg);
 }
-.play-screen .panel, .play-screen .map-navigation, .play-screen .forces-bar, .play-screen .space-inspector, .play-screen .track-card {background:var(--panel); border-color:var(--line); color:var(--fg);}
+.play-screen .panel, .play-screen .forces-bar, .play-screen .space-inspector, .play-screen .track-card {background:var(--panel); border-color:var(--line); color:var(--fg);}
 .play-screen .panel {box-shadow:0 1px 3px #2b241a40;}
 .play-screen .side {box-sizing:border-box; padding:6px; background:#e9dfc6; border:1px solid var(--line); border-radius:6px; box-shadow:0 2px 8px #0008;}
 .play-screen .map-panel {box-shadow:0 2px 8px #0008; border-radius:6px;}
-.play-screen h2, .play-screen h3, .play-screen .board-title, .play-screen .supporting-details > summary {font-family:var(--label-font);}
-.play-screen .map-navigation .board-title {flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.play-screen h2, .play-screen h3, .play-screen .supporting-details > summary {font-family:var(--label-font);}
 .play-screen .find-space {flex-wrap:nowrap; white-space:nowrap;}
-.play-screen .map-caption, .play-screen .track-card {background:var(--panel); border-color:var(--line);}
+.play-screen .track-card {background:var(--panel); border-color:var(--line);}
 .map {touch-action:none;}
 .map-window {position:relative;}
 /* One summary row. The step scales and the numeric scales open from their own disclosures. */
 .track-scales {margin-left:auto; position:relative;}
 .track-scales > summary {cursor:pointer; min-height:44px; box-sizing:border-box; display:flex; align-items:center; padding:2px 10px; border:1px solid var(--line); border-radius:4px; background:#fff7e7;}
 .track-scales[open] > .political-tracks {position:absolute; right:0; top:100%; margin-top:4px; width:min(760px,90vw); z-index:8; background:var(--panel); box-shadow:0 4px 14px #2b241a66;}
-/* Map only: the track card and caption sit in the empty side margins of the board, so the board takes the full area. */
-/* Map only: one row over the lower margin, clear of the Note button. It covers no domestic space at fit zoom. */
-.map-only .track-card {position:absolute; left:8px; bottom:8px; z-index:2; width:auto; max-width:calc(100% - 150px); height:auto; padding:4px; border:1px solid var(--line); border-radius:6px; box-shadow:0 2px 8px #0006;}
-.map-only .track-card .track-summaries {flex-wrap:nowrap; gap:4px;}
-.map-only .track-scales {margin-left:0; position:static;}
-.map-only .track-scales[open] > .political-tracks {right:auto; left:0; top:auto; bottom:100%; margin:0 0 4px; width:min(560px,60vw);}
-.map-only .map-caption {display:none;}
-
-@media (max-width:1100px) {
-  .map-only .track-card, .map-only .map-caption {position:static; width:auto; box-shadow:none; border-radius:0;}
-  .map-only .track-card .track-summaries {flex-direction:row; flex-wrap:wrap;}
-  /* The card is in flow here, so the scales open in flow below the summary row and are not clipped. */
-  .map-only .track-scales[open] > .political-tracks {position:static; width:auto; margin:4px 0 0; box-shadow:none;}
-}
 .play-screen .find-space > span {position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap;}
 .play-screen .find-space select {max-width:150px;}
-.play-screen .map-navigation button {padding:4px 6px;}
-.map-only .track-card .track-row {flex:none;}
-@media (max-width:2100px) {.play-screen .board-title span {display:none;}}
 
 /* Space details are a floating player-aid card on the map, so a selection does not shrink the board. */
 @media (min-width:1101px) {
@@ -605,41 +519,73 @@ body:has(.play-screen) .tip {font-size:16px;}
 .atlas-selected .casing {stroke:#2e2114; stroke-opacity:.8; stroke-width:8;}
 .atlas-selected .ring {stroke:#f0c54a; stroke-width:4;}
 
-/* Narrow desktop (1101 to 1500 px): the side panel takes no layout column. It lies over the right
-   part of the map window, below the track card and the toolbar. Those rows and the forces bar get the
-   full width and stay on one row. The board keeps clear of the open panel, so no area is under it. */
-@media (min-width:1101px) and (max-width:1500px) {
-  .play-screen:not(.actions-hidden) {--sidebar-width:320px;}
-  .play-screen {--overlay-top:104px;}
-  .play-screen:not(:has(.track-card)) {--overlay-top:50px;}
-  .play-screen .play {grid-template-columns:minmax(0,1fr); position:relative;}
-  .play-screen:not(.map-only) .side {position:absolute; z-index:4; right:0; top:var(--overlay-top); bottom:50px; width:var(--sidebar-width); height:auto; box-sizing:border-box;}
-  .play-screen:not(.map-only) .map-window {margin-right:var(--sidebar-width);}
-  .play-screen .map-navigation .board-title {display:none;}
-  /* The caption shows only while it reports candidate targets. Its fixed hints are in each area tooltip. */
-  .play-screen .map-caption:not(:has(strong)) {display:none;}
-  .play-main {gap:4px;}
-  /* The Note button is at the lower right corner. The forces bar keeps clear of it. */
-  .play-screen .forces-bar {margin-right:108px; gap:4px 8px; padding:4px 6px;}
-  .play-screen .forces-group {gap:7px; flex-wrap:nowrap; white-space:nowrap;}
-  .play-screen .forces-bar > button {padding:4px 6px;}
-  .play-screen .action-panels .elig-box button {padding:4px 0; letter-spacing:-.2px;}
-  .play-screen .elig-row {gap:2px;}
-  .play-screen .elig-box {padding:2px 1px;}
-}
 
 /* Map space tooltip: opens on hover, keyboard focus and touch. */
-.space-tip {position:fixed; z-index:20; box-sizing:border-box; max-width:280px; max-height:calc(100vh - 16px); overflow:hidden; padding:10px 12px; border:1px solid #7f765e; border-radius:6px; background:#fbf5e9; color:#2f2a20; box-shadow:0 4px 14px rgb(0 0 0 / .3); font-size:14px; line-height:1.35; pointer-events:none;}
+.space-tip {position:fixed; z-index:20; box-sizing:border-box; max-width:280px; max-height:calc(100vh - 16px); overflow:hidden; padding:10px 12px; border:1px solid #7f765e; border-radius:6px; background:#fbf5e9; color:#2f2a20; box-shadow:0 4px 14px rgb(0 0 0 / .3); font-size:16px; line-height:1.35; pointer-events:none;}
 .space-tip strong {display:block; margin-bottom:6px; font:700 17px Georgia,serif;}
 .space-tip dl {display:grid; grid-template-columns:auto 1fr; gap:2px 12px; margin:0;}
 .space-tip dt {color:#625944;}
 .space-tip dd {margin:0; font-weight:600;}
 .space-tip dd.space-tip-list {grid-column:1 / -1;}
 .space-tip ul {margin:0 0 2px; padding-left:18px;}
-.space-tip p {margin:0; color:#625944; font-size:12.5px;}
+.space-tip p {margin:0; color:#625944; font-size:16px;}
 .space-tip dl + p {margin-top:8px; padding-top:6px; border-top:1px solid #d8ccb2;}
 .space-tip p.space-tip-note {color:#2f2a20; margin-bottom:4px;}
 /* A touch long press opens the space tooltip, not the text selection or the system callout. */
 .map-window .map {-webkit-touch-callout:none; -webkit-user-select:none; user-select:none;}
 .oop-border {stroke:#6f6450; stroke-opacity:.35; stroke-width:1.2;}
 .oop-label {letter-spacing:9px; fill-opacity:.6;}
+
+/* Menu bar layout (UI simplification): menu bar with the status line, one strip with the tracks
+   and the forces, then the map and the side panel. The map gets every remaining pixel. */
+.menubar {display:flex; flex-wrap:wrap; align-items:center; gap:2px 2px; min-height:40px; padding:0 8px; box-sizing:border-box; background:#e9dfc6; color:#2b241a; border-bottom:1px solid #b9a985; position:relative; z-index:9; font-size:16px;}
+.menubar-menu {position:relative;}
+.menubar-menu > button {background:transparent; color:inherit; border:0; border-radius:4px; padding:4px 12px; min-height:36px; font-size:16px;}
+.menubar-menu > button[aria-expanded="true"], .menubar-menu > button:hover {background:#315e73; color:#fff;}
+.menu {position:absolute; top:calc(100% + 2px); left:0; min-width:260px; display:grid; padding:4px 0; background:#fbf5e9; color:#2b241a; border:1px solid #7f765e; border-radius:6px; box-shadow:0 8px 24px #0006; z-index:20;}
+.menu > button {display:grid; grid-template-columns:20px 1fr auto; gap:8px; align-items:center; text-align:left; background:transparent; color:inherit; border:0; border-radius:0; padding:6px 14px; min-height:36px; font-size:16px;}
+.menu > button:hover, .menu > button:focus-visible {background:#dfe9ed; outline:none;}
+.menu > button[aria-disabled="true"] {opacity:.5; cursor:default;}
+.menu kbd {background:transparent; color:#5c513d; border:0; padding:0;}
+.menu [role="separator"] {border-top:1px solid #d8ccb2; margin:4px 0;}
+.menubar-status {margin-left:auto; min-width:0;}
+.status-line {display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:2px 14px; font-size:16px;}
+.status-line .chip.acting {background:#315e73; color:#fff; border:0; font-size:16px;}
+.status-line .score-details {position:relative; color:inherit; font-size:16px;}
+.status-line .score-details[open] {padding-top:0;}
+.status-line .score-details[open] > .status-victory-scroll {position:absolute; right:0; top:calc(100% + 6px); width:min(1100px,92vw); box-sizing:border-box; overflow-x:auto; padding:8px 12px; background:#fbf5e9; color:#2b241a; border:1px solid #7f765e; border-radius:6px; box-shadow:0 8px 24px #0006; z-index:20;}
+.status-victory-scroll .victory-track {min-width:1000px;}
+.play-screen {display:flex; flex-direction:column; padding:0; gap:4px;}
+.play-screen > .play {flex:1; min-height:0; padding:0 4px 4px;}
+.status-strip {display:flex; flex-wrap:nowrap; align-items:center; gap:4px 12px; padding:2px 8px; background:var(--panel); border-bottom:1px solid var(--line); color:var(--fg);}
+.status-strip .track-card.expanded {flex:1 1 auto; min-width:0; padding:0; background:transparent;}
+.status-strip .forces-bar {flex:none; margin-left:auto; padding:0; border:0; background:transparent; box-shadow:none;}
+.play-screen .forces-group {gap:8px; flex-wrap:nowrap; white-space:nowrap;}
+.forces-row {padding:0 4px;}
+.fullscreen-message {margin:0; padding:4px 12px; background:#fbf5e9; color:#453c2d;}
+.map-zoom {position:absolute; right:10px; bottom:10px; z-index:3; display:flex; gap:4px; align-items:center; padding:4px; background:#fbf5e9e6; color:#2b241a; border:1px solid var(--line); border-radius:6px;}
+.map-zoom button {background:#fffbf2; color:#453c2d; border-color:#b6a88c; padding:4px 8px;}
+.map-zoom output {min-width:3.5em; text-align:center;}
+.map-targets {position:absolute; left:10px; top:10px; z-index:3; padding:4px 10px; background:#fbf5e9e6; color:#2b241a; border:1px solid var(--line); border-radius:6px; font-size:16px;}
+.card-face header {margin-bottom:4px;}
+.card-face .card-id {font-weight:700;}
+.card-face h3 {margin:2px 0 4px; font-size:20px; line-height:1.3;}
+.card-face:focus {outline:3px solid var(--changed); outline-offset:2px;}
+/* Eligibility track C: one shared row; the bar under a box marks it open to the 2nd Eligible, in its color. */
+.play-screen .elig-row {grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px;}
+.elig-box {display:grid; grid-template-rows:auto 24px; gap:2px; padding:0; border:0; background:none;}
+.elig-box.closed {background:none;}
+.elig-box button {width:100%; min-height:48px; line-height:1.15;}
+.elig-box.closed button {background:repeating-linear-gradient(45deg, #f3ead6 0 5px, #e4d9bd 5px 10px); color:#7a6f5a;}
+.elig-box.open-next button {box-shadow:inset 0 -7px 0 var(--next-color);}
+.elig-box.pointed {outline:none;}
+.elig-box.pointed button {outline:3px solid var(--changed); outline-offset:-1px;}
+.elig-slot {display:flex; justify-content:center; align-items:center;}
+.elig-legend {display:flex; gap:8px; align-items:flex-start;}
+.elig-swatch {flex:none; width:22px; height:8px; margin-top:12px; border-radius:2px; background:var(--next-color);}
+.elig-legend .elig-effect {flex:1; margin:0;}
+@media (max-width:1500px) {
+  .status-strip {flex-wrap:wrap;}
+  .status-strip .forces-bar {margin-left:0;}
+}
+

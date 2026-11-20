@@ -1,7 +1,18 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { FullscreenButton } from "./FullscreenButton.tsx";
+import { useFullscreen } from "./fullscreen.ts";
+
+/** The hook's state as the View menu shows it: a button label and the status message. */
+function FullscreenButton() {
+  const f = useFullscreen();
+  return (
+    <>
+      <button type="button" disabled={f.pending} onClick={() => void f.toggle()}>{f.active ? "Exit fullscreen" : "Fullscreen"}</button>
+      {f.message !== null && <span role="status">{f.message}</span>}
+    </>
+  );
+}
 
 let fullscreen: Element | null = null;
 let request: ReturnType<typeof vi.fn>;

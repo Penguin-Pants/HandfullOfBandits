@@ -1,7 +1,8 @@
 // UI shell (11 P2-13; 08 s2): Home, package check and play screens.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Api, PackageSummary } from "./api.ts";
 import { PackageCheck } from "./check/PackageCheck.tsx";
+import { MenuBar, type Menu } from "./common/MenuBar.tsx";
 import { Experiments } from "./experiments/Experiments.tsx";
 import { Home } from "./home/Home.tsx";
 import { Metrics } from "./metrics/Metrics.tsx";
@@ -23,29 +24,32 @@ type Screen =
 export function App({ api }: { readonly api: Api }) {
   const [screen, setScreen] = useState<Screen>({ name: "home" });
   const home = (): void => { setScreen({ name: "home" }); };
+  const review = (): void => { setScreen({ name: "review" }); };
+  // F opens Feedback review from every screen, except while typing in a field.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      const t = e.target as HTMLElement | null;
+      if (t !== null && (["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName) || t.isContentEditable)) return;
+      if ((e.key === "f" || e.key === "F") && !e.ctrlKey && !e.metaKey && !e.altKey) review();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("keydown", onKey); };
+  }, []);
+  /** The screens menu; Play adds its game items to the same menu. */
+  const screens: Menu["items"] = [
+    { label: "Home", onSelect: home },
+    { label: "Feedback review", shortcut: "F", onSelect: review },
+    { label: "Metrics review", onSelect: () => { setScreen({ name: "metrics" }); } },
+    { label: "Experiment reports", onSelect: () => { setScreen({ name: "experiments" }); } },
+  ];
   return (
     <>
-      {screen.name !== "play" && (
-        <nav>
-        <button type="button" onClick={home}>
-          Home
-        </button>
-        <button type="button" onClick={() => { setScreen({ name: "review" }); }}>
-          Feedback review (F)
-        </button>
-        <button type="button" onClick={() => { setScreen({ name: "metrics" }); }}>
-          Metrics review
-        </button>
-        <button type="button" onClick={() => { setScreen({ name: "experiments" }); }}>
-          Experiment reports
-        </button>
-        </nav>
-      )}
+      {screen.name !== "play" && <MenuBar menus={[{ label: "Game", items: screens }]} />}
       {screen.name === "home" && <Home api={api} onOpen={(sessionId) => { setScreen({ name: "play", sessionId }); }} onCheck={(pkg) => { setScreen({ name: "check", pkg }); }} onSetup={(pkg, scenarioId) => { setScreen({ name: "setup", pkg, scenarioId }); }} />}
       {screen.name === "setup" && <Setup api={api} pkg={screen.pkg} scenarioId={screen.scenarioId} onBack={home} />}
       {screen.name === "check" && <PackageCheck pkg={screen.pkg} onBack={home} />}
       {screen.name === "play" && (
-        <Play api={api} sessionId={screen.sessionId} onExit={home} onReview={() => { setScreen({ name: "review" }); }} onOpenState={(before, after) => { setScreen({ name: "state", sessionId: screen.sessionId, before, after, back: screen }); }} />
+        <Play api={api} sessionId={screen.sessionId} screens={screens} onExit={home} onOpenState={(before, after) => { setScreen({ name: "state", sessionId: screen.sessionId, before, after, back: screen }); }} />
       )}
       {screen.name === "review" && <Review api={api} onOpenState={(sessionId, hash) => { setScreen({ name: "state", sessionId, before: null, after: hash, back: screen }); }} />}
       {screen.name === "metrics" && <Metrics api={api} />}
