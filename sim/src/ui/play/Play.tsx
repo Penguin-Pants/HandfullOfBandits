@@ -83,6 +83,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const [botError, setBotError] = useState<string | null>(null);
   const stepped = useRef<string | null>(null);
   const rewinding = useRef(false);
+  /** The pending wait before a bot step; Undo and a branch clear it before they change the head. */
+  const botTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [speed, setSpeed] = useState(savedBotSpeed);
   /** The action whose bot moves a map click hid: the player's own plan takes the map (R1.3). */
   const [movesSeen, setMovesSeen] = useState<string | null>(null);
@@ -155,7 +157,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   }, [load]);
 
   // The seated bot acts after the chosen wait when the head is its decision (R1.1). A new head,
-  // a speed change, Pause, a bot error and unmount clear the wait; Undo and a branch skip it.
+  // a speed change, Pause, a bot error and unmount clear the wait; so do Undo and a branch.
   const botToAct = data?.botToAct ?? null;
   useEffect(() => {
     if (data === null || botToAct === null || rewinding.current || speed === "pause" || botError !== null) return;
@@ -163,7 +165,6 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     const at = `${data.head.actionId}:${data.head.stateHash}`;
     if (stepped.current === at) return;
     const timer = setTimeout(() => {
-      if (rewinding.current) return;
       stepped.current = at;
       api.botStep(sessionId, data.head.actionId, data.head.stateHash).then((r) => {
         if (r.partial !== null) {
@@ -176,6 +177,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
         setBotError(e instanceof Error ? e.message : String(e));
       });
     }, BOT_DELAYS[speed]);
+    botTimer.current = timer;
     return () => { clearTimeout(timer); };
   }, [api, sessionId, data, botToAct, load, speed, botError]);
 
@@ -245,6 +247,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     if (steps <= 0) steps = committed.length;
     if (!window.confirm(steps > 1 ? `Undo your last action and the ${String(steps - 1)} bot action(s) after it?` : "Undo the last action?")) return;
     setError(null);
+    clearTimeout(botTimer.current);
     rewinding.current = true;
     try {
       let at = { actionId: data.head.actionId, stateHash: data.head.stateHash };
@@ -267,6 +270,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const branch = async (actionId: string): Promise<void> => {
     if (!window.confirm(`Start a new branch at ${actionId}? The current branch stays stored.`)) return;
     setError(null);
+    clearTimeout(botTimer.current);
     rewinding.current = true;
     try {
       await api.branch(sessionId, actionId, data.head.actionId, data.head.stateHash);

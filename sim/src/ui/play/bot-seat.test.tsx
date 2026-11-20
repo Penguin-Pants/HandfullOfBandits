@@ -344,6 +344,24 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     expect(botStep).not.toHaveBeenCalled();
   });
 
+  it("AC1.5: Undo cancels the wait even when the reload after it is slow (PR 139 review)", async () => {
+    const reload = deferred<never>();
+    let calls = 0;
+    const session = vi.fn(() => (++calls === 1 ? Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: cardHead("A1"), botToAct: "state" }) : reload.promise));
+    const legal = () => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] });
+    const botStep = vi.fn(() => new Promise<never>(() => undefined));
+    const history = vi.fn(() => Promise.resolve([item("A1", [])]));
+    const undo = vi.fn(() => Promise.resolve({ undone: "A1", head: "x", undoneAfterRandom: false, state: cardHead("A0") } as never));
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, legal, botStep, history, undo })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1000);
+    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
+    await tick(5000);
+    expect(botStep).not.toHaveBeenCalled();
+  });
+
   it("a branch during the wait sends no bot step for the old head", async () => {
     const n = { at: 0 };
     const heads = [cardHead("A1"), cardHead("B1")];
