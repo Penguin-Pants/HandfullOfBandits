@@ -29,7 +29,7 @@ import { compareCommand, createCommand, listCommand, runCommand } from "./regres
 const usage = [
   "Usage: sim validate <package-dir>",
   "       sim diff <old-package-dir> <new-package-dir>",
-  "       sim setup-sheet <package-dir> [--variant <name>] [--scenario <id>] [--out <new-file.md>]",
+  "       sim setup-sheet <package-dir> [--variant <name>] [--scenario <id>] [--out <new-file.md> | --rules <rules.md>]",
   "       sim rule \"<rule ref>\" [--package <dir>]",
   "       sim rules <package-dir> [--check]",
   "       sim replay <file.json> [--package <dir>]",
@@ -69,12 +69,13 @@ if (command === "validate" && target !== undefined) {
 } else if (command === "diff" && target !== undefined && args[2] !== undefined) {
   print(diffCommand(target, args[2]));
 } else if (command === "setup-sheet" && target !== undefined && !target.startsWith("--")) {
-  const valueFlags = ["--variant", "--scenario", "--out"];
-  const bad = args.slice(2).some((a, i, all) => (a.startsWith("--") ? !valueFlags.includes(a) || all[i + 1] === undefined || (all[i + 1] ?? "").startsWith("--") : !valueFlags.includes(all[i - 1] ?? "")));
+  const valueFlags = ["--variant", "--scenario", "--out", "--rules"];
+  // --rules writes the package setup into rule 10.2, so it takes no variant and no --out.
+  const bad = (args.includes("--rules") && (args.includes("--variant") || args.includes("--out"))) || args.slice(2).some((a, i, all) => (a.startsWith("--") ? !valueFlags.includes(a) || all[i + 1] === undefined || (all[i + 1] ?? "").startsWith("--") : !valueFlags.includes(all[i - 1] ?? "")));
   if (bad) print({ exitCode: 2, lines: [usage] });
   else {
     try {
-      print(setupSheetCommand(target, args.includes("--variant") ? flag("--variant", "") : null, flag("--scenario", "full-campaign"), args.includes("--out") ? flag("--out", "") : null));
+      print(setupSheetCommand(target, args.includes("--variant") ? flag("--variant", "") : null, flag("--scenario", "full-campaign"), args.includes("--out") ? flag("--out", "") : null, args.includes("--rules") ? flag("--rules", "") : null));
     } catch (e) {
       print({ exitCode: 1, lines: [`error: ${e instanceof Error ? e.message : String(e)}`] });
     }

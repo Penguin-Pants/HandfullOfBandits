@@ -845,8 +845,8 @@ All Guerrillas below start Underground. Unlisted spaces or piece types are empty
 | Ağrı-Iğdır | 1T, 1P | — |
 | Western Cities | 2T, 2P, 1B | — |
 | KDP Zone | — | 4G, 1B |
-| PUK Zone | — | — |
 | Syria-Bekaa | — | 2G, 1B, Leadership Present |
+| PUK Zone | — | — |
 
 Set **Passive Opposition** in Hakkari, Şırnak, Siirt, Batman hinterland and Van hinterland. Set **Passive Support** in Şanlıurfa, Adıyaman, Elazığ and Western Cities. All other domestic spaces are Neutral.
 

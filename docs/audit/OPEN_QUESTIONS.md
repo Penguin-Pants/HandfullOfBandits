@@ -76,8 +76,8 @@ Answers to audit section 7.6. Results: `docs/prototype/45-setup-controls-plan4.m
 
 Open from Plan 4 (doc 45 section 4, Propose; not blocking):
 
-- **P4-1 Rule 10.2 space name.** Rule 10.2 writes "Diyarbakır City"; rule 1.3 and the package write "Diyarbakır City (Amed)". Proposed: use the full name in 10.2 and rebuild the print set.
-- **P4-2 Rule 10.2 from the package.** The setup sheet now derives the 10.2 text from the package. Proposed: generate rule 10.2 from it with a drift check, as Appendix A is.
+- **P4-1 Rule 10.2 space name.** Answered 2026-11-19: keep the short name "Diyarbakır City" in 10.2. The setup sheet drops a space's other name in brackets.
+- **P4-2 Rule 10.2 from the package.** Answered 2026-11-19: done. `make print` (target `setup-rule`, `sim setup-sheet --rules`) writes 10.2 from `scenarios/full-campaign.yaml`; `sim/test/setup-sheet.test.ts` fails when they differ. Designer choices: table rows follow the scenario file order (PUK Zone, not in the file, prints last); 10.2 keeps its track wording and its "no markers" sentence.
 
 ## Open from Plan 3
 
