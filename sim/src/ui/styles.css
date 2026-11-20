@@ -423,7 +423,8 @@ h3 {font-size:16px;}
 .find-space {display:flex; flex-wrap:wrap; align-items:center; gap:5px; font-size:16px;}
 .find-space select {max-width:185px; background:#fffbf2; color:#403b30; border-color:#b6a88c;}
 .play-screen .forces-bar {padding:4px 8px; gap:4px 12px;}
-.play-screen .overlay {top:12px; right:12px; width:min(850px,calc(100vw - 24px)); max-height:calc(100dvh - 24px);}
+/* Overlays open below the menu bar (40 px), so their headings and Close buttons stay clear. */
+.play-screen .overlay {top:48px; right:12px; width:min(850px,calc(100vw - 24px)); max-height:calc(100dvh - 60px);}
 body:has(.play-screen) .tip {font-size:16px;}
 @media (max-width:1600px) {
   .track-card.expanded .political-track .mini-track {display:grid; grid-template-columns:repeat(2,minmax(0,1fr));}

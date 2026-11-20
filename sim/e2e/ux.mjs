@@ -72,6 +72,11 @@ try {
    return {small:[...new Set(small)].slice(0,10),clipped};
   });
   check(readable.small.length===0&&readable.clipped.length===0,'readable windowed UI '+label,readable);
+  // Help and History open below the menu bar, so their headings and Close buttons stay clear.
+  await page.locator('body').press('?');await page.getByLabel('Help',{exact:true}).waitFor();
+  const overlay=await page.evaluate(()=>({top:document.querySelector('.overlay').getBoundingClientRect().top,menubar:document.querySelector('.menubar').getBoundingClientRect().bottom}));
+  check(overlay.top>=overlay.menubar,'Help opens below the menu bar '+label,overlay);
+  await page.getByRole('button',{name:'Close (?)',exact:true}).click();
   await page.screenshot({path:join(shots,`after-${label}.png`)});
   const camera=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox');
   await menu(page,'View','Map only');

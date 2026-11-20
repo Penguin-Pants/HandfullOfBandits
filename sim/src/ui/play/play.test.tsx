@@ -253,6 +253,15 @@ describe("Play first card and Undo (UI simplification)", () => {
     expect(submit).toHaveBeenCalledOnce();
   });
 
+  it("offers a retry when the automatic reveal fails", async () => {
+    const submit = vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValue({ actionId: "S-A2" });
+    const legal = () => Promise.resolve<LegalChoices>({ faction: null, phase: "setup", advance: true, violations: [] });
+    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: setupHead() }), legal, submit, history: () => Promise.resolve([setupItem("S-A1")]) })} sessionId="S" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Retry the first card" }));
+    await waitFor(() => { expect(submit).toHaveBeenCalledTimes(2); });
+    expect(submit).toHaveBeenLastCalledWith("S", { type: "Advance" }, "S-A1", "S-A1");
+  });
+
   it("does not reveal outside setup", async () => {
     const submit = vi.fn();
     render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: head("S-A3", "DK-012", "state") }), legal: () => Promise.resolve({ ...legalFor("state"), advance: true }), submit })} sessionId="S" />);

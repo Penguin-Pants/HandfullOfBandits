@@ -388,6 +388,8 @@ export function Play({ api, sessionId, screens = [], onExit, onOpenState }: Play
             <section className="panel next-task" aria-label="Next action">
               <span className="eyebrow">{words(view.status.phase)}</span>
               <h2>{view.status.pending?.prompt ?? (view.status.ended !== null ? "Game complete" : view.status.phase === "setup" ? "Revealing the first card" : legal.advance === true ? "Advance the sequence" : "Follow the card or phase instructions below")}</h2>
+              {/* The automatic reveal runs once per head; after a failure the player starts it again. */}
+              {view.status.phase === "setup" && error !== null && <button type="button" onClick={() => void commit({ type: "Advance" })}>Retry the first card</button>}
             </section>
           )}
           {botTurn && (
