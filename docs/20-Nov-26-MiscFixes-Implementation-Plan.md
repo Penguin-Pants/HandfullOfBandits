@@ -7,8 +7,8 @@ Source: the requirements agreed in the session of 2026-11-20 (R1 to R5 below). S
 | Phase | Status | Pull request | Notes |
 | --- | --- | --- | --- |
 | 1 | ✅ Done | Penguin-Pants/HandfullOfBandits#137 | CI green, Codex review clean. See "Phase 1 outcome" |
-| 2 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
-| 3 | Not started | – | – |
+| 2 | ✅ Done | Penguin-Pants/HandfullOfBandits#138 | CI green, Codex review clean. See "Phase 2 outcome" |
+| 3 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
 | 4 | Not started | – | Gate: user picks a mockup |
 | 5 | Not started | – | – |
 | 6 | Not started | – | – |
@@ -129,6 +129,14 @@ Requirement IDs come from the requirements response. Acceptance criteria (AC) ID
 **Acceptance criteria:** AC2.1 to AC2.4 pass. The current Troops test stays green.
 
 **Dependencies:** None. This phase can run in parallel with Phase 1.
+
+**Phase 2 outcome (done)**
+- Corrected root cause: the plan's selection-mismatch theory did not reproduce (a Play test with a State bot built a route). The real defect was the panel flow: the destination was the current map selection and "Use ... as origin" copied that same selection, so one space showed as both origin and destination (user report, 2026-11-20).
+- `RedeployForm.tsx`: the next map click sets the origin, the click after it sets the destination. "Clear origin" starts over. "Add route" clears both.
+- AC2.4: `SpaceView` has `hostEntry` and `hostEntryCost` (`sim/src/server/view.ts`, from `entryToBox` and `march.restrictedExtraCost`). The panel names the Active arrival and the cost for a Restricted Guerrilla destination.
+- AC2.3: unchanged; the server violation shows on commit.
+- `phases.ts`: the Redeploy guide text describes the click flow.
+- Tests: `redeploy.test.tsx` (two-click route, next route and Clear origin, Restricted cost), `bot-seat.test.tsx` (human PKK route after the bot State part). `make test`: 1854 tests pass.
 
 ## Phase 3: Paced and animated bot actions
 

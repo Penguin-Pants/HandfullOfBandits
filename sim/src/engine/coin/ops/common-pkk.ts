@@ -31,7 +31,7 @@ export function statePieces(ruleset: Ruleset, state: GameState, space: string): 
   return ruleset.pieces.filter((p) => p.faction === FACTION.state).reduce((sum, p) => sum + count(state, space, p.id), 0);
 }
 
-type Entry = "open" | "restricted" | "closed";
+export type Entry = "open" | "restricted" | "closed";
 
 /** Entry rule for a destination: domestic spaces are open; boxes follow the host posture. */
 export function entryToBox(ruleset: Ruleset, state: GameState, dest: string): Entry {
