@@ -50,11 +50,11 @@ Human IC-3a play is still needed for every right-hand item.
 | 1. Observe | Allowlisted, deep-frozen view: board, tracks, visible cards; deck order and future dice hidden | `sim/src/cli/player-observation.ts` | Observation version 1 |
 | 2. Generate | Legal candidates per decision kind and action family, engine-validated | `sim/src/cli/candidates.ts` | Family cap 14; broad mode ×4 for audits |
 | 3. Determinize | Sample a legal deck order and dice with the player's own seed | `player-observation.ts` (`determinize`, `SearchRng`) | Player seed from experiment, game and faction |
-| 4. Simulate | Apply a candidate, run automatic phases and any victory check | `sim/src/cli/strategies/scenario-a.ts` | 600 engine steps per decision (`SEARCH_BUDGET`) |
+| 4. Simulate | Apply a candidate, run automatic phases and any victory check | `sim/src/cli/strategies/roster.ts` | 600 engine steps per decision (`SEARCH_BUDGET`) |
 | 5. Score | Margin difference (rules 7.3, Harm penalty) + potential estimate + strategy weights | `sim/src/cli/strategies/evaluation.ts` | Weights in `FAMILIES` |
-| 6. Search | Family round-robin until 25% of the budget is left (65% for v4); best 6 re-scored on 2 more samples | `scenario-a.ts` (`searchDecide`, `roundRobin`) | `search-2` |
-| 6a. 2-move line (v4) | Top 3 plans: opponent's best reply (neutral weights), then own best next play, tried in family rotation within a budget share; only checked plans compete | `scenario-a.ts` (`deepLine`, `bestPlay`) | 1,800 steps per decision |
-| 7. Reply check | Adaptive bots only: best 4 re-scored against the opponent's best reply, up to 40 sampled | `scenario-a.ts` | S-ADAPT, P-ADAPT |
+| 6. Search | Family round-robin until 25% of the budget is left (65% for v4); best 6 re-scored on 2 more samples | `roster.ts` (`searchDecide`, `roundRobin`) | `search-2` |
+| 6a. 2-move line (v4) | Top 3 plans: opponent's best reply (neutral weights), then own best next play, tried in family rotation within a budget share; only checked plans compete | `roster.ts` (`deepLine`, `bestPlay`) | 1,800 steps per decision |
+| 7. Reply check | Adaptive bots only: best 4 re-scored against the opponent's best reply, up to 40 sampled | `roster.ts` | S-ADAPT, P-ADAPT |
 | 8. Final round | Civic Action solved against the best Agitation reply; Agitation solved exactly over generated allocations | `evaluation.ts`, `candidates.ts` | Exact search with ties kept (`cand-5`) |
 
 ### Player roster
@@ -87,7 +87,7 @@ PKK v2 caps the potential estimate by the remaining conversion opportunities. Co
 |---|---|---|
 | Cards to the final Propaganda, from scenario data (`finalRound`, piles, campaigns) | `evaluation.ts` timing | Yes, reads the scenario |
 | Potential estimate: Civic Action caps and Train/Rally chances of the remaining Propaganda rounds | `evaluation.ts` | Partly: since DD-25 review (doc 36) it counts every income before the final round; weights still tuned on a 2-round game |
-| Strategy weights | `FAMILIES` in `scenario-a.ts` | No; tuned on Scenario A pilots |
+| Strategy weights | `FAMILIES` in `roster.ts` | No; tuned on Scenario A pilots |
 | Qualification fixtures (campaign C2, round 1 or 2, named cards) | `qualification.ts` | Partly: C2 fixtures keep the dealt C3 to C5 piles since the DD-25 review (doc 36); positions and named cards are fixed |
 | Coverage mechanics list | `experiment-coverage.ts` (`MECHANICS`) | Yes since 2026-11-13: Village Clearance, Covert Action, ceasefire, Legal Politics, the three later Pivotals, Europe Ban |
 | Space and box names (host zones, Western Cities, Diyarbakir City fallback) | `candidates.ts` | No; map-specific. Cross-Border origins read `crossBorder.origins` since the DD-25 review (doc 36) |

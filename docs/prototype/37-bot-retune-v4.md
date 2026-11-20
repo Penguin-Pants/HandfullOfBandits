@@ -22,8 +22,8 @@ These are bot results on 15 development seeds per cell. They are not balance pro
 
 | Item | Change | Evidence |
 |---|---|---|
-| Roster v4 | The 8 families with the exported dials: S-POL Legitimacy 0.35; S-CON capped; S-ADAPT own 0.9, opponent 1.15, Bases 3, Guerrillas 1.5, Legitimacy 0.8, capped; P-POL own 1.4, opponent 0.65, Legitimacy 0.3; P-EXP own 0.35; PKK families capped. v1 to v3 stay registered | `sim/src/cli/strategies/scenario-a.ts` (`V4_CHANGES`); test `sim/test/bot-retune-v4.test.ts` |
-| 2-move planning | The top 3 plans are played on: the opponent's best reply (neutral weights), then the bot's own best next play. Only checked plans compete | `scenario-a.ts` (`deepLine`, `bestPlay`) |
+| Roster v4 | The 8 families with the exported dials: S-POL Legitimacy 0.35; S-CON capped; S-ADAPT own 0.9, opponent 1.15, Bases 3, Guerrillas 1.5, Legitimacy 0.8, capped; P-POL own 1.4, opponent 0.65, Legitimacy 0.3; P-EXP own 0.35; PKK families capped. v1 to v3 stay registered | `sim/src/cli/strategies/roster.ts` (`V4_CHANGES`); test `sim/test/bot-retune-v4.test.ts` |
+| 2-move planning | The top 3 plans are played on: the opponent's best reply (neutral weights), then the bot's own best next play. Only checked plans compete | `roster.ts` (`deepLine`, `bestPlay`) |
 | Budget | 1,800 steps per decision; 35% for the first pass (630, more than the 450 of v1) | `DEEP_RESERVE` |
 | Legitimacy dial | Counts for the bot's own side: a PKK bot values a lower State Legitimacy (designer answer). No earlier PKK bot used it | `sim/src/cli/strategies/evaluation.ts:209` |
 | Test package | `sim/experiments/packages/dd25-variant-a`: thresholds 43/38; Siirt and Bitlis 2 Police each; Available Police 2. Copy removed 2026-11-19 (audit Plan 4 V3): now variant `game-packages/kurdish-coin/0.1.0/variants/dd25-variant-a.yaml`; the run keeps the copy's content in `package-content.json`. | `scenarios/full-campaign.yaml` in the copy |

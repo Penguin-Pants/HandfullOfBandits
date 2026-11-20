@@ -12,7 +12,7 @@ import { decideObserved, type DecisionRecord } from "./game-runner.ts";
 import { SearchRng } from "./player-observation.ts";
 import { isObservationPlayer, type ObservationPlayer } from "./players.ts";
 import { resolvePlayer } from "./player-registry.ts";
-import { CURRENT } from "./strategies/scenario-a.ts";
+import { CURRENT } from "./strategies/roster.ts";
 
 /** Bot player ID per faction. A faction with no entry is a human seat. */
 export type Seats = Readonly<Record<string, string>>;

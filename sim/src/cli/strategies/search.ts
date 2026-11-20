@@ -15,7 +15,7 @@ import { decisionPoint, generateCandidates, GENERATOR_VERSION, type Candidate } 
 import { determinize } from "../player-observation.ts";
 import type { Choice, DecisionRequest, LinePlay, ObservationPlayer, SearchContext } from "../players.ts";
 import { evaluate, WIN_VALUE, type Weights } from "./evaluation.ts";
-import { BASE, familyWeights, outcome, roundRobin, scenarioAPlayer } from "./scenario-a.ts";
+import { BASE, familyWeights, outcome, roundRobin, rosterPlayer } from "./roster.ts";
 
 /** Plies per line, the candidate's own ply included (5.4: this card and the next for both factions). */
 export const DEPTH = 4;
@@ -77,7 +77,7 @@ interface Entry { readonly candidate: Candidate; total: number; samples: number;
 function searchDecide(family: SearchFamily, w: Weights, request: DecisionRequest, ctx: SearchContext): Choice {
   const [only] = request.candidates;
   if (only === undefined) throw new Error("no candidates");
-  const delegate = scenarioAPlayer(family.base.id, family.base.version);
+  const delegate = rosterPlayer(family.base.id, family.base.version);
   if (delegate === null) throw new Error(`${family.id}: base ${family.base.id}@${String(family.base.version)} is not registered`);
   if (request.kind !== "card" || request.candidates.length === 1) return delegate.decide(request, ctx);
   const notes: string[] = [];

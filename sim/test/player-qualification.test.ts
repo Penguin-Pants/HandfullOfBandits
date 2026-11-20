@@ -6,7 +6,7 @@ import { decisionPoint, generateCandidates } from "../src/cli/candidates.ts";
 import { determinize, observe, SearchRng } from "../src/cli/player-observation.ts";
 import { resolvePlayer } from "../src/cli/player-registry.ts";
 import { FIXTURES, independentStandings, qualify, runFixture, suiteHash } from "../src/cli/qualification.ts";
-import { CURRENT, roundRobin } from "../src/cli/strategies/scenario-a.ts";
+import { CURRENT, roundRobin } from "../src/cli/strategies/roster.ts";
 import { TransitionBudget, type ObservationPlayer } from "../src/cli/players.ts";
 import { derive } from "../src/engine/coin/derive.ts";
 import { checkStandings } from "../src/engine/coin/victory.ts";

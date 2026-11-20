@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { decisionPoint, generateCandidates, type CandidateSet, type DecisionKind } from "../src/cli/candidates.ts";
 import { independentStandings } from "../src/cli/qualification.ts";
 import { evaluate } from "../src/cli/strategies/evaluation.ts";
-import { CURRENT } from "../src/cli/strategies/scenario-a.ts";
+import { CURRENT } from "../src/cli/strategies/roster.ts";
 import type { AnyCommand, GameState } from "../src/engine/core/types.ts";
 import { engine, inCampaign, op, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "./board.ts";
 

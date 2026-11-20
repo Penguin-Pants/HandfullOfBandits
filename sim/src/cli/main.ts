@@ -18,7 +18,7 @@ import { join } from "node:path";
 import { experimentCoverage } from "./experiment-coverage.ts";
 import { cardsCommand } from "./experiment-cards.ts";
 import { resolvePlayer } from "./player-registry.ts";
-import { CURRENT } from "./strategies/scenario-a.ts";
+import { CURRENT } from "./strategies/roster.ts";
 import { validateCommand } from "./validate.ts";
 import { diffCommand } from "./diff.ts";
 import { setupSheetCommand } from "./setup-sheet.ts";

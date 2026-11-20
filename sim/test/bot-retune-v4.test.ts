@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { resolvePlayer } from "../src/cli/player-registry.ts";
 import { evaluate } from "../src/cli/strategies/evaluation.ts";
-import { combineDeep, CURRENT, deepLine, FAMILIES } from "../src/cli/strategies/scenario-a.ts";
+import { combineDeep, CURRENT, deepLine, FAMILIES } from "../src/cli/strategies/roster.ts";
 import { decisionPoint, generateCandidates } from "../src/cli/candidates.ts";
 import { determinize, observe, SearchRng } from "../src/cli/player-observation.ts";
 import { isObservationPlayer, TransitionBudget } from "../src/cli/players.ts";

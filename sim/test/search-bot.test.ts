@@ -6,7 +6,7 @@ import { determinize, observe, SearchRng } from "../src/cli/player-observation.t
 import { resolvePlayer } from "../src/cli/player-registry.ts";
 import { TransitionBudget, type ObservationPlayer, type SearchContext } from "../src/cli/players.ts";
 import { FIXTURES, runFixture } from "../src/cli/qualification.ts";
-import { BASE } from "../src/cli/strategies/scenario-a.ts";
+import { BASE } from "../src/cli/strategies/roster.ts";
 import { DEPTH, sampleLine, searchPlayer } from "../src/cli/strategies/search.ts";
 import type { GameState } from "../src/engine/core/types.ts";
 import { engine, ruleset } from "./board.ts";

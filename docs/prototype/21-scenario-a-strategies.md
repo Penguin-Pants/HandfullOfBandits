@@ -10,7 +10,7 @@ These strategies are hypotheses about scoring routes. They are not proven strong
 |---|---|---|
 | Public observation (allowlist, frozen copy) | Trusted runner | `sim/src/cli/player-observation.ts` |
 | Candidates on a public projection, then live validation | Trusted runner | `sim/src/cli/candidates.ts`, `game-runner.ts` |
-| Choice of one candidate ID | Player | `sim/src/cli/strategies/scenario-a.ts` |
+| Choice of one candidate ID | Player | `sim/src/cli/strategies/roster.ts` |
 | Apply, hash, journal | Trusted runner | `sim/src/cli/game-runner.ts` |
 
 - The observation omits the seed, RNG, pile contents and order, set-aside identities and opponent hand identities. It keeps played cards, pile counts and all board state (rules 2.2).
@@ -87,7 +87,7 @@ Value = own margin minus opponent margin (rules 7.3, including 2 per Harm above 
 | P-SURV | Guerrillas, Resources and camps, then conversion | Underground 0.5, Resources 0.4, external 0.15, preservation scaled down as the expected cards before the final Propaganda fall | Converts when the expected cards left fall below half the top part; margins override survival |
 | P-ADAPT | Balanced | Potential 0.7/0.6, Bases 1 | Sampled opponent reply on the best four plans |
 
-All weights are in `FAMILIES` (`scenario-a.ts`) and are recorded in each experiment's `players.json`. No parameter variant was tuned on evaluation seeds.
+All weights are in `FAMILIES` (`roster.ts`) and are recorded in each experiment's `players.json`. No parameter variant was tuned on evaluation seeds.
 
 ## Versions, frozen roster and counters
 
