@@ -266,7 +266,7 @@ function freeAction(run: EventRun, cursor: Cursor, action: string, constraints: 
   ctx.log("ChoiceMade", { freeAction: action, locations: [...part.locations] }, run.ruleRef);
   handler.execute(ctx, part, options);
   if (after) runSa();
-  const still = rolled(ctx.entries.slice(mark)) ? [] : unchangedLocations(before, ctx.state, part.locations);
+  const still = rolled(ctx.entries.slice(mark)) ? [] : unchangedLocations(before, ctx.state, part.locations, ctx.entries.slice(mark));
   if (still[0] !== undefined) ask(run, NO_EFFECT, noEffectMessage(still[0]));
   cursor.previous = part.locations;
 }

@@ -6,9 +6,14 @@ import { EUROPE_SPACE, TRACK } from "./ids.ts";
 
 export const NO_EFFECT = "locationNoEffect";
 
-/** Locations whose pieces, faces, markers and level (Europe: the Europe track) are the same in `after`. */
-export function unchangedLocations(before: GameState, after: GameState, locations: readonly string[]): string[] {
-  const changed = (loc: string): boolean => (loc === EUROPE_SPACE ? before.tracks[TRACK.europe] !== after.tracks[TRACK.europe] : canonicalJson(before.spaces[loc] ?? null) !== canonicalJson(after.spaces[loc] ?? null));
+/**
+ * Locations whose pieces, faces, markers and level (Europe: the Europe track) are the same in `after`
+ * and that no piece entered or left in `entries` (a move that stays in place is not a change). Pieces that leave as others arrive change a space
+ * even when its count and faces end the same (March A to B, B to C).
+ */
+export function unchangedLocations(before: GameState, after: GameState, locations: readonly string[], entries: readonly LogEntry[]): string[] {
+  const moved = new Set(entries.flatMap((e) => (e.kind === "EffectApplied" && e.data["effect"] === "movePieces" && e.data["from"] !== e.data["to"] ? [e.data["from"], e.data["to"]].filter((x) => typeof x === "string") : [])));
+  const changed = (loc: string): boolean => moved.has(loc) || (loc === EUROPE_SPACE ? before.tracks[TRACK.europe] !== after.tracks[TRACK.europe] : canonicalJson(before.spaces[loc] ?? null) !== canonicalJson(after.spaces[loc] ?? null));
   return locations.filter((loc) => !changed(loc));
 }
 

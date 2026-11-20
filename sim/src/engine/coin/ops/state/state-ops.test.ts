@@ -101,6 +101,12 @@ describe("Train (06 s2.1)", () => {
 });
 
 describe("Garrison (06 s2.2)", () => {
+  it("refuses a Garrison whose only move keeps Police in place and activates no one (decision 18)", () => {
+    const board = setPieces(setPieces(turnOf("state"), "hakkari", "police", 1), "hakkari", "guerrilla", 0);
+    const garrison = op("state", "limitedOp", { op: "state.garrison", locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "hakkari", to: "hakkari", count: 1 }] } } });
+    expect(codes(board, garrison)).toEqual(["locationNoEffect"]);
+  });
+
   it("moves Police, then activates one per Police and Guard in the target (Mountain: per 2), 2 Resources total", () => {
     const board = setPieces(start, "hakkari", "guerrilla", 3);
     const { state } = play(board, op("state", "opOnly", { op: "state.garrison", locations: ["hakkari"], perLocation: { hakkari: { moves: [{ from: "van-rural", to: "hakkari", count: 1 }, { from: "agri-igdir", to: "bingol-tunceli", count: 1 }] } } }));
