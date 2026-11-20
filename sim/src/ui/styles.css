@@ -211,8 +211,6 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4p
 .map-body .map { flex: 1; min-width: 0; min-height: 0; height: 100%; }
 .track-card { flex: none; align-self: flex-start; max-height: 100%; overflow-y: auto; box-sizing: border-box; width: 240px; display: grid; gap: 6px; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 10px #0003; }
 .track-row { display: grid; gap: 3px; font-size: 16px; }
-.track-name { color: var(--muted); }
-.track-name b { color: var(--fg); }
 .track-row .mini-track { flex-wrap: wrap; }
 .track-row .mini-box { min-width: 12px; font-size: 16px; }
 .track-bar { position: relative; display: block; height: 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); overflow: hidden; }
@@ -262,8 +260,6 @@ h3 {font-size:16px;}
 .map-window .map {width:100%; height:100%; border:0; border-radius:0; background:#eee3c8;}
 .track-card {display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; width:100%; max-height:150px; padding:8px 12px; border:0; border-radius:0; box-shadow:none; background:#e8dfcb; color:#403b30; flex:none; overflow:visible; align-self:stretch;}
 .track-row {font-size:16px; min-width:0; align-content:start;}
-.track-name {color:#615640;}
-.track-name b {display:block; color:#332e24; font-size:16px; font-weight:650;}
 .track-card .mini-track {display:none;}
 .track-card .track-bar {height:5px; background:#d3c7ac; border:0;}
 .track-card .track-fill {background:#315e73;}
@@ -322,20 +318,12 @@ h3 {font-size:16px;}
 .box-track rect {fill:#f5eedf; stroke:#8b7b5e;}
 .box-track text {font:600 11px system-ui,sans-serif; fill:#403b30;}
 .track-row {position:relative; padding-right:18px;}
-.track-scale {position:absolute; top:0; right:0;}
-.track-scale summary {cursor:pointer; color:#514735; list-style:none; padding:0 4px;}
-.track-scale-content {position:absolute; right:0; top:26px; width:220px; padding:10px; background:#fbf5e9; border:1px solid #9b8d73; box-shadow:0 4px 12px #0003; z-index:8; border-radius:4px;}
-.track-card .track-scale-content .mini-track {display:flex;}
-.track-scale-content .mini-box, .track-scale-content .mini-step {color:#403b30; background:#e6dcc6; border-color:#b4a588; font-size:16px; line-height:22px;}
-.track-scale-content .mini-box.on, .track-scale-content .mini-step.on {background:#315e73; color:white;}
-.track-name b {padding-right:4px;}
 .atlas-counter text {font-size:12px;}
 .atlas-political .level-marker {font-size:12px;}
 .mode-political .force-layer, .mode-terrain .force-layer, .mode-terrain .political-layer, .mode-forces .political-layer {display:none;}
 .elig-box button {overflow-wrap:normal; word-break:normal;}
 .elig-row {grid-template-columns:40px repeat(5,minmax(0,1fr));}
 /* Map layer filters and track labels. */
-.track-name b {display:inline; margin-left:6px;}
 .track-row {gap:0;}
 .track-card {padding:5px 10px;}
 .elig-row {grid-template-columns:50px repeat(5,minmax(0,1fr));}
@@ -343,7 +331,6 @@ h3 {font-size:16px;}
 .mode-terrain .control-layer, .mode-forces .control-layer {display:none;}
 .piece-code {font:700 9px system-ui,sans-serif; pointer-events:none;}
 .help strong[style*="color"], .forces-row h3[style*="color"] {background:#f6efdf; padding:2px 5px; border-radius:3px;}
-.track-scale summary {min-width:24px; min-height:24px; display:grid; place-items:center;}
 
 /* Approved on-map layout. Only the two remote spaces use the left column. */
 .atlas-label {font-size:22px;}
