@@ -1,6 +1,6 @@
 # How to play and test the full campaign
 
-The full campaign is the only scenario: five Campaigns (C1 to C5), each with 12 Event cards and one Propaganda card. One game takes more than one sitting. The session saves after each action, so you can stop and use **Resume** on the Home screen. The short S0 test game is archived. You play both factions, State and PKK. You need no other file than this one and [INSTALL.md](INSTALL.md).
+The full campaign is the only scenario: five Campaigns (C1 to C5), each with 12 Event cards and one Propaganda card. One game takes more than one sitting. The session saves after each action, so you can stop and use **Resume** on the Home screen. The short S0 test game is archived. By default you play against a bot. To play both factions, State and PKK, choose **None: I play both sides** in **Opponent**. You need no other file than this one and [INSTALL.md](INSTALL.md).
 
 Your job: play the full campaign to the end and write a note each time something is unclear, wrong or slow.
 

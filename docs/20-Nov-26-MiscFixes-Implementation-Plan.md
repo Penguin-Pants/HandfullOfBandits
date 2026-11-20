@@ -237,7 +237,7 @@ Requirement IDs come from the requirements response. Acceptance criteria (AC) ID
 - COIN series claims cite [Wikipedia, "COIN (board game)"](https://en.wikipedia.org/wiki/COIN_(board_game)): publisher, purpose, first game and designer, variable turn order. No publisher text is copied. An unverified "not a GMT Games product" line was cut.
 - AC5.2 (checked by hand): each `make` command is a `Makefile` target. Each `npm run` command is a `sim/package.json` script (`sim`, `build`, `check`, `start`); `npm ci` and `npm test` are npm built-ins.
 - Play describes the X/Y score line (Phase 4) and the Bot speed select and last bot moves (Phase 3).
-- Open: `docs/tester/HOW-TO-PLAY.md` says "You play both factions", but Home now defaults to the recommended bot. Proposed as an out-of-scope fix.
+- `docs/tester/HOW-TO-PLAY.md`: it said "You play both factions", but Home defaults to the recommended bot (`sim/src/ui/home/Home.tsx:43`). Now it names the **Opponent** choice (user approved).
 
 ## Phase 6: Review, validate and ship
 
