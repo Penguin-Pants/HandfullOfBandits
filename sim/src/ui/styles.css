@@ -202,6 +202,12 @@ nav { height: 50px; box-sizing: border-box; }
 .map-arrow.live line { stroke-dasharray: 10 8; opacity: 0.8; }
 .map-arrow-head { fill: var(--accent); }
 .map-arrow-count { font-size: 18px; font-weight: 700; fill: var(--fg); paint-order: stroke; stroke: var(--cell); stroke-width: 5px; }
+/* Last bot action (R1.3): its arrows and changed outlines pulse a few times. Reduced motion: no
+   pulse; the arrows and outlines still show (AC1.8). */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes bot-pulse { 50% { opacity: 0.35; } }
+  .bot-moves .map-arrow, .changed-outline { animation: bot-pulse 0.75s ease-in-out 3; }
+}
 /* Action summaries (UC-6) */
 .action-summary { margin: 2px 0 6px; font-size:inherit; color: var(--muted); }
 .help-actions { display: grid; gap: 6px; margin: 0 0 10px; font-size:inherit; }

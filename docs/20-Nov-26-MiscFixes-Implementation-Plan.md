@@ -8,8 +8,8 @@ Source: the requirements agreed in the session of 2026-11-20 (R1 to R5 below). S
 | --- | --- | --- | --- |
 | 1 | ✅ Done | Penguin-Pants/HandfullOfBandits#137 | CI green, Codex review clean. See "Phase 1 outcome" |
 | 2 | ✅ Done | Penguin-Pants/HandfullOfBandits#138 | CI green, Codex review clean. See "Phase 2 outcome" |
-| 3 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
-| 4 | Not started | – | Gate: user picks a mockup |
+| 3 | ✅ Done | Penguin-Pants/HandfullOfBandits#139 | See "Phase 3 outcome" |
+| 4 | Next | – | Start here. Gate: build the mockup page, then the user picks a variant. Node 24 is required (`sim/package.json` engines) |
 | 5 | Not started | – | – |
 | 6 | Not started | – | – |
 
@@ -169,6 +169,14 @@ Requirement IDs come from the requirements response. Acceptance criteria (AC) ID
 **Acceptance criteria:** AC1.1 to AC1.8 pass. The existing bot-seat tests stay green. Some existing tests may now need timers advanced. Change them only in that way, and never remove an assertion.
 
 **Dependencies:** None in code. Run it after Phase 2, because both edit `Play.tsx`. This avoids conflicts.
+
+**Phase 3 outcome (done)**
+- `Play.tsx`: a timer runs before each `botStep`, with the `stepped` guard kept. A new head, a speed change, Pause, a bot error and unmount clear it. Undo and branch clear it when they start (Codex finding on #139: a slow reload let the old timer fire). A new head clears an old bot error (review fix: the bot stayed stuck after Undo past an error).
+- AC1.6 decision: a speed change during a wait starts that wait again at the new speed.
+- New `BotSpeed.tsx`: the control (`hob.botSpeed`) and `botMoves`, which adds up the applied `movePieces` entries per route.
+- `Board.tsx`: a `lastMoves` prop ("Last bot moves" group). A human plan or map click hides it. Changed outlines carry a `changed-outline` class.
+- `styles.css`: one `bot-pulse` keyframe inside `@media (prefers-reduced-motion: no-preference)` (AC1.8).
+- Tests: 17 new in `bot-seat.test.tsx` (fake timers, with a `jest` alias for Testing Library). `make test`: 1871 tests pass.
 
 ## Phase 4: Score X/Y display (gated)
 

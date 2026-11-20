@@ -84,6 +84,8 @@ export interface BoardProps {
   readonly onDrag?: (from: string, to: string) => void;
   /** Planned moves, drawn as arrows with their piece count. */
   readonly arrows?: readonly { readonly from: string; readonly to: string; readonly count: number }[];
+  /** The last bot action's moves, drawn like planned moves (R1.3). */
+  readonly lastMoves?: readonly { readonly from: string; readonly to: string; readonly count: number }[];
 }
 
 export function levelColor(level: number | null): string {
@@ -117,6 +119,7 @@ function Tokens({ space, view, x, y }: { space: SpaceView; view: BoardView; x: n
 
 function Space({ space, cell, atlas, selected, neighbor, changed, eligible, described, onSelect, onGrab }: { space: SpaceView; cell: Point[] | null; atlas: AtlasSpace | undefined; selected: boolean; neighbor: boolean; changed: boolean; eligible: boolean | null; described: boolean; onSelect: BoardProps["onSelect"]; onGrab: (id: string) => void }) {
   const outline = selected ? "var(--accent)" : changed ? "var(--changed)" : null;
+  const changedClass = changed && !selected ? "changed-outline" : undefined;
   const box = cell === null ? { x: space.x - INSET_W / 2, y: space.y - INSET_H / 2 } : null;
   return (
     <g
@@ -140,15 +143,15 @@ function Space({ space, cell, atlas, selected, neighbor, changed, eligible, desc
             <image href={CITY_ART[space.id] ?? "/diyarbakir-city.png"} x={atlas.circle[0] - atlas.circle[2]} y={atlas.circle[1] - atlas.circle[2]} width={atlas.circle[2] * 2} height={atlas.circle[2] * 2} opacity={.4} clipPath={`url(#clip-city-${space.id})`} pointerEvents="none" />
           </>}
           <path d={edgePath(atlas)} className="atlas-edge" fill="none" vectorEffect="non-scaling-stroke" strokeLinejoin="round" pointerEvents="none" />
-          <path d={edgePath(atlas)} className="atlas-outline" fill="none" stroke={outline ?? "#f4ecd6"} strokeWidth={outline === null ? 2.2 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
+          <path d={edgePath(atlas)} className={changedClass === undefined ? "atlas-outline" : `atlas-outline ${changedClass}`} fill="none" stroke={outline ?? "#f4ecd6"} strokeWidth={outline === null ? 2.2 : 4} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeDasharray={changed && !selected ? "8 5" : undefined} pointerEvents="none" />
         </>
       ) : box === null ? (
         <>
           <path d={pathOf(cell ?? [])} fill={levelColor(space.level)} stroke="var(--cell-line)" strokeWidth={1.2} strokeDasharray="6 3" />
-          {outline !== null && <path d={pathOf(cell ?? [])} fill="none" stroke={outline} strokeWidth={6} strokeDasharray={selected ? undefined : "8 5"} />}
+          {outline !== null && <path className={changedClass} d={pathOf(cell ?? [])} fill="none" stroke={outline} strokeWidth={6} strokeDasharray={selected ? undefined : "8 5"} />}
         </>
       ) : (
-        <rect x={box.x} y={box.y} width={INSET_W} height={INSET_H} rx={6} fill={levelColor(space.level)} stroke={outline ?? "var(--cell-line)"} strokeWidth={outline === null ? 1.5 : 5} />
+        <rect className={changedClass} x={box.x} y={box.y} width={INSET_W} height={INSET_H} rx={6} fill={levelColor(space.level)} stroke={outline ?? "var(--cell-line)"} strokeWidth={outline === null ? 1.5 : 5} />
       )}
     </g>
   );
@@ -231,7 +234,7 @@ function EuropeTrack({ track, onReveal }: { readonly track: BoardView["status"][
   </g>;
 }
 
-export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [], mode = "full", eligible = null, camera = {zoom:1,x:0,y:0}, onPan, onZoom, onReveal }: BoardProps) {
+export function Board({ view, selected, onSelect, changed = [], onDrag, arrows = [], lastMoves = [], mode = "full", eligible = null, camera = {zoom:1,x:0,y:0}, onPan, onZoom, onReveal }: BoardProps) {
   const cells = regionCells(view.spaces);
   const spaces = view.spaces.filter(s => !isEuropeTrack(s));
   const europe = view.spaces.find(isEuropeTrack);
@@ -275,6 +278,11 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
     const layout = cells.geographic && s !== undefined ? atlasLayout(s) : undefined;
     return s === undefined ? null : layout === undefined ? { x: s.x, y: s.y } : { x: layout.stack[0] + layout.stack[2] / 2, y: layout.stack[1] + layout.stack[3] / 2 };
   };
+  const drawn = (moves: BoardProps["arrows"] = []) => moves.map((m, i) => {
+    const a = centre(m.from);
+    const b = centre(m.to);
+    return a === null || b === null ? null : <Arrow key={`${m.from}-${m.to}-${String(i)}`} a={a} b={b} label={String(m.count)} />;
+  });
   // A release outside the map ends the drag without a move.
   useEffect(() => {
     if (grab === null) return;
@@ -403,13 +411,14 @@ export function Board({ view, selected, onSelect, changed = [], onDrag, arrows =
         return at === undefined || isEuropeTrack(at) ? null : <BoxTrack geographic={cells.geographic} key={t.id} track={t} space={at} />;
       })}
       <g pointerEvents="none" aria-label="Planned moves">
-        {arrows.map((m, i) => {
-          const a = centre(m.from);
-          const b = centre(m.to);
-          return a === null || b === null ? null : <Arrow key={`${m.from}-${m.to}-${String(i)}`} a={a} b={b} label={String(m.count)} />;
-        })}
+        {drawn(arrows)}
         {from !== null && grab?.at != null && <Arrow a={from} b={grab.at} live />}
       </g>
+      {lastMoves.length > 0 && (
+        <g pointerEvents="none" aria-label="Last bot moves" className="bot-moves">
+          {drawn(lastMoves)}
+        </g>
+      )}
     </svg>
     {tipSpace !== undefined && <SpaceTip space={tipSpace} eligible={eligible === null ? null : eligible.includes(tipSpace.id)} tipRef={tipRef} />}
   </>);

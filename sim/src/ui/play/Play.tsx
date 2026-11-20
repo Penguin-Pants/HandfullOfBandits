@@ -26,6 +26,7 @@ import { TrackCard } from "../status/TrackCard.tsx";
 import { skipQuestion } from "../propaganda/phases.ts";
 import { FullscreenButton } from "./FullscreenButton.tsx";
 import { BotWhy } from "../history/BotWhy.tsx";
+import { BOT_DELAYS, BotSpeed, botMoves, savedBotSpeed } from "./BotSpeed.tsx";
 
 export interface PlayProps {
   readonly api: Api;
@@ -76,12 +77,17 @@ const SPACE_INSPECTOR: boolean = false;
 export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProps) {
   const [data, setData] = useState<{ session: SessionRow; head: Head; botToAct?: string | null; botExtends?: boolean } | null>(null);
   // Bot seat (audit Plan 2 S1): the bot State part a human PKK extends, the head the bot last
-  // stepped from (one request per head) and a pause while Undo walks back past bot actions.
+  // stepped from (one request per head) and a stop while Undo or a branch changes the head.
   const [statePart, setStatePart] = useState<Readonly<Record<string, unknown>> | null>(null);
   const [pkkOptions, setPkkOptions] = useState<readonly Readonly<Record<string, unknown>>[] | null>(null);
   const [botError, setBotError] = useState<string | null>(null);
   const stepped = useRef<string | null>(null);
-  const undoing = useRef(false);
+  const rewinding = useRef(false);
+  /** The pending wait before a bot step; Undo and a branch clear it before they change the head. */
+  const botTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [speed, setSpeed] = useState(savedBotSpeed);
+  /** The action whose bot moves a map click hid: the player's own plan takes the map (R1.3). */
+  const [movesSeen, setMovesSeen] = useState<string | null>(null);
   const [legal, setLegal] = useState<LegalChoices | null>(null);
   // The map-built plans (UC-5): one for the Faction panel, one for an Event's free action. Map
   // clicks and drags build the active one.
@@ -134,6 +140,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
         setChanged(prev === null ? [] : changedSpaces(prev.view, s.head.view));
         setStatePart(null);
         setPkkOptions(null);
+        setBotError(null);
       }
       shown.current = s.head;
       setData(s);
@@ -149,26 +156,30 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     return () => { loadVersion.current++; };
   }, [load]);
 
-  // The seated bot acts as soon as the head is its decision.
+  // The seated bot acts after the chosen wait when the head is its decision (R1.1). A new head,
+  // a speed change, Pause, a bot error and unmount clear the wait; so do Undo and a branch.
   const botToAct = data?.botToAct ?? null;
   useEffect(() => {
+    if (data === null || botToAct === null || rewinding.current || speed === "pause" || botError !== null) return;
     // One request per head state: a continued Operation keeps its action ID but changes the state.
-    if (data === null || botToAct === null || undoing.current) return;
     const at = `${data.head.actionId}:${data.head.stateHash}`;
     if (stepped.current === at) return;
-    stepped.current = at;
-    setBotError(null);
-    api.botStep(sessionId, data.head.actionId, data.head.stateHash).then((r) => {
-      if (r.partial !== null) {
-        setStatePart(r.partial);
-        setPkkOptions(r.options);
-      }
-      else void load();
-    }).catch((e: unknown) => {
-      stepped.current = null;
-      setBotError(e instanceof Error ? e.message : String(e));
-    });
-  }, [api, sessionId, data, botToAct, load]);
+    const timer = setTimeout(() => {
+      stepped.current = at;
+      api.botStep(sessionId, data.head.actionId, data.head.stateHash).then((r) => {
+        if (r.partial !== null) {
+          setStatePart(r.partial);
+          setPkkOptions(r.options);
+        }
+        else void load();
+      }).catch((e: unknown) => {
+        stepped.current = null;
+        setBotError(e instanceof Error ? e.message : String(e));
+      });
+    }, BOT_DELAYS[speed]);
+    botTimer.current = timer;
+    return () => { clearTimeout(timer); };
+  }, [api, sessionId, data, botToAct, load, speed, botError]);
 
   const commit = async (command: AnyCommand): Promise<void> => {
     if (data === null) return;
@@ -215,7 +226,11 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const loadFailure = loadError === null ? null : <div><p role="alert">Could not load session: {loadError}</p><button type="button" onClick={() => void load()}>Retry</button><button type="button" onClick={onExit}>Home</button></div>;
   if (data === null || legal === null) return <div className="screen">{loadFailure ?? <p>Loading…</p>}</div>;
   const view = data.head.view;
+  const lastItem = history.filter((h) => h.action.status !== "undone").at(-1);
+  const planArrows = arrowsOf(plan);
+  const lastMoves = planArrows.length === 0 && lastItem !== undefined && movesSeen !== lastItem.action.action_id ? botMoves(lastItem) : [];
   const select = (id: string, add: boolean): void => {
+    setMovesSeen(lastItem?.action.action_id ?? null);
     dispatch({ type: "click", id, add });
     setFocused(id);
     focusStore.set({ panel: "board", selectedSpace: id });
@@ -232,7 +247,8 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     if (steps <= 0) steps = committed.length;
     if (!window.confirm(steps > 1 ? `Undo your last action and the ${String(steps - 1)} bot action(s) after it?` : "Undo the last action?")) return;
     setError(null);
-    undoing.current = true;
+    clearTimeout(botTimer.current);
+    rewinding.current = true;
     try {
       let at = { actionId: data.head.actionId, stateHash: data.head.stateHash };
       for (let i = 0; i < steps; i++) {
@@ -246,7 +262,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
-      undoing.current = false;
+      rewinding.current = false;
       stepped.current = null;
       await load();
     }
@@ -254,14 +270,18 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const branch = async (actionId: string): Promise<void> => {
     if (!window.confirm(`Start a new branch at ${actionId}? The current branch stays stored.`)) return;
     setError(null);
+    clearTimeout(botTimer.current);
+    rewinding.current = true;
     try {
       await api.branch(sessionId, actionId, data.head.actionId, data.head.stateHash);
       last.current = { id: null, at: null };
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      rewinding.current = false;
       // A branch can return to a head the bot already stepped from: let it act there again.
       stepped.current = null;
       await load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
     }
   };
   const end = async (debrief: string | null): Promise<void> => {
@@ -277,6 +297,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
   const eventOpen = legal.boxes?.some((b) => b.box === "event" && b.allowed) ?? false;
   const mapTools = (
               <div className="row">
+              {Object.keys(seats).length > 0 && <BotSpeed value={speed} onChange={setSpeed} />}
               <button type="button" aria-pressed={showKey} onClick={() => { setShowKey(!showKey); }}>
                 Key
               </button>
@@ -314,7 +335,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           <div className="panel map-panel">
             {showTracks && <TrackCard view={view} />}
             <div className="map-body">
-            <MapCanvas tools={mapTools} eligible={plans.active === "event" ? eventTargets : factionTargets} view={board} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={arrowsOf(plan)} />
+            <MapCanvas tools={mapTools} eligible={plans.active === "event" ? eventTargets : factionTargets} view={board} selected={selected} onSelect={select} changed={changed} onDrag={(from, to) => { dispatch({ type: "drag", from, to }); }} arrows={planArrows} lastMoves={lastMoves} />
             </div>
             {SPACE_INSPECTOR && detail !== undefined && <div className="space-inspector" aria-live="polite"><button type="button" aria-label="Close space details" onClick={() => {setFocused(null);}}>×</button><SpaceDetail space={detail} tracks={view.status.tracks} /><p className="hint">{(legal.actions ?? []).filter(a => a.locations.includes(detail.id)).map(a => a.label).join(" · ") || "No standalone operation target listed for the acting faction."} Complete plans are checked by the rules engine.</p></div>}
             {showKey && (
@@ -342,7 +363,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
               {botError !== null && (
                 <>
                   <p className="bad">{botError}</p>
-                  <button type="button" onClick={() => void load()}>Retry</button>
+                  <button type="button" onClick={() => { setBotError(null); void load(); }}>Retry</button>
                 </>
               )}
             </section>
@@ -357,7 +378,7 @@ export function Play({ api, sessionId, onExit, onReview, onOpenState }: PlayProp
           ) : (
             <EventPanel onTargets={setEventTargets} api={api} sessionId={sessionId} view={view} faction={legal.faction} eventOpen={eventOpen} onCommit={(c) => void commit(c)} forms={legal.forms ?? []} plan={plans.event} dispatch={toEvent} onFreeAction={(open) => { dispatch({ type: "activate", owner: open ? "event" : "faction" }); }} />
           )}
-          <LastAction item={history.filter((h) => h.action.status !== "undone").at(-1)} view={view} onRule={onRule} />
+          <LastAction item={lastItem} view={view} onRule={onRule} />
           <div className="row">
             <button type="button" onClick={() => { setShowHelp(!showHelp); }}>
               Help (?)

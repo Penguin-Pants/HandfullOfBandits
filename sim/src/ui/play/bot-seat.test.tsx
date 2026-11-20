@@ -2,9 +2,9 @@
 // Audit Plan 2 S1: the Play screen lets the seated bot act, joins a bot State part with the human
 // PKK answers, sends a human State part to a PKK bot, walks Undo back past bot actions, and shows
 // "Why?" for a bot command. Home starts a session with the chosen bot seat.
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { turnOf, withCard } from "../../../test/board.ts";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { setPieces, turnOf, withCard } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { mockApi } from "../../../test/ui/mock-api.ts";
 import { boardView } from "../../server/view.ts";
@@ -12,9 +12,27 @@ import type { GameState } from "../../engine/core/types.ts";
 import type { BotRecord, Head, HistoryItem, LegalChoices, SessionRow } from "../api.ts";
 import { Home } from "../home/Home.tsx";
 import { BotWhy, commandText } from "../history/BotWhy.tsx";
+import { BOT_SPEED_SETTING, botMoves, savedBotSpeed } from "./BotSpeed.tsx";
 import { Play } from "./Play.tsx";
 
-afterEach(cleanup);
+// The bot waits with setTimeout (R1.1): fake the timeouts. Testing Library flushes a setTimeout(0)
+// after each act and moves a fake clock in waitFor only through a global `jest`: alias it to vi.
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  vi.stubGlobal("jest", { advanceTimersByTime: (ms: number) => vi.advanceTimersByTime(ms) });
+});
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+  localStorage.clear();
+});
+const tick = (ms: number): Promise<void> => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
+/** Wait until the bot turn shows, then let the Normal wait run out. */
+const botActs = async (): Promise<void> => {
+  await screen.findByText(/is choosing/);
+  await tick(1500);
+};
 
 const headOf = (id: string, state: GameState): Head => ({ actionId: id, stateHash: `h-${id}`, state, derived: null as never, view: boardView(kurdish.ruleset, kurdish.data, state) });
 const cardHead = (id: string) => headOf(id, withCard(turnOf("state"), "DK-012"));
@@ -44,6 +62,7 @@ describe("Play with a bot seat", () => {
     const legal = vi.fn(() => Promise.resolve<LegalChoices>({ faction: n === 0 ? "state" : "pkk", phase: "card", first: true, boxes: [], actions: [] }));
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     expect(await screen.findByText(/State bot \(S-ADAPT@5\) is choosing/)).toBeTruthy();
+    await tick(1500);
     await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
     expect(botStep).toHaveBeenCalledTimes(1);
     expect(botStep).toHaveBeenCalledWith("S", "A1", "h-A1");
@@ -57,6 +76,9 @@ describe("Play with a bot seat", () => {
     const botStep = vi.fn(() => { n++; return Promise.resolve({ actionId: "A1", partial: null, options: null, records: [record] }); });
     const legal = vi.fn(() => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }));
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    await botActs();
+    await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
+    await tick(1500);
     await waitFor(() => { expect(botStep).toHaveBeenCalledTimes(2); });
     expect(botStep.mock.calls.map((c) => (c as unknown[])[2])).toEqual(["h-A1", "h-A1b"]);
   });
@@ -71,10 +93,12 @@ describe("Play with a bot seat", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
     const legal = vi.fn(() => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] }));
     render(<Play api={mockApi({ session, legal, botStep, history, branch })} sessionId="S" />);
+    await botActs();
     await waitFor(() => { expect(botStep).toHaveBeenCalledTimes(1); });
     fireEvent.click(await screen.findByRole("button", { name: "History (H)" }));
     fireEvent.click(await screen.findByRole("button", { name: "Branch from here" }));
     await waitFor(() => { expect(branch).toHaveBeenCalled(); });
+    await botActs();
     await waitFor(() => { expect(botStep).toHaveBeenCalledTimes(2); });
   });
 
@@ -84,6 +108,7 @@ describe("Play with a bot seat", () => {
     const botStep = vi.fn(() => Promise.resolve({ actionId: null, partial: statePart, options: null, records: [record] }));
     const submit = vi.fn(() => Promise.resolve({ actionId: "R2", head: redeployHead("R2"), entries: [] }));
     render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), botStep, submit })} sessionId="S" />);
+    await botActs();
     expect(await screen.findByLabelText("State bot part")).toBeTruthy();
     expect(screen.getByLabelText("State bot part").textContent).toMatch(/moves 2 Troops from Van/);
     // The human PKK routes Guerrillas only; the server keeps the bot's Troops and Police.
@@ -99,6 +124,7 @@ describe("Play with a bot seat", () => {
     const botStep = vi.fn(() => Promise.resolve({ actionId: null, partial: statePart, options: null, records: [record] }));
     const submit = vi.fn(() => Promise.resolve({ actionId: "R2", head: redeployHead("R2"), entries: [] }));
     render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), botStep, submit })} sessionId="S" />);
+    await botActs();
     expect(await screen.findByLabelText("State bot part")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Hakkari" }));
     fireEvent.click(screen.getByRole("button", { name: /^Ş[ıi]rnak$/ }));
@@ -141,6 +167,7 @@ describe("Play with a bot seat", () => {
     const botStep = vi.fn(() => Promise.resolve({ actionId: null, partial: { ceasefire: { accept: true } }, options, records: [record] }));
     const submit = vi.fn(() => Promise.resolve({ actionId: "L2", head, entries: [] }));
     render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), botStep, submit })} sessionId="S" />);
+    await botActs();
     expect((await screen.findByLabelText("State bot part")).textContent).toMatch(/accepts the ceasefire/);
     // Not "End the ceasefire": acceptance made it Reciprocal Restraint.
     expect(screen.queryByRole("button", { name: /End the ceasefire/ })).toBeNull();
@@ -169,6 +196,240 @@ describe("Play with a bot seat", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Undo (Ctrl+Z)" }));
     await waitFor(() => { expect(undo).toHaveBeenCalledTimes(3); });
     expect(undo.mock.calls.map((c) => c[1])).toEqual(["A3", "A2", "A1"]);
+  });
+});
+
+describe("Bot pacing and last bot moves (Phase 3)", () => {
+  const move = (n: number, from: string, to: string, count: number, face: string) => ({ entry_id: `B-E${String(n)}`, action_id: "B", n, kind: "EffectApplied", state_seq: n, rule_ref: null, assumption_ref: null, data: JSON.stringify({ effect: "movePieces", piece: "guerrilla", from, to, face, arrive: face, count }), text: "", cause: null, cardTitle: null });
+  /** A bot action that moved 2 + 1 Guerrillas from Hakkari to Şırnak, and a human action before it. */
+  const botItem = { ...item("B", [record]), entries: [move(1, "hakkari", "sirnak", 2, "underground"), move(2, "hakkari", "sirnak", 1, "active")] } as HistoryItem;
+  const deferred = <T,>() => {
+    let resolve: (v: T) => void = () => undefined;
+    const promise = new Promise<T>((r) => { resolve = r; });
+    return { promise, resolve };
+  };
+  /** The State bot acts at head A1; after its step the head is A2 and the human PKK acts. */
+  const steps = (failure?: Error) => {
+    const n = { at: 0 };
+    const botStep = vi.fn(() => {
+      if (failure !== undefined) return Promise.reject(failure);
+      n.at = 1;
+      return Promise.resolve({ actionId: "A2", partial: null, options: null, records: [record] });
+    });
+    const heads = [cardHead("A1"), cardHead("A2")];
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: heads[n.at] as Head, botToAct: n.at === 0 ? "state" : null }));
+    const legal = vi.fn(() => Promise.resolve<LegalChoices>({ faction: n.at === 0 ? "state" : "pkk", phase: "card", first: true, boxes: [], actions: [] }));
+    return { n, session, legal, botStep };
+  };
+
+  it("botMoves adds up a route's applied moves and skips other entries and human actions", () => {
+    const skipped = { ...move(3, "van", "hakkari", 4, "default"), kind: "EffectSkipped" };
+    const placed = { ...move(4, "van", "hakkari", 1, "default"), data: JSON.stringify({ effect: "placePieces", space: "van", count: 1 }) };
+    expect(botMoves({ ...botItem, entries: [...botItem.entries, skipped, placed] })).toEqual([{ from: "hakkari", to: "sirnak", count: 3 }]);
+    expect(botMoves({ ...botItem, bot: [] })).toEqual([]);
+    expect(botMoves(undefined)).toEqual([]);
+  });
+
+  it("savedBotSpeed falls back to Normal for a missing or unknown value", () => {
+    expect(savedBotSpeed()).toBe("normal");
+    localStorage.setItem(BOT_SPEED_SETTING, "warp");
+    expect(savedBotSpeed()).toBe("normal");
+  });
+
+  it("AC1.1: waits 1.5 s at Normal speed before the bot step", async () => {
+    const { session, legal, botStep } = steps();
+    render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1499);
+    expect(botStep).not.toHaveBeenCalled();
+    await tick(1);
+    expect(botStep).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([["slow", 3000], ["fast", 500]] as const)("AC1.2: reads the saved %s speed on mount and waits %i ms", async (speed, ms) => {
+    localStorage.setItem(BOT_SPEED_SETTING, speed);
+    const { session, legal, botStep } = steps();
+    render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    expect(screen.getByRole("button", { name: speed === "slow" ? "Slow" : "Fast" }).getAttribute("aria-pressed")).toBe("true");
+    await tick(ms - 1);
+    expect(botStep).not.toHaveBeenCalled();
+    await tick(1);
+    expect(botStep).toHaveBeenCalledTimes(1);
+  });
+
+  it("AC1.2: saves the chosen speed in the browser", async () => {
+    const { session, legal, botStep } = steps();
+    render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Fast" }));
+    expect(localStorage.getItem(BOT_SPEED_SETTING)).toBe("fast");
+  });
+
+  it("shows the speed control only when the session has a bot seat", async () => {
+    const session = vi.fn(() => Promise.resolve({ session: row({}), head: cardHead("A1"), botToAct: null }));
+    render(<Play api={mockApi({ session, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
+    await screen.findByRole("button", { name: "Undo (Ctrl+Z)" });
+    expect(screen.queryByRole("group", { name: "Bot speed" })).toBeNull();
+  });
+
+  it("AC1.3: Pause sends no bot step; Normal resumes it", async () => {
+    const { session, legal, botStep } = steps();
+    render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1000);
+    fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+    await tick(10000);
+    expect(botStep).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Normal" }));
+    await tick(1500);
+    expect(botStep).toHaveBeenCalledTimes(1);
+  });
+
+  it("AC1.6: a speed change during the wait starts the wait again at the new speed", async () => {
+    const { session, legal, botStep } = steps();
+    render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1000);
+    fireEvent.click(screen.getByRole("button", { name: "Slow" }));
+    await tick(2999);
+    expect(botStep).not.toHaveBeenCalled();
+    await tick(1);
+    expect(botStep).toHaveBeenCalledTimes(1);
+  });
+
+  it("AC1.4: shows the last bot action's moves as arrows and its changed spaces as outlines during the wait", async () => {
+    const heads = [cardHead("A1"), headOf("A2", setPieces(withCard(turnOf("state"), "DK-012"), "sirnak", "guerrilla", 3))];
+    const n = { at: 0 };
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: heads[n.at] as Head, botToAct: "state" }));
+    const history = vi.fn(() => Promise.resolve(n.at === 0 ? [item("A1", [])] : [item("A1", []), botItem]));
+    const botStep = vi.fn(() => { n.at = 1; return Promise.resolve({ actionId: "B", partial: null, options: null, records: [record] }); });
+    const legal = () => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] });
+    const { container } = render(<Play api={mockApi({ session, legal, botStep, history })} sessionId="S" />);
+    await botActs();
+    await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
+    const arrows = await screen.findByLabelText("Last bot moves");
+    expect(arrows.querySelectorAll(".map-arrow")).toHaveLength(1);
+    expect(arrows.textContent).toBe("3");
+    expect(container.querySelector('[data-space="sirnak"] .changed-outline')).not.toBeNull();
+    // The second bot step still waits, so the moves stay on screen.
+    expect(botStep).toHaveBeenCalledTimes(1);
+  });
+
+  it("AC1.4: a human plan click hides the bot arrows (plan arrows win)", async () => {
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: cardHead("A2"), botToAct: null }));
+    const history = vi.fn(() => Promise.resolve([item("A1", []), botItem]));
+    render(<Play api={mockApi({ session, history, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
+    expect((await screen.findByLabelText("Last bot moves")).textContent).toBe("3");
+    fireEvent.click(screen.getByRole("button", { name: "Hakkari" }));
+    expect(screen.queryByLabelText("Last bot moves")?.textContent ?? "").toBe("");
+  });
+
+  it("AC1.5: Undo during the wait sends no bot step for the old head", async () => {
+    const { n, session, legal, botStep } = steps();
+    const pending = deferred<never>();
+    const history = vi.fn(() => Promise.resolve([item("A1", [])]));
+    const undo = vi.fn(() => pending.promise);
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, legal, botStep, history, undo })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1000);
+    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    await waitFor(() => { expect(undo).toHaveBeenCalled(); });
+    await tick(5000);
+    expect(botStep).not.toHaveBeenCalled();
+    n.at = 1;
+    pending.resolve({ undone: "A1", head: "x", undoneAfterRandom: false, state: cardHead("A2") } as never);
+    await waitFor(() => { expect(screen.queryByText(/is choosing/)).toBeNull(); });
+    await tick(5000);
+    expect(botStep).not.toHaveBeenCalled();
+  });
+
+  it("AC1.5: Undo cancels the wait even when the reload after it is slow (PR 139 review)", async () => {
+    const reload = deferred<never>();
+    let calls = 0;
+    const session = vi.fn(() => (++calls === 1 ? Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: cardHead("A1"), botToAct: "state" }) : reload.promise));
+    const legal = () => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] });
+    const botStep = vi.fn(() => new Promise<never>(() => undefined));
+    const history = vi.fn(() => Promise.resolve([item("A1", [])]));
+    const undo = vi.fn(() => Promise.resolve({ undone: "A1", head: "x", undoneAfterRandom: false, state: cardHead("A0") } as never));
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, legal, botStep, history, undo })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1000);
+    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
+    await tick(5000);
+    expect(botStep).not.toHaveBeenCalled();
+  });
+
+  it("a branch during the wait sends no bot step for the old head", async () => {
+    const n = { at: 0 };
+    const heads = [cardHead("A1"), cardHead("B1")];
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: heads[n.at] as Head, botToAct: "state" }));
+    const legal = () => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] });
+    const botStep = vi.fn(() => new Promise<never>(() => undefined));
+    const history = vi.fn(() => Promise.resolve([item("A0", []), item("A1", [])]));
+    const pending = deferred<never>();
+    const branch = vi.fn(() => pending.promise);
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, legal, botStep, history, branch })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1000);
+    fireEvent.click(screen.getByRole("button", { name: "History (H)" }));
+    fireEvent.click((await screen.findAllByRole("button", { name: "Branch from here" }))[0] as HTMLElement);
+    await waitFor(() => { expect(branch).toHaveBeenCalled(); });
+    await tick(5000);
+    expect(botStep).not.toHaveBeenCalled();
+    n.at = 1;
+    pending.resolve({ branchId: "b2", head: heads[1] } as never);
+    await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
+    await tick(1500);
+    expect(botStep).toHaveBeenCalledTimes(1);
+    expect(botStep).toHaveBeenCalledWith("S", "B1", "h-B1");
+  });
+
+  it("stops the wait on unmount", async () => {
+    const { session, legal, botStep } = steps();
+    const { unmount } = render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    await screen.findByText(/is choosing/);
+    await tick(1000);
+    unmount();
+    await tick(5000);
+    expect(botStep).not.toHaveBeenCalled();
+  });
+
+  it("AC1.7: a bot step error shows its text and starts no new wait until Retry", async () => {
+    const { session, legal, botStep } = steps(new Error("Bot failed: no legal play"));
+    render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
+    await botActs();
+    expect(await screen.findByText("Bot failed: no legal play")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Fast" }));
+    await tick(10000);
+    expect(botStep).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Bot failed: no legal play")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+    await waitFor(() => { expect(screen.queryByText("Bot failed: no legal play")).toBeNull(); });
+    await tick(500);
+    expect(botStep).toHaveBeenCalledTimes(2);
+  });
+  it("AC1.7: a new head after a bot error (Undo) clears the error, and the bot acts again", async () => {
+    const n = { at: 0 };
+    const heads = [cardHead("A1"), cardHead("A0")];
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: heads[n.at] as Head, botToAct: "state" }));
+    const legal = () => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] });
+    const botStep = vi.fn(() => (n.at === 0 ? Promise.reject(new Error("Bot failed")) : new Promise<never>(() => undefined)));
+    const history = vi.fn(() => Promise.resolve([item("A1", [])]));
+    const undo = vi.fn(() => { n.at = 1; return Promise.resolve({ undone: "A1", head: "x", undoneAfterRandom: false, state: heads[1] } as never); });
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, legal, botStep, history, undo })} sessionId="S" />);
+    await botActs();
+    expect(await screen.findByText("Bot failed")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
+    await waitFor(() => { expect(screen.queryByText("Bot failed")).toBeNull(); });
+    await tick(1500);
+    expect(botStep).toHaveBeenCalledTimes(2);
+    expect(botStep).toHaveBeenLastCalledWith("S", "A0", "h-A0");
   });
 });
 
