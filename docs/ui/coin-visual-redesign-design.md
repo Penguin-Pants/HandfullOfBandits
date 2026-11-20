@@ -1,6 +1,6 @@
 # Handful of Bandits: implemented visual system
 
-Implements `docs/ui/coin-visual-redesign.md`. Geometry, identifiers, links, rules and game state are unchanged.
+Implements the visual redesign brief (archived on the `archive/docs-ui` branch). Geometry, identifiers, links, rules and game state are unchanged.
 
 ## Architecture
 
@@ -93,19 +93,7 @@ Measured board share of the viewport:
 - `make test` passes: 1520 tests in 109 files. UI tests: 259 pass.
 - `make e2e` (smoke, 36 checks) and `make ux` (76 checks) pass on Linux with Chromium. They cover both target sizes, page scroll, board area thresholds, wheel zoom, selection, drag planning, commit, undo, notes and export.
 - No console errors.
-- Screenshots in `docs/ui/coin-visual-redesign/`:
-
-At 1920 x 1080:
-
-- [Before](coin-visual-redesign/before-1920.jpg)
-- [After](coin-visual-redesign/after-1920.jpg)
-- [After, Map only](coin-visual-redesign/after-1920-map-only.jpg)
-- [After, zoomed and selected](coin-visual-redesign/after-1920-zoomed-selected.jpg)
-
-At 1366 x 768:
-
-- [After](coin-visual-redesign/after-1366.jpg)
-- [After, Map only](coin-visual-redesign/after-1366-map-only.jpg)
+- Older screenshots are on the `archive/docs-ui` branch.
 
 ## Known limitations
 

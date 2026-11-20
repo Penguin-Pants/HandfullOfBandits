@@ -26,6 +26,6 @@ The atlas viewBox is `0 0 1280 960`. Other packages and older schematic saves re
 
 Run `make check`, `make test`, `make e2e` and `make ux`. Browser checks use optional Playwright and `HOB_CHROMIUM=/usr/bin/chromium` in the review environment. They cover content containment, text collisions, normal force visibility, posture placement, four viewport sizes, keyboard and mouse navigation, dense/empty views, legacy rendering and gameplay.
 
-Screenshots and the viewport report are in [ux-overhaul/screenshots](ux-overhaul/screenshots). The 125% case uses a 1536×864 CSS viewport and 1.25 device-pixel ratio. Dense and empty screenshots use synthetic view fixtures only. The approved standalone mock-up is in [ux-overhaul/approved-prototype.png](ux-overhaul/approved-prototype.png).
+Screenshots, the viewport report and the approved mock-up are on the `archive/docs-ui` branch. The 125% case uses a 1536×864 CSS viewport and 1.25 device-pixel ratio. Dense and empty screenshots use synthetic view fixtures only.
 
 At 1366×768 the initial view shows part of the map at readable size. Fit, pan and search expose the full board. Linux/Chromium are verified locally; Windows is covered by repository CI rather than a local execution claim.
