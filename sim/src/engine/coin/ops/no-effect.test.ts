@@ -20,3 +20,8 @@ it("does not count a skipped move or another effect as a change", () => {
   const other = [entry("EffectSkipped", { effect: "movePieces", from: "sirnak", to: "hakkari", count: 2 }), entry("EffectApplied", { effect: "placePieces", space: "hakkari" })];
   expect(unchangedLocations(state, state, ["hakkari", "sirnak"], other)).toEqual(["hakkari", "sirnak"]);
 });
+
+it("does not count a move with the same origin and destination as a change", () => {
+  const stay = [entry("EffectApplied", { effect: "movePieces", from: "hakkari", to: "hakkari", count: 1 })];
+  expect(unchangedLocations(state, state, ["hakkari"], stay)).toEqual(["hakkari"]);
+});
