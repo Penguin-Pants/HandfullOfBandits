@@ -43,7 +43,7 @@ Items 15 to 23 and three print-set approvals. Rule text is in `prototype-rules.m
 | 23 | m-27 | DK-010 gets a neutral title: "Rival Kurdish Groups (1986)". | Appendix A | Done: package title, print set. Research 08 keeps the old title as history |
 | P-1 | #122 | Approved: DK-037, DK-040 and DK-093 print the rule 5.4 Always text; DK-016 prints the standard Propaganda line. | 5.4 | None |
 | P-2 | #122 | Approved: Pivotals print the rule 5.3 text. | 5.3 | None |
-| T-1 | docs 41, 42 | Keep thresholds 49/32 until human games test 43/38. | 7.1 | A human 43/38 game needs a selectable variant (audit Plan 4) |
+| T-1 | docs 41, 42 | Keep thresholds 49/32 until human games test 43/38. | 7.1 | Ready: Home "Setup" offers variant `dd25-thresholds-43-38` (audit Plan 4 V2); the human games are still to play |
 
 Open from these decisions: none.
 
@@ -63,6 +63,21 @@ Open from Plan 2 (doc 43 section 4):
 - **B-5 S2 Pass target.** Answered 2026-11-19: voluntary Pass (Resources for the cheapest base Operation) ≤ 5%. Only `S-CON@5` (−0.3 on unspent Resources) meets it (3.0%); it wins fewer games than `S-CON@4` (15.6%). Run diagnostic `voluntaryPassShare` (`experiment-coverage.ts`).
 - **B-6 S3 scope.** Answered 2026-11-19: a 10-seed first check. Done (`dev-s3-search-10`): S-SEARCH@1 12/40, S-CON@5 7/40, S-CON@4 25/40.
 - **B-7 Default State opponent.** Answered 2026-11-19: keep `S-CON@4`, the strongest bot, although it misses the B-5 target. `S-SEARCH@1` stays registered for later tuning.
+
+## Decisions (2026-11-19, Plan 4)
+
+Answers to audit section 7.6. Results: `docs/prototype/45-setup-controls-plan4.md`.
+
+| # | Question | Decision | Pending |
+|:--|:--|:--|:--|
+| V-1 | Where do variants live? | In the repository, next to the package: `game-packages/<package>/<version>/variants/<name>.yaml`. The app saves there | Done: V1 loader |
+| V-2 | Must bots be requalified per variant? | No. Sessions and runs record the variant name and hash; a study report states that the bots were qualified on the baseline package | Done: V3 report line |
+| V-3 | V1 acceptance, since the package copies drifted from the baseline | Proof: the overlay compiles to the same scenario as the copy its stored run used. The 5 copies in `sim/experiments/packages/` become overlays; the 7 dd25 manifests name the overlays | Done: overlays and proof (V1); copies removed and manifests repointed (V3) |
+
+Open from Plan 4 (doc 45 section 4, Propose; not blocking):
+
+- **P4-1 Rule 10.2 space name.** Rule 10.2 writes "Diyarbakır City"; rule 1.3 and the package write "Diyarbakır City (Amed)". Proposed: use the full name in 10.2 and rebuild the print set.
+- **P4-2 Rule 10.2 from the package.** The setup sheet now derives the 10.2 text from the package. Proposed: generate rule 10.2 from it with a drift check, as Appendix A is.
 
 ## Open from Plan 3
 

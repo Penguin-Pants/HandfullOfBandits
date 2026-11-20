@@ -183,7 +183,7 @@ describe("Home bot seat", () => {
   it("defaults to the recommended bot and starts the session with its seat", async () => {
     const createSession = vi.fn(() => Promise.resolve({ sessionId: "S1", head: {} as never }));
     const seatPlayers = () => Promise.resolve([{ id: "P-SURV@4", faction: "pkk", description: "p" }, { id: "S-ADAPT@5", faction: "state", description: "s", recommended: true }]);
-    render(<Home api={mockApi({ createSession, seatPlayers })} onOpen={vi.fn()} onCheck={vi.fn()} />);
+    render(<Home api={mockApi({ createSession, seatPlayers })} onOpen={vi.fn()} onCheck={vi.fn()} onSetup={vi.fn()} />);
     const select = await screen.findByLabelText("Opponent");
     await waitFor(() => { expect((select as HTMLSelectElement).value).toBe("S-ADAPT@5"); });
     const start = screen.getByRole("button", { name: "Start" });

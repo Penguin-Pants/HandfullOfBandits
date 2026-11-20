@@ -5,7 +5,8 @@
  "description": "Roster v4 on the TEST VARIANT package dd25-variant-b (thresholds 46/35, +1 Police in Siirt and Bitlis): same cells and seeds as dd25-v4b-variant-a (doc 38). Not the game rules.",
  "scenario": "full-campaign",
  "package": {
-  "dir": "../packages/dd25-variant-b",
+  "dir": "../../../game-packages/kurdish-coin/0.1.0",
+  "variant": "dd25-variant-b",
   "hash": "79a01c86eb245d36e78b77e8a07a231460e147486526fdf354488ac5535cd15c"
  },
  "expected": {

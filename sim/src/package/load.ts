@@ -4,7 +4,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseDocument } from "yaml";
 import { canonicalHash } from "../engine/core/canonical.ts";
-import { SINGLE_FACE } from "../engine/core/state.ts";
+import { own, SINGLE_FACE } from "../engine/core/state.ts";
 import { markersIn } from "../engine/core/terms.ts";
 import type { Card, CardSide, Ruleset, RulesetScenario } from "../engine/core/types.ts";
 import { parsePackageFile, type PackageFile } from "./schema/index.ts";
@@ -15,6 +15,8 @@ const CORE_FILES = ["manifest", "parameters", "factions", "pieces", "map", "trac
 const OPTIONAL_FILES = ["assumptions", "rules"] as const;
 const SCENARIO_DIR = "scenarios";
 const CARD_DIR = "cards";
+/** Variant overlays (audit Plan 4 V1). Not package content: variant.ts reads them. */
+export const VARIANT_DIR = "variants";
 /** Folders whose `*.yaml` files the loader reads, with the schema of each file. */
 const LIST_DIRS = [
   [SCENARIO_DIR, "scenario"],
@@ -33,9 +35,9 @@ export type LoadResult =
 
 const READ_ROOT = new Set([...CORE_FILES, ...OPTIONAL_FILES].map((file) => `${file}.yaml`));
 /** Root entries that are not read and need no warning. */
-const QUIET_ROOT = new Set([SCENARIO_DIR, CARD_DIR, "map", "CHANGELOG.md"]);
+const QUIET_ROOT = new Set([SCENARIO_DIR, CARD_DIR, VARIANT_DIR, "map", "CHANGELOG.md"]);
 
-function readError(path: string, e: unknown): PackageIssue {
+export function readError(path: string, e: unknown): PackageIssue {
   const code = (e as NodeJS.ErrnoException).code ?? "unknown error";
   return { level: "error", code: "V-SCHEMA", file: path, path: "", id: null, message: `Cannot read this entry (${code}).` };
 }
@@ -73,17 +75,19 @@ export function readPackageDir(dir: string): RawPackage {
       issues.push(readError(path, e));
       continue;
     }
-    const doc = parseDocument(text);
-    const first = doc.errors[0];
-    if (first === undefined) {
-      files[path] = doc.toJS();
-    } else {
-      // First line only: the yaml message ends with a multi-line source excerpt.
-      const message = `YAML error: ${(first.message.split("\n")[0] ?? "").replace(/:$/, "")}.`;
-      issues.push({ level: "error", code: "V-SCHEMA", file: path, path: "", id: null, message });
-    }
+    const parsed = parseYaml(text);
+    if ("data" in parsed) files[path] = parsed.data;
+    else issues.push({ level: "error", code: "V-SCHEMA", file: path, path: "", id: null, message: parsed.message });
   }
   return { files, issues };
+}
+
+/** Parsed YAML, or a one-line message for its first error. */
+export function parseYaml(text: string): { readonly data: unknown } | { readonly message: string } {
+  const doc = parseDocument(text);
+  const first = doc.errors[0];
+  // First line only: the yaml message ends with a multi-line source excerpt.
+  return first === undefined ? { data: doc.toJS() } : { message: `YAML error: ${(first.message.split("\n")[0] ?? "").replace(/:$/, "")}.` };
 }
 
 /** Nearest `id` field on the way down a path, so a schema issue names its element. */
@@ -214,7 +218,7 @@ export function compileRuleset(data: PackageData, packageHash: string, issues: r
       return { id: t.id, kind: t.kind, min: t.min, max: t.max, overflow };
     }),
     markers: data.markers.map((m) => ({ id: m.id, count: m.count, sides: m.sides ?? [], blocks: m.blocks ?? [], capsLevel: m.capsLevel ?? null })),
-    stacking: data.map.stacking.map((r) => ({
+    stacking: data.map.stacking.filter((r) => r.setupOnly !== true).map((r) => ({
       pieces: r.pieces,
       max: r.max,
       spaceKind: r.spaceKind ?? null,
@@ -268,7 +272,23 @@ function compileCard(card: PackageData["cards"][string][number]): Card {
   };
 }
 
-function compileScenario(data: PackageData, scenario: PackageData["scenarios"][string], blockedBy: readonly string[]): RulesetScenario {
+type ScenarioData = PackageData["scenarios"][string];
+
+/**
+ * The scenario's Available pool, or when it gives none the derived one (audit Plan 4 V1): each piece
+ * total minus the pieces on the map minus Out of Play. V-PIECES rejects a negative result.
+ */
+function availablePool(data: PackageData, scenario: ScenarioData): Record<string, number> {
+  if (scenario.available !== undefined) return scenario.available;
+  const onMap = new Map<string, number>();
+  for (const setup of Object.values(scenario.spaces)) {
+    for (const [type, n] of Object.entries(setup.pieces ?? {})) onMap.set(type, (onMap.get(type) ?? 0) + (typeof n === "number" ? n : Object.values(n).reduce((a, b) => a + b, 0)));
+  }
+  // Zero entries stay out, as in a written pool: the engine reads an absent entry as 0.
+  return Object.fromEntries(data.pieces.map((p) => [p.id, p.count - (onMap.get(p.id) ?? 0) - (own(scenario.outOfPlay, p.id) ?? 0)] as const).filter(([, n]) => n !== 0));
+}
+
+export function compileScenario(data: PackageData, scenario: ScenarioData, blockedBy: readonly string[] = []): RulesetScenario {
   const placedAs = new Map(data.pieces.map((p) => [p.id, p.placedAs ?? SINGLE_FACE]));
   return {
     finalRound: scenario.finalRound,
@@ -287,7 +307,7 @@ function compileScenario(data: PackageData, scenario: PackageData["scenarios"][s
         { level: s.level ?? null, pieces: faces(s.pieces, (type) => placedAs.get(type) ?? SINGLE_FACE), markers: faces(s.markers, () => SINGLE_FACE) },
       ]),
     ),
-    available: scenario.available ?? {},
+    available: availablePool(data, scenario),
     outOfPlay: scenario.outOfPlay ?? {},
     flags: scenario.flags ?? {},
     thresholds: scenario.thresholds ?? {},

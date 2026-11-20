@@ -26,6 +26,8 @@ Start the app with `make start`. The Home screen offers one scenario: **Full cam
 
 Scenarios A, B and C and the S0 test scenario are archived in [archive/](archive/README.md), with their tests and golden replays. One shorter scenario returns after the full game is validated.
 
+Setup variants: on Home, **Setup editor** edits the start position, thresholds, tracks and piece pools, checks each change and saves the result as `game-packages/kurdish-coin/0.1.0/variants/<name>.yaml`. Pick it under **Setup** to start a session on it. A variant file names only what it changes; Available is derived. `npm run sim -- validate <package-dir>` checks every variant and prints its hash; a study names one with `"package": {"dir": ..., "variant": "<name>"}`. Print a setup sheet in the rule 10.2 layout, with the variant's change list, with `npm run sim -- setup-sheet <package-dir> [--variant <name>] --out <file.md>`; a session export names the same variant with the same change text ([doc 45](docs/prototype/45-setup-controls-plan4.md)).
+
 Run a paired policy screen with `cd sim` then `npm run sim -- batch --games 10 --strategy concentration,sanctuary --swap-seats --out metrics.csv`. Each adjacent pair uses the same seed with the policies assigned to opposite factions. A faction-specific policy uses the scripted legal fallback as its other faction. Use `--seed N` or `--package <dir>` when needed.
 
 These batch policies are legacy screens, not qualified players: they read the full game state and fall back to the scripted policy for decisions they do not cover.

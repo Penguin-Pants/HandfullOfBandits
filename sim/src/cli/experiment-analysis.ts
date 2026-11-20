@@ -273,6 +273,8 @@ export interface Analysis {
   readonly experiment: string;
   readonly stage: string;
   readonly experimentHash: string;
+  /** Setup variant the study names (audit Plan 4 V3), or null. */
+  readonly variant: string | null;
   readonly scheduled: number;
   readonly byStatus: Readonly<Record<string, number>>;
   readonly conditions: readonly { readonly id: string; readonly cells: readonly CellSummary[]; readonly roster: ReturnType<typeof rosterAverage>; readonly warnings: Warnings }[];
@@ -293,7 +295,7 @@ export function analyzeExperiment(dir: string, coverage: Coverage): Analysis {
   const roles = existsSync(join(dir, "players.json")) ? JSON.parse(readFileSync(join(dir, "players.json"), "utf8")) as Record<string, { role: string }> : {};
   const qualified = (g: GameRecord): boolean => roles[g.state]?.role === "qualified" && roles[g.pkk]?.role === "qualified";
   return {
-    analysisVersion: ANALYSIS_VERSION, experiment: manifest.id, stage: manifest.stage, experimentHash: identity.experimentHash, scheduled: results.length, byStatus,
+    analysisVersion: ANALYSIS_VERSION, experiment: manifest.id, stage: manifest.stage, experimentHash: identity.experimentHash, variant: manifest.package.variant ?? null, scheduled: results.length, byStatus,
     conditions: manifest.conditions.map((c) => {
       const mine = included.filter((g) => g.conditionId === c.id);
       const cells = summarizeCells(mine, manifest.expected.thresholds, manifest.expected.harmLimit);
@@ -310,7 +312,9 @@ export const pct = (x: number): string => (Number.isNaN(x) ? "n/a" : `${(100 * x
 
 /** Markdown report for one analysis, with its coverage ledger. */
 export function renderReport(a: Analysis, coverage: Coverage | null): string {
-  const out: string[] = [`# Experiment ${a.experiment} (${a.stage})`, "", `Experiment hash \`${a.experimentHash}\`. Analysis version ${String(a.analysisVersion)}.`, "", "## Completion", "", `Scheduled ${String(a.scheduled)} games: ${Object.entries(a.byStatus).map(([k, v]) => `${k} ${String(v)}`).join(", ")}. Incomplete games are not losses and are excluded from win rates.`, ""];
+  // Designer decision V-2 (2026-11-19): no requalification per variant; the report says so.
+  const variant = a.variant === null ? [] : [`Setup variant \`${a.variant}\`. The players were qualified on the baseline package, not on this variant (designer decision V-2).`, ""];
+  const out: string[] = [`# Experiment ${a.experiment} (${a.stage})`, "", `Experiment hash \`${a.experimentHash}\`. Analysis version ${String(a.analysisVersion)}.`, "", ...variant, "## Completion", "", `Scheduled ${String(a.scheduled)} games: ${Object.entries(a.byStatus).map(([k, v]) => `${k} ${String(v)}`).join(", ")}. Incomplete games are not losses and are excluded from win rates.`, ""];
   for (const c of a.conditions) {
     out.push(`## Condition ${c.id}`, "", "State win rate per cell, 95% Wilson interval, completed games (n). Rows: State player; columns: PKK player.", "");
     const states = [...new Set(c.cells.map((x) => x.state))];

@@ -1,11 +1,11 @@
 // scenarios/*.yaml (04 s4.10). V-PIECES, V-STACK and V-OPTIONS run in the loader.
 import { z } from "zod";
-import { count, id, idList, optionValue, text } from "./common.ts";
+import { count, id, idList, optionValue, packageHash, text } from "./common.ts";
 
 /** A count, or counts per flip state or side. */
 const faceCounts = z.union([count, z.record(id, count)]);
 
-const spaceSetup = z.strictObject({
+export const spaceSetup = z.strictObject({
   /** Signed steps from Neutral, positive toward Support (DEC-36). */
   level: z.int().optional(),
   pieces: z.record(id, faceCounts).optional(),
@@ -24,6 +24,7 @@ export const scenarioSchema = z.strictObject({
   propagandaLast: z.boolean().optional(),
   tracks: z.record(id, z.union([z.int(), id])),
   spaces: z.record(id, spaceSetup),
+  /** Absent: derived, piece total minus pieces on the map minus Out of Play (audit Plan 4 V1). */
   available: z.record(id, count).optional(),
   outOfPlay: z.record(id, count).optional(),
   pivotals: z.record(id, idList(0)).optional(),
@@ -32,4 +33,22 @@ export const scenarioSchema = z.strictObject({
   options: z.record(id, optionValue).optional(),
   excludedCards: z.array(z.strictObject({ card: id, reason: text })).optional(),
   testOnly: z.boolean().optional(),
+  /** Written by the loader when it applies a variant (audit Plan 4 V1). Never written by hand. */
+  variant: z
+    .strictObject({
+      name: id,
+      base: packageHash,
+      /** Each setup value that differs from the base package (package/diff.ts `setupChanges`). */
+      changes: z.array(
+        z.strictObject({
+          kind: z.enum(["threshold", "track", "level", "piece", "marker", "available", "outOfPlay", "total"]),
+          space: id.nullable(),
+          id: id.nullable(),
+          face: id.nullable(),
+          from: z.union([z.int(), id]).nullable(),
+          to: z.union([z.int(), id]).nullable(),
+        }),
+      ),
+    })
+    .optional(),
 });

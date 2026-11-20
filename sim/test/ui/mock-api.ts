@@ -15,6 +15,7 @@ export const okPackage: PackageSummary = {
   ],
   assumptions: [{ id: "PA-01", text: "Executing faction chooses", status: "accepted" }],
   options: { syriaMarchRestricted: ["allow", "deny"] },
+  variants: [],
 };
 
 const never = (): Promise<never> => Promise.reject(new Error("not mocked"));
@@ -46,6 +47,8 @@ export function mockApi(overrides: Partial<Api> = {}): Api {
     experiments: () => Promise.resolve([]),
     experiment: never,
     openExperimentGame: never,
+    checkVariant: never,
+    saveVariant: never,
     ...overrides,
   };
 }

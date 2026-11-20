@@ -1,0 +1,4 @@
+# TEST VARIANT (doc 41), not the game rules: thresholds State 43 and PKK 38 only; setup unchanged.
+base: c0eb06493fbb18572e309bc5c9e29325dd97ea15a0491b6d8b3a430c24b2aff9
+scenario: full-campaign
+thresholds: {state: 43, pkk: 38}

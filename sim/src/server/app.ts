@@ -73,15 +73,30 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     return service.validate(dir);
   });
 
+  // Setup editor (audit Plan 4 V2): check one overlay, save it as a variant of its package.
+  app.post("/api/variants/check", (request) => {
+    const b = body<{ dir: string; name: string; overlay: unknown; text: string }>(request.body);
+    if (typeof b.dir !== "string") throw new ServiceError(400, "dir is required.");
+    if ((b.name !== undefined && typeof b.name !== "string") || (b.text !== undefined && typeof b.text !== "string")) throw new ServiceError(400, "name and text must be strings.");
+    return service.checkVariant({ dir: b.dir, ...(b.name === undefined ? {} : { name: b.name }), ...(b.overlay === undefined ? {} : { overlay: b.overlay }), ...(b.text === undefined ? {} : { text: b.text }) });
+  });
+  app.post("/api/variants", (request, reply) => {
+    const b = body<{ dir: string; name: string; overlay: unknown; replace: boolean }>(request.body);
+    if (typeof b.dir !== "string" || typeof b.name !== "string" || b.overlay === undefined) throw new ServiceError(400, "dir, name and overlay are required.");
+    return reply.status(201).send(service.saveVariant({ dir: b.dir, name: b.name, overlay: b.overlay, replace: b.replace === true }));
+  });
+
   app.get("/api/sessions", () => service.listSessions());
   app.get("/api/seat-players", () => service.seatPlayers());
   app.post("/api/sessions", (request, reply) => {
-    const b = body<{ dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number>; seats: unknown }>(request.body);
+    const b = body<{ dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number>; seats: unknown; variant: unknown }>(request.body);
     if (typeof b.dir !== "string" || typeof b.scenarioId !== "string" || typeof b.seed !== "number") throw new ServiceError(400, "dir, scenarioId and seed are required.");
+    if (b.variant !== undefined && typeof b.variant !== "string") throw new ServiceError(400, "variant must be a variant name.");
     if (b.seats !== undefined && (typeof b.seats !== "object" || b.seats === null || Array.isArray(b.seats))) throw new ServiceError(400, "seats must be an object of faction to player ID.");
     const created = service.createSession({
       dir: b.dir, scenarioId: b.scenarioId, seed: b.seed, name: typeof b.name === "string" && b.name !== "" ? b.name : b.scenarioId,
       ...(b.options === undefined ? {} : { options: b.options }), ...(b.seats === undefined ? {} : { seats: b.seats as Record<string, unknown> }),
+      ...(typeof b.variant === "string" ? { variant: b.variant } : {}),
     });
     return reply.status(201).send(created);
   });

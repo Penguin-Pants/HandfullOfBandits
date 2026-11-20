@@ -1,5 +1,6 @@
 import { cardModifiers, cardModifierParameters } from "../engine/modules/registry.ts";
 // Cross-file package checks (04 s9): V-REF, V-PIECES, V-STACK, V-LINKS, V-PARAM, V-FACTIONS, V-RANGE, V-VICTORY.
+// V-VARIANT is reported by the variant loader (variant.ts).
 // Input has passed V-SCHEMA. Each issue names file, path, element ID and one sentence.
 import { own, SINGLE_FACE } from "../engine/core/state.ts";
 import { SELECTED } from "../engine/core/terms.ts";
@@ -19,7 +20,8 @@ export type IssueCode =
   | "V-VICTORY"
   | "V-CARDS"
   | "V-ENCODE"
-  | "V-EFFECT";
+  | "V-EFFECT"
+  | "V-VARIANT";
 
 export interface PackageIssue {
   readonly level: "error" | "warning";
@@ -517,13 +519,30 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       }
     }
 
-    // V-PIECES: map plus pools equals the total of each piece type. Markers on the map fit their supply.
+    // V-PIECES: map plus pools equals the total of each piece type. An omitted Available pool is
+    // derived from the rest (audit Plan 4 V1), so only an excess is possible. Markers on the map fit their supply.
     for (const piece of pkg.pieces) {
       const map = onMap.get(piece.id) ?? 0;
-      const available = own(scenario.available, piece.id) ?? 0;
       const outOfPlay = own(scenario.outOfPlay, piece.id) ?? 0;
+      if (scenario.available === undefined) {
+        if (map + outOfPlay > piece.count) {
+          error("V-PIECES", file, "", piece.id, `${String(map)} on the map + ${String(outOfPlay)} out of play = ${String(map + outOfPlay)}, but pieces.yaml has ${String(piece.count)}.`);
+        }
+        continue;
+      }
+      const available = own(scenario.available, piece.id) ?? 0;
       if (map + available + outOfPlay !== piece.count) {
         error("V-PIECES", file, "", piece.id, `${String(map)} on the map + ${String(available)} available + ${String(outOfPlay)} out of play = ${String(map + available + outOfPlay)}, but pieces.yaml has ${String(piece.count)}.`);
+      }
+    }
+    // A piece type that needs a flag (for example Guards and Law 3175) is in play at setup without it.
+    for (const piece of pkg.pieces) {
+      if (piece.requiresFlag === undefined || own(scenario.flags, piece.requiresFlag) === true) continue;
+      const map = onMap.get(piece.id) ?? 0;
+      const outOfPlay = own(scenario.outOfPlay, piece.id) ?? 0;
+      const inPlay = map + (scenario.available === undefined ? Math.max(0, piece.count - map - outOfPlay) : (own(scenario.available, piece.id) ?? 0));
+      if (inPlay > 0) {
+        issues.push({ level: "warning", code: "V-PIECES", file, path: "", id: piece.id, message: `${String(inPlay)} ${piece.id} on the map or Available, but flag ${piece.requiresFlag} is not set (pieces.yaml requiresFlag).` });
       }
     }
     for (const marker of pkg.markers) {
@@ -538,7 +557,8 @@ export function validatePackage(pkg: PackageData): PackageIssue[] {
       if (rule.terrain !== undefined && (space.terrain === undefined || !rule.terrain.includes(space.terrain))) return;
       if (rule.spaces !== undefined && !rule.spaces.includes(space.id)) return;
       const count = rule.pieces.reduce((sum, p) => sum + total(own(placed, p) ?? 0), 0);
-      if (count > rule.max) report(`${String(count)} of ${rule.pieces.join(", ")} exceed the limit of ${String(rule.max)} (map.yaml stacking.${String(i)}).`);
+      const source = rule.source === undefined ? "" : `, ${rule.source}`;
+      if (count > rule.max) report(`${String(count)} of ${rule.pieces.join(", ")} exceed the limit of ${String(rule.max)} (map.yaml stacking.${String(i)}${source}).`);
     });
   }
 

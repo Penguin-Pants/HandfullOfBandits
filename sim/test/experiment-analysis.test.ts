@@ -211,7 +211,7 @@ describe("experiment analysis and coverage on real artifacts (20 Phases 6 and 7)
   it("keeps player versions in report labels so versions of one family stay distinct (PR #40 review)", () => {
     const cells = summarizeCells([game(["b", "S-A@1", "P-A@1"], 1, "state"), game(["b", "S-A@2", "P-A@1"], 1, "pkk")], { state: 49, pkk: 30 }, 6);
     const roster = rosterAverage([], 10, 1);
-    const report = renderReport({ analysisVersion: 2, experiment: "x", stage: "development", experimentHash: "h", scheduled: 2, byStatus: { complete: 2 }, conditions: [{ id: "b", cells, roster, warnings: { cell: [], roster: [], margin: [] } }], review: { closest: [], largest: [], random: [], failures: [], all: [] }, routes: { games: 0, state: { support: 0, legitimacy: 0 }, pkk: { opposition: 0, bases: 0 }, stateWinners: { games: 0, support: 0, legitimacy: 0 }, pkkWinners: { games: 0, opposition: 0, bases: 0 } } }, null);
+    const report = renderReport({ analysisVersion: 2, experiment: "x", stage: "development", experimentHash: "h", variant: null, scheduled: 2, byStatus: { complete: 2 }, conditions: [{ id: "b", cells, roster, warnings: { cell: [], roster: [], margin: [] } }], review: { closest: [], largest: [], random: [], failures: [], all: [] }, routes: { games: 0, state: { support: 0, legitimacy: 0 }, pkk: { opposition: 0, bases: 0 }, stateWinners: { games: 0, support: 0, legitimacy: 0 }, pkkWinners: { games: 0, opposition: 0, bases: 0 } } }, null);
     expect(report).toContain("| S-A@1 |");
     expect(report).toContain("| S-A@2 |");
     expect(report).toContain("| S-A@2 vs P-A@1 |");

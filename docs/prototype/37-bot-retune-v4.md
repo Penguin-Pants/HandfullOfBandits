@@ -26,7 +26,7 @@ These are bot results on 15 development seeds per cell. They are not balance pro
 | 2-move planning | The top 3 plans are played on: the opponent's best reply (neutral weights), then the bot's own best next play. Only checked plans compete | `scenario-a.ts` (`deepLine`, `bestPlay`) |
 | Budget | 1,800 steps per decision; 35% for the first pass (630, more than the 450 of v1) | `DEEP_RESERVE` |
 | Legitimacy dial | Counts for the bot's own side: a PKK bot values a lower State Legitimacy (designer answer). No earlier PKK bot used it | `sim/src/cli/strategies/evaluation.ts:209` |
-| Test package | `sim/experiments/packages/dd25-variant-a`: thresholds 43/38; Siirt and Bitlis 2 Police each; Available Police 2 | `scenarios/full-campaign.yaml` in the copy |
+| Test package | `sim/experiments/packages/dd25-variant-a`: thresholds 43/38; Siirt and Bitlis 2 Police each; Available Police 2. Copy removed 2026-11-19 (audit Plan 4 V3): now variant `game-packages/kurdish-coin/0.1.0/variants/dd25-variant-a.yaml`; the run keeps the copy's content in `package-content.json`. | `scenarios/full-campaign.yaml` in the copy |
 
 Qualification: 8 of 8 v4 players pass, random baselines fail (`sim/experiments/qualification-v4.json`, suite `9c5bc5ca…`).
 

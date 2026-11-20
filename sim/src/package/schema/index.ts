@@ -12,9 +12,10 @@ import { piecesSchema } from "./pieces.ts";
 import { scenarioSchema } from "./scenario.ts";
 import { sequenceSchema } from "./sequence.ts";
 import { tracksSchema } from "./tracks.ts";
+import { variantSchema } from "./variant.ts";
 import { victorySchema } from "./victory.ts";
 
-/** One schema per package file. `scenario` applies to each file in `scenarios/`, `cards` to each in `cards/`. */
+/** One schema per package file. `scenario` applies to each file in `scenarios/`, `cards` to each in `cards/`, `variant` to each in `variants/`. */
 export const packageFileSchemas = {
   manifest: manifestSchema,
   parameters: parametersSchema,
@@ -30,6 +31,8 @@ export const packageFileSchemas = {
   rules: rulesSchema,
   /** Applies to each file in `cards/`. */
   cards: cardsSchema,
+  /** Applies to each file in `variants/` (audit Plan 4 V1). */
+  variant: variantSchema,
 } as const;
 
 export type PackageFile = keyof typeof packageFileSchemas;

@@ -22,7 +22,7 @@ describe("startBlockers", () => {
 
 describe("Home", () => {
   it("enables Start for a clean scenario, disables it for the blocked full campaign, and lists PA warnings", async () => {
-    render(<Home api={mockApi()} onOpen={vi.fn()} onCheck={vi.fn()} />);
+    render(<Home api={mockApi()} onOpen={vi.fn()} onCheck={vi.fn()} onSetup={vi.fn()} />);
     const start = await screen.findByRole("button", { name: "Start" });
     await waitFor(() => { expect((start as HTMLButtonElement).disabled).toBe(false); });
     fireEvent.change(screen.getByLabelText("Scenario"), { target: { value: "full-campaign" } });
@@ -34,12 +34,29 @@ describe("Home", () => {
   it("starts a session with the seed, name and options, then opens it", async () => {
     const createSession = vi.fn(() => Promise.resolve({ sessionId: "S1", head: {} as never }));
     const onOpen = vi.fn();
-    render(<Home api={mockApi({ createSession })} onOpen={onOpen} onCheck={vi.fn()} />);
+    render(<Home api={mockApi({ createSession })} onOpen={onOpen} onCheck={vi.fn()} onSetup={vi.fn()} />);
     const start = await screen.findByRole("button", { name: "Start" });
     await waitFor(() => { expect((start as HTMLButtonElement).disabled).toBe(false); });
     fireEvent.change(screen.getByLabelText("Seed"), { target: { value: "42" } });
     fireEvent.click(start);
     await waitFor(() => { expect(onOpen).toHaveBeenCalledWith("S1"); });
     expect(createSession).toHaveBeenCalledWith({ dir: okPackage.dir, scenarioId: "short", seed: 42, name: "short-seed42", options: {} });
+  });
+
+  it("starts a session on a saved variant and opens the setup editor", async () => {
+    const createSession = vi.fn(() => Promise.resolve({ sessionId: "S2", head: {} as never }));
+    const onSetup = vi.fn();
+    const pkg = { ...okPackage, variants: [{ name: "thresholds-43-38", ok: true, hash: "c".repeat(64), issues: [], scenario: "short" }, { name: "broken", ok: false, hash: null, issues: [], scenario: null }, { name: "other", ok: true, hash: "e".repeat(64), issues: [], scenario: "full-campaign" }] };
+    render(<Home api={mockApi({ createSession, packages: () => Promise.resolve([pkg]) })} onOpen={vi.fn()} onCheck={vi.fn()} onSetup={onSetup} />);
+    const start = await screen.findByRole("button", { name: "Start" });
+    await waitFor(() => { expect((start as HTMLButtonElement).disabled).toBe(false); });
+    expect(screen.getByRole<HTMLOptionElement>("option", { name: "Variant broken (errors)" }).disabled).toBe(true);
+    // A variant of another scenario is not offered (PR #130 review).
+    expect(screen.queryByRole("option", { name: "Variant other" })).toBeNull();
+    fireEvent.change(screen.getByLabelText("Setup variant"), { target: { value: "thresholds-43-38" } });
+    fireEvent.click(start);
+    await waitFor(() => { expect(createSession).toHaveBeenCalledWith({ dir: okPackage.dir, scenarioId: "short", seed: 1, name: "short-thresholds-43-38-seed1", options: {}, variant: "thresholds-43-38" }); });
+    fireEvent.click(screen.getByRole("button", { name: "Setup editor" }));
+    expect(onSetup).toHaveBeenCalledWith(pkg, "short");
   });
 });

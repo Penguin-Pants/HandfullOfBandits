@@ -43,7 +43,19 @@ export function exportMarkdown(data: CoinSimExport): string {
   const manifestOf = (hash: unknown): Row => obj(data.packages.find((p) => p["package_hash"] === hash)?.["manifest"]);
   const version = (hash: unknown): string => { const m = manifestOf(hash); return `${escaped(m["packageId"])} ${escaped(m["version"])}, rules ${escaped(m["rulesetVersion"])}`; };
   const lines = ["# Playtest export\n", `Exported: ${escaped(data.exportMeta.exportedAt)}. App: ${escaped(data.exportMeta.appVersion)}.\n`, "## Scope\n", `Sessions: ${String(data.sessions.length)} (${data.sessions.map((s) => escaped(s["session_id"])).join(", ")}).\n`];
-  for (const s of data.sessions) lines.push(`- [${escaped(s["session_id"])}] ${escaped(s["name"])}. Package ${version(s["package_hash"])}. Scenario ${escaped(s["scenario_id"])}, seed ${escaped(s["seed"])}. Winner: ${s["result"] === null ? "not ended" : escaped(obj(s["result"])["winner"] ?? "none")}.`);
+  const variantOf = (hash: unknown, scenario: unknown): Row | undefined => list(data.packages.find((p) => p["package_hash"] === hash)?.["variants"]).map(obj).find((v) => v["scenario"] === scenario);
+  for (const s of data.sessions) {
+    const variant = variantOf(s["package_hash"], s["scenario_id"]);
+    lines.push(`- [${escaped(s["session_id"])}] ${escaped(s["name"])}. Package ${version(s["package_hash"])}. Scenario ${escaped(s["scenario_id"])}${variant === undefined ? "" : `, setup variant ${escaped(variant["name"])}`}, seed ${escaped(s["seed"])}. Winner: ${s["result"] === null ? "not ended" : escaped(obj(s["result"])["winner"] ?? "none")}.`);
+  }
+  // Same change text as the variant's setup sheet (audit Plan 4 V4), so a paper game and this session name the same setup.
+  const variants = data.packages.flatMap((p) => list(p["variants"]).map(obj).map((v) => ({ hash: p["package_hash"], v })));
+  if (variants.length > 0) lines.push("", "## Setup variants\n");
+  for (const { hash, v } of variants) {
+    lines.push(`Package ${version(hash)} (${escaped(hash)}): scenario ${escaped(v["scenario"])}, variant ${escaped(v["name"])}, made on package ${escaped(String(v["base"]).slice(0, 12))}.\n`);
+    for (const c of list(v["changes"])) lines.push(`- ${escaped(c)}`);
+    lines.push("");
+  }
   lines.push("", "## Prototype assumptions\n");
   for (const p of data.packages) {
     lines.push(`Package ${version(p["package_hash"])} (${escaped(p["package_hash"])}).\n`);

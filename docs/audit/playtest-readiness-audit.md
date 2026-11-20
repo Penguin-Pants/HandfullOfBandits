@@ -6,7 +6,7 @@
 - **Companion file:** `card-ledger.csv` (193 rows, one per card side, with `path:line` evidence).
 - **Effort scale:** S = one focused pull request with tests. M = two to four pull requests. L = five or more. (Project rule: no time estimates.)
 
-> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. The designer answered every Plan 1 decision on 2026-11-19; see `docs/audit/OPEN_QUESTIONS.md`, section "Decisions (2026-11-19)". Plan 1 is complete ([#127](https://github.com/Penguin-Pants/HandfullOfBandits/pull/127)): D-06 fixes C-5 to C-9 (the Ambush decision is now DD-26). M1: `sim/test/no-crash.test.ts` applies every candidate from 50 random states in C1 to C5 (about 5,400) with no throw. D-03 and M3: a recount found 46 of 160 codes untested (the grep in section 2.5 missed codes made with `at(location, "code", ...)`); `sim/test/rejection-codes.test.ts` tests each one and fails if any engine code has no asserting test. D-04: probe players `S-PROBE@1` and `P-PROBE@1` (`sim/src/cli/strategies/probe.ts`); the generator now offers Strike Collaborators after the Operation (decision 10). In run `sim/experiments/runs/d04-probe` (100 games) each of the 21 non-Victory rows below 10 in `dd25-v4b` reaches 16 or more games. By designer decision, the four Victory outcome rows (V-simultaneous, V-harm-gate, V-tie, V-excess-harm) stay reviewed fixtures: a player cannot force them. Plan 2 ([doc 43](../prototype/43-solo-opponent-plan2.md)): the designer chose the bot as the State. S1, S4 and S5 are done: the Home screen seats a bot (default `S-CON@4`), each bot action shows "Why?" with the top 3 plays and the sampled line, and 10 new C3 to C5 positions pass for every qualified bot. S2 is blocked on a design decision: most State passes are forced by Resources, so the 20% Pass target needs an economy change or a new target (`OPEN_QUESTIONS.md` B-5). S3 is not started (B-6). Next milestone: answer B-5 and B-6. Plan 3 ([doc 44](../prototype/44-simulation-analysis-plan3.md)) is complete: A1 `experiment compare <base> <variant> --paired` (doc 41 means exact, interval ends within one bootstrap step), A2 `experiment new` (no manual hash; `supersedes` optional), A3 `experiment cards` (189 of 189 run counts match at `c22d5ab`; one no-effect count corrected, DK-052 shaded 5 to 6), A4 done in Plan 1, A5 app screen "Experiment reports" (open a report, open a game at a decision). Open: target band and seed count (section 6.7).
+> **Status update (2026-11-19):** D-01 is fixed ([#120](https://github.com/Penguin-Pants/HandfullOfBandits/pull/120)). D-02 and conflicts C-1 to C-3 are fixed ([#122](https://github.com/Penguin-Pants/HandfullOfBandits/pull/122)): the print set is built from the package with a drift check in `make test`. The ledger rows marked "Catalogue text stale" and "D-01" describe the reviewed commit, not `main`. Scratch scripts named in this report (`late.ts`, probe, replay attribution) were not committed. The designer answered every Plan 1 decision on 2026-11-19; see `docs/audit/OPEN_QUESTIONS.md`, section "Decisions (2026-11-19)". Plan 1 is complete ([#127](https://github.com/Penguin-Pants/HandfullOfBandits/pull/127)): D-06 fixes C-5 to C-9 (the Ambush decision is now DD-26). M1: `sim/test/no-crash.test.ts` applies every candidate from 50 random states in C1 to C5 (about 5,400) with no throw. D-03 and M3: a recount found 46 of 160 codes untested (the grep in section 2.5 missed codes made with `at(location, "code", ...)`); `sim/test/rejection-codes.test.ts` tests each one and fails if any engine code has no asserting test. D-04: probe players `S-PROBE@1` and `P-PROBE@1` (`sim/src/cli/strategies/probe.ts`); the generator now offers Strike Collaborators after the Operation (decision 10). In run `sim/experiments/runs/d04-probe` (100 games) each of the 21 non-Victory rows below 10 in `dd25-v4b` reaches 16 or more games. By designer decision, the four Victory outcome rows (V-simultaneous, V-harm-gate, V-tie, V-excess-harm) stay reviewed fixtures: a player cannot force them. Plan 2 ([doc 43](../prototype/43-solo-opponent-plan2.md)): the designer chose the bot as the State. S1, S4 and S5 are done: the Home screen seats a bot (default `S-CON@4`), each bot action shows "Why?" with the top 3 plays and the sampled line, and 10 new C3 to C5 positions pass for every qualified bot. S2 is blocked on a design decision: most State passes are forced by Resources, so the 20% Pass target needs an economy change or a new target (`OPEN_QUESTIONS.md` B-5). S3 is not started (B-6). Next milestone: answer B-5 and B-6. Plan 3 ([doc 44](../prototype/44-simulation-analysis-plan3.md)) is complete: A1 `experiment compare <base> <variant> --paired` (doc 41 means exact, interval ends within one bootstrap step), A2 `experiment new` (no manual hash; `supersedes` optional), A3 `experiment cards` (189 of 189 run counts match at `c22d5ab`; one no-effect count corrected, DK-052 shaded 5 to 6), A4 done in Plan 1, A5 app screen "Experiment reports" (open a report, open a game at a decision). Open: target band and seed count (section 6.7). Plan 4 ([doc 45](../prototype/45-setup-controls-plan4.md)) is complete: the designer chose variants next to the package and no requalification per variant (`OPEN_QUESTIONS.md` V-1 to V-3). V1 overlays `variants/<name>.yaml` with derived Available and their own hash (the 5 dd25 copies became overlays that compile to the same scenarios), V2 Home "Setup editor" (every 7.3 error inline; a saved variant starts a session), V3 `package.variant` in studies (copies deleted), V4 `sim setup-sheet` in the rule 10.2 layout, with the same change text in session exports. Not built: "what if" branches from a live position (no milestone).
 
 ---
 
@@ -32,7 +32,7 @@
 ### What can I run locally today, and what can I change about setup?
 
 - **Run:** the app, `check`, `test`, `validate`, `batch`, `experiment run/replay/analyze/qualify`, `export`, `regression`. All work on Windows without GNU Make through `npm` in `sim/` (Node 24 is mandatory; Node 22 fails `npm ci`).
-- **Change in the UI:** package version, scenario, two options (hot pursuit, Restricted Syria March) and seed only.
+- **Change in the UI:** package version, scenario, two options (hot pursuit, Restricted Syria March) and seed only. (Plan 4 V2 adds the Setup editor: thresholds, start tracks, pieces, levels, totals and Out of Play, saved as a variant.)
 - **Change by file:** every start piece, level, marker, track, pool, threshold and Pivotal hand in `scenarios/full-campaign.yaml`, then put the copy under `game-packages/kurdish-coin/<new-version>/`. The Home screen then lists it. Validation catches over-supply and stacking errors (tested, section 2.6).
 
 ### What should I build or fix first?
@@ -40,7 +40,7 @@
 1. ✅ Done (#120). **Fix D-01** (engine accepts a command and then throws): S.
 2. ✅ Done (#122). **Regenerate the print set from the package** and add a drift check: M. This unblocks physical playtests of C3 to C5.
 3. ✅ Done (doc 43). **Add a bot seat to the app** (designer chose: bot plays the State first): M. This is the first playable solo milestone.
-4. **Add setup variant overlays** with derived Available pools: M. This removes full package copies for every variant.
+4. ✅ Done (doc 45). **Add setup variant overlays** with derived Available pools: M. This removes full package copies for every variant.
 5. ✅ Done (doc 44). **Add a paired run-versus-run compare** to `experiment`: S.
 
 ---
@@ -60,7 +60,7 @@
 | Victory | `victory.yaml` and `scenarios/full-campaign.yaml` (`thresholds: {state: 49, pkk: 32}`) | none | research 09 s1 ("13 domestic spaces") |
 | Design intent | `research/research-final/project-management/design-decisions.md` (DD-nn), `docs/prototype/13-design-decisions.md` (DEC-nn), `assumptions.yaml` (PA-nn) | none | `docs/audit/OPEN_QUESTIONS.md` items 15 to 23 still open |
 | Experiments | `docs/prototype/36` to `41`, `sim/experiments/manifests/dd25-*.json`, `sim/experiments/runs/dd25-*` | `analysis-v2/report.md` per run | Scenario A runs (`baseline-*`, `options-*` and others) |
-| Test variants | `sim/experiments/packages/dd25-*` (full package copies) | none | none |
+| Test variants | `game-packages/kurdish-coin/0.1.0/variants/*.yaml` (overlays, Plan 4) | Resolved content and hash (`sim validate`) | `sim/experiments/packages/dd25-*` (full package copies), removed by Plan 4 V3 |
 
 **Active full-campaign package:** `game-packages/kurdish-coin/0.1.0`, hash `5a605bb7eee8…` (`npm run sim -- validate` output). The same hash is in `dd25-pilot`, `dd25-pilot-main-players` and `dd25-v4b`.
 
@@ -110,7 +110,7 @@
 ### 2.3 Where it slows playtesting
 
 - **Print material is not generated from the package** with a drift check (C-1, C-2). Physical tests can use wrong card text.
-- **Variants need full package copies** (`sim/experiments/packages/dd25-*`). Each is a byte copy with three changed lines.
+- **Variants need full package copies** (`sim/experiments/packages/dd25-*`). Each is a byte copy with three changed lines. (Fixed by Plan 4: overlays in `variants/`, copies removed.)
 - **No bot seat in sessions.** The designer must play both sides in the app.
 - **Validation stops at the first die roll** (`core/exec.ts:56`). This is correct for previews but hides later questions (D-01).
 - **Experiment set-up friction.** A manifest needs the package hash, a `supersedes` field (required, nullable) and fingerprints. Paired run comparison needs a scratch script (doc 36 s8 item 6).
@@ -482,7 +482,7 @@ Status 2026-11-19 ([doc 44](../prototype/44-simulation-analysis-plan3.md)): A1 t
 | Map, links, terrain | No | `map.yaml` | Bot names in `cli/candidates.ts` (doc 36 s8 item 4) |
 | Deck composition | No | card YAML, `excludedCards`, `pileSize` | No |
 
-To use a changed file in the app today: copy the package folder to `game-packages/kurdish-coin/<new-version>/`, edit, run `npm run sim -- validate <dir>`, then pick it on Home. `HOB_PACKAGES` can point the app to another packages folder (`sim/src/main.ts:12`).
+To use a changed file in the app today: copy the package folder to `game-packages/kurdish-coin/<new-version>/`, edit, run `npm run sim -- validate <dir>`, then pick it on Home. `HOB_PACKAGES` can point the app to another packages folder (`sim/src/main.ts:12`). (Since Plan 4: a setup change is a variant made in the Setup editor or written as `variants/<name>.yaml`; no copy is needed.)
 
 ### 7.2 Recommended first version
 
@@ -517,14 +517,16 @@ Export each variant as a printable sheet in the rule 10.2 table format, plus a s
 
 ### 7.6 Milestones and acceptance
 
-| ID | Content | Entry points | Effort | Acceptance |
-|:--|:--|:--|:--|:--|
-| V1 | Overlay loader, derived Available, hash | `package/load.ts`, `package/validate.ts`, `schema/scenario.ts` | M | `dd25-thresholds-43-38` rebuilt as a 3-line overlay gives the same package hash content |
-| V2 | Setup editor, save, reset, export, import | `ui/home`, `server/service.ts` | M | Each error in 7.3 shows inline; a saved variant starts a session |
-| V3 | Variant in experiment manifests | `cli/experiment-manifest.ts` | S | A study names a variant, not a package copy |
-| V4 | Printable setup sheet | `export/markdown.ts` | S | Sheet matches rule 10.2 layout for the baseline |
+Status 2026-11-19 ([doc 45](../prototype/45-setup-controls-plan4.md)): V1 to V4 ✅.
 
-**Decisions you need to make:** where variants live (inside the repository or in a user folder) and whether bots must be requalified per variant.
+| ID | Content | Entry points | Effort | Acceptance | Status |
+|:--|:--|:--|:--|:--|:--|
+| V1 | Overlay loader, derived Available, hash | `package/load.ts`, `package/validate.ts`, `schema/scenario.ts` | M | `dd25-thresholds-43-38` rebuilt as a 3-line overlay gives the same package hash content | ✅ Three lines. The copies drifted from the baseline, so by decision V-3 the proof is the same compiled scenario: 5 of 5 overlays equal their stored runs |
+| V2 | Setup editor, save, reset, export, import | `ui/home`, `server/service.ts` | M | Each error in 7.3 shows inline; a saved variant starts a session | ✅ All 5 items inline (items 3 and 4 are new setup-only data rules); a saved variant starts a session (test and browser) |
+| V3 | Variant in experiment manifests | `cli/experiment-manifest.ts` | S | A study names a variant, not a package copy | ✅ `package.variant`; a study on the 43/38 variant runs; the 7 dd25 manifests name variants; the copies are gone |
+| V4 | Printable setup sheet | `export/markdown.ts` | S | Sheet matches rule 10.2 layout for the baseline | ✅ `sim setup-sheet`: same table header and rows, legend, levels and closing paragraph (scores, margins, Control) as rule 10.2; rows follow the scenario file order. The session export prints the same change text |
+
+**Decisions you need to make:** answered 2026-11-19 (`OPEN_QUESTIONS.md`, Plan 4): variants live in the repository next to the package (V-1); no requalification per variant, runs record the variant (V-2).
 
 ---
 

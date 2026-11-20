@@ -3,6 +3,8 @@ import type { AnnotationRow } from "../store/repos/annotations.ts";
 import type { CategoryRow } from "../store/repos/categories.ts";
 import type { SessionRow } from "../store/repos/sessions.ts";
 import type { ExperimentDetail, ExperimentGameRow, ExperimentSummary, Head, HistoryEntry, PackageSummary, SeatPlayer } from "../server/service.ts";
+import type { SetupBase, VariantCheck, VariantSummary } from "../server/variants.ts";
+import type { SetupChange } from "../package/diff.ts";
 import type { BoardView, ForceView, PieceView, SpaceView } from "../server/view.ts";
 import type { ReviewRow } from "../server/review.ts";
 import type { Cell as MetricsCell, MetricsTable } from "../export/metrics.ts";
@@ -14,6 +16,7 @@ import type { UiFocus } from "../annotate/types.ts";
 
 export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
 export type { ExperimentDetail, ExperimentGameRow, ExperimentSummary, SeatPlayer };
+export type { SetupBase, SetupChange, VariantCheck, VariantSummary };
 export type { HistoryEntry, MetricsCell, MetricsTable, ReviewRow, RuleLookup };
 export type { AnnotationRow, BoardView, CategoryRow, ForceView, Head, PackageSummary, PieceView, SessionRow, SpaceView };
 
@@ -116,8 +119,11 @@ export const metricsQuery = (sessionIds: readonly string[]): string => (sessionI
 export const api = {
   packages: () => call<PackageSummary[]>("GET", "/packages"),
   sessions: () => call<SessionRow[]>("GET", "/sessions"),
-  createSession: (body: { dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number>; seats?: Record<string, string> }) =>
+  createSession: (body: { dir: string; scenarioId: string; seed: number; name: string; options: Record<string, string | number>; seats?: Record<string, string>; variant?: string }) =>
     call<{ sessionId: string; head: Head }>("POST", "/sessions", body),
+  /** Setup editor (audit Plan 4 V2): check an overlay, import YAML text or open a saved variant. */
+  checkVariant: (body: { dir: string; name?: string; overlay?: unknown; text?: string }) => call<VariantCheck>("POST", "/variants/check", body),
+  saveVariant: (body: { dir: string; name: string; overlay: unknown; replace: boolean }) => call<VariantSummary>("POST", "/variants", body),
   /** The faction whose bot acts at the head, or null (audit Plan 2 S1). */
   session: (id: string) => call<{ session: SessionRow; head: Head; botToAct?: string | null; botExtends?: boolean }>("GET", `/sessions/${id}`),
   seatPlayers: () => call<SeatPlayer[]>("GET", "/seat-players"),
