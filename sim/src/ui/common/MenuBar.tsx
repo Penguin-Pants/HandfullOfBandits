@@ -36,11 +36,14 @@ export function MenuBar({ menus, status }: { readonly menus: readonly Menu[]; re
   useEffect(() => {
     if (open === null || !focusFirst.current) return;
     focusFirst.current = false;
-    bar.current?.querySelector<HTMLElement>('[role="menu"] [role^="menuitem"]:not([aria-disabled="true"])')?.focus();
+    firstItem()?.focus();
   }, [open]);
 
+  const firstItem = (): HTMLElement | null | undefined => bar.current?.querySelector<HTMLElement>('[role="menu"] [role^="menuitem"]:not([aria-disabled="true"])');
   const openAt = (i: number, withFocus: boolean): void => {
     const n = (i + menus.length) % menus.length;
+    // Already open (a click opened it): no new render runs the focus effect, so focus now.
+    if (open === n && withFocus) { firstItem()?.focus(); return; }
     focusFirst.current = withFocus;
     setOpen(n);
     if (!withFocus) tops.current[n]?.focus();

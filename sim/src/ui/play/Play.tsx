@@ -261,7 +261,8 @@ export function Play({ api, sessionId, screens = [], onExit, onOpenState }: Play
   const undo = async (): Promise<void> => {
     if (!undoable) return;
     // With a bot seat, Undo goes back past the bot's actions to the human's last action.
-    const committed = history.filter((h) => h.action.status !== "undone").reverse();
+    // Setup actions (session start, first card reveal) are never undone: the walk stops before them.
+    const committed = history.filter((h) => h.action.status !== "undone" && h.action.phase !== "setup").reverse();
     // A bot-only action has bot records and no human part; a joint action the human completed stops the walk.
     const botOnly = (h: HistoryItem): boolean => (h.bot ?? []).length > 0 && !(h.bot ?? []).some((r) => r.humanJoined === true);
     let steps = humanOf(seatsOf(data.session)) === null ? 1 : committed.findIndex((h) => !botOnly(h)) + 1;

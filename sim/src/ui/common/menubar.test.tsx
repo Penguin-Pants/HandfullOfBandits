@@ -59,6 +59,16 @@ describe("MenuBar", () => {
     done();
   });
 
+  it("moves focus into a menu opened by a click when the keyboard takes over", () => {
+    const done = setup();
+    const game = screen.getByRole("menuitem", { name: "Game" });
+    fireEvent.click(game);
+    game.focus();
+    fireEvent.keyDown(game, { key: "ArrowDown" });
+    expect(document.activeElement).toBe(screen.getByRole("menuitem", { name: "Undo" }));
+    done();
+  });
+
   it("closes on a click outside", () => {
     const done = setup();
     fireEvent.click(screen.getByRole("menuitem", { name: "Game" }));

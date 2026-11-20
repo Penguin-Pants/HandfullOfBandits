@@ -49,7 +49,7 @@ export function App({ api }: { readonly api: Api }) {
       {screen.name === "setup" && <Setup api={api} pkg={screen.pkg} scenarioId={screen.scenarioId} onBack={home} />}
       {screen.name === "check" && <PackageCheck pkg={screen.pkg} onBack={home} />}
       {screen.name === "play" && (
-        <Play api={api} sessionId={screen.sessionId} screens={screens} onOpenState={(before, after) => { setScreen({ name: "state", sessionId: screen.sessionId, before, after, back: screen }); }} />
+        <Play api={api} sessionId={screen.sessionId} screens={screens} onExit={home} onOpenState={(before, after) => { setScreen({ name: "state", sessionId: screen.sessionId, before, after, back: screen }); }} />
       )}
       {screen.name === "review" && <Review api={api} onOpenState={(sessionId, hash) => { setScreen({ name: "state", sessionId, before: null, after: hash, back: screen }); }} />}
       {screen.name === "metrics" && <Metrics api={api} />}

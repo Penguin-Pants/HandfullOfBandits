@@ -200,6 +200,19 @@ describe("Play with a bot seat", () => {
     expect(undo.mock.calls.map((c) => c[1])).toEqual(["A3", "A2"]);
   });
 
+  it("never walks Undo back into setup when the bot acted first", async () => {
+    const setup = (id: string): HistoryItem => ({ action: { action_id: id, status: "committed", faction: null, box: null, phase: "setup", summary: "Setup" }, entries: [], notes: 0 }) as never;
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: cardHead("A3"), botToAct: null }));
+    const history = vi.fn(() => Promise.resolve([setup("A1"), setup("A2"), item("A3", [record])]));
+    const undo = vi.fn((_: string, at: string) => Promise.resolve({ undone: at, head: "x", undoneAfterRandom: false, state: cardHead("A2") }));
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, history, undo, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
+    await screen.findByRole("menuitem", { name: "Game" });
+    menu("Game", "Undo");
+    await waitFor(() => { expect(undo).toHaveBeenCalled(); });
+    expect(undo.mock.calls.map((c) => c[1])).toEqual(["A3"]);
+  });
+
   it("undoes the bot actions after the human's last action, then that action", async () => {
     const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: cardHead("A3"), botToAct: null }));
     const history = vi.fn(() => Promise.resolve([item("A1", []), item("A2", [record]), item("A3", [record])]));

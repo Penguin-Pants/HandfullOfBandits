@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import type { SessionRow } from "./api.ts";
 import { mockApi } from "../../test/ui/mock-api.ts";
 import { App } from "./App.tsx";
 
@@ -27,5 +28,14 @@ describe("App menu bar", () => {
     fireEvent.keyDown(window, { key: "f" });
     expect(await screen.findByLabelText("Feedback review")).toBeTruthy();
     field.remove();
+  });
+
+  it("returns Home from a Play screen that failed to load", async () => {
+    const row = { session_id: "S1", name: "saved", scenario_id: "short", seed: 1, status: "active" } as SessionRow;
+    render(<App api={mockApi({ sessions: () => Promise.resolve([row]), session: () => Promise.reject(new Error("gone")) })} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Resume" }));
+    expect(await screen.findByRole("alert")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Home" }));
+    expect(await screen.findByRole("button", { name: "Resume" })).toBeTruthy();
   });
 });
