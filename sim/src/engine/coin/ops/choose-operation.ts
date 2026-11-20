@@ -151,7 +151,7 @@ function hasReplacement(ruleset: Ruleset, state: GameState, plan: ParsedPlan): b
   const changes = (p: ActionPart, o: ActionOptions): boolean => {
     const ctx = createExec(ruleset, state);
     plan.op.execute(ctx, p, o);
-    return rolled(ctx.entries) || unchangedLocations(state, ctx.state, p.locations).length === 0;
+    return rolled(ctx.entries) || unchangedLocations(state, ctx.state, p.locations, ctx.entries).length === 0;
   };
   return probes.some((p) => variants(p).some((o) => plan.op.check(ruleset, state, p, o).length === 0 && plan.op.cost(ruleset, state, p, o) <= budget && changes(p, o)));
 }
@@ -165,7 +165,7 @@ function noEffectViolations(ruleset: Ruleset, state: GameState, command: AnyComm
   chooseOperationHandler.execute?.(ctx, command);
   if (rolled(ctx.entries) || ctx.state.pending?.resume !== undefined) return [];
   const baseline = simulate(ruleset, state, (b) => { applyRestraint(b, plan.options.faction, uses(plan)); });
-  return unchangedLocations(baseline, ctx.state, plan.part.locations).map((loc) => at(loc, NO_EFFECT, noEffectMessage(loc), "rules 3.1"));
+  return unchangedLocations(baseline, ctx.state, plan.part.locations, ctx.entries).map((loc) => at(loc, NO_EFFECT, noEffectMessage(loc), "rules 3.1"));
 }
 
 /** The Op and SA of a parsed plan, for the ceasefire table (07 s7.2). */

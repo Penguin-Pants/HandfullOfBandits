@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { rollDie } from "../../../core/rng.ts";
-import { codes, op, pieces, play, setLevel, setMarkers, setPieces, setTrack, turnOf, withRoll } from "../../../../../test/board.ts";
+import { codes, engine, op, pieces, play, ruleset, setLevel, setMarkers, setPieces, setTrack, turnOf, withCard, withRoll } from "../../../../../test/board.ts";
 
 // T-VAL and T-OPS for PKK Operations: one fixture per rule line of research 06 s4 (11 P2-07).
 // Pinned so these operation tests do not follow setup changes: no Guerrillas in Şanlıurfa or Van hinterland, 3 in the KDP Zone.
@@ -125,6 +125,28 @@ describe("March (06 s4.2)", () => {
     const plan = op("pkk", "opOnly", { op: "pkk.march", locations: ["van-rural", "sirnak"], perLocation: { "van-rural": { moves: moves("underground") }, sirnak: { moves: moves() } } });
     expect(pieces(start, "hakkari", "guerrilla")).toEqual({ underground: 2, active: 0 });
     expect(codes(start, plan)).toContain("marchGuerrillas");
+  });
+
+  it("accepts a destination whose Guerrillas leave as others arrive (A to B, B to C; decision 18)", () => {
+    const board = setPieces(setPieces(setPieces(start, "sirnak", "guerrilla", 2), "hakkari", "guerrilla", 2), "van-rural", "guerrilla", 2);
+    const plan = op("pkk", "opOnly", { op: "pkk.march", locations: ["hakkari", "van-rural"], perLocation: { hakkari: { moves: [{ from: "sirnak", count: 2 }] }, "van-rural": { moves: [{ from: "hakkari", count: 2 }] } } });
+    expect(codes(board, plan)).toEqual([]);
+    const { state } = play(board, plan);
+    expect(pieces(state, "sirnak", "guerrilla")).toEqual({ underground: 0, active: 0 });
+    expect(pieces(state, "hakkari", "guerrilla")).toEqual({ underground: 2, active: 0 });
+    expect(pieces(state, "van-rural", "guerrilla")).toEqual({ underground: 4, active: 0 });
+  });
+
+  it("accepts the same March as a free Event action (events.ts free action; decision 18)", () => {
+    const card = ruleset.cards["DK-001"];
+    if (card?.shaded === undefined || card.shaded === null) throw new Error("DK-001");
+    const r = { ...ruleset, cards: { ...ruleset.cards, "DK-001": { ...card, shaded: { ...card.shaded, effects: [{ type: "freeAction" as const, action: "pkk.march", constraints: {} }] } } } };
+    const board = withCard(setPieces(setPieces(setPieces(start, "sirnak", "guerrilla", 2), "hakkari", "guerrilla", 2), "van-rural", "guerrilla", 2), "DK-001");
+    const answer = { locations: ["hakkari", "van-rural"], perLocation: { hakkari: { moves: [{ from: "sirnak", count: 2 }] }, "van-rural": { moves: [{ from: "hakkari", count: 2 }] } } };
+    const result = engine.apply(r, board, { type: "ChooseEvent", faction: "pkk", side: "shaded", answers: [answer] });
+    expect(result.ok ? result.transition.state.pending?.prompt ?? null : result.validation.violations.map((v) => v.code)).toBeNull();
+    if (!result.ok) throw new Error("free March");
+    expect(pieces(result.transition.state, "van-rural", "guerrilla")).toEqual({ underground: 4, active: 0 });
   });
 
   it("Limited Op: one destination", () => {
