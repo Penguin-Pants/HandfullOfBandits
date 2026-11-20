@@ -1,4 +1,5 @@
 // Status bar (08 s3.5; UI clarity round R4): turn position, eligibility and the victory track.
+// The closed track summary shows each faction's score as X/Y (R4.1, variant B).
 // Tracks are on the map (UC-7): host postures and Europe on
 // their boxes, the rest in the Resources and politics card.
 import type { ReactNode } from "react";
@@ -29,7 +30,9 @@ export function StatusBar({ view, children }: { readonly view: BoardView; readon
         <span className="chip">2nd: {name(s.secondEligible)}{box(s.secondEligible)}</span>
         {s.active !== null && <strong className="chip acting">Acting: <FactionMark faction={s.active} />{name(s.active)}</strong>}
       </div>
-      <details className="score-details"><summary>Victory track</summary><div className="status-victory-scroll" role="region" aria-label="Victory track scale" tabIndex={0}><ScoreTrack view={view} /></div></details>
+      <details className="score-details"><summary>Victory track{view.factions.map((f) => (
+        <span key={f.id}> · <strong style={{ color: f.color }}>{f.name} {s.scores[f.id] ?? 0}/{s.thresholds[f.id] ?? "–"}</strong></span>
+      ))}</summary><div className="status-victory-scroll" role="region" aria-label="Victory track scale" tabIndex={0}><ScoreTrack view={view} /></div></details>
       {s.ended !== null && (
         <div className="row">
           <strong>Game over: {s.ended.winner === null ? "no winner" : name(s.ended.winner)}</strong> <span>{s.ended.labels.join(", ")}</span>

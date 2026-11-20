@@ -9,8 +9,8 @@ Source: the requirements agreed in the session of 2026-11-20 (R1 to R5 below). S
 | 1 | ✅ Done | Penguin-Pants/HandfullOfBandits#137 | CI green, Codex review clean. See "Phase 1 outcome" |
 | 2 | ✅ Done | Penguin-Pants/HandfullOfBandits#138 | CI green, Codex review clean. See "Phase 2 outcome" |
 | 3 | ✅ Done | Penguin-Pants/HandfullOfBandits#139 | See "Phase 3 outcome" |
-| 4 | Next | – | Start here. Gate: build the mockup page, then the user picks a variant. Node 24 is required (`sim/package.json` engines) |
-| 5 | Not started | – | – |
+| 4 | ✅ Done | (this PR) | User picked variant B. See "Phase 4 outcome" |
+| 5 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
 | 6 | Not started | – | – |
 
 ## Requirements (source of truth)
@@ -204,6 +204,13 @@ Requirement IDs come from the requirements response. Acceptance criteria (AC) ID
 **Acceptance criteria:** AC4.1 to AC4.3 pass. The user approved the chosen variant. `make ux` (Playwright viewport checks) passes, or is reported as not run when Playwright is not available.
 
 **Dependencies:** The user's choice of mockup. Otherwise none.
+
+**Phase 4 outcome (done)**
+- Gate: the mockup page showed A, B and C with the real stylesheet. The user picked B. The page was deleted after the build and never committed.
+- `StatusBar.tsx`: the closed summary reads "Victory track · State X/Y · PKK X/Y" in faction colors. A missing threshold shows "X/–". The track stays collapsible.
+- "Sometimes disappears" check: no threshold is dropped. Variant thresholds merge into the scenario (`sim/src/package/variant.ts:81`) and every server view applies the session options (`sim/src/server/service.ts:391`, `:715`). The likely cause was the values inside the closed `<details>`, which variant B fixes. Confidence medium.
+- Phase 3 fix found by `make ux`: the four speed buttons wrapped the map tools to two rows at 1920 px. The user chose one select ("Bot: Normal") in the tools row, and the board title hides when a bot seat shows the select (`styles.css`). The ux checks keep their limits.
+- Tests: AC4.1 (card and Propaganda), AC4.2, AC4.3 in `board.test.tsx`. Bot-seat tests drive the select. `make test`: 1875 tests pass. `make ux` passes (81 checks).
 
 ## Phase 5: README for players
 

@@ -346,6 +346,27 @@ describe("Resources and politics card (UC-7)", () => {
     expect(screen.getByLabelText("Mood states").querySelector("[aria-current]")?.textContent).toBe("Very Tense");
   });
 
+  const scoreView = (scores: Record<string, number>, thresholds: Record<string, number>, phase = view.status.phase) => ({ ...view, status: { ...view.status, phase, scores, thresholds } });
+  const summary = (): string => document.querySelector(".score-details > summary")?.textContent ?? "";
+
+  it.each(["card", "propaganda"])("AC4.1: shows State X/Y and PKK X/Y in the closed Victory track summary (%s phase)", (phase) => {
+    render(<StatusBar view={scoreView({ state: 12, pkk: 8 }, { state: 49, pkk: 32 }, phase)} />);
+    expect(summary()).toBe("Victory track · State 12/49 · PKK 8/32");
+    expect(screen.getByText("State 12/49")).toBeTruthy();
+  });
+
+  it("AC4.2: a missing threshold shows X/–, and a score above its threshold still shows", () => {
+    render(<StatusBar view={scoreView({ state: 60, pkk: 8 }, { state: 49 })} />);
+    expect(summary()).toBe("Victory track · State 60/49 · PKK 8/–");
+  });
+
+  it("AC4.3: keeps the collapsible Victory track, closed by default", () => {
+    render(<StatusBar view={view} />);
+    const details = document.querySelector("details.score-details");
+    expect(details).not.toBeNull();
+    expect((details as HTMLDetailsElement).open).toBe(false);
+  });
+
   it("the status bar no longer repeats the tracks", () => {
     render(<StatusBar view={view} />);
     expect(screen.queryByLabelText("Tracks")).toBeNull();
