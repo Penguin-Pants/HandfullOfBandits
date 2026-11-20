@@ -60,7 +60,7 @@ Bot-against-bot studies are paused. The designer plays against the bot seat, whi
 - `npm run sim -- replay <file.json | sessionId>` replays a saved game.
 - `npm run sim -- fuzz [--seeds N]` plays random legal games to find crashes.
 
-The simulator uses the illustrated atlas with live counted pieces, linked panels for narrow regions and map navigation. Older saved layouts retain the schematic fallback. See [UX design and validation](docs/ux-overhaul.md). The printed-board look, wooden piece sprites and board-first layout are described in [the implemented visual system](docs/coin-visual-redesign-design.md).
+The simulator uses the illustrated atlas with live counted pieces, linked panels for narrow regions and map navigation. Older saved layouts retain the schematic fallback. See [UX design and validation](docs/ui/ux-overhaul.md). The printed-board look, wooden piece sprites and board-first layout are described in [the implemented visual system](docs/ui/coin-visual-redesign-design.md).
 
 ## Printed rules
 

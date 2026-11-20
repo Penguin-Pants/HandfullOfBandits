@@ -3,7 +3,7 @@
 ## Mission
 Implement a complete visual redesign of the existing browser-based Handful of Bandits game. Make it resemble a professionally produced physical GMT COIN-series board game, with a detailed printed map and realistic painted wooden pieces. This is an implementation task, not a request for mockups or a new game. Preserve all gameplay logic, state, region identities, geographic geometry and adjacency.
 
-This specification is authoritative for the visual redesign. Existing `docs/ux-overhaul-plan.md` and `docs/prototype/11-build-plan.md` may be consulted for architecture and constraints but are not the task to execute. Do not restart those plans.
+This specification is authoritative for the visual redesign. Existing `docs/ui/ux-overhaul-plan.md` and `docs/prototype/11-build-plan.md` may be consulted for architecture and constraints but are not the task to execute. Do not restart those plans.
 
 ## Locked decisions
 - Pieces: pre-rendered 3D-looking sprites, not real-time 3D objects.

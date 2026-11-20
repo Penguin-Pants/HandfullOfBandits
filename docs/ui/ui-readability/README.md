@@ -2,7 +2,7 @@
 
 This change preserves the approved resource badges, expanded political tracks and Game status panel in the right column. It does not restore the old global status row or the removed faction score summaries.
 
-PR #82 is merged. This branch is stacked on the still-open PR #84 (`codex/compact-sidebar-status`, commit `a3a77be`). Merge #84 first, then retarget this PR to main. No PR was merged as part of this task.
+PRs #82 and #84 (`codex/compact-sidebar-status`) are merged (checked 2026-11-20).
 
 ## Behavior
 

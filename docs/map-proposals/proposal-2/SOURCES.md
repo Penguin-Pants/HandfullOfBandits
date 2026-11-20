@@ -6,7 +6,7 @@ Natural Earth (public domain). Same files as `game-packages/kurdish-coin/0.1.0/m
 
 ## City art
 
-Both photos come from Wikimedia Commons under CC BY-SA 4.0. The converted images in this folder are derivative works and carry the same license (CC BY-SA 4.0). Each photo was cropped, converted to grayscale, converted to a line-and-hatch sepia etching and tinted. The original colors and the photographer's signature are not in the converted image.
+Both photos come from Wikimedia Commons under CC BY-SA 4.0. The converted images (now only in `game-packages/kurdish-coin/0.1.0/map/`; this folder held identical copies until 2026-11-20) are derivative works and carry the same license (CC BY-SA 4.0). Each photo was cropped, converted to grayscale, converted to a line-and-hatch sepia etching and tinted. The original colors and the photographer's signature are not in the converted image.
 
 | Output | Source file | Author | License |
 |---|---|---|---|

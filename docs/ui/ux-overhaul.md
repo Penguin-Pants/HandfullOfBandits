@@ -16,7 +16,7 @@ The resource strip remains above the map with expandable scales. The sidebar put
 
 ## Geometry maintenance
 
-`sim/src/ui/board/atlas-data.ts` contains presentation paths, sampled rings, information anchors and original package reference coordinates. `docs/ux-overhaul/approved-map-geometry.json` records the approved shared-border construction. Reversed shared curves use the same coordinates, avoiding seams. The city has an even-odd hole in the hinterland. Lake Van retains the sourced outline fitted inside Van-Bitlis.
+`sim/src/ui/board/atlas-data.ts` contains presentation paths, sampled rings, information anchors and original package reference coordinates. `docs/ui/ux-overhaul/approved-map-geometry.json` records the approved shared-border construction. Reversed shared curves use the same coordinates, avoiding seams. The city has an even-odd hole in the hinterland. Lake Van retains the sourced outline fitted inside Van-Bitlis.
 
 `layout.ts` supplies the fixed approved information anchors and status hierarchy. Normal forces occupy a compact grid. Groups that would cross a boundary become explicit overflow, with full contents in inspection. The previous interior-placement solver and domestic panel rail were removed.
 
