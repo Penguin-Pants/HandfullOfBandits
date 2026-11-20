@@ -301,8 +301,10 @@ export function Play({ api, sessionId, screens = [], onExit, onOpenState }: Play
       setError(e instanceof Error ? e.message : String(e));
     } finally {
       rewinding.current = false;
-      // A branch can return to a head the bot already stepped from: let it act there again.
+      // A branch can return to a head the bot already stepped from, or to the setup head the UI
+      // already revealed from: let each act there again.
       stepped.current = null;
+      revealed.current = null;
       await load();
     }
   };

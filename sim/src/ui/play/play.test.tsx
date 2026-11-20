@@ -262,6 +262,22 @@ describe("Play first card and Undo (UI simplification)", () => {
     expect(submit).toHaveBeenLastCalledWith("S", { type: "Advance" }, "S-A1", "S-A1");
   });
 
+  it("reveals again after a branch back to the setup action", async () => {
+    let n = 0;
+    const card = head("S-A2", "DK-012", "pkk");
+    const session = vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: n === 1 ? card : setupHead() }));
+    const legal = vi.fn(() => Promise.resolve<LegalChoices>(n === 1 ? legalFor("pkk") : { faction: null, phase: "setup", advance: true, violations: [] }));
+    const submit = vi.fn(() => { n = 1; return Promise.resolve({ actionId: "S-A2" }); });
+    const branch = vi.fn(() => { n = 2; return Promise.resolve({ branchId: "B2", head: setupHead() }); });
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session, legal, submit: submit as never, branch, history: () => Promise.resolve([setupItem("S-A1"), setupItem("S-A2")]) })} sessionId="S" />);
+    await screen.findByLabelText("Current card DK-012");
+    menu("Game", "History");
+    fireEvent.click(screen.getByRole("button", { name: "Branch from here" }));
+    await waitFor(() => { expect(branch).toHaveBeenCalled(); });
+    await waitFor(() => { expect(submit).toHaveBeenCalledTimes(2); });
+  });
+
   it("does not reveal outside setup", async () => {
     const submit = vi.fn();
     render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: head("S-A3", "DK-012", "state") }), legal: () => Promise.resolve({ ...legalFor("state"), advance: true }), submit })} sessionId="S" />);
