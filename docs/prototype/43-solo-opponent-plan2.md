@@ -9,8 +9,8 @@ You can now play a full campaign against a bot in the app. The bot takes the Sta
 | ID | Status | Result |
 |:--|:--|:--|
 | S1 Bot seat | ✅ Done | Home "Opponent" picker; server route; Play screen auto-steps the bot |
-| S2 State retune | ⚠️ Blocked (design) | The 20% Pass target cannot be met by the bot alone (section 3) |
-| S3 Search bot | ❌ Not started | Acceptance needs about 400 slow games and a Windows timing run (section 5) |
+| S2 State retune | ⚠️ Target met only by a weaker bot | New target voluntary Pass ≤ 5% (B-5): only `S-CON@5` meets it; `S-CON@4` stays default (B-7, section 3a) |
+| S3 Search bot | ⚠️ First check done | `S-SEARCH@1` 10-seed check (B-6): 12/40 against `S-CON@4` 25/40. Full acceptance and Windows timing not run (section 5) |
 | S4 Decision review | ✅ Done | Top 3 candidates, value components and sampled line, in Last action and History |
 | S5 C3 to C5 positions | ✅ Done | 10 new positions; all 12 qualified bots pass; no retune needed |
 
@@ -60,12 +60,15 @@ Search adds 5 wins over the same weights (+12.5 points) but stays 13 wins below 
 
 ## 4. Decide (designer)
 
-1. **S2 Pass target.** Keep "Pass share ≤ 20%" and change the State economy (for example a cheaper Limited Op, more income), or replace the target with "voluntary Pass (2 or more Resources) ≤ 5%", which v4 S-CON nearly meets (13%) and v5 meets (2%)?
-2. **S3 scope.** Run the full S3 acceptance (50 seeds per opponent, about 400 games of a slower bot, several hours on one machine) or a smaller first check (10 seeds)? The Windows timing check needs your laptop.
+Answered 2026-11-19 (`docs/audit/OPEN_QUESTIONS.md` B-5 to B-7; results in section 3a):
+
+1. **S2 Pass target.** Voluntary Pass ≤ 5%.
+2. **S3 scope.** A 10-seed first check.
+3. **Default State opponent.** Keep `S-CON@4`.
 
 ## 5. Not done
 
-- **S3** (determinized 4-ply search). Not started: its acceptance (5.6 items 3 and 4) needs the decision above and a Windows 11 run.
+- **S3 full acceptance** (5.6 item 4: 50 seeds per opponent). Deferred with bot-against-bot studies (`OPEN_QUESTIONS.md` A-2). `S-SEARCH@1` is registered for later tuning.
 - **5.6 item 3** (Windows response time) needs your laptop: run a short experiment and read decision times from the journals.
 - **5.6 item 1 with qualified bots.** The 200 seat games (section 6) used the random baselines (fast; same seat code). Qualified bots played 128 experiment games through the same decision code (`decideObserved`) with 0 rejections and 128/128 identical replays.
 
