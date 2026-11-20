@@ -9,7 +9,7 @@ Source: the requirements agreed in the session of 2026-11-20 (R1 to R5 below). S
 | 1 | ✅ Done | Penguin-Pants/HandfullOfBandits#137 | CI green, Codex review clean. See "Phase 1 outcome" |
 | 2 | ✅ Done | Penguin-Pants/HandfullOfBandits#138 | CI green, Codex review clean. See "Phase 2 outcome" |
 | 3 | ✅ Done | Penguin-Pants/HandfullOfBandits#139 | See "Phase 3 outcome" |
-| 4 | ✅ Done | (this PR) | User picked variant B. See "Phase 4 outcome" |
+| 4 | ✅ Done | Penguin-Pants/HandfullOfBandits#140 | User picked variant B. See "Phase 4 outcome" |
 | 5 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
 | 6 | Not started | – | – |
 
