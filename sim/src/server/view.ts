@@ -5,6 +5,7 @@ import { closureViolations } from "../engine/coin/propaganda/legal-politics.ts";
 import { declareCeasefireHandler } from "../engine/coin/ceasefire.ts";
 import { ceasefireOptions } from "../engine/coin/propaganda/ceasefire-step.ts";
 import { derive } from "../engine/coin/derive.ts";
+import { entryToBox, type Entry } from "../engine/coin/ops/common-pkk.ts";
 import { activeFaction } from "../engine/coin/sequence/ct.ts";
 import { param } from "../engine/core/params.ts";
 import type { GameState, Ruleset } from "../engine/core/types.ts";
@@ -46,6 +47,9 @@ export interface SpaceView {
   readonly markers: readonly { readonly marker: string; readonly side: string; readonly count: number; readonly hidden: boolean }[];
   readonly tags: readonly string[];
   readonly confidence: string | null;
+  /** PKK entry into this space by March or Redeploy (07 s5.1): open, Restricted (arrive Active, pay `hostEntryCost`) or closed. */
+  readonly hostEntry: Entry;
+  readonly hostEntryCost: number;
 }
 
 /** One piece type's totals: on the map, Available and out of play (04 s2). */
@@ -121,6 +125,7 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
   const spaces = data.map.spaces.map((s): SpaceView => {
     const here = state.spaces[s.id];
     const level = here?.level ?? null;
+    const entry = entryToBox(ruleset, state, s.id);
     return {
       id: s.id,
       name: s.name,
@@ -143,6 +148,8 @@ export function boardView(ruleset: Ruleset, data: PackageData, state: GameState)
       markers: data.markers.flatMap((m) => Object.entries(here?.markers[m.id] ?? {}).filter(([, n]) => n > 0).map(([side, count]) => ({ marker: m.id, side, count, hidden: hidden.has(m.id) }))),
       tags: s.tags ?? [],
       confidence: s.confidence ?? null,
+      hostEntry: entry,
+      hostEntryCost: entry === "restricted" ? param(ruleset, "march.restrictedExtraCost", "number") : 0,
     };
   });
   const card = state.deck.currentCard;

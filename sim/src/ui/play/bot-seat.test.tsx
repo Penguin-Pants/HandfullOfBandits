@@ -93,6 +93,21 @@ describe("Play with a bot seat", () => {
     expect(submit).toHaveBeenCalledWith("S", { type: "PropagandaChoice", phase: "redeploy", choice: { troops: [], police: [], guerrilla: [] } }, "R1", "h-R1");
   });
 
+  it("lets the human PKK build a Guerrilla Redeploy route on the map after the bot State part (R2)", async () => {
+    const statePart = { troops: [{ from: "van-rural", to: "van-city", count: 2 }], police: [] };
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: redeployHead("R1"), botToAct: "state" }));
+    const botStep = vi.fn(() => Promise.resolve({ actionId: null, partial: statePart, options: null, records: [record] }));
+    const submit = vi.fn(() => Promise.resolve({ actionId: "R2", head: redeployHead("R2"), entries: [] }));
+    render(<Play api={mockApi({ session, legal: () => Promise.resolve(legalAdvance), botStep, submit })} sessionId="S" />);
+    expect(await screen.findByLabelText("State bot part")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Hakkari" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Ş[ıi]rnak$/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Add route" }));
+    fireEvent.click(screen.getByRole("button", { name: "Redeploy pieces" }));
+    await waitFor(() => { expect(submit).toHaveBeenCalled(); });
+    expect(submit).toHaveBeenCalledWith("S", { type: "PropagandaChoice", phase: "redeploy", choice: { troops: [], police: [], guerrilla: [{ from: "hakkari", to: "sirnak", count: 1 }] } }, "R1", "h-R1");
+  });
+
   it("sends a human State part of a joint phase to the PKK bot", async () => {
     const session = vi.fn(() => Promise.resolve({ session: row({ pkk: "P-SURV@4" }), head: redeployHead("R1"), botToAct: null, botExtends: true }));
     const botStep = vi.fn(() => Promise.resolve({ actionId: "R2", partial: null, options: null, records: [] }));
