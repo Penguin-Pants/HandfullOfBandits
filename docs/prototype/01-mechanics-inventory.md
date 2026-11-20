@@ -38,7 +38,7 @@ The research package names one core design. This plan implements that design and
 | Victory | State: Total Support + Legitimacy. PKK: Total Opposition + domestic PKK Bases. Harm gates | DD-14 |
 | Optional modules | MOD-3B (3 factions), MOD-4A (4 factions), Concept B map | 13; DD-16 |
 
-The optional modules are inventoried in section 12. The plan does not build them before the core design is playable (see 10-mvp-scope.md).
+The optional modules are inventoried in section 12. The plan does not build them before the core design is playable.
 
 ## 4. Status vocabulary
 

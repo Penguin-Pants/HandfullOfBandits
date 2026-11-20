@@ -14,12 +14,13 @@ Designer decision, 2026-11-12: design and test the **full game** (five Campaigns
 | `tests/scenario-a.test.ts` | Scenario A setup values and golden replay | `sim/test/` |
 | `tests/scenarios-bc.test.ts` | Scenario B and C setup values, the Scenario B threshold option and golden replays | `sim/test/` |
 | `golden/` | Seed 7 golden replays of S0 and Scenarios A, B and C | `sim/test/golden/` |
+| `playtestresults.md` | S0 Opening playtest findings, October 2026 | repository root |
 
 The tests are in the state of the last commit before the archive. The golden files were last regenerated before the archive, so their hashes do not match the current package.
 
 ## Not moved
 
-- `sim/experiments/` (manifests, runs, qualification records): records of Scenario A experiments. They name `scenario-a` and older package hashes. They stay as history and do not run again.
+- `sim/experiments/`: the Scenario A manifests, runs and qualification records were removed from the tree on 2026-11-20 (designer decision; about 180 MB). Recover them from Git history. The full-campaign records (`dd22-*`, `dd25-*`, `dev-s*`, `d04-probe`) stay.
 - `docs/prototype/` and `research/`: design history. They still describe the archived scenarios.
 
 ## Removed with Scenario B

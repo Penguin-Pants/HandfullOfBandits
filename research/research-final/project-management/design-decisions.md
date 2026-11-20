@@ -203,7 +203,7 @@ Source: section 6 of `package-b-coin-design/11-critical-design-review.md` (IR-31
 
 ## DD-20 Changes accepted after the S0 playtests
 
-Source: `playtestresults.md` (October 2026, finding D2).
+Source: `archive/playtestresults.md` (October 2026, finding D2).
 
 1. No income in the final Propaganda round. The Resources phase is skipped in the round that ends the game. Reason: the income came after the last card and could not be spent.
 2. Agitation in Propaganda uses the Rally rule: a space with a PKK Base or PKK Control (was: a PKK piece and no State Control). Reason: one rule for both, and Propaganda Agitation was almost never possible (finding D6).

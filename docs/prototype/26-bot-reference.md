@@ -1,6 +1,6 @@
 # Automated players: reference and review checklist
 
-Date: 2026-11-13 (was 2026-11-04). State of the code: generator `cand-6`, qualification suite 2, search `search-2`, observation version 1, roster v4 for both factions with 2-move planning (doc 37, 2026-11-17), engine with DEC-62. Use this file before each new simulation program, and update it whenever the bots change. Details: [21](21-scenario-a-strategies.md) (players), [19](19-scenario-a-automated-playtest-spec.md) (requirements), [23](23-scenario-a-automated-playtest-report.md) (results).
+Date: 2026-11-13 (was 2026-11-04). State of the code: generator `cand-6`, qualification suite 2, search `search-2`, observation version 1, roster v4 for both factions with 2-move planning (doc 37, 2026-11-17), engine with DEC-62. Use this file before each new simulation program, and update it whenever the bots change. Details: [21](21-scenario-a-strategies.md) (players), [19](19-scenario-a-automated-playtest-spec.md) (requirements), 23 (removed) (results).
 
 ## Part 1: summary
 
@@ -20,7 +20,7 @@ Date: 2026-11-13 (was 2026-11-04). State of the code: generator `cand-6`, qualif
 
 ### Weaknesses
 
-- **Two moves ahead, on 3 leaders only (v4).** The top 3 plans are checked against the opponent's best reply and the bot's own next play (doc 37). Other plans are not checked, and the reply uses neutral weights. Versions 1 to 3 look one action ahead (see P-SHIELD, [25](25-p-shield-designer-notes.md)).
+- **Two moves ahead, on 3 leaders only (v4).** The top 3 plans are checked against the opponent's best reply and the bot's own next play (doc 37). Other plans are not checked, and the reply uses neutral weights. Versions 1 to 3 look one action ahead (see P-SHIELD, 25 (removed)).
 - **Bounded choice lists.** At most 14 candidates per action family. Four review rounds found pruning gaps; more may exist.
 - **Hand-set weights.** Each strategy is a guess about good play, not a learned or optimal policy.
 - **Passive State.** The State passes on about 39% of its card choices and ends with about 4.8 unused Resources.

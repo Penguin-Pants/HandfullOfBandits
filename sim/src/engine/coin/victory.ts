@@ -85,7 +85,7 @@ function endGame(ctx: Exec, result: GameResult, standings: readonly Standing[]):
   if (winner !== undefined && winner.harm > limit) ctx.log("StopRuleFlag", { rule: 4, faction: winner.faction, harm: winner.harm, limit }, "12 s9"); // literal-ok: research 12 s9 stop rule number
 }
 
-/** Labels for a result (09 s4; 10-mvp-scope s2.1 for test scenarios). */
+/** Labels for a result (09 s4; the S0 test scenario is archived). */
 function labels(ctx: Exec, ranked: readonly Standing[]): string[] {
   const [first, second] = ranked;
   const diff = first !== undefined && second !== undefined ? first.margin - second.margin : 0;

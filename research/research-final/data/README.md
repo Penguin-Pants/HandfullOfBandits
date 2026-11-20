@@ -1,6 +1,6 @@
 # Data Dictionary
 
-All files are UTF-8 CSV. IDs follow the Claude input scheme. Merged rows carry Sol IDs in `sol_ids` and the Sol status in `sol_verification_status`. The full ID map is [../audit/id-crosswalk.csv](../audit/id-crosswalk.csv).
+All files are UTF-8 CSV. IDs follow the Claude input scheme. Merged rows carry Sol IDs in `sol_ids` and the Sol status in `sol_verification_status`. The full ID map is ../audit/id-crosswalk.csv (not in this repository).
 
 ## Confidence scale
 
@@ -93,7 +93,7 @@ Columns: `model_id`, `factions`, `fidelity`, `agency`, `objectives`, `decisions`
 
 ### ../sources/source-registry.csv
 
-Prefix `S-`. Rows: 527. `verification_status` is the stronger of the two input statuses; `verification_basis` names who inspected the content (claude, sol, claude+sol or final). See [../audit/source-verification.md](../audit/source-verification.md).
+Prefix `S-`. Rows: 527. `verification_status` is the stronger of the two input statuses; `verification_basis` names who inspected the content (claude, sol, claude+sol or final). See ../audit/source-verification.md (not in this repository).
 
 Columns: `source_id`, `short_title`, `author_or_org`, `pub_date`, `source_type`, `language`, `url`, `reliability`, `bias_or_limits`, `verification_status`, `access_detail`, `provenance`, `orig_ids`, `independence_group`, `claims_supported`, `notes`, `sol_ids`, `sol_verification_status`, `checked_content`, `source_family`, `verification_basis`.
 

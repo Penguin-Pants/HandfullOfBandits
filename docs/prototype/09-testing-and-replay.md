@@ -124,4 +124,4 @@ flowchart TD
 2. `npm run check` runs lint, type check and package validation for every version folder in `game-packages/`.
 3. Coverage target: 90 percent lines for `engine/core` and `engine/coin`. No target for UI.
 
-Next step: read 10-mvp-scope.md.
+Next step: read 11-build-plan.md.

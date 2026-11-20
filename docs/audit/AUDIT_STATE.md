@@ -27,7 +27,7 @@ Result: 1 Blocker, 12 Major, 27 Minor. Decisions for the designer: `OPEN_QUESTIO
 - `docs/rules/prototype-notes.md`: Appendix B (edition boundary, precedence, known differences).
 - `docs/rules/prototype-card-reference.md`: Appendix A, generated C1 and C2 card text only.
 - `docs/rules/review.md`: earlier two-pass reviews of the rules text.
-- `docs/rules/handful-of-bandits-rules-a4.pdf`: stale PDF (review.md says it was not rebuilt after the full-game revision). Not audited.
+- `docs/rules/handful-of-bandits-rules-a4.pdf`: stale PDF at the time of this audit. Rebuilt since (#122), with a drift check in `make test`. Not audited.
 - `docs/handouts/pkk-handout.html`, `docs/handouts/turkish-state-handout.html`: player handouts.
 - `docs/tester/HOW-TO-PLAY.md`: tester guide.
 
@@ -44,7 +44,7 @@ Result: 1 Blocker, 12 Major, 27 Minor. Decisions for the designer: `OPEN_QUESTIO
 - `research/research-final/project-management/design-decisions.md`: DD register.
 - `docs/prototype/13-design-decisions.md`: DEC register. `docs/prototype/27` to `34`: approved texts for later systems and cards.
 - `docs/prototype/02-rules-gap-analysis.md`: earlier gap list (GAP and PA numbers).
-- `playtestresults.md`, `docs/prototype/23-scenario-a-automated-playtest-report.md`: playtest results.
+- `playtestresults.md` (now `archive/playtestresults.md`) and `docs/prototype/23-scenario-a-automated-playtest-report.md` (removed): playtest results.
 
 **Structural references**
 

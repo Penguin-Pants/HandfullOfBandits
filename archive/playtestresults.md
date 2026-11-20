@@ -133,4 +133,4 @@ Priority order. "Seen in" names the games that show the finding.
 ## Sources
 
 - Agent notes from games A and B (session scratchpad, not committed).
-- Rules: `docs/prototype/10-mvp-scope.md`, `game-packages/kurdish-coin/0.1.0/assumptions.yaml` (PA-06), `sim/src/engine/coin/propaganda/legitimacy.ts:20` (Emergency Rule moves), `sim/src/server/forms.ts:40` (Rally fields), `sim/src/ui/propaganda/phases.ts:16` (Agitation text).
+- Rules: `docs/prototype/10-mvp-scope.md` (removed), `game-packages/kurdish-coin/0.1.0/assumptions.yaml` (PA-06), `sim/src/engine/coin/propaganda/legitimacy.ts:20` (Emergency Rule moves), `sim/src/server/forms.ts:40` (Rally fields), `sim/src/ui/propaganda/phases.ts:16` (Agitation text).
