@@ -1,6 +1,7 @@
 /* global process, document, innerWidth, innerHeight, outerWidth, devicePixelRatio */
 // Headed X11 checks use native keyboard input, not DPR or page-scale emulation.
 import {execFileSync} from 'node:child_process';
+import {menu, menuChecked} from './menu.mjs';
 import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -39,8 +40,7 @@ export async function nativeChecks({chromium,base,shots,check}) {
   if(!window)throw new Error('X11 Chromium window not found');
   const key=(...keys)=>execFileSync('python3',['-c',xkey,window,...keys]);
   await page.getByRole('button',{name:'Start',exact:true}).click();
-  await page.getByRole('button',{name:/Reveal first card/}).click();
-  await page.getByRole('heading',{name:'Choose your action'}).waitFor();
+  await page.getByRole('heading',{name:/(First|Second) Eligible$/}).first().waitFor();
   for(const factor of [1,1.25,1.5]){
    if(factor===1)key('Control_L','0');
    if(factor===1.25){key('Control_L','equal');key('Control_L','equal');}
@@ -59,16 +59,17 @@ export async function nativeChecks({chromium,base,shots,check}) {
   await page.mouse.move(from.x,from.y);await page.mouse.down();await page.mouse.move(to.x,to.y,{steps:8});await page.mouse.up();
   const move=page.getByLabel('Move Hakkari to Şırnak',{exact:true});await move.waitFor();await page.getByLabel('Preview',{exact:true}).waitFor();
   await page.getByLabel('Find space',{exact:true}).selectOption('sirnak');
-  await page.getByRole('button',{name:'Political',exact:true}).click();
+  await menu(page,'Map','Political');
   const camera=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox'),draft=await move.textContent();
-  await page.locator('[aria-label="Cards"] > summary').click();
+  await page.locator('[aria-label="Last action"] > summary').click();
   const width=await page.locator('.map-panel').evaluate(el=>el.getBoundingClientRect().width);
-  await page.getByRole('button',{name:'Hide actions',exact:true}).click();
-  check(await page.getByLabel('Status',{exact:true}).isVisible()&&await page.getByLabel('Resources and politics',{exact:true}).isVisible()&&await page.getByLabel('Forces',{exact:true}).isVisible(),'collapsed actions preserve status, resources and forces');
-  check(await page.locator('.map-panel').evaluate(el=>el.getBoundingClientRect().width)>width,'collapsed actions release map width');
-  await page.getByRole('button',{name:'Fullscreen',exact:true}).click();await page.waitForFunction(()=>document.fullscreenElement===document.documentElement);
-  await page.getByRole('button',{name:'Exit fullscreen',exact:true}).waitFor();
-  check(await page.getByRole('button',{name:'Exit fullscreen',exact:true}).isVisible(),'native fullscreen entry and button state');
+  await menu(page,'View','Map only');
+  check(await page.getByLabel('Status',{exact:true}).isVisible()&&await page.getByLabel('Resources and politics',{exact:true}).isVisible(),'Map only keeps the status line and resources');
+  check(await page.locator('.map-panel').evaluate(el=>el.getBoundingClientRect().width)>width,'Map only releases map width');
+  await menu(page,'View','Fullscreen');await page.waitForFunction(()=>document.fullscreenElement===document.documentElement);
+  await page.getByRole('menuitem',{name:'View',exact:true}).click();
+  check(await page.getByRole('menuitem',{name:'Exit fullscreen',exact:true}).isVisible(),'native fullscreen entry and menu state');
+  await page.getByRole('menuitem',{name:'View',exact:true}).click(); // Close the menu without Escape, which leaves fullscreen.
   await page.screenshot({path:join(shots,'native-fullscreen.png')});
   await page.keyboard.press('?');await page.getByLabel('Help',{exact:true}).waitFor();
   check(await page.getByRole('button',{name:'Close (?)',exact:true}).isVisible(),'Help in fullscreen');
@@ -80,21 +81,21 @@ export async function nativeChecks({chromium,base,shots,check}) {
   check(await page.getByLabel('Note text',{exact:true}).isVisible(),'notes in fullscreen');
   // Native Escape must exit fullscreen without clearing the unfinished operation.
   key('Escape');await page.waitForFunction(()=>document.fullscreenElement===null);
-  await page.getByRole('button',{name:'Fullscreen',exact:true}).waitFor();
-  check(await page.getByRole('button',{name:'Fullscreen',exact:true}).isVisible(),'native Escape updates fullscreen state');
+  await page.getByRole('menuitem',{name:'View',exact:true}).click();
+  check(await page.getByRole('menuitem',{name:'Fullscreen',exact:true}).isVisible(),'native Escape updates fullscreen state');
+  await page.getByRole('menuitem',{name:'View',exact:true}).click(); // Close the menu.
   await page.keyboard.press('Escape'); // Close the note, after the browser has exited.
-  await page.getByRole('button',{name:'Show actions',exact:true}).click();
+  await menu(page,'View','Map only');
   check(await move.textContent()===draft&&await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')===camera,'draft and camera survive native fullscreen and sidebar changes');
-  check(await page.getByRole('button',{name:'Şırnak',exact:true}).getAttribute('aria-pressed')==='true'&&await page.getByRole('button',{name:'Political',exact:true}).getAttribute('aria-pressed')==='true','selection and display layer survive fullscreen');
-  check(await page.getByLabel('Cards',{exact:true}).evaluate(el=>el.open),'supporting disclosure stays open through layout changes');
-  await page.getByRole('button',{name:'Fullscreen',exact:true}).click();await page.waitForFunction(()=>!!document.fullscreenElement);
-  await page.getByRole('button',{name:'Exit fullscreen',exact:true}).waitFor();
+  check(await page.getByRole('button',{name:'Şırnak',exact:true}).getAttribute('aria-pressed')==='true'&&await menuChecked(page,'Map','Political'),'selection and display layer survive fullscreen');
+  check(await page.getByLabel('Last action',{exact:true}).evaluate(el=>el.open),'supporting disclosure stays open through layout changes');
+  await menu(page,'View','Fullscreen');await page.waitForFunction(()=>!!document.fullscreenElement);
   await page.getByRole('button',{name:'March',exact:true}).hover();
   const tooltip=page.getByRole('tooltip');await tooltip.waitFor();
   check(await tooltip.evaluate(el=>document.fullscreenElement.contains(el)),'tooltip portal in fullscreen');
   await page.mouse.move(0,0);
-  await page.getByRole('button',{name:'Exit fullscreen',exact:true}).click();await page.waitForFunction(()=>document.fullscreenElement===null);
-  check(true,'native button exit');
+  await menu(page,'View','Exit fullscreen');await page.waitForFunction(()=>document.fullscreenElement===null);
+  check(true,'native menu exit');
   // Reach a real Propaganda decision through legal engine commands, never synthetic state.
   const packages=await (await page.request.get(base+'/api/packages')).json();
   const pkg=packages.find(p=>p.packageId==='kurdish-coin'),loaded=loadPackage(readPackageDir(pkg.dir));if(!loaded.ok)throw new Error('Package did not load');
@@ -108,7 +109,7 @@ export async function nativeChecks({chromium,base,shots,check}) {
   await page.goto(base);await page.getByRole('row').filter({has:page.locator(`[href="/api/sessions/${created.sessionId}/export"]`)}).getByRole('button',{name:'Resume',exact:true}).click();
   const choice=page.getByLabel('Emergency Rule step',{exact:true});await choice.waitFor();
   check(await choice.getByRole('button').count()>0&&await choice.evaluate(el=>el.closest('details')===null),'required Propaganda choice is directly available');
-  await page.getByRole('button',{name:'Fullscreen',exact:true}).click();await page.waitForFunction(()=>!!document.fullscreenElement);
+  await menu(page,'View','Fullscreen');await page.waitForFunction(()=>!!document.fullscreenElement);
   await choice.scrollIntoViewIfNeeded();await page.screenshot({path:join(shots,'native-fullscreen-decision.png')});
   const chosen=head.view.status.emergencyMoves[0];
   const response=page.waitForResponse(r=>r.url().includes('/commands')&&r.request().method()==='POST');

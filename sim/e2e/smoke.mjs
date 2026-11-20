@@ -3,6 +3,7 @@
 // Needs a built UI (`npm run build`) and Playwright with Chromium (not a project dependency).
 // Run: make e2e
 import { createEngine } from "../src/engine/index.ts";
+import { menu } from "./menu.mjs";
 import { coinHandlers } from "../src/engine/coin/handlers.ts";
 import { loadPackage, readPackageDir } from "../src/package/load.ts";
 import { scriptedPolicy } from "../src/cli/play.ts";
@@ -50,17 +51,16 @@ try {
   // Hotseat: both sides human (the bot seat has its own check below).
   await page.getByLabel("Opponent", {exact: true}).selectOption("");
   await start.click();
-  await page.getByRole("button", { name: /Reveal first card/ }).click();
-  await page.getByText(/^Card 1$/).waitFor();
-  check(true, "Play: first card revealed");
-  const sidebarWidth = await page.locator('aside.side').evaluate(el => el.getBoundingClientRect().width);
-  check(await page.getByLabel('Status', {exact: true}).evaluate(el => el.closest('aside') !== null), "game status stays in the sidebar");
+  await page.locator('[aria-label^="Current card "]').first().waitFor();
+  check(true, "Play: first card revealed without a click");
+  check(await page.getByLabel('Status', {exact: true}).evaluate(el => el.closest('[role="menubar"]') !== null), "game status is in the menu bar");
   check(await page.getByLabel('Scores', {exact: true}).count() === 0, "repeated score summaries are removed");
   await page.locator('.score-details summary').click();
-  const victoryFits = await page.locator('.status-victory-scroll').evaluate((el, before) =>
-    el.scrollWidth > el.clientWidth && Math.abs(el.closest('aside').getBoundingClientRect().width - before) < 1 && document.documentElement.scrollWidth <= innerWidth,
-  sidebarWidth);
-  check(victoryFits, "expanded victory track scrolls without widening the sidebar");
+  const victoryFits = await page.locator('.status-victory-scroll').evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return r.left >= 0 && r.right <= innerWidth && document.documentElement.scrollWidth <= innerWidth;
+  });
+  check(victoryFits, "expanded victory track opens on screen without page scroll");
   await page.locator('.score-details summary').click();
   const artwork = await page.evaluate(async () => {
     const hrefs = [...document.querySelectorAll('[data-artwork="printed-board"] image')].map((el) => el.getAttribute("href") ?? "");
@@ -164,24 +164,24 @@ try {
     return {
       fits: document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth,
       panelVisible: box("Faction panel").bottom <= side.bottom,
-      forcesBelowMap: box("Forces").top > box("Board").bottom,
-      order: ["Next action", "Faction panel", "Cards", "Event panel"].map((l) => order.indexOf(l)),
+      forcesAboveMap: box("Forces").bottom <= box("Board").top,
+      order: ["Faction panel", "Event panel"].map((l) => order.indexOf(l)),
     };
   });
   check(layout.fits, "one view: no page scroll at 1920 x 950");
   check(layout.panelVisible, "one view: Faction panel fully visible");
-  check(layout.forcesBelowMap, "forces bar below the map");
+  check(layout.forcesAboveMap, "forces in the strip above the map");
   // UC-4: the map is large enough to read at the designer's 1907 x 863 screen.
   await page.setViewportSize({ width: 1907, height: 863 });
   await page.reload();
   await page.getByRole("button", {name:"Resume", exact:true}).first().click();
-  await page.getByRole("heading", {name:"Choose your action"}).waitFor();
+  await page.getByRole("heading", {name:/(First|Second) Eligible$/}).first().waitFor();
   await page.waitForTimeout(300);
   const mapHeight = await page.evaluate(() => document.querySelector('[aria-label="Board"]').getBoundingClientRect().height);
   const mapText = await page.locator('.atlas-label:not(.city-name)').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize) * el.ownerSVGElement.getScreenCTM().a);
   check(mapHeight >= 300 && mapText >= 18, `readable map at 1907 x 863 (${String(Math.round(mapHeight))} px high, ${mapText.toFixed(1)} px names)`);
   // The approved resource strip stays above the map.
-  const card = await page.evaluate(() => document.querySelector('.map-panel > [aria-label="Resources and politics"]') !== null);
+  const card = await page.evaluate(() => document.querySelector('.status-strip > [aria-label="Resources and politics"]') !== null);
   check(card, "Resources and politics strip is above the map");
   await page.keyboard.press("m");
   await page.keyboard.press("n");
@@ -197,7 +197,7 @@ try {
   await page.setViewportSize({ width: 800, height: 900 });
   await page.waitForTimeout(300);
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "narrow screen: no sideways scroll at 800 px");
-  check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: task, faction choices, cards, event");
+  check(layout.order.every((n, i, a) => n >= 0 && (i === 0 || n > a[i - 1])), "right column order: faction choices, then the card");
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.waitForTimeout(300);
   // UC-7 review: at 1366 x 768 the card covers no space name on the map.
@@ -207,15 +207,10 @@ try {
     return [...document.querySelectorAll("text.map-label")].every((t) => { const r = t.getBoundingClientRect(); const clipped = {left:Math.max(r.left,m.left),right:Math.min(r.right,m.right),top:Math.max(r.top,m.top),bottom:Math.min(r.bottom,m.bottom)}; return clipped.right <= clipped.left || clipped.bottom <= clipped.top || clipped.right <= c.left || clipped.left >= c.right || clipped.bottom <= c.top || clipped.top >= c.bottom; });
   });
   check(clear, "Resources and politics card covers no space name at 1366 x 768");
-  // UC-9: the right column ends above the fixed Note button, so the button covers none of it.
+  // UC-9: Note is in the Game menu, so no fixed button covers the right column.
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.waitForTimeout(300);
-  const noteClear = await page.evaluate(() => {
-    const side = document.querySelector("aside.side").getBoundingClientRect();
-    const n = document.querySelector(".note-closed button").getBoundingClientRect();
-    return side.bottom <= n.top;
-  });
-  check(noteClear, "right column ends above the Note button at 1600 x 900");
+  check(await page.locator(".note-closed button").count() === 0, "no fixed Note button over the right column at 1600 x 900");
   await page.getByRole("button", {name:"Fit map"}).click();
   // UC-5: a March is planned by a mouse drag on the map, never by typed text.
   await page.getByRole("button", { name: "Limited Op" }).click();
@@ -235,7 +230,7 @@ try {
   check((await page.locator("aside input, aside select, aside textarea").count()) === 0, "no text, number or list fields in the right column");
   await page.getByRole("button", { name: "Clear (Esc)" }).click();
   await page.getByRole("button", { name: "Pass" }).last().click();
-  await page.getByText("1st: PKK (Pass)", { exact: true }).waitFor();
+  await page.getByLabel("Status", { exact: true }).getByText(/^1st: PKK \(Pass\)/).waitFor();
   check(true, "one action committed (PKK Pass)");
   await page.locator("svg").first().click({ position: { x: 5, y: 5 } });
   await page.keyboard.press("n");
@@ -243,14 +238,14 @@ try {
   await page.keyboard.press("Enter");
   await page.getByRole("status").filter({ hasText: /Saved, linked to/ }).waitFor();
   check(true, "note saved and linked to the action");
-  await page.getByRole("button", { name: "Undo (Ctrl+Z)" }).click();
-  await page.getByText("1st: PKK", { exact: true }).waitFor();
+  await menu(page, "Game", "Undo");
+  await page.getByLabel("Status", { exact: true }).getByText(/^1st: PKK · /).waitFor();
   check(true, "undo restored the board");
   const sessions = await (await fetch(`${base}/api/sessions`)).json();
   const exported = await (await fetch(`${base}/api/sessions/${sessions[0].session_id}/export`)).json();
   check(exported.exportMeta.schema === "coin-sim-export/1" && exported.annotations.length === 1 && exported.actions.some((a) => a.status === "undone"), "JSON export holds the note and the undone action");
   // Phase 3a automated flow. IC-3a still requires the designer's own UI playthrough.
-  await page.getByRole("button", {name: "Home",exact: true}).click();
+  await menu(page, "Game", "Home");
   await page.getByLabel("Scenario", {exact: true}).selectOption("full-campaign");
   await page.getByLabel("Seed", {exact: true}).fill("7");
   await page.getByLabel("Opponent", {exact: true}).selectOption("");
@@ -268,7 +263,9 @@ try {
   const loaded = loadPackage(readPackageDir(pkg.dir));
   check(loaded.ok, "Package loads for automated play");
   const engine = createEngine(coinHandlers);
-  let head = created.head;
+  // The UI reveals the first card by itself: wait for it, then script from the current head.
+  await page.locator('[aria-label^="Current card "]').first().waitFor();
+  let head = (await (await fetch(`${base}/api/sessions/${created.sessionId}`)).json()).head;
   let steps = 0;
   while (head.state.ended === null) {
     if (steps++ >= 2000) throw new Error("The full campaign exceeded 2000 commands");
@@ -280,7 +277,7 @@ try {
   check(head.state.turn.propagandaRound === 5, "The full campaign completes five rounds through the session API");
   await page.reload();
   await page.getByRole("row").filter({hasText: "full-campaign-seed7"}).getByRole("button", {name: "Resume",exact: true}).click();
-  await page.locator('header[aria-label="Status"]').getByText(/^Game over:/).waitFor();
+  await page.getByLabel("Status", { exact: true }).getByText(/^Game over:/).waitFor();
   check(true, "Full campaign result renders in the UI");
   await page.keyboard.press("n");
   await page.getByLabel("Note text").fill("Automated full campaign smoke note; designer IC-3a remains pending.");
@@ -289,7 +286,7 @@ try {
   const aExport = await (await fetch(`${base}/api/sessions/${created.sessionId}/export`)).json();
   check(aExport.sessions[0].scenario_id === "full-campaign" && aExport.annotations.length === 1 && aExport.metrics.filter(m => m.propaganda_round !== undefined).length === 5, "Full campaign export contains the session, five round metrics and UI note");
   // Audit Plan 2 S1: a State bot seat. The human PKK passes on card 1; the bot then acts by itself and says why.
-  await page.getByRole("button", {name: "Home",exact: true}).click();
+  await menu(page, "Game", "Home");
   await page.getByLabel("Seed", {exact: true}).fill("8");
   await page.getByLabel("Name", {exact: true}).fill("bot-seat");
   const opponent = page.getByLabel("Opponent", {exact: true});
@@ -297,8 +294,7 @@ try {
   const botCreation = page.waitForResponse(r => r.url().endsWith("/api/sessions") && r.request().method() === "POST");
   await page.getByRole("button", {name: "Start",exact: true}).click();
   const botSession = await (await botCreation).json();
-  await page.getByRole("button", { name: /Reveal first card/ }).click();
-  await page.getByText(/^Card 1$/).waitFor();
+  await page.locator('[aria-label^="Current card "]').first().waitFor();
   const now = await (await fetch(`${base}/api/sessions/${botSession.sessionId}`)).json();
   const pass = await fetch(`${base}/api/sessions/${botSession.sessionId}/commands`, {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify({command: {type: "Pass", faction: "pkk"}, headActionId: now.head.actionId, headStateHash: now.head.stateHash})});
   check(pass.ok, "the human PKK passes on card 1");

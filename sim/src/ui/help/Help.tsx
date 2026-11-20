@@ -2,15 +2,18 @@
 // (research 06), how to build an Operation, keyboard keys. `?` toggles it.
 import type { ActionForm, BoardView } from "../api.ts";
 export const KEYS: readonly (readonly [string, string])[] = [
-  ["Space", "Reveal the first card, or Advance when nothing needs a choice"],
+  ["Space", "Advance when nothing needs a choice"],
   ["Click / Shift-click", "Select a space / add a space to the selection"],
-  ["Alt-drag / Arrow keys", "Pan the map; focus the board first for arrow keys. Fit map resets the camera."],
+  ["Right-click / long press", "Show the details of a space"],
+  ["Wheel", "Zoom the map at the pointer"],
+  ["Alt-drag / Arrow keys", "Pan the map; focus the board first for arrow keys. Map > Fit map resets the camera."],
   ["M", "Show the map only or restore the panels"],
   ["Drag", "From one space to another: move pieces (March, Sweep, Garrison, Air Mobility)"],
   ["Enter", "Commit the plan (Faction panel) or save a note (note bar)"],
   ["Esc", "Clear the plan or close the note bar"],
   ["N", "Write a note; Tab changes what it is attached to"],
   ["H", "Show or hide the history"],
+  ["F", "Open Feedback review"],
   ["Ctrl+Z", "Undo the last action"],
   ["?", "Show or hide this help"],
 ];
@@ -117,7 +120,7 @@ export function Help({ onClose, view, forms = [] }: HelpProps) {
             <li>Victory track at the top: each marker is a score; the flag is the winning score.</li>
             <li>Mountain marks: Mountain spaces (Activation and Assault work at half rate there). Blue lines: the Euphrates and Tigris; blue area: Lake Van.</li>
             <li>Rule button next to a log line (Last action and History): shows the research text that the line cites. A line with no Rule button cites no rule.</li>
-            <li>Host posture of Syria, KDP and PUK under their boxes; Europe in its box. The other tracks are in the Resources and politics card (Tracks button).</li>
+            <li>Host posture of Syria, KDP and PUK under their boxes; Europe in its box. The other tracks are in the Resources and politics strip (View menu: Tracks).</li>
           </ul>
           <h3>Keys</h3>
           <table>

@@ -7,12 +7,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setPieces, turnOf, withCard } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { mockApi } from "../../../test/ui/mock-api.ts";
+import { menu, menuChecked } from "../../../test/ui/menu.ts";
 import { boardView } from "../../server/view.ts";
 import type { GameState } from "../../engine/core/types.ts";
 import type { BotRecord, Head, HistoryItem, LegalChoices, SessionRow } from "../api.ts";
 import { Home } from "../home/Home.tsx";
 import { BotWhy, commandText } from "../history/BotWhy.tsx";
-import { BOT_SPEED_SETTING, botMoves, savedBotSpeed } from "./BotSpeed.tsx";
+import { BOT_SPEED_LABELS, BOT_SPEED_SETTING, botMoves, savedBotSpeed, type BotSpeedChoice } from "./bot-speed.ts";
 import { Play } from "./Play.tsx";
 
 // The bot waits with setTimeout (R1.1): fake the timeouts. Testing Library flushes a setTimeout(0)
@@ -29,8 +30,8 @@ afterEach(() => {
 });
 const tick = (ms: number): Promise<void> => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
 /** Wait until the bot turn shows, then let the Normal wait run out. */
-/** Choose a bot speed in the map tools select. */
-const pick = (speed: string): void => { fireEvent.change(screen.getByLabelText("Bot speed"), { target: { value: speed } }); };
+/** Choose a bot speed in the Bot menu. */
+const pick = (speed: BotSpeedChoice): void => { menu("Bot", BOT_SPEED_LABELS[speed]); };
 const botActs = async (): Promise<void> => {
   await screen.findByText(/is choosing/);
   await tick(1500);
@@ -56,6 +57,14 @@ const record: BotRecord = {
 const item = (id: string, bot: readonly BotRecord[]): HistoryItem => ({ action: { action_id: id, status: "committed", faction: bot.length > 0 ? "state" : "pkk", box: "pass", phase: "card", summary: "Pass" }, entries: [], notes: 0, bot }) as never;
 
 describe("Play with a bot seat", () => {
+  it("keeps the current card face up, read only, while the bot chooses", async () => {
+    const session = vi.fn(() => Promise.resolve({ session: row({ state: "S-ADAPT@5" }), head: cardHead("A1"), botToAct: "state" }));
+    render(<Play api={mockApi({ session, legal: () => Promise.resolve<LegalChoices>({ faction: "state", phase: "card", first: true, boxes: [], actions: [] }), botStep: () => new Promise(() => undefined) })} sessionId="S" />);
+    expect(await screen.findByText(/is choosing/)).toBeTruthy();
+    expect(screen.getByLabelText("Current card DK-012")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /^Execute/ })).toBeNull();
+  });
+
   it("steps the bot once for its head, then reloads", async () => {
     let n = 0;
     const heads = [cardHead("A1"), cardHead("A2")];
@@ -97,7 +106,8 @@ describe("Play with a bot seat", () => {
     render(<Play api={mockApi({ session, legal, botStep, history, branch })} sessionId="S" />);
     await botActs();
     await waitFor(() => { expect(botStep).toHaveBeenCalledTimes(1); });
-    fireEvent.click(await screen.findByRole("button", { name: "History (H)" }));
+    await screen.findByRole("menuitem", { name: "Game" });
+    menu("Game", "History");
     fireEvent.click(await screen.findByRole("button", { name: "Branch from here" }));
     await waitFor(() => { expect(branch).toHaveBeenCalled(); });
     await botActs();
@@ -184,7 +194,8 @@ describe("Play with a bot seat", () => {
     const undo = vi.fn((_: string, at: string) => Promise.resolve({ undone: at, head: "x", undoneAfterRandom: false, state: cardHead(at === "A3" ? "A2" : "A1") }));
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<Play api={mockApi({ session, history, undo, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
-    fireEvent.click(await screen.findByRole("button", { name: "Undo (Ctrl+Z)" }));
+    await screen.findByRole("menuitem", { name: "Game" });
+    menu("Game", "Undo");
     await waitFor(() => { expect(undo).toHaveBeenCalledTimes(2); });
     expect(undo.mock.calls.map((c) => c[1])).toEqual(["A3", "A2"]);
   });
@@ -195,7 +206,8 @@ describe("Play with a bot seat", () => {
     const undo = vi.fn((_: string, at: string) => Promise.resolve({ undone: at, head: "x", undoneAfterRandom: false, state: cardHead(at === "A3" ? "A2" : "A1") }));
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<Play api={mockApi({ session, history, undo, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
-    fireEvent.click(await screen.findByRole("button", { name: "Undo (Ctrl+Z)" }));
+    await screen.findByRole("menuitem", { name: "Game" });
+    menu("Game", "Undo");
     await waitFor(() => { expect(undo).toHaveBeenCalledTimes(3); });
     expect(undo.mock.calls.map((c) => c[1])).toEqual(["A3", "A2", "A1"]);
   });
@@ -253,7 +265,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     const { session, legal, botStep } = steps();
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     await screen.findByText(/is choosing/);
-    expect(screen.getByLabelText<HTMLSelectElement>("Bot speed").value).toBe(speed);
+    expect(menuChecked("Bot", BOT_SPEED_LABELS[speed])).toBe(true);
     await tick(ms - 1);
     expect(botStep).not.toHaveBeenCalled();
     await tick(1);
@@ -264,7 +276,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     const { session, legal, botStep } = steps();
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     // In the map tools row; the board title gives up its room there (styles.css, make ux).
-    expect((await screen.findByLabelText("Bot speed")).closest(".map-navigation")).not.toBeNull();
+    await screen.findByRole("menuitem", { name: "Bot" });
     pick("fast");
     expect(localStorage.getItem(BOT_SPEED_SETTING)).toBe("fast");
   });
@@ -272,8 +284,8 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
   it("shows the speed control only when the session has a bot seat", async () => {
     const session = vi.fn(() => Promise.resolve({ session: row({}), head: cardHead("A1"), botToAct: null }));
     render(<Play api={mockApi({ session, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
-    await screen.findByRole("button", { name: "Undo (Ctrl+Z)" });
-    expect(screen.queryByLabelText("Bot speed")).toBeNull();
+    await screen.findByRole("menuitem", { name: "Game" });
+    expect(screen.queryByRole("menuitem", { name: "Bot" })).toBeNull();
   });
 
   it("AC1.3: Pause sends no bot step; Normal resumes it", async () => {
@@ -337,7 +349,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     render(<Play api={mockApi({ session, legal, botStep, history, undo })} sessionId="S" />);
     await screen.findByText(/is choosing/);
     await tick(1000);
-    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    menu("Game", "Undo");
     await waitFor(() => { expect(undo).toHaveBeenCalled(); });
     await tick(5000);
     expect(botStep).not.toHaveBeenCalled();
@@ -360,7 +372,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     render(<Play api={mockApi({ session, legal, botStep, history, undo })} sessionId="S" />);
     await screen.findByText(/is choosing/);
     await tick(1000);
-    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    menu("Game", "Undo");
     await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
     await tick(5000);
     expect(botStep).not.toHaveBeenCalled();
@@ -379,7 +391,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     render(<Play api={mockApi({ session, legal, botStep, history, branch })} sessionId="S" />);
     await screen.findByText(/is choosing/);
     await tick(1000);
-    fireEvent.click(screen.getByRole("button", { name: "History (H)" }));
+    menu("Game", "History");
     fireEvent.click((await screen.findAllByRole("button", { name: "Branch from here" }))[0] as HTMLElement);
     await waitFor(() => { expect(branch).toHaveBeenCalled(); });
     await tick(5000);
@@ -428,7 +440,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     render(<Play api={mockApi({ session, legal, botStep, history, undo })} sessionId="S" />);
     await botActs();
     expect(await screen.findByText("Bot failed")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    menu("Game", "Undo");
     await waitFor(() => { expect(session).toHaveBeenCalledTimes(2); });
     await waitFor(() => { expect(screen.queryByText("Bot failed")).toBeNull(); });
     await tick(1500);

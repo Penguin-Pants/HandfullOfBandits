@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CategoryRow, NoteInput } from "../api.ts";
 import { turnOf } from "../../../test/board.ts";
@@ -34,10 +35,11 @@ describe("defaultAnchor", () => {
 });
 
 describe("NoteBar (T-UI-02)", () => {
-  it("stays a Note (N) button until opened (UC-4)", () => {
-    render(<NoteBar categories={categories} anchor={() => ({ anchor: "session", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} />);
-    expect(screen.queryByLabelText("Note text")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Note (N)" }));
+  it("shows nothing until the menu handle opens it", () => {
+    const handle = createRef<{ readonly open: () => void }>();
+    const { container } = render(<NoteBar handle={handle} categories={categories} anchor={() => ({ anchor: "session", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} />);
+    expect(container.textContent).toBe("");
+    act(() => { handle.current?.open(); });
     expect(screen.getByLabelText("Note text")).toBeTruthy();
     fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Escape" });
     expect(screen.queryByLabelText("Note text")).toBeNull();

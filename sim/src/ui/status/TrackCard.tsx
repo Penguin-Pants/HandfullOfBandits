@@ -48,7 +48,6 @@ export function TrackCard({ view }: { readonly view: BoardView }) {
   const tracks = view.status.tracks.filter(t => spaceOfTrack(t.id, view.spaces) === undefined && !(HIDDEN_AT_ZERO.has(t.id) && t.value === 0));
   const stepTracks = tracks.filter(t => t.steps !== undefined);
   return <section className="track-card expanded" aria-label="Resources and politics">
-    <h4>Resources and politics</h4>
     <div className="track-summaries">
     {tracks.map(t => {
       const faction = view.factions.find(f => t.id === `resources.${f.id}`);

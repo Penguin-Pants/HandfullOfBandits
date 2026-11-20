@@ -1,7 +1,15 @@
+// Browser fullscreen for the View menu: the whole document goes fullscreen, so body portals,
+// tooltips and every overlay stay visible. `message` explains a refused or unsupported request.
 import { useEffect, useState } from "react";
 
-/** Fullscreen the document so body portals, tooltips and every overlay stay visible. */
-export function FullscreenButton() {
+export interface Fullscreen {
+  readonly active: boolean;
+  readonly pending: boolean;
+  readonly message: string | null;
+  readonly toggle: () => Promise<void>;
+}
+
+export function useFullscreen(): Fullscreen {
   const [active, setActive] = useState(() => Boolean(document.fullscreenElement));
   const [message, setMessage] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -27,8 +35,5 @@ export function FullscreenButton() {
       setPending(false);
     }
   };
-  return <div className="fullscreen-control">
-    <button type="button" disabled={pending} onClick={() => void toggle()}>{active ? "Exit fullscreen" : "Fullscreen"}</button>
-    {message !== null && <span role="status">{message}</span>}
-  </div>;
+  return { active, pending, message, toggle };
 }

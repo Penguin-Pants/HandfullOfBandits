@@ -73,9 +73,9 @@ describe("StateViewer", () => {
     const after = { ...before, status: { ...before.status, cardIndex: 2 } };
     const stateView = vi.fn((_id: string, hash: string) => Promise.resolve(hash === "h1" ? before : after));
     render(<StateViewer api={mockApi({ stateView })} sessionId="S" before="h1" after="h2" onBack={vi.fn()} />);
-    expect(await screen.findByText("Card 2")).toBeTruthy();
+    expect(await screen.findByText(/Card 2\b/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Before" }));
-    expect(await screen.findByText("Card 0")).toBeTruthy();
+    expect(await screen.findByText(/Card 0\b/)).toBeTruthy();
     expect(screen.getByText("Read only")).toBeTruthy();
   });
 });

@@ -1,5 +1,6 @@
 // Faction panel (08 s3.2): boxes, Op list with OK or the first violation (T-UI-03), plan building
-// on the map by mouse (UC-5), live validation, preview, commit with Enter.
+// on the map by mouse (UC-5), live validation, preview, commit with Enter. The Pass box is the one
+// Pass control.
 import { Tip } from "../common/Tip.tsx";
 import { useEffect, useRef, useState, type ReactElement } from "react";
 import { confirmWarnings } from "../common/confirm.ts";
@@ -125,7 +126,8 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
   }, []);
   const pickBox = (b: string): void => {
     if (b === "pass") onCommit({ type: "Pass", faction });
-    else if (b !== "event") setBox(b);
+    else if (b === "event") document.getElementById("event-panel")?.focus();
+    else setBox(b);
   };
 
   const spaceName = (id: string): string => view.spaces.find((s) => s.id === id)?.name ?? words(id);
@@ -235,9 +237,6 @@ export function FactionPanel({ onTargets, api, sessionId, view, legal, plan, dis
         </button>
         <button type="button" onClick={clear}>
           Clear (Esc)
-        </button>
-        <button type="button" disabled={resume !== undefined} onClick={() => { onCommit({ type: "Pass", faction }); }}>
-          Pass
         </button>
       </div>
     </section>

@@ -6,9 +6,11 @@ import {mkdtempSync,mkdirSync,rmSync,writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {nativeChecks} from './native.mjs';
+import {menu} from './menu.mjs';
 const {chromium}=createRequire(import.meta.url)('playwright');
 const temp=mkdtempSync(join(tmpdir(),'hob-ux-'));
-const shots=process.env.HOB_SCREENSHOTS ?? '../docs/ui/ux-overhaul/screenshots';
+// Screenshots and validation.json go to a temp folder unless HOB_SCREENSHOTS names one.
+const shots=process.env.HOB_SCREENSHOTS ?? join(tmpdir(),'hob-ux-screenshots');
 mkdirSync(shots,{recursive:true});
 const base='http://127.0.0.1:5200';
 const server=spawn(process.execPath,['src/main.ts'],{env:{...process.env,HOB_DB:join(temp,'test.sqlite'),PORT:'5200'},stdio:'inherit'});
@@ -20,8 +22,10 @@ try {
  browser=await chromium.launch({executablePath:process.env.HOB_CHROMIUM ?? '/usr/bin/chromium',args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1920,height:1080}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('dialog',d=>d.accept());
- await page.goto(base);await page.getByRole('button',{name:'Start',exact:true}).click();await page.getByRole('button',{name:/Reveal first card/}).click();
- await page.getByRole('heading',{name:'Choose your action'}).waitFor();
+ // The first card is revealed without a click; the Faction panel heading names the acting faction.
+ const ready=()=>page.getByRole('heading',{name:/(First|Second) Eligible$/}).first().waitFor();
+ await page.goto(base);await page.getByRole('button',{name:'Start',exact:true}).click();
+ await ready();
  const geometry=await page.evaluate(()=>{
   const svg=document.querySelector('[aria-label="Board"]'),outside=[],collisions=[];
   for(const info of svg.querySelectorAll('[data-info]:not([data-callout])')) {
@@ -50,43 +54,56 @@ try {
  check(await page.locator('.atlas-overflow').count()===0,'normal setup shows every force and marker group');
  for(const [width,height,label] of [[1920,1080,'1920'],[1536,864,'1536'],[2560,1440,'2560'],[1366,768,'1366']]) {
   await page.setViewportSize({width,height});await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
-  await page.getByRole('heading',{name:'Choose your action'}).waitFor();
+  await ready();
   const metrics=await page.evaluate(()=>{
    const svg=document.querySelector('[aria-label="Board"]'),texts=[...svg.querySelectorAll('.atlas-label:not(.city-name)')],scale=svg.getScreenCTM().a;
-   return {fits:document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight,labelMin:Math.min(...texts.map(t=>parseFloat(getComputedStyle(t).fontSize)*scale)),mapHeight:svg.getBoundingClientRect().height,task:document.querySelector('[aria-label="Next action"]').getBoundingClientRect().bottom<=innerHeight};
+   return {fits:document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight,labelMin:Math.min(...texts.map(t=>parseFloat(getComputedStyle(t).fontSize)*scale)),mapHeight:svg.getBoundingClientRect().height,task:document.querySelector('[aria-label="Faction panel"] h3').getBoundingClientRect().bottom<=innerHeight};
   });
   check(metrics.fits&&metrics.task,'viewport '+label,metrics);check(metrics.labelMin>=18,'readable names '+label,metrics);
-  const readable=await page.evaluate(()=>({text:parseFloat(getComputedStyle(document.querySelector('.play-screen')).fontSize),instructions:parseFloat(getComputedStyle(document.querySelector('.next-task p')).fontSize),controls:[...document.querySelectorAll('.map-navigation button')].every(b=>parseFloat(getComputedStyle(b).fontSize)>=16&&b.scrollWidth<=b.clientWidth+1)}));
-  check(readable.text>=16&&readable.instructions>=18&&readable.controls,'readable windowed UI '+label,readable);
+  // Every visible text outside the map drawing is at least 16 px, and no control clips its label.
+  const readable=await page.evaluate(()=>{
+   const small=[];
+   for(const el of document.querySelectorAll('body *')){
+    if(el.closest('svg')||el.getClientRects().length===0)continue;
+    if(![...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()!==''))continue;
+    const size=parseFloat(getComputedStyle(el).fontSize);if(size<16)small.push(`${el.className||el.tagName}: ${size}`);
+   }
+   const clipped=[...document.querySelectorAll('.menubar button, .map-zoom button, .elig-box button')].filter(b=>b.scrollWidth>b.clientWidth+1).map(b=>b.textContent);
+   return {small:[...new Set(small)].slice(0,10),clipped};
+  });
+  check(readable.small.length===0&&readable.clipped.length===0,'readable windowed UI '+label,readable);
   await page.screenshot({path:join(shots,`after-${label}.png`)});
   const camera=await page.getByRole('img',{name:'Board'}).getAttribute('viewBox');
-  await page.getByRole('button',{name:'Hide actions',exact:true}).click();
-  check(await page.getByLabel('Status',{exact:true}).isVisible()&&await page.getByLabel('Forces',{exact:true}).isVisible(),'collapsed status and forces '+label);
+  await menu(page,'View','Map only');
+  check(await page.getByLabel('Status',{exact:true}).isVisible()&&await page.getByLabel('Resources and politics',{exact:true}).isVisible(),'Map only keeps the status line and tracks '+label);
   check(await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')===camera,'camera retained '+label);
-  await page.screenshot({path:join(shots,`after-${label}-collapsed.png`)});
-  await page.getByRole('button',{name:'Show actions',exact:true}).click();
+  await page.screenshot({path:join(shots,`after-${label}-maponly.png`)});
+  await menu(page,'View','Map only');
 
  }
 
  // Phase 3: board-first full-window layout and wheel and drag navigation at the two target sizes.
  for(const [width,height,label] of [[1920,1080,'1920'],[1366,768,'1366']]) {
   await page.setViewportSize({width,height});await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
-  await page.getByRole('heading',{name:'Choose your action'}).waitFor();await page.waitForTimeout(300);
+  await ready();await page.waitForTimeout(300);
   const measure=()=>page.evaluate(()=>{
    const rect=sel=>document.querySelector(sel)?.getBoundingClientRect(),board=rect('[aria-label="Board"]'),root=document.documentElement;
-   return {ratio:board.width*board.height/(innerWidth*innerHeight),noScroll:root.scrollWidth<=innerWidth&&root.scrollHeight<=innerHeight&&scrollX===0&&scrollY===0,toolbar:rect('.map-navigation').height,track:rect('.track-card')?.height??0,side:rect('aside.side')?.width??0,navWidth:rect('.map-navigation').width,uncovered:(board.width*board.height-['aside.side','.track-card','.map-caption','.forces-bar','.space-inspector'].reduce((sum,sel)=>{const r=rect(sel);return r===undefined?sum:sum+Math.max(0,Math.min(r.right,board.right)-Math.max(r.left,board.left))*Math.max(0,Math.min(r.bottom,board.bottom)-Math.max(r.top,board.top));},0))/(innerWidth*innerHeight)};
+   const area=sel=>{const r=rect(sel);return r===undefined||r.width===0?0:r.width*r.height;};
+   const others=['aside.side','.status-strip','.menubar'].map(sel=>[sel,area(sel)]);
+   return {ratio:board.width*board.height/(innerWidth*innerHeight),noScroll:root.scrollWidth<=innerWidth&&root.scrollHeight<=innerHeight&&scrollX===0&&scrollY===0,menubar:rect('.menubar').height,track:rect('.track-card')?.height??0,side:rect('aside.side')?.width??0,largest:others.every(([,a])=>a<board.width*board.height),others};
   });
   const open=await measure();
   check(open.noScroll,'no page scroll, panels open '+label,open);
-  check(open.toolbar<=(width>=1900?48:96),'compact toolbar (one row at 1920, two at 1366) '+label,open);
-  if(width>=1900){check(open.ratio>=.6,'board covers 60% of the window with panels open '+label,open);check(open.side<=420&&open.track<=60,'side panel and track card compact '+label,open);}
-  else {check(open.side<=360,'side panel width '+label,open);check(open.uncovered>=.6,'uncovered board is 60% of the window with the overlay side panel open '+label,open);check(open.navWidth>=width-12,'side panel takes no layout column: the toolbar has the full width '+label,open);}
+  check(open.menubar<=48,'one-row menu bar '+label,open);
+  check(open.largest,'the map is the largest element '+label,open);
+  if(width>=1900){check(open.ratio>=.65,'board covers 65% of the window with panels open '+label,open);check(open.side<=420&&open.track<=60,'side panel and track card compact '+label,open);}
+  else {check(open.side<=360,'side panel width '+label,open);check(open.ratio>=.55,'board covers 55% of the window with panels open '+label,open);}
   await page.screenshot({path:join(shots,`board-first-${label}-panels.png`)});
-  await page.getByRole('button',{name:'Map only (M)',exact:true}).click();await page.waitForTimeout(200);
+  await menu(page,'View','Map only');await page.waitForTimeout(200);
   const only=await measure();
   check(only.noScroll&&only.ratio>=.85,'board covers 85% of the window in Map only '+label,only);
   await page.screenshot({path:join(shots,`board-first-${label}-maponly.png`)});
-  await page.getByRole('button',{name:'Show panels (M)',exact:true}).click();await page.getByRole('button',{name:'Fit map'}).click();
+  await menu(page,'View','Map only');await page.getByRole('button',{name:'Fit map'}).click();
   const board=page.getByRole('img',{name:'Board'}),zoom=page.getByLabel('Map zoom'),box=await board.boundingBox();
   const px=box.x+box.width/2+120,py=box.y+box.height/2+60;
   const under=()=>board.evaluate((svg,[x,y])=>{const p=new DOMPoint(x,y).matrixTransform(svg.getScreenCTM().inverse());return [p.x,p.y];},[px,py]);
@@ -149,7 +166,7 @@ try {
  check(await page.getByRole('img',{name:'Board'}).getAttribute('viewBox')===beforeClick,'mouse focus preserves camera');
  await page.getByRole('button',{name:'Fit map'}).click();
  for(const mode of ['Forces','Political','Terrain','Full']) {
-  await page.getByRole('button',{name:mode,exact:true}).click();
+  await menu(page,'Map',mode);
   check(await page.locator('.atlas-stack').first().isVisible()===(mode==='Forces'||mode==='Full'),'force layer '+mode);
   check(await page.locator('.atlas-political').first().isVisible()===(mode==='Political'||mode==='Full'),'political layer '+mode);
   await page.getByLabel('Find space').selectOption('diyarbakir-city');
@@ -175,16 +192,16 @@ try {
  check((await hoverText('sirnak')).includes('Stress 8'),'dense inspection retains all groups');
  await page.screenshot({path:join(shots,'dense-state.png')});
  stressMode='empty';await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
- await page.getByRole('heading',{name:'Choose your action'}).waitFor();
+ await ready();
  check(await page.locator('.atlas-stack').count()===0,'empty spaces retain labels without phantom forces');
  await page.screenshot({path:join(shots,'empty-state.png')});
  stressMode='legacy';await page.reload();await page.getByRole('button',{name:'Resume',exact:true}).first().click();
- await page.getByRole('heading',{name:'Choose your action'}).waitFor();
+ await ready();
  check(await page.locator('.atlas-area').count()===0,'older coordinate snapshots use schematic fallback');
- await page.getByRole('button',{name:'Terrain',exact:true}).click();
+ await menu(page,'Map','Terrain');
  check(await page.locator('.force-layer').first().isVisible()===false,'legacy Terrain hides forces');
  check(await page.locator('.political-layer').first().isVisible()===false,'legacy Terrain hides alignment');
- await page.getByRole('button',{name:'Full',exact:true}).click();
+ await menu(page,'Map','Full');
  check(await page.locator('.force-layer').first().isVisible(),'legacy Full restores forces');
  await page.getByLabel('Find space').selectOption('europe');
  check(await page.getByRole('meter',{name:'Europe track'}).getAttribute('aria-valuemin')==='0'&&await page.getByRole('meter',{name:'Europe track'}).getAttribute('aria-valuemax')==='5','Europe scale remains readable in legacy layouts');

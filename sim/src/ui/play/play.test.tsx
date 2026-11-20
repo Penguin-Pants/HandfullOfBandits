@@ -4,6 +4,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { setMarkers, turnOf, withCard } from "../../../test/board.ts";
 import { kurdish } from "../../../test/kurdish-package.ts";
 import { mockApi } from "../../../test/ui/mock-api.ts";
+import { menu, menuChecked } from "../../../test/ui/menu.ts";
+import type { HistoryItem } from "../api.ts";
 import { boardView } from "../../server/view.ts";
 import type { Head, LegalChoices, SessionRow } from "../api.ts";
 import { Play } from "./Play.tsx";
@@ -15,6 +17,8 @@ function head(id: string, card: string, acting: "state" | "pkk"): Head {
   const state = withCard(turnOf(acting), card);
   return { actionId: id, stateHash: id, state, derived: null as never, view: boardView(kurdish.ruleset, kurdish.data, state) };
 }
+/** One committed card action, so Undo has something to undo. */
+const played = (): Promise<HistoryItem[]> => Promise.resolve([{ action: { action_id: "S-A3", summary: "Pass by state", status: "committed", faction: "state", box: "pass", phase: "card" }, entries: [], notes: 0 }] as never);
 const legalFor = (faction: string): LegalChoices => ({ faction, phase: "card", first: true, boxes: [{ box: "pass", allowed: true, reason: null }], actions: [] });
 
 describe("Play undo (T-UI-04)", () => {
@@ -28,12 +32,12 @@ describe("Play undo (T-UI-04)", () => {
       return Promise.resolve({ undone: "S-A3", head: "S-A2", undoneAfterRandom: false });
     });
     vi.spyOn(window, "confirm").mockReturnValue(true);
-    render(<Play api={mockApi({ session, legal, undo })} sessionId="S" />);
-    expect(await screen.findByText(/DK-012/, { selector: "span" })).toBeTruthy();
+    render(<Play api={mockApi({ session, legal, undo, history: played })} sessionId="S" />);
+    expect(await screen.findByLabelText("Current card DK-012")).toBeTruthy();
     expect(screen.getByRole("heading", { name: /^State (First|Second) Eligible/ })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Undo (Ctrl+Z)" }));
+    menu("Game", "Undo");
     await waitFor(() => { expect(undo).toHaveBeenCalledWith("S", "S-A3", "S-A3"); });
-    expect(await screen.findByText(/DK-001/, { selector: "span" })).toBeTruthy();
+    expect(await screen.findByLabelText("Current card DK-001")).toBeTruthy();
     expect(screen.getByRole("heading", { name: /^PKK (First|Second) Eligible/ })).toBeTruthy();
   });
 });
@@ -52,13 +56,13 @@ describe("Play branch (P4-04)", () => {
     });
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<Play api={mockApi({ session, legal, history, branch })} sessionId="S" />);
-    await screen.findByText(/DK-012/, { selector: "span" });
-    fireEvent.click(screen.getByRole("button", { name: "History (H)" }));
+    await screen.findByLabelText("Current card DK-012");
+    menu("Game", "History");
     // Neither a pending action (open Operation) nor the head (S-A3) offers a branch.
     expect(screen.getAllByRole("button", { name: "Branch from here" })).toHaveLength(1);
     fireEvent.click(screen.getByRole("button", { name: "Branch from here" }));
     await waitFor(() => { expect(branch).toHaveBeenCalledWith("S", "S-A2", "S-A3", "S-A3"); });
-    expect(await screen.findByText(/DK-001/, { selector: "span" })).toBeTruthy();
+    expect(await screen.findByLabelText("Current card DK-001")).toBeTruthy();
   });
 });
 
@@ -90,10 +94,11 @@ it("activating fullscreen does not advance the turn", async () => {
   Object.defineProperty(document, "fullscreenEnabled", { configurable: true, value: true });
   try {
     render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h }), legal: () => Promise.resolve({ ...legalFor("state"), advance: true }), submit })} sessionId="S" />);
-    const button = await screen.findByRole("button", { name: "Fullscreen" });
-    button.focus();
-    fireEvent.keyDown(button, { key: " " });
-    fireEvent.click(button);
+    fireEvent.click(await screen.findByRole("menuitem", { name: "View" }));
+    const item = screen.getByRole("menuitem", { name: "Fullscreen" });
+    item.focus();
+    fireEvent.keyDown(item, { key: " " });
+    fireEvent.click(item);
     await waitFor(() => { expect(request).toHaveBeenCalledOnce(); });
     expect(submit).not.toHaveBeenCalled();
   } finally {
@@ -107,40 +112,40 @@ describe("Play map space (UC-4)", () => {
     const h = head("S-A3", "DK-012", "state");
     const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))) });
     render(<Play api={api} sessionId="S" />);
-    await screen.findByText(/DK-012/, { selector: "span" });
+    await screen.findByLabelText("Current card DK-012");
   };
 
   it("Key shows and hides the legend", async () => {
     await render1();
     expect(screen.queryByLabelText("Legend")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Key" }));
+    menu("View", "Key");
     expect(screen.getByLabelText("Legend")).toBeTruthy();
+    expect(menuChecked("View", "Key")).toBe(true);
   });
 
-  it("places game status in the sidebar and keeps navigation available", async () => {
-    const onExit = vi.fn();
-    const onReview = vi.fn();
+  it("puts the status line in the menu bar and the screens in the Game menu", async () => {
+    const onHome = vi.fn();
     const h = head("S-A3", "DK-012", "state");
-    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h }), legal: () => Promise.resolve(legalFor("state")) })} sessionId="S" onExit={onExit} onReview={onReview} />);
+    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h }), legal: () => Promise.resolve(legalFor("state")) })} sessionId="S" screens={[{ label: "Home", onSelect: onHome }]} />);
     const status = await screen.findByLabelText("Status");
-    expect(status.closest("aside")).toBe(screen.getByRole("complementary", { name: "Side panel" }));
-    expect(screen.getByRole("heading", { name: "Game status" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Home" }));
-    fireEvent.click(screen.getByRole("button", { name: "Feedback review" }));
-    expect(onExit).toHaveBeenCalledOnce();
-    expect(onReview).toHaveBeenCalledOnce();
-    expect(screen.queryByLabelText("Scores")).toBeNull();
+    expect(status.closest('[role="menubar"]')).not.toBeNull();
+    expect(status.textContent).toMatch(/Card \d+ · DK-012/);
+    menu("Game", "Home");
+    expect(onHome).toHaveBeenCalledOnce();
+    for (const top of ["Game", "View", "Map", "Help"]) expect(screen.getByRole("menuitem", { name: top })).toBeTruthy();
+    expect(screen.queryByRole("menuitem", { name: "Bot" })).toBeNull();
   });
 
-  it("M hides the status bar, side panel and forces bar, and shows them again", async () => {
+  it("M hides the side panel and the forces, keeps the status line, and the View menu shows them again", async () => {
     await render1();
     expect(screen.getByLabelText("Forces")).toBeTruthy();
     fireEvent.keyDown(window, { key: "m" });
-    expect(screen.queryByLabelText("Status")).toBeNull();
+    expect(screen.getByLabelText("Status")).toBeTruthy();
     expect(screen.queryByLabelText("Forces")).toBeNull();
     expect(screen.queryByRole("complementary", { name: "Side panel" })).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Show panels (M)" }));
-    expect(screen.getByLabelText("Status")).toBeTruthy();
+    expect(menuChecked("View", "Map only")).toBe(true);
+    menu("View", "Map only");
+    expect(screen.getByRole("complementary", { name: "Side panel" })).toBeTruthy();
   });
 
   it("M works from the moment the loaded board is on screen", async () => {
@@ -156,41 +161,35 @@ describe("Play map space (UC-4)", () => {
     });
     await render1();
     await pressed;
-    await waitFor(() => { expect(screen.queryByLabelText("Status")).toBeNull(); });
+    await waitFor(() => { expect(screen.queryByRole("complementary", { name: "Side panel" })).toBeNull(); });
   });
 
-  it("hides actions without losing status, resources, forces, selection or the camera", async () => {
+  it("Map only keeps the selection, the camera and the action panel state", async () => {
     await render1();
     fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "sirnak" } });
-    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
-    fireEvent.click(screen.getByRole("button", { name: "Political" }));
+    menu("Map", "Zoom in");
+    expect(screen.getByLabelText("Map zoom").textContent).not.toBe("100%");
+    menu("Map", "Political");
+    expect(screen.getByRole("img", { name: "Board" }).classList.contains("mode-political")).toBe(true);
+    expect(menuChecked("Map", "Political")).toBe(true);
     const camera = screen.getByRole("img", { name: "Board" }).getAttribute("viewBox");
     const action = screen.getByRole("button", { name: "Clear (Esc)" });
     action.focus();
-    fireEvent.click(screen.getByRole("button", { name: "Hide actions" }));
-    const restore = screen.getByRole("button", { name: "Show actions" });
-    expect(document.activeElement).toBe(restore);
-    expect(restore.getAttribute("aria-expanded")).toBe("false");
-    expect(screen.queryByRole("button", { name: "Clear (Esc)" })).toBeNull();
-    for (const label of ["Status", "Resources and politics", "Forces"]) expect(screen.getByLabelText(label)).toBeTruthy();
+    fireEvent.keyDown(window, { key: "m" });
+    expect(document.activeElement).not.toBe(action);
+    for (const label of ["Status", "Resources and politics"]) expect(screen.getByLabelText(label)).toBeTruthy();
     expect(screen.getByRole("button", { name: "Şırnak" }).getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByRole("img", { name: "Board" }).getAttribute("viewBox")).toBe(camera);
-    fireEvent.click(restore);
-    expect(screen.getByRole("button", { name: "Hide actions" }).getAttribute("aria-expanded")).toBe("true");
-    expect(screen.getByRole("button", { name: "Clear (Esc)" })).toBe(action);
-    fireEvent.click(screen.getByRole("button", { name: "Hide actions" }));
     fireEvent.keyDown(window, { key: "m" });
-    expect(screen.getByRole("button", { name: "Fullscreen" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Show panels (M)" }));
-    expect(screen.getByRole("button", { name: "Show actions" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Show actions" }));
     expect(screen.getByRole("button", { name: "Clear (Esc)" })).toBe(action);
+    menu("Map", "Fit map");
+    expect(screen.getByLabelText("Map zoom").textContent).toBe("100%");
   });
 
-  it("forces bar shows counts and opens the full tables", async () => {
+  it("forces bar shows counts and the View menu opens the full tables", async () => {
     await render1();
     expect(screen.queryByLabelText("State forces")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: /Show forces table/ }));
+    menu("View", "Forces table");
     expect(screen.getByLabelText("State forces")).toBeTruthy();
   });
 });
@@ -216,24 +215,59 @@ describe("Play hidden markers (P4-07)", () => {
     const h: Head = { actionId: "S-A3", stateHash: "S-A3", state, derived: null as never, view: boardView(kurdish.ruleset, kurdish.data, state) };
     const api = mockApi({ session: vi.fn(() => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: h })), legal: vi.fn(() => Promise.resolve(legalFor("state"))) });
     render(<Play api={api} sessionId="S" />);
-    await screen.findByText(/DK-012/, { selector: "span" });
-    fireEvent.click(screen.getByRole("button", { name: "Key" }));
+    await screen.findByLabelText("Current card DK-012");
+    menu("View", "Key");
     fireEvent.change(screen.getByLabelText("Find space"), { target: { value: "sirnak" } });
     const botanText = (): string => { fireEvent.contextMenu(screen.getByRole("button", { name: "Şırnak" })); return screen.getByRole("tooltip").textContent; };
     const covert = (): number => document.querySelectorAll("[aria-label^='Covert (face down)']").length;
     expect(covert()).toBeGreaterThan(0);
     expect(screen.getByLabelText("Legend").textContent).toContain("Covert (face down)");
     expect(botanText()).toContain("1 Covert (face down)");
-    const toggle = screen.getByRole("button", { name: "Hide Covert" });
-    expect(toggle.getAttribute("aria-pressed")).toBe("false");
-    fireEvent.click(toggle);
-    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(menuChecked("Map", "Hide Covert")).toBe(false);
+    menu("Map", "Hide Covert");
+    expect(menuChecked("Map", "Hide Covert")).toBe(true);
     expect(covert()).toBe(0);
     expect(screen.getByLabelText("Legend").textContent).not.toContain("Covert");
     expect(botanText()).toContain("Pieces");
     expect(botanText()).not.toContain("Covert");
     expect(screen.queryByLabelText("Şırnak detail")).toBeNull();
-    fireEvent.click(toggle);
+    menu("Map", "Hide Covert");
     expect(covert()).toBeGreaterThan(0);
+  });
+});
+
+describe("Play first card and Undo (UI simplification)", () => {
+  const setupHead = (): Head => {
+    const state = turnOf("pkk");
+    const s = { ...state, turn: { ...state.turn, phase: "setup" }, deck: { ...state.deck, currentCard: null } };
+    return { actionId: "S-A1", stateHash: "S-A1", state: s, derived: null as never, view: boardView(kurdish.ruleset, kurdish.data, s) };
+  };
+  const setupItem = (id: string) => ({ action: { action_id: id, summary: "Setup", status: "committed", faction: null, box: null, phase: "setup" }, entries: [], notes: 0 }) as never;
+
+  it("reveals the first card without a click, once per setup head", async () => {
+    const submit = vi.fn(() => Promise.resolve({ actionId: "S-A2" }));
+    const legal = vi.fn(() => Promise.resolve<LegalChoices>({ faction: null, phase: "setup", advance: true, violations: [] }));
+    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: setupHead() }), legal, submit: submit as never, history: () => Promise.resolve([setupItem("S-A1")]) })} sessionId="S" />);
+    await waitFor(() => { expect(submit).toHaveBeenCalledWith("S", { type: "Advance" }, "S-A1", "S-A1"); });
+    await waitFor(() => { expect(legal.mock.calls.length).toBeGreaterThan(1); });
+    expect(submit).toHaveBeenCalledOnce();
+  });
+
+  it("does not reveal outside setup", async () => {
+    const submit = vi.fn();
+    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: head("S-A3", "DK-012", "state") }), legal: () => Promise.resolve({ ...legalFor("state"), advance: true }), submit })} sessionId="S" />);
+    await screen.findByLabelText("Current card DK-012");
+    expect(submit).not.toHaveBeenCalled();
+  });
+
+  it("disables Undo and Ctrl+Z while only setup actions are committed", async () => {
+    const undo = vi.fn();
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<Play api={mockApi({ session: () => Promise.resolve({ session: { name: "t", status: "active" } as SessionRow, head: head("S-A2", "DK-012", "state") }), legal: () => Promise.resolve(legalFor("state")), undo, history: () => Promise.resolve([setupItem("S-A1"), setupItem("S-A2")]) })} sessionId="S" />);
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Game" }));
+    expect(screen.getByRole("menuitem", { name: "Undo" }).getAttribute("aria-disabled")).toBe("true");
+    fireEvent.keyDown(window, { key: "z", ctrlKey: true });
+    expect(confirm).not.toHaveBeenCalled();
+    expect(undo).not.toHaveBeenCalled();
   });
 });

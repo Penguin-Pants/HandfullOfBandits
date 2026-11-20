@@ -1,4 +1,4 @@
-// Bot pacing (R1.1 to R1.3): the wait before each bot action, a Play-screen control to change it,
+// Bot pacing (R1.1 to R1.3): the wait before each bot action, the Bot menu choices that change it,
 // and the last bot action's moves for the map. The speed is a browser setting, like SIGNAL_SETTING
 // in ../propaganda/SignalPrompt.tsx.
 import type { HistoryItem } from "../api.ts";
@@ -31,17 +31,7 @@ export function botMoves(item: HistoryItem | undefined): Move[] {
   return [...moves.values()];
 }
 
-const LABELS: Readonly<Record<BotSpeedChoice, string>> = { slow: "Bot: Slow", normal: "Bot: Normal", fast: "Bot: Fast", pause: "Bot: Paused" };
+export const BOT_SPEED_LABELS: Readonly<Record<BotSpeedChoice, string>> = { slow: "Slow", normal: "Normal", fast: "Fast", pause: "Pause" };
 
-/** One select (Slow, Normal, Fast, Pause), so the map tools stay one row; the choice is saved in the browser. */
-export function BotSpeed({ value, onChange }: { readonly value: BotSpeedChoice; readonly onChange: (speed: BotSpeedChoice) => void }) {
-  return (
-    <select aria-label="Bot speed" value={value} onChange={(e) => {
-      const speed = BOT_SPEEDS.find((s) => s === e.target.value) ?? "normal";
-      localStorage.setItem(BOT_SPEED_SETTING, speed);
-      onChange(speed);
-    }}>
-      {BOT_SPEEDS.map((s) => <option key={s} value={s}>{LABELS[s]}</option>)}
-    </select>
-  );
-}
+/** Save the Bot menu choice in the browser. */
+export const saveBotSpeed = (speed: BotSpeedChoice): void => { localStorage.setItem(BOT_SPEED_SETTING, speed); };
