@@ -10,7 +10,9 @@ This repository holds the rules, the card text, the game package data, a local a
 
 COIN (short for "COunterINsurgency") is a series of board games published by GMT Games. The games simulate historic insurgency and counterinsurgency conflicts. The first game is Andean Abyss (2012), designed by Volko Ruhnke. COIN games use a variable turn order: in Andean Abyss, a deck of Event cards sets the order in which the factions act. Source: [Wikipedia, "COIN (board game)"](https://en.wikipedia.org/wiki/COIN_(board_game)).
 
-A Handful of Bandits is a COIN-series prototype for this conflict. The rules are in [prototype-rules.md](docs/rules/prototype-rules.md).
+A Handful of Bandits is a COIN-series prototype for this conflict created by a fan. It is not associated with GMT nor published by them (yet!).
+
+The rules are in [prototype-rules.md](docs/rules/prototype-rules.md).
 
 ## Install
 
