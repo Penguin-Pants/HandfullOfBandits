@@ -39,7 +39,8 @@ describe("sim replay", () => {
     db.close();
     expect(replaySession(sessionId, file)).toEqual({ exitCode: 0, lines: ["identical (5 actions)"] });
     expect(replaySession("nope", file).exitCode).toBe(1);
-  });
+    // 0.2 s alone, but past the 5 s default once on the Windows runner with every test file in parallel (PR 143 CI).
+  }, 60000);
 });
 
 describe("session options (04 s10.3)", () => {
