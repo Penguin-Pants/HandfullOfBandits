@@ -1,67 +1,73 @@
 # A Handful of Bandits: Turkey and the PKK, 1984-1999
 
-A two-player COIN-series board game prototype about the conflict in southeastern Turkey, with a local playtest simulator. The State plays against the PKK over five Campaigns (C1 to C5). This repository holds the rules, the card text, the game package data, the simulator and the playtest records.
+## About the game
+
+A two-player board game prototype about the conflict in southeastern Turkey from 1984 to 1999. One player is the State. The other player is the PKK. The game has five Campaigns (C1 to C5). Each Campaign has 12 Event cards and one Propaganda card. The fifth Propaganda round ends the game.
+
+This repository holds the rules, the card text, the game package data, a local app to play the game and the playtest records.
+
+## The COIN series
+
+COIN (short for "COunterINsurgency") is a series of board games published by GMT Games. The games simulate historic insurgency and counterinsurgency conflicts. The first game is Andean Abyss (2012), designed by Volko Ruhnke. COIN games use a variable turn order: in Andean Abyss, a deck of Event cards sets the order in which the factions act. Source: [Wikipedia, "COIN (board game)"](https://en.wikipedia.org/wiki/COIN_(board_game)).
+
+A Handful of Bandits is a COIN-series prototype for this conflict. The rules are in [prototype-rules.md](docs/rules/prototype-rules.md).
+
+## Install
+
+You need Node.js 24 or later. Windows 10 or later and macOS work.
+
+1. In the `sim` folder, run `npm ci`.
+2. Run `npm run build`.
+3. Run `npm start`, then open http://127.0.0.1:5174.
+
+With GNU Make, `make install` and `make start` do the same steps. The full guide, with fixes for common errors, is [docs/tester/INSTALL.md](docs/tester/INSTALL.md).
+
+## Setup
+
+On the Home screen:
+
+1. **Scenario:** **Full campaign (1984-1999)** is the only scenario.
+2. **Setup:** **Package setup** is the standard start. A setup variant changes the start position, thresholds, tracks or piece pools. **Setup editor** makes a new variant.
+3. **Opponent:** the recommended bot is the default. Choose **None: I play both sides** to play both factions yourself.
+4. **Seed** and **Name**, then **Start**.
+
+## Play
+
+1. Click **Reveal first card**.
+2. On each card, the First Eligible faction acts, then the Second Eligible faction. Choose a box (**Event**, **Limited Op**, **Op Only**, **Op + SA** or **Pass**), build the plan on the map and click **Commit (Enter)**.
+3. On a Propaganda card, follow the steps in the right panel.
+4. The status bar shows each score as X/Y: the score now and the score that wins ("Victory track · State 21/49 · PKK 6/32"). Open **Victory track** for the full track.
+5. When a bot acts, the map shows its moves as arrows and outlines the spaces it changed. The **Bot** select in the map tools sets the wait between bot actions: Slow, Normal, Fast or Paused.
+6. **Undo (Ctrl+Z)** takes back an action. **Help (?)** lists how to win, the actions and the keys. Press **N** to write a playtest note.
+
+The step-by-step guide is [docs/tester/HOW-TO-PLAY.md](docs/tester/HOW-TO-PLAY.md). Print the [rulebook (A4 PDF)](docs/rules/handful-of-bandits-rules-a4.pdf) and the [card sheets (A4 PDF)](docs/card-catalogue/cards-a4.pdf) at 100% / Actual size.
 
 ## Development
 
-Needs Node.js 24 LTS or later and GNU Make. The simulator lives in `sim/`.
+Needs Node.js 24 LTS or later and GNU Make. The simulator is in `sim/`. Windows without Make: run the npm script of each target inside `sim/` (`npm ci`, `npm run check`, `npm test`, `npm run build` then `npm start`).
 
-1. `make install`
-2. `make check` (typecheck and lint)
-3. `make test`
-4. `make start` (builds the UI, then starts the app at http://127.0.0.1:5174)
-5. `make schema` after a change to a package schema in `sim/src/package/schema/`
-6. `make validate DIR=<package-dir>` to check a game package
-7. Export sessions from `sim/`: `npm run sim -- export <sessionId...> --format json|markdown|csv --out <file or folder>`. CSV writes `annotations.csv`, `actions.csv` and `metrics.csv` into the folder. The **Metrics review** screen (Home nav) shows the per-round metrics and downloads `metrics.csv`.
-8. Regression cases from notes (09 s7): `npm run sim -- regression create <annotationId>`, then `npm run sim -- regression run <caseId> --package <dir>` reports same, changed (per-round metric diff), incompatible or error. `regression list` shows cases; `regression compare <actionId> <actionId>` diffs the rounds of two branch paths.
+### Make targets
 
-After a change to the research documents, run `make rules DIR=<package-dir>`. It rewrites the package `rules.yaml`, the rule text behind each log rule ref. `npm run sim -- rules <dir> --check` only checks it, and `make test` fails when it is stale.
+- `make install`: install the dependencies.
+- `make check`: typecheck and lint.
+- `make test`: run the tests.
+- `make start`: build the UI and start the app at http://127.0.0.1:5174.
+- `make schema`: after a change to a package schema in `sim/src/package/schema/`.
+- `make validate DIR=<package-dir>`: check a game package and its variants.
+- `make rules DIR=<package-dir>`: after a change to the research documents. It rewrites the package `rules.yaml`. `make test` fails when it is stale.
+- `make e2e` and `make ux`: browser smoke and viewport checks (need Playwright).
+- `make print`: rebuild the rulebook and card sheet PDFs after a change to the rules, the cards or a print source. `make test` fails until you do. Sources: [docs/rules](docs/rules/README.md) and [docs/card-catalogue](docs/card-catalogue/README.md).
 
-Windows without Make: run `npm ci`, `npm run check` or `npm test` inside `sim/`. To start the app, run `npm run build` then `npm start`.
+### Simulator commands
 
-Playtesters: install with [docs/tester/INSTALL.md](docs/tester/INSTALL.md) and play with [docs/tester/HOW-TO-PLAY.md](docs/tester/HOW-TO-PLAY.md). Print the text a log rule ref cites with `npm run sim -- rule "06 s3.2"` (the app shows the same text under the **Rule** button).
+Run these in `sim/` as `npm run sim -- <command>`.
 
-## Full campaign playtest
+- `export <sessionId...> --format json|markdown|csv --out <file or folder>`: export sessions.
+- `rule "06 s3.2"`: print the rule text a log rule ref cites.
+- `regression create <annotationId>`, `regression run <caseId> --package <dir>`, `regression list`, `regression compare <actionId> <actionId>`: regression cases from notes.
+- `setup-sheet <package-dir> [--variant <name>] --out <file.md>`: print a setup sheet ([doc 45](docs/prototype/45-setup-controls-plan4.md)).
+- `batch --games 10 --strategy concentration,sanctuary --swap-seats --out metrics.csv`: paired policy screens. These legacy policies screen for exploits. They do not establish balance.
+- `experiment new|run|replay|analyze|qualify|compare|cards`: automated playtest experiments ([doc 44](docs/prototype/44-simulation-analysis-plan3.md)). Records are in `sim/experiments/`. The current record is `dd25-pilot` ([doc 36](docs/prototype/36-dd25-balance-pilot.md)).
+- `diff <old-package-dir> <new-package-dir>`, `replay <file.json | sessionId>`, `fuzz [--seeds N]`.
 
-Start the app with `make start`. The Home screen offers one scenario: **Full campaign (1984-1999)**. It uses C1 to C5 and ends at the fifth Propaganda round. Design and tests use the full game only (decision of 2026-11-12).
-
-Scenarios A, B and C and the S0 test scenario are archived in [archive/](archive/README.md), with their tests and golden replays. One shorter scenario returns after the full game is validated.
-
-Setup variants: on Home, **Setup editor** edits the start position, thresholds, tracks and piece pools, checks each change and saves the result as `game-packages/kurdish-coin/0.1.0/variants/<name>.yaml`. Pick it under **Setup** to start a session on it. A variant file names only what it changes; Available is derived. `npm run sim -- validate <package-dir>` checks every variant and prints its hash; a study names one with `"package": {"dir": ..., "variant": "<name>"}`. Print a setup sheet in the rule 10.2 layout, with the variant's change list, with `npm run sim -- setup-sheet <package-dir> [--variant <name>] --out <file.md>`; a session export names the same variant with the same change text ([doc 45](docs/prototype/45-setup-controls-plan4.md)).
-
-### Paired policy screens (batch)
-
-Run `cd sim` then `npm run sim -- batch --games 10 --strategy concentration,sanctuary --swap-seats --out metrics.csv`. Each adjacent pair uses the same seed with the policies assigned to opposite factions. A faction-specific policy uses the scripted legal fallback as its other faction. Use `--seed N` or `--package <dir>` when needed.
-
-These batch policies are legacy screens, not qualified players: they read the full game state and fall back to the scripted policy for decisions they do not cover.
-
-Policies from research 12 section 7: State `concentration` (no Civic Action), `civic-action` (least security first) and `emergency-rule`; PKK `sanctuary`, `concealment` and `coerce-only`. `scripted` is also available. Village Clearance and Legal Politics policies wait for their later-phase rules. CSV holds round scores, margins, Harm, income, Resources and political tracks. The report flags an 80% faction win rate across at least ten games. These runs screen for exploits; they do not establish balance.
-
-### Automated playtest experiments
-
-Run `cd sim` then `npm run sim -- experiment run <manifest.json> --out <new-dir>`. The manifest freezes rules, options, players, seeds and limits. The output directory holds every game journal, results and failures. Other `experiment` commands:
-
-- `experiment new <study.json> --out <manifest.json>` fills the package hash and fingerprints.
-- `experiment replay <dir>` checks every state hash.
-- `experiment analyze <dir>` writes the report, coverage ledger and statistics.
-- `experiment qualify <out.json>` runs the player qualification fixtures.
-- `experiment compare <base> <variant> --paired --out <file.md>` compares two runs by cell and seed.
-- `experiment cards <run>... --out <file.md>` counts card side plays.
-
-In the app, **Experiment reports** shows each run's report and opens any game at a chosen decision ([doc 44](docs/prototype/44-simulation-analysis-plan3.md)).
-
-Records in `sim/experiments/`: the first full-campaign records are `dd22-pilot-before` (13-space map, main) and `dd22-pilot-after` (18-space map, DD-22): the same 16 qualified cells and 15 development seeds on the same engine. Their reports are in each run's `analysis-v2/report.md`. The current record is `dd25-pilot` (DD-25 setup, PKK threshold 32), with the control `dd25-pilot-main-players`; see [doc 36](docs/prototype/36-dd25-balance-pilot.md). The Scenario A records were removed from the tree on 2026-11-20 (see `archive/README.md`). The players were tuned and qualified on Scenario A, not on C3 to C5.
-
-Bot-against-bot studies are paused. The designer plays against the bot seat, which the Home screen offers.
-
-### Other commands
-
-- `npm run sim -- diff <old-package-dir> <new-package-dir>` lists parameter, card and handler changes between two packages.
-- `npm run sim -- replay <file.json | sessionId>` replays a saved game.
-- `npm run sim -- fuzz [--seeds N]` plays random legal games to find crashes.
-
-The simulator uses the illustrated atlas with live counted pieces, linked panels for narrow regions and map navigation. Older saved layouts retain the schematic fallback. See [UX design and validation](docs/ui/ux-overhaul.md). The printed-board look, wooden piece sprites and board-first layout are described in [the implemented visual system](docs/ui/coin-visual-redesign-design.md).
-
-## Printed rules
-
-[Download the rulebook (A4 portrait PDF)](docs/rules/handful-of-bandits-rules-a4.pdf) and the [card sheets (A4 PDF)](docs/card-catalogue/cards-a4.pdf). Both are built from [prototype-rules.md](docs/rules/prototype-rules.md) and the package card text. Print at 100% / Actual size. Rebuild both with `make print` after a change to the rules, the cards or a print source; `make test` fails until you do. Editable sources and requirements are in [docs/rules](docs/rules/README.md) and [docs/card-catalogue](docs/card-catalogue/README.md).
+Bot-against-bot studies are paused. Scenarios A, B and C and the S0 test scenario are in [archive/](archive/README.md). The UI design is in [docs/ui/ux-overhaul.md](docs/ui/ux-overhaul.md) and [docs/ui/coin-visual-redesign-design.md](docs/ui/coin-visual-redesign-design.md).

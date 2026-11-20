@@ -10,8 +10,8 @@ Source: the requirements agreed in the session of 2026-11-20 (R1 to R5 below). S
 | 2 | ✅ Done | Penguin-Pants/HandfullOfBandits#138 | CI green, Codex review clean. See "Phase 2 outcome" |
 | 3 | ✅ Done | Penguin-Pants/HandfullOfBandits#139 | See "Phase 3 outcome" |
 | 4 | ✅ Done | Penguin-Pants/HandfullOfBandits#140 | User picked variant B. See "Phase 4 outcome" |
-| 5 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
-| 6 | Not started | – | – |
+| 5 | ✅ Done | Penguin-Pants/HandfullOfBandits#141 | See "Phase 5 outcome" |
+| 6 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
 
 ## Requirements (source of truth)
 
@@ -231,6 +231,13 @@ Requirement IDs come from the requirements response. Acceptance criteria (AC) ID
 **Acceptance criteria:** AC5.1 and AC5.2 are met.
 
 **Dependencies:** Phases 3 and 4, because the README describes their UI.
+
+**Phase 5 outcome (done)**
+- `README.md`: About the game, The COIN series, Install, Setup, Play, then Development (AC5.1). Development is trimmed to a Make target list and a simulator command list.
+- COIN series claims cite [Wikipedia, "COIN (board game)"](https://en.wikipedia.org/wiki/COIN_(board_game)): publisher, purpose, first game and designer, variable turn order. No publisher text is copied. An unverified "not a GMT Games product" line was cut.
+- AC5.2 (checked by hand): each `make` command is a `Makefile` target. Each `npm run` command is a `sim/package.json` script (`sim`, `build`, `check`, `start`); `npm ci` and `npm test` are npm built-ins.
+- Play describes the X/Y score line (Phase 4) and the Bot speed select and last bot moves (Phase 3).
+- Open: `docs/tester/HOW-TO-PLAY.md` says "You play both factions", but Home now defaults to the recommended bot. Proposed as an out-of-scope fix.
 
 ## Phase 6: Review, validate and ship
 
