@@ -1,6 +1,17 @@
 # Misc fixes implementation plan (2026-11-20)
 
-Source: the requirements agreed in the session of 2026-11-20 (R1 to R5 below). Status: ready for implementation. Phase 4 has one product gate: the user picks a mockup.
+Source: the requirements agreed in the session of 2026-11-20 (R1 to R5 below). Status: in progress. Phase 4 has one product gate: the user picks a mockup.
+
+## Progress
+
+| Phase | Status | Pull request | Notes |
+| --- | --- | --- | --- |
+| 1 | ✅ Done | Penguin-Pants/HandfullOfBandits#137 | CI green, Codex review clean. See "Phase 1 outcome" |
+| 2 | Next | – | Start here. Node 24 is required (`sim/package.json` engines) |
+| 3 | Not started | – | – |
+| 4 | Not started | – | Gate: user picks a mockup |
+| 5 | Not started | – | – |
+| 6 | Not started | – | – |
 
 ## Requirements (source of truth)
 
@@ -90,6 +101,12 @@ Requirement IDs come from the requirements response. Acceptance criteria (AC) ID
 **Acceptance criteria:** AC3.1 to AC3.3 pass. `make check` and `make test` pass.
 
 **Dependencies:** None.
+
+**Phase 1 outcome (done)**
+- `unchangedLocations` takes the dry-run log entries. An applied `movePieces` entry between two different spaces marks both spaces as changed. A move with the same origin and destination is not a change (Codex finding on #137: Garrison accepts such a route).
+- Callers updated: `choose-operation.ts` (Operation check and replacement probe) and `events.ts` (Event free action).
+- Side effect, intended by R3.2: State Sweep and Garrison pass-through moves follow the same rule.
+- Tests: `pkk-ops.test.ts` (Operation and Event free March), `no-effect.test.ts` (helper), `state-ops.test.ts` (same-space Garrison is refused). `make test`: 1851 tests pass.
 
 ## Phase 2: PKK Guerrilla Redeploy in the panel
 
