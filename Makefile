@@ -32,11 +32,11 @@ ux:
 	cd sim && npm run build && node e2e/ux.mjs
 
 # A4 portrait reading edition of the current playable prototype.
-rulebook:
+rulebook: setup-rule
 	python3 docs/rules/build-rulebook.py
 
 # Card catalogue PDF and HTML from the package card text (docs/printdata.py).
-cards:
+cards: setup-rule
 	python3 docs/card-catalogue/generate.py
 
 # Rule 10.2 Starting Position from the package full-campaign scenario (sim setup-sheet --rules).
