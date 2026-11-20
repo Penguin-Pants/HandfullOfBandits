@@ -83,8 +83,8 @@ Open from Plan 4 (doc 45 section 4, Propose; not blocking):
 
 Audit section 6.7. The tools are built (doc 44); these choices set how to read their results.
 
-- **A-1 Target band.** What State share of bot games is the balance target? Today 60 to 65%.
-- **A-2 Seed count.** How many seeds per cell before a rules change? Docs 37 to 41 propose 50.
+- **A-1 Target band.** Answered 2026-11-20: 60 to 65% State share.
+- **A-2 Seed count.** Deferred 2026-11-20: bot-against-bot studies are paused. The designer playtests against the bot seat; new automated bots may follow. The threshold confirmation (audit section 8) and the P-POL question (doc 42 section 4) wait with it.
 
 ## Original questions
 
