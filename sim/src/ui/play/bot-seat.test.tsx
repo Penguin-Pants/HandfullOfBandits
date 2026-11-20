@@ -29,6 +29,8 @@ afterEach(() => {
 });
 const tick = (ms: number): Promise<void> => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
 /** Wait until the bot turn shows, then let the Normal wait run out. */
+/** Choose a bot speed in the map tools select. */
+const pick = (speed: string): void => { fireEvent.change(screen.getByLabelText("Bot speed"), { target: { value: speed } }); };
 const botActs = async (): Promise<void> => {
   await screen.findByText(/is choosing/);
   await tick(1500);
@@ -251,7 +253,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     const { session, legal, botStep } = steps();
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     await screen.findByText(/is choosing/);
-    expect(screen.getByRole("button", { name: speed === "slow" ? "Slow" : "Fast" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByLabelText<HTMLSelectElement>("Bot speed").value).toBe(speed);
     await tick(ms - 1);
     expect(botStep).not.toHaveBeenCalled();
     await tick(1);
@@ -261,7 +263,9 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
   it("AC1.2: saves the chosen speed in the browser", async () => {
     const { session, legal, botStep } = steps();
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
-    fireEvent.click(await screen.findByRole("button", { name: "Fast" }));
+    // In the map tools row; the board title gives up its room there (styles.css, make ux).
+    expect((await screen.findByLabelText("Bot speed")).closest(".map-navigation")).not.toBeNull();
+    pick("fast");
     expect(localStorage.getItem(BOT_SPEED_SETTING)).toBe("fast");
   });
 
@@ -269,7 +273,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     const session = vi.fn(() => Promise.resolve({ session: row({}), head: cardHead("A1"), botToAct: null }));
     render(<Play api={mockApi({ session, legal: () => Promise.resolve<LegalChoices>({ faction: "pkk", phase: "card", first: true, boxes: [], actions: [] }) })} sessionId="S" />);
     await screen.findByRole("button", { name: "Undo (Ctrl+Z)" });
-    expect(screen.queryByRole("group", { name: "Bot speed" })).toBeNull();
+    expect(screen.queryByLabelText("Bot speed")).toBeNull();
   });
 
   it("AC1.3: Pause sends no bot step; Normal resumes it", async () => {
@@ -277,10 +281,10 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     await screen.findByText(/is choosing/);
     await tick(1000);
-    fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+    pick("pause");
     await tick(10000);
     expect(botStep).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "Normal" }));
+    pick("normal");
     await tick(1500);
     expect(botStep).toHaveBeenCalledTimes(1);
   });
@@ -290,7 +294,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     await screen.findByText(/is choosing/);
     await tick(1000);
-    fireEvent.click(screen.getByRole("button", { name: "Slow" }));
+    pick("slow");
     await tick(2999);
     expect(botStep).not.toHaveBeenCalled();
     await tick(1);
@@ -403,7 +407,7 @@ describe("Bot pacing and last bot moves (Phase 3)", () => {
     render(<Play api={mockApi({ session, legal, botStep })} sessionId="S" />);
     await botActs();
     expect(await screen.findByText("Bot failed: no legal play")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Fast" }));
+    pick("fast");
     await tick(10000);
     expect(botStep).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Bot failed: no legal play")).toBeTruthy();

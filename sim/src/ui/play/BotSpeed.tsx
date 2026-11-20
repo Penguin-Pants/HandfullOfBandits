@@ -31,18 +31,17 @@ export function botMoves(item: HistoryItem | undefined): Move[] {
   return [...moves.values()];
 }
 
-const LABELS: Readonly<Record<BotSpeedChoice, string>> = { slow: "Slow", normal: "Normal", fast: "Fast", pause: "Pause" };
+const LABELS: Readonly<Record<BotSpeedChoice, string>> = { slow: "Bot: Slow", normal: "Bot: Normal", fast: "Bot: Fast", pause: "Bot: Paused" };
 
-/** Slow, Normal, Fast and Pause buttons; the choice is saved in the browser. */
+/** One select (Slow, Normal, Fast, Pause), so the map tools stay one row; the choice is saved in the browser. */
 export function BotSpeed({ value, onChange }: { readonly value: BotSpeedChoice; readonly onChange: (speed: BotSpeedChoice) => void }) {
   return (
-    <div className="row" role="group" aria-label="Bot speed">
-      {BOT_SPEEDS.map((s) => (
-        <button key={s} type="button" aria-pressed={value === s} onClick={() => {
-          localStorage.setItem(BOT_SPEED_SETTING, s);
-          onChange(s);
-        }}>{LABELS[s]}</button>
-      ))}
-    </div>
+    <select aria-label="Bot speed" value={value} onChange={(e) => {
+      const speed = BOT_SPEEDS.find((s) => s === e.target.value) ?? "normal";
+      localStorage.setItem(BOT_SPEED_SETTING, speed);
+      onChange(speed);
+    }}>
+      {BOT_SPEEDS.map((s) => <option key={s} value={s}>{LABELS[s]}</option>)}
+    </select>
   );
 }

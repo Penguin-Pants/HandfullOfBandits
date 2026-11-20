@@ -347,7 +347,7 @@ h3 {font-size:16px;}
 @media (max-width:600px) { .map-window {overflow:auto;} .map-window .map {min-width:860px;} }
 /* Integrated review: protect map height and show action choices before supporting cards. */
 .score-details {font-size:13px; color:var(--muted);}
-.score-details summary {cursor:pointer; width:max-content;}
+.score-details summary {cursor:pointer; width:max-content; max-width:100%;}
 .score-details[open] {padding-top:4px;}
 .score-details .victory-track {color:var(--fg);}
 .vt-cell.five {background:#3c4443; color:#fff;}
@@ -480,6 +480,8 @@ h3 {font-size:16px;}
 .play-screen .map-navigation .row {flex-wrap:wrap; gap:5px;}
 .play-screen .map-navigation > .row:not([role="group"]) {display:contents;}
 .play-screen .map-navigation .board-title {font-size:16px; margin-right:auto; letter-spacing:.3px;}
+/* With a bot seat the speed select takes the title's room, so the tools stay one row at 1920 px (make ux). */
+.play-screen .map-navigation:has(select[aria-label="Bot speed"]) .board-title {display:none;}
 .play-screen .map-navigation .board-title span {font-size:14px; margin-left:4px;}
 .play-screen .map-navigation button {background:#fffbf2; color:#453c2d; border-color:#b6a88c; padding:4px 8px;}
 .play-screen .map-navigation button[aria-pressed="true"] {background:#315e73; color:#fff; border-color:#315e73;}
