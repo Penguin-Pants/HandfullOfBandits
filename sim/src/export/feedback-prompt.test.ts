@@ -18,7 +18,7 @@ const data = {
   actions: [],
   states: [{
     state_hash: "h2", derived: { control: { hakkari: "state" } },
-    content: { spaces: { hakkari: { level: -1, pieces: { guerrilla: { underground: 2, active: 0 }, police: { active: 1 } }, markers: { terror: { on: 1 }, base: { on: 0 } } } } },
+    content: { initiative: { boxes: { state: null, pkk: "event" } }, spaces: { hakkari: { level: -1, pieces: { guerrilla: { underground: 2, active: 0 }, police: { active: 1 } }, markers: { terror: { on: 1 }, base: { on: 0 } } } } },
   }],
   annotations: [annotation],
 } as unknown as CoinSimExport;
@@ -64,5 +64,9 @@ describe("feedbackPrompt", () => {
     expect(feedbackPrompt(input)).toContain("Selected space: hakkari. Level: -1. Control: state.\nPieces: guerrilla underground=2, police active=1.\nMarkers: terror on=1.");
     const none = { ...annotation, context: { ...context, selected_space: null } };
     expect(feedbackPrompt({ ...input, annotation: none })).toContain("Selected space: none.");
+  });
+
+  it.fails("shows who plays each side (AC4.1)", () => {
+    expect(feedbackPrompt(input)).toContain("## Seats\n\n| Faction | Player |\n| --- | --- |\n| state | human |\n| pkk | pkk-heuristic@1 |\n");
   });
 });
