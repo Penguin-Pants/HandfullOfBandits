@@ -66,7 +66,7 @@ describe("feedbackPrompt", () => {
     expect(feedbackPrompt({ ...input, annotation: none })).toContain("Selected space: none.");
   });
 
-  it.fails("shows who plays each side (AC4.1)", () => {
+  it("shows who plays each side (AC4.1)", () => {
     expect(feedbackPrompt(input)).toContain("## Seats\n\n| Faction | Player |\n| --- | --- |\n| state | human |\n| pkk | pkk-heuristic@1 |\n");
   });
 });

@@ -22,18 +22,25 @@ const quoted = (text: string): string => text.split("\n").map((line) => `> ${lin
 const counts = (map: unknown): string => Object.entries(obj(map)).flatMap(([type, faces]) => Object.entries(obj(faces)).filter(([, n]) => n !== 0).map(([face, n]) => `${escaped(type)} ${escaped(face)}=${escaped(n)}`)).join(", ") || "none";
 
 /** The selected space at the note's state (AC3.2). Needs an export with states. */
-function selectedSpace(data: CoinSimExport, stateHash: unknown, id: unknown): string {
+function selectedSpace(row: Row, id: unknown): string {
   if (typeof id !== "string") return "Selected space: none.";
-  const row = data.states.find((s) => s["state_hash"] === stateHash) ?? {};
   const space = obj(obj(obj(row["content"])["spaces"])[id]);
   const control = obj(obj(row["derived"])["control"])[id];
   return `Selected space: ${escaped(id)}. Level: ${escaped(space["level"] ?? "none")}. Control: ${escaped(control ?? "none")}.\nPieces: ${counts(space["pieces"])}.\nMarkers: ${counts(space["markers"])}.`;
+}
+
+/** Player of each faction at the note's state: "human" or the bot player ID (AC4.1). */
+function seats(row: Row, session: Row): string[] {
+  const bots = obj(session["seats"]);
+  const factions = Object.keys(obj(obj(obj(row["content"])["initiative"])["boxes"]));
+  return ["## Seats\n", "| Faction | Player |", "| --- | --- |", ...factions.map((f) => `| ${escaped(f)} | ${escaped(bots[f] ?? "human")} |`), ""];
 }
 
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
   const session = data.sessions.find((s) => s["session_id"] === annotation["session_id"]) ?? {};
+  const state = data.states.find((s) => s["state_hash"] === annotation["state_hash"]) ?? {};
   const started = String(session["code_fingerprint"]);
   const warnings = [
     ...(code.dirty ? [`Warning: the app ran with uncommitted changes. Commit \`${code.commit}\` may not reproduce the problem.`] : []),
@@ -51,7 +58,8 @@ export function feedbackPrompt(input: FeedbackInput): string {
     `Tracks: ${pairs(ctx["tracks"])}.`,
     `Scores: ${pairs(ctx["scores"])}. Thresholds: ${pairs(ctx["thresholds"])}.`,
     `Harm counts: ${pairs(ctx["harm_counts"])}.\n`,
-    `${selectedSpace(data, annotation["state_hash"], ctx["selected_space"])}\n`,
+    `${selectedSpace(state, ctx["selected_space"])}\n`,
+    ...seats(state, session),
   ];
   return `${lines.join("\n")}\n`;
 }
