@@ -1,0 +1,92 @@
+# Feedback prompt implementation plan (2026-11-23)
+
+Source: the feature request of 2026-11-23 (R1 to R6 below). Status: draft, waiting for review. Two product gates: D1 and D2 in "Decisions".
+
+## Goal
+
+While playing, the user writes one feedback note. The app turns it into one Markdown prompt. The prompt holds everything a new Claude Code session needs to find, reproduce and fix the problem. The user copies or downloads it and pastes it into a session.
+
+## Progress
+
+| Phase | Status | Pull request | Notes |
+| --- | --- | --- | --- |
+| 1 | Not started | – | Prompt builder (server, pure) |
+| 2 | Not started | – | Client diagnostics buffer |
+| 3 | Not started | – | UI: "Report to Claude" in the note bar |
+| 4 | Not started | – | Reproduction check and docs |
+
+## Requirements (source of truth)
+
+| ID | Requirement |
+| --- | --- |
+| R1 | Give feedback at any moment in play, with no need to stop the game |
+| R2 | The output is one prompt for a Claude Code session |
+| R3 | The prompt holds the game state: scenario, seed, Campaign, round, card, phase, active faction, tracks and scores |
+| R4 | The prompt holds who plays each side (human or bot ID) |
+| R5 | The prompt holds debug data: recent log entries, recent commands, validation results, client errors, app and code versions |
+| R6 | The prompt holds enough data to reproduce the state in a fresh checkout |
+
+| AC | Check |
+| --- | --- |
+| AC1.1 | From the Play screen, one key or one Game menu item opens the feedback form. The game state does not change (T-ANN-04 applies) |
+| AC1.2 | Saving the form also saves a normal note, so it shows in Review and in exports |
+| AC2.1 | The prompt starts with the user's text, then a task line: "Find the root cause, write a failing test, fix it" |
+| AC2.2 | The prompt names the repository, the commit (code fingerprint) and the rule files to read (`docs/rules/prototype-rules.md`, `AGENTS.md`) |
+| AC3.1 | The prompt shows Campaign, Propaganda round, card ID and title, phase, eligibility, Resources, Legitimacy, Europe, Legal Space, Ceasefire, scores, thresholds and Harm counts |
+| AC3.2 | The prompt shows the space the user selected, with its pieces, markers, level and Control |
+| AC4.1 | The prompt shows a seat table: State and PKK, each "human" or the bot player ID |
+| AC4.2 | When the note is on a bot action, the prompt holds that bot's decision record (`store/repos/bot-decisions.ts`) |
+| AC5.1 | The prompt holds the last N log entries (default 30) with rule refs, and the last N commands with validation results |
+| AC5.2 | The prompt holds the last client errors (failed API calls and uncaught errors, default 10) |
+| AC6.1 | The prompt holds a replay record that `sim replay <file.json>` accepts. Replaying it gives the same state hash as the note's state hash |
+| AC6.2 | The prompt states the replay command and the expected state hash |
+| AC6.3 | A prompt above the size limit (D2) moves the replay record to a separate file and says so |
+
+## Existing parts to reuse (Edits 5)
+
+| Part | File | Use |
+| --- | --- | --- |
+| Note bar (`N` key, Game menu) | `sim/src/ui/notes/NoteBar.tsx` | Add the "Report to Claude" action here. No new form |
+| Note context builder | `sim/src/annotate/context.ts`, `sim/src/server/service.ts:605` | Source of state, action, rule refs and legal choices |
+| Markdown export helpers | `sim/src/export/markdown.ts` | Reuse `changes()` and escaping for state diffs |
+| Session export | `sim/src/server/app.ts:152` | Session, package and action data |
+| Replay | `sim/src/cli/replay.ts` | Reproduction path for AC6.1 |
+| Code fingerprint | `sim/src/package/fingerprint.ts` | Code version in AC2.2 |
+| Seats | `sim/src/store/repos/sessions.ts:20` | Seat table in AC4.1 |
+
+## Phases
+
+### Phase 1: prompt builder (server, pure)
+
+1. Add `sim/src/export/feedback-prompt.ts`. Input: a saved annotation row, the session export and a client diagnostics object. Output: one Markdown string.
+2. Add `POST /api/sessions/:id/feedback`. It calls `service.annotate()` with a `feedback` category, then builds the prompt. It returns `{ annotationId, prompt }`.
+3. Tests first: one test per AC2 to AC5 item, on a fixture session.
+
+### Phase 2: client diagnostics buffer
+
+1. Add a ring buffer in `sim/src/ui/api.ts`: failed requests (method, path, status, message) and `window.onerror` and `unhandledrejection` events. Max 10 entries. In memory only.
+2. The feedback call sends the buffer. No other code reads it.
+3. Tests: a failed `botStep` call shows in the buffer. The buffer drops the oldest entry past 10.
+
+### Phase 3: UI
+
+1. The note bar gets a "Report to Claude" button next to Save (keyboard: Ctrl+Enter).
+2. On success, a dialog shows the prompt with "Copy" and "Download .md" buttons.
+3. Tests: AC1.1 and AC1.2 in `sim/src/ui/notes/notes.test.tsx`.
+
+### Phase 4: reproduction check and docs
+
+1. Integration test: play a seeded session to a known state, build the prompt, take out the replay record, run `replayFile`, compare the hash (AC6.1).
+2. Add a short "Report a problem" section to the tester docs (`docs/tester`).
+
+## Decisions (product gates)
+
+| ID | Question | Recommendation |
+| --- | --- | --- |
+| D1 | Does the user copy the prompt by hand, or does the app open a GitHub issue with it? | Copy and download only. An issue needs a GitHub token in the app and makes the game state public |
+| D2 | Size limit before the replay record moves to a separate file? | 60 KB. Long sessions can have hundreds of commands |
+
+## Risks
+
+1. ⚠️ The prompt is useless if the commit in the prompt is not on GitHub. The prompt must say "Check out commit X" and warn when the working tree had local changes (`codeFingerprint` differs from the fingerprint of the commit). Confidence: medium. Needs a check of how `fingerprint.ts` reads the tree.
+2. Client errors can include file paths from the user's computer. Keep only the path part of API URLs and the error message.
