@@ -155,6 +155,17 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.queryByRole("dialog")).toBeNull();
   });
+
+  it.fails("keeps the prompt dialog when the note bar opens again (review F3)", async () => {
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    fireEvent.keyDown(window, { key: "n" });
+    expect(screen.getByLabelText("Note text")).toBeTruthy();
+    expect(screen.queryByRole("dialog", { name: "Prompt for Claude Code" })).not.toBeNull();
+  });
 });
 
 describe("EndSession (T-UI-06)", () => {
