@@ -156,6 +156,20 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it.fails("says whether Copy worked (review F2)", async () => {
+    const writeText = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error("denied"));
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    await waitFor(() => { expect(screen.queryByText("Copied.")).not.toBeNull(); });
+    fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    await waitFor(() => { expect(screen.queryByText("Copy failed. Select the text and copy it.")).not.toBeNull(); });
+  });
+
   it("keeps the prompt dialog when the note bar opens again (review F3)", async () => {
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
     fireEvent.keyDown(window, { key: "n" });
