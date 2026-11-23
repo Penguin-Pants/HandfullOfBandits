@@ -69,6 +69,10 @@ describe("migrate", () => {
     expect(categories[0]).toEqual({ category_id: "balance", label: "Balance concern", hotkey: "Alt+1", color: null, sort: 1, active: 1 });
   });
 
+  it.fails("seeds the feedback category for Report to Claude notes", () => {
+    expect(listCategories(db).at(-1)).toEqual({ category_id: "feedback", label: "Report to Claude", hotkey: null, color: null, sort: 17, active: 1 });
+  });
+
   it("turns on WAL mode and foreign keys", () => {
     expect(db.pragma("journal_mode", { simple: true })).toBe("wal");
     expect(db.pragma("foreign_keys", { simple: true })).toBe(1);
