@@ -1,6 +1,7 @@
 // Feedback prompt (docs/23-Nov-26-Feedback-Prompt-Implementation-Plan.md, Phase 1). Pure: one
 // Markdown prompt from a saved note, its session export and the client diagnostics.
-import type { CoinSimExport } from "./json.ts";
+import { obj, type CoinSimExport } from "./json.ts";
+import { escaped, pairs } from "./markdown.ts";
 
 type Row = Record<string, unknown>;
 
@@ -19,6 +20,7 @@ const quoted = (text: string): string => text.split("\n").map((line) => `> ${lin
 
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
+  const ctx = obj(annotation["context"]);
   const session = data.sessions.find((s) => s["session_id"] === annotation["session_id"]) ?? {};
   const started = String(session["code_fingerprint"]);
   const warnings = [
@@ -28,6 +30,15 @@ export function feedbackPrompt(input: FeedbackInput): string {
   const lines = [
     "# Feedback from play\n", `${quoted(String(annotation["text"]))}\n`, "Task: Find the root cause, write a failing test, fix it.\n",
     "## Code\n", `Repository: ${REPOSITORY}`, `Check out commit \`${code.commit}\`.`, `Code fingerprint: \`${code.fingerprint}\`.`, ...warnings, `Read first: ${RULE_FILES.map((f) => `\`${f}\``).join(", ")}.\n`,
+    "## Game state\n",
+    `Session: ${escaped(session["session_id"])}. Scenario: ${escaped(session["scenario_id"])}. Seed: ${escaped(session["seed"])}.`,
+    `Campaign ${escaped(ctx["campaign"])}, Propaganda round ${escaped(ctx["propaganda_round"])}, card ${escaped(ctx["card_index"])}. Phase: ${escaped(ctx["phase"])}. Active faction: ${escaped(ctx["active_faction"] ?? "none")}.`,
+    `Card: ${escaped(ctx["current_card_id"] ?? "none")} ${escaped(ctx["current_card_title"])}.`,
+    `Eligibility: first ${escaped(ctx["first_eligible"] ?? "none")}, second ${escaped(ctx["second_eligible"] ?? "none")}.`,
+    `Resources: ${pairs(ctx["resources"])}.`,
+    `Tracks: ${pairs(ctx["tracks"])}.`,
+    `Scores: ${pairs(ctx["scores"])}. Thresholds: ${pairs(ctx["thresholds"])}.`,
+    `Harm counts: ${pairs(ctx["harm_counts"])}.\n`,
   ];
   return `${lines.join("\n")}\n`;
 }

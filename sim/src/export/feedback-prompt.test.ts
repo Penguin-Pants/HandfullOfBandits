@@ -43,7 +43,7 @@ describe("feedbackPrompt", () => {
     expect(moved).not.toContain("uncommitted");
   });
 
-  it.fails("shows scenario, seed, turn, card, eligibility, tracks, scores, thresholds and Harm (AC3.1)", () => {
+  it("shows scenario, seed, turn, card, eligibility, tracks, scores, thresholds and Harm (AC3.1)", () => {
     const prompt = feedbackPrompt(input);
     for (const line of [
       "Session: S1. Scenario: full-campaign. Seed: 7.",

@@ -5,12 +5,12 @@ import { metricsTable, usesOf } from "./metrics.ts";
 
 type Row = Record<string, unknown>;
 
-const escaped = (value: unknown): string => (typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? String(value) : value == null ? "" : JSON.stringify(value)).replace(/([\\`*_{}[\]<>#|])/g, "\\$1");
+export const escaped = (value: unknown): string => (typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? String(value) : value == null ? "" : JSON.stringify(value)).replace(/([\\`*_{}[\]<>#|])/g, "\\$1");
 const nested = (text: string, indent: string): string => text.split("\n").map((line) => (line === "" ? "" : `${indent}${line}`)).join("\n");
 const note = (n: Row): string => `- [${escaped(n["annotation_id"])}; ${escaped(n["action_id"] ?? n["state_hash"] ?? n["session_id"])}; ${escaped(n["anchor"])}] ${escaped(n["text"]).replace(/\n/g, "\n  ")}\n`;
 const refsOf = (action: Row): string[] => [...new Set(list(action["entries"]).flatMap((e) => [obj(e)["rule_ref"], obj(e)["assumption_ref"]]).filter((x): x is string => typeof x === "string"))];
 const or = (value: unknown, fallback: string): string => (value === null || value === undefined || value === "" ? fallback : escaped(value));
-const pairs = (value: unknown): string => Object.entries(obj(value)).map(([k, v]) => `${escaped(k)}=${escaped(v)}`).join(", ");
+export const pairs = (value: unknown): string => Object.entries(obj(value)).map(([k, v]) => `${escaped(k)}=${escaped(v)}`).join(", ");
 
 /** `state_changes` (07 s4.2) in one line. */
 function changes(value: unknown): string {
