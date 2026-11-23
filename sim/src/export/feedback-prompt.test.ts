@@ -15,7 +15,15 @@ const data = {
   packages: [], categories: [], metrics: [], index: { annotations: [] },
   sessions: [{ session_id: "S1", scenario_id: "full-campaign", seed: 7, package_hash: "p1", code_fingerprint: "f1", app_version: "0.1.0", seats: { pkk: "pkk-heuristic@1" }, head_action_id: "A2" }],
   branches: [{ branch_id: "B1", session_id: "S1", forked_from_action_id: null }],
-  actions: [],
+  actions: [
+    { action_id: "A1", session_id: "S1", branch_id: "B1", branch_seq: 0, state_hash_before: null, state_hash_after: "h1", kind: "setup", commands: [], entries: [], botDecisions: [] },
+    {
+      action_id: "A2", session_id: "S1", branch_id: "B1", branch_seq: 1, state_hash_before: "h1", state_hash_after: "h2", kind: "command",
+      commands: [{ payload: { type: "ChooseOperation", faction: "pkk", box: "op", plan: { op: "rally" } }, validation: { ok: true, violations: [], warnings: [] } }],
+      entries: [{ kind: "PiecePlaced", rule_ref: "3.3.1", data: { space: "hakkari" } }],
+      botDecisions: [{ player: "pkk-heuristic@1", chosen: "rally", score: 3 }],
+    },
+  ],
   states: [{
     state_hash: "h2", derived: { control: { hakkari: "state" } },
     content: { initiative: { boxes: { state: null, pkk: "event" } }, spaces: { hakkari: { level: -1, pieces: { guerrilla: { underground: 2, active: 0 }, police: { active: 1 } }, markers: { terror: { on: 1 }, base: { on: 0 } } } } },
@@ -68,5 +76,10 @@ describe("feedbackPrompt", () => {
 
   it("shows who plays each side (AC4.1)", () => {
     expect(feedbackPrompt(input)).toContain("## Seats\n\n| Faction | Player |\n| --- | --- |\n| state | human |\n| pkk | pkk-heuristic@1 |\n");
+  });
+
+  it.fails("holds the bot decision record of a note on a bot action, and none on a human action (AC4.2)", () => {
+    expect(feedbackPrompt(input)).toContain(`## Bot decision (action A2)\n\n\`\`\`json\n${JSON.stringify([{ player: "pkk-heuristic@1", chosen: "rally", score: 3 }], null, 2)}\n\`\`\`\n`);
+    expect(feedbackPrompt({ ...input, annotation: { ...annotation, action_id: "A1" } })).not.toContain("## Bot decision");
   });
 });
