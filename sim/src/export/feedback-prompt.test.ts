@@ -16,7 +16,10 @@ const data = {
   sessions: [{ session_id: "S1", scenario_id: "full-campaign", seed: 7, package_hash: "p1", code_fingerprint: "f1", app_version: "0.1.0", seats: { pkk: "pkk-heuristic@1" }, head_action_id: "A2" }],
   branches: [{ branch_id: "B1", session_id: "S1", forked_from_action_id: null }],
   actions: [],
-  states: [],
+  states: [{
+    state_hash: "h2", derived: { control: { hakkari: "state" } },
+    content: { spaces: { hakkari: { level: -1, pieces: { guerrilla: { underground: 2, active: 0 }, police: { active: 1 } }, markers: { terror: { on: 1 }, base: { on: 0 } } } } },
+  }],
   annotations: [annotation],
 } as unknown as CoinSimExport;
 const input: FeedbackInput = { annotation, data, code: { commit: "c0ffee", dirty: false, fingerprint: "f1" } };
@@ -55,5 +58,11 @@ describe("feedbackPrompt", () => {
       "Scores: state=21, pkk=17. Thresholds: state=30, pkk=25.",
       "Harm counts: state=3, pkk=1.",
     ]) expect(prompt).toContain(line);
+  });
+
+  it.fails("shows the selected space with level, Control, pieces and markers (AC3.2)", () => {
+    expect(feedbackPrompt(input)).toContain("Selected space: hakkari. Level: -1. Control: state.\nPieces: guerrilla underground=2, police active=1.\nMarkers: terror on=1.");
+    const none = { ...annotation, context: { ...context, selected_space: null } };
+    expect(feedbackPrompt({ ...input, annotation: none })).toContain("Selected space: none.");
   });
 });
