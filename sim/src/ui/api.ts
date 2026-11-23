@@ -112,6 +112,11 @@ function recordError(error: ClientError): void {
   if (errors.length > MAX_ERRORS) errors.shift();
 }
 
+/** Record uncaught errors and unhandled rejections of `target`. Returns a function that stops it. */
+export function captureWindowErrors(target: Window): () => void {
+  return () => { target.removeEventListener("error", recordError as never); };
+}
+
 async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, { method, headers: body === undefined ? {} : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
   const data = (await res.json()) as unknown;

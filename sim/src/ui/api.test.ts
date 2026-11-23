@@ -39,3 +39,12 @@ it("keeps the last 10 errors and drops the oldest", async () => {
   expect(sent[0]).toMatchObject({ message: "boom 1" });
   expect(sent[9]).toMatchObject({ message: "boom 10" });
 });
+
+it.fails("records uncaught errors and unhandled rejections with the message only", async () => {
+  const mod = await import("./api.ts");
+  const stop = mod.captureWindowErrors(window);
+  window.dispatchEvent(new ErrorEvent("error", { message: "x is undefined", filename: "C:/Users/me/app.js" }));
+  window.dispatchEvent(Object.assign(new Event("unhandledrejection"), { reason: new Error("lost promise") }));
+  stop();
+  expect(await sentErrors(mod.api)).toEqual([{ kind: "error", message: "x is undefined" }, { kind: "rejection", message: "lost promise" }]);
+});
