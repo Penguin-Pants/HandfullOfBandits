@@ -156,7 +156,7 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it.fails("says whether Copy worked (review F2)", async () => {
+  it("says whether Copy worked (review F2)", async () => {
     const writeText = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error("denied"));
     Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);

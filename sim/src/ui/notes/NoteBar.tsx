@@ -31,6 +31,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<{ readonly annotationId: string; readonly prompt: string } | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
 
   /** Open at the current anchor; keep its action ID so Tab can return to it. */
   const start = (): void => {
@@ -72,7 +73,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
     setText("");
     setPicked([]);
   };
-/** Save the note, or report it to Claude when `report` (Ctrl+Enter) and the prompt dialog opens. */
+  /** Save the note, or report it to Claude when `report` (Ctrl+Enter) and the prompt dialog opens. */
   const save = async (report = false): Promise<void> => {
     if (open === null || text.trim() === "" || pending.current) return;
     pending.current = true;
@@ -126,10 +127,11 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
       <div role="dialog" aria-label="Prompt for Claude Code" className="panel">
         <textarea readOnly aria-label="Prompt" rows={16} style={{ width: "100%" }} value={prompt.prompt} />
         <div className="row">
-          <button type="button" onClick={() => void navigator.clipboard.writeText(prompt.prompt)}>Copy</button>
+          <button type="button" onClick={() => { navigator.clipboard.writeText(prompt.prompt).then(() => { setCopied("Copied."); }, () => { setCopied("Copy failed. Select the text and copy it."); }); }}>Copy</button>
           <a href={`data:text/markdown;charset=utf-8,${encodeURIComponent(prompt.prompt)}`} download={`feedback-${prompt.annotationId}.md`}>Download .md</a>
-          <button type="button" onClick={() => { setPrompt(null); }}>Close</button>
+          <button type="button" onClick={() => { setPrompt(null); setCopied(null); }}>Close</button>
         </div>
+        {copied !== null && <p role="status">{copied}</p>}
       </div>
     </div>
   );
