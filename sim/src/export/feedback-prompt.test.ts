@@ -22,7 +22,7 @@ const data = {
 const input: FeedbackInput = { annotation, data };
 
 describe("feedbackPrompt", () => {
-  it.fails("starts with the user's text, then the task line (AC2.1)", () => {
+  it("starts with the user's text, then the task line (AC2.1)", () => {
     const lines = feedbackPrompt(input).split("\n").filter((l) => l !== "");
     expect(lines.slice(0, 3)).toEqual(["# Feedback from play", "> PKK Rally put a Guerrilla in a Controlled space.", "Task: Find the root cause, write a failing test, fix it."]);
   });

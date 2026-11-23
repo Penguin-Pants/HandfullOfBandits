@@ -10,6 +10,9 @@ export interface FeedbackInput {
   readonly data: CoinSimExport;
 }
 
+const quoted = (text: string): string => text.split("\n").map((line) => `> ${line}`).join("\n");
+
 export function feedbackPrompt(input: FeedbackInput): string {
-  return String(input.annotation["text"]);
+  const lines = ["# Feedback from play\n", `${quoted(String(input.annotation["text"]))}\n`, "Task: Find the root cause, write a failing test, fix it.\n"];
+  return `${lines.join("\n")}\n`;
 }

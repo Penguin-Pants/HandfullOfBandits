@@ -10,7 +10,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 | Phase | Status | Pull request | Notes |
 | --- | --- | --- | --- |
-| 1 | In progress | (opening) | Prompt builder (server, pure). Current task: AC2.1 test (`it.fails` until it passes) |
+| 1 | In progress | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Current task: AC2.2 test |
 | 2 | Not started | – | Client diagnostics buffer |
 | 3 | Not started | – | UI: "Report to Claude" in the note bar |
 | 4 | Not started | – | Reproduction check and docs |
