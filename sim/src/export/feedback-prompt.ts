@@ -8,6 +8,8 @@ export interface FeedbackInput {
   /** The saved note, as an export row (context parsed). */
   readonly annotation: Row;
   readonly data: CoinSimExport;
+  /** Code that serves the app now: git commit, uncommitted changes, engine fingerprint. */
+  readonly code: { readonly commit: string; readonly dirty: boolean; readonly fingerprint: string };
 }
 
 const quoted = (text: string): string => text.split("\n").map((line) => `> ${line}`).join("\n");

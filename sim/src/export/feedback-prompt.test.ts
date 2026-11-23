@@ -19,11 +19,20 @@ const data = {
   states: [],
   annotations: [annotation],
 } as unknown as CoinSimExport;
-const input: FeedbackInput = { annotation, data };
+const input: FeedbackInput = { annotation, data, code: { commit: "c0ffee", dirty: false, fingerprint: "f1" } };
 
 describe("feedbackPrompt", () => {
   it("starts with the user's text, then the task line (AC2.1)", () => {
     const lines = feedbackPrompt(input).split("\n").filter((l) => l !== "");
     expect(lines.slice(0, 3)).toEqual(["# Feedback from play", "> PKK Rally put a Guerrilla in a Controlled space.", "Task: Find the root cause, write a failing test, fix it."]);
+  });
+
+  it.fails("names the repository, commit, code fingerprint and rule files (AC2.2)", () => {
+    const prompt = feedbackPrompt(input);
+    expect(prompt).toContain("Repository: https://github.com/Penguin-Pants/HandfullOfBandits");
+    expect(prompt).toContain("Check out commit `c0ffee`.");
+    expect(prompt).toContain("Code fingerprint: `f1`.");
+    expect(prompt).toContain("Read first: `AGENTS.md`, `docs/rules/prototype-rules.md`.");
+    expect(prompt).not.toContain("Warning");
   });
 });
