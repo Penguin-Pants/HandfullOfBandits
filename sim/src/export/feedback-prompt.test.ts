@@ -7,7 +7,7 @@ const context = {
   session_id: "S1", scenario_id: "full-campaign", campaign: "C2", propaganda_round: 2, card_index: 3, phase: "card", active_faction: "pkk",
   first_eligible: "pkk", second_eligible: "state", current_card_id: "DK-012", current_card_title: "Mountain Raid", state_hash: "h2",
   resources: { state: 14, pkk: 6 }, tracks: { legitimacy: 9, europe: 2, legalSpace: "open", ceasefire: "none" },
-  scores: { state: 21, pkk: 17 }, thresholds: { state: 30, pkk: 25 }, harm_counts: { civilian: 3 }, selected_space: "hakkari",
+  scores: { state: 21, pkk: 17 }, thresholds: { state: 30, pkk: 25 }, harm_counts: { state: 3, pkk: 1 }, selected_space: "hakkari",
 };
 const annotation = { annotation_id: "N1", session_id: "S1", action_id: "A2", anchor: "executed", state_hash: "h2", text: "PKK Rally put a Guerrilla in a Controlled space.", category_ids: ["feedback"], context };
 const data = {
@@ -41,5 +41,19 @@ describe("feedbackPrompt", () => {
     const moved = feedbackPrompt({ ...input, code: { ...input.code, fingerprint: "f2" } });
     expect(moved).toContain("Warning: the session started on code fingerprint `f1`. The app now runs `f2`.");
     expect(moved).not.toContain("uncommitted");
+  });
+
+  it.fails("shows scenario, seed, turn, card, eligibility, tracks, scores, thresholds and Harm (AC3.1)", () => {
+    const prompt = feedbackPrompt(input);
+    for (const line of [
+      "Session: S1. Scenario: full-campaign. Seed: 7.",
+      "Campaign C2, Propaganda round 2, card 3. Phase: card. Active faction: pkk.",
+      "Card: DK-012 Mountain Raid.",
+      "Eligibility: first pkk, second state.",
+      "Resources: state=14, pkk=6.",
+      "Tracks: legitimacy=9, europe=2, legalSpace=open, ceasefire=none.",
+      "Scores: state=21, pkk=17. Thresholds: state=30, pkk=25.",
+      "Harm counts: state=3, pkk=1.",
+    ]) expect(prompt).toContain(line);
   });
 });
