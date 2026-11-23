@@ -143,7 +143,7 @@ it("keeps a new note draft when the post-save refresh fails", async () => {
   expect(screen.getByLabelText<HTMLTextAreaElement>("Note text").value).toBe("second");
 });
 
-it.fails("Report to Claude in Play calls api.feedback and sends no game command (AC1.1, T-ANN-04)", async () => {
+it("Report to Claude in Play calls api.feedback and sends no game command (AC1.1, T-ANN-04)", async () => {
   const feedback = vi.fn(() => Promise.resolve({ annotationId: "N7", prompt: "# Feedback from play" }));
   const submit = vi.fn();
   render(<Play api={mockApi({ session, legal, feedback, submit })} sessionId="S" />);
