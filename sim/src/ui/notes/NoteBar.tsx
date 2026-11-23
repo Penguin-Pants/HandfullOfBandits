@@ -147,6 +147,8 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
     );
   }
   return (
+    <>
+    {dialog}
     <footer className="panel" aria-label="Note bar" aria-busy={saving}>
       {saving && <p role="status">Saving note…</p>}
       {saved !== null && <strong role="status">{saved}</strong>}
@@ -170,5 +172,6 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
         onKeyDown={onKeyDown}
       />
     </footer>
+    </>
   );
 }

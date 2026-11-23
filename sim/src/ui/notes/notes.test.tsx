@@ -156,7 +156,7 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it.fails("keeps the prompt dialog when the note bar opens again (review F3)", async () => {
+  it("keeps the prompt dialog when the note bar opens again (review F3)", async () => {
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
     fireEvent.keyDown(window, { key: "n" });
     fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
