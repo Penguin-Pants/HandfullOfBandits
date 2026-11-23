@@ -11,6 +11,8 @@ export interface FeedbackInput {
   readonly data: CoinSimExport;
   /** Code that serves the app now: git commit, uncommitted changes, engine fingerprint. */
   readonly code: { readonly commit: string; readonly dirty: boolean; readonly fingerprint: string };
+  /** How many recent log entries and commands to show. Defaults: 30 each. */
+  readonly limits?: { readonly log?: number; readonly commands?: number };
 }
 
 const REPOSITORY = "https://github.com/Penguin-Pants/HandfullOfBandits";

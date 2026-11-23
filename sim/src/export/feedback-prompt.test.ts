@@ -16,10 +16,13 @@ const data = {
   sessions: [{ session_id: "S1", scenario_id: "full-campaign", seed: 7, package_hash: "p1", code_fingerprint: "f1", app_version: "0.1.0", seats: { pkk: "pkk-heuristic@1" }, head_action_id: "A2" }],
   branches: [{ branch_id: "B1", session_id: "S1", forked_from_action_id: null }],
   actions: [
-    { action_id: "A1", session_id: "S1", branch_id: "B1", branch_seq: 0, state_hash_before: null, state_hash_after: "h1", kind: "setup", commands: [], entries: [], botDecisions: [] },
+    { action_id: "A1", session_id: "S1", branch_id: "B1", branch_seq: 0, state_hash_before: null, state_hash_after: "h1", kind: "setup", commands: [], entries: [{ kind: "Setup", rule_ref: "2.1", data: {} }], botDecisions: [] },
     {
       action_id: "A2", session_id: "S1", branch_id: "B1", branch_seq: 1, state_hash_before: "h1", state_hash_after: "h2", kind: "command",
-      commands: [{ payload: { type: "ChooseOperation", faction: "pkk", box: "op", plan: { op: "rally" } }, validation: { ok: true, violations: [], warnings: [] } }],
+      commands: [
+        { payload: { type: "ChooseOperation", faction: "pkk", box: "op", plan: { op: "rally" } }, validation: { ok: true, violations: [], warnings: [] } },
+        { payload: { type: "Answer", choice: "x" }, validation: { ok: true, violations: [], warnings: [{ code: "W1", message: "low" }], preview: { effects: [] } } },
+      ],
       entries: [{ kind: "PiecePlaced", rule_ref: "3.3.1", data: { space: "hakkari" } }],
       botDecisions: [{ player: "pkk-heuristic@1", chosen: "rally", score: 3 }],
     },
@@ -81,5 +84,15 @@ describe("feedbackPrompt", () => {
   it("holds the bot decision record of a note on a bot action, and none on a human action (AC4.2)", () => {
     expect(feedbackPrompt(input)).toContain(`## Bot decision (action A2)\n\n\`\`\`json\n${JSON.stringify([{ player: "pkk-heuristic@1", chosen: "rally", score: 3 }], null, 2)}\n\`\`\`\n`);
     expect(feedbackPrompt({ ...input, annotation: { ...annotation, action_id: "A1" } })).not.toContain("## Bot decision");
+  });
+
+  it.fails("holds the last N log entries with rule refs and the last N commands with validation (AC5.1)", () => {
+    const all = feedbackPrompt(input);
+    expect(all).toContain("## Recent log (last 2 of 2 entries)\n\n- A1 Setup, rule 2.1: `{}`\n- A2 PiecePlaced, rule 3.3.1: `{\"space\":\"hakkari\"}`\n");
+    const last = feedbackPrompt({ ...input, limits: { log: 1, commands: 1 } });
+    expect(last).toContain("## Recent log (last 1 of 2 entries)\n\n- A2 PiecePlaced");
+    expect(last).not.toContain("A1 Setup");
+    expect(last).toContain("## Recent commands (last 1 of 2)\n\n- A2 `{\"type\":\"Answer\",\"choice\":\"x\"}` Validation: `{\"ok\":true,\"violations\":[],\"warnings\":[{\"code\":\"W1\",\"message\":\"low\"}]}`\n");
+    expect(last).not.toContain("ChooseOperation");
   });
 });
