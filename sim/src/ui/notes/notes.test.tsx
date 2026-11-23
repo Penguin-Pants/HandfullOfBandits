@@ -122,7 +122,7 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(dialog.querySelector("textarea")?.value).toBe("# Feedback from play\n\n> Rally is wrong");
   });
 
-  it.fails("the Report to Claude button saves the note once, closes the bar and says it is saved (AC1.2)", async () => {
+  it("the Report to Claude button saves the note once, closes the bar and says it is saved (AC1.2)", async () => {
     const onSave = vi.fn(() => Promise.resolve("N1"));
     const onReport = report();
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={onSave} onReport={onReport} />);

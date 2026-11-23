@@ -151,6 +151,9 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
         {picked.map((c) => (
           <span key={c}>#{c}</span>
         ))}
+        {onReport !== undefined && (
+          <button type="button" disabled={saving} title="Ctrl+Enter" onClick={() => void save(true)}>Report to Claude</button>
+        )}
       </div>
       <textarea
         ref={input}
