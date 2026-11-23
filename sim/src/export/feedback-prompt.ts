@@ -21,8 +21,8 @@ export interface FeedbackInput {
   /** Code that serves the app now: git commit, uncommitted changes, engine fingerprint. */
   readonly code: { readonly commit: string; readonly dirty: boolean; readonly fingerprint: string };
   readonly diagnostics: { readonly errors: readonly ClientError[] };
-  /** How many recent log entries and commands to show. Defaults: 30 each. */
-  readonly limits?: { readonly log?: number; readonly commands?: number };
+  /** How many recent log entries, commands and client errors to show. Defaults: 30, 30 and 10. */
+  readonly limits?: { readonly log?: number; readonly commands?: number; readonly errors?: number };
 }
 
 const REPOSITORY = "https://github.com/Penguin-Pants/HandfullOfBandits";
@@ -77,6 +77,16 @@ function recent(data: CoinSimExport, session: Row, limits: FeedbackInput["limits
   ];
 }
 
+/** Last client errors (AC5.2). A request keeps only the path of its URL: no host or query (Risk 2). */
+function clientErrors(errors: readonly ClientError[], limit: number): string[] {
+  if (errors.length === 0) return ["## Client errors\n", "None.\n"];
+  const shown = errors.slice(-limit);
+  const line = (e: ClientError): string => e.kind === "request"
+    ? `- request ${escaped(e.method)} ${escaped(URL.parse(e.path ?? "", "http://localhost")?.pathname ?? "")}: ${escaped(e.status)} ${escaped(e.message.replace(/\s+/g, " "))}`
+    : `- ${e.kind}: ${escaped(e.message.replace(/\s+/g, " "))}`;
+  return [`## Client errors (last ${String(shown.length)} of ${String(errors.length)})\n`, ...shown.map(line), ""];
+}
+
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
@@ -103,6 +113,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
     ...seats(state, session),
     ...botDecision(data, annotation["action_id"]),
     ...recent(data, session, input.limits),
+    ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),
   ];
   return `${lines.join("\n")}\n`;
 }

@@ -96,7 +96,7 @@ describe("feedbackPrompt", () => {
     expect(last).not.toContain("ChooseOperation");
   });
 
-  it.fails("holds the last 10 client errors with only the path of API URLs (AC5.2, Risk 2)", () => {
+  it("holds the last 10 client errors with only the path of API URLs (AC5.2, Risk 2)", () => {
     expect(feedbackPrompt(input)).toContain("## Client errors\n\nNone.\n");
     const errors = [
       ...Array.from({ length: 11 }, (_, i) => ({ kind: "error" as const, message: `boom ${String(i)}` })),
