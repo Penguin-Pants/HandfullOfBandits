@@ -78,7 +78,7 @@ describe("feedbackPrompt", () => {
     expect(feedbackPrompt(input)).toContain("## Seats\n\n| Faction | Player |\n| --- | --- |\n| state | human |\n| pkk | pkk-heuristic@1 |\n");
   });
 
-  it.fails("holds the bot decision record of a note on a bot action, and none on a human action (AC4.2)", () => {
+  it("holds the bot decision record of a note on a bot action, and none on a human action (AC4.2)", () => {
     expect(feedbackPrompt(input)).toContain(`## Bot decision (action A2)\n\n\`\`\`json\n${JSON.stringify([{ player: "pkk-heuristic@1", chosen: "rally", score: 3 }], null, 2)}\n\`\`\`\n`);
     expect(feedbackPrompt({ ...input, annotation: { ...annotation, action_id: "A1" } })).not.toContain("## Bot decision");
   });

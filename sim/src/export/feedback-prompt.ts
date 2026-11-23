@@ -1,6 +1,6 @@
 // Feedback prompt (docs/23-Nov-26-Feedback-Prompt-Implementation-Plan.md, Phase 1). Pure: one
 // Markdown prompt from a saved note, its session export and the client diagnostics.
-import { obj, type CoinSimExport } from "./json.ts";
+import { list, obj, type CoinSimExport } from "./json.ts";
 import { escaped, pairs } from "./markdown.ts";
 
 type Row = Record<string, unknown>;
@@ -36,6 +36,12 @@ function seats(row: Row, session: Row): string[] {
   return ["## Seats\n", "| Faction | Player |", "| --- | --- |", ...factions.map((f) => `| ${escaped(f)} | ${escaped(bots[f] ?? "human")} |`), ""];
 }
 
+/** Decision records of the note's action, when a bot played it (AC4.2). */
+function botDecision(data: CoinSimExport, actionId: unknown): string[] {
+  const records = list(data.actions.find((a) => a["action_id"] === actionId)?.["botDecisions"]);
+  return records.length === 0 ? [] : [`## Bot decision (action ${escaped(actionId)})\n`, `\`\`\`json\n${JSON.stringify(records, null, 2)}\n\`\`\`\n`];
+}
+
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
@@ -60,6 +66,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
     `Harm counts: ${pairs(ctx["harm_counts"])}.\n`,
     `${selectedSpace(state, ctx["selected_space"])}\n`,
     ...seats(state, session),
+    ...botDecision(data, annotation["action_id"]),
   ];
   return `${lines.join("\n")}\n`;
 }
