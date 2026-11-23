@@ -105,6 +105,24 @@ describe("NoteBar (T-UI-02)", () => {
   });
 });
 
+describe("Report to Claude (feedback prompt Phase 3)", () => {
+  const report = () => vi.fn(() => Promise.resolve({ annotationId: "N7", prompt: "# Feedback from play\n\n> Rally is wrong" }));
+
+  it.fails("Ctrl+Enter sends the note with its frozen anchor and focus and shows the prompt (AC1.1)", async () => {
+    const onSave = vi.fn(() => Promise.resolve("N1"));
+    const onReport = report();
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "executed", actionId: "S-A3" })} focus={focus} onSave={onSave} onReport={onReport} />);
+    fireEvent.keyDown(window, { key: "n" });
+    const box = screen.getByLabelText("Note text");
+    fireEvent.change(box, { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(box, { key: "Enter", ctrlKey: true });
+    await waitFor(() => { expect(onReport).toHaveBeenCalledWith({ anchor: "executed", actionId: "S-A3", text: "Rally is wrong", categoryIds: [], focus: focus() }); });
+    expect(onSave).not.toHaveBeenCalled();
+    const dialog = await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    expect(dialog.querySelector("textarea")?.value).toBe("# Feedback from play\n\n> Rally is wrong");
+  });
+});
+
 describe("EndSession (T-UI-06)", () => {
   it("saves one debrief, or none on Skip", () => {
     const onEnd = vi.fn();

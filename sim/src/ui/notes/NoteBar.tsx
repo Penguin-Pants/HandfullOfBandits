@@ -14,6 +14,8 @@ export interface NoteBarProps {
   readonly anchor: () => ReturnType<typeof defaultAnchor>;
   readonly focus: () => NoteInput["focus"];
   readonly onSave: (note: NoteInput) => Promise<string>;
+  /** Save the note as a feedback note and get its Claude Code prompt (feedback prompt Phase 3). */
+  readonly onReport?: (note: NoteInput) => Promise<{ readonly annotationId: string; readonly prompt: string }>;
   /** `open()` does what N does: open at the current anchor, or focus the open note. */
   readonly handle?: Ref<{ readonly open: () => void }>;
 }

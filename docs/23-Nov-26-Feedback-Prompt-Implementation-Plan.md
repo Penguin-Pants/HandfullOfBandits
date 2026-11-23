@@ -11,8 +11,8 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | Phase | Status | Pull request | Notes |
 | --- | --- | --- | --- |
 | 1 | Merged | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Review done. Waiting for the go-ahead for Phase 2 |
-| 2 | Review done | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
-| 3 | Not started | – | UI: "Report to Claude" in the note bar |
+| 2 | Merged | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
+| 3 | In progress | (opening) | UI: "Report to Claude" in the note bar. Current task: AC1.1 test (`it.fails` until it passes) |
 | 4 | Not started | – | Reproduction check and docs |
 
 ## Requirements (source of truth)
