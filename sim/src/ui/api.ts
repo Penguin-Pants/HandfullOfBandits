@@ -128,14 +128,20 @@ export function captureWindowErrors(target: Window): () => void {
 }
 
 async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
-  const res = await fetch(`/api${path}`, { method, headers: body === undefined ? {} : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
-  const data = (await res.json()) as unknown;
-  if (!res.ok) {
-    const err = data as { error?: string; detail?: unknown };
-    recordError({ kind: "request", method, path: `/api${path}`, status: res.status, message: err.error ?? res.statusText });
-    throw new ApiError(res.status, err.error ?? res.statusText, err.detail ?? null);
+  const failed = (status: number, message: string): void => { recordError({ kind: "request", method, path: `/api${path}`, status, message }); };
+  let res: Response;
+  try {
+    res = await fetch(`/api${path}`, { method, headers: body === undefined ? {} : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+  } catch (e) {
+    // No response: status 0.
+    failed(0, e instanceof Error ? e.message : String(e));
+    throw e;
   }
-  return data as T;
+  if (res.ok) return (await res.json()) as T;
+  // An error body may not be JSON (a proxy page): fall back to the status text.
+  const err = (await res.json().catch(() => ({}))) as { error?: string; detail?: unknown };
+  failed(res.status, err.error ?? res.statusText);
+  throw new ApiError(res.status, err.error ?? res.statusText, err.detail ?? null);
 }
 
 /** Query for `/api/metrics` and `/api/metrics.csv`: a comma list of session IDs, empty for all. */

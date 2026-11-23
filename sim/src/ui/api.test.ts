@@ -49,7 +49,7 @@ it("records uncaught errors and unhandled rejections with the message only", asy
   expect(await sentErrors(mod.api)).toEqual([{ kind: "error", message: "x is undefined" }, { kind: "rejection", message: "lost promise" }]);
 });
 
-it.fails("records a network failure and a non-JSON error response (review F1)", async () => {
+it("records a network failure and a non-JSON error response (review F1)", async () => {
   const { api } = await import("./api.ts");
   fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch"));
   await expect(api.legal("S1")).rejects.toThrow("Failed to fetch");

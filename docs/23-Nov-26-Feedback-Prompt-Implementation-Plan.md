@@ -11,7 +11,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | Phase | Status | Pull request | Notes |
 | --- | --- | --- | --- |
 | 1 | Merged | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Review done. Waiting for the go-ahead for Phase 2 |
-| 2 | In progress | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Current task: two-pass review |
+| 2 | Review done | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
 | 3 | Not started | – | UI: "Report to Claude" in the note bar |
 | 4 | Not started | – | Reproduction check and docs |
 
@@ -103,6 +103,14 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | Backticks in log data break inline code | Drop | No engine message holds a backtick (grep) |
 | Codex P2: the feedback route dropped a proposed command (`NoteBar.tsx:80-82` sends it) | Fix | ✅ Route forwards `proposed`; prompt shows a Proposed command section. Test in `sim/test/feedback.test.ts` |
 | AC6.1 to AC6.3 (replay record in the prompt) are in no phase. Phase 4 assumes the prompt already holds the record. Also `replayFile` (`sim/src/cli/replay.ts:19`) ignores session options, so a session with options does not replay from a PlayRecord file | Decide | Open: which phase adds the replay record |
+
+## Phase 2 review (2026-11-23)
+
+| Finding | Class | Outcome |
+| --- | --- | --- |
+| F1: a rejected fetch (network failure) or a non-JSON error body skipped the buffer | Fix | ✅ `call()` records status 0 or the status text. Test in `sim/src/ui/api.test.ts` |
+| The buffer keeps the query string of a request path | Drop | The server keeps only the path (`feedback-prompt.ts` `clientErrors`), and the buffer stays in memory |
+| Clear the buffer after a sent report | Drop | Not in the plan; a second report on the same problem keeps its errors |
 
 ## Resume here
 
