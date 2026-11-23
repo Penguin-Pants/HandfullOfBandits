@@ -115,7 +115,7 @@ describe("feedbackPrompt", () => {
     expect(past).toContain("| pkk | pkk-heuristic@1 |");
   });
 
-  it.fails("shows no rows for a limit of 0 (review F4)", () => {
+  it("shows no rows for a limit of 0 (review F4)", () => {
     const prompt = feedbackPrompt({ ...input, diagnostics: { errors: [{ kind: "error", message: "boom" }] }, limits: { log: 0, commands: 0, errors: 0 } });
     expect(prompt).toContain("## Recent log (last 0 of 2 entries)\n\n\n");
     expect(prompt).toContain("## Recent commands (last 0 of 2)\n\n\n");

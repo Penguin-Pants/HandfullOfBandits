@@ -54,6 +54,9 @@ function botDecision(data: CoinSimExport, actionId: unknown): string[] {
   return records.length === 0 ? [] : [`## Bot decision (action ${escaped(actionId)})\n`, `\`\`\`json\n${JSON.stringify(records, null, 2)}\n\`\`\`\n`];
 }
 
+/** The last `n` items; `n` of 0 gives none (`slice(-0)` would give all). */
+const last = <T>(items: readonly T[], n: number): readonly T[] => items.slice(Math.max(0, items.length - n));
+
 const inline = (value: unknown): string => `\`${JSON.stringify(value)}\``;
 
 /** Last log entries and commands on the path from setup to the session head (AC5.1). */
@@ -62,8 +65,8 @@ function recent(data: CoinSimExport, session: Row, limits: FeedbackInput["limits
   const path = typeof head === "string" ? pathsOf(data)(head) : [];
   const entries = path.flatMap((a) => list(a["entries"]).map((e) => ({ id: a["action_id"], e: obj(e) })));
   const commands = path.flatMap((a) => list(a["commands"]).map((c) => ({ id: a["action_id"], c: obj(c) })));
-  const logShown = entries.slice(-(limits?.log ?? 30));
-  const commandsShown = commands.slice(-(limits?.commands ?? 30));
+  const logShown = last(entries, limits?.log ?? 30);
+  const commandsShown = last(commands, limits?.commands ?? 30);
   return [
     `## Recent log (last ${String(logShown.length)} of ${String(entries.length)} entries)\n`,
     ...logShown.map(({ id, e }) => `- ${escaped(id)} ${escaped(e["kind"])}${e["rule_ref"] == null ? "" : `, rule ${escaped(e["rule_ref"])}`}: ${inline(e["data"])}`),
@@ -80,7 +83,7 @@ function recent(data: CoinSimExport, session: Row, limits: FeedbackInput["limits
 /** Last client errors (AC5.2). A request keeps only the path of its URL: no host or query (Risk 2). */
 function clientErrors(errors: readonly ClientError[], limit: number): string[] {
   if (errors.length === 0) return ["## Client errors\n", "None.\n"];
-  const shown = errors.slice(-limit);
+  const shown = last(errors, limit);
   const line = (e: ClientError): string => e.kind === "request"
     ? `- request ${escaped(e.method)} ${escaped(URL.parse(e.path ?? "", "http://localhost")?.pathname ?? "")}: ${escaped(e.status)} ${escaped(e.message.replace(/\s+/g, " "))}`
     : `- ${e.kind}: ${escaped(e.message.replace(/\s+/g, " "))}`;
