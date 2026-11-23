@@ -1,6 +1,6 @@
 // Feedback prompt (docs/23-Nov-26-Feedback-Prompt-Implementation-Plan.md, Phase 1). Pure: one
 // Markdown prompt from a saved note, its session export and the client diagnostics.
-import { list, obj, type CoinSimExport } from "./json.ts";
+import { list, obj, pathsOf, type CoinSimExport } from "./json.ts";
 import { escaped, pairs } from "./markdown.ts";
 
 type Row = Record<string, unknown>;
@@ -44,6 +44,29 @@ function botDecision(data: CoinSimExport, actionId: unknown): string[] {
   return records.length === 0 ? [] : [`## Bot decision (action ${escaped(actionId)})\n`, `\`\`\`json\n${JSON.stringify(records, null, 2)}\n\`\`\`\n`];
 }
 
+const inline = (value: unknown): string => `\`${JSON.stringify(value)}\``;
+
+/** Last log entries and commands on the path from setup to the session head (AC5.1). */
+function recent(data: CoinSimExport, session: Row, limits: FeedbackInput["limits"]): string[] {
+  const head = session["head_action_id"];
+  const path = typeof head === "string" ? pathsOf(data)(head) : [];
+  const entries = path.flatMap((a) => list(a["entries"]).map((e) => ({ id: a["action_id"], e: obj(e) })));
+  const commands = path.flatMap((a) => list(a["commands"]).map((c) => ({ id: a["action_id"], c: obj(c) })));
+  const logShown = entries.slice(-(limits?.log ?? 30));
+  const commandsShown = commands.slice(-(limits?.commands ?? 30));
+  return [
+    `## Recent log (last ${String(logShown.length)} of ${String(entries.length)} entries)\n`,
+    ...logShown.map(({ id, e }) => `- ${escaped(id)} ${escaped(e["kind"])}${e["rule_ref"] == null ? "" : `, rule ${escaped(e["rule_ref"])}`}: ${inline(e["data"])}`),
+    "",
+    `## Recent commands (last ${String(commandsShown.length)} of ${String(commands.length)})\n`,
+    ...commandsShown.map(({ id, c }) => {
+      const v = obj(c["validation"]);
+      return `- ${escaped(id)} ${inline(c["payload"])} Validation: ${inline({ ok: v["ok"], violations: v["violations"], warnings: v["warnings"] })}`;
+    }),
+    "",
+  ];
+}
+
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
@@ -69,6 +92,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
     `${selectedSpace(state, ctx["selected_space"])}\n`,
     ...seats(state, session),
     ...botDecision(data, annotation["action_id"]),
+    ...recent(data, session, input.limits),
   ];
   return `${lines.join("\n")}\n`;
 }

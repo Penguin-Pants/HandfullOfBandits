@@ -86,7 +86,7 @@ describe("feedbackPrompt", () => {
     expect(feedbackPrompt({ ...input, annotation: { ...annotation, action_id: "A1" } })).not.toContain("## Bot decision");
   });
 
-  it.fails("holds the last N log entries with rule refs and the last N commands with validation (AC5.1)", () => {
+  it("holds the last N log entries with rule refs and the last N commands with validation (AC5.1)", () => {
     const all = feedbackPrompt(input);
     expect(all).toContain("## Recent log (last 2 of 2 entries)\n\n- A1 Setup, rule 2.1: `{}`\n- A2 PiecePlaced, rule 3.3.1: `{\"space\":\"hakkari\"}`\n");
     const last = feedbackPrompt({ ...input, limits: { log: 1, commands: 1 } });
