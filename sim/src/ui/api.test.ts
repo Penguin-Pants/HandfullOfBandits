@@ -27,3 +27,15 @@ it("sends a failed botStep call with the feedback request", async () => {
   await expect(api.botStep("S1", "A1", "h1")).rejects.toThrow("The session moved on.");
   expect(await sentErrors(api)).toEqual([{ kind: "request", method: "POST", path: "/api/sessions/S1/bot-step", status: 409, message: "The session moved on." }]);
 });
+
+it.fails("keeps the last 10 errors and drops the oldest", async () => {
+  const { api } = await import("./api.ts");
+  for (let i = 0; i < 11; i++) {
+    fetchMock.mockResolvedValueOnce(reply(500, { error: `boom ${String(i)}`, detail: null }));
+    await expect(api.legal("S1")).rejects.toThrow();
+  }
+  const sent = await sentErrors(api);
+  expect(sent).toHaveLength(10);
+  expect(sent[0]).toMatchObject({ message: "boom 1" });
+  expect(sent[9]).toMatchObject({ message: "boom 10" });
+});
