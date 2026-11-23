@@ -104,11 +104,18 @@ export class ApiError extends Error {
   }
 }
 
+/** Recent client errors for a feedback report (feedback prompt Phase 2). In memory only. */
+const errors: ClientError[] = [];
+function recordError(error: ClientError): void {
+  errors.push(error);
+}
+
 async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, { method, headers: body === undefined ? {} : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
   const data = (await res.json()) as unknown;
   if (!res.ok) {
     const err = data as { error?: string; detail?: unknown };
+    recordError({ kind: "request", method, path: `/api${path}`, status: res.status, message: err.error ?? res.statusText });
     throw new ApiError(res.status, err.error ?? res.statusText, err.detail ?? null);
   }
   return data as T;
@@ -141,7 +148,7 @@ export const api = {
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
   /** Save a feedback note and get its Claude Code prompt, with the recent client errors (feedback prompt Phase 2). */
-  feedback: (id: string, body: NoteInput) => call<{ annotationId: string; prompt: string }>("POST", `/sessions/${id}/feedback`, { ...body, diagnostics: { errors: [] } }),
+  feedback: (id: string, body: NoteInput) => call<{ annotationId: string; prompt: string }>("POST", `/sessions/${id}/feedback`, { ...body, diagnostics: { errors } }),
   undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean; state?: Head }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
   /** Branch from a past action (P4-04). */
   branch: (id: string, actionId: string, headActionId: string, headStateHash?: string) => call<{ branchId: string; head: Head }>("POST", `/sessions/${id}/branches`, { actionId, headActionId, headStateHash }),

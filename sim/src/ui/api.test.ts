@@ -21,7 +21,7 @@ async function sentErrors(api: typeof import("./api.ts").api): Promise<unknown[]
   return (JSON.parse(init?.body as string) as { diagnostics: { errors: unknown[] } }).diagnostics.errors;
 }
 
-it.fails("sends a failed botStep call with the feedback request", async () => {
+it("sends a failed botStep call with the feedback request", async () => {
   const { api } = await import("./api.ts");
   fetchMock.mockResolvedValueOnce(reply(409, { error: "The session moved on.", detail: null }));
   await expect(api.botStep("S1", "A1", "h1")).rejects.toThrow("The session moved on.");
