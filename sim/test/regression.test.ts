@@ -122,7 +122,8 @@ describe("P4-06 run against a target version (09 s7.2)", () => {
     db.prepare("DELETE FROM regression_cases WHERE case_id = ?").run(short.caseId);
   });
 
-  it("names a package that does not load", () => {
+  // Copies and loads the whole package: past 5 s on the Windows runner with all test files in parallel (PR #148).
+  it("names a package that does not load", { timeout: 60_000 }, () => {
     const broken = join(dir, "broken");
     cpSync(kurdishDir, broken, { recursive: true });
     writeFileSync(join(broken, "parameters.yaml"), "- {id: harm.limit\n");
