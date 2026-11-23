@@ -108,7 +108,7 @@ describe("NoteBar (T-UI-02)", () => {
 describe("Report to Claude (feedback prompt Phase 3)", () => {
   const report = () => vi.fn(() => Promise.resolve({ annotationId: "N7", prompt: "# Feedback from play\n\n> Rally is wrong" }));
 
-  it.fails("Ctrl+Enter sends the note with its frozen anchor and focus and shows the prompt (AC1.1)", async () => {
+  it("Ctrl+Enter sends the note with its frozen anchor and focus and shows the prompt (AC1.1)", async () => {
     const onSave = vi.fn(() => Promise.resolve("N1"));
     const onReport = report();
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "executed", actionId: "S-A3" })} focus={focus} onSave={onSave} onReport={onReport} />);

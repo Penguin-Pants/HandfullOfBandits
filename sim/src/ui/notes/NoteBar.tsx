@@ -20,7 +20,7 @@ export interface NoteBarProps {
   readonly handle?: Ref<{ readonly open: () => void }>;
 }
 
-export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarProps) {
+export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }: NoteBarProps) {
   const input = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState<{ anchor: ReturnType<typeof defaultAnchor>; focus: NoteInput["focus"]; executedId: string | null } | null>(null);
   const [text, setText] = useState("");
@@ -30,6 +30,7 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState<string | null>(null);
 
   /** Open at the current anchor; keep its action ID so Tab can return to it. */
   const start = (): void => {
@@ -71,7 +72,8 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
     setText("");
     setPicked([]);
   };
-  const save = async (): Promise<void> => {
+/** Save the note, or report it to Claude when `report` (Ctrl+Enter) and the prompt dialog opens. */
+  const save = async (report = false): Promise<void> => {
     if (open === null || text.trim() === "" || pending.current) return;
     pending.current = true;
     setSaving(true);
@@ -80,8 +82,10 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
     const ids = categories.map((c) => c.category_id);
     const categoryIds = [...new Set([...picked, ...hashCategories(text, ids)])];
     const { proposed, ...where } = open.anchor;
+    const note = { ...where, ...(proposed === undefined ? {} : { proposed }), text, categoryIds, focus: open.focus };
     try {
-      await onSave({ ...where, ...(proposed === undefined ? {} : { proposed }), text, categoryIds, focus: open.focus });
+      if (report && onReport !== undefined) setPrompt((await onReport(note)).prompt);
+      else await onSave(note);
       if (submitted === revision.current) {
         setSaved(open.anchor.actionId === null ? `Saved (${open.anchor.anchor})` : `Saved, linked to ${open.anchor.actionId}`);
         close();
@@ -99,7 +103,7 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
   const onKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      void save();
+      void save(e.ctrlKey);
     } else if (e.key === "Escape") {
       close();
     } else if (e.key === "Tab" && open !== null) {
@@ -117,14 +121,24 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
     }
   };
 
+  const dialog = prompt === null ? null : (
+    <div className="overlay">
+      <div role="dialog" aria-label="Prompt for Claude Code" className="panel">
+        <textarea readOnly aria-label="Prompt" rows={16} style={{ width: "100%" }} value={prompt} />
+      </div>
+    </div>
+  );
   if (open === null) {
-    if (saved === null && !saving && error === null) return null;
+    if (saved === null && !saving && error === null) return dialog;
     return (
+      <>
+      {dialog}
       <footer className="note-closed" aria-label="Note bar">
         {saved !== null && <strong role="status">{saved}</strong>}
         {saving && <p role="status">Saving note…</p>}
         {error !== null && <p role="alert">Note not saved: {error}</p>}
       </footer>
+      </>
     );
   }
   return (
