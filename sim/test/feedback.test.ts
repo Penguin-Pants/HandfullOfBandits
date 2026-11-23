@@ -54,4 +54,13 @@ describe("POST /api/sessions/:id/feedback", () => {
     const unknown = await app.inject({ method: "POST", url: "/api/sessions/nope/feedback", payload: { text: "x" } });
     expect(unknown.statusCode).toBe(404);
   });
+
+  it.fails("keeps a proposed command and shows its plan and validation (review: Codex P2)", async () => {
+    const proposed = scriptedPolicy(engine, short.ruleset, state);
+    const res = await app.inject({ method: "POST", url: `/api/sessions/${sessionId}/feedback`, payload: { anchor: "proposed", text: "Why is this legal?", proposed } });
+    expect(res.statusCode).toBe(201);
+    const { prompt } = res.json<{ prompt: string }>();
+    expect(prompt).toContain(`## Proposed command\n\n\`${JSON.stringify(proposed)}\``);
+    expect(prompt).toMatch(/Validation: `\{"ok":(true|false),"violations":/);
+  });
 });
