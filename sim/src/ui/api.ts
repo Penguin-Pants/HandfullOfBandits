@@ -13,8 +13,9 @@ import type { LogEntryRow } from "../store/repos/log-entries.ts";
 import type { AnyCommand, GameState, Question, RuleLookup, ValidationResult, Violation } from "../server/api-types.ts";
 import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
+import type { ClientError } from "../export/feedback-prompt.ts";
 
-export type { ActionForm, AnyCommand, FormField, Question, UiFocus, ValidationResult, Violation };
+export type { ActionForm, AnyCommand, ClientError, FormField, Question, UiFocus, ValidationResult, Violation };
 export type { ExperimentDetail, ExperimentGameRow, ExperimentSummary, SeatPlayer };
 export type { SetupBase, SetupChange, VariantCheck, VariantSummary };
 export type { HistoryEntry, MetricsCell, MetricsTable, ReviewRow, RuleLookup };
@@ -103,14 +104,44 @@ export class ApiError extends Error {
   }
 }
 
+/** The last client errors for a feedback report (feedback prompt Phase 2). In memory only. */
+const MAX_ERRORS = 10;
+const errors: ClientError[] = [];
+function recordError(error: ClientError): void {
+  errors.push(error);
+  if (errors.length > MAX_ERRORS) errors.shift();
+}
+
+/** Record uncaught errors and unhandled rejections of `target`, message only (Risk 2). Returns a function that stops it. */
+export function captureWindowErrors(target: Window): () => void {
+  const onError = (e: ErrorEvent): void => { recordError({ kind: "error", message: e.message }); };
+  const onRejection = (e: PromiseRejectionEvent): void => {
+    const reason: unknown = e.reason;
+    recordError({ kind: "rejection", message: reason instanceof Error ? reason.message : String(reason) });
+  };
+  target.addEventListener("error", onError);
+  target.addEventListener("unhandledrejection", onRejection);
+  return () => {
+    target.removeEventListener("error", onError);
+    target.removeEventListener("unhandledrejection", onRejection);
+  };
+}
+
 async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
-  const res = await fetch(`/api${path}`, { method, headers: body === undefined ? {} : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
-  const data = (await res.json()) as unknown;
-  if (!res.ok) {
-    const err = data as { error?: string; detail?: unknown };
-    throw new ApiError(res.status, err.error ?? res.statusText, err.detail ?? null);
+  const failed = (status: number, message: string): void => { recordError({ kind: "request", method, path: `/api${path}`, status, message }); };
+  let res: Response;
+  try {
+    res = await fetch(`/api${path}`, { method, headers: body === undefined ? {} : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+  } catch (e) {
+    // No response: status 0.
+    failed(0, e instanceof Error ? e.message : String(e));
+    throw e;
   }
-  return data as T;
+  if (res.ok) return (await res.json()) as T;
+  // An error body may not be JSON (a proxy page): fall back to the status text.
+  const err = (await res.json().catch(() => ({}))) as { error?: string; detail?: unknown };
+  failed(res.status, err.error ?? res.statusText);
+  throw new ApiError(res.status, err.error ?? res.statusText, err.detail ?? null);
 }
 
 /** Query for `/api/metrics` and `/api/metrics.csv`: a comma list of session IDs, empty for all. */
@@ -139,6 +170,8 @@ export const api = {
   categories: () => call<CategoryRow[]>("GET", "/categories"),
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
+  /** Save a feedback note and get its Claude Code prompt, with the recent client errors (feedback prompt Phase 2). */
+  feedback: (id: string, body: NoteInput) => call<{ annotationId: string; prompt: string }>("POST", `/sessions/${id}/feedback`, { ...body, diagnostics: { errors } }),
   undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean; state?: Head }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
   /** Branch from a past action (P4-04). */
   branch: (id: string, actionId: string, headActionId: string, headStateHash?: string) => call<{ branchId: string; head: Head }>("POST", `/sessions/${id}/branches`, { actionId, headActionId, headStateHash }),
