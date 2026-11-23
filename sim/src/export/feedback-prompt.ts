@@ -5,12 +5,22 @@ import { escaped, pairs } from "./markdown.ts";
 
 type Row = Record<string, unknown>;
 
+/** One client error (Phase 2 buffer): a failed API request, an uncaught error or an unhandled rejection. */
+export interface ClientError {
+  readonly kind: "request" | "error" | "rejection";
+  readonly method?: string;
+  readonly path?: string;
+  readonly status?: number;
+  readonly message: string;
+}
+
 export interface FeedbackInput {
   /** The saved note, as an export row (context parsed). */
   readonly annotation: Row;
   readonly data: CoinSimExport;
   /** Code that serves the app now: git commit, uncommitted changes, engine fingerprint. */
   readonly code: { readonly commit: string; readonly dirty: boolean; readonly fingerprint: string };
+  readonly diagnostics: { readonly errors: readonly ClientError[] };
   /** How many recent log entries and commands to show. Defaults: 30 each. */
   readonly limits?: { readonly log?: number; readonly commands?: number };
 }

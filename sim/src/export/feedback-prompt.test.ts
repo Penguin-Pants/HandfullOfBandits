@@ -33,7 +33,7 @@ const data = {
   }],
   annotations: [annotation],
 } as unknown as CoinSimExport;
-const input: FeedbackInput = { annotation, data, code: { commit: "c0ffee", dirty: false, fingerprint: "f1" } };
+const input: FeedbackInput = { annotation, data, code: { commit: "c0ffee", dirty: false, fingerprint: "f1" }, diagnostics: { errors: [] } };
 
 describe("feedbackPrompt", () => {
   it("starts with the user's text, then the task line (AC2.1)", () => {
@@ -94,5 +94,18 @@ describe("feedbackPrompt", () => {
     expect(last).not.toContain("A1 Setup");
     expect(last).toContain("## Recent commands (last 1 of 2)\n\n- A2 `{\"type\":\"Answer\",\"choice\":\"x\"}` Validation: `{\"ok\":true,\"violations\":[],\"warnings\":[{\"code\":\"W1\",\"message\":\"low\"}]}`\n");
     expect(last).not.toContain("ChooseOperation");
+  });
+
+  it.fails("holds the last 10 client errors with only the path of API URLs (AC5.2, Risk 2)", () => {
+    expect(feedbackPrompt(input)).toContain("## Client errors\n\nNone.\n");
+    const errors = [
+      ...Array.from({ length: 11 }, (_, i) => ({ kind: "error" as const, message: `boom ${String(i)}` })),
+      { kind: "request" as const, method: "POST", path: "http://127.0.0.1:5173/api/sessions/S1/bot-step?x=1", status: 409, message: "The session moved on." },
+    ];
+    const prompt = feedbackPrompt({ ...input, diagnostics: { errors } });
+    expect(prompt).toContain("## Client errors (last 10 of 12)\n\n- error: boom 2\n");
+    expect(prompt).toContain("- request POST /api/sessions/S1/bot-step: 409 The session moved on.\n");
+    expect(prompt).not.toContain("boom 1\n");
+    expect(prompt).not.toContain("127.0.0.1");
   });
 });
