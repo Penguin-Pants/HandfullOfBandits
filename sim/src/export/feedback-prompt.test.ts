@@ -36,7 +36,7 @@ describe("feedbackPrompt", () => {
     expect(prompt).not.toContain("Warning");
   });
 
-  it.fails("warns on local changes and on a session started on other engine code (Risk 1)", () => {
+  it("warns on local changes and on a session started on other engine code (Risk 1)", () => {
     expect(feedbackPrompt({ ...input, code: { ...input.code, dirty: true } })).toContain("Warning: the app ran with uncommitted changes. Commit `c0ffee` may not reproduce the problem.");
     const moved = feedbackPrompt({ ...input, code: { ...input.code, fingerprint: "f2" } });
     expect(moved).toContain("Warning: the session started on code fingerprint `f1`. The app now runs `f2`.");
