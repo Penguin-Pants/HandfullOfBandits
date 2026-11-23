@@ -1,6 +1,6 @@
 # Feedback prompt implementation plan (2026-11-23)
 
-Source: the feature request of 2026-11-23 (R1 to R6 below). Status: draft, waiting for review. Two product gates: D1 and D2 in "Decisions".
+Source: the feature request of 2026-11-23 (R1 to R6 below). Status: approved. The user decided D1 and D2 on 2026-11-23 (see "Decisions").
 
 ## Goal
 
@@ -79,12 +79,12 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 1. Integration test: play a seeded session to a known state, build the prompt, take out the replay record, run `replayFile`, compare the hash (AC6.1).
 2. Add a short "Report a problem" section to the tester docs (`docs/tester`).
 
-## Decisions (product gates)
+## Decisions
 
-| ID | Question | Recommendation |
+| ID | Question | Decision |
 | --- | --- | --- |
-| D1 | Does the user copy the prompt by hand, or does the app open a GitHub issue with it? | Copy and download only. An issue needs a GitHub token in the app and makes the game state public |
-| D2 | Size limit before the replay record moves to a separate file? | 60 KB. Long sessions can have hundreds of commands |
+| D1 | Does the user copy the prompt by hand, or does the app open a GitHub issue with it? | ✅ Copy and download only. No GitHub issue: that needs a token in the app and makes the game state public |
+| D2 | Size limit before the replay record moves to a separate file? | ✅ 60 KB. Above it, the replay record goes to a separate .json file |
 
 ## Risks
 
