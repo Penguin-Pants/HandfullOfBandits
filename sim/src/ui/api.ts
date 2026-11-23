@@ -112,9 +112,19 @@ function recordError(error: ClientError): void {
   if (errors.length > MAX_ERRORS) errors.shift();
 }
 
-/** Record uncaught errors and unhandled rejections of `target`. Returns a function that stops it. */
+/** Record uncaught errors and unhandled rejections of `target`, message only (Risk 2). Returns a function that stops it. */
 export function captureWindowErrors(target: Window): () => void {
-  return () => { target.removeEventListener("error", recordError as never); };
+  const onError = (e: ErrorEvent): void => { recordError({ kind: "error", message: e.message }); };
+  const onRejection = (e: PromiseRejectionEvent): void => {
+    const reason: unknown = e.reason;
+    recordError({ kind: "rejection", message: reason instanceof Error ? reason.message : String(reason) });
+  };
+  target.addEventListener("error", onError);
+  target.addEventListener("unhandledrejection", onRejection);
+  return () => {
+    target.removeEventListener("error", onError);
+    target.removeEventListener("unhandledrejection", onRejection);
+  };
 }
 
 async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
