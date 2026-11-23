@@ -136,6 +136,25 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(onSave).not.toHaveBeenCalled();
     expect(screen.queryByLabelText("Note text")).toBeNull();
   });
+
+  it.fails("the prompt dialog copies, downloads as .md and closes (D1)", async () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    const copy = screen.queryByRole("button", { name: "Copy" });
+    expect(copy).not.toBeNull();
+    if (copy !== null) fireEvent.click(copy);
+    expect(writeText).toHaveBeenCalledWith("# Feedback from play\n\n> Rally is wrong");
+    const link = screen.getByRole("link", { name: "Download .md" });
+    expect(link.getAttribute("download")).toBe("feedback-N7.md");
+    expect(decodeURIComponent((link.getAttribute("href") ?? "").replace("data:text/markdown;charset=utf-8,", ""))).toBe("# Feedback from play\n\n> Rally is wrong");
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
 });
 
 describe("EndSession (T-UI-06)", () => {
