@@ -137,7 +137,7 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(screen.queryByLabelText("Note text")).toBeNull();
   });
 
-  it.fails("the prompt dialog copies, downloads as .md and closes (D1)", async () => {
+  it("the prompt dialog copies, downloads as .md and closes (D1)", async () => {
     const writeText = vi.fn(() => Promise.resolve());
     Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);

@@ -30,7 +30,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState<{ readonly annotationId: string; readonly prompt: string } | null>(null);
 
   /** Open at the current anchor; keep its action ID so Tab can return to it. */
   const start = (): void => {
@@ -84,7 +84,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
     const { proposed, ...where } = open.anchor;
     const note = { ...where, ...(proposed === undefined ? {} : { proposed }), text, categoryIds, focus: open.focus };
     try {
-      if (report && onReport !== undefined) setPrompt((await onReport(note)).prompt);
+      if (report && onReport !== undefined) setPrompt(await onReport(note));
       else await onSave(note);
       if (submitted === revision.current) {
         setSaved(open.anchor.actionId === null ? `Saved (${open.anchor.anchor})` : `Saved, linked to ${open.anchor.actionId}`);
@@ -124,7 +124,12 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
   const dialog = prompt === null ? null : (
     <div className="overlay">
       <div role="dialog" aria-label="Prompt for Claude Code" className="panel">
-        <textarea readOnly aria-label="Prompt" rows={16} style={{ width: "100%" }} value={prompt} />
+        <textarea readOnly aria-label="Prompt" rows={16} style={{ width: "100%" }} value={prompt.prompt} />
+        <div className="row">
+          <button type="button" onClick={() => void navigator.clipboard.writeText(prompt.prompt)}>Copy</button>
+          <a href={`data:text/markdown;charset=utf-8,${encodeURIComponent(prompt.prompt)}`} download={`feedback-${prompt.annotationId}.md`}>Download .md</a>
+          <button type="button" onClick={() => { setPrompt(null); }}>Close</button>
+        </div>
       </div>
     </div>
   );
