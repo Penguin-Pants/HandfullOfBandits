@@ -108,4 +108,10 @@ describe("feedbackPrompt", () => {
     expect(prompt).not.toContain("boom 1\n");
     expect(prompt).not.toContain("127.0.0.1");
   });
+
+  it.fails("reads the selected space and seats at the head state of the game state section, not the noted action's state (review F1)", () => {
+    const past = feedbackPrompt({ ...input, annotation: { ...annotation, action_id: "A1", state_hash: "h1" } });
+    expect(past).toContain("Selected space: hakkari. Level: -1. Control: state.");
+    expect(past).toContain("| pkk | pkk-heuristic@1 |");
+  });
 });
