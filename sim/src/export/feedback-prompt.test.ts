@@ -60,7 +60,7 @@ describe("feedbackPrompt", () => {
     ]) expect(prompt).toContain(line);
   });
 
-  it.fails("shows the selected space with level, Control, pieces and markers (AC3.2)", () => {
+  it("shows the selected space with level, Control, pieces and markers (AC3.2)", () => {
     expect(feedbackPrompt(input)).toContain("Selected space: hakkari. Level: -1. Control: state.\nPieces: guerrilla underground=2, police active=1.\nMarkers: terror on=1.");
     const none = { ...annotation, context: { ...context, selected_space: null } };
     expect(feedbackPrompt({ ...input, annotation: none })).toContain("Selected space: none.");

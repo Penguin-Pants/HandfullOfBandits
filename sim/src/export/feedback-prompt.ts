@@ -18,6 +18,18 @@ const RULE_FILES = ["AGENTS.md", "docs/rules/prototype-rules.md"];
 
 const quoted = (text: string): string => text.split("\n").map((line) => `> ${line}`).join("\n");
 
+/** Non-zero face counts of a piece or marker map: `type face=n`. */
+const counts = (map: unknown): string => Object.entries(obj(map)).flatMap(([type, faces]) => Object.entries(obj(faces)).filter(([, n]) => n !== 0).map(([face, n]) => `${escaped(type)} ${escaped(face)}=${escaped(n)}`)).join(", ") || "none";
+
+/** The selected space at the note's state (AC3.2). Needs an export with states. */
+function selectedSpace(data: CoinSimExport, stateHash: unknown, id: unknown): string {
+  if (typeof id !== "string") return "Selected space: none.";
+  const row = data.states.find((s) => s["state_hash"] === stateHash) ?? {};
+  const space = obj(obj(obj(row["content"])["spaces"])[id]);
+  const control = obj(obj(row["derived"])["control"])[id];
+  return `Selected space: ${escaped(id)}. Level: ${escaped(space["level"] ?? "none")}. Control: ${escaped(control ?? "none")}.\nPieces: ${counts(space["pieces"])}.\nMarkers: ${counts(space["markers"])}.`;
+}
+
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
@@ -39,6 +51,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
     `Tracks: ${pairs(ctx["tracks"])}.`,
     `Scores: ${pairs(ctx["scores"])}. Thresholds: ${pairs(ctx["thresholds"])}.`,
     `Harm counts: ${pairs(ctx["harm_counts"])}.\n`,
+    `${selectedSpace(data, annotation["state_hash"], ctx["selected_space"])}\n`,
   ];
   return `${lines.join("\n")}\n`;
 }
