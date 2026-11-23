@@ -6,8 +6,10 @@ import { escaped, pairs } from "./markdown.ts";
 type Row = Record<string, unknown>;
 
 /** One client error (Phase 2 buffer): a failed API request, an uncaught error or an unhandled rejection. */
+export const CLIENT_ERROR_KINDS = ["request", "error", "rejection"] as const;
+
 export interface ClientError {
-  readonly kind: "request" | "error" | "rejection";
+  readonly kind: (typeof CLIENT_ERROR_KINDS)[number];
   readonly method?: string;
   readonly path?: string;
   readonly status?: number;
@@ -84,9 +86,10 @@ function recent(data: CoinSimExport, session: Row, limits: FeedbackInput["limits
 function clientErrors(errors: readonly ClientError[], limit: number): string[] {
   if (errors.length === 0) return ["## Client errors\n", "None.\n"];
   const shown = last(errors, limit);
-  const line = (e: ClientError): string => e.kind === "request"
-    ? `- request ${escaped(e.method)} ${escaped(URL.parse(e.path ?? "", "http://localhost")?.pathname ?? "")}: ${escaped(e.status)} ${escaped(e.message.replace(/\s+/g, " "))}`
-    : `- ${e.kind}: ${escaped(e.message.replace(/\s+/g, " "))}`;
+  const line = (e: ClientError): string => {
+    const message = escaped(e.message.replace(/\s+/g, " "));
+    return e.kind === "request" ? `- request ${escaped(e.method)} ${escaped(URL.parse(e.path ?? "", "http://localhost")?.pathname ?? "")}: ${escaped(e.status)} ${message}` : `- ${e.kind}: ${message}`;
+  };
   return [`## Client errors (last ${String(shown.length)} of ${String(errors.length)})\n`, ...shown.map(line), ""];
 }
 

@@ -9,7 +9,7 @@ import { getSession } from "../store/repos/sessions.ts";
 import { NOTE_STATUSES, type Anchor, type NoteStatus } from "../store/repos/annotations.ts";
 import { exportCsv, metricsCsv } from "../export/csv.ts";
 import { exportJson, validateExport } from "../export/json.ts";
-import { feedbackPrompt, type ClientError } from "../export/feedback-prompt.ts";
+import { CLIENT_ERROR_KINDS, feedbackPrompt, type ClientError } from "../export/feedback-prompt.ts";
 import { exportMarkdown } from "../export/markdown.ts";
 import { metricsTable } from "../export/metrics.ts";
 import { codeFingerprint, git } from "../package/fingerprint.ts";
@@ -26,12 +26,10 @@ function body<T>(value: unknown): Partial<T> {
   return typeof value === "object" && value !== null ? (value) : {};
 }
 
-const ERROR_KINDS: readonly string[] = ["request", "error", "rejection"] satisfies ClientError["kind"][];
-
 /** Client errors of a feedback request; entries that are not client errors drop out. */
 function clientErrors(value: unknown): ClientError[] {
   const errors = body<{ errors: unknown }>(value).errors;
-  return Array.isArray(errors) ? errors.filter((e): e is ClientError => typeof e === "object" && e !== null && ERROR_KINDS.includes((e as ClientError).kind) && typeof (e as ClientError).message === "string") : [];
+  return Array.isArray(errors) ? errors.filter((e): e is ClientError => typeof e === "object" && e !== null && (CLIENT_ERROR_KINDS as readonly unknown[]).includes((e as ClientError).kind) && typeof (e as ClientError).message === "string") : [];
 }
 
 function command(value: unknown): AnyCommand {
