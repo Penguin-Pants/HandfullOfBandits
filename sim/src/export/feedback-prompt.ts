@@ -33,7 +33,7 @@ const quoted = (text: string): string => text.split("\n").map((line) => `> ${lin
 /** Non-zero face counts of a piece or marker map: `type face=n`. */
 const counts = (map: unknown): string => Object.entries(obj(map)).flatMap(([type, faces]) => Object.entries(obj(faces)).filter(([, n]) => n !== 0).map(([face, n]) => `${escaped(type)} ${escaped(face)}=${escaped(n)}`)).join(", ") || "none";
 
-/** The selected space at the note's state (AC3.2). Needs an export with states. */
+/** The selected space at the head state of the note's context (AC3.2). Needs an export with states. */
 function selectedSpace(row: Row, id: unknown): string {
   if (typeof id !== "string") return "Selected space: none.";
   const space = obj(obj(obj(row["content"])["spaces"])[id]);
@@ -41,7 +41,7 @@ function selectedSpace(row: Row, id: unknown): string {
   return `Selected space: ${escaped(id)}. Level: ${escaped(space["level"] ?? "none")}. Control: ${escaped(control ?? "none")}.\nPieces: ${counts(space["pieces"])}.\nMarkers: ${counts(space["markers"])}.`;
 }
 
-/** Player of each faction at the note's state: "human" or the bot player ID (AC4.1). */
+/** Player of each faction: "human" or the bot player ID (AC4.1). */
 function seats(row: Row, session: Row): string[] {
   const bots = obj(session["seats"]);
   const factions = Object.keys(obj(obj(obj(row["content"])["initiative"])["boxes"]));
@@ -91,7 +91,8 @@ export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
   const session = data.sessions.find((s) => s["session_id"] === annotation["session_id"]) ?? {};
-  const state = data.states.find((s) => s["state_hash"] === annotation["state_hash"]) ?? {};
+  // The context describes the head at note time; a note on a past action keeps that action's hash in `state_hash`.
+  const state = data.states.find((s) => s["state_hash"] === ctx["state_hash"]) ?? {};
   const started = String(session["code_fingerprint"]);
   const warnings = [
     ...(code.dirty ? [`Warning: the app ran with uncommitted changes. Commit \`${code.commit}\` may not reproduce the problem.`] : []),
