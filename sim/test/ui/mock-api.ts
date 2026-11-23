@@ -35,6 +35,7 @@ export function mockApi(overrides: Partial<Api> = {}): Api {
     categories: () => Promise.resolve([]),
     annotations: () => Promise.resolve([]),
     annotate: never,
+    feedback: never,
     endSession: never,
     undo: never,
     branch: never,
