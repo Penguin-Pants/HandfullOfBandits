@@ -98,6 +98,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
   const state = data.states.find((s) => s["state_hash"] === ctx["state_hash"]) ?? {};
   const started = String(session["code_fingerprint"]);
   const warnings = [
+    ...(code.commit === "unknown" ? ["Warning: the app could not read its git commit. Ask the user which commit they ran."] : []),
     ...(code.dirty ? [`Warning: the app ran with uncommitted changes. Commit \`${code.commit}\` may not reproduce the problem.`] : []),
     ...(started === code.fingerprint ? [] : [`Warning: the session started on code fingerprint \`${started}\`. The app now runs \`${code.fingerprint}\`.`]),
   ];
