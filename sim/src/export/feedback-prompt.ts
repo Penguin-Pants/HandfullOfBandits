@@ -93,6 +93,11 @@ function clientErrors(errors: readonly ClientError[], limit: number): string[] {
   return [`## Client errors (last ${String(shown.length)} of ${String(errors.length)})\n`, ...shown.map(line), ""];
 }
 
+/** The drafted command of a proposed note, with its validation (07 s4.2 `plan`, `validation`). */
+function proposed(annotation: Row, ctx: Row): string[] {
+  return annotation["action_id"] == null && ctx["plan"] !== undefined ? ["## Proposed command\n", `${inline(ctx["plan"])} Validation: ${inline(ctx["validation"])}\n`] : [];
+}
+
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
@@ -119,6 +124,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
     `Harm counts: ${pairs(ctx["harm_counts"])}.\n`,
     `${selectedSpace(state, ctx["selected_space"])}\n`,
     ...seats(state, session),
+    ...proposed(annotation, ctx),
     ...botDecision(data, annotation["action_id"]),
     ...recent(data, session, input.limits),
     ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),

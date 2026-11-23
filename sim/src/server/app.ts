@@ -205,10 +205,13 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
   });
   // Feedback prompt (docs/23-Nov-26-Feedback-Prompt-Implementation-Plan.md, Phase 1): a feedback note and its Claude Code prompt.
   app.post<{ Params: Id }>("/api/sessions/:id/feedback", (request, reply) => {
-    const b = body<{ anchor: Anchor; actionId: string | null; text: string; focus: UiFocus; diagnostics: unknown }>(request.body);
+    const b = body<{ anchor: Anchor; actionId: string | null; text: string; focus: UiFocus; diagnostics: unknown; proposed: unknown }>(request.body);
     const anchor = b.anchor ?? "state";
     if (!ANCHORS.includes(anchor) || typeof b.text !== "string") throw new ServiceError(400, `text is required; anchor must be one of ${ANCHORS.join(", ")}.`);
-    const id = service.annotate(request.params.id, { anchor, actionId: b.actionId ?? null, text: b.text, categoryIds: ["feedback"], focus: b.focus ?? NO_FOCUS });
+    const id = service.annotate(request.params.id, {
+      anchor, actionId: b.actionId ?? null, text: b.text, categoryIds: ["feedback"], focus: b.focus ?? NO_FOCUS,
+      ...(b.proposed === undefined ? {} : { proposed: command(b.proposed) }),
+    });
     const data = sessionExport(request.params.id, true);
     const dirty = git(["status", "--porcelain", "--", "sim/src", "game-packages"]);
     const prompt = feedbackPrompt({

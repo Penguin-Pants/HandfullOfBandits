@@ -101,6 +101,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | Pass 2: client error kinds copied in `app.ts`; message cleanup written twice | Fix | ✅ `CLIENT_ERROR_KINDS` shared; one cleanup |
 | Export with states is too heavy for each feedback call | Drop | Full campaign (158 commands): 3.3 MB, 46 ms |
 | Backticks in log data break inline code | Drop | No engine message holds a backtick (grep) |
+| Codex P2: the feedback route dropped a proposed command (`NoteBar.tsx:80-82` sends it) | Fix | ✅ Route forwards `proposed`; prompt shows a Proposed command section. Test in `sim/test/feedback.test.ts` |
 | AC6.1 to AC6.3 (replay record in the prompt) are in no phase. Phase 4 assumes the prompt already holds the record. Also `replayFile` (`sim/src/cli/replay.ts:19`) ignores session options, so a session with options does not replay from a PlayRecord file | Decide | Open: which phase adds the replay record |
 
 ## Resume here
