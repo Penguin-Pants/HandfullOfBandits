@@ -1,7 +1,6 @@
 // Experiment manifests (19 s2; 20 Phase 1): versioned input, validated before any game starts, and
 // the frozen identity captured from the runtime. Seeds come from a repository seed registry that
 // keeps development and evaluation seeds disjoint.
-import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { cpus } from "node:os";
@@ -11,7 +10,7 @@ import { z } from "zod";
 import { canonicalHash } from "../engine/core/canonical.ts";
 import { param } from "../engine/core/params.ts";
 import type { FactionId, Ruleset } from "../engine/core/types.ts";
-import { codeFingerprint, sourceFingerprint } from "../package/fingerprint.ts";
+import { codeFingerprint, git, sourceFingerprint } from "../package/fingerprint.ts";
 import { loadPackage, readPackageDir, withSessionOptions, type LoadResult } from "../package/load.ts";
 import { loadVariant } from "../package/variant.ts";
 import type { PackageData } from "../package/validate.ts";
@@ -130,14 +129,6 @@ export function playerSeed(experimentId: string, gameId: string, faction: Factio
 /** Stable game ID: condition, players, seed and repeat. */
 export function gameId(condition: string, state: string, pkk: string, s: number, repeat: number): string {
   return `${condition}~${state}~${pkk}~${String(s)}~r${String(repeat)}`.replaceAll("@", "v");
-}
-
-function git(args: string[]): string {
-  try {
-    return execFileSync("git", args, { cwd: repoRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
-  } catch {
-    return "unknown";
-  }
 }
 
 /** Identity of the code and machine that run the experiment (19 s2). */

@@ -33,7 +33,7 @@ for (let i = 0; i < 3; i++) {
 const space = Object.keys(state.spaces)[0] ?? "";
 
 describe("POST /api/sessions/:id/feedback", () => {
-  it.fails("saves a feedback note and returns its prompt", async () => {
+  it("saves a feedback note and returns its prompt", async () => {
     const res = await app.inject({
       method: "POST", url: `/api/sessions/${sessionId}/feedback`,
       payload: { text: "Rally looks wrong here.", focus: { panel: "board", selectedSpace: space, selectedPieces: [], hoveredActionId: null }, diagnostics: { errors: [{ kind: "request", method: "POST", path: "/api/x?y=1", status: 409, message: "moved on" }] } },
@@ -48,7 +48,7 @@ describe("POST /api/sessions/:id/feedback", () => {
     expect(prompt).toContain("- request POST /api/x: 409 moved on");
   });
 
-  it.fails("refuses a note with no text and an unknown session", async () => {
+  it("refuses a note with no text and an unknown session", async () => {
     const empty = await app.inject({ method: "POST", url: `/api/sessions/${sessionId}/feedback`, payload: { text: " " } });
     expect(empty.statusCode).toBe(400);
     const unknown = await app.inject({ method: "POST", url: "/api/sessions/nope/feedback", payload: { text: "x" } });

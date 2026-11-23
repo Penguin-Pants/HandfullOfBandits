@@ -9,8 +9,10 @@ import { getSession } from "../store/repos/sessions.ts";
 import { NOTE_STATUSES, type Anchor, type NoteStatus } from "../store/repos/annotations.ts";
 import { exportCsv, metricsCsv } from "../export/csv.ts";
 import { exportJson, validateExport } from "../export/json.ts";
+import { feedbackPrompt, type ClientError } from "../export/feedback-prompt.ts";
 import { exportMarkdown } from "../export/markdown.ts";
 import { metricsTable } from "../export/metrics.ts";
+import { codeFingerprint, git } from "../package/fingerprint.ts";
 import { APP_VERSION, ServiceError, type SessionService } from "./service.ts";
 
 interface Id {
@@ -22,6 +24,14 @@ const NO_FOCUS: UiFocus = { panel: "board", selectedSpace: null, selectedPieces:
 
 function body<T>(value: unknown): Partial<T> {
   return typeof value === "object" && value !== null ? (value) : {};
+}
+
+const ERROR_KINDS: readonly string[] = ["request", "error", "rejection"] satisfies ClientError["kind"][];
+
+/** Client errors of a feedback request; entries that are not client errors drop out. */
+function clientErrors(value: unknown): ClientError[] {
+  const errors = body<{ errors: unknown }>(value).errors;
+  return Array.isArray(errors) ? errors.filter((e): e is ClientError => typeof e === "object" && e !== null && ERROR_KINDS.includes((e as ClientError).kind) && typeof (e as ClientError).message === "string") : [];
 }
 
 function command(value: unknown): AnyCommand {
@@ -194,6 +204,20 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
       ...(b.proposed === undefined ? {} : { proposed: command(b.proposed) }),
     });
     return reply.status(201).send({ annotationId: id });
+  });
+  // Feedback prompt (docs/23-Nov-26-Feedback-Prompt-Implementation-Plan.md, Phase 1): a feedback note and its Claude Code prompt.
+  app.post<{ Params: Id }>("/api/sessions/:id/feedback", (request, reply) => {
+    const b = body<{ anchor: Anchor; actionId: string | null; text: string; focus: UiFocus; diagnostics: unknown }>(request.body);
+    const anchor = b.anchor ?? "state";
+    if (!ANCHORS.includes(anchor) || typeof b.text !== "string") throw new ServiceError(400, `text is required; anchor must be one of ${ANCHORS.join(", ")}.`);
+    const id = service.annotate(request.params.id, { anchor, actionId: b.actionId ?? null, text: b.text, categoryIds: ["feedback"], focus: b.focus ?? NO_FOCUS });
+    const data = sessionExport(request.params.id, true);
+    const dirty = git(["status", "--porcelain", "--", "sim/src", "game-packages"]);
+    const prompt = feedbackPrompt({
+      annotation: data.annotations.find((n) => n["annotation_id"] === id) ?? {}, data, diagnostics: { errors: clientErrors(b.diagnostics) },
+      code: { commit: git(["rev-parse", "HEAD"]), dirty: dirty !== "" && dirty !== "unknown", fingerprint: codeFingerprint() },
+    });
+    return reply.status(201).send({ annotationId: id, prompt });
   });
   if (uiDir !== null) serveUi(app, uiDir);
   return app;
