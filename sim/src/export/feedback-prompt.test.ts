@@ -27,7 +27,7 @@ describe("feedbackPrompt", () => {
     expect(lines.slice(0, 3)).toEqual(["# Feedback from play", "> PKK Rally put a Guerrilla in a Controlled space.", "Task: Find the root cause, write a failing test, fix it."]);
   });
 
-  it.fails("names the repository, commit, code fingerprint and rule files (AC2.2)", () => {
+  it("names the repository, commit, code fingerprint and rule files (AC2.2)", () => {
     const prompt = feedbackPrompt(input);
     expect(prompt).toContain("Repository: https://github.com/Penguin-Pants/HandfullOfBandits");
     expect(prompt).toContain("Check out commit `c0ffee`.");

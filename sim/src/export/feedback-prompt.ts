@@ -12,9 +12,16 @@ export interface FeedbackInput {
   readonly code: { readonly commit: string; readonly dirty: boolean; readonly fingerprint: string };
 }
 
+const REPOSITORY = "https://github.com/Penguin-Pants/HandfullOfBandits";
+const RULE_FILES = ["AGENTS.md", "docs/rules/prototype-rules.md"];
+
 const quoted = (text: string): string => text.split("\n").map((line) => `> ${line}`).join("\n");
 
 export function feedbackPrompt(input: FeedbackInput): string {
-  const lines = ["# Feedback from play\n", `${quoted(String(input.annotation["text"]))}\n`, "Task: Find the root cause, write a failing test, fix it.\n"];
+  const { code } = input;
+  const lines = [
+    "# Feedback from play\n", `${quoted(String(input.annotation["text"]))}\n`, "Task: Find the root cause, write a failing test, fix it.\n",
+    "## Code\n", `Repository: ${REPOSITORY}`, `Check out commit \`${code.commit}\`.`, `Code fingerprint: \`${code.fingerprint}\`.`, `Read first: ${RULE_FILES.map((f) => `\`${f}\``).join(", ")}.\n`,
+  ];
   return `${lines.join("\n")}\n`;
 }
