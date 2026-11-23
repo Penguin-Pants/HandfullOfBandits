@@ -28,7 +28,7 @@ it("sends a failed botStep call with the feedback request", async () => {
   expect(await sentErrors(api)).toEqual([{ kind: "request", method: "POST", path: "/api/sessions/S1/bot-step", status: 409, message: "The session moved on." }]);
 });
 
-it.fails("keeps the last 10 errors and drops the oldest", async () => {
+it("keeps the last 10 errors and drops the oldest", async () => {
   const { api } = await import("./api.ts");
   for (let i = 0; i < 11; i++) {
     fetchMock.mockResolvedValueOnce(reply(500, { error: `boom ${String(i)}`, detail: null }));

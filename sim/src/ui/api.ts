@@ -104,10 +104,12 @@ export class ApiError extends Error {
   }
 }
 
-/** Recent client errors for a feedback report (feedback prompt Phase 2). In memory only. */
+/** The last client errors for a feedback report (feedback prompt Phase 2). In memory only. */
+const MAX_ERRORS = 10;
 const errors: ClientError[] = [];
 function recordError(error: ClientError): void {
   errors.push(error);
+  if (errors.length > MAX_ERRORS) errors.shift();
 }
 
 async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
