@@ -76,8 +76,9 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 ### Phase 4: reproduction check and docs
 
-1. Integration test: play a seeded session to a known state, build the prompt, take out the replay record, run `replayFile`, compare the hash (AC6.1).
-2. Add a short "Report a problem" section to the tester docs (`docs/tester`).
+1. Add the replay record to the prompt (AC6.1 to AC6.3, D2, D3): the command and replay hash, and a separate .json file above 60 KB. `replayFile` applies the session options.
+2. Integration test: play a seeded session to a known state, build the prompt, take out the replay record, run `replayFile`, compare the hash (AC6.1).
+3. Add a short "Report a problem" section to the tester docs (`docs/tester`).
 
 ## Decisions
 
@@ -85,6 +86,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | --- | --- | --- |
 | D1 | Does the user copy the prompt by hand, or does the app open a GitHub issue with it? | ✅ Copy and download only. No GitHub issue: that needs a token in the app and makes the game state public |
 | D2 | Size limit before the replay record moves to a separate file? | ✅ 60 KB. Above it, the replay record goes to a separate .json file |
+| D3 | Which phase adds the replay record (AC6.1 to AC6.3) to the prompt? | ✅ Phase 4 (decided by Claude at the user's request, 2026-11-23). It is server builder work with the reproduction test that proves it; Phase 3 is UI only. Phase 4 also makes `replayFile` apply session options (`sim/src/cli/replay.ts:19`) |
 
 ## Risks
 
@@ -102,7 +104,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | Export with states is too heavy for each feedback call | Drop | Full campaign (158 commands): 3.3 MB, 46 ms |
 | Backticks in log data break inline code | Drop | No engine message holds a backtick (grep) |
 | Codex P2: the feedback route dropped a proposed command (`NoteBar.tsx:80-82` sends it) | Fix | ✅ Route forwards `proposed`; prompt shows a Proposed command section. Test in `sim/test/feedback.test.ts` |
-| AC6.1 to AC6.3 (replay record in the prompt) are in no phase. Phase 4 assumes the prompt already holds the record. Also `replayFile` (`sim/src/cli/replay.ts:19`) ignores session options, so a session with options does not replay from a PlayRecord file | Decide | Open: which phase adds the replay record |
+| AC6.1 to AC6.3 (replay record in the prompt) are in no phase. Also `replayFile` (`sim/src/cli/replay.ts:19`) ignores session options | Decide | ✅ D3: Phase 4 |
 
 ## Phase 2 review (2026-11-23)
 
@@ -114,4 +116,4 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 ## Resume here
 
-Phase 1 is merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147)). Phase 2 is complete on branch `feedback-prompt-phase-2` ([#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148)): `sim/src/ui/api.ts` keeps the last 10 client errors in memory (failed requests, network failures, uncaught errors and unhandled rejections; `captureWindowErrors` runs in `sim/src/ui/main.tsx`), and `api.feedback()` sends them as `diagnostics` to `POST /api/sessions/:id/feedback`. The two-pass review is done and `make test` is green (1913 tests, Node 24). Next: wait for the user's go-ahead, then start Phase 3 (the "Report to Claude" button in `sim/src/ui/notes/NoteBar.tsx`) on a new branch `feedback-prompt-phase-3`. Open decision before Phase 4: which phase adds the replay record (AC6.1 to AC6.3) to the prompt.
+Phase 1 is merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147)). Phase 2 is complete on branch `feedback-prompt-phase-2` ([#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148)): `sim/src/ui/api.ts` keeps the last 10 client errors in memory (failed requests, network failures, uncaught errors and unhandled rejections; `captureWindowErrors` runs in `sim/src/ui/main.tsx`), and `api.feedback()` sends them as `diagnostics` to `POST /api/sessions/:id/feedback`. The two-pass review is done and `make test` is green (1913 tests, Node 24). Next: wait for the user's go-ahead, then start Phase 3 (the "Report to Claude" button in `sim/src/ui/notes/NoteBar.tsx`) on a new branch `feedback-prompt-phase-3`. Decision D3: Phase 4 adds the replay record (AC6).
