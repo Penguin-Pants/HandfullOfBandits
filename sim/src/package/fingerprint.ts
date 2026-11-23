@@ -1,12 +1,14 @@
 // Code fingerprints (04 s10.3 item 3; DEC-19): one SHA-256 over a source tree. The engine
 // fingerprint covers all rules-execution code: the engine entry files and engine/core, coin and
 // modules. Experiments (19 s2) also fingerprint player and runner code with the same function.
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const srcDir = fileURLToPath(new URL("../", import.meta.url));
+const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 
 function files(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true })
@@ -35,4 +37,13 @@ let cached: string | null = null;
 export function codeFingerprint(): string {
   cached ??= sourceFingerprint("engine", ["core", "coin", "modules"]);
   return cached;
+}
+
+/** Trimmed output of a git command in the repository root, or "unknown" when git fails. */
+export function git(args: readonly string[]): string {
+  try {
+    return execFileSync("git", args, { cwd: repoRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  } catch {
+    return "unknown";
+  }
 }

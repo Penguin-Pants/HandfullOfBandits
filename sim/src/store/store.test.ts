@@ -62,11 +62,15 @@ describe("migrate", () => {
       "actions", "annotation_revisions", "annotations", "annotations_fts", "annotations_fts_config", "annotations_fts_data", "annotations_fts_docsize", "annotations_fts_idx", "bot_decisions", "branches", "categories", "commands", "log_entries", "metrics",
       "package_versions", "regression_cases", "regression_runs", "sessions", "states",
     ]);
-    expect(db.pragma("user_version", { simple: true })).toBe(4);
-    expect(migrate(db)).toBe(4);
+    expect(db.pragma("user_version", { simple: true })).toBe(5);
+    expect(migrate(db)).toBe(5);
     const categories = listCategories(db);
-    expect(categories).toHaveLength(16);
+    expect(categories).toHaveLength(17);
     expect(categories[0]).toEqual({ category_id: "balance", label: "Balance concern", hotkey: "Alt+1", color: null, sort: 1, active: 1 });
+  });
+
+  it("seeds the feedback category for Report to Claude notes", () => {
+    expect(listCategories(db).at(-1)).toEqual({ category_id: "feedback", label: "Report to Claude", hotkey: null, color: null, sort: 17, active: 1 });
   });
 
   it("turns on WAL mode and foreign keys", () => {

@@ -10,7 +10,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 | Phase | Status | Pull request | Notes |
 | --- | --- | --- | --- |
-| 1 | Not started | – | Prompt builder (server, pure) |
+| 1 | Review done | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Review done. Waiting for the go-ahead for Phase 2 |
 | 2 | Not started | – | Client diagnostics buffer |
 | 3 | Not started | – | UI: "Report to Claude" in the note bar |
 | 4 | Not started | – | Reproduction check and docs |
@@ -90,3 +90,20 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 1. ⚠️ The prompt is useless if the commit in the prompt is not on GitHub. The prompt must say "Check out commit X" and warn when the working tree had local changes (`codeFingerprint` differs from the fingerprint of the commit). Confidence: medium. Needs a check of how `fingerprint.ts` reads the tree.
 2. Client errors can include file paths from the user's computer. Keep only the path part of API URLs and the error message.
+
+## Phase 1 review (2026-11-23)
+
+| Finding | Class | Outcome |
+| --- | --- | --- |
+| F1: a note on a past action read the selected space and seats from that action's state, not the head state of the game state section | Fix | ✅ Reads `context.state_hash`. Test in `sim/src/export/feedback-prompt.test.ts` |
+| F4: a limit of 0 showed every row (`slice(-0)`) | Fix | ✅ `last()` helper. Test added |
+| F6: no warning when git could not read the commit | Fix | ✅ Warning line. Test added |
+| Pass 2: client error kinds copied in `app.ts`; message cleanup written twice | Fix | ✅ `CLIENT_ERROR_KINDS` shared; one cleanup |
+| Export with states is too heavy for each feedback call | Drop | Full campaign (158 commands): 3.3 MB, 46 ms |
+| Backticks in log data break inline code | Drop | No engine message holds a backtick (grep) |
+| Codex P2: the feedback route dropped a proposed command (`NoteBar.tsx:80-82` sends it) | Fix | ✅ Route forwards `proposed`; prompt shows a Proposed command section. Test in `sim/test/feedback.test.ts` |
+| AC6.1 to AC6.3 (replay record in the prompt) are in no phase. Phase 4 assumes the prompt already holds the record. Also `replayFile` (`sim/src/cli/replay.ts:19`) ignores session options, so a session with options does not replay from a PlayRecord file | Decide | Open: which phase adds the replay record |
+
+## Resume here
+
+Phase 1 is complete on branch `feedback-prompt-phase-1` ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147)): `sim/src/export/feedback-prompt.ts` builds the prompt (AC2.1 to AC5.2, Risk 1 and Risk 2), migration 5 (`sim/src/store/feedback.sql`) seeds the `feedback` category and `POST /api/sessions/:id/feedback` in `sim/src/server/app.ts` returns `{ annotationId, prompt }`. The two-pass review is done and every Fix finding is pushed with a test. `make test` is green (1908 tests, Node 24). Next: wait for the user's go-ahead, then start Phase 2 (client diagnostics buffer in `sim/src/ui/api.ts`) on a new branch `feedback-prompt-phase-2`. Open decision before Phase 4: which phase adds the replay record (AC6.1 to AC6.3) to the prompt.
