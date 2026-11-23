@@ -121,4 +121,8 @@ describe("feedbackPrompt", () => {
     expect(prompt).toContain("## Recent commands (last 0 of 2)\n\n\n");
     expect(prompt).toContain("## Client errors (last 0 of 1)\n\n\n");
   });
+
+  it.fails("warns when git could not read the commit (review F6)", () => {
+    expect(feedbackPrompt({ ...input, code: { ...input.code, commit: "unknown" } })).toContain("Warning: the app could not read its git commit. Ask the user which commit they ran.");
+  });
 });
