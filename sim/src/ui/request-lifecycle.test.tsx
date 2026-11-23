@@ -142,3 +142,17 @@ it("keeps a new note draft when the post-save refresh fails", async () => {
   expect((await screen.findByRole("alert")).textContent).toContain("refresh unavailable");
   expect(screen.getByLabelText<HTMLTextAreaElement>("Note text").value).toBe("second");
 });
+
+it.fails("Report to Claude in Play calls api.feedback and sends no game command (AC1.1, T-ANN-04)", async () => {
+  const feedback = vi.fn(() => Promise.resolve({ annotationId: "N7", prompt: "# Feedback from play" }));
+  const submit = vi.fn();
+  render(<Play api={mockApi({ session, legal, feedback, submit })} sessionId="S" />);
+  await screen.findByRole("menuitem", { name: "Game" });
+  menu("Game", "Note");
+  const box = screen.getByLabelText("Note text");
+  fireEvent.change(box, { target: { value: "Rally is wrong" } });
+  fireEvent.keyDown(box, { key: "Enter", ctrlKey: true });
+  await waitFor(() => { expect(feedback).toHaveBeenCalledWith("S", expect.objectContaining({ text: "Rally is wrong" })); });
+  expect(submit).not.toHaveBeenCalled();
+  expect(await screen.findByRole("dialog", { name: "Prompt for Claude Code" })).toBeTruthy();
+});
