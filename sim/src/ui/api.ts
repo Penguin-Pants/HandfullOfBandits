@@ -13,7 +13,7 @@ import type { LogEntryRow } from "../store/repos/log-entries.ts";
 import type { AnyCommand, GameState, Question, RuleLookup, ValidationResult, Violation } from "../server/api-types.ts";
 import type { ActionForm, FormField } from "../server/forms.ts";
 import type { UiFocus } from "../annotate/types.ts";
-import type { ClientError } from "../export/feedback-prompt.ts";
+import type { ClientError, FeedbackReport } from "../export/feedback-prompt.ts";
 
 export type { ActionForm, AnyCommand, ClientError, FormField, Question, UiFocus, ValidationResult, Violation };
 export type { ExperimentDetail, ExperimentGameRow, ExperimentSummary, SeatPlayer };
@@ -104,6 +104,9 @@ export class ApiError extends Error {
   }
 }
 
+/** Reply of a feedback report: the note ID, the prompt and a replay record above the size limit (AC6.3). */
+export type FeedbackReply = { readonly annotationId: string } & FeedbackReport;
+
 /** The last client errors for a feedback report (feedback prompt Phase 2). In memory only. */
 const MAX_ERRORS = 10;
 const errors: ClientError[] = [];
@@ -171,7 +174,7 @@ export const api = {
   annotations: (id: string) => call<AnnotationRow[]>("GET", `/sessions/${id}/annotations`),
   annotate: (id: string, body: NoteInput) => call<{ annotationId: string }>("POST", `/sessions/${id}/annotations`, body),
   /** Save a feedback note and get its Claude Code prompt, with the recent client errors (feedback prompt Phase 2). */
-  feedback: (id: string, body: NoteInput) => call<{ annotationId: string; prompt: string }>("POST", `/sessions/${id}/feedback`, { ...body, diagnostics: { errors } }),
+  feedback: (id: string, body: NoteInput) => call<FeedbackReply>("POST", `/sessions/${id}/feedback`, { ...body, diagnostics: { errors } }),
   undo: (id: string, headActionId: string, headStateHash?: string) => call<{ undone: string; head: string; undoneAfterRandom: boolean; state?: Head }>("POST", `/sessions/${id}/undo`, { headActionId, headStateHash }),
   /** Branch from a past action (P4-04). */
   branch: (id: string, actionId: string, headActionId: string, headStateHash?: string) => call<{ branchId: string; head: Head }>("POST", `/sessions/${id}/branches`, { actionId, headActionId, headStateHash }),

@@ -156,8 +156,8 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it.fails("offers the separate replay record as a .json download, and no link without one (AC6.3)", async () => {
-    const record = { scenario: "full-campaign", seed: 7, commands: [], hashes: ["h1"], ended: false };
+  it("offers the separate replay record as a .json download, and no link without one (AC6.3)", async () => {
+    const record = { scenario: "full-campaign", seed: 7, options: {}, package: { id: "kurdish-coin", version: "0.1.0", hash: "p1" }, commands: [], hashes: ["h1"], ended: false };
     const onReport = vi.fn(() => Promise.resolve({ annotationId: "N8", prompt: "# Feedback from play", replay: { file: "replay-S1.json", record } }));
     const { unmount } = render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={onReport} />);
     fireEvent.keyDown(window, { key: "n" });
