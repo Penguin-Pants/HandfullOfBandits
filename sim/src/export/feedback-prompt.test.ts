@@ -147,8 +147,9 @@ describe("feedbackPrompt", () => {
     expect(report(input).replay).toBeUndefined();
     const big = { ...data, sessions: data.sessions.map((x) => ({ ...x, options: { note: "x".repeat(70_000) } })) } as CoinSimExport;
     const out = report({ ...input, data: big });
-    expect(out.replay?.options).toEqual({ note: "x".repeat(70_000) });
-    expect(out.replay?.hashes).toEqual(["h1", null, "h2"]);
+    expect(out.replay?.record.options).toEqual({ note: "x".repeat(70_000) });
+    expect(out.replay?.record.hashes).toEqual(["h1", null, "h2"]);
+    expect(out.replay?.file).toBe("replay-S1.json");
     expect(out.prompt).not.toContain("```json\n{\"scenario\"");
     expect(out.prompt).toContain("The prompt with the record is above 60 KB, so the record is in a separate file: download `replay-S1.json`.");
     expect(out.prompt).toContain("Expected state hash: `h2`.");

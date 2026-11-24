@@ -87,7 +87,7 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
   afterAll(() => { rmSync(listed.root, { recursive: true, force: true }); });
 
   /** Play scripted commands (to the end, or `max`) and report with `text`. */
-  async function playAndReport(packageDir: string, max: number, options?: Record<string, string>, text = "Replay this."): Promise<{ sessionId: string; prompt: string; replay?: unknown; noteHash: string | null | undefined }> {
+  async function playAndReport(packageDir: string, max: number, options?: Record<string, string>, text = "Replay this."): Promise<{ sessionId: string; prompt: string; replay: { file: string; record: unknown } | undefined; noteHash: string | null | undefined }> {
     const created = service.createSession({ dir: packageDir, scenarioId: SHORT, seed: 11, name: "replay", ...(options === undefined ? {} : { options }) });
     let at = created.head;
     let atId = at.actionId;
@@ -97,7 +97,7 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
       atId = res.actionId;
     }
     const res = await app.inject({ method: "POST", url: `/api/sessions/${created.sessionId}/feedback`, payload: { text } });
-    const { annotationId, prompt, replay } = res.json<{ annotationId: string; prompt: string; replay?: unknown }>();
+    const { annotationId, prompt, replay } = res.json<{ annotationId: string; prompt: string; replay?: { file: string; record: unknown } }>();
     const noteHash = service.annotations(created.sessionId).find((n) => n.annotation_id === annotationId)?.state_hash;
     return { sessionId: created.sessionId, prompt, replay, noteHash };
   }
@@ -130,8 +130,8 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
   it("returns a record above the 60 KB limit separately, and it replays (AC6.3)", async () => {
     const report = await playAndReport(fixture.dir, 3, undefined, "x".repeat(61 * 1024));
     expect(inPrompt(report.prompt)).toBeUndefined();
-    expect(report.replay).toBeTypeOf("object");
-    const out = replayRecordFile(report.sessionId, JSON.stringify(report.replay), fixture.dir);
+    expect(report.replay?.file).toBe(`replay-${report.sessionId}.json`);
+    const out = replayRecordFile(report.sessionId, JSON.stringify(report.replay?.record), fixture.dir);
     expect(out.lines).toEqual(["identical (3 commands)"]);
     expect(out.finalHash).toBe(report.noteHash);
   });

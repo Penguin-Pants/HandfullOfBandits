@@ -128,8 +128,7 @@ export function replayRecord(data: CoinSimExport, session: Row, state: Row): Rep
 }
 
 /** The replay record with the `sim replay` command and the expected state hash (AC6.2). */
-function replaySection(record: ReplayRecord, sessionId: unknown, expectedHash: unknown, separate: boolean): string[] {
-  const file = `replay-${String(sessionId)}.json`;
+function replaySection(record: ReplayRecord, file: string, expectedHash: unknown, separate: boolean): string[] {
   return [
     "## Replay record\n",
     ...(separate ? [`The prompt with the record is above ${String(PROMPT_LIMIT_KB)} KB, so the record is in a separate file: download \`${file}\`.`] : []),
@@ -146,7 +145,8 @@ const bytes = (text: string): number => new TextEncoder().encode(text).length;
 /** The prompt, and the replay record when it is too large for the prompt (AC6.3, D2). */
 export interface FeedbackReport {
   readonly prompt: string;
-  readonly replay?: ReplayRecord;
+  /** The record and the file name the prompt gives it. */
+  readonly replay?: { readonly file: string; readonly record: ReplayRecord };
 }
 
 export function feedbackPrompt(input: FeedbackInput): FeedbackReport {
@@ -181,7 +181,8 @@ export function feedbackPrompt(input: FeedbackInput): FeedbackReport {
     ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),
   ];
   const record = replayRecord(data, session, state);
-  const join = (separate: boolean): string => `${[...lines, ...replaySection(record, session["session_id"], ctx["state_hash"], separate)].join("\n")}\n`;
+  const file = `replay-${String(session["session_id"])}.json`;
+  const join = (separate: boolean): string => `${[...lines, ...replaySection(record, file, ctx["state_hash"], separate)].join("\n")}\n`;
   const full = join(false);
-  return bytes(full) <= PROMPT_LIMIT_KB * 1024 ? { prompt: full } : { prompt: join(true), replay: record };
+  return bytes(full) <= PROMPT_LIMIT_KB * 1024 ? { prompt: full } : { prompt: join(true), replay: { file, record } };
 }
