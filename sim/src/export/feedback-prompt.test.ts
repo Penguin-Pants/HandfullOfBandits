@@ -143,7 +143,7 @@ describe("feedbackPrompt", () => {
     expect(prompt).toContain("Expected result: `identical (2 commands)`. Expected state hash: `h2`.");
   });
 
-  it.fails("moves a replay record above the 60 KB limit to a separate file and says so (AC6.3, D2)", () => {
+  it("moves a replay record above the 60 KB limit to a separate file and says so (AC6.3, D2)", () => {
     expect(report(input).replay).toBeUndefined();
     const big = { ...data, sessions: data.sessions.map((x) => ({ ...x, options: { note: "x".repeat(70_000) } })) } as CoinSimExport;
     const out = report({ ...input, data: big });

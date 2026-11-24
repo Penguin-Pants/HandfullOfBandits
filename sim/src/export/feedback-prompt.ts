@@ -128,15 +128,20 @@ export function replayRecord(data: CoinSimExport, session: Row, state: Row): Rep
 }
 
 /** The replay record with the `sim replay` command and the expected state hash (AC6.2). */
-function replaySection(record: ReplayRecord, sessionId: unknown, expectedHash: unknown): string[] {
+function replaySection(record: ReplayRecord, sessionId: unknown, expectedHash: unknown, separate: boolean): string[] {
   const file = `replay-${String(sessionId)}.json`;
   return [
     "## Replay record\n",
+    ...(separate ? [`The prompt with the record is above ${String(PROMPT_LIMIT_KB)} KB, so the record is in a separate file: download \`${file}\`.`] : []),
     `Save the record as \`sim/${file}\`. Then run \`cd sim && npm run --silent sim -- replay ${file} --package ../game-packages/${record.package.id}/${record.package.version}\`.`,
     `Expected result: \`identical (${String(record.commands.length)} commands)\`. Expected state hash: \`${String(expectedHash)}\`.\n`,
-    `\`\`\`json\n${JSON.stringify(record)}\n\`\`\`\n`,
+    ...(separate ? [] : [`\`\`\`json\n${JSON.stringify(record)}\n\`\`\`\n`]),
   ];
 }
+
+/** D2: above this size (UTF-8 bytes) the replay record goes to a separate file (AC6.3). */
+const PROMPT_LIMIT_KB = 60;
+const bytes = (text: string): number => new TextEncoder().encode(text).length;
 
 /** The prompt, and the replay record when it is too large for the prompt (AC6.3, D2). */
 export interface FeedbackReport {
@@ -174,7 +179,9 @@ export function feedbackPrompt(input: FeedbackInput): FeedbackReport {
     ...botDecision(data, annotation["action_id"]),
     ...recent(data, session, input.limits),
     ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),
-    ...replaySection(replayRecord(data, session, state), session["session_id"], ctx["state_hash"]),
   ];
-  return { prompt: `${lines.join("\n")}\n` };
+  const record = replayRecord(data, session, state);
+  const join = (separate: boolean): string => `${[...lines, ...replaySection(record, session["session_id"], ctx["state_hash"], separate)].join("\n")}\n`;
+  const full = join(false);
+  return bytes(full) <= PROMPT_LIMIT_KB * 1024 ? { prompt: full } : { prompt: join(true), replay: record };
 }
