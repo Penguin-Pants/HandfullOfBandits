@@ -170,7 +170,7 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     await waitFor(() => { expect(screen.queryByText("Copy failed. Select the text and copy it.")).not.toBeNull(); });
   });
 
-  it.fails("retries a failed report as a report when Enter is pressed (Codex review)", async () => {
+  it("retries a failed report as a report when Enter is pressed (Codex review)", async () => {
     const onSave = vi.fn(() => Promise.resolve("N1"));
     const onReport = vi.fn().mockRejectedValueOnce(new Error("server down")).mockResolvedValueOnce({ annotationId: "N7", prompt: "# Feedback from play" });
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={onSave} onReport={onReport} />);

@@ -27,6 +27,8 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
   const [picked, setPicked] = useState<string[]>([]);
   const revision = useRef(0);
   const pending = useRef(false);
+  /** The last submission was a report that failed: Enter retries it as a report. */
+  const failedReport = useRef(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
@@ -68,6 +70,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
 
   const close = (): void => {
     revision.current++;
+    failedReport.current = false;
     setError(null);
     setOpen(null);
     setText("");
@@ -95,6 +98,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
       }
       setTimeout(() => { setSaved(null); }, 2000);
     } catch (e) {
+      failedReport.current = report;
       setError(e instanceof Error ? e.message : String(e));
     } finally {
       pending.current = false;
@@ -104,7 +108,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
   const onKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      void save(e.ctrlKey);
+      void save(e.ctrlKey || failedReport.current);
     } else if (e.key === "Escape") {
       close();
     } else if (e.key === "Tab" && open !== null) {
@@ -154,7 +158,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
     <footer className="panel" aria-label="Note bar" aria-busy={saving}>
       {saving && <p role="status">Saving note…</p>}
       {saved !== null && <strong role="status">{saved}</strong>}
-      {error !== null && <p role="alert">Note not saved: {error}. Press Enter to retry.</p>}
+      {error !== null && <p role="alert">Note not saved: {error}. Press Enter to retry{failedReport.current ? " the report" : ""}.</p>}
       <div className="row">
         <span className="muted">{`Note on: ${open.anchor.anchor}${open.anchor.actionId === null ? "" : ` (${open.anchor.actionId})`}`}</span>
         {picked.map((c) => (

@@ -12,7 +12,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | --- | --- | --- | --- |
 | 1 | Merged | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Review done. Waiting for the go-ahead for Phase 2 |
 | 2 | Merged | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
-| 3 | Review done | [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150) | UI: "Report to Claude" in the note bar. Current task: Codex fix, failed report retries as a report |
+| 3 | Review done | [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150) | UI: "Report to Claude" in the note bar. Review done. Waiting for the go-ahead for Phase 4 |
 | 4 | Not started | – | Reproduction check and docs |
 
 ## Requirements (source of truth)
@@ -122,6 +122,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | F2: a denied clipboard write failed with no message | Fix | ✅ Status line: "Copied." or "Copy failed. Select the text and copy it." Test added |
 | Cmd+Enter on macOS does not report | Drop | The plan names Ctrl+Enter, and Ctrl+Enter works on macOS too |
 | Esc does not close the dialog | Drop | The Close button closes it; the note bar keeps Esc |
+| Codex: after a failed report, Enter saved a normal note with no prompt | Fix | ✅ Enter retries a failed report as a report. Test in `notes.test.tsx` |
 | "Copied." stays after a second report while the dialog is open | Drop | It names the last Copy click; low impact |
 
 ## Resume here
