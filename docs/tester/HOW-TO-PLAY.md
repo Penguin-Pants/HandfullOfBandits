@@ -58,13 +58,25 @@ Write a note when:
 - a screen is slow, hidden or hard to use
 - the **Rule** text does not match what the game did
 
-## 6. End the game
+## 6. Report a problem
+
+Use this when the game did something wrong and you want a Claude Code session to fix it. The app writes one prompt with your note, the game state and the data that Claude needs to replay your game.
+
+1. Press **N**, or open the **Game** menu and click **Note**. The game does not stop.
+2. Type what went wrong.
+3. Press **Ctrl+Enter** or click **Report to Claude**. The app saves your note and opens the prompt.
+4. Click **Copy**, or click **Download .md** to save the prompt as a file.
+5. If the dialog shows **Download replay .json**, click it too. When the prompt is larger than 60 KB, the app puts the replay data in this file. Keep the file with the prompt.
+6. Click **Close**.
+7. Open a new Claude Code session on this repository. Paste the prompt as your first message. If you downloaded the replay file, attach it or put it in the `sim` folder.
+
+## 7. End the game
 
 1. After the last Propaganda step, the right panel says **Game complete**. The top bar shows who won.
 2. Click **End session**.
 3. Type an overall comment (what was hard, what was good). Click **Save debrief and end**. To skip the comment, click **Skip and end**.
 
-## 7. Send your result
+## 8. Send your result
 
 1. Click **Home** (top left).
 2. In the saved sessions table, find your game. Click **Export**. The browser saves a JSON file.

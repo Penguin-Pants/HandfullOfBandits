@@ -8,6 +8,7 @@ import type { GameJob } from "./game-runner.ts";
 import { coinHandlers } from "../engine/coin/handlers.ts";
 import { createEngine } from "../engine/index.ts";
 import { loadPackage, readPackageDir, withSessionOptions } from "../package/load.ts";
+import { loadVariant } from "../package/variant.ts";
 import { replaySteps } from "../engine/replay.ts";
 import { storedSteps } from "../store/repos/actions.ts";
 import { loadPackageContent } from "../store/repos/packages.ts";
@@ -15,12 +16,16 @@ import { getSession } from "../store/repos/sessions.ts";
 import { openStore } from "../store/migrate.ts";
 import { replay, type PlayRecord } from "./play.ts";
 
-/** Replay a PlayRecord file against the package in `packageDir`. */
+/** Replay a PlayRecord file against the package in `packageDir`, with the record's variant and session options. */
 export function replayFile(file: string, packageDir: string): { exitCode: number; lines: string[] } {
   const record = JSON.parse(readFileSync(file, "utf8")) as PlayRecord;
-  const loaded = loadPackage(readPackageDir(packageDir));
-  if (!loaded.ok) return { exitCode: 1, lines: ["error: the package does not load"] };
-  return report(replay(createEngine(coinHandlers), loaded.ruleset, record), record.commands.length);
+  const loaded = record.variant === undefined ? loadPackage(readPackageDir(packageDir)) : loadVariant(packageDir, record.variant);
+  if (!loaded.ok) return { exitCode: 1, lines: [record.variant === undefined ? "error: the package does not load" : `error: the package with variant ${record.variant} does not load`] };
+  const ruleset = withSessionOptions(loaded.ruleset, record.scenario, record.options ?? {});
+  const result = report(replay(createEngine(coinHandlers), ruleset, record), record.commands.length);
+  const recorded = record.package?.hash;
+  if (recorded === undefined || recorded === loaded.hash) return result;
+  return { ...result, lines: [`warning: the package hash is ${loaded.hash}, not the recorded ${recorded}; check out the commit in the prompt`, ...result.lines] };
 }
 
 /** Replay a stored session from its own stored package (04 s10.3). */

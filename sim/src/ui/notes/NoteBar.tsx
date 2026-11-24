@@ -3,7 +3,7 @@
 // focused, so plan entry keeps its keys (11 P2-16 risk). Closed, it shows only save status; the
 // Game menu opens it through `handle`.
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
-import type { CategoryRow, NoteInput } from "../api.ts";
+import type { CategoryRow, FeedbackReply, NoteInput } from "../api.ts";
 import { hashCategories, type defaultAnchor } from "./anchor.ts";
 
 const ANCHORS: readonly NoteInput["anchor"][] = ["executed", "proposed", "state", "session"];
@@ -15,7 +15,7 @@ export interface NoteBarProps {
   readonly focus: () => NoteInput["focus"];
   readonly onSave: (note: NoteInput) => Promise<string>;
   /** Save the note as a feedback note and get its Claude Code prompt (feedback prompt Phase 3). */
-  readonly onReport?: (note: NoteInput) => Promise<{ readonly annotationId: string; readonly prompt: string }>;
+  readonly onReport?: (note: NoteInput) => Promise<FeedbackReply>;
   /** `open()` does what N does: open at the current anchor, or focus the open note. */
   readonly handle?: Ref<{ readonly open: () => void }>;
 }
@@ -32,7 +32,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState<{ readonly annotationId: string; readonly prompt: string } | null>(null);
+  const [prompt, setPrompt] = useState<FeedbackReply | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
   /** Open at the current anchor; keep its action ID so Tab can return to it. */
@@ -133,6 +133,7 @@ export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }:
         <div className="row">
           <button type="button" onClick={() => { navigator.clipboard.writeText(prompt.prompt).then(() => { setCopied("Copied."); }, () => { setCopied("Copy failed. Select the text and copy it."); }); }}>Copy</button>
           <a href={`data:text/markdown;charset=utf-8,${encodeURIComponent(prompt.prompt)}`} download={`feedback-${prompt.annotationId}.md`}>Download .md</a>
+          {prompt.replay !== undefined && <a href={`data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(prompt.replay.record))}`} download={prompt.replay.file}>Download replay .json</a>}
           <button type="button" onClick={() => { setPrompt(null); setCopied(null); }}>Close</button>
         </div>
         {copied !== null && <p role="status">{copied}</p>}

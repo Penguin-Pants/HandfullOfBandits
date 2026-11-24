@@ -98,7 +98,63 @@ function proposed(annotation: Row, ctx: Row): string[] {
   return annotation["action_id"] == null && ctx["plan"] !== undefined ? ["## Proposed command\n", `${inline(ctx["plan"])} Validation: ${inline(ctx["validation"])}\n`] : [];
 }
 
-export function feedbackPrompt(input: FeedbackInput): string {
+/** The `PlayRecord` file that `sim replay <file.json>` reads (`cli/play.ts`; export may not import cli, 03 s5). */
+export interface ReplayRecord {
+  readonly scenario: string;
+  readonly seed: number;
+  readonly options: Readonly<Record<string, unknown>>;
+  readonly package: { readonly id: string; readonly version: string; readonly hash: string };
+  /** Setup variant of the session (`variants/<name>.yaml` in the package), when it started with one. */
+  readonly variant?: string;
+  readonly commands: readonly unknown[];
+  readonly hashes: readonly (string | null)[];
+  readonly ended: boolean;
+}
+
+/**
+ * PlayRecord of the path from setup to the session head (AC6.1). The store keeps one hash per action
+ * (`storedSteps`), so the hash after a command inside an action is null.
+ */
+function replayRecord(data: CoinSimExport, session: Row, state: Row): ReplayRecord {
+  const head = session["head_action_id"];
+  const [setup, ...actions] = typeof head === "string" ? pathsOf(data)(head) : [];
+  const pkg = obj(data.packages.find((p) => p["package_hash"] === session["package_hash"]));
+  const manifest = obj(pkg["manifest"]);
+  const variant = list(pkg["variants"]).map(obj).find((v) => v["scenario"] === session["scenario_id"])?.["name"];
+  return {
+    scenario: String(session["scenario_id"]), seed: Number(session["seed"]),
+    options: obj(session["options"]),
+    package: { id: String(manifest["packageId"]), version: String(manifest["version"]), hash: String(session["package_hash"]) },
+    ...(typeof variant === "string" ? { variant } : {}),
+    commands: actions.flatMap((a) => list(a["commands"]).map((c) => obj(c)["payload"])),
+    hashes: [String(setup?.["state_hash_after"]), ...actions.flatMap((a) => list(a["commands"]).map((_, i, all) => (i === all.length - 1 ? String(a["state_hash_after"]) : null)))],
+    ended: obj(state["content"])["ended"] != null,
+  };
+}
+
+/** The replay record with the `sim replay` command and the expected state hash (AC6.2). */
+function replaySection(record: ReplayRecord, file: string, expectedHash: unknown, separate: boolean): string[] {
+  return [
+    "## Replay record\n",
+    ...(separate ? [`The prompt with the record is above ${String(PROMPT_LIMIT_KB)} KB, so the record is in a separate file: download \`${file}\`.`] : []),
+    `Save the record as \`sim/${file}\`. Then run \`cd sim && npm run --silent sim -- replay ${file} --package ../game-packages/${record.package.id}/${record.package.version}\`.`,
+    `Expected result: \`identical (${String(record.commands.length)} commands)\`. Expected state hash: \`${String(expectedHash)}\`.\n`,
+    ...(separate ? [] : [`\`\`\`json\n${JSON.stringify(record)}\n\`\`\`\n`]),
+  ];
+}
+
+/** D2: above this size (UTF-8 bytes) the replay record goes to a separate file (AC6.3). */
+const PROMPT_LIMIT_KB = 60;
+const bytes = (text: string): number => new TextEncoder().encode(text).length;
+
+/** The prompt, and the replay record when it is too large for the prompt (AC6.3, D2). */
+export interface FeedbackReport {
+  readonly prompt: string;
+  /** The record and the file name the prompt gives it. */
+  readonly replay?: { readonly file: string; readonly record: ReplayRecord };
+}
+
+export function feedbackPrompt(input: FeedbackInput): FeedbackReport {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
   const session = data.sessions.find((s) => s["session_id"] === annotation["session_id"]) ?? {};
@@ -129,5 +185,9 @@ export function feedbackPrompt(input: FeedbackInput): string {
     ...recent(data, session, input.limits),
     ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),
   ];
-  return `${lines.join("\n")}\n`;
+  const record = replayRecord(data, session, state);
+  const file = `replay-${String(session["session_id"])}.json`;
+  const join = (separate: boolean): string => `${[...lines, ...replaySection(record, file, ctx["state_hash"], separate)].join("\n")}\n`;
+  const full = join(false);
+  return bytes(full) <= PROMPT_LIMIT_KB * 1024 ? { prompt: full } : { prompt: join(true), replay: { file, record } };
 }

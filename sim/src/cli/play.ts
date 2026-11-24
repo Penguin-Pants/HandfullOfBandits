@@ -3,7 +3,7 @@
 import { legalOps } from "../engine/coin/stop-rules.ts";
 import { activeFaction } from "../engine/coin/sequence/ct.ts";
 import type { Engine } from "../engine/index.ts";
-import { replaySteps } from "../engine/replay.ts";
+import { replaySteps, type ReplayStep } from "../engine/replay.ts";
 import type { AnyCommand, GameState, JsonValue, Question, Ruleset } from "../engine/core/types.ts";
 
 /** Picks an answer for a question. `draw(n)` returns an integer in [0, n). */
@@ -68,9 +68,14 @@ export interface PlayRecord {
   readonly scenario: string;
   readonly seed: number;
   readonly commands: readonly AnyCommand[];
-  /** stateHash after start, then after each command. */
-  readonly hashes: readonly string[];
+  /** stateHash after start, then after each command. Null: not stored (a command inside a stored action); the next hash checks it. */
+  readonly hashes: readonly (string | null)[];
   readonly ended: boolean;
+  /** Session options of a stored session (feedback replay record); `replayFile` applies them. */
+  readonly options?: Readonly<Record<string, string | number>>;
+  /** Setup variant of a stored session; `replayFile` loads `variants/<name>.yaml` of the package. */
+  readonly variant?: string;  /** Package of a stored session; `replayFile` warns when the loaded package has another hash. */
+  readonly package?: { readonly id: string; readonly version: string; readonly hash: string };
 }
 
 /** Play from start until the game ends or `maxSteps` commands. Throws on an illegal command. */
@@ -92,7 +97,16 @@ export function playGame(engine: Engine, ruleset: Ruleset, scenario: string, see
 
 /** Replay a record; returns the first step whose hash differs, or null when identical. */
 export function replay(engine: Engine, ruleset: Ruleset, record: Pick<PlayRecord, "scenario" | "seed" | "commands" | "hashes">): { readonly step: number; readonly expected: string; readonly actual: string } | null {
-  const steps = record.commands.map((command, i) => ({ id: String(i + 1), commands: [command], hashAfter: record.hashes[i + 1] ?? "" }));
+  // A step ends at each stored hash; commands with a null hash join the next step.
+  const steps: ReplayStep[] = [];
+  let group: AnyCommand[] = [];
+  record.commands.forEach((command, i) => {
+    group.push(command);
+    const hash = record.hashes[i + 1] ?? null;
+    if (hash === null && i < record.commands.length - 1) return;
+    steps.push({ id: String(i + 1), commands: group, hashAfter: hash ?? "" });
+    group = [];
+  });
   const diff = replaySteps(engine, ruleset, record.scenario, record.seed, record.hashes[0] ?? "", steps);
   return diff === null ? null : { step: diff.id === "start" ? 0 : Number(diff.id), expected: diff.expected, actual: diff.actual };
 }
