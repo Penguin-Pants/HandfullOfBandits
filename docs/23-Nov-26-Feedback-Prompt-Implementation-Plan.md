@@ -13,7 +13,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | 1 | Merged | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Review done. Waiting for the go-ahead for Phase 2 |
 | 2 | Merged | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
 | 3 | Merged | [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150) | UI: "Report to Claude" in the note bar. Review done |
-| 4 | Review done | [#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151) | Replay record, `replayFile` with options and variant, tester docs. Review done. Waiting for merge |
+| 4 | Merged | [#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151) | Replay record, `replayFile` with options and variant, tester docs. Review done |
 
 ## Requirements (source of truth)
 
@@ -142,4 +142,4 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 ## Resume here
 
-All four phases are complete. Phases 1 to 3 are merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147), [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148), [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150)). Phase 4 is on branch `feedback-prompt-phase-4` ([#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151)): the prompt has a "Replay record" section with the `sim replay` command and the expected state hash (AC6.1, AC6.2); above 60 KB the record moves to `replay-<session>.json`, which the endpoint returns and the dialog downloads (AC6.3); `replayFile` applies the record's options and variant and warns on another package hash; `docs/tester/HOW-TO-PLAY.md` section 6 is "Report a problem". The two-pass review is done, all Codex threads are resolved and `make test` is green (1930 tests, Node 24). Next: the user reviews and merges #151.
+All four phases are complete and merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147), [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148), [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150), [#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151)). Phase 4: the prompt has a "Replay record" section with the `sim replay` command and the expected state hash (AC6.1, AC6.2); above 60 KB the record moves to `replay-<session>.json`, which the endpoint returns and the dialog downloads (AC6.3); `replayFile` applies the record's options and variant and warns on another package hash; `docs/tester/HOW-TO-PLAY.md` section 6 is "Report a problem". The two-pass review is done, all Codex threads are resolved and `make test` is green (1930 tests, Node 24). No work is open in this plan.
