@@ -156,6 +156,26 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it.fails("offers the separate replay record as a .json download, and no link without one (AC6.3)", async () => {
+    const record = { scenario: "full-campaign", seed: 7, commands: [], hashes: ["h1"], ended: false };
+    const onReport = vi.fn(() => Promise.resolve({ annotationId: "N8", prompt: "# Feedback from play", replay: { file: "replay-S1.json", record } }));
+    const { unmount } = render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={onReport} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Big game" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    const link = screen.queryByRole("link", { name: "Download replay .json" });
+    expect(link?.getAttribute("download")).toBe("replay-S1.json");
+    expect(JSON.parse(decodeURIComponent((link?.getAttribute("href") ?? "").replace("data:application/json;charset=utf-8,", "")))).toEqual(record);
+    unmount();
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Small game" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    expect(screen.queryByRole("link", { name: "Download replay .json" })).toBeNull();
+  });
+
   it("says whether Copy worked (review F2)", async () => {
     const writeText = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error("denied"));
     Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
