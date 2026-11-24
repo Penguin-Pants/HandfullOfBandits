@@ -80,10 +80,14 @@ describe("replay() with hashes not stored inside an action (Phase 4)", () => {
 describe("replay record of a feedback prompt (AC6.1)", () => {
   // A copy of the short package that declares and lists `threshold.state` (mock data); thresholds enter the state at Propaganda (pipeline.ts).
   const listed = shortPackage("hob-feedback-options-");
-  const scenarioFile = join(listed.dir, "scenarios", `${SHORT}.yaml`);
-  writeFileSync(scenarioFile, readFileSync(scenarioFile, "utf8").replace("options: {syriaMarchRestricted: allow}", "options: {syriaMarchRestricted: allow, threshold.state: 49}"));
-  const manifestFile = join(listed.dir, "manifest.yaml");
-  writeFileSync(manifestFile, readFileSync(manifestFile, "utf8").replace("options:\n", "options:\n  threshold.state:\n    values: [40, 49]\n    description: test only\n"));
+  /** Edit one package file; a Windows checkout has CRLF line endings, so patterns allow `\r`. */
+  const edit = (file: string, from: RegExp, to: string): void => {
+    const text = readFileSync(join(listed.dir, file), "utf8");
+    if (!from.test(text)) throw new Error(`${file} has no match for ${String(from)}`);
+    writeFileSync(join(listed.dir, file), text.replace(from, to));
+  };
+  edit(join("scenarios", `${SHORT}.yaml`), /options: \{syriaMarchRestricted: allow\}/, "options: {syriaMarchRestricted: allow, threshold.state: 49}");
+  edit("manifest.yaml", /^options:\r?\n/m, "options:\n  threshold.state:\n    values: [40, 49]\n    description: test only\n");
   afterAll(() => { rmSync(listed.root, { recursive: true, force: true }); });
 
   /** Play scripted commands (to the end, or `max`) and report with `text`. */
