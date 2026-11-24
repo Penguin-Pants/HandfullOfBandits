@@ -127,6 +127,17 @@ export function replayRecord(data: CoinSimExport, session: Row, state: Row): Rep
   };
 }
 
+/** The replay record with the `sim replay` command and the expected state hash (AC6.2). */
+function replaySection(record: ReplayRecord, sessionId: unknown, expectedHash: unknown): string[] {
+  const file = `replay-${String(sessionId)}.json`;
+  return [
+    "## Replay record\n",
+    `Save the record as \`sim/${file}\`. Then run \`cd sim && npm run --silent sim -- replay ${file} --package ../game-packages/${record.package.id}/${record.package.version}\`.`,
+    `Expected result: \`identical (${String(record.commands.length)} commands)\`. Expected state hash: \`${String(expectedHash)}\`.\n`,
+    `\`\`\`json\n${JSON.stringify(record)}\n\`\`\`\n`,
+  ];
+}
+
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
@@ -157,7 +168,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
     ...botDecision(data, annotation["action_id"]),
     ...recent(data, session, input.limits),
     ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),
-    "## Replay record\n", `\`\`\`json\n${JSON.stringify(replayRecord(data, session, state))}\n\`\`\`\n`,
+    ...replaySection(replayRecord(data, session, state), session["session_id"], ctx["state_hash"]),
   ];
   return `${lines.join("\n")}\n`;
 }
