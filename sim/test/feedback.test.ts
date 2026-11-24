@@ -153,4 +153,12 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
     expect(out.lines).toEqual(["identical (3 commands)"]);
     expect(out.finalHash).toBe(report.noteHash);
   });
+
+  it.fails("warns when the package hash differs from the recorded one (review F1)", async () => {
+    const report = await playAndReport({ dir: fixture.dir, max: 3 });
+    const record = JSON.parse(inPrompt(report.prompt) ?? "{}") as { package: { hash: string } };
+    const loaded = record.package.hash;
+    const out = replayRecordFile(report.sessionId, JSON.stringify({ ...record, package: { ...record.package, hash: "other" } }), fixture.dir);
+    expect(out.lines).toEqual([`warning: the package hash is ${loaded}, not the recorded other; check out the commit in the prompt`, "identical (3 commands)"]);
+  });
 });
