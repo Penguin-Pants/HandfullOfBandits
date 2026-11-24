@@ -15,12 +15,13 @@ import { getSession } from "../store/repos/sessions.ts";
 import { openStore } from "../store/migrate.ts";
 import { replay, type PlayRecord } from "./play.ts";
 
-/** Replay a PlayRecord file against the package in `packageDir`. */
+/** Replay a PlayRecord file against the package in `packageDir`, with the record's session options. */
 export function replayFile(file: string, packageDir: string): { exitCode: number; lines: string[] } {
   const record = JSON.parse(readFileSync(file, "utf8")) as PlayRecord;
   const loaded = loadPackage(readPackageDir(packageDir));
   if (!loaded.ok) return { exitCode: 1, lines: ["error: the package does not load"] };
-  return report(replay(createEngine(coinHandlers), loaded.ruleset, record), record.commands.length);
+  const ruleset = withSessionOptions(loaded.ruleset, record.scenario, record.options ?? {});
+  return report(replay(createEngine(coinHandlers), ruleset, record), record.commands.length);
 }
 
 /** Replay a stored session from its own stored package (04 s10.3). */

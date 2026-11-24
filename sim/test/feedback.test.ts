@@ -112,7 +112,7 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
     expect(out.finalHash).toBe(out.noteHash);
   });
 
-  it.fails("replays a session that started with options (replayFile applies them)", async () => {
+  it("replays a session that started with options (replayFile applies them)", async () => {
     const out = await reportAndReplay(listed.dir, 500, { "threshold.state": "40" });
     expect(out.lines[0]).toMatch(/^identical \(\d+ commands\)$/);
     expect(out.exitCode).toBe(0);

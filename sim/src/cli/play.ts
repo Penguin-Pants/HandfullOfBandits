@@ -71,6 +71,8 @@ export interface PlayRecord {
   /** stateHash after start, then after each command. Null: not stored (a command inside a stored action); the next hash checks it. */
   readonly hashes: readonly (string | null)[];
   readonly ended: boolean;
+  /** Session options of a stored session (feedback replay record); `replayFile` applies them. */
+  readonly options?: Readonly<Record<string, string | number>>;
 }
 
 /** Play from start until the game ends or `maxSteps` commands. Throws on an illegal command. */
