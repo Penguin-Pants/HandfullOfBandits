@@ -11,8 +11,8 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | Phase | Status | Pull request | Notes |
 | --- | --- | --- | --- |
 | 1 | Merged | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Review done. Waiting for the go-ahead for Phase 2 |
-| 2 | Review done | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
-| 3 | Not started | – | UI: "Report to Claude" in the note bar |
+| 2 | Merged | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
+| 3 | Review done | [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150) | UI: "Report to Claude" in the note bar. Review done. Waiting for the go-ahead for Phase 4 |
 | 4 | Not started | – | Reproduction check and docs |
 
 ## Requirements (source of truth)
@@ -114,6 +114,17 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | The buffer keeps the query string of a request path | Drop | The server keeps only the path (`feedback-prompt.ts` `clientErrors`), and the buffer stays in memory |
 | Clear the buffer after a sent report | Drop | Not in the plan; a second report on the same problem keeps its errors |
 
+## Phase 3 review (2026-11-23)
+
+| Finding | Class | Outcome |
+| --- | --- | --- |
+| F3: opening the note bar again hid the prompt dialog | Fix | ✅ The open bar renders the dialog too. Test in `sim/src/ui/notes/notes.test.tsx` |
+| F2: a denied clipboard write failed with no message | Fix | ✅ Status line: "Copied." or "Copy failed. Select the text and copy it." Test added |
+| Cmd+Enter on macOS does not report | Drop | The plan names Ctrl+Enter, and Ctrl+Enter works on macOS too |
+| Esc does not close the dialog | Drop | The Close button closes it; the note bar keeps Esc |
+| Codex: after a failed report, Enter saved a normal note with no prompt | Fix | ✅ Enter retries a failed report as a report. Test in `notes.test.tsx` |
+| "Copied." stays after a second report while the dialog is open | Drop | It names the last Copy click; low impact |
+
 ## Resume here
 
-Phase 1 is merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147)). Phase 2 is complete on branch `feedback-prompt-phase-2` ([#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148)): `sim/src/ui/api.ts` keeps the last 10 client errors in memory (failed requests, network failures, uncaught errors and unhandled rejections; `captureWindowErrors` runs in `sim/src/ui/main.tsx`), and `api.feedback()` sends them as `diagnostics` to `POST /api/sessions/:id/feedback`. The two-pass review is done and `make test` is green (1913 tests, Node 24). Next: wait for the user's go-ahead, then start Phase 3 (the "Report to Claude" button in `sim/src/ui/notes/NoteBar.tsx`) on a new branch `feedback-prompt-phase-3`. Decision D3: Phase 4 adds the replay record (AC6).
+Phases 1 and 2 are merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147), [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148)). Phase 3 is complete on branch `feedback-prompt-phase-3` ([#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150)): `sim/src/ui/notes/NoteBar.tsx` has a "Report to Claude" button (Ctrl+Enter) that calls `onReport`, and a prompt dialog with Copy, Download .md and Close; `sim/src/ui/play/Play.tsx` wires it to `api.feedback()`. The two-pass review is done and `make test` is green (1919 tests, Node 24). Next: wait for the user's go-ahead, then start Phase 4 on a new branch `feedback-prompt-phase-4`: the replay record in the prompt (AC6.1 to AC6.3, D2, D3), `replayFile` with session options, the reproduction integration test and the tester docs section.

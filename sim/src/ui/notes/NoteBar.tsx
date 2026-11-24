@@ -14,20 +14,26 @@ export interface NoteBarProps {
   readonly anchor: () => ReturnType<typeof defaultAnchor>;
   readonly focus: () => NoteInput["focus"];
   readonly onSave: (note: NoteInput) => Promise<string>;
+  /** Save the note as a feedback note and get its Claude Code prompt (feedback prompt Phase 3). */
+  readonly onReport?: (note: NoteInput) => Promise<{ readonly annotationId: string; readonly prompt: string }>;
   /** `open()` does what N does: open at the current anchor, or focus the open note. */
   readonly handle?: Ref<{ readonly open: () => void }>;
 }
 
-export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarProps) {
+export function NoteBar({ categories, anchor, focus, onSave, onReport, handle }: NoteBarProps) {
   const input = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState<{ anchor: ReturnType<typeof defaultAnchor>; focus: NoteInput["focus"]; executedId: string | null } | null>(null);
   const [text, setText] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
   const revision = useRef(0);
   const pending = useRef(false);
+  /** The last submission was a report that failed: Enter retries it as a report. */
+  const failedReport = useRef(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState<{ readonly annotationId: string; readonly prompt: string } | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
 
   /** Open at the current anchor; keep its action ID so Tab can return to it. */
   const start = (): void => {
@@ -64,12 +70,14 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
 
   const close = (): void => {
     revision.current++;
+    failedReport.current = false;
     setError(null);
     setOpen(null);
     setText("");
     setPicked([]);
   };
-  const save = async (): Promise<void> => {
+  /** Save the note, or report it to Claude when `report` (Ctrl+Enter) and the prompt dialog opens. */
+  const save = async (report = false): Promise<void> => {
     if (open === null || text.trim() === "" || pending.current) return;
     pending.current = true;
     setSaving(true);
@@ -78,8 +86,10 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
     const ids = categories.map((c) => c.category_id);
     const categoryIds = [...new Set([...picked, ...hashCategories(text, ids)])];
     const { proposed, ...where } = open.anchor;
+    const note = { ...where, ...(proposed === undefined ? {} : { proposed }), text, categoryIds, focus: open.focus };
     try {
-      await onSave({ ...where, ...(proposed === undefined ? {} : { proposed }), text, categoryIds, focus: open.focus });
+      if (report && onReport !== undefined) setPrompt(await onReport(note));
+      else await onSave(note);
       if (submitted === revision.current) {
         setSaved(open.anchor.actionId === null ? `Saved (${open.anchor.anchor})` : `Saved, linked to ${open.anchor.actionId}`);
         close();
@@ -88,6 +98,7 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
       }
       setTimeout(() => { setSaved(null); }, 2000);
     } catch (e) {
+      failedReport.current = report;
       setError(e instanceof Error ? e.message : String(e));
     } finally {
       pending.current = false;
@@ -97,7 +108,7 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
   const onKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      void save();
+      void save(e.ctrlKey || failedReport.current);
     } else if (e.key === "Escape") {
       close();
     } else if (e.key === "Tab" && open !== null) {
@@ -115,26 +126,47 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
     }
   };
 
+  const dialog = prompt === null ? null : (
+    <div className="overlay">
+      <div role="dialog" aria-label="Prompt for Claude Code" className="panel">
+        <textarea readOnly aria-label="Prompt" rows={16} style={{ width: "100%" }} value={prompt.prompt} />
+        <div className="row">
+          <button type="button" onClick={() => { navigator.clipboard.writeText(prompt.prompt).then(() => { setCopied("Copied."); }, () => { setCopied("Copy failed. Select the text and copy it."); }); }}>Copy</button>
+          <a href={`data:text/markdown;charset=utf-8,${encodeURIComponent(prompt.prompt)}`} download={`feedback-${prompt.annotationId}.md`}>Download .md</a>
+          <button type="button" onClick={() => { setPrompt(null); setCopied(null); }}>Close</button>
+        </div>
+        {copied !== null && <p role="status">{copied}</p>}
+      </div>
+    </div>
+  );
   if (open === null) {
-    if (saved === null && !saving && error === null) return null;
+    if (saved === null && !saving && error === null) return dialog;
     return (
+      <>
+      {dialog}
       <footer className="note-closed" aria-label="Note bar">
         {saved !== null && <strong role="status">{saved}</strong>}
         {saving && <p role="status">Saving note…</p>}
         {error !== null && <p role="alert">Note not saved: {error}</p>}
       </footer>
+      </>
     );
   }
   return (
+    <>
+    {dialog}
     <footer className="panel" aria-label="Note bar" aria-busy={saving}>
       {saving && <p role="status">Saving note…</p>}
       {saved !== null && <strong role="status">{saved}</strong>}
-      {error !== null && <p role="alert">Note not saved: {error}. Press Enter to retry.</p>}
+      {error !== null && <p role="alert">Note not saved: {error}. Press Enter to retry{failedReport.current ? " the report" : ""}.</p>}
       <div className="row">
         <span className="muted">{`Note on: ${open.anchor.anchor}${open.anchor.actionId === null ? "" : ` (${open.anchor.actionId})`}`}</span>
         {picked.map((c) => (
           <span key={c}>#{c}</span>
         ))}
+        {onReport !== undefined && (
+          <button type="button" disabled={saving} title="Ctrl+Enter" onClick={() => void save(true)}>Report to Claude</button>
+        )}
       </div>
       <textarea
         ref={input}
@@ -146,5 +178,6 @@ export function NoteBar({ categories, anchor, focus, onSave, handle }: NoteBarPr
         onKeyDown={onKeyDown}
       />
     </footer>
+    </>
   );
 }

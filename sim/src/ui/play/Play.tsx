@@ -434,6 +434,11 @@ export function Play({ api, sessionId, screens = [], onExit, onOpenState }: Play
           void load();
           return annotationId;
         }}
+        onReport={async (note) => {
+          const reported = await api.feedback(sessionId, note);
+          void load();
+          return reported;
+        }}
       />
       {showHistory && (
         <div className="overlay">

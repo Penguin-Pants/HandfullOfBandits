@@ -105,6 +105,97 @@ describe("NoteBar (T-UI-02)", () => {
   });
 });
 
+describe("Report to Claude (feedback prompt Phase 3)", () => {
+  const report = () => vi.fn(() => Promise.resolve({ annotationId: "N7", prompt: "# Feedback from play\n\n> Rally is wrong" }));
+
+  it("Ctrl+Enter sends the note with its frozen anchor and focus and shows the prompt (AC1.1)", async () => {
+    const onSave = vi.fn(() => Promise.resolve("N1"));
+    const onReport = report();
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "executed", actionId: "S-A3" })} focus={focus} onSave={onSave} onReport={onReport} />);
+    fireEvent.keyDown(window, { key: "n" });
+    const box = screen.getByLabelText("Note text");
+    fireEvent.change(box, { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(box, { key: "Enter", ctrlKey: true });
+    await waitFor(() => { expect(onReport).toHaveBeenCalledWith({ anchor: "executed", actionId: "S-A3", text: "Rally is wrong", categoryIds: [], focus: focus() }); });
+    expect(onSave).not.toHaveBeenCalled();
+    const dialog = await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    expect(dialog.querySelector("textarea")?.value).toBe("# Feedback from play\n\n> Rally is wrong");
+  });
+
+  it("the Report to Claude button saves the note once, closes the bar and says it is saved (AC1.2)", async () => {
+    const onSave = vi.fn(() => Promise.resolve("N1"));
+    const onReport = report();
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={onSave} onReport={onReport} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
+    const button = screen.queryByRole("button", { name: "Report to Claude" });
+    expect(button).not.toBeNull();
+    if (button !== null) fireEvent.click(button);
+    expect(await screen.findByText("Saved (state)")).toBeTruthy();
+    expect(onReport).toHaveBeenCalledTimes(1);
+    expect(onSave).not.toHaveBeenCalled();
+    expect(screen.queryByLabelText("Note text")).toBeNull();
+  });
+
+  it("the prompt dialog copies, downloads as .md and closes (D1)", async () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    const copy = screen.queryByRole("button", { name: "Copy" });
+    expect(copy).not.toBeNull();
+    if (copy !== null) fireEvent.click(copy);
+    expect(writeText).toHaveBeenCalledWith("# Feedback from play\n\n> Rally is wrong");
+    const link = screen.getByRole("link", { name: "Download .md" });
+    expect(link.getAttribute("download")).toBe("feedback-N7.md");
+    expect(decodeURIComponent((link.getAttribute("href") ?? "").replace("data:text/markdown;charset=utf-8,", ""))).toBe("# Feedback from play\n\n> Rally is wrong");
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("says whether Copy worked (review F2)", async () => {
+    const writeText = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error("denied"));
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    await waitFor(() => { expect(screen.queryByText("Copied.")).not.toBeNull(); });
+    fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    await waitFor(() => { expect(screen.queryByText("Copy failed. Select the text and copy it.")).not.toBeNull(); });
+  });
+
+  it("retries a failed report as a report when Enter is pressed (Codex review)", async () => {
+    const onSave = vi.fn(() => Promise.resolve("N1"));
+    const onReport = vi.fn().mockRejectedValueOnce(new Error("server down")).mockResolvedValueOnce({ annotationId: "N7", prompt: "# Feedback from play" });
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={onSave} onReport={onReport} />);
+    fireEvent.keyDown(window, { key: "n" });
+    const box = screen.getByLabelText("Note text");
+    fireEvent.change(box, { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(box, { key: "Enter", ctrlKey: true });
+    expect((await screen.findByRole("alert")).textContent).toContain("server down");
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter" });
+    await waitFor(() => { expect(onReport).toHaveBeenCalledTimes(2); });
+    expect(onSave).not.toHaveBeenCalled();
+  });
+
+  it("keeps the prompt dialog when the note bar opens again (review F3)", async () => {
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
+    fireEvent.keyDown(window, { key: "n" });
+    fireEvent.change(screen.getByLabelText("Note text"), { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter", ctrlKey: true });
+    await screen.findByRole("dialog", { name: "Prompt for Claude Code" });
+    fireEvent.keyDown(window, { key: "n" });
+    expect(screen.getByLabelText("Note text")).toBeTruthy();
+    expect(screen.queryByRole("dialog", { name: "Prompt for Claude Code" })).not.toBeNull();
+  });
+});
+
 describe("EndSession (T-UI-06)", () => {
   it("saves one debrief, or none on Skip", () => {
     const onEnd = vi.fn();
