@@ -13,7 +13,7 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | 1 | Merged | [#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147) | Prompt builder (server, pure). Review done. Waiting for the go-ahead for Phase 2 |
 | 2 | Merged | [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148) | Client diagnostics buffer. Review done. Waiting for the go-ahead for Phase 3 |
 | 3 | Merged | [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150) | UI: "Report to Claude" in the note bar. Review done |
-| 4 | In progress | [#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151) | Reproduction check and docs. Current task: two-pass review (F1: package hash warning) |
+| 4 | Review done | [#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151) | Replay record, `replayFile` with options and variant, tester docs. Review done. Waiting for merge |
 
 ## Requirements (source of truth)
 
@@ -125,6 +125,21 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 | Codex: after a failed report, Enter saved a normal note with no prompt | Fix | ✅ Enter retries a failed report as a report. Test in `notes.test.tsx` |
 | "Copied." stays after a second report while the dialog is open | Drop | It names the last Copy click; low impact |
 
+## Phase 4 review (2026-11-24)
+
+| Finding | Class | Outcome |
+| --- | --- | --- |
+| Codex: `replay()` compared a null hash (a command inside a stored action) with the real hash | Fix | ✅ A null hash joins the next step (`sim/src/cli/play.ts`). Test in `sim/test/feedback.test.ts` |
+| Codex: `replayFile` ignored the record's session options | Fix | ✅ `withSessionOptions` (`sim/src/cli/replay.ts`). Integration test with `threshold.state` |
+| Codex: a session with a setup variant replayed as "differs at step 0" | Fix | ✅ The record holds `variant`; `replayFile` uses `loadVariant`. Integration test with `dd25-variant-a` |
+| Codex: the endpoint dropped the separate record | Fix | ✅ Endpoint returns `replay: { file, record }`; dialog has "Download replay .json". Tests in `feedback.test.ts` and `notes.test.tsx` |
+| Windows CI: the options test edited `manifest.yaml` with `"options:\n"`, which a CRLF checkout does not match | Fix | ✅ Pattern `\r?\n`; the edit throws on no match |
+| F1: `package.hash` in the record had no reader, so a package mismatch gave no cause | Fix | ✅ `replayFile` prints a warning line. Test in `feedback.test.ts` |
+| Pass 2: `replayRecord` exported with no outside caller | Fix | ✅ Module-private |
+| `ReplayRecord` (export) copies the `PlayRecord` shape (cli) | Drop | The layer rule forbids export to import cli (`sim/eslint/boundaries.js:23`); the integration tests prove the shapes match |
+| An action with no commands would drop out of the record | Drop | Only setup has no commands (`sim/src/server/service.ts:376`) |
+| The prompt's `sim replay` command | Drop | Checked by hand: `identical (158 commands)` on `test/golden/full-campaign-seed-7.json` |
+
 ## Resume here
 
-Phases 1 and 2 are merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147), [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148)). Phase 3 is complete on branch `feedback-prompt-phase-3` ([#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150)): `sim/src/ui/notes/NoteBar.tsx` has a "Report to Claude" button (Ctrl+Enter) that calls `onReport`, and a prompt dialog with Copy, Download .md and Close; `sim/src/ui/play/Play.tsx` wires it to `api.feedback()`. The two-pass review is done and `make test` is green (1919 tests, Node 24). Next: wait for the user's go-ahead, then start Phase 4 on a new branch `feedback-prompt-phase-4`: the replay record in the prompt (AC6.1 to AC6.3, D2, D3), `replayFile` with session options, the reproduction integration test and the tester docs section.
+All four phases are complete. Phases 1 to 3 are merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147), [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148), [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150)). Phase 4 is on branch `feedback-prompt-phase-4` ([#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151)): the prompt has a "Replay record" section with the `sim replay` command and the expected state hash (AC6.1, AC6.2); above 60 KB the record moves to `replay-<session>.json`, which the endpoint returns and the dialog downloads (AC6.3); `replayFile` applies the record's options and variant and warns on another package hash; `docs/tester/HOW-TO-PLAY.md` section 6 is "Report a problem". The two-pass review is done, all Codex threads are resolved and `make test` is green (1930 tests, Node 24). Next: the user reviews and merges #151.
