@@ -90,8 +90,8 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 ## Risks
 
-1. ⚠️ The prompt is useless if the commit in the prompt is not on GitHub. The prompt must say "Check out commit X" and warn when the working tree had local changes (`codeFingerprint` differs from the fingerprint of the commit). Confidence: medium. Needs a check of how `fingerprint.ts` reads the tree.
-2. Client errors can include file paths from the user's computer. Keep only the path part of API URLs and the error message.
+1. ⚠️ Partly handled. The prompt is useless if the commit in the prompt is not on GitHub. Done (Phase 1): the prompt says "Check out commit X" and warns on uncommitted changes, on an unknown commit and on a session that started on another code fingerprint (`sim/src/export/feedback-prompt.ts`). Open: nothing checks that the commit is on a remote, so an unpushed commit gets no warning (`sim/src/server/app.ts:219` reads only `rev-parse HEAD` and `status --porcelain`). The user chose to leave this open (2026-11-24).
+2. ✅ Handled (Phase 1). Client errors can include file paths from the user's computer. The prompt keeps only the path part of API URLs and the error message (`clientErrors` in `sim/src/export/feedback-prompt.ts`).
 
 ## Phase 1 review (2026-11-23)
 
@@ -142,4 +142,4 @@ While playing, the user writes one feedback note. The app turns it into one Mark
 
 ## Resume here
 
-All four phases are complete and merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147), [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148), [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150), [#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151)). Phase 4: the prompt has a "Replay record" section with the `sim replay` command and the expected state hash (AC6.1, AC6.2); above 60 KB the record moves to `replay-<session>.json`, which the endpoint returns and the dialog downloads (AC6.3); `replayFile` applies the record's options and variant and warns on another package hash; `docs/tester/HOW-TO-PLAY.md` section 6 is "Report a problem". The two-pass review is done, all Codex threads are resolved and `make test` is green (1930 tests, Node 24). No work is open in this plan.
+All four phases are complete and merged ([#147](https://github.com/Penguin-Pants/HandfullOfBandits/pull/147), [#148](https://github.com/Penguin-Pants/HandfullOfBandits/pull/148), [#150](https://github.com/Penguin-Pants/HandfullOfBandits/pull/150), [#151](https://github.com/Penguin-Pants/HandfullOfBandits/pull/151)). Phase 4: the prompt has a "Replay record" section with the `sim replay` command and the expected state hash (AC6.1, AC6.2); above 60 KB the record moves to `replay-<session>.json`, which the endpoint returns and the dialog downloads (AC6.3); `replayFile` applies the record's options and variant and warns on another package hash; `docs/tester/HOW-TO-PLAY.md` section 6 is "Report a problem". The two-pass review is done, all Codex threads are resolved and `make test` is green (1930 tests, Node 24). No work is open in this plan. Risk 1 has one open part (an unpushed commit gets no warning); the user chose to leave it open.
