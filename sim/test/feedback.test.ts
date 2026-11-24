@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
-import { scriptedPolicy } from "../src/cli/play.ts";
+import { playGame, replay, scriptedPolicy } from "../src/cli/play.ts";
 import { buildApp } from "../src/server/app.ts";
 import { SessionService } from "../src/server/service.ts";
 import { openStore } from "../src/store/migrate.ts";
@@ -62,5 +62,16 @@ describe("POST /api/sessions/:id/feedback", () => {
     const { prompt } = res.json<{ prompt: string }>();
     expect(prompt).toContain(`## Proposed command\n\n\`${JSON.stringify(proposed)}\``);
     expect(prompt).toMatch(/Validation: `\{"violations":\[.*\],"warnings":/);
+  });
+});
+
+describe("replay() with hashes not stored inside an action (Phase 4)", () => {
+  const game = playGame(engine, short.ruleset, SHORT, 7, scriptedPolicy, 3);
+  // Commands 1 and 2 as one stored action: the hash after command 1 is not stored.
+  const grouped = { ...game, hashes: [game.hashes[0] ?? "", null, ...game.hashes.slice(2)] };
+
+  it.fails("checks a null hash at the next stored hash", () => {
+    expect(replay(engine, short.ruleset, grouped)).toBeNull();
+    expect(replay(engine, short.ruleset, { ...grouped, hashes: [...grouped.hashes.slice(0, 2), "wrong", ...grouped.hashes.slice(3)] })).toEqual({ step: 2, expected: "wrong", actual: game.hashes[2] });
   });
 });

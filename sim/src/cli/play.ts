@@ -68,8 +68,8 @@ export interface PlayRecord {
   readonly scenario: string;
   readonly seed: number;
   readonly commands: readonly AnyCommand[];
-  /** stateHash after start, then after each command. */
-  readonly hashes: readonly string[];
+  /** stateHash after start, then after each command. Null: not stored (a command inside a stored action); the next hash checks it. */
+  readonly hashes: readonly (string | null)[];
   readonly ended: boolean;
 }
 
