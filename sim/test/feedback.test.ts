@@ -1,8 +1,9 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import { playGame, replay, scriptedPolicy } from "../src/cli/play.ts";
+import { replayFile } from "../src/cli/replay.ts";
 import { buildApp } from "../src/server/app.ts";
 import { SessionService } from "../src/server/service.ts";
 import { openStore } from "../src/store/migrate.ts";
@@ -73,5 +74,48 @@ describe("replay() with hashes not stored inside an action (Phase 4)", () => {
   it("checks a null hash at the next stored hash", () => {
     expect(replay(engine, short.ruleset, grouped)).toBeNull();
     expect(replay(engine, short.ruleset, { ...grouped, hashes: [...grouped.hashes.slice(0, 2), "wrong", ...grouped.hashes.slice(3)] })).toEqual({ step: 2, expected: "wrong", actual: game.hashes[2] });
+  });
+});
+
+describe("replay record of a feedback prompt (AC6.1)", () => {
+  // A copy of the short package that declares and lists `threshold.state` (mock data); thresholds enter the state at Propaganda (pipeline.ts).
+  const listed = shortPackage("hob-feedback-options-");
+  const scenarioFile = join(listed.dir, "scenarios", `${SHORT}.yaml`);
+  writeFileSync(scenarioFile, readFileSync(scenarioFile, "utf8").replace("options: {syriaMarchRestricted: allow}", "options: {syriaMarchRestricted: allow, threshold.state: 49}"));
+  const manifestFile = join(listed.dir, "manifest.yaml");
+  writeFileSync(manifestFile, readFileSync(manifestFile, "utf8").replace("options:\n", "options:\n  threshold.state:\n    values: [40, 49]\n    description: test only\n"));
+  afterAll(() => { rmSync(listed.root, { recursive: true, force: true }); });
+
+  /** Play scripted commands (to the end, or `max`), report, write the record to a file and replay it with `replayFile`. */
+  async function reportAndReplay(packageDir: string, max: number, options?: Record<string, string>): Promise<{ exitCode: number; lines: string[]; noteHash: string | null | undefined; finalHash: unknown }> {
+    const created = service.createSession({ dir: packageDir, scenarioId: SHORT, seed: 11, name: "replay", ...(options === undefined ? {} : { options }) });
+    let at = created.head;
+    let atId = at.actionId;
+    for (let i = 0; i < max && at.state.ended === null; i++) {
+      const res = service.submit(created.sessionId, scriptedPolicy(engine, short.ruleset, at.state), atId);
+      at = res.head;
+      atId = res.actionId;
+    }
+    const res = await app.inject({ method: "POST", url: `/api/sessions/${created.sessionId}/feedback`, payload: { text: "Replay this." } });
+    const { annotationId, prompt } = res.json<{ annotationId: string; prompt: string }>();
+    const record = /## Replay record\n[\s\S]*?```json\n([\s\S]*?)\n```/.exec(prompt)?.[1] ?? "{}";
+    const file = join(dir, `replay-${created.sessionId}.json`);
+    writeFileSync(file, record);
+    const noteHash = service.annotations(created.sessionId).find((n) => n.annotation_id === annotationId)?.state_hash;
+    return { ...replayFile(file, packageDir), noteHash, finalHash: (JSON.parse(record) as { hashes?: unknown[] }).hashes?.at(-1) };
+  }
+
+  it("replays to the note's state hash", async () => {
+    const out = await reportAndReplay(fixture.dir, 3);
+    expect(out.lines).toEqual(["identical (3 commands)"]);
+    expect(out.exitCode).toBe(0);
+    expect(out.finalHash).toBe(out.noteHash);
+  });
+
+  it.fails("replays a session that started with options (replayFile applies them)", async () => {
+    const out = await reportAndReplay(listed.dir, 500, { "threshold.state": "40" });
+    expect(out.lines[0]).toMatch(/^identical \(\d+ commands\)$/);
+    expect(out.exitCode).toBe(0);
+    expect(out.finalHash).toBe(out.noteHash);
   });
 });
