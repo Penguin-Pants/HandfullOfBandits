@@ -4,10 +4,13 @@ import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import { playGame, replay, scriptedPolicy } from "../src/cli/play.ts";
 import { replayFile } from "../src/cli/replay.ts";
+import type { Ruleset } from "../src/engine/core/types.ts";
+import { loadVariant } from "../src/package/variant.ts";
 import { buildApp } from "../src/server/app.ts";
 import { SessionService } from "../src/server/service.ts";
 import { openStore } from "../src/store/migrate.ts";
 import { engine } from "./board.ts";
+import { kurdishDir } from "./kurdish-package.ts";
 import { SHORT, short, shortPackage } from "./short-game.ts";
 
 // Feedback prompt Phase 1: POST /api/sessions/:id/feedback saves a feedback note and returns the prompt.
@@ -90,13 +93,15 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
   edit("manifest.yaml", /^options:\r?\n/m, "options:\n  threshold.state:\n    values: [40, 49]\n    description: test only\n");
   afterAll(() => { rmSync(listed.root, { recursive: true, force: true }); });
 
-  /** Play scripted commands (to the end, or `max`) and report with `text`. */
-  async function playAndReport(packageDir: string, max: number, options?: Record<string, string>, text = "Replay this."): Promise<{ sessionId: string; prompt: string; replay: { file: string; record: unknown } | undefined; noteHash: string | null | undefined }> {
-    const created = service.createSession({ dir: packageDir, scenarioId: SHORT, seed: 11, name: "replay", ...(options === undefined ? {} : { options }) });
+  interface Play { readonly dir: string; readonly max: number; readonly scenario?: string; readonly ruleset?: Ruleset; readonly options?: Record<string, string>; readonly variant?: string; readonly text?: string }
+
+  /** Play scripted commands (to the end, or `max`) and report with `text`. Defaults: the short fixture. */
+  async function playAndReport({ dir: packageDir, max, scenario = SHORT, ruleset = short.ruleset, options, variant, text = "Replay this." }: Play): Promise<{ sessionId: string; prompt: string; replay: { file: string; record: unknown } | undefined; noteHash: string | null | undefined }> {
+    const created = service.createSession({ dir: packageDir, scenarioId: scenario, seed: 11, name: "replay", ...(options === undefined ? {} : { options }), ...(variant === undefined ? {} : { variant }) });
     let at = created.head;
     let atId = at.actionId;
     for (let i = 0; i < max && at.state.ended === null; i++) {
-      const res = service.submit(created.sessionId, scriptedPolicy(engine, short.ruleset, at.state), atId);
+      const res = service.submit(created.sessionId, scriptedPolicy(engine, ruleset, at.state), atId);
       at = res.head;
       atId = res.actionId;
     }
@@ -116,7 +121,7 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
   const inPrompt = (prompt: string): string | undefined => /## Replay record\n[\s\S]*?```json\n([\s\S]*?)\n```/.exec(prompt)?.[1];
 
   it("replays to the note's state hash", async () => {
-    const report = await playAndReport(fixture.dir, 3);
+    const report = await playAndReport({ dir: fixture.dir, max: 3 });
     const out = replayRecordFile(report.sessionId, inPrompt(report.prompt) ?? "{}", fixture.dir);
     expect(out.lines).toEqual(["identical (3 commands)"]);
     expect(out.exitCode).toBe(0);
@@ -124,7 +129,7 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
   });
 
   it("replays a session that started with options (replayFile applies them)", async () => {
-    const report = await playAndReport(listed.dir, 500, { "threshold.state": "40" });
+    const report = await playAndReport({ dir: listed.dir, max: 500, options: { "threshold.state": "40" } });
     const out = replayRecordFile(report.sessionId, inPrompt(report.prompt) ?? "{}", listed.dir);
     expect(out.lines[0]).toMatch(/^identical \(\d+ commands\)$/);
     expect(out.exitCode).toBe(0);
@@ -132,10 +137,19 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
   });
 
   it("returns a record above the 60 KB limit separately, and it replays (AC6.3)", async () => {
-    const report = await playAndReport(fixture.dir, 3, undefined, "x".repeat(61 * 1024));
+    const report = await playAndReport({ dir: fixture.dir, max: 3, text: "x".repeat(61 * 1024) });
     expect(inPrompt(report.prompt)).toBeUndefined();
     expect(report.replay?.file).toBe(`replay-${report.sessionId}.json`);
     const out = replayRecordFile(report.sessionId, JSON.stringify(report.replay?.record), fixture.dir);
+    expect(out.lines).toEqual(["identical (3 commands)"]);
+    expect(out.finalHash).toBe(report.noteHash);
+  });
+
+  it.fails("replays a session that started with a setup variant (Codex review)", async () => {
+    const variant = loadVariant(kurdishDir, "dd25-variant-a");
+    if (!variant.ok) throw new Error("dd25-variant-a must load");
+    const report = await playAndReport({ dir: kurdishDir, max: 3, scenario: "full-campaign", ruleset: variant.ruleset, variant: "dd25-variant-a" });
+    const out = replayRecordFile(report.sessionId, inPrompt(report.prompt) ?? "{}", kurdishDir);
     expect(out.lines).toEqual(["identical (3 commands)"]);
     expect(out.finalHash).toBe(report.noteHash);
   });
