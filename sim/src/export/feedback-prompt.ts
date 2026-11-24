@@ -104,6 +104,8 @@ export interface ReplayRecord {
   readonly seed: number;
   readonly options: Readonly<Record<string, unknown>>;
   readonly package: { readonly id: string; readonly version: string; readonly hash: string };
+  /** Setup variant of the session (`variants/<name>.yaml` in the package), when it started with one. */
+  readonly variant?: string;
   readonly commands: readonly unknown[];
   readonly hashes: readonly (string | null)[];
   readonly ended: boolean;
@@ -116,11 +118,14 @@ export interface ReplayRecord {
 export function replayRecord(data: CoinSimExport, session: Row, state: Row): ReplayRecord {
   const head = session["head_action_id"];
   const [setup, ...actions] = typeof head === "string" ? pathsOf(data)(head) : [];
-  const manifest = obj(data.packages.find((p) => p["package_hash"] === session["package_hash"])?.["manifest"]);
+  const pkg = obj(data.packages.find((p) => p["package_hash"] === session["package_hash"]));
+  const manifest = obj(pkg["manifest"]);
+  const variant = list(pkg["variants"]).map(obj).find((v) => v["scenario"] === session["scenario_id"])?.["name"];
   return {
     scenario: String(session["scenario_id"]), seed: Number(session["seed"]),
     options: obj(session["options"]),
     package: { id: String(manifest["packageId"]), version: String(manifest["version"]), hash: String(session["package_hash"]) },
+    ...(typeof variant === "string" ? { variant } : {}),
     commands: actions.flatMap((a) => list(a["commands"]).map((c) => obj(c)["payload"])),
     hashes: [String(setup?.["state_hash_after"]), ...actions.flatMap((a) => list(a["commands"]).map((_, i, all) => (i === all.length - 1 ? String(a["state_hash_after"]) : null)))],
     ended: obj(state["content"])["ended"] != null,

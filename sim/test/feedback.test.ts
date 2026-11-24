@@ -145,7 +145,7 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
     expect(out.finalHash).toBe(report.noteHash);
   });
 
-  it.fails("replays a session that started with a setup variant (Codex review)", async () => {
+  it("replays a session that started with a setup variant (Codex review)", async () => {
     const variant = loadVariant(kurdishDir, "dd25-variant-a");
     if (!variant.ok) throw new Error("dd25-variant-a must load");
     const report = await playAndReport({ dir: kurdishDir, max: 3, scenario: "full-campaign", ruleset: variant.ruleset, variant: "dd25-variant-a" });
