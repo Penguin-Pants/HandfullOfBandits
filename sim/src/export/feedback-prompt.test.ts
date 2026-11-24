@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { feedbackPrompt, type FeedbackInput } from "./feedback-prompt.ts";
+import { feedbackPrompt as report, type FeedbackInput } from "./feedback-prompt.ts";
 import type { CoinSimExport } from "./json.ts";
 
 // Mock data (tests only): one session, two actions, one note on the second action.
@@ -33,16 +33,18 @@ const data = {
   }],
   annotations: [annotation],
 } as unknown as CoinSimExport;
+/** The prompt text of a report. */
+const text = (i: FeedbackInput): string => report(i).prompt;
 const input: FeedbackInput = { annotation, data, code: { commit: "c0ffee", dirty: false, fingerprint: "f1" }, diagnostics: { errors: [] } };
 
 describe("feedbackPrompt", () => {
   it("starts with the user's text, then the task line (AC2.1)", () => {
-    const lines = feedbackPrompt(input).split("\n").filter((l) => l !== "");
+    const lines = text(input).split("\n").filter((l) => l !== "");
     expect(lines.slice(0, 3)).toEqual(["# Feedback from play", "> PKK Rally put a Guerrilla in a Controlled space.", "Task: Find the root cause, write a failing test, fix it."]);
   });
 
   it("names the repository, commit, code fingerprint and rule files (AC2.2)", () => {
-    const prompt = feedbackPrompt(input);
+    const prompt = text(input);
     expect(prompt).toContain("Repository: https://github.com/Penguin-Pants/HandfullOfBandits");
     expect(prompt).toContain("Check out commit `c0ffee`.");
     expect(prompt).toContain("Code fingerprint: `f1`.");
@@ -51,14 +53,14 @@ describe("feedbackPrompt", () => {
   });
 
   it("warns on local changes and on a session started on other engine code (Risk 1)", () => {
-    expect(feedbackPrompt({ ...input, code: { ...input.code, dirty: true } })).toContain("Warning: the app ran with uncommitted changes. Commit `c0ffee` may not reproduce the problem.");
-    const moved = feedbackPrompt({ ...input, code: { ...input.code, fingerprint: "f2" } });
+    expect(text({ ...input, code: { ...input.code, dirty: true } })).toContain("Warning: the app ran with uncommitted changes. Commit `c0ffee` may not reproduce the problem.");
+    const moved = text({ ...input, code: { ...input.code, fingerprint: "f2" } });
     expect(moved).toContain("Warning: the session started on code fingerprint `f1`. The app now runs `f2`.");
     expect(moved).not.toContain("uncommitted");
   });
 
   it("shows scenario, seed, turn, card, eligibility, tracks, scores, thresholds and Harm (AC3.1)", () => {
-    const prompt = feedbackPrompt(input);
+    const prompt = text(input);
     for (const line of [
       "Session: S1. Scenario: full-campaign. Seed: 7.",
       "Campaign C2, Propaganda round 2, card 3. Phase: card. Active faction: pkk.",
@@ -72,24 +74,24 @@ describe("feedbackPrompt", () => {
   });
 
   it("shows the selected space with level, Control, pieces and markers (AC3.2)", () => {
-    expect(feedbackPrompt(input)).toContain("Selected space: hakkari. Level: -1. Control: state.\nPieces: guerrilla underground=2, police active=1.\nMarkers: terror on=1.");
+    expect(text(input)).toContain("Selected space: hakkari. Level: -1. Control: state.\nPieces: guerrilla underground=2, police active=1.\nMarkers: terror on=1.");
     const none = { ...annotation, context: { ...context, selected_space: null } };
-    expect(feedbackPrompt({ ...input, annotation: none })).toContain("Selected space: none.");
+    expect(text({ ...input, annotation: none })).toContain("Selected space: none.");
   });
 
   it("shows who plays each side (AC4.1)", () => {
-    expect(feedbackPrompt(input)).toContain("## Seats\n\n| Faction | Player |\n| --- | --- |\n| state | human |\n| pkk | pkk-heuristic@1 |\n");
+    expect(text(input)).toContain("## Seats\n\n| Faction | Player |\n| --- | --- |\n| state | human |\n| pkk | pkk-heuristic@1 |\n");
   });
 
   it("holds the bot decision record of a note on a bot action, and none on a human action (AC4.2)", () => {
-    expect(feedbackPrompt(input)).toContain(`## Bot decision (action A2)\n\n\`\`\`json\n${JSON.stringify([{ player: "pkk-heuristic@1", chosen: "rally", score: 3 }], null, 2)}\n\`\`\`\n`);
-    expect(feedbackPrompt({ ...input, annotation: { ...annotation, action_id: "A1" } })).not.toContain("## Bot decision");
+    expect(text(input)).toContain(`## Bot decision (action A2)\n\n\`\`\`json\n${JSON.stringify([{ player: "pkk-heuristic@1", chosen: "rally", score: 3 }], null, 2)}\n\`\`\`\n`);
+    expect(text({ ...input, annotation: { ...annotation, action_id: "A1" } })).not.toContain("## Bot decision");
   });
 
   it("holds the last N log entries with rule refs and the last N commands with validation (AC5.1)", () => {
-    const all = feedbackPrompt(input);
+    const all = text(input);
     expect(all).toContain("## Recent log (last 2 of 2 entries)\n\n- A1 Setup, rule 2.1: `{}`\n- A2 PiecePlaced, rule 3.3.1: `{\"space\":\"hakkari\"}`\n");
-    const last = feedbackPrompt({ ...input, limits: { log: 1, commands: 1 } });
+    const last = text({ ...input, limits: { log: 1, commands: 1 } });
     expect(last).toContain("## Recent log (last 1 of 2 entries)\n\n- A2 PiecePlaced");
     expect(last).not.toContain("A1 Setup");
     expect(last).toContain("## Recent commands (last 1 of 2)\n\n- A2 `{\"type\":\"Answer\",\"choice\":\"x\"}` Validation: `{\"ok\":true,\"violations\":[],\"warnings\":[{\"code\":\"W1\",\"message\":\"low\"}]}`\n");
@@ -97,12 +99,12 @@ describe("feedbackPrompt", () => {
   });
 
   it("holds the last 10 client errors with only the path of API URLs (AC5.2, Risk 2)", () => {
-    expect(feedbackPrompt(input)).toContain("## Client errors\n\nNone.\n");
+    expect(text(input)).toContain("## Client errors\n\nNone.\n");
     const errors = [
       ...Array.from({ length: 11 }, (_, i) => ({ kind: "error" as const, message: `boom ${String(i)}` })),
       { kind: "request" as const, method: "POST", path: "http://127.0.0.1:5173/api/sessions/S1/bot-step?x=1", status: 409, message: "The session moved on." },
     ];
-    const prompt = feedbackPrompt({ ...input, diagnostics: { errors } });
+    const prompt = text({ ...input, diagnostics: { errors } });
     expect(prompt).toContain("## Client errors (last 10 of 12)\n\n- error: boom 2\n");
     expect(prompt).toContain("- request POST /api/sessions/S1/bot-step: 409 The session moved on.\n");
     expect(prompt).not.toContain("boom 1\n");
@@ -110,24 +112,24 @@ describe("feedbackPrompt", () => {
   });
 
   it("reads the selected space and seats at the head state of the game state section, not the noted action's state (review F1)", () => {
-    const past = feedbackPrompt({ ...input, annotation: { ...annotation, action_id: "A1", state_hash: "h1" } });
+    const past = text({ ...input, annotation: { ...annotation, action_id: "A1", state_hash: "h1" } });
     expect(past).toContain("Selected space: hakkari. Level: -1. Control: state.");
     expect(past).toContain("| pkk | pkk-heuristic@1 |");
   });
 
   it("shows no rows for a limit of 0 (review F4)", () => {
-    const prompt = feedbackPrompt({ ...input, diagnostics: { errors: [{ kind: "error", message: "boom" }] }, limits: { log: 0, commands: 0, errors: 0 } });
+    const prompt = text({ ...input, diagnostics: { errors: [{ kind: "error", message: "boom" }] }, limits: { log: 0, commands: 0, errors: 0 } });
     expect(prompt).toContain("## Recent log (last 0 of 2 entries)\n\n\n");
     expect(prompt).toContain("## Recent commands (last 0 of 2)\n\n\n");
     expect(prompt).toContain("## Client errors (last 0 of 1)\n\n\n");
   });
 
   it("warns when git could not read the commit (review F6)", () => {
-    expect(feedbackPrompt({ ...input, code: { ...input.code, commit: "unknown" } })).toContain("Warning: the app could not read its git commit. Ask the user which commit they ran.");
+    expect(text({ ...input, code: { ...input.code, commit: "unknown" } })).toContain("Warning: the app could not read its git commit. Ask the user which commit they ran.");
   });
 
   it("holds a replay record of the path to the head: one hash per stored action, null inside an action (AC6.1)", () => {
-    const block = /## Replay record\n[\s\S]*?```json\n([\s\S]*?)\n```/.exec(feedbackPrompt(input))?.[1] ?? "{}";
+    const block = /## Replay record\n[\s\S]*?```json\n([\s\S]*?)\n```/.exec(text(input))?.[1] ?? "{}";
     expect(JSON.parse(block)).toEqual({
       scenario: "full-campaign", seed: 7, options: { "threshold.state": 28 }, package: { id: "kurdish-coin", version: "0.1.0", hash: "p1" },
       commands: [{ type: "ChooseOperation", faction: "pkk", box: "op", plan: { op: "rally" } }, { type: "Answer", choice: "x" }],
@@ -136,7 +138,7 @@ describe("feedbackPrompt", () => {
   });
 
   it("states the replay command and the expected state hash (AC6.2)", () => {
-    const prompt = feedbackPrompt(input);
+    const prompt = text(input);
     expect(prompt).toContain("Save the record as `sim/replay-S1.json`. Then run `cd sim && npm run --silent sim -- replay replay-S1.json --package ../game-packages/kurdish-coin/0.1.0`.");
     expect(prompt).toContain("Expected result: `identical (2 commands)`. Expected state hash: `h2`.");
   });

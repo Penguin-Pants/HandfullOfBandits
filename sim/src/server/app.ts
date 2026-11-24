@@ -214,7 +214,7 @@ export function buildApp(service: SessionService, uiDir: string | null = null): 
     });
     const data = sessionExport(request.params.id, true);
     const dirty = git(["status", "--porcelain", "--", "sim/src", "game-packages"]);
-    const prompt = feedbackPrompt({
+    const { prompt } = feedbackPrompt({
       annotation: data.annotations.find((n) => n["annotation_id"] === id) ?? {}, data, diagnostics: { errors: clientErrors(b.diagnostics) },
       code: { commit: git(["rev-parse", "HEAD"]), dirty: dirty !== "" && dirty !== "unknown", fingerprint: codeFingerprint() },
     });

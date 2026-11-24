@@ -138,7 +138,13 @@ function replaySection(record: ReplayRecord, sessionId: unknown, expectedHash: u
   ];
 }
 
-export function feedbackPrompt(input: FeedbackInput): string {
+/** The prompt, and the replay record when it is too large for the prompt (AC6.3, D2). */
+export interface FeedbackReport {
+  readonly prompt: string;
+  readonly replay?: ReplayRecord;
+}
+
+export function feedbackPrompt(input: FeedbackInput): FeedbackReport {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
   const session = data.sessions.find((s) => s["session_id"] === annotation["session_id"]) ?? {};
@@ -170,5 +176,5 @@ export function feedbackPrompt(input: FeedbackInput): string {
     ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),
     ...replaySection(replayRecord(data, session, state), session["session_id"], ctx["state_hash"]),
   ];
-  return `${lines.join("\n")}\n`;
+  return { prompt: `${lines.join("\n")}\n` };
 }
