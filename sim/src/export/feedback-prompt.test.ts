@@ -142,4 +142,16 @@ describe("feedbackPrompt", () => {
     expect(prompt).toContain("Save the record as `sim/replay-S1.json`. Then run `cd sim && npm run --silent sim -- replay replay-S1.json --package ../game-packages/kurdish-coin/0.1.0`.");
     expect(prompt).toContain("Expected result: `identical (2 commands)`. Expected state hash: `h2`.");
   });
+
+  it.fails("moves a replay record above the 60 KB limit to a separate file and says so (AC6.3, D2)", () => {
+    expect(report(input).replay).toBeUndefined();
+    const big = { ...data, sessions: data.sessions.map((x) => ({ ...x, options: { note: "x".repeat(70_000) } })) } as CoinSimExport;
+    const out = report({ ...input, data: big });
+    expect(out.replay?.options).toEqual({ note: "x".repeat(70_000) });
+    expect(out.replay?.hashes).toEqual(["h1", null, "h2"]);
+    expect(out.prompt).not.toContain("```json\n{\"scenario\"");
+    expect(out.prompt).toContain("The prompt with the record is above 60 KB, so the record is in a separate file: download `replay-S1.json`.");
+    expect(out.prompt).toContain("Expected state hash: `h2`.");
+    expect(new TextEncoder().encode(out.prompt).length).toBeLessThan(60 * 1024);
+  });
 });
