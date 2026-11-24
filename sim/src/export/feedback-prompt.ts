@@ -115,7 +115,7 @@ export interface ReplayRecord {
  * PlayRecord of the path from setup to the session head (AC6.1). The store keeps one hash per action
  * (`storedSteps`), so the hash after a command inside an action is null.
  */
-export function replayRecord(data: CoinSimExport, session: Row, state: Row): ReplayRecord {
+function replayRecord(data: CoinSimExport, session: Row, state: Row): ReplayRecord {
   const head = session["head_action_id"];
   const [setup, ...actions] = typeof head === "string" ? pathsOf(data)(head) : [];
   const pkg = obj(data.packages.find((p) => p["package_hash"] === session["package_hash"]));
