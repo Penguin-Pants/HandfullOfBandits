@@ -127,7 +127,7 @@ describe("replay record of a feedback prompt (AC6.1)", () => {
     expect(out.finalHash).toBe(report.noteHash);
   });
 
-  it.fails("returns a record above the 60 KB limit separately, and it replays (AC6.3)", async () => {
+  it("returns a record above the 60 KB limit separately, and it replays (AC6.3)", async () => {
     const report = await playAndReport(fixture.dir, 3, undefined, "x".repeat(61 * 1024));
     expect(inPrompt(report.prompt)).toBeUndefined();
     expect(report.replay).toBeTypeOf("object");
