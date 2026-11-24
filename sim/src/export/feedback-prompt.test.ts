@@ -134,4 +134,10 @@ describe("feedbackPrompt", () => {
       hashes: ["h1", null, "h2"], ended: false,
     });
   });
+
+  it.fails("states the replay command and the expected state hash (AC6.2)", () => {
+    const prompt = feedbackPrompt(input);
+    expect(prompt).toContain("Save the record as `sim/replay-S1.json`. Then run `cd sim && npm run --silent sim -- replay replay-S1.json --package ../game-packages/kurdish-coin/0.1.0`.");
+    expect(prompt).toContain("Expected result: `identical (2 commands)`. Expected state hash: `h2`.");
+  });
 });
