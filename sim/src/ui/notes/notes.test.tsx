@@ -170,6 +170,20 @@ describe("Report to Claude (feedback prompt Phase 3)", () => {
     await waitFor(() => { expect(screen.queryByText("Copy failed. Select the text and copy it.")).not.toBeNull(); });
   });
 
+  it.fails("retries a failed report as a report when Enter is pressed (Codex review)", async () => {
+    const onSave = vi.fn(() => Promise.resolve("N1"));
+    const onReport = vi.fn().mockRejectedValueOnce(new Error("server down")).mockResolvedValueOnce({ annotationId: "N7", prompt: "# Feedback from play" });
+    render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={onSave} onReport={onReport} />);
+    fireEvent.keyDown(window, { key: "n" });
+    const box = screen.getByLabelText("Note text");
+    fireEvent.change(box, { target: { value: "Rally is wrong" } });
+    fireEvent.keyDown(box, { key: "Enter", ctrlKey: true });
+    expect((await screen.findByRole("alert")).textContent).toContain("server down");
+    fireEvent.keyDown(screen.getByLabelText("Note text"), { key: "Enter" });
+    await waitFor(() => { expect(onReport).toHaveBeenCalledTimes(2); });
+    expect(onSave).not.toHaveBeenCalled();
+  });
+
   it("keeps the prompt dialog when the note bar opens again (review F3)", async () => {
     render(<NoteBar categories={categories} anchor={() => ({ anchor: "state", actionId: null })} focus={focus} onSave={vi.fn(() => Promise.resolve("N1"))} onReport={report()} />);
     fireEvent.keyDown(window, { key: "n" });
