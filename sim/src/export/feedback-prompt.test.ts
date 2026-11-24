@@ -12,8 +12,8 @@ const context = {
 const annotation = { annotation_id: "N1", session_id: "S1", action_id: "A2", anchor: "executed", state_hash: "h2", text: "PKK Rally put a Guerrilla in a Controlled space.", category_ids: ["feedback"], context };
 const data = {
   exportMeta: { schema: "coin-sim-export/1", appVersion: "0.1.0", exportedAt: "2026-11-23T00:00:00Z", filter: { sessionIds: ["S1"], withStates: true } },
-  packages: [], categories: [], metrics: [], index: { annotations: [] },
-  sessions: [{ session_id: "S1", scenario_id: "full-campaign", seed: 7, package_hash: "p1", code_fingerprint: "f1", app_version: "0.1.0", seats: { pkk: "pkk-heuristic@1" }, head_action_id: "A2" }],
+  packages: [{ package_hash: "p1", manifest: { packageId: "kurdish-coin", version: "0.1.0" } }], categories: [], metrics: [], index: { annotations: [] },
+  sessions: [{ session_id: "S1", scenario_id: "full-campaign", seed: 7, package_hash: "p1", code_fingerprint: "f1", app_version: "0.1.0", seats: { pkk: "pkk-heuristic@1" }, options: { "threshold.state": 28 }, head_action_id: "A2" }],
   branches: [{ branch_id: "B1", session_id: "S1", forked_from_action_id: null }],
   actions: [
     { action_id: "A1", session_id: "S1", branch_id: "B1", branch_seq: 0, state_hash_before: null, state_hash_after: "h1", kind: "setup", commands: [], entries: [{ kind: "Setup", rule_ref: "2.1", data: {} }], botDecisions: [] },
@@ -124,5 +124,14 @@ describe("feedbackPrompt", () => {
 
   it("warns when git could not read the commit (review F6)", () => {
     expect(feedbackPrompt({ ...input, code: { ...input.code, commit: "unknown" } })).toContain("Warning: the app could not read its git commit. Ask the user which commit they ran.");
+  });
+
+  it.fails("holds a replay record of the path to the head: one hash per stored action, null inside an action (AC6.1)", () => {
+    const block = /## Replay record\n[\s\S]*?```json\n([\s\S]*?)\n```/.exec(feedbackPrompt(input))?.[1] ?? "{}";
+    expect(JSON.parse(block)).toEqual({
+      scenario: "full-campaign", seed: 7, options: { "threshold.state": 28 }, package: { id: "kurdish-coin", version: "0.1.0", hash: "p1" },
+      commands: [{ type: "ChooseOperation", faction: "pkk", box: "op", plan: { op: "rally" } }, { type: "Answer", choice: "x" }],
+      hashes: ["h1", null, "h2"], ended: false,
+    });
   });
 });
