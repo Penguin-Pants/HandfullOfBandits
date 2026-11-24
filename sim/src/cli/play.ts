@@ -74,7 +74,8 @@ export interface PlayRecord {
   /** Session options of a stored session (feedback replay record); `replayFile` applies them. */
   readonly options?: Readonly<Record<string, string | number>>;
   /** Setup variant of a stored session; `replayFile` loads `variants/<name>.yaml` of the package. */
-  readonly variant?: string;
+  readonly variant?: string;  /** Package of a stored session; `replayFile` warns when the loaded package has another hash. */
+  readonly package?: { readonly id: string; readonly version: string; readonly hash: string };
 }
 
 /** Play from start until the game ends or `maxSteps` commands. Throws on an illegal command. */

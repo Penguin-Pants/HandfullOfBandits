@@ -22,7 +22,10 @@ export function replayFile(file: string, packageDir: string): { exitCode: number
   const loaded = record.variant === undefined ? loadPackage(readPackageDir(packageDir)) : loadVariant(packageDir, record.variant);
   if (!loaded.ok) return { exitCode: 1, lines: [record.variant === undefined ? "error: the package does not load" : `error: the package with variant ${record.variant} does not load`] };
   const ruleset = withSessionOptions(loaded.ruleset, record.scenario, record.options ?? {});
-  return report(replay(createEngine(coinHandlers), ruleset, record), record.commands.length);
+  const result = report(replay(createEngine(coinHandlers), ruleset, record), record.commands.length);
+  const recorded = record.package?.hash;
+  if (recorded === undefined || recorded === loaded.hash) return result;
+  return { ...result, lines: [`warning: the package hash is ${loaded.hash}, not the recorded ${recorded}; check out the commit in the prompt`, ...result.lines] };
 }
 
 /** Replay a stored session from its own stored package (04 s10.3). */
