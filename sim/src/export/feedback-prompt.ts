@@ -98,6 +98,35 @@ function proposed(annotation: Row, ctx: Row): string[] {
   return annotation["action_id"] == null && ctx["plan"] !== undefined ? ["## Proposed command\n", `${inline(ctx["plan"])} Validation: ${inline(ctx["validation"])}\n`] : [];
 }
 
+/** The `PlayRecord` file that `sim replay <file.json>` reads (`cli/play.ts`; export may not import cli, 03 s5). */
+export interface ReplayRecord {
+  readonly scenario: string;
+  readonly seed: number;
+  readonly options: Readonly<Record<string, unknown>>;
+  readonly package: { readonly id: string; readonly version: string; readonly hash: string };
+  readonly commands: readonly unknown[];
+  readonly hashes: readonly (string | null)[];
+  readonly ended: boolean;
+}
+
+/**
+ * PlayRecord of the path from setup to the session head (AC6.1). The store keeps one hash per action
+ * (`storedSteps`), so the hash after a command inside an action is null.
+ */
+export function replayRecord(data: CoinSimExport, session: Row, state: Row): ReplayRecord {
+  const head = session["head_action_id"];
+  const [setup, ...actions] = typeof head === "string" ? pathsOf(data)(head) : [];
+  const manifest = obj(data.packages.find((p) => p["package_hash"] === session["package_hash"])?.["manifest"]);
+  return {
+    scenario: String(session["scenario_id"]), seed: Number(session["seed"]),
+    options: obj(session["options"]),
+    package: { id: String(manifest["packageId"]), version: String(manifest["version"]), hash: String(session["package_hash"]) },
+    commands: actions.flatMap((a) => list(a["commands"]).map((c) => obj(c)["payload"])),
+    hashes: [String(setup?.["state_hash_after"]), ...actions.flatMap((a) => list(a["commands"]).map((_, i, all) => (i === all.length - 1 ? String(a["state_hash_after"]) : null)))],
+    ended: obj(state["content"])["ended"] != null,
+  };
+}
+
 export function feedbackPrompt(input: FeedbackInput): string {
   const { code, annotation, data } = input;
   const ctx = obj(annotation["context"]);
@@ -128,6 +157,7 @@ export function feedbackPrompt(input: FeedbackInput): string {
     ...botDecision(data, annotation["action_id"]),
     ...recent(data, session, input.limits),
     ...clientErrors(input.diagnostics.errors, input.limits?.errors ?? 10),
+    "## Replay record\n", `\`\`\`json\n${JSON.stringify(replayRecord(data, session, state))}\n\`\`\`\n`,
   ];
   return `${lines.join("\n")}\n`;
 }

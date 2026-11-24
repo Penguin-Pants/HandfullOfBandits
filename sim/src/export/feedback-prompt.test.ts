@@ -93,7 +93,7 @@ describe("feedbackPrompt", () => {
     expect(last).toContain("## Recent log (last 1 of 2 entries)\n\n- A2 PiecePlaced");
     expect(last).not.toContain("A1 Setup");
     expect(last).toContain("## Recent commands (last 1 of 2)\n\n- A2 `{\"type\":\"Answer\",\"choice\":\"x\"}` Validation: `{\"ok\":true,\"violations\":[],\"warnings\":[{\"code\":\"W1\",\"message\":\"low\"}]}`\n");
-    expect(last).not.toContain("ChooseOperation");
+    expect(last.split("## Replay record")[0]).not.toContain("ChooseOperation");
   });
 
   it("holds the last 10 client errors with only the path of API URLs (AC5.2, Risk 2)", () => {
@@ -126,7 +126,7 @@ describe("feedbackPrompt", () => {
     expect(feedbackPrompt({ ...input, code: { ...input.code, commit: "unknown" } })).toContain("Warning: the app could not read its git commit. Ask the user which commit they ran.");
   });
 
-  it.fails("holds a replay record of the path to the head: one hash per stored action, null inside an action (AC6.1)", () => {
+  it("holds a replay record of the path to the head: one hash per stored action, null inside an action (AC6.1)", () => {
     const block = /## Replay record\n[\s\S]*?```json\n([\s\S]*?)\n```/.exec(feedbackPrompt(input))?.[1] ?? "{}";
     expect(JSON.parse(block)).toEqual({
       scenario: "full-campaign", seed: 7, options: { "threshold.state": 28 }, package: { id: "kurdish-coin", version: "0.1.0", hash: "p1" },
