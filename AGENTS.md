@@ -74,3 +74,9 @@ Run on the complete phase diff after tests pass and before commit.
 - Default to the cheapest adequate model. Follow `.agents/skills/shared/SUBAGENT-STEERABILITY.md` if present.
 - Verify subagent completion. Retry incomplete work with a higher turn limit. Report turn-limit exhaustion with ⚠️.
 - Ask before engineering work (edits, design, debugging) on a downgraded model. Mechanical, read-only, git and docs work: no prompt.
+
+## Required shared instructions
+
+Before any work, read and follow `.agents/shared/instructions.md`. Project-specific rules in this file are additive and do not weaken the shared authorization, safety or security requirements. Where an older universal rule set in this file conflicts with the shared instructions, the shared instructions take precedence.
+
+@.agents/shared/instructions.md
