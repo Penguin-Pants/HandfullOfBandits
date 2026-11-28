@@ -82,8 +82,14 @@ describe("Extort (06 s5.2, PA-12)", () => {
     expect(state.tracks["resources.pkk"]).toBe(5 - 1 + 2);
   });
 
-  it("needs PKK Control, Pop 1+ and no Displacement in a domestic space; Host or Tolerant in a box", () => {
-    expect(codes(pkkTurn, op("pkk", "opSa", { op: "pkk.rally", locations: ["agri-igdir"], sa: sa(["hakkari"]) }))).toEqual(["extortControl"]);
+  it("needs no PKK Control: an Underground Guerrilla in a Pop 1+ space is enough", () => {
+    const plan = op("pkk", "opSa", { op: "pkk.rally", locations: ["agri-igdir"], sa: sa(["hakkari"]) });
+    expect(codes(pkkTurn, plan)).toEqual([]);
+    const { state } = play(pkkTurn, plan);
+    expect(state.tracks["resources.pkk"]).toBe(5 - 1 + 1);
+  });
+
+  it("needs Pop 1+ and no Displacement in a domestic space; Host or Tolerant in a box", () => {
     const syria = { ...pkkTurn, tracks: { ...pkkTurn.tracks, "posture.syria": "restricted" } };
     expect(codes(syria, op("pkk", "opSa", { op: "pkk.rally", locations: ["agri-igdir"], sa: sa(["syria-bekaa"]) }))).toEqual(["extortHost"]);
     const displaced = setMarkers(setPieces(pkkTurn, "bingol-tunceli", "guerrilla", 3), "bingol-tunceli", "displacement", 1, "new");

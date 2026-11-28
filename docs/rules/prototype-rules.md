@@ -423,7 +423,7 @@ Ambush Momentum increases the limit to three spaces. The same procedure applies 
 
 **Accompanies:** any PKK Op. **Cost:** free.
 
-Choose any subset of qualifying locations. In each, activate one Underground Guerrilla and gain one Resource. A domestic space needs Pop of at least one, PKK Control and no Displacement. An external camp needs Host or Tolerant posture and an Underground Guerrilla. Europe and Iran do not qualify as host camps.
+Choose any subset of qualifying locations. In each, activate one Underground Guerrilla and gain one Resource. A domestic space needs Pop of at least one, an Underground Guerrilla and no Displacement. PKK Control is not needed. An external camp needs Host or Tolerant posture and an Underground Guerrilla. Europe and Iran do not qualify as host camps.
 
 ### 4.3.3 Strike Collaborators
 

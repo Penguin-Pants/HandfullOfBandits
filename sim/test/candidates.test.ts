@@ -41,6 +41,13 @@ describe("card decisions (19 s5 Initiative, Operations, Special Activities)", ()
     for (const v of ["civicAction", "guards", "base"]) expect(f).toContain(`op:state.train/${v}@limitedOp`);
   });
 
+  it("offers Coerce+Extort at 0 PKK Resources: Extort elsewhere first pays for Coerce (06 s5.2, DEC-16)", () => {
+    const s = setTrack(setPieces(setPieces(rich(turnOf("pkk")), "hakkari", "guards", 2), "sirnak", "guerrilla", 3), "resources.pkk", 0);
+    const set = gen(s, "card", "pkk");
+    allLegal(s, set);
+    expect(families(set)).toContain("op:pkk.coerce+pkk.extort@opSa");
+  });
+
   it("covers every PKK Operation and Special Activity, Rally options and Agitate", () => {
     const s = setPieces(setPieces(rich(turnOf("pkk")), "hakkari", "guards", 2), "sirnak", "guerrilla", 3);
     const set = gen(s, "card", "pkk");

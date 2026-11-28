@@ -220,7 +220,7 @@ Evidence: guerrilla tactics against patrols [E-0162]. Adapts CT 4.3.3.
 
 Accompanies: any Op.
 
-In each space with Pop 1 or more, an Underground Guerrilla, PKK Control and no Displacement marker, and in each external box whose host is Host or Tolerant and that holds an Underground Guerrilla: Activate one Guerrilla and gain 1 Resource.
+Flip an Underground Guerrilla to Active and gain 1 Resource in each selected space with Pop 1 or more and an Underground Guerrilla and no Displacement marker, and in each external box whose host is Host or Tolerant with an Underground Guerrilla.
 
 Evidence: taxation mixed willing and coerced payment; Low confidence [F-034; Q-359 not used for values]. Adapts CT 4.3.1.
 
@@ -270,7 +270,7 @@ Europe mobilization is not a separate SA. The PKK raises Europe by selecting the
 | PKK | Attack | Op | 1 per space | One die; conditional attrition per Troop (DD-21) |
 | PKK | Coerce | Op | 1 per space | Toward Neutral only; marker |
 | PKK | Ambush | SA, Attack | 0 | 2 spaces; remove 1 |
-| PKK | Extort | SA, any Op | 0 | +1 per space with Control |
+| PKK | Extort | SA, any Op | 0 | +1 per space with an Underground Guerrilla |
 | PKK | Strike Collaborators | SA, Rally, March or Coerce | 1 per space | Harm marker; Europe -1 |
 | PKK | Host Pressure | SA, Rally or March | 2 | Die; may backfire |
 
