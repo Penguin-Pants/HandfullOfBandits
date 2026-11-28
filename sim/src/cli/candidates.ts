@@ -394,9 +394,13 @@ function saVariants(r: Ruleset, s: GameState, sa: string, base: Plan): Plan[] {
       return locs.length === 0 ? [] : [withSa(sa, locs, {}, "before")];
     }
     case "pkk.extort": {
-      const ok = (l: string): boolean => count(s, l, "guerrilla", "underground") > 0 && (r.spaces.find((x) => x.id === l)?.kind === "domestic" ? pop(r, l) > 0 && controlOf(r, s, l) === "pkk" && markers(s, l, "displacement") === 0 : ["host", "tolerant"].includes(postureOf(s, l) ?? ""));
+      const ok = (l: string): boolean => count(s, l, "guerrilla", "underground") > 0 && (r.spaces.find((x) => x.id === l)?.kind === "domestic" ? pop(r, l) > 0 && markers(s, l, "displacement") === 0 : ["host", "tolerant"].includes(postureOf(s, l) ?? ""));
       const locs = [...domestic(r), ...HOSTS].filter(ok);
-      return locs.length === 0 ? [] : [withSa(sa, locs, {}, "after"), withSa(sa, locs, {}, "before")];
+      // Extort needs no Control (06 s5.2), so it can share a space with the Op. Also offer the set
+      // outside the Op spaces: a lone Underground Guerrilla cannot serve both Coerce and Extort.
+      const apart = locs.filter((l) => !base.locations.includes(l));
+      const after = apart.length > 0 && apart.length < locs.length ? [withSa(sa, apart, {}, "after")] : [];
+      return locs.length === 0 ? [] : [withSa(sa, locs, {}, "after"), withSa(sa, locs, {}, "before"), ...after];
     }
     case "pkk.strike-collaborators": {
       if (s.flags["law3175"] !== true) return [];
