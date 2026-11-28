@@ -1,13 +1,64 @@
 Project tier:
 Conventions version: 1.0
 
-## Agent Rules
+# AGENTS.md
 
-User has diagnosed ADHD. Optimize every reply for scannability, brevity and single-threaded focus.
+A Handful of Bandits: a two-player COIN-series board game prototype (State vs PKK, 1984-1999). The repository holds the rules, the card text, the game package data, a local simulator app and playtest records. Project context lives in this file; `docs/project-context.md` does not exist.
 
-#### Output (chat, commits, code comments, docs)
+## Stack
 
-01. Write in ASD-STE100. Plain, warm peer tone. Exception: profanity allowed for emphasis when context fits.
+- Simulator in `sim/`: Node.js 24+, TypeScript 6, React 19, Vite 8, Fastify 5, better-sqlite3, Zod 4, Vitest 5, ESLint 10. Versions: `sim/package.json`.
+- Print set: Python 3 with PyYAML and reportlab, Pandoc, XeLaTeX, Liberation fonts (`docs/rules/README.md`).
+- CI: `make install`, `make check`, `make test` on Windows only, Node 24 (`.github/workflows/ci.yml`). Write path-safe code: no POSIX-only paths or shell in npm scripts.
+
+## Commands
+
+Run from the repository root. Without Make, run the npm script inside `sim/`.
+
+- `make check`: typecheck and lint. Run before every commit.
+- `make test`: all Vitest tests. Run before every commit. Single file: `cd sim && npx vitest run test/<file>.test.ts`.
+- `make validate DIR=game-packages/kurdish-coin/0.1.0`: after any package change.
+- `make rules DIR=game-packages/kurdish-coin/0.1.0`: after a change in `research/`. Rewrites `rules.yaml`; `make test` fails while it is stale.
+- `make schema`: after a change in `sim/src/package/schema/`. Rewrites `game-packages/_schema/`.
+- `make print`: after a change to rules, cards, scenario or a print source. `make test` (`sim/test/print-drift.test.ts`) fails until it runs.
+- `make e2e`, `make ux`: browser checks. Need Playwright with Chromium.
+- `UPDATE_GOLDEN=1 make test`: rewrite golden replays. Only after a deliberate rules change.
+
+## Map
+
+- `sim/src/engine/`: pure rules engine. `sim/src/server/`, `sim/src/ui/`, `sim/src/cli/`, `sim/src/store/`: app layers. Module boundaries: `sim/eslint/boundaries.js`, tested by `sim/test/arch.test.ts`.
+- `game-packages/kurdish-coin/0.1.0/`: the game package (YAML data, cards, scenarios, variants).
+- `research/`: rules source of truth for `rules.yaml`.
+- `docs/prototype/`: specs, build plan (`11-build-plan.md`) and decision log (`13-design-decisions.md`, `DEC-NN`).
+- `docs/rules/`, `docs/card-catalogue/`: print sources and generated PDFs.
+- Spec citations in code use `<doc> s<section>`: `05 s8` is `docs/prototype/05-rules-engine-spec.md` section 8.
+
+## Boundaries
+
+**Always**
+
+- Run `make check` and `make test` before a commit. Report each skipped check and its reason.
+- Run the regenerate target from Commands after a change to its source.
+- Cite the spec section or `DEC-NN` in a code comment for a rule implementation.
+
+**Ask first**
+
+- Game design or rules decisions. Record the outcome in `docs/prototype/13-design-decisions.md`.
+- New dependencies, CI workflow changes or changes to module boundaries.
+- Golden replay rewrites (`UPDATE_GOLDEN=1`).
+
+**Never**
+
+- Edit files listed under `managed` in `.agents/ownership.json`. The sync bot overwrites them. Propose the change for the upstream standards repository.
+- Hand-edit generated files: `rules.yaml`, `game-packages/_schema/*.json`, `docs/rules/prototype-card-reference.md`, `*.pdf`, `*.inputs.json`, `sim/test/golden/`. Run the generator. If its tools are missing, say so.
+- Load, build or fix tests in `archive/`. It is out of the run by design.
+- Commit secrets or playtest databases (`*.sqlite`).
+
+## Output rules
+
+User has diagnosed ADHD. Optimize every reply for scannability, brevity and single-threaded focus. These rules apply to chat, commits, code comments and docs. They are stricter than the shared instructions.
+
+01. Write in ASD-STE100. Plain, warm peer tone. Profanity allowed for emphasis when context fits.
 02. Multi-turn tasks: line 1 is `Step X/Y: <summary>`, then a blank line, then the body.
 03. Next line: the answer, command, file path or diff. Rationale below it.
 04. Unprompted explanations: max ~150 words. Elaborate only when asked.
@@ -20,63 +71,16 @@ User has diagnosed ADHD. Optimize every reply for scannability, brevity and sing
 11. Emoji only as status markers (✅ ❌ ⚠️). Max one per line. Never in prose, headings or code.
 12. No em dashes. No Oxford commas.
 
-#### Process
+## Project additions to shared rules
 
-1. Verify before asserting: source read, grep or authoritative docs. Never use general knowledge for specifics (APIs, headers, pricing).
-2. Cite sources (`path/file.go:42` or URL). Label uncited claims "unverified assumption" and state how to verify.
-3. State confidence (high/medium/low) on diagnoses and fixes.
-4. Ambiguous request: verify first. If still ambiguous, ask one question before any edit.
-5. Challenge the user's reasoning when evidence disagrees.
-6. A question is not an edit instruction. Answer it.
-7. Run independent tool calls in parallel.
-8. After 3 failed fix attempts: stop edits, name the unverified assumption, ask one diagnostic question.
-
-#### Edits
-
-1. In-task edits: proceed without approval. Report changes after.
-2. Out-of-task edits: propose a diff in chat. Edit only after explicit approval. Diff >40 lines: give a 1-line summary first; user chooses view or proceed.
-3. Every error found, in any file, gets a root-cause fix: apply in-task fixes, propose out-of-task fixes. Never label or defer.
-4. Prefer removing components over adding. Use the fewest moving parts that satisfy the requirement.
-5. Search the codebase for an existing implementation before adding a new pattern.
-6. New pattern replaces old: migrate all call sites and delete the old implementation in the same change.
-7. Delete unused code after confirming zero references (incl. dynamic imports, config, external consumers).
-8. One-time scripts: run from /tmp, delete after, never commit.
-9. Mock data only in tests.
-
-#### Review (TWO-PASS REVIEW)
-
-Run on the complete phase diff after tests pass and before commit.
-
-1. Pass 1, correctness: trace each changed function from a real caller. Check error branches, edge inputs, Windows and Linux paths and conformance to the cited spec section.
-2. Pass 2, simplicity: remove code with no caller, merge duplicates and reuse existing patterns (Edits 4 to 7).
-3. Verify each finding before acting on it: reproduce it, or cite the line that proves it.
-4. Classify each finding:
-   - **Fix:** defect in the phase diff. Fix it in the same change, with a test that fails without the fix.
-   - **Propose:** defect outside the phase scope. Propose a diff (Edits 2) and record it in the plan.
-   - **Decide:** needs a product or design decision. Stop that part and ask one question (Process 4).
-   - **Drop:** does not reproduce, or the fix costs more than it prevents. State why in one line.
-5. Report one line per finding with its class and outcome. Run validation again after fixes.
-
-#### Testing (TDD)
-
-1. Stub first. Prove failure on an assertion, not a compile error. Write minimum code to pass.
-2. Unit test every public function and error branch. Integration test every feature slice.
-3. Assert behavior, not implementation. Delete assertions that survive an inverted requirement.
-
-#### Tooling
-
-- Use Makefile targets over direct calls when present (e.g. `make test`).
-- Grep for exact search, `rg` for regex. Mermaid for complex system diagrams.
+- Out-of-task diff >40 lines: give a 1-line summary first; user chooses view or proceed.
+- Every error found, in any file, gets a root-cause fix: apply in-task fixes, propose out-of-task fixes.
+- New pattern replaces old: migrate all call sites and delete the old implementation in the same change.
+- Delete test assertions that still pass with the requirement inverted.
 - Instruction files (SKILL.md, **/prompts/**, AGENTS.md, CLAUDE.md): format only with `mdformat --number --end-of-line keep` (keeps CRLF line endings).
-
-#### Subagents
-
-- Default to the cheapest adequate model. Follow `.agents/skills/shared/SUBAGENT-STEERABILITY.md` if present.
-- Verify subagent completion. Retry incomplete work with a higher turn limit. Report turn-limit exhaustion with ⚠️.
-- Ask before engineering work (edits, design, debugging) on a downgraded model. Mechanical, read-only, git and docs work: no prompt.
 
 ## Required shared instructions
 
-Before any work, read and follow `.agents/shared/instructions.md`. Project-specific rules in this file are additive and do not weaken the shared authorization, safety or security requirements. Where an older universal rule set in this file conflicts with the shared instructions, the shared instructions take precedence.
+Before any work, read and follow `.agents/shared/instructions.md`. It defines process, edits, testing, two-pass review (F1 to F4), Git, security and subagent rules. Rules in this file are additive and do not weaken the shared authorization, safety or security requirements. On conflict, the shared instructions take precedence.
 
 @.agents/shared/instructions.md
