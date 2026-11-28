@@ -398,9 +398,10 @@ function saVariants(r: Ruleset, s: GameState, sa: string, base: Plan): Plan[] {
       const locs = [...domestic(r), ...HOSTS].filter(ok);
       // Extort needs no Control (06 s5.2), so it can share a space with the Op. Also offer the set
       // outside the Op spaces: a lone Underground Guerrilla cannot serve both Coerce and Extort.
+      // Before the Op, that set can also pay for it (DEC-16).
       const apart = locs.filter((l) => !base.locations.includes(l));
-      const after = apart.length > 0 && apart.length < locs.length ? [withSa(sa, apart, {}, "after")] : [];
-      return locs.length === 0 ? [] : [withSa(sa, locs, {}, "after"), withSa(sa, locs, {}, "before"), ...after];
+      const split = apart.length > 0 && apart.length < locs.length ? [withSa(sa, apart, {}, "after"), withSa(sa, apart, {}, "before")] : [];
+      return locs.length === 0 ? [] : [withSa(sa, locs, {}, "after"), withSa(sa, locs, {}, "before"), ...split];
     }
     case "pkk.strike-collaborators": {
       if (s.flags["law3175"] !== true) return [];
